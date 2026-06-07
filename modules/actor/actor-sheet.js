@@ -34,9 +34,10 @@ import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-acti
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
+
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
-const { TextEditor } = foundry.applications.ux;
+const { TextEditor, ContextMenu, SearchFilter, DragDrop } = foundry.applications.ux;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static propertiesToEnrich = [
@@ -946,28 +947,28 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const html = $(this.element);
     resizeListener(html.find('.window-content'))
 
-    new foundry.applications.ux.ContextMenu(this.element, '.item .withContext', [], {
+    new ContextMenu(this.element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
+    new ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
       jQuery: false,
       fixed: true
     });
 
-    new foundry.applications.ux.ContextMenu(this.element, '.unequipped-weapon-menu', [], {
+    new ContextMenu(this.element, '.unequipped-weapon-menu', [], {
       onOpen: this._onUnequippedWeaponContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.effectConfig', [], {
+    new ContextMenu(this.element, '.effectConfig', [], {
       onOpen: this._onStatusEffectContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
+    new ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
       onOpen: this._onBulkInventoryContext.bind(this),
       jQuery: false,
       fixed: true,
@@ -1103,19 +1104,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
-    this.#talentSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#talentSearch ??= new SearchFilter({
       inputSelector: ".talentSearch",
       contentSelector: ".allTalents",
       callback: this._filterTalents.bind(this)
     });
     this.#talentSearch.bind(this.element);
-    this.#gearSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#gearSearch ??= new SearchFilter({
       inputSelector: ".gearSearch",
       contentSelector: "[data-application-part=inventory]",
       callback: this._filterGear.bind(this)
     });
     this.#gearSearch.bind(this.element);
-    this.#conditionSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#conditionSearch ??= new SearchFilter({
       inputSelector: ".conditionSearch",
       contentSelector: ".statusEffectMenu",
       callback: this._filterConditions.bind(this)
@@ -1143,7 +1144,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     //todo we could remove this if every .item is replaced with .draggable (parent class has draggable attachment listener)
-    new foundry.applications.ux.DragDrop.implementation({
+    new DragDrop.implementation({
       dragSelector: ".item",
       dropSelector: null,
       permissions: {
@@ -1635,7 +1636,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         entry.hidden = false;
         continue;
       }
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -1658,7 +1659,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         entry.hidden = false;
         continue;
       }
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -1671,7 +1672,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
 
       const title = _loc(entry.querySelector('button').dataset.tooltip) || '';
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -2048,7 +2049,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _handleApplication(item) {
     item = duplicate(item);
-    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name && i.system.skill == item.system.skill);
     if (!res) await this.actor.createEmbeddedDocuments('Item', [item]);
   }
 
