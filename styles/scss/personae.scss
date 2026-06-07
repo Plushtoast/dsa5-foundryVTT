@@ -491,6 +491,17 @@
         align-items: center;
         gap: 0.5rem;
       }
+
+      .broken-actor-link {
+        cursor: default;
+        opacity: 0.85;
+      }
+    }
+
+    > .broken-actor-link {
+      align-self: flex-start;
+      margin-top: 0.25rem;
+      opacity: 0.85;
     }
   }
 

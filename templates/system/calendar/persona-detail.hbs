@@ -19,17 +19,28 @@
                 data-action="editActor" data-persona-uuid="{{uuid}}" data-key="{{dramatisKey}}">
                 <i class="fas fa-edit"></i>
             </button>
+            {{#if actorMissing}}
+            <span class="detail-action-btn broken-actor-link"
+                data-tooltip="PERSONAE.FIELDS.personae.actor_uuid.warning">
+                <i class="fas fa-unlink"></i>
+            </span>
+            {{else}}
             <button type="button" class="detail-action-btn sheet-btn"
                 data-tooltip="PERSONAE.FIELDS.personae.showActorDescription.label" data-action="showSheet"
                 data-uuid="{{actor.uuid}}">
                 <i class="fas fa-user"></i>
             </button>
+            {{/if}}
             <button type="button" class="detail-action-btn delete-btn"
                 data-tooltip="PERSONAE.FIELDS.personae.visible.label" data-action="toggleVisibility"
                 data-persona-uuid="{{uuid}}" data-key="{{dramatisKey}}">
                 <i class="fas fa-eye{{ifThen visible '' '-slash'}}"></i>
             </button>
         </div>
+        {{else if actorMissing}}
+        <span class="broken-actor-link" data-tooltip="PERSONAE.FIELDS.personae.actor_uuid.warning">
+            <i class="fas fa-unlink"></i>
+        </span>
         {{/if}}
     </div>
 
@@ -56,7 +67,7 @@
             <div class="detail-section">
                 {{#if noTabs}}<h3 class="section-title">{{localize 'GM Notes'}}</h3>{{/if}}
                 <div class="section-content">
-                    <div class="description-text">{{{actor.system.details.notes.gmdescription}}}</div>
+                    <div class="description-text">{{#if actor}}{{{actor.system.details.notes.gmdescription}}}{{/if}}</div>
                 </div>
             </div>
         </div>
