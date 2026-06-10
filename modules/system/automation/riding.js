@@ -62,16 +62,19 @@ export default class Riding {
     if (!horseId) return;
 
     const scene = token.parent;
-    const horse = this.getHorse(token.actor);
-    if (scene && (data.x || data.y) && horse) {
-      const waypoint = {
-          x: data.x ?? token.x,
-          y: data.y ?? token.y,
-          rotation: data.rotation ?? token.rotation,
-          elevation: data.elevation ? data.elevation - 1 : token.elevation - 1,
-        }
-      horse.token.move(waypoint);
-    }
+    if (!scene || (!data.x && !data.y)) return;
+
+    const horseToken = scene.tokens.get(horseId);
+    if (!horseToken) return;
+
+    const waypoint = {
+      x: data.x ?? token.x,
+      y: data.y ?? token.y,
+      rotation: data.rotation ?? token.rotation,
+      elevation: data.elevation !== undefined ? data.elevation - 1 : (token.elevation ?? 0) - 1,
+    };
+
+    horseToken.update(waypoint, { noHooks: true });
   }
 
   static rollLoyalty(actor, options = {}) {
