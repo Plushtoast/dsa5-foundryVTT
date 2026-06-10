@@ -19,7 +19,6 @@ import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
-
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
     switch (data.type) {

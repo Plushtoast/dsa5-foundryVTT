@@ -28,6 +28,7 @@ import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
+import GroupData from '../data/actor/group.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
@@ -1492,7 +1493,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           if (!partyUuid) return false;
           const party = fromUuidSync(partyUuid);
           if (!party?.system?.actors) return false;
-          return party.system.actors.has(actor);
+          if (!party.system.actors.has(actor)) return false;
+          return GroupData.getUnlockedLootDepots(party).length > 0;
         },
         onClick: () => {
           import('./group-sheet.js').then((m) => m.default.passItemToGroup(actor, item));
