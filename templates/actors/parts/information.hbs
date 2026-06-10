@@ -1,7 +1,7 @@
-{{#if document.isOwner}}
+{{#if isGM}}
 {{#if prepare.information}}
 <div class="groupbox">
-  <legend class="table-title lineheight">{{localize 'TYPES.Item.information'}}</legend>
+  <legend class="table-title lineheight">{{localize 'TYPES.Item.information'}} <i class="fas fa-mask" data-tooltip="TT.onlyGM"></i></legend>
   <div class='row-section wrap cards'>
     {{#each prepare.information as |item i|}}
     <div class='item' data-item-id='{{item._id}}'>
