@@ -883,12 +883,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     },
   };
 
-  async getTrackedHeros() {
+  async getTrackedHeros(skipGroupActors = true) {
     const trackedActors = game.settings.get('dsa5', 'trackedActors');
     let heros;
     if (trackedActors.actors && trackedActors.actors.length > 0) {
       heros = game.actors
-        .filter((x) => trackedActors.actors.includes(x.id))
+        .filter((x) => {
+          return trackedActors.actors.includes(x.id) && (!skipGroupActors || x.type != "group");
+        })
         .sort((a, b) => {
           return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id);
         });
