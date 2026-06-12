@@ -732,6 +732,7 @@
             "RemoveSpecies": "Tierart entfernen",
             "ShortPrefix": "Ausbildung:",
             "SpeciesChangeHint": "Tierart anpassen",
+            "SpeciesSelectHint": "Wähle die Tierart für {name}. Trick- und Dressurmodifikatoren sowie mögliche Ausbildungsaufsätze hängen von der gewählten Tierart ab.",
             "Tab": "Ausbildung",
             "TabName": "Ausbildung",
             "TeachBtn": "Ausbilden",

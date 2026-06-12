@@ -732,6 +732,7 @@
       "RemoveSpecies": "Remove species",
       "ShortPrefix": "Training:",
       "SpeciesChangeHint": "Change species",
+      "SpeciesSelectHint": "Choose the species for {name}. Trick and training modifiers as well as available training modules depend on the selected species.",
       "Tab": "Training",
       "TabName": "Training",
       "TeachBtn": "Train",
