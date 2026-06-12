@@ -1,4 +1,5 @@
 import { getShapeshiftingPreset, SHAPESHIFTING_PRESET_KEYS } from './shapeshifting/shapeshifting_presets.js'
+import { DSATokenDocument } from '../hooks/token.js'
 
 const { mergeObject, getProperty, setProperty, deepClone } = foundry.utils
 
@@ -401,11 +402,11 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             const tokenData = {
                 x: source.token.x,
                 y: source.token.y,
-                elevation: source.token.elevation,
                 actorLink: false,
                 name: targetData.name,
                 delta: targetData,
             }
+            DSATokenDocument.applySourceTokenPlacement(source.token, tokenData);
             if (keepToken) {
                 mergeObject(tokenData, {
                     width: sourceData.prototypeToken.width,
@@ -520,10 +521,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             const tokenData = {
                 x: actor.token.x,
                 y: actor.token.y,
-                elevation: actor.token.elevation,
                 actorLink: false,
                 delta,
             }
+            DSATokenDocument.applySourceTokenPlacement(actor.token, tokenData);
 
             const tempToken = await original.getTokenDocument(tokenData, { parent: canvas.scene })
             const createdToken = await TokenDocument.implementation.create(tempToken, { parent: canvas.scene });

@@ -26,6 +26,7 @@ export default class Riding {
         y: token.y,
         hidden: token.hidden,
       });
+      TokenDocument.implementation.applySourceTokenPlacement(token, horseTokenSource);
       const horseToken = (await scene.createEmbeddedDocuments('Token', [horseTokenSource]))[0];
       const tokenUpdate = {
         'flags.dsa5.horseTokenId': horseToken.id,
@@ -277,7 +278,9 @@ export default class Riding {
     }
 
     if (riderToken && !horse.token) {
-      horse = (await canvas.scene.createEmbeddedDocuments('Token', [await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y })]))[0].actor;
+      const horseTokenData = await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y });
+      TokenDocument.implementation.applySourceTokenPlacement(riderToken, horseTokenData);
+      horse = (await canvas.scene.createEmbeddedDocuments('Token', [horseTokenData]))[0].actor;
     }
 
     const actorUpdate = {

@@ -1,3 +1,5 @@
+import { DSATokenDocument } from '../../hooks/token.js';
+
 const ICON_CONTROL = 'fa-arrows-to-eye';
 const ICON_SUMMON = 'fa-bell';
 const POSITION_STYLE = 'left:calc(50% + 40px);top:1px;';
@@ -145,6 +147,7 @@ export default class CompanionHotbar {
     const spawnX = ownerToken.x + (scene.grid.size || canvas.grid?.size || 50);
     const spawnY = ownerToken.y;
     const tokenData = await petActor.getTokenDocument({ x: spawnX, y: spawnY }, { parent: scene });
+    DSATokenDocument.applySourceTokenPlacement(ownerToken, tokenData);
     const [createdToken] = await scene.createEmbeddedDocuments('Token', [tokenData]);
 
     return createdToken ?? null;
