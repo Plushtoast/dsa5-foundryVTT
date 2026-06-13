@@ -415,11 +415,9 @@ export default class DSA5StatusEffects {
 
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
+
       const charges = ef.system?.charges;
-      if (charges) {
-        const value = Number(charges.value);
-        if (Number.isFinite(value) && value <= 0) continue;
-      }
+      if (charges && Number.isFinite(charges.value) && charges.value <= 0) continue;
 
       for (const coreId of [...ef.statuses]) {
         if (finishedCoreIds.includes(coreId)) continue;

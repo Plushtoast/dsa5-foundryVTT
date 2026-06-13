@@ -58,9 +58,8 @@ export function connectSocket() {
           Promise.all(effectUuids.map(async (uuid) => {
             try {
               const effect = await fromUuid(uuid);
-              const charges = effect?.getFlag?.('dsa5', 'charges');
-              const value = Number(charges?.value);
-              if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+              const charges = effect?.system?.charges;
+              if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
               if (effect.disabled) return;
               await effect.consumeCharges(amount);
             } catch (e) {
