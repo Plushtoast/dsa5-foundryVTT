@@ -212,12 +212,13 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     const documentTypes = ['Actor', 'JournalEntry', 'Scene'];
     const scope = json.options?.scope?.split('-')[1];
 
-    for (const mPack of module?.packs | []) {
+    for (const mPack of module?.packs ?? []) {
       if (!documentTypes.includes(mPack.type)) continue;
       if (mPack.flags?.dsalang != game.i18n.lang) continue;
       if (scope && !mPack.id.includes(scope)) continue;
 
       const pack = game.packs.get(mPack.id);
+      if (!pack) continue;
       const visibility = toggle ? 'OBSERVER' : 'NONE';
       const ownership = {
         ownership: {
