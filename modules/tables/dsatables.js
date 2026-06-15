@@ -2,6 +2,13 @@ import DSA5 from '../config/config-dsa5.js';
 import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import TestModuleLoader from '../tests/testModuleLoader.js';
+
+const TABLE_EFFECT_RUNTIME_TESTS = 'tableEffectRuntime';
+
+TestModuleLoader.register(TABLE_EFFECT_RUNTIME_TESTS, {
+  url: 'systems/dsa5/modules/tests/tableEffectRuntimeTests.js',
+});
 
 const { getProperty, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -226,5 +233,14 @@ export default class DSATables {
 
   static defaultParryCrit() {
     return ', ' + _loc('attackOfOpportunity');
+  }
+
+  static async runRuntimeTests(options = {}) {
+    const Runner = await TestModuleLoader.load(TABLE_EFFECT_RUNTIME_TESTS);
+    return Runner.run(options);
+  }
+
+  static getTestLoadStates() {
+    return TestModuleLoader.getLoadStates();
   }
 }
