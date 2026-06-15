@@ -29,7 +29,7 @@ import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilitie
 import { FateRolls } from './concerns/faterolls.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
-import TableEffectActiveEffects from '../tables/tableEffectActiveEffects.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
@@ -2029,7 +2029,7 @@ export default class Actordsa5 extends Actor {
         const charges = effect?.system?.charges;
         if (effect.disabled) return;
         if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
-        await TableEffectActiveEffects.applyAfterUse(effect);
+        await ActiveEffectLifecycle.applyAfterUse(effect);
         if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
         await effect.consumeCharges(1);
       } catch (e) {

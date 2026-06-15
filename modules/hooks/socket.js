@@ -18,7 +18,7 @@ import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
-import TableEffectActiveEffects from '../tables/tableEffectActiveEffects.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 
 export function connectSocket() {
@@ -63,7 +63,7 @@ export function connectSocket() {
               const charges = effect?.system?.charges;
               if (effect.disabled) return;
               if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
-              await TableEffectActiveEffects.applyAfterUse(effect);
+              await ActiveEffectLifecycle.applyAfterUse(effect);
               if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
               await effect.consumeCharges(amount);
             } catch (e) {

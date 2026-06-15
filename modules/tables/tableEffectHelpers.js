@@ -2,6 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import CombatskillData from '../data/item/combatskill.js';
 import TraitData from '../data/item/trait.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import TableTemplates from './tableTemplates.js';
 
 const { getProperty } = foundry.utils;
 
@@ -17,6 +18,25 @@ export default class TableEffectHelpers {
       token: actor.token?.id,
       scene: actor.token?.parent?.id || canvas.scene?.id,
     };
+  }
+
+  static speakerFromToken(target) {
+    if (!target?.actor) return undefined;
+    return {
+      token: target.id,
+      actor: target.actor.id,
+      scene: target.scene?.id || canvas.scene?.id,
+    };
+  }
+
+  static speakerFromMessage(messageId) {
+    const message = messageId ? game.messages.get(messageId) : undefined;
+    return getProperty(message, 'flags.data.preData.extra.speaker') || message?.speaker;
+  }
+
+  static speakersFromMessages(messageIds) {
+    const ids = messageIds ? Array.from(messageIds instanceof Set ? messageIds : Array.isArray(messageIds) ? messageIds : [messageIds]) : [];
+    return ids.map((messageId) => this.speakerFromMessage(messageId)).filter(Boolean);
   }
 
   static actorsFromSpeakers(speakers = []) {
@@ -35,7 +55,7 @@ export default class TableEffectHelpers {
     } else if (target == 'self') {
       finalTargets = [context.speaker || targets[0]].filter(Boolean);
     } else if (target == 'victim') {
-      finalTargets = selectedTargets.length ? selectedTargets : context.targets || [];
+      finalTargets = selectedTargets.length ? selectedTargets : context.targets || context.contextTargets || [];
       hasTargets = finalTargets.length > 0;
       if (!hasTargets) ui.notifications.warn('DSAError.noVictim', { localize: true });
     } else if (target == 'attacker') {
@@ -62,6 +82,19 @@ export default class TableEffectHelpers {
     };
   }
 
+  static buildBotchContext(testData, table) {
+    return {
+      table,
+      speaker: testData.extra.speaker,
+      targets: Array.from(game.user.targets).map((target) => this.speakerFromToken(target)).filter(Boolean),
+      attacker: this.speakerFromMessage(testData.attackerMessage),
+      defenders: this.speakersFromMessages(testData.defenderMessage),
+      attackerMessage: testData.attackerMessage,
+      defenderMessage: testData.defenderMessage,
+      isOpposedTest: testData.isOpposedTest,
+    };
+  }
+
   static async rollSourceDamage(source, args = {}, context = {}) {
     const damageActor = context.damageActor || source.actor || source.parent || context.speaker;
     if (!damageActor) throw new Error('No damage actor found for table effect damage roll.');
@@ -84,8 +117,9 @@ export default class TableEffectHelpers {
 
   static async markWorkflowUsed(message, label) {
     if (message.content.includes('fa-check')) return;
+    const marker = await TableTemplates.chatCheckMarker(label);
     await message.update({
-      content: message.content.replace('</div>', `<i class="fas fa-check" style="float:right" data-tooltip="${label}"></i></div>`),
+      content: message.content.replace('</div>', `${marker}</div>`),
     });
   }
 

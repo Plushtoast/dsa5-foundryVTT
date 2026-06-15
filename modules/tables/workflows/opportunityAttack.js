@@ -1,12 +1,16 @@
-import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import OnUseEffect from '../system/automation/onUseEffects.js';
-import DSATables from './dsatables.js';
-import TableEffectActiveEffects from './tableEffectActiveEffects.js';
-import TableEffectHelpers from './tableEffectHelpers.js';
+import OnUseEffect from '../../system/automation/onUseEffects.js';
+import ConditionEffectBuilder from '../../status/conditionEffectBuilder.js';
+import EffectDuration from '../../status/effectDuration.js';
+import TableEffectFactory from '../tableEffectFactory.js';
+import TableEffectHelpers from '../tableEffectHelpers.js';
+import TableTemplates from '../tableTemplates.js';
+import TableChatWorkflow from './TableChatWorkflow.js';
 
 const { duplicate, mergeObject } = foundry.utils;
 
-export default class TableOpportunityAttack {
+export default class TableOpportunityAttack extends TableChatWorkflow {
+  static flagKey = 'opportunityAttack';
+
   static normalize(args = {}) {
     const attacks = Array.isArray(args.attacks) ? args.attacks.map((attack) => this.normalizeAttack(attack)) : undefined;
     return {
@@ -28,46 +32,37 @@ export default class TableOpportunityAttack {
     };
   }
 
-  static async createCard(args, mode, targets, source, tableMessageId, message, context = {}) {
-    const actor = context.speaker;
-    const target = context.attacker || targets[0];
+  static async createCard(ctx, args) {
+    const actor = ctx.speaker;
+    const target = ctx.attacker || ctx.applyTargets[0];
     if (!actor || !target) return false;
 
-    const weapons = this.#meleeWeapons(actor);
+    const weapons = this.#meleeWeapons(actor).map((weapon) => ({ id: weapon.id, name: weapon.name }));
     const data = this.normalize(args);
     const targetSpeaker = TableEffectHelpers.speakerFromActor(target);
     const actorSpeaker = TableEffectHelpers.speakerFromActor(actor);
     if (!targetSpeaker || !actorSpeaker) return false;
 
-    const weaponButtons = weapons.length
-      ? weapons.map((weapon) => `<button class="tableOpportunityAttack small-button chat-button" data-weapon="${weapon.id}"><i class="fas fa-swords"></i> ${weapon.name}</button>`).join('')
-      : `<p>${_loc('DSAError.notFound', { category: _loc('TYPES.Item.meleeweapon'), name: _loc('WEAPON.Item') })}</p>`;
-    const modifiers = this.#attackModifiers(data).join(' / ');
-    const content = `<div class="dsa5 chat-card">
-      <p><b>${_loc('attackOfOpportunity')}</b>: ${actor.name} &rarr; ${target.name}</p>
-      <p>${_loc('CHAR.ATTACK')}: ${modifiers}</p>
-      <div class="flexrow">${weaponButtons}</div>
-    </div>`;
-    await ChatMessage.create(mergeObject(DSA5_Utility.chatDataSetup(content), {
-      flags: {
-        dsa5: {
-          opportunityAttack: {
-            tableMessageId,
-            actor: actorSpeaker,
-            target: targetSpeaker,
-            data,
-            used: false,
-            usedCount: 0,
-          },
-        },
-      },
-    }));
-    return true;
+    const content = await TableTemplates.opportunityAttackCard({
+      actorName: actor.name,
+      targetName: target.name,
+      modifiers: this.#attackModifiers(data).join(' / '),
+      weapons,
+    });
+
+    return this.createWorkflowMessage(content, {
+      tableMessageId: ctx.messageId,
+      actor: actorSpeaker,
+      target: targetSpeaker,
+      data,
+      used: false,
+      usedCount: 0,
+    });
   }
 
   static async roll(ev) {
-    const message = game.messages.get(ev.currentTarget.closest('.message')?.dataset.messageId);
-    const data = TableEffectHelpers.flag(message, 'opportunityAttack');
+    const message = this.getMessage(ev);
+    const data = this.flag(message);
     const usedCount = Number(data?.usedCount || 0);
     const count = Number(data?.data?.count || 1);
     if (!message || !data || usedCount >= count) return false;
@@ -94,7 +89,7 @@ export default class TableOpportunityAttack {
       'flags.dsa5.opportunityAttack.used': nextUsedCount >= count,
       'flags.dsa5.opportunityAttack.usedCount': nextUsedCount,
     });
-    if (nextUsedCount >= count) await TableEffectHelpers.markWorkflowUsed(message, _loc('attackOfOpportunity'));
+    if (nextUsedCount >= count) await this.markWorkflowUsed(message, _loc('attackOfOpportunity'));
     const result = await actor.basicTest(setupData);
     await this.#applyFollowupMalus(actor, attackData.followupMalus, message);
     await this.#applyFollowupEffect(result, attackData, data.target, message);
@@ -111,7 +106,7 @@ export default class TableOpportunityAttack {
 
   static async #applyFollowupMalus(actor, followupMalus, message) {
     if (followupMalus?.type == 'ignoreManeuverPenalty') {
-      await TableEffectActiveEffects.createManeuverPenaltyIgnore(actor, followupMalus.value, followupMalus.duration || { rounds: 1 });
+      await TableEffectFactory.createManeuverPenaltyIgnore(actor, followupMalus.value, followupMalus.duration || { rounds: 1 });
       await message.update({ 'flags.dsa5.opportunityAttack.followupApplied': true });
       return true;
     }
@@ -119,8 +114,7 @@ export default class TableOpportunityAttack {
     if (!followupMalus?.changes?.length) return false;
 
     const effect = OnUseEffect.effectBaseDummy(_loc('botchCritEffect'), followupMalus.changes, followupMalus.duration || { rounds: 1 });
-    await DSATables.finalizeEffect(effect);
-    await actor.addCondition(effect);
+    await TableEffectFactory.addCondition(actor, effect);
     await message.update({ 'flags.dsa5.opportunityAttack.followupApplied': true });
     return true;
   }
@@ -131,18 +125,13 @@ export default class TableOpportunityAttack {
     const target = TableEffectHelpers.actorFromSpeaker(targetSpeaker);
     if (successLevel <= 0 || !followupEffect?.systemEffect || !target) return false;
 
-    const baseEffect = CONFIG.statusEffects.find((effect) => effect.id == followupEffect.systemEffect);
-    if (!baseEffect) return false;
+    const effect = ConditionEffectBuilder.fromSystemEffect(followupEffect.systemEffect, {
+      level: followupEffect.level || 1,
+      duration: followupEffect.duration || {},
+    });
+    if (!effect) return false;
 
-    const level = followupEffect.level || 1;
-    const changes = duplicate(baseEffect.system?.changes || []);
-    const baseChange = changes.find((change) => change.key == `system.condition.${followupEffect.systemEffect}`);
-    if (baseChange) baseChange.value = level;
-
-    const effect = OnUseEffect.effectBaseDummy(`${_loc(`CONDITION.${followupEffect.systemEffect}`)} - ${_loc('botchCritEffect')}`, changes, followupEffect.duration || {});
-    effect.icon = baseEffect.icon;
-    await DSATables.finalizeEffect(effect);
-    await target.addCondition(effect);
+    await TableEffectFactory.addCondition(target, effect);
     await message.update({ 'flags.dsa5.opportunityAttack.followupEffectApplied': true });
     return true;
   }

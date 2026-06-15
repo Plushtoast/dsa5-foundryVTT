@@ -1,31 +1,14 @@
 import ActiveEffectScopedRules from '../status/active_effect_scoped_rules.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSATables from '../tables/dsatables.js';
-import TableEffectActiveEffects from '../tables/tableEffectActiveEffects.js';
+import TableEffectFactory from '../tables/tableEffectFactory.js';
 import TableEffectHelpers from '../tables/tableEffectHelpers.js';
 import TableEffects from '../tables/tableEffects.js';
-import TableOpportunityAttack from '../tables/tableOpportunityAttack.js';
+import TableEffectContext from '../tables/tableEffectContext.js';
+import { IMPLEMENTED_EFFECT_KEYS, TABLE_EFFECT_HANDLERS } from '../tables/tableEffectRegistry.js';
+import TableOpportunityAttack from '../tables/workflows/opportunityAttack.js';
 
 const { duplicate, getProperty, mergeObject, randomID } = foundry.utils;
-
-const IMPLEMENTED_EFFECT_KEYS = [
-  'attackPenaltyReduction',
-  'damageModifier',
-  'defenseCountModifier',
-  'gearDamaged',
-  'gearLost',
-  'malus',
-  'maneuverPenaltyIgnore',
-  'nextAction',
-  'opportunityAttack',
-  'resistEffect',
-  'scopedModifier',
-  'scopedRestriction',
-  'selfAttack',
-  'selfDamage',
-  'weaponDelay',
-  'weaponRepairPenalty',
-];
 
 export default class TableEffectRuntimeTests {
   static async run(options = {}) {
@@ -248,6 +231,27 @@ export default class TableEffectRuntimeTests {
     return message;
   }
 
+  static #handlerContext(fixtures, { message = null, mode = 'self', applyTargets, source, context = {} } = {}) {
+    const speaker = context.speaker || fixtures.self;
+    const tableContext = {
+      ...(message ? TableEffectHelpers.buildEffectContext(message.flags.dsa5.options, speaker) : {}),
+      speaker,
+      ...context,
+    };
+    return TableEffectContext.fromHandler({
+      message,
+      mode,
+      applyTargets: applyTargets ?? [fixtures.self],
+      source,
+      context: tableContext,
+    });
+  }
+
+  static async #runHandler(key, args, fixtures, options = {}) {
+    const handler = TABLE_EFFECT_HANDLERS[key];
+    return handler(this.#handlerContext(fixtures, options), args);
+  }
+
   static #tableOptions(fixtures, extra = {}) {
     return {
       speaker: fixtures.speaker,
@@ -278,11 +282,11 @@ export default class TableEffectRuntimeTests {
     if (!fixtures.victimToken) throw new Error('no active scene token for victim test');
 
     this.#clearTargets();
-    await fixtures.victimToken.object?.setTarget?.(true, { releaseOthers: true });
-    const resolved = TableEffectHelpers.evaluateTargetArg({ target: 'victim' }, [fixtures.self], {
-      speaker: fixtures.self,
-      targets: [fixtures.victim],
+    TableEffectHelpers.targetToken(fixtures.victimSpeaker);
+    const ctx = this.#handlerContext(fixtures, {
+      context: TableEffectHelpers.buildEffectContext(this.#tableOptions(fixtures), fixtures.self),
     });
+    const resolved = ctx.resolveTargets({ target: 'victim' });
     if (!resolved.hasTargets || resolved.finalTargets[0]?.id != fixtures.victim.id) {
       throw new Error('victim target resolution failed');
     }
@@ -331,8 +335,11 @@ export default class TableEffectRuntimeTests {
     }), cleanup);
 
     const before = self.effects.size;
-    const context = TableEffectHelpers.buildEffectContext(message.flags.dsa5.options, self);
-    const ok = await TableEffects.malus(getProperty(message, 'flags.dsa5.hasEffect').malus, 'self', [self], fixtures.meleeWeapon, message.id, message, context);
+    const ok = await this.#runHandler('malus', getProperty(message, 'flags.dsa5.hasEffect').malus, fixtures, {
+      message,
+      applyTargets: [self],
+      source: fixtures.meleeWeapon,
+    });
     const after = (await Actor.get(fixtures.self.id)).effects.size;
     if (!ok || after <= before) throw new Error('noTarget malus did not create an effect');
     await this.#cleanup(cleanup);
@@ -345,19 +352,21 @@ export default class TableEffectRuntimeTests {
       malus: [{ systemEffect: 'prone', duration: { rounds: 1 } }],
     }, this.#tableOptions(fixtures), cleanup);
 
-    const ok = await TableEffects.malus(getProperty(message, 'flags.dsa5.hasEffect').malus, 'self', [fixtures.self], fixtures.meleeWeapon, message.id, message, { speaker: fixtures.self });
+    const ok = await this.#runHandler('malus', getProperty(message, 'flags.dsa5.hasEffect').malus, fixtures, { message, source: fixtures.meleeWeapon });
     if (!ok) throw new Error('prone malus handler returned false');
     await this.#cleanup(cleanup);
     return 'prone malus applied';
   }
 
   static async #testScopedModifier(fixtures) {
-    await TableEffects.scopedModifier({
+    await this.#runHandler('scopedModifier', {
       target: 'self',
       scopeTarget: 'attacker',
       changes: [{ key: 'system.meleeStats.attack', value: 2 }],
       duration: { rounds: 1 },
-    }, 'self', [fixtures.self], fixtures.meleeWeapon, null, null, TableEffectHelpers.buildEffectContext(this.#tableOptions(fixtures), fixtures.self));
+    }, fixtures, {
+      context: TableEffectHelpers.buildEffectContext(this.#tableOptions(fixtures), fixtures.self),
+    });
 
     const actor = await Actor.get(fixtures.self.id);
     const entries = ActiveEffectScopedRules.activeEntries(actor, 'modifier');
@@ -366,11 +375,13 @@ export default class TableEffectRuntimeTests {
   }
 
   static async #testScopedRestriction(fixtures) {
-    await TableEffects.scopedRestriction({
+    await this.#runHandler('scopedRestriction', {
       target: 'self',
       restrictions: ['attack'],
       duration: { rounds: 1 },
-    }, 'self', [fixtures.self], fixtures.meleeWeapon, null, null, TableEffectHelpers.buildEffectContext(this.#tableOptions(fixtures), fixtures.self));
+    }, fixtures, {
+      context: TableEffectHelpers.buildEffectContext(this.#tableOptions(fixtures), fixtures.self),
+    });
 
     const actor = await Actor.get(fixtures.self.id);
     const entries = ActiveEffectScopedRules.activeEntries(actor, 'restriction');
@@ -379,7 +390,7 @@ export default class TableEffectRuntimeTests {
   }
 
   static async #testManeuverPenaltyIgnore(fixtures) {
-    await TableEffectActiveEffects.createManeuverPenaltyIgnore(fixtures.self, 2, { rounds: 1 });
+    await TableEffectFactory.createManeuverPenaltyIgnore(fixtures.self, 2, { rounds: 1 });
     const actor = await Actor.get(fixtures.self.id);
     const effect = actor.effects.find((ef) => !ef.disabled && ef.system?.charges?.max == 1);
     if (!effect) throw new Error('maneuver penalty ignore effect missing');
@@ -388,7 +399,7 @@ export default class TableEffectRuntimeTests {
 
   static async #testDefenseCountModifier(fixtures) {
     const before = fixtures.self.effects.size;
-    await TableEffectActiveEffects.createDefenseCountModifier(fixtures.self, { floor: -1 }, { rounds: 1 });
+    await TableEffectFactory.createDefenseCountModifier(fixtures.self, { floor: -1 }, { rounds: 1 });
     const actor = await Actor.get(fixtures.self.id);
     if (actor.effects.size <= before) throw new Error('defense count modifier effect missing');
     return 'defense count modifier created';
@@ -396,7 +407,7 @@ export default class TableEffectRuntimeTests {
 
   static async #testAttackPenaltyReduction(fixtures) {
     const before = fixtures.self.effects.size;
-    await TableEffectActiveEffects.createAttackPenaltyReduction(fixtures.self, { value: 2 }, { rounds: 1 });
+    await TableEffectFactory.createAttackPenaltyReduction(fixtures.self, { value: 2 }, { rounds: 1 });
     const actor = await Actor.get(fixtures.self.id);
     if (actor.effects.size <= before) throw new Error('attack penalty reduction effect missing');
     return 'attack penalty reduction created';
@@ -406,7 +417,7 @@ export default class TableEffectRuntimeTests {
     const actor = await Actor.get(fixtures.self.id);
     await actor.updateEmbeddedDocuments('Item', [{ _id: fixtures.meleeWeapon.id, 'system.worn.value': true }]);
     const weapon = actor.items.get(fixtures.meleeWeapon.id);
-    const ok = await TableEffects.gearLost({ distance: '1d6' }, 'self', [actor], weapon);
+    const ok = await this.#runHandler('gearLost', { distance: '1d6' }, fixtures, { applyTargets: [actor], source: weapon });
     if (!ok) throw new Error('gearLost handler returned false');
     const refreshed = await Actor.get(fixtures.self.id);
     const stillEquipped = refreshed.items.filter((item) => item.id == fixtures.meleeWeapon.id && item.system.worn?.value);
@@ -418,7 +429,7 @@ export default class TableEffectRuntimeTests {
     const actor = await Actor.get(fixtures.self.id);
     const weapon = actor.items.get(fixtures.rangedWeapon.id);
     const before = weapon.system.reloadTime.progress;
-    const ok = await TableEffects.weaponDelay({ actions: 1 }, 'self', [actor], weapon);
+    const ok = await this.#runHandler('weaponDelay', { actions: 1 }, fixtures, { applyTargets: [actor], source: weapon });
     const item = (await Actor.get(fixtures.self.id)).items.get(fixtures.rangedWeapon.id);
     if (!ok || Number(item.system.reloadTime.progress) >= before) throw new Error('weaponDelay did not reduce reload progress');
     return `reload ${before} -> ${item.system.reloadTime.progress}`;
@@ -427,7 +438,7 @@ export default class TableEffectRuntimeTests {
   static async #testWeaponRepairPenalty(fixtures) {
     const actor = await Actor.get(fixtures.self.id);
     const weapon = actor.items.get(fixtures.meleeWeapon.id);
-    const ok = await TableEffects.weaponRepairPenalty({ value: -2 }, 'self', [actor], weapon);
+    const ok = await this.#runHandler('weaponRepairPenalty', { value: -2 }, fixtures, { applyTargets: [actor], source: weapon });
     const item = (await Actor.get(fixtures.self.id)).items.get(fixtures.meleeWeapon.id);
     const penaltyEffects = [...item.effects].filter((effect) => effect.flags?.dsa5?.tableEffect?.type == 'weaponRepairPenalty');
     if (!ok || !penaltyEffects.length) throw new Error('weaponRepairPenalty effect missing');
@@ -438,7 +449,11 @@ export default class TableEffectRuntimeTests {
     const woundsBefore = fixtures.self.system.status.wounds.value;
     const cleanup = { messageIds: [] };
     const message = await this.#createTableMessage({ selfDamage: { target: 'self' } }, this.#tableOptions(fixtures, { source: undefined }), cleanup);
-    const ok = await TableEffects.selfDamage(getProperty(message, 'flags.dsa5.hasEffect').selfDamage, 'self', [fixtures.self], undefined, message.id, message, { speaker: fixtures.self });
+    const ok = await this.#runHandler('selfDamage', getProperty(message, 'flags.dsa5.hasEffect').selfDamage, fixtures, {
+      message,
+      source: undefined,
+      context: { speaker: fixtures.self },
+    });
     const actor = await Actor.get(fixtures.self.id);
     if (!ok || actor.system.status.wounds.value >= woundsBefore) throw new Error('selfDamage fallback did not apply damage');
     await this.#cleanup(cleanup);
@@ -457,15 +472,11 @@ export default class TableEffectRuntimeTests {
       },
     }, this.#tableOptions(fixtures), cleanup);
 
-    const ok = await TableEffects.resistEffect(
-      getProperty(message, 'flags.dsa5.hasEffect').resistEffect,
-      'self',
-      [fixtures.self],
-      fixtures.meleeWeapon,
-      message.id,
+    const ok = await this.#runHandler('resistEffect', getProperty(message, 'flags.dsa5.hasEffect').resistEffect, fixtures, {
       message,
-      { speaker: fixtures.self },
-    );
+      source: fixtures.meleeWeapon,
+      context: { speaker: fixtures.self },
+    });
     if (!ok) throw new Error('resistEffect apply returned false');
 
     const resistMessage = [...game.messages].slice(beforeCount).find((msg) => msg.content?.includes('resist-roll') || msg.content?.includes('Körperbeherrschung'));
@@ -484,12 +495,10 @@ export default class TableEffectRuntimeTests {
       const structureBefore = weapon.system.structure.value;
       const cleanup = { messageIds: [] };
       const message = await this.#createTableMessage({ gearDamaged: 1 }, this.#tableOptions(fixtures), cleanup);
-      const ok = await TableEffects.gearDamaged(
-        getProperty(message, 'flags.dsa5.hasEffect').gearDamaged,
-        'self',
-        [fixtures.self],
-        weapon,
-      );
+      const ok = await this.#runHandler('gearDamaged', getProperty(message, 'flags.dsa5.hasEffect').gearDamaged, fixtures, {
+        message,
+        source: weapon,
+      });
       const item = (await Actor.get(fixtures.self.id)).items.get(weapon.id);
       if (!ok || item.system.structure.value >= structureBefore) {
         throw new Error('gearDamaged did not reduce weapon structure');
@@ -507,15 +516,11 @@ export default class TableEffectRuntimeTests {
       nextAction: { modifier: -2, duration: { rounds: 1 } },
     }, this.#tableOptions(fixtures), cleanup);
     const effectsBefore = (await Actor.get(fixtures.self.id)).effects.size;
-    const ok = await TableEffects.nextAction(
-      getProperty(message, 'flags.dsa5.hasEffect').nextAction,
-      'self',
-      [fixtures.self],
-      fixtures.meleeWeapon,
-      message.id,
+    const ok = await this.#runHandler('nextAction', getProperty(message, 'flags.dsa5.hasEffect').nextAction, fixtures, {
       message,
-      { speaker: fixtures.self },
-    );
+      source: fixtures.meleeWeapon,
+      context: { speaker: fixtures.self },
+    });
     const actor = await Actor.get(fixtures.self.id);
     if (!ok || actor.effects.size <= effectsBefore) throw new Error('nextAction did not create an active effect');
     await this.#cleanup(cleanup);
@@ -528,15 +533,11 @@ export default class TableEffectRuntimeTests {
     const message = await this.#createTableMessage({
       selfAttack: { target: 'self' },
     }, this.#tableOptions(fixtures), cleanup);
-    const ok = await TableEffects.selfAttack(
-      getProperty(message, 'flags.dsa5.hasEffect').selfAttack,
-      'self',
-      [fixtures.self],
-      fixtures.meleeWeapon,
-      message.id,
+    const ok = await this.#runHandler('selfAttack', getProperty(message, 'flags.dsa5.hasEffect').selfAttack, fixtures, {
       message,
-      { speaker: fixtures.self },
-    );
+      source: fixtures.meleeWeapon,
+      context: { speaker: fixtures.self },
+    });
     const actor = await Actor.get(fixtures.self.id);
     if (!ok || actor.system.status.wounds.value >= woundsBefore) throw new Error('selfAttack did not apply damage');
     await this.#cleanup(cleanup);
@@ -567,11 +568,21 @@ export default class TableEffectRuntimeTests {
     const weapon = actor.items.get(fixtures.meleeWeapon.id);
 
     const tableMessage = await this.#createTableMessage({}, this.#tableOptions(fixtures), cleanup);
-    const context = TableEffectHelpers.buildEffectContext(tableMessage.flags.dsa5.options, actor);
-    const ok = await TableOpportunityAttack.createCard({
+    const attacker = await Actor.get(fixtures.attacker.id);
+    const tableContext = {
+      ...TableEffectHelpers.buildEffectContext(tableMessage.flags.dsa5.options, actor),
+      attacker,
+    };
+    const ctx = this.#handlerContext(fixtures, {
+      message: tableMessage,
+      applyTargets: [actor],
+      source: weapon,
+      context: tableContext,
+    });
+    const ok = await TableOpportunityAttack.createCard(ctx, {
       count: 1,
       attackModifier: 0,
-    }, 'self', [await Actor.get(fixtures.attacker.id)], weapon, tableMessage.id, tableMessage, context);
+    });
     if (!ok) throw new Error('opportunity attack card was not created');
 
     const card = game.messages.find((msg) => this.#opportunityAttackFlag(msg)?.tableMessageId == tableMessage.id);
@@ -614,7 +625,7 @@ export default class TableEffectRuntimeTests {
       if (['damageModifier', 'malus', 'resistEffect', 'selfAttack', 'selfDamage'].includes(key)) {
         const targetKey = Array.isArray(payload[key]) ? payload[key][0]?.target : payload[key]?.target;
         if (targetKey == 'victim' && fixtures.victimToken) {
-          await fixtures.victimToken.object?.setTarget(true, { releaseOthers: true });
+          TableEffectHelpers.targetToken(fixtures.victimSpeaker);
         }
       }
 
