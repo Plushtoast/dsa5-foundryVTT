@@ -1,56 +1,70 @@
 <div class="companion-training-header">
-    <div class="flexrow gap10px">
-        <div class="flex0" style="min-width:50px;">
+    {{#if typePickingMode}}
+        <div class="flexrow gap10px">
+            <span><b>{{localize 'COMPANIONS.Training.SpeciesChangeHint'}}</b></span>
+            <button type="button" class="button icon fas fa-times dsadesignbutton noBorder" data-action="toggleSpeciesSelector"
+                    data-tooltip="{{localize 'Cancel'}}"></button>
+        </div>
+        <div class="dsa-info-box">
+            <p class="dsa-info-text">{{localize 'COMPANIONS.Training.SpeciesSelectHint' name=companion.name}}</p>
+        </div>
+        <div class="form-group">
+            <div class="form-fields">
+                <input type="search" class="search-input speciesSearch" placeholder="{{localize 'Book.search'}}" autofocus>
+            </div>
+        </div>
+        <div class="species-selector-box scrollable species-selector-list">
+            {{#each speciesData as |speciesList groupName|}}
+                <div class="species-group">
+                    <h4 class="species-group-name">{{groupName}}</h4>
+                    <div class="dsa-grid gap5px" style="--grid-repeat: 2; --grid-max: 1fr; margin-bottom: 10px;">
+                        {{#each speciesList}}
+                            <div data-action="selectSpecies" data-species="{{this.name}}" data-search="{{this.name}} {{groupName}}"
+                                 class="species-item" title="{{this.name}}">
+                            <img src="{{this.img}}" class="species-item-img">
+                            <span class="species-item-name">{{this.name}}</span>
+                            <span class="species-item-badges">
+                                <span class="dsa-pip {{this.trickModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrickMod'}}: {{this.trickMod}}">
+                                    <i class="fa-solid fa-paw"></i> {{this.trickMod}}
+                                </span>
+                                <span class="dsa-pip {{this.trainingModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrainingMod'}}: {{this.trainingMod}}">
+                                    <i class="fa-solid fa-graduation-cap"></i> {{this.trainingMod}}
+                                </span>
+                            </span>
+                            {{#if this.trainingModules.length}}
+                            <span class="species-item-modules" data-tooltip="{{localize 'COMPANIONS.Species.TrainingModules'}}">
+                                {{#each this.trainingModules}}<span class="dsa-pip">{{this}}</span>{{/each}}
+                            </span>
+                            {{/if}}
+                        </div>
+                    {{/each}}
+                </div>
+                </div>
+            {{/each}}
+        </div>
+    {{else}}
+        <div class="flexrow gap10px">
             <img src="{{currentSpeciesImg}}" class="species-img">
-        </div>        
-        <div class="flexcol" style="gap: 2px;">
-            <span><b>{{#if currentSpecies}}{{currentSpecies}}{{else}}{{localize "unknown"}}{{/if}}</b></span>
-            {{#if currentSpeciesData}}
-            <span class="species-item-badges">
-                <span class="dsa-pip {{currentSpeciesData.trickModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrickMod'}}: {{currentSpeciesData.trickMod}}">
-                    <i class="fa-solid fa-paw"></i> {{currentSpeciesData.trickMod}}
+            <div class="flexcol gap2px">
+                <span><b>{{#if currentSpecies}}{{currentSpecies}}{{else}}{{localize "unknown"}}{{/if}}</b></span>
+                {{#if currentSpeciesData}}
+                <span class="species-item-badges">
+                    <span class="dsa-pip {{currentSpeciesData.trickModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrickMod'}}: {{currentSpeciesData.trickMod}}">
+                        <i class="fa-solid fa-paw"></i> {{currentSpeciesData.trickMod}}
+                    </span>
+                    <span class="dsa-pip {{currentSpeciesData.trainingModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrainingMod'}}: {{currentSpeciesData.trainingMod}}">
+                        <i class="fa-solid fa-graduation-cap"></i> {{currentSpeciesData.trainingMod}}
+                    </span>
+                    {{#each currentSpeciesData.trainingModules}}<span class="dsa-pip" data-tooltip="{{localize 'COMPANIONS.Species.TrainingModules'}}">{{this}}</span>{{/each}}
                 </span>
-                <span class="dsa-pip {{currentSpeciesData.trainingModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrainingMod'}}: {{currentSpeciesData.trainingMod}}">
-                    <i class="fa-solid fa-graduation-cap"></i> {{currentSpeciesData.trainingMod}}
-                </span>
-                {{#each currentSpeciesData.trainingModules}}<span class="dsa-pip" data-tooltip="{{localize 'COMPANIONS.Species.TrainingModules'}}">{{this}}</span>{{/each}}
-            </span>
+                {{/if}}
+            </div>
+            <button type="button" class="button icon fas fa-pencil dsadesignbutton noBorder" data-action="toggleSpeciesSelector"
+                    data-tooltip="{{localize 'COMPANIONS.Training.SpeciesChangeHint'}}"></button>
+            {{#if currentSpecies}}
+            <button type="button" class="button icon fas fa-trash dsadesignbutton noBorder" data-action="removeSpecies"
+                data-tooltip="{{localize 'COMPANIONS.Training.RemoveSpecies'}}"></button>
             {{/if}}
         </div>
-        <button type="button" class="button icon fas fa-pencil dsadesignbutton noBorder" data-action="toggleSpeciesSelector"
-                data-tooltip="{{localize 'COMPANIONS.Training.SpeciesChangeHint'}}"></button>
-        {{#if currentSpecies}}
-        <button type="button" class="button icon fas fa-trash dsadesignbutton noBorder" data-action="removeSpecies"
-            data-tooltip="{{localize 'COMPANIONS.Training.RemoveSpecies'}}"></button>
-        {{/if}}
-    </div>
-
-    <div id="speciesSelector" class="species-selector-box" hidden>
-        {{#each speciesData as |speciesList groupName|}}
-            <h4 class="species-group-name">{{groupName}}</h4>
-            <div class="dsa-grid gap5px" style="--grid-repeat: 2; --grid-max: 1fr; margin-bottom: 10px;">
-                {{#each speciesList}}
-                    <div data-action="selectSpecies" data-species="{{this.name}}" class="species-item" title="{{this.name}}">
-                        <img src="{{this.img}}" class="species-item-img">
-                        <span class="species-item-name">
-                            {{this.name}}
-                        </span>
-                        <span class="species-item-badges">
-                            <span class="dsa-pip {{this.trickModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrickMod'}}: {{this.trickMod}}">
-                                <i class="fa-solid fa-paw"></i> {{this.trickMod}}
-                            </span>
-                            <span class="dsa-pip {{this.trainingModClass}}" data-tooltip="{{localize 'COMPANIONS.Species.TrainingMod'}}: {{this.trainingMod}}">
-                                <i class="fa-solid fa-graduation-cap"></i> {{this.trainingMod}}
-                            </span>
-                        </span>
-                        {{#if this.trainingModules.length}}
-                        <span class="species-item-modules" data-tooltip="{{localize 'COMPANIONS.Species.TrainingModules'}}">
-                            {{#each this.trainingModules}}<span class="dsa-pip">{{this}}</span>{{/each}}
-                        </span>
-                        {{/if}}
-                    </div>
-                {{/each}}
-            </div>
-        {{/each}}
-    </div>
+    {{/if}}
 </div>

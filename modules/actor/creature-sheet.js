@@ -60,7 +60,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       scrollable: [''],
     },
     notes: {
-      template: 'systems/dsa5/templates/actors/actor-notes.hbs',
+      template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
       scrollable: [''],
     }
   }

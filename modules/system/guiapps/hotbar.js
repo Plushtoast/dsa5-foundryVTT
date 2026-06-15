@@ -120,6 +120,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     }).bind(this.element);
 
+    if (game.user.isGM) {
+      this.element.querySelectorAll('.partyDrag').forEach((element) => {
+        element.addEventListener('dragstart', (event) => this._onDragStartParty(event));
+      });
+    }
+
     const container = this.element.querySelector('.rangeContainer');
     if (!container) return;
 
@@ -135,6 +141,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   _canDragDropEdit() {
     return this.editMode;
+  }
+
+  _onDragStartParty(event) {
+    const uuid = event.currentTarget?.dataset.uuid;
+    if (!uuid) return;
+
+    event.dataTransfer.setData('text/plain', JSON.stringify({ type: 'Actor', uuid }));
+    event.dataTransfer.effectAllowed = 'copy';
   }
 
   async _onDragStartEdit(event) {
@@ -426,6 +440,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   static async #openPartySheet() {
     await GroupActorSheet.openPartySheet();
+  }
+
+  #primaryPartyActor() {
+    const partyUuid = game.settings.get('dsa5', 'primaryParty');
+    const party = partyUuid ? fromUuidSync(partyUuid) : null;
+    return party?.type === 'group' ? party : null;
   }
 
   static #onToggleFreeAction(ev, target) {
@@ -787,7 +807,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     context.collapseBar = this.collapseBar;
     context.editMode = this.editMode ? 'wiggle-animation' : '';
-    context.showPartyButton = game.user.isGM || !!game.settings.get('dsa5', 'primaryParty');
+    const party = this.#primaryPartyActor();
+    context.showPartyButton = game.user.isGM || !!party;
+    context.partyActorUuid = party?.uuid;
     const actor = this.actor;
 
     const groups = { skills: {}, attacks: [], functions: [] };

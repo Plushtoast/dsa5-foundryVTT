@@ -17,20 +17,23 @@
 
 
   <div class="col ten flexAlignEnd flexrow table-title lineheight">
+    {{#if isGM}}
     <button type="button" class="icon fas fa-dice noBorder dsadesignbutton" data-action="rollAllBlind"
       data-tooltip="CHAT.MODES.blind"></button>
     <button type="button" class="icon fas fa-bed noBorder dsadesignbutton" data-action="rollRegeneration"
       data-tooltip="regenerate"></button>
     <button type="button" class="icon fas fa-shuffle noBorder dsadesignbutton" data-action="randomMember"
-      data-tooltip="MASTER.randomPlayer"></button>
+      data-tooltip="MASTER.randomPlayer"></button>    
     <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
     <button type="button" class="icon fas fa-trophy noBorder dsadesignbutton" data-action="awardAP"
       data-tooltip="MASTER.awardXP"></button>
     <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
+    
     <button type="button" class="icon fas fa-piggy-bank noBorder dsadesignbutton" data-action="groupGetPaid"
       data-tooltip="PAYMENT.wage"></button>
     <button type="button" class="icon fas fa-coins noBorder dsadesignbutton" data-action="groupPayment"
       data-tooltip="MASTER.payTT"></button>
+    {{/if}}
   </div>
 
   {{#each members as |hero|}}

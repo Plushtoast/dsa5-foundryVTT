@@ -1,5 +1,8 @@
 export const AppV2Mixin = (superclass) =>
   class extends superclass {
+    static dragHighlightCleanupBound = false;
+    static dragHighlightData = null;
+
     static DEFAULT_OPTIONS = {
       ownerActions: {},
       majorButtons: [],
@@ -8,7 +11,42 @@ export const AppV2Mixin = (superclass) =>
     static clearDragHighlights() {
       document.querySelectorAll('.window-content.dsaDraggedOver').forEach((el) => {
         el.classList.remove('dsaDraggedOver');
+        delete el.dataset.dragHint;
       });
+    }
+
+    static ensureDragHighlightCleanup() {
+      if (this.dragHighlightCleanupBound) return;
+
+      const clear = () => {
+        this.clearDragHighlights();
+        this.dragHighlightData = null;
+      };
+      window.addEventListener('dragend', clear, true);
+      window.addEventListener('drop', clear, true);
+      window.addEventListener('blur', clear, true);
+      window.addEventListener('dragleave', (event) => {
+        if (!event.relatedTarget) clear();
+      }, true);
+      this.dragHighlightCleanupBound = true;
+    }
+
+    _dragHighlightHint(event) {
+      let data;
+      try {
+        data = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
+      } catch {
+        data = {};
+      }
+
+      if (!data.type) data = this.constructor.dragHighlightData || {};
+
+      if (data.type !== 'Item' || !data.uuid || !this.actor) return '';
+
+      const item = fromUuidSync(data.uuid);
+      if (!item || item.parent?.uuid === this.actor.uuid || !game.dsa5.config.equipmentCategories.has(item.type)) return '';
+
+      return game.i18n.localize('SHEET.DropMoveFromSourceHint');
     }
 
     async _renderFrame(options) {
@@ -28,6 +66,7 @@ export const AppV2Mixin = (superclass) =>
     }
 
     async _onRender(context, options) {
+      this.constructor.ensureDragHighlightCleanup();
       this.constructor.clearDragHighlights();
       await super._onRender(context, options);
     }
@@ -73,8 +112,12 @@ export const AppV2Mixin = (superclass) =>
         this.constructor.clearDragHighlights();
         if (isInBorder) {
           hovered.classList.remove('dsaDraggedOver');
+          delete hovered.dataset.dragHint;
         } else {
           hovered.classList.add('dsaDraggedOver');
+          const hint = this._dragHighlightHint(event);
+          if (hint) hovered.dataset.dragHint = hint;
+          else delete hovered.dataset.dragHint;
         }
       } else {
         this.constructor.clearDragHighlights();

@@ -35,11 +35,13 @@
       <div class='col'>
         <ul>
           <li><b>{{localize 'purse'}}</b>: {{{hero.purse}}}</li>
+          {{#unless (eq hero.type 'group')}}
           <li><b>{{localize 'Experience'}}</b>: {{hero.system.details.experience.spent}}/{{hero.system.details.experience.total}}</li>
           <li><b>{{localize 'advantages'}}</b>:
             {{#each hero.advantages as |ad i|}}<a class='actorItem' data-action='actorItem' data-uuid='{{ad.uuid}}'>{{ad.name}}</a>{{/each}}</li>
           <li><b>{{localize 'disadvantages'}}</b>:
             {{#each hero.disadvantages as |ad i|}}<a class='actorItem' data-action='actorItem' data-uuid='{{ad.uuid}}'>{{ad.name}}</a>{{/each}}</li>
+          {{/unless}}
         </ul>
       </div>
     </div>

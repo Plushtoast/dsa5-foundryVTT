@@ -17,10 +17,10 @@
                 <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.typeText'}}</span><span class='citygen-card__meta-value'>{{detail.typeText}}</span></div>
               {{/if}}
               {{#if detail.hasQuality}}
-                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.quality'}}</span><span class='citygen-card__meta-value'>{{detail.qualityText}}</span></div>
+                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.quality'}}</span><span class='citygen-card__meta-value'>{{detail.qualityText}}{{#if detail.qualityQS}} ({{localize 'CHARAbbrev.QS'}} {{detail.qualityQS}}){{/if}}</span></div>
               {{/if}}
               {{#if detail.hasPrice}}
-                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.price'}}</span><span class='citygen-card__meta-value'>{{detail.priceText}}{{#if detail.priceQS}} (QS {{detail.priceQS}}){{/if}}</span></div>
+                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.price'}}</span><span class='citygen-card__meta-value'>{{detail.priceText}}{{#if detail.priceQS}} ({{localize 'CHARAbbrev.QS'}} {{detail.priceQS}}){{/if}}</span></div>
               {{/if}}
             </div>
           </div>
@@ -34,7 +34,7 @@
       </article>
     {{else}}
       <div class='citygen-placeholder'>
-        <div class='citygen-placeholder__icon'>{{> systems/dsa5/templates/journal/citydetailsentry_icon.hbs}}</div>
+        <div class='citygen-placeholder__icon'><i class='fas fa-dungeon'></i></div>
         <div class='citygen-placeholder__title'>{{localize 'DSACITYDETAILS.empty'}}</div>
       </div>
     {{/each}}

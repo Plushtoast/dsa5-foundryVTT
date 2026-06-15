@@ -178,28 +178,36 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
-        if (!entry.actor) return;
+        entry.actorMissing = !!entry.actor_uuid && !entry.actor;
         entry.preparedTags = [];
         entry.isGM = game.user.isGM;
-        const isCreature = entry.actor.type === "creature";
-        entry.garadan = this.resolveGaradan(entry, entry.actor);
-        entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
-        if (isCreature) {
-            if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
-        } else {
-            if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
-            if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
-            if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
-        }
-        entry.garadanVisible = this.shouldShowGaradan(entry, { isGM: entry.isGM });
-        entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
-        if (entry.showActorDescription) {
+        if (entry.actor) {
+            const isCreature = entry.actor.type === "creature";
+            entry.garadan = this.resolveGaradan(entry, entry.actor);
+            entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
             if (isCreature) {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
+                if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
             } else {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "", { secrets: game.user.isGM });
+                if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
+                if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
+                if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
+            }
+            entry.garadanVisible = this.shouldShowGaradan(entry, { isGM: entry.isGM });
+            entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
+            if (entry.showActorDescription) {
+                if (isCreature) {
+                    entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
+                } else {
+                    entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "", { secrets: game.user.isGM });
+                }
+            } else {
+                entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
             }
         } else {
+            entry.garadan = this.resolveGaradan(entry);
+            entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
+            entry.garadanVisible = this.shouldShowGaradan(entry, { isGM: entry.isGM });
+            entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
             entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
         }
         entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "", { secrets: game.user.isGM });

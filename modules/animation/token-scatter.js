@@ -1,3 +1,5 @@
+import { DSATokenDocument } from '../hooks/token.js';
+
 export default class TokenScatter {
   static ANIMATION_DURATION = 800;
   static STAGGER_DELAY = 100;
@@ -13,6 +15,72 @@ export default class TokenScatter {
       positions.push({ x, y });
     }
     return positions;
+  }
+
+  /**
+   * Animate tokens on the canvas, then persist the target state to their documents.
+   * Falls back to immediate document updates when the canvas is unavailable.
+   * @param {TokenDocument[]} tokens
+   * @param {Array<{x?: number, y?: number, alpha?: number}>} targets
+   * @param {object} [options]
+   * @param {number} [options.duration]
+   * @param {number} [options.stagger]
+   * @param {string} [options.transition]
+   * @param {(token: TokenDocument, target: object) => Promise<void>} [options.persist]
+   */
+  static async animateThenPersist(tokens, targets, options = {}) {
+    const {
+      duration = this.ANIMATION_DURATION,
+      stagger = this.STAGGER_DELAY,
+      transition = 'swirl',
+      persist,
+    } = options;
+
+    const canAnimate = canvas.ready && tokens.some((token) => token.object);
+
+    if (!canAnimate) {
+      if (persist) {
+        await Promise.all(tokens.map((token, i) => {
+          const target = targets[i];
+          return target ? persist(token, target) : Promise.resolve();
+        }));
+      } else {
+        const scene = tokens[0]?.parent;
+        const updates = tokens
+          .map((token, i) => (targets[i] ? { _id: token.id, ...targets[i] } : null))
+          .filter(Boolean);
+        if (scene && updates.length) {
+          await scene.updateEmbeddedDocuments('Token', updates);
+        }
+      }
+      return;
+    }
+
+    await Promise.all(tokens.map((token, i) => {
+      const target = targets[i];
+      if (!target) return Promise.resolve();
+
+      return new Promise((resolve) => {
+        setTimeout(async () => {
+          const placeable = token.object;
+          const animateTo = {};
+          if (target.x !== undefined) animateTo.x = target.x;
+          if (target.y !== undefined) animateTo.y = target.y;
+          if (target.alpha !== undefined) animateTo.alpha = target.alpha;
+
+          if (placeable && Object.keys(animateTo).length) {
+            await placeable.animate(animateTo, { duration, transition });
+          }
+
+          if (persist) {
+            await persist(token, target);
+          } else {
+            await token.update(target);
+          }
+          resolve();
+        }, i * stagger);
+      });
+    }));
   }
 
   static async deploy(groupToken, memberActors) {
@@ -42,6 +110,7 @@ export default class TokenScatter {
 
     const positions = this.scatterPositions(cx, cy, toCreate.length, gridSize);
     const tokenDataArray = [];
+    const scatterTargets = [];
 
     for (let i = 0; i < toCreate.length; i++) {
       const actor = toCreate[i];
@@ -51,14 +120,14 @@ export default class TokenScatter {
         x: cx,
         y: cy,
         hidden: false,
+        alpha: 0,
       });
-      const data = td.toObject();
+      const data = DSATokenDocument.applySourceTokenPlacement(groupToken, td.toObject());
       data.x = cx;
       data.y = cy;
       data.alpha = 0;
-      data._targetX = snapped.x;
-      data._targetY = snapped.y;
       tokenDataArray.push(data);
+      scatterTargets.push({ x: snapped.x, y: snapped.y, alpha: 1 });
     }
 
     const groupPlaceable = groupToken.object;
@@ -71,38 +140,19 @@ export default class TokenScatter {
 
     await groupToken.update({ hidden: true });
 
-    const created = await scene.createEmbeddedDocuments('Token', tokenDataArray.map((d) => {
-      const { _targetX, _targetY, ...rest } = d;
-      return rest;
-    }));
+    const created = await scene.createEmbeddedDocuments('Token', tokenDataArray);
 
-    const memberTokenIds = [];
-    for (let i = 0; i < created.length; i++) {
-      const token = created[i];
-      const targetData = tokenDataArray[i];
-      memberTokenIds.push(token.id);
-
-      await token.update({
+    await this.animateThenPersist(created, scatterTargets, {
+      persist: (token, target) => token.update({
+        x: target.x,
+        y: target.y,
+        alpha: target.alpha,
         'flags.dsa5.groupTokenId': groupToken.id,
-      });
-
-      const placeable = token.object;
-      if (placeable) {
-        setTimeout(() => {
-          placeable.animate(
-            {
-              x: targetData._targetX,
-              y: targetData._targetY,
-              alpha: 1,
-            },
-            { duration: this.ANIMATION_DURATION, transition: 'swirl' }
-          );
-        }, i * this.STAGGER_DELAY);
-      }
-    }
+      }),
+    });
 
     await groupToken.update({
-      'flags.dsa5.memberTokenIds': memberTokenIds,
+      'flags.dsa5.memberTokenIds': created.map((token) => token.id),
     });
 
     return created;
@@ -124,23 +174,21 @@ export default class TokenScatter {
       .map((id) => scene.tokens.get(id))
       .filter(Boolean);
 
-    for (let i = 0; i < memberTokens.length; i++) {
-      const token = memberTokens[i];
-      const placeable = token.object;
-      if (placeable) {
-        setTimeout(() => {
-          placeable.animate(
-            { x: cx, y: cy, alpha: 0 },
-            { duration: this.ANIMATION_DURATION, transition: 'swirl' }
-          );
-        }, i * this.STAGGER_DELAY);
-      }
-    }
+    const gatherTargets = memberTokens.map(() => ({ x: cx, y: cy, alpha: 0 }));
 
-    const totalDelay =
-      memberTokens.length * this.STAGGER_DELAY + this.ANIMATION_DURATION + 100;
+    await this.animateThenPersist(memberTokens, gatherTargets, {
+      persist: (token, target) => token.update({
+        x: target.x,
+        y: target.y,
+        alpha: target.alpha,
+        hidden: true,
+      }),
+    });
 
-    await new Promise((resolve) => setTimeout(resolve, totalDelay));
+    await scene.deleteEmbeddedDocuments(
+      'Token',
+      memberTokens.map((t) => t.id)
+    );
 
     await groupToken.update({ hidden: false });
 
@@ -151,11 +199,6 @@ export default class TokenScatter {
         { duration: this.ANIMATION_DURATION / 2, transition: 'swirl' }
       );
     }
-
-    await scene.deleteEmbeddedDocuments(
-      'Token',
-      memberTokens.map((t) => t.id)
-    );
 
     await groupToken.update({
       'flags.dsa5.memberTokenIds': [],

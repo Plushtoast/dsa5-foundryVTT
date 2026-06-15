@@ -1,11 +1,12 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-const { mergeObject } = foundry.utils;
+const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
-const { TextEditor } = foundry.applications.ux;
 
 export default class GroupCheck {
+  static #updateSemaphore = new foundry.utils.Semaphore(1);
+
   static async requestGC(category, name, messageId, modifier = 0) {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
@@ -24,6 +25,8 @@ export default class GroupCheck {
         break;
       default:
         const skill = actor.items.find((i) => i.name == name && i.type == category);
+        if (!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: name }, localize: true });
+        
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
           const result = await actor.basicTest(setupData);
           await GroupCheck.editGroupCheckRoll(messageId, result, name, category);
@@ -36,11 +39,8 @@ export default class GroupCheck {
   }
 
   static async editGroupCheckRoll(messageId, result, target, type) {
-    const message = await game.messages.get(messageId);
-    const data = message.flags.gc;
     const isCrit = result.result.successLevel > 1;
     const critMultiplier = isCrit ? 2 : 1;
-    data.botched = data.botched || result.result.successLevel < -1;
     const actor = DSA5_Utility.getSpeaker(result.result.speaker);
     const update = {
       messageId: result.result.messageId,
@@ -49,14 +49,40 @@ export default class GroupCheck {
       success: result.result.successLevel,
       target,
       type,
+      botched: result.result.successLevel < -1,
     };
-    const index = data.results.findIndex((x) => x.messageId == update.messageId);
-    if (index >= 0) {
-      data.results[index] = update;
-    } else {
-      data.results.push(update);
+
+    await GroupCheck.updateGCResult(messageId, update);
+  }
+
+  static async updateGCResult(messageId, update) {
+    if (!game.user.isGM) {
+      game.socket.emit('system.dsa5', {
+        type: 'updateGroupCheck',
+        payload: {
+          messageId,
+          update,
+        },
+      });
+      return;
     }
-    GroupCheck.rerenderGC(message, data);
+
+    return this.#updateSemaphore.add(async () => {
+      const message = game.messages.get(messageId);
+      if (!message) return;
+
+      const data = duplicate(message.flags.gc);
+      data.botched = data.botched || update.botched;
+      delete update.botched;
+
+      const index = data.results.findIndex((x) => x.messageId == update.messageId);
+      if (index >= 0) {
+        data.results[index] = update;
+      } else {
+        data.results.push(update);
+      }
+      await GroupCheck.rerenderGC(message, data);
+    });
   }
 
   static async rerenderGC(message, data) {
@@ -74,7 +100,7 @@ export default class GroupCheck {
       data.openRolls = data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
       const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
-      message.update({ content, flags: { gc: data } });
+      await message.update({ content, flags: { gc: data } });
     } else {
       game.socket.emit('system.dsa5', {
         type: 'updateGroupCheck',

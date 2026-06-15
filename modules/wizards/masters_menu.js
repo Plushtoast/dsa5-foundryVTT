@@ -883,12 +883,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     },
   };
 
-  async getTrackedHeros() {
+  async getTrackedHeros(skipGroupActors = true) {
     const trackedActors = game.settings.get('dsa5', 'trackedActors');
     let heros;
     if (trackedActors.actors && trackedActors.actors.length > 0) {
       heros = game.actors
-        .filter((x) => trackedActors.actors.includes(x.id))
+        .filter((x) => {
+          return trackedActors.actors.includes(x.id) && (!skipGroupActors || x.type != "group");
+        })
         .sort((a, b) => {
           return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id);
         });
@@ -963,6 +965,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         uuid: hero.uuid,
         selected: selected[hero.id],
         schips: hero.schipshtml(),
+        type: hero.type,
         purse: purse
           .sort((a, b) => b.system.price.value - a.system.price.value)
           .map((x) => `<span data-tooltip="${x.name}">${x.system.quantity.value}</span>`)
@@ -971,9 +974,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         disadvantages,
         system: {
           status: {
-            wounds: { max: hero.system.status.wounds.max },
-            astralenergy: { max: hero.system.status.astralenergy.max },
-            karmaenergy: { max: hero.system.status.karmaenergy.max },
+            wounds: { max: hero.system.status?.wounds?.max },
+            astralenergy: { max: hero.system.status?.astralenergy?.max },
+            karmaenergy: { max: hero.system.status?.karmaenergy?.max },
           },
           isMage: hero.system.isMage,
           isPriest: hero.system.isPriest,

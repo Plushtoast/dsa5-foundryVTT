@@ -10,12 +10,14 @@ const { TextEditor } = foundry.applications.ux;
 export class CompanionTrainingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     static #traitCatalogsPromise = null;
     static speciesImageCache = null;
+    #speciesSearch;
 
     constructor(actor, companion, options = {}) {
         super(options);
         this.actor = actor;       
         this.companion = companion; 
-        this.loyaltyUnlocked = false; 
+        this.loyaltyUnlocked = false;
+        this.typePickingMode = false;
         this.parentSheet = options.parentSheet; 
     }
 
@@ -268,6 +270,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         await CompanionConfig.ensureLoaded();
         const context = await super._prepareContext(options);
         context.loyaltyUnlocked = this.loyaltyUnlocked;
+        context.typePickingMode = this.typePickingMode;
         context.companion = this.companion;
         
         // --- 1. Grundstatus (Vertraute, Wild, Domestiziert) ---
@@ -466,21 +469,62 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         return context;
     }
 
+    _configureRenderParts(options) {
+        if (this.typePickingMode) {
+            const parts = foundry.utils.deepClone(this.constructor.PARTS);
+            return { header: parts.header };
+        }
+        return super._configureRenderParts(options);
+    }
+
+    _replaceHTML(result, content, options) {
+        super._replaceHTML(result, content, options);
+        if (!this.typePickingMode) return;
+        for (const partId of ['tabs', 'loyalty', 'tricks', 'training']) {
+            content.querySelector(`[data-application-part="${partId}"]`)?.remove();
+        }
+    }
+
     _onRender(context, options) {
         super._onRender(context, options);
+        if (this.typePickingMode) {
+            this.#speciesSearch ??= new foundry.applications.ux.SearchFilter({
+                inputSelector: 'input.speciesSearch[type=search]',
+                contentSelector: '.species-selector-list',
+                callback: this.#onSpeciesSearchFilter.bind(this),
+            });
+            this.#speciesSearch.bind(this.element);
+            return;
+        }
         tabSlider($(this.element));
     }
 
-    static async #onSpeciesSelectorAction() {
-        const selector = this.element.querySelector('#speciesSelector');
-        if (!selector) return;
+    _tearDown(options) {
+        this.#speciesSearch?.unbind();
+        super._tearDown(options);
+    }
 
-        const showing = selector.hidden;
-        selector.hidden = !showing;
-        for (const part of ['tabs', 'loyalty', 'tricks', 'training']) {
-            const el = this.element.querySelector(`[data-application-part="${part}"]`);
-            if (el) el.hidden = showing;
+    #onSpeciesSearchFilter(_event, query, rgx, html) {
+        for (const group of html.querySelectorAll('.species-group')) {
+            let visible = 0;
+            for (const item of group.querySelectorAll('.species-item')) {
+                if (!query) {
+                    item.hidden = false;
+                    visible += 1;
+                    continue;
+                }
+                const searchText = item.dataset.search || '';
+                const isMatch = rgx?.test(foundry.applications.ux.SearchFilter.cleanQuery(searchText));
+                item.hidden = !isMatch;
+                if (isMatch) visible += 1;
+            }
+            group.hidden = visible === 0;
         }
+    }
+
+    static async #onSpeciesSelectorAction() {
+        this.typePickingMode = !this.typePickingMode;
+        await this.render({ force: true });
     }
 
     static async #removeSpecies() {
@@ -492,7 +536,8 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     static async #selectSpecies(event, target) {
         const newSpecies = target.dataset.species;
         await this.companion.update({ 'system.companionData.species': newSpecies });
-        this.render({ force: true });
+        this.typePickingMode = false;
+        await this.render({ force: true });
     }
 
     static #toggleTrickDetails(event, target) {

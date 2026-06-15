@@ -73,11 +73,11 @@ export default class PaymentRequestService {
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
     if (!state?.recipients) return;
 
-    for (const recipient of state.recipients) {
-      if (!recipient.designatedUserId || recipient.status !== 'pending') continue;
+    await Promise.all(state.recipients.map(async (recipient) => {
+      if (!recipient.designatedUserId || recipient.status !== 'pending') return;
 
       await this.dispatchRecipientQuery(messageId, recipient.actorId, recipient.designatedUserId, state);
-    }
+    }));
   }
 
   static async dispatchRecipientQuery(messageId, actorId, userId, state) {
@@ -134,6 +134,7 @@ export default class PaymentRequestService {
       render: true,
       showChatMessage: false,
       notifyOnFailure: payload.mode === 'pay',
+      track: true,
     });
 
     return {
@@ -188,6 +189,7 @@ export default class PaymentRequestService {
       render: true,
       showChatMessage: false,
       notifyOnFailure: false,
+      track: true,
     });
 
     await QueryOrchestrator.handleResult({
@@ -254,9 +256,9 @@ export default class PaymentRequestService {
 
     const message = game.messages.get(messageId);
     const updatedState = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
-    for (const recipient of updatedState.recipients.filter((entry) => actorIds.includes(entry.actorId) && entry.designatedUserId && entry.status === 'pending')) {
+    await Promise.all(updatedState.recipients.filter((entry) => actorIds.includes(entry.actorId) && entry.designatedUserId && entry.status === 'pending').map(async (recipient) => {
       await this.dispatchRecipientQuery(messageId, recipient.actorId, recipient.designatedUserId, updatedState);
-    }
+    }));
   }
 
   static async openAddActorDialog(messageId) {

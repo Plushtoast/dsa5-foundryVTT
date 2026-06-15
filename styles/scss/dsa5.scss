@@ -1851,6 +1851,29 @@ a.img-entity-link {
     align-items: center;
     justify-content: center;
     display: flex;
+    pointer-events: none;
+  }
+
+  &[data-drag-hint]:after {
+    content: attr(data-drag-hint);
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 1;
+    padding: 5px 10px 6px;
+    border: 1px solid #4d4d4d;
+    border-bottom-color: #1f1f1f;
+    border-radius: 5px;
+    background: linear-gradient(#f8f8f8, #d7d7d7);
+    box-shadow: inset 0 1px 0 #fff, 0 2px 0 #1f1f1f, 0 3px 6px rgba(0, 0, 0, 0.45);
+    color: #202020;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    text-shadow: 0 1px 0 #fff;
+    pointer-events: none;
+    white-space: nowrap;
   }
 }
 
@@ -5446,6 +5469,10 @@ input[type='checkbox'].autoCheckbox {
     background: #efe4e4;
     color: black;
   }
+}
+
+.dsaflex-no-wrap {
+    flex-wrap: nowrap;
 }
 
 .fullScreenApp {

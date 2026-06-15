@@ -749,6 +749,7 @@
             "RemoveSpecies": "Tierart entfernen",
             "ShortPrefix": "Ausbildung:",
             "SpeciesChangeHint": "Tierart anpassen",
+            "SpeciesSelectHint": "Wähle die Tierart für {name}. Trick- und Dressurmodifikatoren sowie mögliche Ausbildungsaufsätze hängen von der gewählten Tierart ab.",
             "Tab": "Ausbildung",
             "TabName": "Ausbildung",
             "TeachBtn": "Ausbilden",
@@ -1332,77 +1333,77 @@
             "5": "Wucher (400%)"
         },
         "QUALITY": {
-            "0": "QS 6: außergewöhnlich / nobel / besonders sortiert",
-            "1": "QS 5: sehr gut / gepflegt / gut sortiert",
-            "2": "QS 4: solide / sauber / normal",
-            "3": "QS 3: einfach / ordentlich",
-            "4": "QS 2: mäßig / schlicht / fraglich",
-            "5": "QS 1: schlecht / schmierig / unsauber"
+            "0": "außergewöhnlich / nobel / besonders sortiert",
+            "1": "sehr gut / gepflegt / gut sortiert",
+            "2": "solide / sauber / normal",
+            "3": "einfach / ordentlich",
+            "4": "mäßig / schlicht / fraglich",
+            "5": "schlecht / schmierig / unsauber"
         },
         "QUALITY_BY_KIND": {
             "crafts": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "healers": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "inns": {
-                "0": "QS 6: nobel",
-                "1": "QS 5: gut, sauber",
-                "2": "QS 4: solide, sauber",
-                "3": "QS 3: einfach, fraglich",
-                "4": "QS 2: schlicht, fraglich",
-                "5": "QS 1: schlicht, unsauber"
+                "0": "nobel",
+                "1": "gut, sauber",
+                "2": "solide, sauber",
+                "3": "einfach, fraglich",
+                "4": "schlicht, fraglich",
+                "5": "schlicht, unsauber"
             },
             "merchants": {
-                "0": "QS 6: besonders sortiert, gut",
-                "1": "QS 5: gut sortiert, sehr gut",
-                "2": "QS 4: normal sortiert, solide",
-                "3": "QS 3: einfach sortiert, mäßig",
-                "4": "QS 2: mäßig sortiert, schlicht",
-                "5": "QS 1: schlecht sortiert, schlicht"
+                "0": "besonders sortiert, gut",
+                "1": "gut sortiert, sehr gut",
+                "2": "normal sortiert, solide",
+                "3": "einfach sortiert, mäßig",
+                "4": "mäßig sortiert, schlicht",
+                "5": "schlecht sortiert, schlicht"
             },
             "services": {
-                "0": "QS 6: außergewöhnlich",
-                "1": "QS 5: sehr gut",
-                "2": "QS 4: solide",
-                "3": "QS 3: einfach",
-                "4": "QS 2: mäßig",
-                "5": "QS 1: schlecht"
+                "0": "außergewöhnlich",
+                "1": "sehr gut",
+                "2": "solide",
+                "3": "einfach",
+                "4": "mäßig",
+                "5": "schlecht"
             },
             "taverns": {
-                "0": "QS 6: nobel",
-                "1": "QS 5: gepflegt",
-                "2": "QS 4: sauber",
-                "3": "QS 3: einfach",
-                "4": "QS 2: schäbig",
-                "5": "QS 1: schmierig"
+                "0": "nobel",
+                "1": "gepflegt",
+                "2": "sauber",
+                "3": "einfach",
+                "4": "schäbig",
+                "5": "schmierig"
             },
             "temples": {
-                "0": "QS 6: außergewöhnlich / nobel",
-                "1": "QS 5: sehr gut / gepflegt",
-                "2": "QS 4: solide / sauber",
-                "3": "QS 3: einfach / ordentlich",
-                "4": "QS 2: mäßig / fraglich",
-                "5": "QS 1: schlecht / unsauber"
+                "0": "außergewöhnlich / nobel",
+                "1": "sehr gut / gepflegt",
+                "2": "solide / sauber",
+                "3": "einfach / ordentlich",
+                "4": "mäßig / fraglich",
+                "5": "schlecht / unsauber"
             },
             "travellers": {
-                "0": "QS 6: außergewöhnlich / nobel",
-                "1": "QS 5: sehr gut / gepflegt",
-                "2": "QS 4: solide / sauber",
-                "3": "QS 3: einfach / ordentlich",
-                "4": "QS 2: mäßig / fraglich",
-                "5": "QS 1: schlecht / unsauber"
+                "0": "außergewöhnlich / nobel",
+                "1": "sehr gut / gepflegt",
+                "2": "solide / sauber",
+                "3": "einfach / ordentlich",
+                "4": "mäßig / fraglich",
+                "5": "schlecht / unsauber"
             }
         },
         "SelectDetail": "Stadtdetail auswählen",
@@ -1440,16 +1441,19 @@
                 },
                 "linkedPages": {
                     "uuid": {
-                        "hint": "Verknüpfe die UUID einer Journalseite.",
-                        "label": "UUID der Journalseite"
+                        "hint": "Verknüpfe eine beliebige Dokument-UUID.",
+                        "label": "Dokument-UUID"
+                    },
+                    "visible": {
+                        "label": "Für Spieler sichtbar"
                     }
                 },
                 "location": {
                     "label": "Ort"
                 },
                 "objectives": {
-                    "done": {
-                        "label": "Erledigt"
+                    "status": {
+                        "label": "Status"
                     },
                     "text": {
                         "label": "Ziel"
@@ -1494,11 +1498,13 @@
         },
         "STATUS": {
             "0": "Offen",
-            "1": "Beendet"
+            "1": "Beendet",
+            "2": "Fehlgeschlagen"
         },
         "SelectQuest": "Auftrag auswählen",
         "SelectQuestHint": "Zeige Ziele, Notizen und zugehörige Verknüpfungen des aktuellen Abenteuers an.",
-        "addLinkedPage": "Verknüpfte Seite hinzufügen",
+        "addLinkedDocument": "Verknüpftes Dokument hinzufügen",
+        "addLinkedPage": "Verknüpftes Dokument hinzufügen",
         "addObjective": "Ziel hinzufügen",
         "completionDate": "Beendet",
         "createQuest": "Auftrag erstellen",
@@ -1509,13 +1515,18 @@
             "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)",
             "label": "Auftrags-Journale"
         },
-        "linkedPages": "Verknüpfte Seiten",
+        "linkedDocuments": "Verknüpfte Dokumente",
+        "linkedPages": "Verknüpfte Dokumente",
         "missingLink": "Fehlt",
         "newEntryPlaceholder": "Neuer Auftrag",
         "newObjectivePlaceholder": "Neues Ziel",
-        "noLinkedPages": "Keine verknüpften Seiten.",
+        "noLinkedDocuments": "Keine verknüpften Dokumente.",
+        "noLinkedPages": "Keine verknüpften Dokumente.",
         "noObjectives": "Noch keine Ziele.",
         "objectives": "Ziele",
+        "objectiveStateDone": "Als fehlgeschlagen markieren",
+        "objectiveStateFailed": "Als offen markieren",
+        "objectiveStateOpen": "Als erledigt markieren",
         "playerOwners": "Zugewiesene Spieler",
         "showInQuestlog": "In Aufträgen anzeigen",
         "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
@@ -1525,9 +1536,11 @@
         "targetDate": "Ziel",
         "timeline": "Zeitverlauf",
         "title": "Aufträge",
+        "toggleLinkedDocumentVisibility": "Dokumentsichtbarkeit umschalten",
         "toggleObjectiveDone": "Zielabschluss umschalten",
         "toggleVisibility": "Spielersichtbarkeit umschalten",
-        "ungrouped": "Unsortiert"
+        "ungrouped": "Unsortiert",
+        "unknownDocumentType": "Dokument"
     },
     "DSAREGEX": {
         "combatRounds": "( )?(in )?(Kampfrunde(n)?|KR(s)?)",
@@ -1805,6 +1818,9 @@
         "createEventsJournal": "Ereignisjournal erstellen",
         "createNewGroup": "Neue Gruppe erstellen",
         "deploy": "Mitglieder aufstellen",
+        "depotPermissions": "Depot-Berechtigungen",
+        "depotPermissionsHint": "Lege fest, welche Spieler auf dieses Depot zugreifen können. Aktivierte Spieler können das Depot öffnen und damit handeln.",
+        "depotPermissionsWarning": "Nicht alle Spieler haben Zugriff auf dieses Depot.",
         "depotHint": "Ein Depot ist ein gemeinsames Inventar für die Gruppe. Es kann eine Truhe, ein Fahrzeug, eine Spielerbasis, einen Begleiter mit Vorräten oder einen anderen geteilten Behälter darstellen.",
         "dropLocationsHint": "Einen Fahrzeug-, Händler- oder Schatzakteur hierher ziehen um ihn als Depot hinzuzufügen.",
         "dropMemberHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",
@@ -1820,6 +1836,7 @@
         "noExistingGroups": "Keine vorhandenen Gruppenblätter verfügbar",
         "noGroupInGroup": "Ein Gruppenakteur kann nicht als Mitglied einer anderen Gruppe hinzugefügt werden.",
         "noLocations": "Noch keine Depots. Ziehe einen Fahrzeug-, Händler- oder Schatzakteur hierher.",
+        "noLootDepots": "Kein entsperrtes Schatzdepot verfügbar. Füge auf dem Gruppenblatt ein Schatzdepot hinzu oder entsperre ein vorhandenes.",
         "noMembers": "Noch keine Mitglieder. Ziehe Akteure auf diesen Bogen um sie hinzuzufügen.",
         "noSkills": "Keine Talente verfügbar. Füge zuerst Mitglieder zur Gruppe hinzu.",
         "notes": "Notizen",
@@ -1984,7 +2001,8 @@
                 "targetCategory.value": "Lebewesen..."
             },
             "specialability": {
-                "distribution": "Animisten..."
+                "distribution": "Animisten...",
+                "requirements.value": "Steinbearbeitung..."
             },
             "spell": {
                 "distribution.value": "Hexen...",
@@ -2826,6 +2844,7 @@
         "Dropdown": "Details",
         "DuplicateItem": "Duplizieren",
         "EditItem": "Editieren",
+        "DropMoveFromSourceHint": "Alt halten: verschieben und vom Quellakteur löschen",
         "EquipItem": "Ausrüsten",
         "EquipItemOffHand": "Ausrüsten (Nebenhand)",
         "IgnoreWeaponHandLimits": "Handbeschränkung ignorieren",
@@ -3257,6 +3276,14 @@
         "conjuringSpells": "Mögliche Zaubersprüche für die Beschwörung",
         "dragLink": "Drag & drop Akteur z.B. für Gestaltwandlung und Beschwörung",
         "effectVariant": "Alternativer Effekt wie z.B. ein zweiter oder dritter Angriff",
+        "enricherRq": "Fordert eine Talent-, Zauber- oder Eigenschaftsprobe an",
+        "enricherGc": "Fordert eine Gruppenprobe an",
+        "enricherCh": "Fordert eine 3W20-Probe an",
+        "enricherAP": "Vergibt Abenteuerpunkte",
+        "enricherPay": "Lässt die gewählten Helden den angegebenen Betrag zahlen",
+        "enricherGetPaid": "Zahlt den angegebenen Betrag an die gewählten Helden",
+        "enricherInfoRoll": "Würfelt die verknüpfte Informationsprobe",
+        "enricherInfoPost": "Sendet die Information in den Chat",
         "foreignSpell": "Fremdzauber können nicht modifiziert werden",
         "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
         "onlyGM": "Nur für den Spielleiter sichtbar.",

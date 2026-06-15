@@ -298,7 +298,7 @@ class RepeatingEffectsHelper {
     if (!DSA5_Utility.isActiveGM()) return;
 
     for (const turn of combat.turns) {
-      if (!turn.defeated) {
+      if (!turn.defeated && turn.actor) {
         if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
         if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
 

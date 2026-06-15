@@ -35,6 +35,9 @@ import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
+/** Prevents postUpdateConditions from re-entering while condition effects are being synced. */
+const postUpdateConditionsLocks = new WeakMap();
+
 export default class Actordsa5 extends Actor {
   static DEFAULT_ICON = 'icons/svg/mystery-man-black.svg';
   static selfRegex = /^self\./;
@@ -58,41 +61,53 @@ export default class Actordsa5 extends Actor {
   }
 
   static async deferredEffectAddition(effect, actor, target) {
-    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
-    const isChange = current != target;
     const attr = `changing${effect}`;
-    actor[attr] = isChange;
+    if (actor[attr]) return;
 
-    if (isChange) await actor.addCondition(effect, target, true, true).then(() => (actor[attr] = undefined));
+    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
+    if (current == target) return;
+
+    actor[attr] = true;
+    try {
+      await actor.addCondition(effect, target, true, true);
+    } finally {
+      actor[attr] = undefined;
+    }
   }
 
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
-    if (!actor.system.status?.wounds) return;
+    if (!actor?.system?.status?.wounds) return;
+    if (postUpdateConditionsLocks.get(actor)) return;
 
-    const data = actor.system;
-    const isMerchant = actor.isMerchant();
+    postUpdateConditionsLocks.set(actor, true);
+    try {
+      const data = actor.system;
+      const isMerchant = actor.isMerchant();
 
-    if (!TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) {
-      const pain = actor.woundPain(data);
-      await this.deferredEffectAddition('inpain', actor, pain);
+      if (!TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) {
+        const pain = actor.woundPain(data);
+        await this.deferredEffectAddition('inpain', actor, pain);
+      }
+
+      let newEncumbrance = data.armorEncumbrance;
+      if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant) {
+        newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+      }
+
+      await this.deferredEffectAddition('encumbered', actor, newEncumbrance);
+
+      const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
+      await this.deferredEffectAddition('stunned', actor, brawlingPoints);
+
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.deaf')) await actor.addCondition('deaf');
+
+      if (isMerchant) await actor.prepareMerchant();
+    } finally {
+      postUpdateConditionsLocks.delete(actor);
     }
-
-    let newEncumbrance = data.armorEncumbrance;
-    if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant) {
-      newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
-    }
-
-    await this.deferredEffectAddition('encumbered', actor, newEncumbrance);
-
-    const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
-    await this.deferredEffectAddition('stunned', actor, brawlingPoints);
-
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.deaf')) await actor.addCondition('deaf');
-
-    if (isMerchant) await actor.prepareMerchant();
   }
 
   static async _onCreateOperation(documents, operation, user) {
@@ -541,6 +556,7 @@ export default class Actordsa5 extends Actor {
 
   schipshtml() {
     const schips = [];
+    if (this.type == 'group') return schips;
     for (let i = 1; i <= this.system.status.fatePoints.max; i++) {
       schips.push({
         value: i,
@@ -814,9 +830,6 @@ export default class Actordsa5 extends Actor {
     }
 
     money.coins = money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
-
-    specAbs.magical.push(...specAbs.pact);
-    specAbs.clerical.push(...specAbs.ceremonial);
 
     for (const traditionAbility of specAbs.staff) {
       const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
@@ -1296,7 +1309,9 @@ export default class Actordsa5 extends Actor {
     const fallingDamage = await actor.basicTest(setupData, {
       suppressMessage: true,
     });
+    fallingDamage.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', fallingDamage);
+    result.result.chatCardDamage = fallingDamage.result.damage;
 
     if (!result.result.other) result.result.other = [];
 

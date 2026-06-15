@@ -10,6 +10,7 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
+import MerchantSheetDSA5 from './merchant-sheet.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { escapeHTML } = foundry.utils;
@@ -18,6 +19,7 @@ const { TextEditor } = foundry.applications.ux;
 
 export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static PRIMARY_PARTY_DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/group-primary-party-dialog.hbs';
+  static DEPOT_PERMISSIONS_TEMPLATE = 'systems/dsa5/templates/dialog/group-depot-permissions.hbs';
 
   static TRAVEL_ICONS = {
     foot: 'fa-person-walking',
@@ -28,7 +30,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   static async openPartySheet() {
     const party = await this.#resolvePrimaryParty();
-    party?.sheet?.render(true);
+
+    DSA5_Utility.renderToggle(party?.sheet);
   }
 
   static async #resolvePrimaryParty() {
@@ -187,13 +190,14 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       shareOwnership: this.#shareOwnership,
       openItem: this.#openItem,
       openLocationItem: this.#openLocationItem,
-      locationItemContextMenu: this.#locationItemContextMenu,
+      locationItemContextMenu: this._locationItemContextMenu,
       changeGroupSchip: this.#changeGroupSchip,
       addGroupSchipCount: this.#addGroupSchipCount,
       rollAllBlind: this.#rollAllBlind,
       rollRegeneration: this.#rollRegeneration,
       requestAttributeRoll: this.#requestAttributeRoll,
       tradeWithDepot: this.#tradeWithDepot,
+      depotPermissions: this.#depotPermissions,
       setLocationType: this.#setLocationType,
       resetTravelMode: this.#resetTravelMode,
     },
@@ -279,6 +283,36 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         drop: this.#onLocationItemDrop.bind(this),
       },
     }).bind(this.element);
+  }
+
+  static #findResolvedLocation(groupActor, depotActor) {
+    if (!depotActor) return undefined;
+    return (groupActor.system.resolvedLocations ?? []).find((entry) => entry.actor?.id === depotActor.id);
+  }
+
+  static #getLocationItemContextOptions(groupActor, uuid) {
+    const item = fromUuidSync(uuid);
+    const locActor = item?.parent;
+    if (!item || !locActor) return [];
+
+    const loc = GroupActorSheet.#findResolvedLocation(groupActor, locActor);
+    if (!game.user.isGM && loc?.locked) return [];
+
+    const options = [{
+      label: _loc('SHEET.PostItem'),
+      icon: '<i class="fas fa-comment"></i>',
+      onClick: () => item.postItem(),
+    }];
+
+    if (GroupData.isLootDepotActor(locActor)) {
+      options.push({
+        label: _loc('GROUP.takeItem'),
+        icon: '<i class="fas fa-hand-holding"></i>',
+        onClick: () => GroupActorSheet.takeLocationItem(groupActor, uuid),
+      });
+    }
+
+    return options;
   }
 
   #onLocationItemDragStart(event) {
@@ -404,11 +438,17 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
     context.locations = system.resolvedLocations.map((loc) => ({
       ...loc,
+      permissionWarning: GroupData.playersMissingDepotPermission(loc.actor),
       items: loc.actor.items
         .filter((i) => DSA5.equipmentCategories.has(i.type))
         .map((i) => {
-          i.calculatedPrice = DSA5_Utility.itemPrice(i);
-          return i;
+          const item = i.system.prepareEmbeddedItemSheet();
+          item._id = i.id;
+          item.id = i.id;
+          item.uuid = i.uuid;
+          item.locationKey = loc.key;
+          item.calculatedPrice = DSA5_Utility.itemPrice(i);
+          return item;
         }),
       coins: loc.actor.items
         .filter((i) => i.type === 'money')
@@ -662,6 +702,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #addLocation(event, target) {
+    if (!game.user.isGM) return;
     const defaultName = `${this.actor.name} — ${_loc('GROUP.inventory')}`;
     const content = `<form>
       <p class="hint">${_loc('GROUP.depotHint')}</p>
@@ -684,6 +725,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static #removeLocation(event, target) {
+    if (!game.user.isGM) return;
     const key = target.closest('[data-location-key]')?.dataset.locationKey;
     if (key) this.actor.system.removeLocation(key);
   }
@@ -700,7 +742,16 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     const key = target.closest('[data-location-key]')?.dataset.locationKey ?? target.dataset.locationKey;
     if (!key) return;
     const loc = this.actor.system.locations[key];
-    if (loc) this.actor.update({ [`system.locations.${key}.locked`]: !loc.locked });
+    if (!loc) return;
+    const locked = !loc.locked;
+    this.actor.update({ [`system.locations.${key}.locked`]: locked });
+    const actor = this.actor.system.locationActors.get(key);
+    if (actor?.isMerchant()) {
+      actor.update({
+        'system.merchant.locked': locked,
+        'system.merchant.hidePlayer': locked,
+      });
+    }
   }
 
   static #setLocationType(event, target) {
@@ -750,11 +801,13 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #groupPayment(event, target) {
+    if (!game.user.isGM) return;
     const actors = [...this.actor.system.actors];
     GroupActorSheet.doGroupPayment(actors, true);
   }
 
   static async doGroupPayment(actors, pay, amount = 0) {
+    if (!game.user.isGM) return;
     const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
     const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
@@ -882,80 +935,152 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     item?.sheet?.render(true);
   }
 
-  static async #locationItemContextMenu(event, target) {
+  static async _locationItemContextMenu(event, target) {
+    event.preventDefault();
     event.stopPropagation();
-    const locKey = target.dataset.locationKey;
-    const itemId = target.dataset.itemId;
-    if (!locKey || !itemId) return;
 
-    const locActor = this.actor.system.locationActors.get(locKey);
-    const item = locActor?.items.get(itemId);
-    if (!item) return;
+    const row = target.closest('.location-item-row');
+    if (!row) return;
 
-    const loc = this.actor.system.locations[locKey];
-    const canInteract = game.user.isGM || !loc?.locked;
     const app = this;
-    const items = [];
+    const uuid = row.dataset.uuid;
+    if (!uuid) return;
 
-    if (canInteract) {
-      items.push({
-        label: _loc('SHEET.PostItem'),
-        icon: '<i class="fas fa-comment"></i>',
-        onClick: () => item.postItem(),
-      });
-      items.push({
-        label: _loc('GROUP.takeItem'),
-        icon: '<i class="fas fa-hand-holding"></i>',
-        onClick: () => GroupActorSheet.takeLocationItem(app.actor, locKey, itemId),
-      });
+    const menuItems = GroupActorSheet.#getLocationItemContextOptions(app.actor, uuid);
+    if (!menuItems.length) {
+      const item = fromUuidSync(uuid);
+      const loc = GroupActorSheet.#findResolvedLocation(app.actor, item?.parent);
+      if (loc?.locked && !game.user.isGM) {
+        ui.notifications.warn('GROUP.locationLocked', { localize: true });
+      }
+      return;
     }
 
-    if (!items.length) return;
-
-    const menu = new foundry.applications.ux.ContextMenu(this.element, '', items, { jQuery: false, fixed: true, eventName: 'none' });
+    const menu = new foundry.applications.ux.ContextMenu(app.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
     ui.context?.close();
     await menu.render(target, { animate: true });
     ui.context = menu;
   }
 
-  static async takeLocationItem(groupActor, locKey, itemId) {
+  #bindDepotPermissionDialog(dialog, locActor, refreshContent) {
+    const el = dialog.element;
+    const app = this;
+    if (el.dataset.depotPermBound) return;
+    el.dataset.depotPermBound = 'true';
+    el.addEventListener('click', async (ev) => {
+      const allowBtn = ev.target.closest('[data-action="depotAllowUser"]');
+      if (allowBtn) {
+        ev.preventDefault();
+        await GroupData.setDepotUserPermission(
+          locActor,
+          [allowBtn.dataset.userId],
+          !allowBtn.classList.contains('fa-check-circle'),
+        );
+        await refreshContent(dialog);
+        app.render();
+        return;
+      }
+      const allBtn = ev.target.closest('[data-action="depotAllowAll"]');
+      if (allBtn) {
+        ev.preventDefault();
+        const allow = allBtn.dataset.lock === 'true';
+        const ids = game.users.filter((user) => !user.isGM).map((user) => user.id);
+        await GroupData.setDepotUserPermission(locActor, ids, allow);
+        await refreshContent(dialog);
+        app.render();
+      }
+    });
+  }
+
+  static async #depotPermissions(event, target) {
+    if (!game.user.isGM) return;
+    const locKey = target.closest('[data-location-key]')?.dataset.locationKey ?? target.dataset.locationKey;
+    const locActor = this.actor.system.locationActors.get(locKey);
+    if (!locActor) return;
+    const app = this;
+
+    const refreshContent = async (dialog) => {
+      const container = dialog.element.querySelector('.depot-permissions-content');
+      if (!container) return;
+      container.innerHTML = await renderTemplate(GroupActorSheet.DEPOT_PERMISSIONS_TEMPLATE, {
+        document: locActor,
+        players: GroupData.getDepotPermissionPlayers(locActor),
+      });
+    };
+
+    await foundry.applications.api.DialogV2.wait({
+      window: { title: 'GROUP.depotPermissions' },
+      content: '<div class="depot-permissions-content"></div>',
+      buttons: [
+        {
+          action: 'close',
+          icon: 'fas fa-times',
+          label: 'close',
+          callback: () => null,
+        },
+      ],
+      render: async (_event, dialog) => {
+        app.#bindDepotPermissionDialog(dialog, locActor, refreshContent);
+        await refreshContent(dialog);
+      },
+    });
+    app.render();
+  }
+
+  static transferLootItem(source, target, item, buy) {
+    const amount = Number(item.system.quantity?.value) || 1;
+    if (game.user.isGM) {
+      return MerchantSheetDSA5.finishTransaction(source, target, 0, item.id, buy, amount);
+    }
+    game.socket.emit('system.dsa5', {
+      type: 'trade',
+      payload: {
+        target: MerchantSheetDSA5.transferTokenData(target),
+        source: MerchantSheetDSA5.transferTokenData(source),
+        price: 0,
+        itemId: item.id,
+        buy,
+        amount,
+      },
+    });
+  }
+
+  static async takeLocationItem(groupActor, itemUuid) {
     const character = game.user.character;
     if (!character) {
       ui.notifications.warn('DIALOG.noTarget', { localize: true });
       return;
     }
-    const loc = groupActor.system.locations[locKey];
+    const item = fromUuidSync(itemUuid);
+    const locActor = item?.parent;
+    if (!item || !GroupData.isLootDepotActor(locActor)) return;
+
+    const loc = GroupActorSheet.#findResolvedLocation(groupActor, locActor);
     if (loc?.locked) {
       ui.notifications.warn('GROUP.locationLocked', { localize: true });
       return;
     }
-    const locActor = groupActor.system.locationActors.get(locKey);
-    const item = locActor?.items.get(itemId);
-    if (!item) return;
 
-    const itemData = item.toObject();
-    if (itemData.system?.worn?.value) itemData.system.worn.value = false;
-    await character.createEmbeddedDocuments('Item', [itemData]);
-    await locActor.deleteEmbeddedDocuments('Item', [itemId]);
+    this.transferLootItem(locActor, character, item, true);
   }
 
   static async passItemToGroup(actor, item) {
     const partyUuid = game.settings.get('dsa5', 'primaryParty');
     if (!partyUuid) return;
     const party = fromUuidSync(partyUuid);
-    if (!party?.system?.resolvedLocations) return;
+    if (!party) return;
 
-    const unlocked = party.system.resolvedLocations.filter((l) => !l.locked);
-    if (unlocked.length === 0) {
-      ui.notifications.warn('GROUP.locationLocked', { localize: true });
+    const unlockedLoot = GroupData.getUnlockedLootDepots(party);
+    if (unlockedLoot.length === 0) {
+      ui.notifications.warn('GROUP.noLootDepots', { localize: true });
       return;
     }
 
     let targetLoc;
-    if (unlocked.length === 1) {
-      targetLoc = unlocked[0];
+    if (unlockedLoot.length === 1) {
+      targetLoc = unlockedLoot[0];
     } else {
-      const options = unlocked.map((l) => `<option value="${l.key}">${l.name}</option>`).join('');
+      const options = unlockedLoot.map((l) => `<option value="${l.key}">${l.name}</option>`).join('');
       const content = `<form><div class="form-group"><label>${_loc('GROUP.selectLocation')}</label><select name="locKey">${options}</select></div></form>`;
       const key = await foundry.applications.api.DialogV2.prompt({
         window: { title: 'GROUP.passToGroup' },
@@ -966,14 +1091,11 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         },
       });
       if (!key) return;
-      targetLoc = unlocked.find((l) => l.key === key);
+      targetLoc = unlockedLoot.find((l) => l.key === key);
     }
 
-    if (!targetLoc?.actor) return;
-    const itemData = item.toObject();
-    if (itemData.system?.worn?.value) itemData.system.worn.value = false;
-    await targetLoc.actor.createEmbeddedDocuments('Item', [itemData]);
-    await actor.deleteEmbeddedDocuments('Item', [item.id]);
+    if (!targetLoc?.actor || !actor.isOwner) return;
+    this.transferLootItem(actor, targetLoc.actor, item, false);
   }
 
   static async #tradeWithDepot(event, target) {
@@ -1016,6 +1138,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #groupGetPaid(event, target) {
+    if (!game.user.isGM) return;
     const actors = [...this.actor.system.actors];
     GroupActorSheet.doGroupPayment(actors, false);
   }

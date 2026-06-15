@@ -1,4 +1,5 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
+import ListKeyboardNavigation from './list_keyboard_navigation.js';
 
 export class QuestLogFeature {
     static #parent;
@@ -6,6 +7,7 @@ export class QuestLogFeature {
     static #collapsedGroups = new Set();
 
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         QuestLogFeature.#parent = parent;
@@ -22,7 +24,9 @@ export class QuestLogFeature {
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
+        toggleQuestObjectiveState: QuestLogFeature.toggleQuestObjectiveState,
         toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
+        toggleLinkedDocumentVisibility: QuestLogFeature.toggleLinkedDocumentVisibility,
         toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
     };
 
@@ -139,6 +143,13 @@ export class QuestLogFeature {
         container.innerHTML = detailHTML;
     }
 
+    static #visibleQuestItems() {
+        const list = QuestLogFeature.#parent.element.querySelector('.tab[data-tab="questlog"].active .questlog-list');
+        if (!list) return [];
+
+        return Array.from(list.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
+    }
+
     static async newQuest() {
         await DSAQuestLogEntry.startCreation(QuestLogFeature.#parent, QuestLogFeature.#parent?.actualTimeComponents?.() ?? game.time.calendar.timeToComponents(game.time.worldTime));
     }
@@ -168,7 +179,19 @@ export class QuestLogFeature {
         const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
         if (!page || !objective) return;
 
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.done`]: !objective.done });
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+    }
+
+    static async toggleQuestObjectiveState(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, objectiveKey } = target.dataset;
+        const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
+        if (!page || !objective) return;
+
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
     }
 
     static async toggleObjectiveVisibility(event, target) {
@@ -185,6 +208,16 @@ export class QuestLogFeature {
         const uuid = target.dataset.uuid || target.dataset.pageUuid;
         const entryKey = target.dataset.entryKey;
         await QuestLogFeature.openReference({ uuid, entryKey });
+    }
+
+    static async toggleLinkedDocumentVisibility(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, linkKey } = target.dataset;
+        const reference = page?.system?.quests?.[questKey]?.linkedPages?.[linkKey];
+        if (!page || !reference) return;
+
+        await page.update({ [`system.quests.${questKey}.linkedPages.${linkKey}.visible`]: reference.visible === false });
     }
 
     static async openReference({ uuid, entryKey = null }) {
@@ -211,10 +244,18 @@ export class QuestLogFeature {
             callback: this.#onSearchFilter.bind(this),
         });
         this.#search.bind(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: QuestLogFeature.#parent,
+            tabId: 'questlog',
+            getItems: () => QuestLogFeature.#visibleQuestItems(),
+            selectItem: (event, item) => QuestLogFeature.selectQuest(event, item),
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     _tearDown() {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 
     #onSearchFilter(_event, query, rgx, html) {

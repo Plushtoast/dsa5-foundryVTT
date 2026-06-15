@@ -23,7 +23,6 @@ export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
             template: 'systems/dsa5/templates/journal/citydetailsentry_edit.hbs',
             templates: [
                 'systems/dsa5/templates/journal/citydetailsentry_edit_detail.hbs',
-                'systems/dsa5/templates/journal/citydetailsentry_icon.hbs',
             ],
             scrollable: ['', '.scrollable', '.citydetails-details-container'],
         },
@@ -34,9 +33,7 @@ export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1'],
             template: 'systems/dsa5/templates/journal/citydetailsentry_view.hbs',
-            templates: [
-                'systems/dsa5/templates/journal/citydetailsentry_icon.hbs',
-            ],
+            templates: [],
         },
     };
 

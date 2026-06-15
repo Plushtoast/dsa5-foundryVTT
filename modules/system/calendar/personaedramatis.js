@@ -1,11 +1,13 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
 import { JournalEntryTargetHelper } from "./journalentrytargethelper.js";
+import ListKeyboardNavigation from "./list_keyboard_navigation.js";
 export class PersonaeDramatis {
     static #parent;
     static #lastActiveListType = '0';
     static #lastSelectedActor = null;
     static #collapsedGroups = new Set();
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         PersonaeDramatis.#parent = parent;
@@ -118,10 +120,11 @@ export class PersonaeDramatis {
                     };
                     const actor = entry.actor_uuid ? fromUuidSync(entry.actor_uuid) : null;
                     personaEntry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
-                    if (DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM })) {
+                    const shouldShowGaradan = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
+                    if (shouldShowGaradan) {
                         personaEntry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[personaEntry.garadan] || '';
                     }
-                    personaEntry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
+                    personaEntry.garadanVisible = shouldShowGaradan;
                     personaeData[entry.type].push(personaEntry);
                     if (PersonaeDramatis.#lastSelectedActor &&
                         pageUuid === PersonaeDramatis.#lastSelectedActor.pageUuid &&
@@ -196,25 +199,25 @@ export class PersonaeDramatis {
     }
 
     static async #entryFromTarget(target) {
-        const { personaUuid, personaDramatisKey } = target.closest('[data-persona-uuid]')?.dataset ?? {};
+        const { personaUuid, key } = target.closest('[data-persona-uuid]')?.dataset ?? {};
         if (!personaUuid) return {};
 
         const page = await fromUuid(personaUuid);
         if (!page) return {};
 
-        return { entry: page?.system.personae?.[personaDramatisKey], page, personaDramatisKey };
+        return { entry: page?.system.personae?.[key], page, key };
     }
 
     static async selectActor(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
         PersonaeDramatis.#lastSelectedActor = {
             pageUuid: page.uuid,
-            dramatisKey: personaDramatisKey
+            dramatisKey: key
         };
         PersonaeDramatis.updateSelectionUI(target);
-        PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey, target);
+        PersonaeDramatis.displayActorDetails(entry, page, key, target);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -271,6 +274,15 @@ export class PersonaeDramatis {
         PersonaeDramatis.#setupDetailListeners(container);
     }
 
+    static #visibleListItems() {
+        const list = PersonaeDramatis.#parent.element.querySelector('.tab[data-tab="personae"].active .personae-list');
+        const activeList = list?.dataset.activeList || '0';
+        const activeContent = list?.querySelector(`.list-content[data-list-type="${activeList}"]:not(.hidden)`);
+        if (!activeContent) return [];
+
+        return Array.from(activeContent.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
+    }
+
     static #notesChanged(event) {
         const target = event.target;
         const newValue = target.value;
@@ -303,18 +315,18 @@ export class PersonaeDramatis {
         section.querySelector('.relationship-label').textContent = _loc(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
         target.className = target.className.replace(/level-\d+/g, '');
         target.classList.add(`level-${newValue}`);
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!page) return;
 
         const contactId = target.dataset.contactUuid.replaceAll('.', '_');
-        await page.update({ [`system.personae.${personaDramatisKey}.socialContact.${contactId}.level`]: newValue });
+        await page.update({ [`system.personae.${key}.socialContact.${contactId}.level`]: newValue });
     }
 
     static async editActor(event, target, options = {}) {
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-        if (!personaDramatisKey || !page) return;
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
+        if (!key || !page) return;
 
-        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: personaDramatisKey, close: !options.stay });
+        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: key, close: !options.stay });
     }
 
     static async showSheet(event, target, options = {}) {
@@ -329,10 +341,10 @@ export class PersonaeDramatis {
     }
 
     static async toggleVisibility(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
-        await page.update({ [`system.personae.${personaDramatisKey}.visible`]: !entry.visible });
+        await page.update({ [`system.personae.${key}.visible`]: !entry.visible });
         const i = target.querySelector('i');
         i.classList.toggle('fa-eye', !entry.visible);
         i.classList.toggle('fa-eye-slash', entry.visible);
@@ -436,6 +448,14 @@ export class PersonaeDramatis {
             }
         });
         PersonaeDramatis.#setupDetailListeners(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: PersonaeDramatis.#parent,
+            tabId: 'personae',
+            getItems: () => PersonaeDramatis.#visibleListItems(),
+            selectItem: (event, item) => PersonaeDramatis.selectActor(event, item),
+            detailTabsSelector: '.tab[data-tab="personae"].active .persona-details-container nav.tabs [data-group][data-tab]',
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     #onSearchFilter(_event, query, rgx, html) {
@@ -466,5 +486,6 @@ export class PersonaeDramatis {
 
     _tearDown(options) {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 }

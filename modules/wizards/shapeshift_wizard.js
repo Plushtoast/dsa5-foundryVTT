@@ -1,4 +1,5 @@
 import { getShapeshiftingPreset, SHAPESHIFTING_PRESET_KEYS } from './shapeshifting/shapeshifting_presets.js'
+import { DSATokenDocument } from '../hooks/token.js'
 
 const { mergeObject, getProperty, setProperty, deepClone } = foundry.utils
 
@@ -286,8 +287,12 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
     static async _deleteShapeshiftEffect(shapeshift, ...actors) {
         const parent = shapeshift.parent?.documentName === 'Actor' ? shapeshift.parent : null;
-        const owner = [parent, ...actors].find(actor => actor?.effects?.has(shapeshift.id));
-        if (owner) await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+        const owners = [parent, ...actors].filter((actor, index, candidates) => {
+            return actor?.effects?.has(shapeshift.id) && candidates.findIndex(candidate => candidate?.uuid === actor.uuid) === index;
+        });
+        for (const owner of owners) {
+            await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+        }
     }
 
     static async finish_shapeshift(source, target, data, sourceProperties, remote = false) {
@@ -397,11 +402,11 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             const tokenData = {
                 x: source.token.x,
                 y: source.token.y,
-                elevation: source.token.elevation,
                 actorLink: false,
                 name: targetData.name,
                 delta: targetData,
             }
+            DSATokenDocument.applySourceTokenPlacement(source.token, tokenData);
             if (keepToken) {
                 mergeObject(tokenData, {
                     width: sourceData.prototypeToken.width,
@@ -516,10 +521,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             const tokenData = {
                 x: actor.token.x,
                 y: actor.token.y,
-                elevation: actor.token.elevation,
                 actorLink: false,
                 delta,
             }
+            DSATokenDocument.applySourceTokenPlacement(actor.token, tokenData);
 
             const tempToken = await original.getTokenDocument(tokenData, { parent: canvas.scene })
             const createdToken = await TokenDocument.implementation.create(tempToken, { parent: canvas.scene });

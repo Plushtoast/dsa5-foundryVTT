@@ -1,3 +1,5 @@
+import CompanionHotbar from './companion-hotbar.js';
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -25,7 +27,8 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
 
     static PARTS = {
         main: {
-            template: "systems/dsa5/templates/actors/companions/companion-skill-selection.hbs"
+            template: "systems/dsa5/templates/actors/companions/companion-skill-selection.hbs",
+            scrollable: ['.skill-selection-categories']
         }
     };
 
@@ -41,7 +44,8 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
             { label: 'COMPANIONS.SkillSelection.FamiliarAbilities', items: [] },
             { label: 'COMPANIONS.SkillSelection.HomunculusAbilities', items: [] },
             { label: 'COMPANIONS.Trick.label', items: [] },
-            { label: 'specialAbilities', items: [] }
+            { label: 'specialAbilities', items: [] },
+            ...Object.values(CompanionHotbar.ROLLABLE_CATEGORIES).map(({ label }) => ({ label, items: [] }))
         ];
 
         const categoryMap = {
@@ -51,11 +55,17 @@ export class CompanionSkillSelectionApp extends HandlebarsApplicationMixin(Appli
             'specialability:animal': context.categories[3],
         };
 
+        const rollableCategoryMap = Object.keys(CompanionHotbar.ROLLABLE_CATEGORIES).reduce((categories, type, index) => {
+            categories[type] = context.categories[index + 4];
+            return categories;
+        }, {});
+
         for (const item of this.companion.items) {
             if (savedHotbarIds.has(item.id)) hotbarItems.set(item.id, item);
 
             const subType = item.type === 'trait' ? item.system?.traitType?.value : item.system?.category?.value;
             categoryMap[`${item.type}:${subType}`]?.items.push(item);
+            rollableCategoryMap[item.type]?.items.push(item);
         }
 
         context.hotbarRows = [[], []];

@@ -186,6 +186,7 @@ Hooks.once('ready', () => {
           notStrict: true,
         },
         { label: 'distribution', attr: 'distribution', type: 'text' },
+        { label: 'requirements', attr: 'requirements.value', type: 'text' },
       ],
       liturgy: [
         {

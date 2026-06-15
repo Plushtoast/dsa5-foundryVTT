@@ -749,6 +749,7 @@
       "RemoveSpecies": "Remove species",
       "ShortPrefix": "Training:",
       "SpeciesChangeHint": "Change species",
+      "SpeciesSelectHint": "Choose the species for {name}. Trick and training modifiers as well as available training modules depend on the selected species.",
       "Tab": "Training",
       "TabName": "Training",
       "TeachBtn": "Train",
@@ -1333,77 +1334,77 @@
       "5": "usury (400%)"
     },
     "QUALITY": {
-      "0": "QS 6: exceptional / noble / special stock",
-      "1": "QS 5: very good / well kept / well stocked",
-      "2": "QS 4: solid / clean / normal",
-      "3": "QS 3: simple / decent",
-      "4": "QS 2: modest / plain / questionable",
-      "5": "QS 1: poor / grimy / squalid"
+      "5": "exceptional / noble / special stock",
+      "4": "very good / well kept / well stocked",
+      "3": "solid / clean / normal",
+      "2": "simple / decent",
+      "1": "modest / plain / questionable",
+      "0": "poor / grimy / squalid"
     },
     "QUALITY_BY_KIND": {
       "crafts": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "healers": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "inns": {
-        "0": "QS 6: noble",
-        "1": "QS 5: good, clean",
-        "2": "QS 4: solid, clean",
-        "3": "QS 3: simple, questionable",
-        "4": "QS 2: plain, questionable",
-        "5": "QS 1: plain, squalid"
+        "0": "noble",
+        "1": "good, clean",
+        "2": "solid, clean",
+        "3": "simple, questionable",
+        "4": "plain, questionable",
+        "5": "plain, squalid"
       },
       "merchants": {
-        "0": "QS 6: special stock, good",
-        "1": "QS 5: well stocked, very good",
-        "2": "QS 4: normal stock, solid",
-        "3": "QS 3: simple stock, mediocre",
-        "4": "QS 2: mediocre stock, plain",
-        "5": "QS 1: poor stock, plain"
+        "0": "special stock, good",
+        "1": "well stocked, very good",
+        "2": "normal stock, solid",
+        "3": "simple stock, mediocre",
+        "4": "mediocre stock, plain",
+        "5": "poor stock, plain"
       },
       "services": {
-        "0": "QS 6: exceptional",
-        "1": "QS 5: very good",
-        "2": "QS 4: solid",
-        "3": "QS 3: simple",
-        "4": "QS 2: mediocre",
-        "5": "QS 1: poor"
+        "0": "exceptional",
+        "1": "very good",
+        "2": "solid",
+        "3": "simple",
+        "4": "mediocre",
+        "5": "poor"
       },
       "taverns": {
-        "0": "QS 6: noble",
-        "1": "QS 5: well kept",
-        "2": "QS 4: clean",
-        "3": "QS 3: simple",
-        "4": "QS 2: shabby",
-        "5": "QS 1: grimy"
+        "0": "noble",
+        "1": "well kept",
+        "2": "clean",
+        "3": "simple",
+        "4": "shabby",
+        "5": "grimy"
       },
       "temples": {
-        "0": "QS 6: exceptional / noble",
-        "1": "QS 5: very good / well kept",
-        "2": "QS 4: solid / clean",
-        "3": "QS 3: simple / decent",
-        "4": "QS 2: modest / questionable",
-        "5": "QS 1: poor / squalid"
+        "0": "exceptional / noble",
+        "1": "very good / well kept",
+        "2": "solid / clean",
+        "3": "simple / decent",
+        "4": "modest / questionable",
+        "5": "poor / squalid"
       },
       "travellers": {
-        "0": "QS 6: exceptional / noble",
-        "1": "QS 5: very good / well kept",
-        "2": "QS 4: solid / clean",
-        "3": "QS 3: simple / decent",
-        "4": "QS 2: modest / questionable",
-        "5": "QS 1: poor / squalid"
+        "0": "exceptional / noble",
+        "1": "very good / well kept",
+        "2": "solid / clean",
+        "3": "simple / decent",
+        "4": "modest / questionable",
+        "5": "poor / squalid"
       }
     },
     "SelectDetail": "Select city detail",
@@ -1441,16 +1442,19 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Link a journal entry page UUID.",
-            "label": "Page UUID"
+            "hint": "Link any document UUID.",
+            "label": "Document UUID"
+          },
+          "visible": {
+            "label": "Visible to Players"
           }
         },
         "location": {
           "label": "Location"
         },
         "objectives": {
-          "done": {
-            "label": "Completed"
+          "status": {
+            "label": "Status"
           },
           "text": {
             "label": "Objective"
@@ -1495,11 +1499,13 @@
     },
     "STATUS": {
       "0": "Open",
-      "1": "Ended"
+      "1": "Ended",
+      "2": "Failed"
     },
     "SelectQuest": "Choose a quest",
     "SelectQuestHint": "Show objectives, notes, and related references for the current adventure.",
-    "addLinkedPage": "Add linked page",
+    "addLinkedDocument": "Add linked document",
+    "addLinkedPage": "Add linked document",
     "addObjective": "Add objective",
     "completionDate": "Ended",
     "createQuest": "Create quest entry",
@@ -1510,13 +1516,18 @@
       "hint": "Select journals with quest entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)",
       "label": "Quest Journals"
     },
-    "linkedPages": "Linked Pages",
+    "linkedDocuments": "Linked Documents",
+    "linkedPages": "Linked Documents",
     "missingLink": "Missing",
     "newEntryPlaceholder": "New Quest",
     "newObjectivePlaceholder": "New Objective",
-    "noLinkedPages": "No linked pages.",
+    "noLinkedDocuments": "No linked documents.",
+    "noLinkedPages": "No linked documents.",
     "noObjectives": "No objectives yet.",
     "objectives": "Objectives",
+    "objectiveStateDone": "Mark failed",
+    "objectiveStateFailed": "Mark not done",
+    "objectiveStateOpen": "Mark completed",
     "playerOwners": "Assigned players",
     "showInQuestlog": "Show in quests",
     "showInQuestlogHint": "The quest entries will be available in the quests tab of the calendar picker according to their visibility.",
@@ -1526,8 +1537,10 @@
     "targetDate": "Target",
     "timeline": "Timeline",
     "title": "Quests",
+    "toggleLinkedDocumentVisibility": "Toggle document visibility",
     "toggleObjectiveDone": "Toggle objective completion",
     "toggleVisibility": "Toggle player visibility",
+    "unknownDocumentType": "Document",
     "ungrouped": "Unsorted"
   },
   "DSAREGEX": {
@@ -1806,6 +1819,9 @@
     "createEventsJournal": "Create Events Journal",
     "createNewGroup": "Create new group",
     "deploy": "Deploy Members",
+    "depotPermissions": "Depot Permissions",
+    "depotPermissionsHint": "Configure which players can access this depot. Checked players can open the depot and trade with it.",
+    "depotPermissionsWarning": "Some players lack access to this depot.",
     "depotHint": "A depot is a shared inventory for the group. It can represent a storage chest, a vehicle, a player base, a companion carrying supplies, or any other shared container.",
     "dropLocationsHint": "Drop a vehicle, merchant, or loot actor here to add it as a depot.",
     "dropMemberHint": "Drop a character, NPC or creature here to add it to the group.",
@@ -1821,6 +1837,7 @@
     "noExistingGroups": "No existing group sheets available",
     "noGroupInGroup": "A group actor cannot be added as a member of another group.",
     "noLocations": "No depots yet. Drag a vehicle, merchant, or loot actor to add one.",
+    "noLootDepots": "No unlocked loot depot available. Add a loot depot on the group sheet or unlock an existing one.",
     "noMembers": "No members yet. Drag actors onto this sheet to add them.",
     "noSkills": "No skills available. Add members to the group first.",
     "notes": "Notes",
@@ -1985,7 +2002,8 @@
         "targetCategory.value": "Living creatures..."
       },
       "specialability": {
-        "distribution": "Witch..."
+        "distribution": "Witch...",
+        "requirements.value": "Earthencraft..."
       },
       "spell": {
         "distribution.value": "Witch...",
@@ -2827,6 +2845,7 @@
     "Dropdown": "Details",
     "DuplicateItem": "Duplicate",
     "EditItem": "Edit",
+    "DropMoveFromSourceHint": "Hold Alt to move and delete from source actor",
     "EquipItem": "Equip",
     "EquipItemOffHand": "Equip (Off-Hand)",
     "IgnoreWeaponHandLimits": "Ignore hand limits",
@@ -3258,6 +3277,14 @@
     "conjuringSpells": "Possible spells for the conjuring",
     "dragLink": "Drag & drop actor e.g. for shapeshifting and summoning",
     "effectVariant": "Alternative effect like e.g. a second or third attack",
+    "enricherRq": "Requests a skill, spell or attribute roll",
+    "enricherGc": "Requests a group check",
+    "enricherCh": "Requests a 3d20 check",
+    "enricherAP": "Awards adventure points",
+    "enricherPay": "Lets the selected heroes pay the given amount",
+    "enricherGetPaid": "Pays the given amount to the selected heroes",
+    "enricherInfoRoll": "Rolls the linked information check",
+    "enricherInfoPost": "Posts the information to chat",
     "foreignSpell": "Unfamiliar tradition spells can not be modified",
     "oneQualityPerLine": "Describe one quality level each line",
     "onlyGM": "Only visible to the gamemaster.",

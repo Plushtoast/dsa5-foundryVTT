@@ -2,6 +2,24 @@ import { MerchantSheetMixin } from './mixins/merchantmixin.js';
 import ActorSheetdsa5Creature from './creature-sheet.js';
 
 export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Creature) {
+  static MERCHANTPARTS = {
+    merchant: {
+      ...super.MERCHANTPARTS.merchant,
+      notes: {
+        template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
+        scrollable: [''],
+      },
+    },
+    loot: super.MERCHANTPARTS.loot,
+    epic: {
+      ...super.MERCHANTPARTS.epic,
+      notes: {
+        template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
+        scrollable: [''],
+      },
+    },
+  };
+
   static PARTS = {
     sheet: super.PARTS.sheet,
     header: {

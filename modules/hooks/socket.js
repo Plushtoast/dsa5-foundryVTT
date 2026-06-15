@@ -19,6 +19,7 @@ import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
 import TableEffectActiveEffects from '../tables/tableEffectActiveEffects.js';
+import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
@@ -93,6 +94,9 @@ export function connectSocket() {
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
         break;
+      case 'queryResult':
+        await QueryOrchestrator.handleResult(data.payload);
+        break;
       case 'deleteEffectsByUuid':
         MaintainedEffects.deleteByUuid(data.payload?.uuids || []);
         break;
@@ -106,7 +110,8 @@ export function connectSocket() {
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
+        if (data.payload.update) await GroupCheck.updateGCResult(data.payload.messageId, data.payload.update);
+        else await GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTrackerId':
         APTracker.receiveSocketEvent(data);

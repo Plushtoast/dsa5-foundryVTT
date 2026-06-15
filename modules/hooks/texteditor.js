@@ -30,6 +30,14 @@ export function setEnrichers() {
     GetPaid: _loc('PAYMENT.getPaidButton'),
     AP: _loc('MASTER.awardXP'),
   };
+  const tooltips = {
+    Rq: _loc('TT.enricherRq'),
+    Gc: _loc('TT.enricherGc'),
+    Ch: _loc('TT.enricherCh'),
+    AP: _loc('TT.enricherAP'),
+    Pay: _loc('TT.enricherPay'),
+    GetPaid: _loc('TT.enricherGetPaid'),
+  };
 
   if (!DSA5.statusRegex) {
     const effects = DSA5.statusEffects.map((x) => _loc(x.name).toLowerCase());
@@ -57,7 +65,7 @@ export function setEnrichers() {
         }
 
         return $(
-          `<a class="roll-button request-${rolls[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`,
+          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`,
         )[0];
       },
     },
@@ -69,7 +77,7 @@ export function setEnrichers() {
         const mod = Number(str.match(payRegex)[0]);
         const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : payStrings[type];
         return $(
-          `<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
+          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
         )[0];
       },
     },

@@ -1,6 +1,7 @@
 import { SUMMONING_PRESETS } from './summoning_presets.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TokenScatter from '../../animation/token-scatter.js';
+import { DSATokenDocument } from '../../hooks/token.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -155,6 +156,8 @@ export class SummoningExecutor {
   }
 
   static async _buildTokenDocument(creature, summoner, position, config, scene) {
+    const summonerToken = summoner?.token ?? summoner?.getActiveTokens?.()?.[0]?.document;
+
     const tokenDocument = await creature.getTokenDocument({
       name: creature.name,
       x: position.x,
@@ -169,6 +172,7 @@ export class SummoningExecutor {
     }, { parent: scene });
 
     const tokenData = tokenDocument.toObject?.() ?? tokenDocument;
+    DSATokenDocument.applySourceTokenPlacement(summonerToken, tokenData);
     return mergeObject(tokenData, config.tokenOverrides || {}, { inplace: false });
   }
 
@@ -263,20 +267,18 @@ export class SummoningExecutor {
   static async _scatterTokens(tokens, position, scene, range) {
     const gridSize = scene.grid.size;
     const positions = TokenScatter.scatterPositions(position.x, position.y, tokens.length, gridSize * range);
-    const updates = [];
+    const targets = [];
 
     for (let i = 0; i < tokens.length; i++) {
       const snapped = scene.grid.getSnappedPoint(positions[i], { mode: CONST.GRID_SNAPPING_MODES.TOP_LEFT_VERTEX });
-      updates.push({
-        _id: tokens[i].id,
-        x: snapped.x,
-        y: snapped.y,
-      });
+      targets.push({ x: snapped.x, y: snapped.y });
     }
 
-    if (updates.length) {
-      await scene.updateEmbeddedDocuments("Token", updates);
-    }
+    if (!targets.length) return;
+
+    await TokenScatter.animateThenPersist(tokens, targets, {
+      persist: (token, target) => token.update({ x: target.x, y: target.y }),
+    });
   }
 
   static async _createTrackingEffect(summoner, tokens, scene, creature, overrideData = {}) {
