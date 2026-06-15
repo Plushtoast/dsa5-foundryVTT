@@ -2027,11 +2027,10 @@ export default class Actordsa5 extends Actor {
       try {
         const effect = await fromUuid(uuid);
         const charges = effect?.system?.charges;
-        const value = Number(charges?.value);
         if (effect.disabled) return;
-        if (charges && (!Number.isFinite(value) || value <= 0)) return;
+        if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
         await TableEffectActiveEffects.applyAfterUse(effect);
-        if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+        if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
         await effect.consumeCharges(1);
       } catch (e) {
         console.error('Failed to consume effect charges', uuid, e);
