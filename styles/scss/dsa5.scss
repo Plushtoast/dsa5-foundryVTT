@@ -16,6 +16,13 @@
   --table-title-bg: linear-gradient(90deg, rgba(188, 136, 111, 1) 0%, rgba(255, 255, 255, 0) 100%);
   --oddColor: rgba(0, 0, 0, 0.1);
   --copiedBG: rgba(255, 255, 255, 0.6);
+  --dsa-danger: #8b0000;
+  --dsa-link: #b93d00;
+  --dsa-surface-elevated: #ffffff;
+  --dsa-text-inverse: #ffffff;
+  --dsa-muted-bg: rgba(0, 0, 0, 0.05);
+  --dsa-muted-border: rgba(0, 0, 0, 0.1);
+  --dsa-underline-border: rgba(0, 0, 0, 0.2);
 }
 
 @font-face {
@@ -102,14 +109,14 @@ body {
   /*text-rendering: geometricprecision;*/
   .dsa5 {
     .icon-gray.button.icon {
-      color: #4d473b;
-      background: #d5cfbf;
-      border-color: #b8af9a;
+      color: var(--bg-contrast-color);
+      background: var(--copiedBG);
+      border-color: var(--border-color);
       list-style: none;
     }
 
     .icon-red.button.icon {
-      color: #ffffff;
+      color: var(--dsa-text-inverse);
       background: #9e2f24;
       border-color: #7f241b;
     }
@@ -121,7 +128,7 @@ body {
     }
 
     .icon-green.button.icon {
-      color: #ffffff;
+      color: var(--dsa-text-inverse);
       background: #1d7a4f;
       border-color: #12593a;
     }
@@ -857,7 +864,7 @@ select[multiple] option {
 }
 
 .directory .directory-list .directory-item.folder .context {
-  color: black;
+  color: var(--bg-contrast-color);
 }
 
 .flexgrow-0 {
@@ -1349,17 +1356,17 @@ small {
 }
 
 .selectableRow {
-  border: 1px solid black;
+  border: 1px solid var(--border-color);
   cursor: pointer;
 }
 
 .row-section.selectableRow.tableOdd:hover {
-  background-color: white;
+  background-color: var(--dsa-surface-elevated);
 }
 
 .selectableRow {
   &:hover {
-    background-color: white;
+    background-color: var(--dsa-surface-elevated);
   }
 
   &.selected {
@@ -1373,7 +1380,7 @@ a.img-entity-link {
   display: block;
 
   &:hover {
-    background: white;
+    background: var(--dsa-surface-elevated);
   }
 }
 
@@ -1709,7 +1716,7 @@ a.img-entity-link {
 }
 
 .directory .directory-list .directory-item.active {
-  border-color: black;
+  border-color: var(--border-color);
 }
 
 .popoutImage {
@@ -1780,7 +1787,7 @@ a.img-entity-link {
   content: '\f0da';
   font-family: 'Font Awesome 7 Pro';
   font-weight: 900;
-  color: darkred;
+  color: var(--dsa-danger);
   position: relative;
   left: -5px;
 }
@@ -1827,7 +1834,7 @@ a.img-entity-link {
 }
 
 .dragSortMarker {
-  border-top: 5px solid darkred;
+  border-top: 5px solid var(--dsa-danger);
 }
 
 .chatModifiers .expand-mods {
@@ -2338,7 +2345,7 @@ input[type='search'] {
   }
 
   &.dieSelected span {
-    border: 1px solid black;
+    border: 1px solid var(--border-color);
   }
 }
 
@@ -2357,7 +2364,7 @@ input[type='search'] {
   border: 1px solid transparent;
 
   &:hover {
-    border-color: black;
+    border-color: var(--border-color);
   }
 }
 
@@ -2383,7 +2390,7 @@ input[type='search'] {
     top: -10px;
     z-index: 20;
     width: 224px;
-    border: 1px solid black;
+    border: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.7);
     padding: 8px;
     margin: 0;
@@ -2439,7 +2446,7 @@ input[type='search'] {
     border: 1px solid transparent;
 
     &:hover {
-      border: 1px solid black;
+      border: 1px solid var(--border-color);
     }
   }
 
@@ -2857,7 +2864,7 @@ h2 {
 }
 
 .botch-roll {
-  color: darkred;
+  color: var(--dsa-danger);
 }
 
 .detailbox {
@@ -2875,7 +2882,7 @@ h2 {
   padding-top: 74px;
   bottom: 100%;
   width: 100%;
-  color: black;
+  color: var(--bg-contrast-color);
   line-height: 26px;
 
   ul {
@@ -2922,7 +2929,7 @@ h2 {
   text-align: center;
   line-height: 72px;
   font-family: 'Andalus';
-  color: darkred;
+  color: var(--dsa-danger);
   position: relative;
   margin-bottom: 10px;
   font-weight: bold;
@@ -3184,7 +3191,7 @@ a {
     transition: all ease-in-out 0.3s;
 
     &:hover {
-      background-color: black;
+      background-color: var(--bg-contrast-color);
     }
   }
 }
@@ -3320,7 +3327,8 @@ input[type='checkbox'].smallBox {
 .dsajournal .compendium,
 .libItem .compendium {
   font-size: 10px;
-  color: #696767;
+  color: var(--bg-contrast-color);
+  opacity: 0.55;
   line-height: 10px;
   text-align: center;
   pointer-events: none;
@@ -3427,8 +3435,8 @@ select.noAppearance {
   left: 0px;
   height: 24px;
   bottom: -4px;
-  border: 1px solid darkred;
-  background-color: white;
+  border: 1px solid var(--dsa-danger);
+  background-color: var(--dsa-surface-elevated);
   cursor: pointer;
   box-shadow: 2px 2px 6px black;
   z-index: 1;
@@ -3468,7 +3476,7 @@ select.noAppearance {
 
   .fa-minus,
   .fa-angles-down {
-    color: darkred;
+    color: var(--dsa-danger);
   }
 }
 
@@ -3484,8 +3492,8 @@ select.noAppearance {
 
     &+.select2 {
       width: 8%;
-      background: #efe4e4;
-      color: black;
+      background: var(--bg-color);
+      color: var(--bg-contrast-color);
       position: absolute;
 
       .select2-selection__rendered {
@@ -3534,7 +3542,7 @@ select.noAppearance {
 
   .fa-toggle-off,
   .fa-times {
-    color: darkred;
+    color: var(--dsa-danger);
   }
 
   .tocList {
@@ -3597,7 +3605,7 @@ select.noAppearance {
 
 .subChapter {
   i:before {
-    color: darkred;
+    color: var(--dsa-danger);
     margin-right: 5px;
   }
 }
@@ -3810,7 +3818,7 @@ select.noAppearance {
   font-size: 12px;
   float: right;
   overflow: hidden;
-  border: 1px solid black;
+  border: 1px solid var(--border-color);
 }
 
 .tokenQuickHot {
@@ -3901,7 +3909,7 @@ select.noAppearance {
   font-size: 14px;
   width: var(--tokenQuickhotsize);
   height: var(--tokenQuickhotsize);
-  border: 1px solid black;
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   pointer-events: all;
   background-size: cover;
@@ -3960,7 +3968,7 @@ select.noAppearance {
 
     .skillgm,
     .skill {
-      color: black;
+      color: var(--bg-contrast-color);
 
       &.body {
         background: rgb(79, 109, 101);
@@ -4340,7 +4348,7 @@ select.noAppearance {
 
 .emphasize {
   color: white;
-  background-color: darkred;
+  background-color: var(--dsa-danger);
 
   input::placeholder {
     color: white;
@@ -4348,7 +4356,7 @@ select.noAppearance {
 }
 
 input[type='text'].emphasize {
-  border-color: darkred;
+  border-color: var(--dsa-danger);
 }
 
 .emphasize2 {
@@ -4484,12 +4492,12 @@ input[type='text'].emphasize {
   margin-left: 25px;
 
   div i {
-    color: darkred;
+    color: var(--dsa-danger);
   }
 }
 
 .skill-test .targets div i {
-  color: darkred;
+  color: var(--dsa-danger);
 }
 
 .targets .addTarget {
@@ -4531,7 +4539,7 @@ input[type='text'].emphasize {
   }
 
   .fa-toggle-off {
-    color: darkred;
+    color: var(--dsa-danger);
     margin-right: 6px;
   }
 
@@ -4545,8 +4553,8 @@ input[type='text'].emphasize {
 }
 
 .searchMatch {
-  background-color: yellow;
-  color: black;
+  background-color: var(--copiedBG);
+  color: var(--bg-contrast-color);
 }
 
 .searchLines {
@@ -4561,13 +4569,13 @@ input[type='text'].emphasize {
     position: absolute;
     width: 100%;
     height: 2px;
-    background-color: white;
+    background-color: var(--dsa-surface-elevated);
     pointer-events: none;
   }
 }
 
 .tinyHudIcons {
-  border: 1px solid black;
+  border: 1px solid var(--border-color);
   margin-left: 1px;
   width: 40px;
   border-radius: 5px;
@@ -5138,7 +5146,7 @@ input[type='checkbox'].autoCheckbox {
 }
 
 .fxmaster .window-content .directory-item .config input[type='text'] {
-  color: black;
+  color: var(--bg-contrast-color);
 }
 
 .ammo-selector {
@@ -5199,8 +5207,8 @@ input[type='checkbox'].autoCheckbox {
     }
 
     &:hover em {
-      background-color: white;
-      color: black;
+      background-color: var(--dsa-surface-elevated);
+      color: var(--bg-contrast-color);
     }
   }
 }
@@ -5466,8 +5474,8 @@ input[type='checkbox'].autoCheckbox {
 
 .select2-container {
   .select2-dropdown {
-    background: #efe4e4;
-    color: black;
+    background: var(--bg-color);
+    color: var(--bg-contrast-color);
   }
 }
 
@@ -5529,6 +5537,7 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
+@include meta.load-css('layout.scss');
 @include meta.load-css('theme.scss');
 @include meta.load-css('personae.scss');
 @include meta.load-css('citydetails.scss');

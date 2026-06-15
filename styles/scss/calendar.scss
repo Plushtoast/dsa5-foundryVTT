@@ -1,8 +1,3 @@
-.dark-theme .event-card {
-  --muted-fg: #94a3b8;
-  --ring: rgba(96, 165, 250, 0.35);
-}
-
 .dsaCalendarPicker select,
 .dsaCalendarPicker select option {
   background-color: var(--bg-color);
@@ -11,13 +6,13 @@
 
 .dsaCalendarPicker select option:checked {
   background-color: var(--dsadesign1);
-  color: white;
+  color: var(--dsa-text-inverse);
 }
 
 .event-card {
   --muted-fg: #475569;
   --ring: rgba(37, 99, 235, 0.25);
-  --gradient-color: rgba(188, 136, 111, 0.8);
+  --gradient-color: var(--table-title-bg);
 
   display: grid;
   grid-template-columns: auto 1fr;

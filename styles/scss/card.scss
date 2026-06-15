@@ -18,12 +18,10 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    border: 1px solid rgba(88, 67, 45, 0.28);
+    border: 1px solid var(--border-color);
     border-radius: 2px;
-    background:
-      linear-gradient(180deg, rgba(255, 251, 244, 0.96) 0%, rgba(248, 240, 226, 0.92) 100%),
-      rgba(255, 255, 255, 0.7);
-    box-shadow: 0 8px 22px rgba(57, 37, 17, 0.08);
+    background: var(--sheet-bg);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
   }
 
   .dsa-card-panel__head {
@@ -66,7 +64,7 @@
     flex-wrap: wrap;
 
     .dialog-button {
-      color: rgba(65, 48, 33, 0.9);
+      color: var(--bg-contrast-color);
       transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
       &:hover,
@@ -95,13 +93,15 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(83, 57, 30, 0.72);
+    color: var(--bg-contrast-color);
+    opacity: 0.72;
   }
 
   .dsa-card-panel__copy {
     font-size: 12px;
     line-height: 1.45;
-    color: rgba(65, 48, 33, 0.82);
+    color: var(--bg-contrast-color);
+    opacity: 0.82;
   }
 
   .dsa-card-content {
@@ -109,7 +109,7 @@
     flex-direction: column;
     gap: 10px;
     min-width: 0;
-    color: rgba(65, 48, 33, 0.9);
+    color: var(--bg-contrast-color);
     line-height: 1.5;
 
     > :first-child {
@@ -132,9 +132,9 @@
     align-items: center;
     gap: 12px;
     min-width: 0;
-    border: 1px solid rgba(88, 67, 45, 0.18);
+    border: 1px solid var(--border-color);
     border-radius: 2px;
-    background: rgba(255, 251, 244, 0.72);
+    background: var(--sheet-bg);
 
     p {
       margin: 0;

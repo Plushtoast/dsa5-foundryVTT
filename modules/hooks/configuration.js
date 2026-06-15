@@ -1,5 +1,6 @@
 import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
@@ -15,10 +16,6 @@ export function setupConfiguration() {
     }
     return moneyChoices;
   };
-  const styles = duplicate(DSA5.styles);
-  for (const key of Object.keys(styles)) {
-    styles[key] = _loc(styles[key]);
-  }
   const settings = {
     tabsOutsideSheet: {
       name: 'DSASETTINGS.tabsOutsideSheet',
@@ -503,9 +500,15 @@ export function setupConfiguration() {
       config: true,
       default: 'dsa5-immersive',
       type: String,
-      choices: styles,
+      choices: DSA5Skin.getSettingChoices,
       onChange: async (val) => {
-        $('body').removeClass(Object.keys(styles).join(' ')).addClass(val);
+        if (DSA5Skin.isDarkColorScheme() && val !== DSA5Skin.SKIN_NAKED) {
+          ui.notifications.warn(_loc('DSAError.darkModeSkinRestricted'));
+          await game.settings.set('dsa5', 'globalStyle', DSA5Skin.SKIN_NAKED);
+          DSA5Skin.applyBodyClasses(DSA5Skin.SKIN_NAKED);
+          return;
+        }
+        DSA5Skin.applyBodyClasses(val);
       },
     },
     selfControlOnPain: {

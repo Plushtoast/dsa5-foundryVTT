@@ -1,6 +1,7 @@
 import { PatchViewer } from './patchviewer.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import DSA5Skin from '../helpers/skin-dsa5.js';
 
 const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
@@ -111,30 +112,7 @@ function betaWarning(version, version_specific = '', indef = false) {
 }
 
 async function setDefaultSkin() {
-  const uiConfig = game.settings.get('core', 'uiConfig');
-  const dsaSkin = game.settings.get('dsa5', 'globalStyle');
-
-  if (!Object.hasOwn(DSA5.baseStyles ?? {}, dsaSkin)) return;
-
-  const setDefaults = dsaSkin !== 'dsa5-immersive' || uiConfig.colorScheme.interface !== 'light' || uiConfig.colorScheme.applications !== 'light';
-  if (!setDefaults) return;
-
-  const proceed = await foundry.applications.api.DialogV2.confirm({
-    content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
-    rejectClose: false,
-    modal: true
-  });
-  if (!proceed) return;
-
-  await game.settings.set('dsa5', 'globalStyle', 'dsa5-immersive');
-  await game.settings.set('core', 'uiConfig', {
-    ...uiConfig,
-    colorScheme: {
-      ...uiConfig.colorScheme,
-      interface: 'light',
-      applications: 'light',
-    },
-  });
+  await DSA5Skin.promptFixCombination();
 }
 
 export default function migrateWorld() {

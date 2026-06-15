@@ -1,6 +1,6 @@
 /* Common Variables */
 :root {
-  --personae-gold: #937b48;
+  --personae-gold: var(--dsadesign1);
   --personae-gold-alpha-1: rgba(147, 123, 72, 0.1);
   --personae-gold-alpha-2: rgba(147, 123, 72, 0.2);
   --personae-gold-alpha-3: rgba(147, 123, 72, 0.3);
@@ -701,7 +701,7 @@
 }
 
 /* Dark Theme */
-.dark-theme {
+body.theme-dark {
   .personae-list-column,
   .personae-details-column {
     background: rgba(255, 255, 255, 0.05);
@@ -967,7 +967,7 @@
 }
 
 /* Dark Theme Adjustments */
-.dark-theme {
+body.theme-dark {
   .relationship-slider {
     &::-webkit-slider-thumb {
       background: var(--sheet-background);

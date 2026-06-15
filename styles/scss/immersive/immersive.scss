@@ -33,11 +33,6 @@
     }*/
 
   .vertical-tabs {
-    &.creature-sheet {
-      .tabs.right {
-        left: calc(100% - 10px);
-      }
-    }
     .tabs.right {
       //left: calc(100% - 23px);
 
@@ -85,13 +80,6 @@
   }
 
   form.dsa5.item-sheet {
-    padding-left: 10px;
-    padding-right: 10px;
-
-    [data-tab='details'] {
-      gap: 3px;
-    }
-
     .form-group {
       & > label {
         background: rgb(188, 136, 111);
@@ -157,41 +145,14 @@
       a.content-link,
       a.inline-roll {
         border: none;
-        color: #b93d00;
+        color: var(--dsa-link);
         font-weight: bold;
         background: none;
 
         i {
-          color: #b93d00;
+          color: var(--dsa-link);
         }
       }
-    }
-
-    &.dsajournal .window-content {
-      padding: 0 40px;
-    }
-
-    &.bookWizardsheet,
-    &.dsajournal .window-content {
-      .video-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-
-        iframe {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }
-      }
-    }
-
-    &.dialog .window-content {
-      padding-top: 14px;
-      padding-bottom: 14px;
     }
 
     &.npc-sheet .window-header,
@@ -219,10 +180,6 @@
       height: 40px;
       width: 100%;
       background-size: 100% 40px;
-    }
-
-    &.creature-sheet .window-content {
-      box-shadow: none;
     }
 
     &.monarch {
@@ -332,42 +289,11 @@
       margin-right: 25px;
     }
 
-    &.actor .window-content,
-    &.item .window-content {
-      margin-left: 15px;
-      margin-right: 15px;
-    }
-
     &.dsa5Decent:after {
       background: none;
       margin: 0;
       padding: 0;
       overflow: visible;
-    }
-
-    &.initTracker {
-      &::after,
-      .window-content {
-        background: none;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-      }
-    }
-
-    &.tokenQuickHot {
-      &::after,
-      .window-content {
-        background: none;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-      }
-    }
-
-    &.initTracker::after,
-    &.tokenQuickHot::after {
-      content: none;
     }
 
     &.dsa5Decent {
@@ -529,12 +455,12 @@
     .chat-condition,
     a.inline-roll {
       border: none;
-      color: #b93d00;
+      color: var(--dsa-link);
       font-weight: bold;
       background: none;
 
       i {
-        color: #b93d00;
+        color: var(--dsa-link);
       }
     }
   }
@@ -709,13 +635,5 @@
 
   textarea:read-only {
     color: var(--input-text-color);
-  }
-}
-
-body.theme-dark.dsa5-immersive {
-  .application,
-  .window-app {
-    --input-text-color: #2b2a25;
-    --input-background-color: rgba(0, 0, 0, 0.05);
   }
 }

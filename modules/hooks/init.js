@@ -38,6 +38,7 @@ import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
 import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
@@ -169,13 +170,11 @@ Hooks.once('init', () => {
   mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons);
 
   DSA5SoundEffect.prepareSoundEffects();
-
-  let style = game.settings.get('dsa5', 'globalStyle');
-  if (!DSA5.styles[style]) style = Object.keys(DSA5.styles)[0];
-  $('body').addClass(style);
 });
 
 Hooks.once('setup', () => {
+  DSA5Skin.registerHooks();
+
   if (!['de', 'en'].includes(game.i18n.lang)) {
     console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`);
     showForbiddenLanguageDialog();

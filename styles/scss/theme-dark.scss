@@ -1,7 +1,421 @@
-.theme-dark {
+body.theme-dark {
   --oddColor: rgba(255, 255, 255, 0.05);
   --select2bg: #302831;
-  --copiedBG: rgba(11, 10, 19, 0.9);
+  --copiedBG: rgba(255, 255, 255, 0.08);
+  --dsa-danger: #ef5350;
+  --dsa-link: var(--dsadesign1);
+  --dsa-surface-elevated: var(--sheet-bg);
+  --dsa-muted-bg: var(--sheet-bg);
+  --dsa-muted-border: var(--border-color);
+  --dsa-underline-border: var(--border-color);
+  --bg-color: var(--color-dark-2, #23221f);
+  --bg-contrast-color: var(--color-text-light-primary, #e8e6e3);
+  --border-color: rgba(255, 255, 255, 0.18);
+  --button-color: #c4a86a;
+  --sheet-bg: rgba(255, 255, 255, 0.06);
+  --sheet-border: rgba(255, 255, 255, 0.22);
+  --dsadesign1: #c4a86a;
+  --table-title-bg: rgba(196, 168, 106, 0.18);
+  --personae-gold: #c4a86a;
+  --personae-gold-alpha-1: rgba(196, 168, 106, 0.12);
+  --personae-gold-alpha-2: rgba(196, 168, 106, 0.22);
+  --personae-gold-alpha-3: rgba(196, 168, 106, 0.32);
+
+  // ── Core DSA5 ──────────────────────────────────────────────────────────────
+
+  .window-app .window-content,
+  .application .window-content {
+    color: var(--bg-contrast-color);
+  }
+
+  .dsa5 {
+    .icon-gray.button.icon {
+      color: var(--bg-contrast-color);
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-color);
+    }
+
+    .icon-yellow.button.icon {
+      color: #2a2000;
+      background: #c4a050;
+      border-color: #a88430;
+    }
+
+    .icon-red.button.icon {
+      border-color: #c62828;
+    }
+
+    .dsa-info-box {
+      background: var(--sheet-bg);
+      border-color: var(--border-color);
+    }
+
+    .dsa-info-text {
+      color: var(--bg-contrast-color);
+
+      &.darkred {
+        color: var(--dsa-danger);
+      }
+    }
+
+    .underlined-header {
+      border-bottom-color: var(--border-color);
+    }
+
+    .dsa-pip {
+      border-color: var(--border-color);
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .botch-roll,
+    .fokusregel {
+      color: var(--dsa-danger);
+    }
+
+    .specAbs.active {
+      border-color: var(--dsa-danger);
+    }
+
+    .aggroButton,
+    .tinyHudIcons {
+      border-color: var(--border-color);
+    }
+
+    .tinyHudIcons {
+      background: var(--sheet-bg);
+      background-image: none;
+    }
+
+    .itemTooltip {
+      background: var(--sheet-bg);
+      background-image: none;
+      color: var(--bg-contrast-color);
+      border-color: var(--border-color);
+
+      h1 {
+        color: var(--bg-contrast-color);
+      }
+    }
+
+    .libraryImg {
+      background: var(--sheet-bg);
+      background-image: none;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+
+    .quickfind {
+      background: var(--sheet-bg);
+      background-image: none;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      color: var(--bg-contrast-color);
+      padding-top: 15px;
+
+      li:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      li.focus {
+        border-color: var(--dsadesign1);
+      }
+    }
+
+    .searchMatch {
+      background-color: rgba(196, 168, 106, 0.35);
+      color: var(--bg-contrast-color);
+    }
+
+    .searchLines .marker {
+      background-color: var(--dsadesign1);
+    }
+
+    .dsajournal .compendium,
+    .libItem .compendium {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .cards .item {
+      box-shadow: inset 0 0 12px rgba(196, 168, 106, 0.25);
+    }
+
+    .postChatSection {
+      &.maskfield:after {
+        display: none;
+      }
+
+      .postContentChat:hover em {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: var(--bg-contrast-color);
+      }
+    }
+
+    .changes input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    .headerbadgeflex {
+      .tag {
+        color: var(--bg-contrast-color);
+
+        &.highlight {
+          color: var(--dsadesign1);
+        }
+      }
+
+      > span {
+        color: var(--bg-contrast-color);
+      }
+
+      > a:not(.group-attr-icon):not(.schip) {
+        color: var(--bg-contrast-color);
+      }
+    }
+  }
+
+  .vertical-tabs {
+    .tabs.right {
+      button {
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-left: 8px solid transparent;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: var(--dsadesign1);
+        }
+
+        &.active {
+          background: rgba(196, 168, 106, 0.22);
+        }
+      }
+    }
+  }
+
+  .chatpaperfield,
+  .maskfield,
+  .citefield {
+    border-image: none;
+    border: 1px solid var(--border-color);
+    background: var(--sheet-bg);
+    color: var(--bg-contrast-color);
+  }
+
+  .maskfield:after {
+    display: none;
+  }
+
+  .garadanborder,
+  .garadanb,
+  .garadana {
+    border-image: none;
+    border: 1px solid var(--border-color);
+    background: var(--sheet-bg);
+    color: var(--bg-contrast-color);
+  }
+
+  .damaged1 .slot.rar:after,
+  .slot.common:after,
+  .image.rar:after,
+  .image.common:after {
+    display: none;
+  }
+
+  .slot.rar:after {
+    background-image: none;
+  }
+
+  #chat-form textarea,
+  .chat-message {
+    background: var(--bg-color);
+    color: var(--bg-contrast-color);
+    border: 1px solid var(--border-color);
+  }
+
+  .chat-message .message-content {
+    .dsa5.chat-card,
+    .chat-card,
+    .roll-request-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 6px 8px;
+      color: var(--bg-contrast-color);
+    }
+  }
+
+  .chat-message .message-header {
+    background: none;
+    background-image: none;
+    color: var(--bg-contrast-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  #chat a.content-link,
+  #chat .chat-condition,
+  #chat a.inline-roll,
+  .dsajournal a.content-link,
+  .dsajournal a.inline-roll {
+    border: none;
+    color: var(--dsadesign1);
+    font-weight: bold;
+    background: none;
+
+    i {
+      color: var(--dsadesign1);
+    }
+  }
+
+  .dsajournal .chatButton {
+    background: var(--sheet-bg);
+    color: var(--bg-contrast-color);
+    border-color: var(--border-color);
+  }
+
+  .table-title,
+  .label-text,
+  .table-header {
+    background: var(--table-title-bg);
+    color: var(--bg-contrast-color);
+  }
+
+  [class*='darkred'],
+  .darkred {
+    color: var(--dsa-danger);
+  }
+
+  // ── Cards ──────────────────────────────────────────────────────────────────
+
+  .dsa-card-list {
+    > li.selected {
+      box-shadow: inset 0 0 10px 5px var(--personae-gold-alpha-3);
+    }
+  }
+
+  // ── Companions ───────────────────────────────────────────────────────────────
+
+  .dsaCalendarPicker select,
+  .dsaCalendarPicker select option {
+    background-color: var(--bg-color);
+    color: var(--bg-contrast-color);
+  }
+
+  .event-card {
+    --gradient-color: var(--table-title-bg);
+    --muted-fg: rgba(255, 255, 255, 0.55);
+    --ring: rgba(196, 168, 106, 0.35);
+  }
+
+  // ── Companions ───────────────────────────────────────────────────────────────
+
+  .dsa5-companion {
+    .companion-nature-change {
+      color: var(--bg-contrast-color);
+    }
+
+    .companion-effect-badge {
+      color: var(--bg-contrast-color);
+      border-color: var(--border-color);
+    }
+
+    .training-item-details.unavailable,
+    .max-training-box {
+      color: var(--dsa-danger);
+    }
+  }
+
+  // ── Hotbar ───────────────────────────────────────────────────────────────────
+
+  #hotbar.hotbarV4 {
+    --border-color: rgba(255, 255, 255, 0.22);
+    --hover-color: var(--dsadesign1);
+    --bg-transparent: rgba(255, 255, 255, 0.08);
+
+    .effect div {
+      color: var(--bg-contrast-color);
+      text-shadow: none;
+    }
+
+    .longLayout .hSection li .nameContent {
+      color: var(--bg-contrast-color);
+    }
+
+    .hSection {
+      .skillgm,
+      .skill {
+        .nameContent {
+          color: var(--bg-contrast-color);
+        }
+      }
+
+      > li {
+        border-color: var(--border-color);
+
+        &.drag-over {
+          border-color: var(--dsa-danger);
+        }
+      }
+    }
+
+    .hSection li.active,
+    .macro-group.active {
+      border-color: var(--dsadesign1);
+    }
+  }
+
+  .hotbar-sort-manager {
+    .sort-group-toggle .sort-btn.highlight {
+      color: var(--dsa-danger);
+    }
+
+    .sortable-item.drag-over-before {
+      box-shadow: -3px 0 0 0 var(--dsa-danger);
+    }
+
+    .sortable-item.drag-over-after {
+      box-shadow: 3px 0 0 0 var(--dsa-danger);
+    }
+  }
+
+  // ── Patch viewer ─────────────────────────────────────────────────────────────
+
+  .patchviewer h1 a {
+    color: var(--bg-contrast-color);
+  }
+
+  .dsa5-immersive .patchviewer h1 a {
+    color: var(--bg-contrast-color);
+  }
+
+  // ── Init tracker ─────────────────────────────────────────────────────────────
+
+  .initTracker .item-structure {
+    border-color: var(--border-color);
+  }
+
+  // ── Value widgets ────────────────────────────────────────────────────────────
+
+  .vw-pip {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--bg-contrast-color);
+  }
+
+  .vw-pip.vw-active {
+    background: var(--dsa-danger);
+    color: white;
+  }
+
+  // ── Foundry directory fixes ──────────────────────────────────────────────────
+
+  .directory .directory-list .directory-item.folder .context {
+    color: var(--bg-contrast-color);
+  }
+
+  .v-slider-track {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  // ── Select2 ──────────────────────────────────────────────────────────────────
 
   .changes .selMenu {
     & + .select2 {

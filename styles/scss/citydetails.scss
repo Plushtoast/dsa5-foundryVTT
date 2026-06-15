@@ -1,6 +1,6 @@
 .dsa5-citydetails {
-  --color-bg: rgba(255, 250, 234, 0.9);
-  --color-border-light-primary: rgba(199, 178, 145, 0.45);
+  --color-bg: var(--sheet-bg);
+  --color-border-light-primary: var(--border-color);
 
   &.citygen-cards,
   .citygen-cards {

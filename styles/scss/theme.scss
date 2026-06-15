@@ -31,11 +31,11 @@
     }
 
     .dsa-info-box {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--dsa-muted-bg);
         border-radius: 5px;
         padding: 10px 15px;
         margin-bottom: 15px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--dsa-muted-border);
     }
 
     .dsa-info-text {
@@ -46,7 +46,7 @@
         color: var(--color-text-dark-primary);
 
         &.darkred {
-            color: darkred;
+            color: var(--dsa-danger);
             font-weight: bold;
         }
 
@@ -117,7 +117,7 @@
 
     .underlined-header {
         margin: 0 0 10px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid var(--dsa-underline-border);
         font-family: 'Modesto Condensed', sans-serif;
         font-size: 1.2em;
     }
