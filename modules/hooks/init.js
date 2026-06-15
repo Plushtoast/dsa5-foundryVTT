@@ -126,7 +126,6 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/tables/opportunity-attack-card.hbs',
     'systems/dsa5/templates/tables/accidental-attack-defense-card.hbs',
     'systems/dsa5/templates/tables/gear-dropped.hbs',
-    'systems/dsa5/templates/tables/parts/chat-check-marker.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);

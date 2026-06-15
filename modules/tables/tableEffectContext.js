@@ -78,7 +78,7 @@ export default class TableEffectContext {
       source: _loc('table'),
       target: this.applyTargets.map((actor) => actor.name).join(', '),
     });
-    const marker = await TableTemplates.chatCheckMarker(tt);
+    const marker = TableTemplates.chatCheckMarker(tt);
     await this.message.update({
       content: this.message.content.replace(/hideAnchor">/, `hideAnchor">${marker}`),
     });

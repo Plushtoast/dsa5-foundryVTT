@@ -1,9 +1,9 @@
 const { renderTemplate } = foundry.applications.handlebars;
+const { escapeHTML } = foundry.utils;
 
 const PATHS = {
   opportunityAttackCard: 'systems/dsa5/templates/tables/opportunity-attack-card.hbs',
   accidentalAttackDefenseCard: 'systems/dsa5/templates/tables/accidental-attack-defense-card.hbs',
-  chatCheckMarker: 'systems/dsa5/templates/tables/parts/chat-check-marker.hbs',
   gearDropped: 'systems/dsa5/templates/tables/gear-dropped.hbs',
   tableCard: 'systems/dsa5/templates/tables/tableCard.hbs',
 };
@@ -34,7 +34,7 @@ export default class TableTemplates {
   }
 
   static chatCheckMarker(tooltip) {
-    return renderTemplate(PATHS.chatCheckMarker, { tooltip });
+    return `<i class="fas fa-check" style="float:right" data-tooltip="${escapeHTML(tooltip)}"></i>`;
   }
 
   static gearDropped({ message, rollHtml }) {

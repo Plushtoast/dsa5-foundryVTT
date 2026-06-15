@@ -117,7 +117,7 @@ export default class TableEffectHelpers {
 
   static async markWorkflowUsed(message, label) {
     if (message.content.includes('fa-check')) return;
-    const marker = await TableTemplates.chatCheckMarker(label);
+    const marker = TableTemplates.chatCheckMarker(label);
     await message.update({
       content: message.content.replace('</div>', `${marker}</div>`),
     });
