@@ -3463,10 +3463,11 @@
     "aoewidth": "Breite",
     "application": "Anwendungsgebiet",
     "areaTargetTypes": {
-        "circle": "Sphäre",
+        "cube": "Würfel",
+        "line": "Strahl",
+        "sphere": "Sphäre",
         "cone": "Kegel",
-        "ray": "Strahl",
-        "rect": "Würfel"
+        "ring": "Ring"
     },
     "armor": "Rüstung",
     "arrow": "Pfeil",

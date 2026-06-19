@@ -5,8 +5,8 @@ const { BooleanField, SchemaField, NumberField, StringField } = foundry.data.fie
 
 export default class AoeTemplate extends DSADataModel {
   static defineSchema() {
-    const targetTypes = Object.entries(DSA5.areaTargetTypes).reduce((acc, [key, name]) => {
-      acc[key] = `areaTargetTypes.${name}`;
+    const targetTypes = Object.entries(DSA5.areaTargetTypes).reduce((acc, [key]) => {
+      acc[key] = `areaTargetTypes.${key}`;
       return acc;
     }, {});
     return {

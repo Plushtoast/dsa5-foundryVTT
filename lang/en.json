@@ -3464,10 +3464,11 @@
   "aoewidth": "Width",
   "application": "Application",
   "areaTargetTypes": {
-    "circle": "Sphere",
+    "cube": "Cube",
+    "line": "Line",
+    "sphere": "Sphere",
     "cone": "Cone",
-    "ray": "Ray",
-    "rect": "Cube"
+    "ring": "Ring"
   },
   "armor": "Armor",
   "arrow": "Arrow",
