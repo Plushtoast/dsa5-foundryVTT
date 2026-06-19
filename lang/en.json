@@ -2723,6 +2723,7 @@
     "disarm": "Disarm",
     "disarmHint": "Disarm: The trap can be disarmed with a lockpicking check. The modifier is the trap's difficulty value.",
     "disarmMessage": "Disarm Trap ({duration} min)",
+    "disarmedSuccess": "The trap '{trap}' has been disarmed by {actor}.",
     "hideTrapAll": "Hide Trap from All Players",
     "manualDisarm": "Manual Disarm",
     "manualDisarmConfirm": "Are you sure you want to manually disarm the trap '{name}'?",
@@ -2737,6 +2738,7 @@
     "showTrapAll": "Show Trap to All Players",
     "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
     "trapstart": "<b>{name}</b> triggers <b>{trap}</b>.",
+    "trapDetected": "{actor} detected the trap '{trap}'.",
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
   },

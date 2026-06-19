@@ -77,7 +77,45 @@ export default class RollRequestService {
     });
   }
 
-  static async createRequest({ category, name, modifier = 0, messageMode = DICE_CONSTANTS.CHAT_MODES.PUBLIC, actors = [], label = undefined }) {
+  static buildTokenWhisper(token) {
+    const whisper = game.users.reduce((acc, user) => {
+      if (!user.isGM && user.active && token.actor?.testUserPermission(user, 'OWNER')) acc.push(user.id);
+      return acc;
+    }, []);
+    if (whisper.length === 0) whisper.push(game.user.id);
+    return whisper;
+  }
+
+  static async createTrapRequest({ trapMessage, token, name, modifier = 0, label = undefined, mode, headerHtml = undefined }) {
+    const actor = token?.actor;
+    if (!actor) return;
+
+    return this.createRequest({
+      category: 'skill',
+      name,
+      modifier,
+      label,
+      messageMode: DICE_CONSTANTS.CHAT_MODES.ROLL,
+      actors: [actor],
+      whisper: this.buildTokenWhisper(token),
+      trapContext: {
+        trapMessageUuid: trapMessage.uuid,
+        mode,
+        headerHtml,
+      },
+    });
+  }
+
+  static async createRequest({
+    category,
+    name,
+    modifier = 0,
+    messageMode = DICE_CONSTANTS.CHAT_MODES.PUBLIC,
+    actors = [],
+    label = undefined,
+    trapContext = undefined,
+    whisper = undefined,
+  }) {
     const recipients = await QueryOrchestrator.buildRecipients(actors);
 
     const state = {
@@ -88,11 +126,13 @@ export default class RollRequestService {
       messageMode,
       finalized: false,
       recipients,
+      ...(trapContext ? { trapContext } : {}),
     };
 
     const message = await QueryOrchestrator.createRequest({
       queryType: this.QUERY_TYPE,
       state,
+      whisper,
     });
 
     await this.dispatch(message.id);
@@ -130,8 +170,28 @@ export default class RollRequestService {
       skillIcon,
       category: state.category,
       modifierLabel,
+      headerHtml: state.trapContext?.headerHtml,
       recipients,
     };
+  }
+
+  static async #submitResult(messageId, actorId, result) {
+    await QueryOrchestrator.handleResult({ messageId, actorId, result });
+    if (!game.user.isGM) return;
+
+    const message = game.messages.get(messageId);
+    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    const trapContext = state.trapContext;
+    if (!trapContext || !QueryOrchestrator.TERMINAL_STATES.has(result.status)) return;
+
+    const { DSATrapRegionBehavior } = await import('../../data/regionbehaviors/trap.js');
+    await DSATrapRegionBehavior.handleTrapRollResult({
+      trapMessageUuid: trapContext.trapMessageUuid,
+      mode: trapContext.mode,
+      actorId,
+      status: result.status,
+      resultDetails: result.resultDetails,
+    });
   }
 
   static resultMessageMode(entry, state = {}) {
@@ -201,16 +261,12 @@ export default class RollRequestService {
       );
 
       if (!result) return;
-      await QueryOrchestrator.handleResult({ messageId, actorId, result });
+      await this.#submitResult(messageId, actorId, result);
     } catch (error) {
       console.error(`Failed to query roll request recipient ${actorId}`, error);
-      await QueryOrchestrator.handleResult({
-        messageId,
-        actorId,
-        result: {
-          userId,
-          status: 'error',
-        },
+      await this.#submitResult(messageId, actorId, {
+        userId,
+        status: 'error',
       });
     }
   }
@@ -308,11 +364,7 @@ export default class RollRequestService {
     const result = RollRequestService.buildResultPayload(postFunction.category, payload, postFunction.messageMode);
     if (postFunction.byGM) result.resultDetails = { ...result.resultDetails, byGM: true };
 
-    await QueryOrchestrator.handleResult({
-      messageId: postFunction.requestMessageId,
-      actorId: postFunction.actorId,
-      result,
-    });
+    await this.#submitResult(postFunction.requestMessageId, postFunction.actorId, result);
   }
 
   static async resendToActor(messageId, actorId) {
@@ -353,13 +405,9 @@ export default class RollRequestService {
       byGM: true,
     });
 
-    await QueryOrchestrator.handleResult({
-      messageId,
-      actorId,
-      result: {
-        ...result,
-        resultDetails: { ...result.resultDetails, byGM: true },
-      },
+    await this.#submitResult(messageId, actorId, {
+      ...result,
+      resultDetails: { ...result.resultDetails, byGM: true },
     });
   }
 
@@ -393,7 +441,7 @@ export default class RollRequestService {
       messageMode: state.messageMode,
     });
 
-    await QueryOrchestrator.handleResult({ messageId, actorId, result });
+    await this.#submitResult(messageId, actorId, result);
   }
 
   static handleRenderMessage(msg, html) {

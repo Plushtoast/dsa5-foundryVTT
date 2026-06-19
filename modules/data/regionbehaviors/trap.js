@@ -1,5 +1,6 @@
 import { TrapState } from "../../chatmessage/trap_state.js";
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
+import QueryOrchestrator from "../../system/queries/query-orchestrator.js";
 import { DSARegionBehaviorBase } from './base.js';
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField } = foundry.data.fields;
 
@@ -139,5 +140,41 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         data.charges = `${this.charges}`;
 
         return data;
+    }
+
+    static async handleTrapRollResult({ trapMessageUuid, mode, actorId, status, resultDetails }) {
+        if (!game.user.isGM) return;
+        if (!QueryOrchestrator.TERMINAL_STATES.has(status)) return;
+
+        const trapMessage = await fromUuid(trapMessageUuid);
+        if (!trapMessage) return;
+
+        const trapState = await TrapState.fromMessage(trapMessage);
+        const { behavior, token } = trapState;
+        if (token.actor?.id !== actorId) return;
+
+        const success = ['success', 'critical'].includes(status);
+        const actorName = game.actors.get(actorId)?.name || actorId;
+
+        switch (mode) {
+            case 'disarm':
+                if (success && !behavior.system.disarmed) {
+                    await behavior.update({ 'system.disarmed': true });
+                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.disarmedSuccess', {
+                        format: { trap: behavior.name, actor: actorName },
+                        localize: true,
+                    });
+                }
+                break;
+            case 'search':
+            case 'notice':
+                if (success) {
+                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.trapDetected', {
+                        format: { trap: behavior.name, actor: actorName },
+                        localize: true,
+                    });
+                }
+                break;
+        }
     }
 }

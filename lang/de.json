@@ -2722,6 +2722,7 @@
         "disarm": "Entschärfen",
         "disarmHint": "Entschärfen: Die Falle kann mit einer Probe auf Schlösserknacken entschärft werden. Der Modifikator ist der Schwierigkeitswert der Falle.",
         "disarmMessage": "Falle entschärfen ({duration} min)",
+        "disarmedSuccess": "Die Falle '{trap}' wurde von {actor} entschärft.",
         "hideTrapAll": "Falle verbergen",
         "manualDisarm": "Manuell Entschärfen",
         "manualDisarmConfirm": "Bist du sicher, dass du die Falle '{name}' manuell entschärfen möchtest?",
@@ -2736,6 +2737,7 @@
         "showTrapAll": "Falle den Spielern zeigen",
         "showTrapHint": "Falle anzeigen: Die Falle kann für alle Spieler oder den Spielleiter sichtbar gemacht werden.",
         "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
+        "trapDetected": "{actor} hat die Falle '{trap}' entdeckt.",
         "trigger": "Auslösen",
         "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein."
     },
