@@ -3,6 +3,7 @@ import { ChatMessageState } from "./chatmessage_state.js";
 
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
 import GroupCheck from "../system/rolls/group-check.js";
+import RollRequestService from "../system/queries/roll-request.js";
 import { ITEM_CONSTANTS } from "../config/item-constants.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
 const { renderTemplate } = foundry.applications.handlebars;
@@ -82,31 +83,16 @@ export class TrapState extends ChatMessageState {
     }
 
     #requestRollOptions(message, token) {
-        const forceWhisperIDs = game.users.reduce((acc, user) => {
-            if (!user.isGM && user.active && token.actor.testUserPermission(user, "OWNER")) acc.push(user.id);
-            return acc;
-        }, []);
-        if (forceWhisperIDs.length === 0) {
-            forceWhisperIDs.push(game.user.id);
-        }
-
         return {
-            datasetOptions: {
-                function: 'game.dsa5.dataModels.RegionBehavior.DSATrap.handleRequestRoll',
-                message: message.uuid
-            },
-            forceWhisperIDs
-        }
+            trapMessage: message,
+            token,
+        };
     }
 
     async _handleSearch(event) {
         const { token, region, message, behavior } = this;
         const skill = _loc('LocalizedIDs.perception');
-        const customLabel = undefined
-        const options = this.#requestRollOptions(message, token);
-        Object.assign(options.datasetOptions, {
-            mode: 'search'
-        });
+        const rollOptions = this.#requestRollOptions(message, token);
 
         new foundry.applications.api.DialogV2({
             window: {
@@ -122,16 +108,26 @@ export class TrapState extends ChatMessageState {
                     icon: 'fa fa-magnifying-glass',
                     label: 'REGIONBEHAVIOR_DSATrap.search',
                     default: true,
-                    callback: (event, button, dialog) => {
-                        GroupCheck.showRQMessage(skill, behavior.system.stealth + 1, customLabel, options);
+                    callback: () => {
+                        RollRequestService.createTrapRequest({
+                            ...rollOptions,
+                            name: skill,
+                            modifier: behavior.system.stealth + 1,
+                            mode: 'search',
+                        });
                     },
                 },
                 {
                     action: 'notice',
                     icon: 'fa fa-eye',
                     label: 'REGIONBEHAVIOR_DSATrap.notice',
-                    callback: (event, button, dialog) => {
-                        GroupCheck.showRQMessage(skill, behavior.system.stealth, customLabel, options);
+                    callback: () => {
+                        RollRequestService.createTrapRequest({
+                            ...rollOptions,
+                            name: skill,
+                            modifier: behavior.system.stealth,
+                            mode: 'notice',
+                        });
                     },
                 }
             ]
@@ -185,21 +181,30 @@ export class TrapState extends ChatMessageState {
     async _handleDisarm(event) {
         const { token, region, message, behavior } = this;
         const skill = _loc('LocalizedIDs.lockpick');
-        const customLabel = undefined;
-        const options = this.#requestRollOptions(message, token);
+        const rollOptions = this.#requestRollOptions(message, token);
         const duration = [1, 5, 5][behavior.system.complexity];
-        options.otherMessage = `<b>${_loc('REGIONBEHAVIOR_DSATrap.disarmMessage', {
+        const headerHtml = `<b>${_loc('REGIONBEHAVIOR_DSATrap.disarmMessage', {
             duration
         })}</b>`;
 
-        Object.assign(options.datasetOptions, {
-            mode: 'disarm'
-        });
-
         if (behavior.system.complexity > 1) {
-            GroupCheck.showGCMessage(skill, behavior.system.difficulty, {}, options);
-          } else {
-            GroupCheck.showRQMessage(skill, behavior.system.difficulty, customLabel, options);
+            GroupCheck.showGCMessage(skill, behavior.system.difficulty, {}, {
+                ...rollOptions,
+                otherMessage: headerHtml,
+                forceWhisperIDs: RollRequestService.buildTokenWhisper(token),
+                datasetOptions: {
+                    mode: 'disarm',
+                    message: message.uuid,
+                },
+            });
+        } else {
+            RollRequestService.createTrapRequest({
+                ...rollOptions,
+                name: skill,
+                modifier: behavior.system.difficulty,
+                mode: 'disarm',
+                headerHtml,
+            });
         }
     }
 
@@ -245,9 +250,15 @@ export class TrapState extends ChatMessageState {
         behavior.system.playSound();
 
         const description = behavior.system.description || behavior.system.gmdescription || '';
+        const damageFormula = behavior.system.damageFormula?.trim();
 
-        const roll = await new Roll(behavior.system.damageFormula).evaluate();
-        const rollString = await roll.render();
+        let rollString = '';
+        let roll;
+        if (damageFormula && Roll.validate(damageFormula)) {
+            roll = await new Roll(damageFormula).evaluate();
+            rollString = await roll.render();
+        }
+
         const msg = `
             <div>
             <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
@@ -256,7 +267,9 @@ export class TrapState extends ChatMessageState {
             </div>
         `
         ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-        DiceDSA5._addRollDiceSoNice({ messageMode: game.settings.get("core", "messageMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
+        if (roll) {
+            DiceDSA5._addRollDiceSoNice({ messageMode: game.settings.get("core", "messageMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
+        }
 
         if (behavior.system.charges > 0) behavior.update({ 'system.remainingCharges': behavior.system.remainingCharges - 1 });
     }

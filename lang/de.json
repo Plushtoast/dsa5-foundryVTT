@@ -19,6 +19,11 @@
         "8": "Turnierrüstung"
     },
     "ActiveEffects": {
+        "advancedTabs": {
+            "aura": "Aura",
+            "automation": "Automatisierung",
+            "config": "Konfiguration"
+        },
         "advancedFunctions": {
             "armorPostprocess": "Rüstungstransformation (Macro)",
             "creature": "Beschwörung/Gestaltwandlung",
@@ -82,6 +87,7 @@
             "radius": "Auraradius in Szeneneinheiten (Schritt).",
             "removeMessage": "Bestimmt, wer eine Benachrichtigung erhält, wenn dieser Effekt endet oder entfernt wird.",
             "resistRoll": "Gib eine Widerstandsprobe ein, zum Beispiel Sinnesschärfe -2 mit welcher der Effekt abgewehrt werden kann.",
+            "scopedRules": "Dieser Effekt enthält zielgebundene Regeln. Sie werden automatisch angewendet, wenn ein Ziel im Würfeldialog zu einem der gespeicherten Bezeichner passt.",
             "sourceItemUuid": "UUID des Ursprungs-Gegenstands, bleibt bei rekursivem Makro-Wiedereintritt erhalten (z. B. für akteurbasierte Aura-Makros).",
             "successEffect": "Der Effekt hat bei Erfolg oder Misserfolg eine andere Auswirkung."
         },
@@ -108,6 +114,17 @@
         "removedEffect": "Effekt <b>{source}</b> wurde von <b>{target}</b> entfernt.",
         "resistPain": "Der Schmerz ist überwältigend (Stufe 4). Die Handlungsfähigkeit ist nur über eine Selbstbeherrschungsprobe zu bewahren.",
         "resistRoll": "Widerstandsprobe",
+        "scopedRules": "Zielgebundene Regeln",
+        "scopedRuleScopes": {
+            "againstTarget": "Gegen Ziel",
+            "allOpponents": "Alle Gegner",
+            "incomingAttack": "Eingehender Angriff",
+            "self": "Selbst"
+        },
+        "scopedRuleTypes": {
+            "modifier": "Modifikator",
+            "restriction": "Einschränkung"
+        },
         "sourceItemUuid": "Ursprungs-Gegenstands-UUID",
         "wizardAllCategories": "Alle",
         "wizardCategories": {
@@ -1136,6 +1153,7 @@
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "CastingTimeLimit": "Die Aktionsdauer ist bereits am Limit.",
         "DamagePermission": "Du musst \"Besitzerrechte\" für diesen Akteur haben um dessen Ressourcen zu editieren.",
+        "InvalidJSON": "Das eingegebene JSON ist ungültig.",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",
         "NoAmmo": "Nicht genug Munition.",
@@ -1184,6 +1202,9 @@
         "onlyGMallowed": "Diese Funktion steht nur dem Spielleiter zur Verfügung.",
         "onlyGMcanShapeshift": "Du hast nicht die richtigen Berechtigungen zum Formwandeln.",
         "opposedAttackNoSpecAbs": "Passierschläge können nicht mit Sonderfertigkeiten kombiniert werden",
+        "tableEffectAttackForbidden": "Dieser Angriff ist aktuell durch einen Kritische-Tabelle-Effekt verboten.",
+        "tableEffectDefenseForbidden": "Diese Verteidigung ist aktuell durch einen Kritische-Tabelle-Effekt verboten.",
+        "tableEffectManeuverForbidden": "Dieses Manöver ist aktuell durch einen Kritische-Tabelle-Effekt verboten.",
         "poisonNeedsToBeInActor": "Bitte beachte, dass das Gift im Charakter auch vorhanden sein muss, um angewendet werden zu können.",
         "requiresGM": "Diese Funktion funktioniert nur mit einem eingelogten Spielleiter.",
         "requiresModule": "Diese Funktion benötigt das Modul {module}.",
@@ -2701,6 +2722,7 @@
         "disarm": "Entschärfen",
         "disarmHint": "Entschärfen: Die Falle kann mit einer Probe auf Schlösserknacken entschärft werden. Der Modifikator ist der Schwierigkeitswert der Falle.",
         "disarmMessage": "Falle entschärfen ({duration} min)",
+        "disarmedSuccess": "Die Falle '{trap}' wurde von {actor} entschärft.",
         "hideTrapAll": "Falle verbergen",
         "manualDisarm": "Manuell Entschärfen",
         "manualDisarmConfirm": "Bist du sicher, dass du die Falle '{name}' manuell entschärfen möchtest?",
@@ -2715,6 +2737,7 @@
         "showTrapAll": "Falle den Spielern zeigen",
         "showTrapHint": "Falle anzeigen: Die Falle kann für alle Spieler oder den Spielleiter sichtbar gemacht werden.",
         "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
+        "trapDetected": "{actor} hat die Falle '{trap}' entdeckt.",
         "trigger": "Auslösen",
         "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein."
     },
@@ -2841,6 +2864,7 @@
         "UnEquipItem": "Ausrüstung ablegen",
         "activate": "Aktivieren",
         "actorConfig": "Akteur konfigurieren",
+        "addAfterUse": "Folgeeffekt hinzufügen",
         "addItem": "Gegenstand erstellen",
         "addOnUseAction": "Aktion hinzufügen",
         "addSchip": "Schicksalspunkt hinzufügen",
@@ -2849,6 +2873,12 @@
         "collapse": "Sektion ein-/ausklappen",
         "deactivate": "Deaktivieren",
         "deobfuscateItem": "Abschnitt entschleieren",
+        "afterUseEffect": "Folgeeffekt",
+        "afterUseEffectName": "Effektname",
+        "afterUseEffects": "Folgeeffekte nach Nutzung",
+        "afterUseEffectsHint": "Diese Effekte werden angewendet, wenn ein Modifikator dieses Effekts bei einer Probe genutzt wird.",
+        "afterUseDurationSeconds": "Dauer in Sekunden",
+        "editAfterUse": "Folgeeffekt bearbeiten",
         "editOnUseAction": "Aktion bearbeiten",
         "imageView": "Bildeintrag",
         "import": "Importieren",
@@ -2865,6 +2895,7 @@
         "permRegeneration": "Permanent, wird bei jedem Regenerationswurf hinzugezählt",
         "postAsGroupCheck": "Als Gruppensammelprobe posten",
         "rebuyPAsP": "Zurückgekaufte permanente AsP/KaP",
+        "removeAfterUse": "Folgeeffekt entfernen",
         "removeOnUseAction": "Aktion entfernen",
         "removeSchip": "Schicksalspunkt entfernen",
         "searchItem": "Aus der Bibliothek hinzufügen",
@@ -3434,10 +3465,11 @@
     "aoewidth": "Breite",
     "application": "Anwendungsgebiet",
     "areaTargetTypes": {
-        "circle": "Sphäre",
+        "cube": "Würfel",
+        "line": "Strahl",
+        "sphere": "Sphäre",
         "cone": "Kegel",
-        "ray": "Strahl",
-        "rect": "Würfel"
+        "ring": "Ring"
     },
     "armor": "Rüstung",
     "arrow": "Pfeil",

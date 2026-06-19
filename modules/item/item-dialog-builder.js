@@ -120,6 +120,9 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         const data = {
             messageMode: options.messageMode,
             mode,
+            damageModifier: options.damageModifier || 0,
+            forceOpportunityAttack: options.forceOpportunityAttack,
+            opportunityAttackManeuvers: options.opportunityAttackManeuvers,
         };
         const situationalModifiers = actor ?
             DSA5StatusEffects.getRollModifiers(actor, weapon, { mode }) : [];

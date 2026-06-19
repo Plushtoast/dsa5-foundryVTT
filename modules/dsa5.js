@@ -30,6 +30,7 @@ import DSA5Dialog from './dialog/dialog-dsa5.js';
 import DialogShared from './dialog/dialog-shared.js';
 import DPS from './system/automation/derepositioningsystem.js';
 import DSATables from './tables/dsatables.js';
+import TestModuleLoader from './tests/testModuleLoader.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
 import DSA5StatusEffects from './status/status_effects.js';
 import { MerchantSheetMixin, RandomGoodsAddition } from './actor/mixins/merchantmixin.js';
@@ -100,6 +101,7 @@ Hooks.once('init', () => {
       DSA5StatusEffects,
       DPS,
       DSATables,
+      TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,
       DiceDSA5,

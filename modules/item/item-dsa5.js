@@ -1257,7 +1257,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
           const dmgMod = {
             name: `${currentAmmo.name} - ${_loc('MODS.damage')}`,
-            value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
+            value: currentAmmo.system.damageMod.replace(/[wWD]/g, 'd') || 0,
             type: 'dmg',
             selected: true,
             ref: { id: source.system.currentAmmo.value },

@@ -29,6 +29,7 @@ import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilitie
 import { FateRolls } from './concerns/faterolls.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
@@ -345,24 +346,42 @@ export default class Actordsa5 extends Actor {
 
   getCombatEffectSkillModifier(name, mode) {
     const result = [];
-    const keys = ['step', mode];
+    const keys = ['step', mode, 'CMP'];
 
     for (const k of keys) {
+      const modifiers = this.system.skillModifiers.combat[k] || [];
       result.push(
-        ...this.system.skillModifiers.combat[k]
-          .filter((x) => x.target == name)
+        ...modifiers
+          .filter((x) => {
+            if (this.#combatCompensationScope(x.target) == 'attack' && mode != 'attack') return false;
+            const target = this.#combatModifierTarget(x.target);
+            return target == name || target == '*';
+          })
           .map((f) => {
             return {
-              name: `${f.target || f.source} - ${_loc(`CHAR.${k.toUpperCase()}`)}`,
+              name: `${this.#combatModifierTarget(f.target) || f.source} - ${_loc(k == 'CMP' ? 'MODS.compensation' : `CHAR.${k.toUpperCase()}`)}`,
               value: f.value,
               source: f.source,
               type: k,
+              compensationScope: k == 'CMP' ? this.#combatCompensationScope(f.target) : undefined,
               selected: true,
+              ref: f.ref || null,
             };
           }),
       );
     }
     return result;
+  }
+
+  #combatModifierTarget(target) {
+    const value = `${target || ''}`;
+    const [scope, scopedTarget] = value.split(/:(.*)/s);
+    return ['attack', 'maneuver'].includes(scope) ? scopedTarget : value;
+  }
+
+  #combatCompensationScope(target) {
+    const scope = `${target || ''}`.split(':')[0];
+    return ['attack', 'maneuver'].includes(scope) ? scope : 'all';
   }
 
   prepareSheet(sheetInfo) {
@@ -2008,9 +2027,10 @@ export default class Actordsa5 extends Actor {
       try {
         const effect = await fromUuid(uuid);
         const charges = effect?.system?.charges;
-        const value = Number(charges?.value);
-        if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
         if (effect.disabled) return;
+        if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
+        await ActiveEffectLifecycle.applyAfterUse(effect);
+        if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
         await effect.consumeCharges(1);
       } catch (e) {
         console.error('Failed to consume effect charges', uuid, e);

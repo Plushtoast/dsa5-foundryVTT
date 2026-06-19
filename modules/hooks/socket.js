@@ -18,7 +18,9 @@ import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
+
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
     switch (data.type) {
@@ -58,10 +60,11 @@ export function connectSocket() {
           Promise.all(effectUuids.map(async (uuid) => {
             try {
               const effect = await fromUuid(uuid);
-              const charges = effect?.getFlag?.('dsa5', 'charges');
-              const value = Number(charges?.value);
-              if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+              const charges = effect?.system?.charges;
               if (effect.disabled) return;
+              if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
+              await ActiveEffectLifecycle.applyAfterUse(effect);
+              if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
               await effect.consumeCharges(amount);
             } catch (e) {
               console.error('GM socket consumeEffectCharges failed', uuid, e);

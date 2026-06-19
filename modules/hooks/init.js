@@ -18,6 +18,7 @@ import { BurgerMenuRegistry } from '../item/burgermenus/burger-menu-registry.js'
 import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
 import { MagicalAlchemistDSA5 } from '../item/concerns/alchimist-dsa5.js';
 import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -70,6 +71,7 @@ export default function () {
   registerMagicalActionHooks();
   MagicalAlchemistDSA5.registerHooks();
   SavantDSA5.registerHooks();
+  ActiveEffectLifecycle.registerHooks();
 }
 
 Hooks.once('init', () => {
@@ -120,6 +122,10 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
     'systems/dsa5/templates/system/hud/companion-hotbar.hbs',
     'systems/dsa5/templates/actors/parts/member-card-header.hbs',
+    'systems/dsa5/templates/tables/tableCard.hbs',
+    'systems/dsa5/templates/tables/opportunity-attack-card.hbs',
+    'systems/dsa5/templates/tables/accidental-attack-defense-card.hbs',
+    'systems/dsa5/templates/tables/gear-dropped.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);

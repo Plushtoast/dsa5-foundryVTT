@@ -1,0 +1,27 @@
+<div class="tab standard-form {{tab.cssClass}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+    {{#if advancedFunctions}}
+    {{formGroup document.system.schema.fields.customDuration value=document.system.customDuration label="duration"
+    localize=true placeholder="5,10,15,30,60,120"}}
+    {{formGroup document.system.schema.fields.advancedFunction value=document.system.advancedFunction
+    label="ActiveEffects.custom" localize=true choices=advancedFunctionChoices}}
+    {{formGroup document.system.schema.fields.resistRoll value=document.system.resistRoll
+    label="ActiveEffects.resistRoll" localize=true placeholder=(concat (localize 'LocalizedIDs.perception') " -2")}}
+    <div class="advancedFunctions">
+        {{> systems/dsa5/templates/status/advanced_functions.hbs}}
+    </div>
+    {{/if}}
+
+    <div class="form-group full-height">
+        <label>{{localize 'ActiveEffects.advancedFunctions.onRemove'}}</label>
+        <div class="form-fields height100">
+            {{#if config.canEditMacros}}
+            <code-mirror language="javascript" indent="2" name="system.macroArgs.onRemove"
+                data-tooltip="ActiveEffects.placeholder.onRemove">{{~document.system.macroArgs.onRemove~}}</code-mirror>
+            {{else}}
+            <p class="input-text">{{#if
+                document.system.macroArgs.onRemove}}{{document.system.macroArgs.onRemove}}{{else}} - {{/if}}</p>
+            {{/if}}
+        </div>
+        <p class="hint">{{localize document.system.schema.fields.macroArgs.fields.onRemove.hint}}</p>
+    </div>
+</div>
