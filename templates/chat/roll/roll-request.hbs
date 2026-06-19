@@ -1,4 +1,7 @@
 <div class="dsa5 roll-request-card">
+  {{#if headerHtml}}
+    <div class="trap-roll-request-header">{{{headerHtml}}}</div>
+  {{/if}}
   <p class="flexrow flexAlignCenter gap5px" style="margin:0 0 0.5rem;">
     {{#if skillIcon}}
       <img src="{{skillIcon}}" alt="{{skillName}}" style="width:24px;height:24px;object-fit:cover;border:1px solid var(--border-color);border-radius:3px;flex:0 0 24px;">

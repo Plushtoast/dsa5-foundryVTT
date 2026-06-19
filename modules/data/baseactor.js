@@ -115,6 +115,8 @@ export class ActorDataModel extends DSADataModel {
         step: [],
         parry: [],
         attack: [],
+        CMP: [],
+        defenseCount: [],
         damage: [],
         damageThreshold: [],
       },

@@ -20,7 +20,6 @@ import TableEffects from '../../tables/tableEffects.js';
 import CreatureType from '../automation/creature-type.js';
 import { applyDamage } from '../../hooks/chat_context.js';
 import DSATriggers from '../automation/triggers.js';
-import RuleChaos from '../rules/rule_chaos.js';
 import SpellPreferenceRule from '../rules/spell-preference-rule.js';
 import CombatskillData from '../../data/item/combatskill.js';
 import MeleeweaponData from '../../data/item/meleeweapon.js';
@@ -974,27 +973,50 @@ export default class DiceDSA5 {
       (modifier.type === filter || (filter === '' && modifier.type === undefined))
     );
 
-    const modifierPromises = validModifiers.map(async (modifier) => {
-      const numericValue = Number(modifier.value);
-      return numericValue || await this._stringToRoll(modifier.value);
-    });
+    const modifierPromises = validModifiers.map(async (modifier) => ({
+      modifier,
+      value: await this.#modifierValue(modifier),
+    }));
 
-    let compensation = 0;
-    if (filter === ''){
-      compensation = await DiceDSA5._situationalModifiers(testData, DICE_CONSTANTS.MODIFIER_TYPES.COMPENSATION);
-    }
-
-    const values = await Promise.all(modifierPromises);
-    const [pos, neg] = values.reduce((total, value) => {
+    const resolvedModifiers = await Promise.all(modifierPromises);
+    const [pos, neg, maneuverNeg] = resolvedModifiers.reduce((total, { modifier, value }) => {
       if (value < 0) {
-        total[1] += value;
+        if (modifier.step !== undefined && modifier.ref?.id) total[2] += value;
+        else total[1] += value;
       } else {
         total[0] += value;
       }
       return total;
-    }, [0, 0]);
+    }, [0, 0, 0]);
 
-    return pos + Math.min(0, neg + compensation);
+    if (filter !== '') return pos + neg + maneuverNeg;
+
+    const compensatedManeuverNeg = await this.#applyCompensation(situationalModifiers, 'maneuver', maneuverNeg);
+    const attackCompensatedNeg = await this.#applyCompensation(situationalModifiers, 'attack', neg + compensatedManeuverNeg);
+    const compensatedNeg = await this.#applyCompensation(situationalModifiers, 'all', attackCompensatedNeg);
+    return pos + compensatedNeg;
+  }
+
+  static async #modifierValue(modifier) {
+    const numericValue = Number(modifier.value);
+    return numericValue || await this._stringToRoll(modifier.value);
+  }
+
+  static async #applyCompensation(situationalModifiers, scope, negativeValue) {
+    let remaining = Math.abs(Math.min(0, negativeValue));
+    const compensations = situationalModifiers.filter((modifier) => modifier.value !== undefined && modifier.type === DICE_CONSTANTS.MODIFIER_TYPES.COMPENSATION && (modifier.compensationScope || 'all') === scope);
+    for (const modifier of compensations) {
+      if (modifier.ref) modifier.selected = false;
+      if (!remaining) continue;
+
+      const value = Math.max(0, await this.#modifierValue(modifier));
+      const applied = Math.min(remaining, value);
+      if (!applied) continue;
+
+      remaining -= applied;
+      if (modifier.ref) modifier.selected = true;
+    }
+    return -remaining;
   }
 
   /**
@@ -2443,6 +2465,9 @@ export default class DiceDSA5 {
         await TableEffects.applyEffect(id, mode);
       });
     });
+    html.on('click', '.tableSelfAttackDefense', async (ev) => TableEffects.rollSelfAttackDefense(ev));
+    html.on('click', '.tableSelfAttackDamage', async (ev) => TableEffects.applySelfAttackDamage(ev));
+    html.on('click', '.tableOpportunityAttack', async (ev) => TableEffects.rollOpportunityAttack(ev));
     html.on('click', '.placeTemplate', async (ev) => DSARegionTemplate.placeTemplateFromChat(ev));
     html.on('click', '.summonCreature', async (ev) => {
       DiceDSA5.wrapLock(ev, async (ev, elem) => {

@@ -529,7 +529,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
     const remainingKeys = Object.keys(flags);
     if (remainingKeys.length > 0) {
-      console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
+      //console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
     } else {
       delete source.flags.dsa5;
     }

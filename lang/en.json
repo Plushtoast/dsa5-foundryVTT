@@ -19,6 +19,11 @@
     "8": "Tournament Armor"
   },
   "ActiveEffects": {
+    "advancedTabs": {
+      "aura": "Aura",
+      "automation": "Automation",
+      "config": "Config"
+    },
     "advancedFunctions": {
       "armorPostprocess": "Armor transformation (Macro)",
       "creature": "Conjuring/Shapeshift",
@@ -82,6 +87,7 @@
       "radius": "Aura radius in scene units (steps).",
       "removeMessage": "Choose who receives the notification when this effect expires or is removed.",
       "resistRoll": "Enter a resist check, for example Perception -2, with which the effect can be resisted.",
+      "scopedRules": "This effect contains scoped rules. They are applied automatically when a roll dialog target matches one of the stored identifiers.",
       "sourceItemUuid": "UUID of the originating item, preserved across recursive macro re-entry (e.g. for actor-owned aura macros).",
       "successEffect": "The effect has a different outcome on success or failure."
     },
@@ -108,6 +114,17 @@
     "removedEffect": "Effect <b>{source}</b> removed from <b>{target}</b>.",
     "resistPain": "The pain is overwhelming (level 4). The ability to act can only be maintained via a self-control check.",
     "resistRoll": "Resist check",
+    "scopedRules": "Scoped Rules",
+    "scopedRuleScopes": {
+      "againstTarget": "Against target",
+      "allOpponents": "All opponents",
+      "incomingAttack": "Incoming attack",
+      "self": "Self"
+    },
+    "scopedRuleTypes": {
+      "modifier": "Modifier",
+      "restriction": "Restriction"
+    },
     "sourceItemUuid": "Source item UUID",
     "wizardAllCategories": "All",
     "wizardCategories": {
@@ -1137,6 +1154,7 @@
     "AdvanceMaximumReached": "Max advancements already reached",
     "CastingTimeLimit": "The duration is already at its limit.",
     "DamagePermission": "You need to have \"owner\" permissions to modify this actor's ressources.",
+    "InvalidJSON": "The entered JSON is invalid.",
     "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
     "MissingChoices": "There are missing choices.",
     "NoAmmo": "Not enough ammunition.",
@@ -1187,6 +1205,9 @@
     "onlyGMallowed": "This function is only available to the game master.",
     "onlyGMcanShapeshift": "You don't have the right permissions to shapeshift.",
     "opposedAttackNoSpecAbs": "Attacks of Opportunity can not be combined with Special Abilites",
+    "tableEffectAttackForbidden": "This attack is currently forbidden by a critical table effect.",
+    "tableEffectDefenseForbidden": "This defense is currently forbidden by a critical table effect.",
+    "tableEffectManeuverForbidden": "This maneuver is currently forbidden by a critical table effect.",
     "poisonNeedsToBeInActor": "Please note that the poison must also be present in the character in order to be applied.",
     "requiresGM": "This function only works with a logged in game master.",
     "requiresModule": "This function requires the module {module}.",
@@ -2704,6 +2725,7 @@
     "disarm": "Disarm",
     "disarmHint": "Disarm: The trap can be disarmed with a lockpicking check. The modifier is the trap's difficulty value.",
     "disarmMessage": "Disarm Trap ({duration} min)",
+    "disarmedSuccess": "The trap '{trap}' has been disarmed by {actor}.",
     "hideTrapAll": "Hide Trap from All Players",
     "manualDisarm": "Manual Disarm",
     "manualDisarmConfirm": "Are you sure you want to manually disarm the trap '{name}'?",
@@ -2718,6 +2740,7 @@
     "showTrapAll": "Show Trap to All Players",
     "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
     "trapstart": "<b>{name}</b> triggers <b>{trap}</b>.",
+    "trapDetected": "{actor} detected the trap '{trap}'.",
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
   },
@@ -2844,6 +2867,7 @@
     "UnEquipItem": "Unequip",
     "activate": "Activate",
     "actorConfig": "Configure actor",
+    "addAfterUse": "Add after-use effect",
     "addItem": "Create Item",
     "addOnUseAction": "Add action",
     "addSchip": "Add fate point",
@@ -2852,6 +2876,12 @@
     "collapse": "Collapse/Expand",
     "deactivate": "Deactivate",
     "deobfuscateItem": "Deobfuscate section",
+    "afterUseEffect": "After-use effect",
+    "afterUseEffectName": "Effect name",
+    "afterUseEffects": "After-use effects",
+    "afterUseEffectsHint": "These effects are applied when any modifier from this effect is used during a roll.",
+    "afterUseDurationSeconds": "Duration in seconds",
+    "editAfterUse": "Edit after-use effect",
     "editOnUseAction": "Edit action",
     "imageView": "Image entry",
     "import": "Import",
@@ -2868,6 +2898,7 @@
     "permRegeneration": "Permanent, bonus for every regeneration roll",
     "postAsGroupCheck": "Post as group check.",
     "rebuyPAsP": "Rebought permanent AsP/KaP",
+    "removeAfterUse": "Remove after-use effect",
     "removeOnUseAction": "Remove action",
     "removeSchip": "Remove fate point",
     "searchItem": "Add from the library",
@@ -3323,7 +3354,7 @@
   "TYPES.JournalEntryPage.dsamoneytracker": "Money Tracker",
   "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
   "TYPES.JournalEntryPage.dsaquestlog": "Quest",
-    "TYPES.JournalEntryPage.citydetails": "City Details",
+  "TYPES.JournalEntryPage.citydetails": "City Details",
   "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
   "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
   "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",
@@ -3437,10 +3468,11 @@
   "aoewidth": "Width",
   "application": "Application",
   "areaTargetTypes": {
-    "circle": "Sphere",
+    "cube": "Cube",
+    "line": "Line",
+    "sphere": "Sphere",
     "cone": "Cone",
-    "ray": "Ray",
-    "rect": "Cube"
+    "ring": "Ring"
   },
   "armor": "Armor",
   "arrow": "Arrow",
