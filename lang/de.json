@@ -3528,6 +3528,14 @@
     "cummulativeStatusEffects": "Kumulative Statuseffekte",
     "cummulativeStatusEffectsHint": "Zustände deren Gesamteffekt aus mehreren Quellen berechnet wird.",
     "damage": "Trefferpunkte",
+    "stpDamage": "StP-Schaden",
+    "siegeRules": "Belagerungswaffe",
+    "siege": {
+        "ProMKR": "Schuss/MKR",
+        "RE": "RE",
+        "ProMKRTooltip": "Schuss pro Massenkampfrunde",
+        "RETooltip": "Reichweite in Raumeinheiten"
+    },
     "damageApplied": "Schaden wurde übertragen",
     "damageOverThreshold": "Inklusive Zusatzschaden über Schadensschwelle",
     "damageThreshold": "Schadensschwelle",

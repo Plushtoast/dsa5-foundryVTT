@@ -35,7 +35,9 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
+        stp: new ScopableStringField({ initial: '', label: 'stpDamage' }),
       }),
+      siegeRules: new BooleanField({ initial: false, label: 'siegeRules' }),
       reloadTime: new SchemaField({
         value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
@@ -146,5 +148,13 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     const requiresBothHands = getProperty(changed, 'system.worn.requiresBothHands');
     if (requiresBothHands === true) setProperty(changed, 'system.worn.offHand', false);
     await super._preUpdate(changed, options, user);
+  }
+
+  get schussProMKR() {
+    return Math.floor(60 / this.reloadTime.value);
+  }
+
+  get rwRE() {
+    return this.reach.value.split('/').map(x => Math.floor(Number(x) / 16)).join('/');
   }
 }

@@ -3529,6 +3529,7 @@
   "cummulativeStatusEffects": "Cumulative conditions",
   "cummulativeStatusEffectsHint": "All conditions which are calculated as a sum of different sources.",
   "damage": "Damage",
+  "stpDamage": "StP-Damage",
   "damageApplied": "Damage has been applied",
   "damageOverThreshold": "Including bonus damage of the damage threshold",
   "damageThreshold": "Damage threshold",
@@ -3875,6 +3876,13 @@
   "stepValue": "Level",
   "stone": "Stone",
   "structure": "Structure Points",
+  "siegeRules": "Siege weapon",
+  "siege": {
+        "ProMKR": "Shots/MKR",
+        "RE": "RU",
+        "ProMKRTooltip": "Shots per Mass Combat Round",
+        "RETooltip": "Range in Room Units"
+    },
   "stunnedByCounterAttack": "Counterattack causes 1 level of stunned",
   "summoningPackage": "Modification Package",
   "swarm": {

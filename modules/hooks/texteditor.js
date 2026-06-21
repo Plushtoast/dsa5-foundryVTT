@@ -184,9 +184,7 @@ export function setEnrichers() {
         packs.get(collection).push(documentId);
       }
     }
-    for (const [pack, ids] of packs.entries()) {
-      await pack.getDocuments({ _id__in: ids });
-    }
+    await Promise.all(Array.from(packs, ([pack, ids]) => pack.getDocuments({ _id__in: ids })));
     basePrimer.call(this, text);
   };
 }
