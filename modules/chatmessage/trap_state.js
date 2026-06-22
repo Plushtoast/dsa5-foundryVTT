@@ -188,8 +188,9 @@ export class TrapState extends ChatMessageState {
         })}</b>`;
 
         if (behavior.system.complexity > 1) {
-            GroupCheck.showGCMessage(skill, behavior.system.difficulty, {}, {
-                ...rollOptions,
+            GroupCheck.openDialog({
+                name: skill,
+                modifier: behavior.system.difficulty,
                 otherMessage: headerHtml,
                 forceWhisperIDs: RollRequestService.buildTokenWhisper(token),
                 datasetOptions: {

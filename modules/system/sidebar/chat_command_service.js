@@ -80,7 +80,7 @@ export default class ChatCommandService {
   }
 
   static groupCheck(name, modifier) {
-    GroupCheck.showGCMessage(name, modifier);
+    GroupCheck.openDialog({ name, modifier });
   }
 
   static speakerAbilityRoll(name, type, options = {}) {

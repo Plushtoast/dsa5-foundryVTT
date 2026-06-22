@@ -3,6 +3,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
+import GroupCheck from '../rolls/group-check.js';
 import ChatCommandService from './chat_command_service.js';
 import RollRequestService from '../queries/roll-request.js';
 import ItempackageData from '../../data/item/itempackage.js';
@@ -160,11 +161,7 @@ export default class DSA5ChatListeners {
       {
         label: _loc('HELP.groupcheck'),
         icon: 'fas fa-users',
-        onClick: () =>
-          ChatCommandService.openSkillActorDialog('HELP.groupcheck', {
-            filterFn: (x) => x.type === 'skill',
-            onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
-          }),
+        onClick: () => GroupCheck.openDialog(),
       },
     ].filter(Boolean);
   }

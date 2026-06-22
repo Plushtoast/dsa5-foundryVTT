@@ -783,15 +783,15 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
     if (!rollOptions.length) return;
 
-    const data = {
-      modifier: this.item.system.baseModifier,
-      maxRolls: this.item.system.allowedTestCount.value,
-      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner }),
-      enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner }),
-      rollOptions,
-    };
-
-    GroupCheck.showGCMessage(rollOptions[0].target, 0, data);
+    GroupCheck.openDialog({
+      configuration: {
+        rollOptions,
+        maxRolls: this.item.system.allowedTestCount.value,
+        targetQs: 10,
+        partsuccess: this.item.system.partsuccess,
+        success: this.item.system.success,
+      },
+    });
   }
 
   static async _postFinishedItemWrapper(event, target) {

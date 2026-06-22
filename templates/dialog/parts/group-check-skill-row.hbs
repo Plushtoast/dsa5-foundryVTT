@@ -1,0 +1,15 @@
+<div class='gc-skill-row'>
+  <div>
+    <select name='skill' class='select2 gc-skill-select' style='width:100%;'>
+      {{#each skills}}
+        <option value='{{value}}' {{#if (eq value ../selectedValue)}}selected{{/if}}>{{label}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class='center'>
+    <input name='modifier' class='quantity-click' type='number' value='{{modifier}}' data-tooltip='TT.strgx10' />
+  </div>
+  <div class='center gc-action-col'>
+    <button type='button' class='gc-remove-skill icon fas fa-trash noBorder dsadesignbutton' data-tooltip='{{localize "Delete"}}'></button>
+  </div>
+</div>

@@ -8,6 +8,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
+import GroupCheck from '../system/rolls/group-check.js';
 import GroupActorSheet from '../actor/group-sheet.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
@@ -768,18 +769,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const [skill, type] = this.lastSkill.split('|');
     if (type != 'skill') return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount,
-      text: _loc('MASTER.doGroupCheck', { skill }),
-    });
-    const callback = (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const [skill, type] = this.lastSkill.split('|');
-      if (type != 'skill') return;
-
-      ChatCommandService.groupCheck(skill, number);
-    };
-    this.buildDialog(_loc('HELP.groupcheck'), template, callback);
+    GroupCheck.openDialog({ name: skill, modifier: amount });
   }
 
   async rollRequest(amount = 0) {
