@@ -1523,6 +1523,128 @@ a.img-entity-link {
   border-color: rgba(0, 111, 61, 0.3);
 }
 
+.roll-request-card {
+  .roll-request-header {
+    margin: 0 0 0.35rem;
+  }
+
+  .roll-request-skill-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    flex: 0 0 24px;
+  }
+
+  .roll-request-rows {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .roll-request-row {
+    padding: 3px 0;
+    line-height: 1.15;
+    min-height: 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .roll-request-row-identity {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .roll-request-row-avatar {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    object-fit: cover;
+    border: none;
+    border-radius: 3px;
+  }
+
+  .roll-request-row-names {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    gap: 0;
+  }
+
+  .roll-request-row-title {
+    font-weight: bold;
+    font-size: var(--font-size-13, 13px);
+  }
+
+  .roll-request-designated {
+    opacity: 0.75;
+    line-height: 1.1;
+  }
+
+  .roll-request-row-side {
+    flex: 0 0 auto;
+    align-items: center;
+  }
+
+  &:not(.roll-request-card-regeneration) {
+    .roll-request-result-label {
+      white-space: nowrap;
+      font-size: var(--font-size-13, 13px);
+    }
+
+    .roll-request-row-success,
+    .roll-request-row-failure {
+      margin: 0 -4px;
+      padding: 3px 4px;
+      border-radius: 3px;
+    }
+
+    .roll-request-row-success {
+      background: rgba(0, 111, 61, 0.12);
+      box-shadow: inset 3px 0 0 #0c5c36;
+    }
+
+    .roll-request-row-failure {
+      background: rgba(164, 36, 26, 0.12);
+      box-shadow: inset 3px 0 0 #7a1f19;
+    }
+  }
+}
+
+.roll-request-card-regeneration {
+  .roll-request-row-side {
+    align-items: flex-end;
+  }
+
+  .roll-request-regen-stats {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1px;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .roll-request-regen-stat {
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .roll-request-row.regen-applied {
+    background: rgba(0, 111, 61, 0.16);
+    margin: 0 -4px;
+    padding: 3px 4px;
+    border-radius: 3px;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 14px;
 }
@@ -5042,7 +5164,8 @@ input[type='checkbox'].autoCheckbox {
   }
 }
 
-.flexAlignEnd {
+.flexAlignEnd,
+.flexAlignRight {
   justify-content: flex-end;
   align-items: center;
 }

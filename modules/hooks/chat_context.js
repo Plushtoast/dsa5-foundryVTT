@@ -4,11 +4,11 @@ import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 
 import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
+import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
 const ROLLABLE_TYPES = ['skill', 'spell', 'liturgy', 'ritual', 'ceremony'];
-const STAT_TYPES = ['LeP', 'KaP', 'AsP'];
 const MANA_TYPES = ['ritual', 'spell'];
 
 const getMessageFromLi = (li) => game.messages.get(li?.dataset?.messageId);
@@ -217,18 +217,7 @@ class ConditionChecker {
 
   static canHeal(li) {
     const message = getMessageFromLi(li);
-    const actor = getActorFromMessage(message);
-
-    if (!actor || !hasOwnership(actor) || !message.flags.data) {
-      return false;
-    }
-
-    const { healApplied } = message.flags.data;
-    const hasStats = STAT_TYPES.some(stat =>
-      getProperty(message.flags, `data.postData.${stat}`) !== undefined
-    );
-
-    return !healApplied && hasStats;
+    return RegenerationHelper.canApplyMessage(message);
   }
 
   static canApplyDefaultRolls(li) {
@@ -247,6 +236,13 @@ class ConditionChecker {
     if (!actor || !hasOwnership(actor) || !message?.flags?.data) return false;
 
     return PostRollBuffs.getMatches(message, actor).length > 0;
+  }
+
+  static canApplyAllRegeneration(li) {
+    if (!game.user.isGM) return false;
+
+    const message = getMessageFromLi(li);
+    return !!message && li.querySelector('.roll-request-card') && RegenerationHelper.canApplyAllFromRollRequest(message);
   }
 }
 
@@ -322,21 +318,7 @@ class ActionHandler {
 
   static async applyHealing(li) {
     const message = getMessageFromLi(li);
-    const actor = DSA5_Utility.getSpeaker(message.speaker);
-
-    if (!actor?.isOwner) {
-      return ui.notifications.error('DSAError.DamagePermission', { localize: true });
-    }
-
-    await updateMessageWithCheckmark(
-      message,
-      'healApplied',
-      /<\/div>$/,
-      '<i class="fas fa-check" style="float:right"></i></div>'
-    );
-
-    const { postData } = message.flags.data;
-    await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
+    await RegenerationHelper.applyFromMessage(message);
   }
 
   static async applyDepletableBuffs(li) {
@@ -350,6 +332,13 @@ class ActionHandler {
     new PostRollBuffPicker(message, matches, async (chosen) => {
       await PostRollBuffs.applyMatches(message, chosen);
     }).render(true);
+  }
+
+  static async applyAllRegeneration(li) {
+    const message = getMessageFromLi(li);
+    if (!message) return;
+
+    await RegenerationHelper.applyAllFromRollRequest(message.id);
   }
 }
 
@@ -376,6 +365,12 @@ const createContextOptions = () => {
       icon: '<i class="fas fa-user-plus"></i>',
       visible: ConditionChecker.canHeal,
       onClick: chatMessageAction(ActionHandler.applyHealing),
+    },
+    {
+      label: 'ROLLREQUEST.applyAllRegeneration',
+      icon: '<i class="fas fa-user-plus"></i>',
+      visible: ConditionChecker.canApplyAllRegeneration,
+      onClick: chatMessageAction(ActionHandler.applyAllRegeneration),
     },
     {
       label: 'CHATCONTEXT.ApplyMana',

@@ -1,0 +1,11 @@
+<div class="roll-request-row-identity">
+  {{#if actorImg}}
+    <img class="roll-request-row-avatar" src="{{actorImg}}" alt="{{actorName}}">
+  {{/if}}
+  <div class="roll-request-row-names">
+    <span class="roll-request-row-title ellipsis">{{actorName}}</span>
+    {{#if designatedUserName}}
+      <span class="very-small ellipsis roll-request-designated">{{designatedUserName}}</span>
+    {{/if}}
+  </div>
+</div>

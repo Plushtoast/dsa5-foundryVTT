@@ -3,6 +3,7 @@ import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5Payment from '../system/payment/payment.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
 import RollRequestService from '../system/queries/roll-request.js';
+import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
@@ -58,6 +59,10 @@ export default function () {
   })
 
   Hooks.on('updateChatMessage', (message, changed) => {
+    if (getProperty(changed, 'flags.data.healApplied')) {
+      RegenerationHelper.refreshLinkedRequestCards(message.id);
+    }
+
     if (!getProperty(message, 'flags.dsa5.queryRequest')) return;
     if (!('timestamp' in changed)) return;
 

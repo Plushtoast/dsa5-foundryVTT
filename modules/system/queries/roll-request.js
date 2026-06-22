@@ -1,5 +1,6 @@
 import QueryOrchestrator from './query-orchestrator.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
+import RegenerationHelper from '../rolls/regeneration-helper.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 
@@ -10,6 +11,7 @@ export default class RollRequestService {
   static QUERY_TYPE = 'dsa5.rollRequest';
   static FLAG_KEY = 'rollRequest';
   static TEMPLATE = 'systems/dsa5/templates/chat/roll/roll-request.hbs';
+  static REGEN_TEMPLATE = 'systems/dsa5/templates/chat/roll/roll-request-regeneration.hbs';
   static DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/roll-request-dialog.hbs';
   static PUBLIC_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.PUBLIC, DICE_CONSTANTS.CHAT_MODES.IC]);
 
@@ -140,7 +142,13 @@ export default class RollRequestService {
   }
 
   static async renderMessage(state) {
-    return await renderTemplate(this.TEMPLATE, this.getTemplateData(state));
+    const template = state.category === 'regeneration' ? this.REGEN_TEMPLATE : this.TEMPLATE;
+    return await renderTemplate(template, this.getTemplateData(state));
+  }
+
+  static getActorPortrait(actor) {
+    if (!actor) return 'icons/svg/mystery-man.svg';
+    return actor.prototypeToken?.texture?.src || actor.img || 'icons/svg/mystery-man.svg';
   }
 
   static getTemplateData(state) {
@@ -148,15 +156,30 @@ export default class RollRequestService {
     const modifierLabel = state.modifier > 0 ? `+${state.modifier}` : state.modifier < 0 ? `${state.modifier}` : '';
     const skillIcon = this.getRequestedIcon(state.category, state.name);
 
+    const isRegeneration = state.category === 'regeneration';
+
     const recipients = state.recipients.map((entry) => {
-      const resultLabel = this.buildResultLabel(entry, state.category);
+      const resultLabel = isRegeneration ? '' : this.buildResultLabel(entry, state.category);
+      const regenResults = isRegeneration && ['success', 'critical'].includes(entry.status)
+        ? RegenerationHelper.formatResultRows(entry.resultDetails)
+        : [];
       const statusStyle = QueryOrchestrator.statusStyle(entry.status);
+      const regenApplied = isRegeneration && entry.status === 'success' && RegenerationHelper.isRollRequestEntryApplied(entry);
+      const resultRowClass = isRegeneration ? '' : this.getResultRowClass(entry.status);
+      const resultTooltip = !isRegeneration && ['success', 'critical', 'failure', 'botch'].includes(entry.status)
+        ? statusStyle.label
+        : '';
+      const actor = game.actors.get(entry.actorId);
       return {
         ...entry,
-        actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
+        actorName: actor?.name || entry.actorId,
+        actorImg: this.getActorPortrait(actor),
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
-        ...statusStyle,
         resultLabel,
+        regenResults,
+        regenApplied,
+        resultRowClass,
+        resultTooltip,
         canRoll: !finalized && entry.status === 'pending',
         canGMRoll: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
         canGMAction: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status),
@@ -166,6 +189,7 @@ export default class RollRequestService {
     return {
       isGM: game.user.isGM,
       finalized,
+      isRegeneration,
       skillName: state.label || state.name,
       skillIcon,
       category: state.category,
@@ -213,12 +237,10 @@ export default class RollRequestService {
     return DSA5ChatAutoCompletion.skills.find((entry) => entry.type === 'skill' && entry.name === name)?.img;
   }
 
-  static formatRegenTooltip(data) {
-    const parts = [];
-    if (data?.LeP != null) parts.push(`LeP: ${data.LeP}`);
-    if (data?.AsP != null) parts.push(`AsP: ${data.AsP}`);
-    if (data?.KaP != null) parts.push(`KaP: ${data.KaP}`);
-    return parts.join(', ') || _loc('success');
+  static getResultRowClass(status) {
+    if (['success', 'critical'].includes(status)) return 'roll-request-row-success';
+    if (['failure', 'botch'].includes(status)) return 'roll-request-row-failure';
+    return '';
   }
 
   static buildResultLabel(entry, category) {
@@ -227,8 +249,12 @@ export default class RollRequestService {
     switch (entry.status) {
       case 'success':
       case 'critical':
-        if (category === 'regeneration') return this.formatRegenTooltip(data);
+        if (category === 'regeneration') return RegenerationHelper.formatTooltip(data);
         return `${_loc('CHARAbbrev.QS')} ${qs}`;
+      case 'failure':
+        return _loc('DSAQUERIES.STATUS.failure');
+      case 'botch':
+        return _loc('DSAQUERIES.STATUS.botch');
       default:
         return '';
     }
@@ -459,10 +485,11 @@ export default class RollRequestService {
 
       if (this.canUserSeeResult(entry, rollRequest)) {
         this.revealPrivateResult(row, entry, rollRequest.category);
+        this.updateRegenAppliedRow(row, entry, rollRequest);
         return;
       }
 
-      this.hidePrivateResult(row);
+      this.hidePrivateResult(row, rollRequest.category);
     });
 
     if (!game.user.isGM) {
@@ -476,35 +503,77 @@ export default class RollRequestService {
     }
   }
 
-  static hidePrivateResult(row) {
+  static hidePrivateResult(row, category) {
+    if (category === 'regeneration') {
+      let stats = row.find('.roll-request-regen-stats');
+      if (!stats.length) {
+        stats = $('<div class="roll-request-regen-stats"></div>');
+        row.find('.roll-request-row-side').prepend(stats);
+      }
+      stats.html('<div class="roll-request-regen-stat very-small">?</div>');
+      return;
+    }
+
+    row.removeClass('roll-request-row-success roll-request-row-failure');
+
     let label = row.find('.roll-request-result-label');
     if (!label.length) {
-      label = $('<span class="very-small roll-request-result-label"></span>');
-      row.find('.roll-request-indicator').before(label);
+      label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>');
+      row.find('.roll-request-row-side').before(label);
     }
     label.text('?');
-    const indicator = row.find('.roll-request-indicator');
-    indicator.removeClass((_, className) => (className.match(/\bicon-\S+/g) || []).join(' '));
-    indicator.addClass('icon-gray').attr('data-tooltip', _loc('DSAQUERIES.STATUS.accepted')).attr('aria-label', _loc('DSAQUERIES.STATUS.accepted'));
-    indicator.find('i').attr('class', 'fas fa-check');
+    row.attr('data-tooltip', _loc('DSAQUERIES.STATUS.accepted')).attr('aria-label', _loc('DSAQUERIES.STATUS.accepted'));
   }
 
   static revealPrivateResult(row, entry, category) {
-    const statusStyle = QueryOrchestrator.statusStyle(entry.status);
-    const indicator = row.find('.roll-request-indicator');
-    indicator.removeClass((_, className) => (className.match(/\bicon-\S+/g) || []).join(' '));
-    indicator.addClass(statusStyle.colorClass).attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
-    indicator.find('i').attr('class', `fas ${statusStyle.icon}`);
+    if (category === 'regeneration') {
+      const regenRows = RegenerationHelper.formatResultRows(entry.resultDetails);
+      if (!regenRows.length) return;
 
-    const resultLabel = this.buildResultLabel(entry, category);
-    if (!resultLabel) return;
-
-    let label = row.find('.roll-request-result-label');
-    if (!label.length) {
-      label = $('<span class="very-small roll-request-result-label"></span>');
-      indicator.before(label);
+      let stats = row.find('.roll-request-regen-stats');
+      if (!stats.length) {
+        stats = $('<div class="roll-request-regen-stats"></div>');
+        row.find('.roll-request-row-side').prepend(stats);
+      }
+      stats.empty();
+      for (const regenRow of regenRows) {
+        stats.append($(`<div class="roll-request-regen-stat very-small"><span>${regenRow.label}</span>: ${regenRow.value}</div>`));
+      }
+      return;
     }
-    label.text(resultLabel);
+
+    this.applyStandardResultRowState(row, entry, category);
+  }
+
+  static applyStandardResultRowState(row, entry, category) {
+    row.removeClass('roll-request-row-success roll-request-row-failure');
+    const rowClass = this.getResultRowClass(entry.status);
+    if (rowClass) row.addClass(rowClass);
+
+    const statusStyle = QueryOrchestrator.statusStyle(entry.status);
+    const resultLabel = this.buildResultLabel(entry, category);
+
+    if (resultLabel) {
+      let label = row.find('.roll-request-result-label');
+      if (!label.length) {
+        label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>');
+        row.find('.roll-request-row-side').before(label);
+      }
+      label.text(resultLabel);
+    }
+
+    if (['success', 'critical', 'failure', 'botch'].includes(entry.status)) {
+      row.attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
+    }
+  }
+
+  static updateRegenAppliedRow(row, entry, rollRequest) {
+    if (rollRequest.category !== 'regeneration' || entry.status !== 'success') return;
+    if (!RegenerationHelper.isRollRequestEntryApplied(entry)) return;
+
+    row.addClass('regen-applied');
+    row.attr('data-tooltip', _loc('ROLLREQUEST.regenApplied'));
+    row.attr('aria-label', _loc('ROLLREQUEST.regenApplied'));
   }
 
   static chatListeners(html) {

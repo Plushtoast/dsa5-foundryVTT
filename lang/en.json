@@ -2803,7 +2803,9 @@
   "ROLLREQUEST": {
     "dialogTitle": "Roll Request",
     "rollAction": "Roll",
-    "selectActors": "Select Actors"
+    "selectActors": "Select Actors",
+    "applyAllRegeneration": "Apply Regeneration to All",
+    "regenApplied": "Regeneration applied"
   },
   "RPr": "Routine check",
   "Racedescr": {

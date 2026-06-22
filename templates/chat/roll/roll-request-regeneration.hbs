@@ -1,23 +1,24 @@
-<div class="dsa5 roll-request-card" data-category="{{category}}">
+<div class="dsa5 roll-request-card roll-request-card-regeneration" data-category="{{category}}">
   {{#if headerHtml}}
     <div class="trap-roll-request-header">{{{headerHtml}}}</div>
   {{/if}}
   <p class="flexrow flexAlignCenter gap5px roll-request-header">
-    {{#if skillIcon}}
-      <img src="{{skillIcon}}" alt="{{skillName}}" class="roll-request-skill-icon">
-    {{/if}}
     <b>{{skillName}}</b>{{#if modifierLabel}} ({{modifierLabel}}){{/if}}
   </p>
 
   {{#if recipients.length}}
     <div class="roll-request-rows">
       {{#each recipients}}
-        <div class="flexrow flexAlignCenter roll-request-row gap5px {{resultRowClass}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
+        <div class="flexrow flexAlignCenter roll-request-row gap5px{{#if regenApplied}} regen-applied{{/if}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if regenApplied}} data-tooltip="{{localize "ROLLREQUEST.regenApplied"}}" aria-label="{{localize "ROLLREQUEST.regenApplied"}}"{{/if}}>
           {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
-          {{#if resultLabel}}
-            <b class="roll-request-result-label flexrow flex0 flexAlignRight">{{resultLabel}}</b>
-          {{/if}}
-          <div class="roll-request-row-side flexrow flex0 flexAlignEnd gap2px">
+          <div class="roll-request-row-side flexrow flexAlignEnd gap2px">
+            {{#if regenResults.length}}
+              <div class="roll-request-regen-stats">
+                {{#each regenResults}}
+                  <div class="roll-request-regen-stat very-small"><span>{{label}}</span>: {{value}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
             {{#if canRoll}}
               <button type="button" class="roll-request-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize "ROLLREQUEST.rollAction"}}" aria-label="{{localize "ROLLREQUEST.rollAction"}}"></button>
             {{/if}}

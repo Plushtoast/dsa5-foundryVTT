@@ -82,6 +82,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/enhanced-default-dialog.hbs',
     'systems/dsa5/templates/dialog/default-combat-dialog.hbs',
     'systems/dsa5/templates/chat/roll/test-card.hbs',
+    'systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs',
     'systems/dsa5/templates/dialog/parts/spellmodifiers.hbs',
     'systems/dsa5/templates/dialog/parts/canChangeCastingTime.hbs',
     'systems/dsa5/templates/actors/parts/schipspart.hbs',

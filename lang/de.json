@@ -2802,7 +2802,9 @@
     "ROLLREQUEST": {
         "dialogTitle": "Probenaufforderung",
         "rollAction": "Würfeln",
-        "selectActors": "Helden auswählen"
+        "selectActors": "Helden auswählen",
+        "applyAllRegeneration": "Regeneration für alle anwenden",
+        "regenApplied": "Regeneration angewendet"
     },
     "RPr": "Routineprobe",
     "Racedescr": {
