@@ -1,6 +1,6 @@
 <div class="persona-detail-view">
     <div class="persona-detail-header">
-        <div class="persona-detail-image">
+        <div class="persona-detail-image{{ifThen important ' persona-important' ''}}">
             <img src="{{img}}" alt="{{name}}" />
             {{#if garadanVisible}}
             <div class="persona-status garjourn {{garadanClass}}" data-tooltip="GARADAN.{{garadan}}"></div>

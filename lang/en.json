@@ -2029,6 +2029,7 @@
     "layoutCompact": "Compact cards",
     "layoutList": "List table",
     "loading": "Loading {item}...",
+    "moduleFilter": "Filter modules permanent",
     "noFilter": "No filter",
     "resultCount": "{shown} / {total} results",
     "search": "Search",
@@ -2479,6 +2480,10 @@
         "faction": {
           "hint": "The actor is grouped in the Bestiary by faction/type.",
           "label": "Faction/Type"
+        },
+        "important": {
+          "hint": "Marks this person as important with a golden border around their avatar.",
+          "label": "Important"
         },
         "img": {
           "label": "Image"

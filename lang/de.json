@@ -2028,6 +2028,7 @@
         "layoutCompact": "Kompakte Karten",
         "layoutList": "Listentabelle",
         "loading": "Lade {item}...",
+        "moduleFilter": "Module permanent filtern",
         "noFilter": "Kein Filter",
         "resultCount": "{shown} / {total} Ergebnisse",
         "search": "Suche",
@@ -2478,6 +2479,10 @@
                 "faction": {
                     "hint": "Der Akteur wird über die Fraktion/den Typus im Bestiarium gruppiert.",
                     "label": "Fraktion/Typus"
+                },
+                "important": {
+                    "hint": "Markiert diese Person als wichtig mit goldenem Rahmen um den Avatar.",
+                    "label": "Wichtig"
                 },
                 "img": {
                     "label": "Avatar"

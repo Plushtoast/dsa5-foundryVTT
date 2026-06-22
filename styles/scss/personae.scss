@@ -297,6 +297,18 @@
   }
 }
 
+/* Important persona golden shine */
+.persona-list-image.persona-important,
+.persona-detail-image.persona-important {
+  img {
+    border-color: var(--dsadesign1);
+    box-shadow:
+      0 0 4px var(--dsadesign1),
+      0 0 10px rgba(212, 175, 55, 0.7),
+      0 0 16px rgba(212, 175, 55, 0.5);
+  }
+}
+
 /* Status Indicators */
 .persona-status {
   position: absolute;
