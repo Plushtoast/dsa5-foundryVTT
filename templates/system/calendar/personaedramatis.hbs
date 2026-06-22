@@ -16,9 +16,7 @@
                             <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
                             <i class="fas fa-search"></i>
                         </div>
-                        {{#if isGM}}
-                        <button type="button" class="icon fas fa-plus list-add-button" data-action="newPersona" data-tooltip="{{localize 'PERSONAE.Add'}}"></button>
-                        {{/if}}
+                        <button type="button" class="icon fas fa-bars list-context-menu noBorder dsadesignbutton" data-action="personaeListMenu" data-tooltip="{{localize 'JOURNAL.ActionShow'}}"></button>
                     </div>
                 </div>
                 
@@ -36,7 +34,7 @@
                             </div>
                             <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-persona-important="{{persona.important}}" data-persona-visible="{{persona.visible}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
                                 <div class="persona-list-image{{ifThen important ' persona-important' ''}}">
                                     <img src="{{img}}" alt="{{name}}" />
                                     {{#if garadanVisible}}
@@ -73,7 +71,7 @@
                                 <i class="fas fa-users"></i>
                                 <p>{{localize "PERSONAE.NoPersonsInList"}}</p>
                                 {{#if ../isGM}}
-                                <button type="button" class="flexrow add-persona-small">
+                                <button type="button" class="flexrow add-persona-small" data-action="newPersona">
                                     <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
                                 </button>
                                 {{/if}}
@@ -95,7 +93,7 @@
                             </div>
                             <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-persona-important="{{persona.important}}" data-persona-visible="{{persona.visible}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
                                 <div class="persona-list-image{{ifThen important ' persona-important' ''}}">
                                     <img src="{{img}}" alt="{{name}}" />
                                 </div>
@@ -129,7 +127,7 @@
                                 <i class="fas fa-dragon"></i>
                                 <p>{{localize "PERSONAE.NoBeasts"}}</p>
                                 {{#if ../isGM}}
-                                <button type="button" class="flexrow add-persona-small">
+                                <button type="button" class="flexrow add-persona-small" data-action="newPersona">
                                     <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
                                 </button>
                                 {{/if}}

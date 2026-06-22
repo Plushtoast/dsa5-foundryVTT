@@ -2561,6 +2561,8 @@
         "copyAvatar": "Avatar vom Original kopieren",
         "copyToken": "Token vom Original kopieren",
         "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
+        "filterImportant": "Nur Wichtige",
+        "filterVisible": "Nur für Spieler sichtbar",
         "journals": {
             "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)",
             "label": "Dramatis Personae Journals"

@@ -69,7 +69,8 @@
   background: linear-gradient(90deg, var(--dsadesign1) 0%, var(--personae-gold-alpha-3) 100%);
   border-bottom: 1px solid var(--border-color);
 
-  .list-add-button {
+  .list-add-button,
+  .list-context-menu {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 999px;
   }
