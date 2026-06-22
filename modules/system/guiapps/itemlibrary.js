@@ -652,13 +652,13 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     $(input).closest('.library-filter-chip').addClass('active');
 
     if (this.advancedFiltering) {
-      const dataFilters = html.find('.detailFilters');
+      const dataFilters = this._getDetailFilters(tab);
       const subcategory = dataFilters.attr('data-subc');
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
       }
       const template = await this.buildDetailFilter(category, type);
-      html.find('.tab.active .itemlibrary-sidebar .advancedSearchContent').html(template);
+      html.find(`[data-tab="${tab}"] .itemlibrary-sidebar .advancedSearchContent`).html(template);
     }
 
     await this.filterItems(tab);
@@ -679,7 +679,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     chip.classList.toggle('active', isChecked);
 
     if (this.advancedFiltering) {
-      const dataFilters = $(this.element).find('.detailFilters');
+      const dataFilters = this._getDetailFilters(tab);
       const subcategory = dataFilters.attr('data-subc');
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
@@ -839,7 +839,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async advancedFilterStuff(documentGroup, page) {
-    const dataFilters = $(this.element).find('.detailFilters');
+    const dataFilters = this._getDetailFilters(documentGroup);
     const subcategory = dataFilters.attr('data-subc');
     const search = this._syncSearchFromInput(documentGroup).toLowerCase();
 
@@ -891,6 +891,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const query = input?.value ?? '';
     this.findIndex(tab).search = query;
     return query;
+  }
+
+  _getDetailFilters(tab) {
+    const activeTab = tab ?? this.element?.querySelector('.tab.active')?.dataset?.tab;
+    if (!activeTab) return $();
+    return $(this.element).find(`[data-tab="${activeTab}"] .detailFilters`).first();
   }
 
   _beginFreshFilter(tab) {
@@ -955,7 +961,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return filteredItems;
   }
 
-  changeTab(tab, group, options) {
+  async changeTab(tab, group, options) {
     super.changeTab(tab, group, options)
 
     const input = this.element?.querySelector('.filterBy-search');
@@ -976,7 +982,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         break
     }
 
-    this.filterItems(tab);
+    if (this.advancedFiltering) await this._syncAdvancedSidebarForTab(tab);
+    await this.filterItems(tab);
   }
 
   setBGImage(filterdItems, category) {
@@ -1532,12 +1539,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
     html.find('.dsa-choice-browser__results.scrollable').on('scroll.infinit', this._debouncedInfiniteScroll);
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
-    html.on('change', '.detailFilters input, .detailFilters select', () => {
+    html.on('change', '.detailFilters input, .detailFilters select', (ev) => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
 
       if (this.advancedFiltering) {
-        const dataFilters = $(this.element).find('.detailFilters');
-        const subcategory = dataFilters.attr('data-subc');
+        const subcategory = $(ev.currentTarget).closest('.detailFilters').attr('data-subc');
         if (subcategory && this.detailFilter[subcategory]) {
           this.detailFilter[subcategory].next = undefined;
         }
@@ -1584,7 +1590,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const category = $(this.element).find('.tab.active')[0].dataset.tab;
 
     if (source.advancedFiltering) {
-      const dataFilters = $(source.element).find('.detailFilters');
+      const dataFilters = source._getDetailFilters(category);
       const subcategory = dataFilters.attr('data-subc');
 
       if (subcategory) {
@@ -1626,7 +1632,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     this._syncSearchFromInput(category)
 
     if (this.advancedFiltering) {
-      const dataFilters = $(this.element).find('.detailFilters');
+      const dataFilters = this._getDetailFilters(category);
       const subcategory = dataFilters.attr('data-subc');
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
@@ -1651,7 +1657,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     $(ev.currentTarget).closest('.library-filter-chip').removeClass('active');
 
     if (this.advancedFiltering) {
-      const dataFilters = $(this.element).find('.detailFilters');
+      const dataFilters = this._getDetailFilters(tab);
       const subcategory = dataFilters.attr('data-subc');
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
