@@ -792,7 +792,7 @@ export default class DiceDSA5 {
 
   static async #rollRegeneration(testData) {
     const modifier = await this._situationalModifiers(testData);
-    const roll = testData.roll;
+    let roll = testData.roll;
     const chars = [];
 
     const result = {
