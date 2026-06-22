@@ -3,6 +3,32 @@ import DSA5 from '../config/config-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
+const modRegex = /(-|\+)?\d+/;
+const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
+const innerRegex = /(?:\[)(.*?)(?=\])/;
+
+function formatEnricherMod(modifier) {
+  if (modifier < 0) return ` ${modifier}`;
+  if (modifier > 0) return ` +${modifier}`;
+  return '';
+}
+
+function parseSkillModSegment(segment) {
+  const modMatch = segment.match(modRegex);
+  const mod = modMatch ? Number(modMatch[0]) : 0;
+  const skill = segment.replace(modRegex, '').trim();
+  return { skill, mod };
+}
+
+function parseGcRollOptions(inner) {
+  if (optionRegex.test(inner) || !inner.includes(',')) return null;
+
+  return inner.split(',').map((segment) => {
+    const { skill, mod } = parseSkillModSegment(segment.trim());
+    return { target: skill, modifier: mod, type: 'skill' };
+  });
+}
+
 export function setEnrichers() {
   const rolls = { Rq: 'roll', Gc: 'GC', Ch: 'CH' };
   const icons = {
@@ -21,10 +47,7 @@ export function setEnrichers() {
     Pay: '',
     GetPaid: '',
   };
-  const modRegex = /(-|\+)?\d+/;
   const payRegex = /(-|\+)?\d+(\.\d+)?/;
-  const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
-  const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
     Pay: _loc('PAYMENT.payButton'),
     GetPaid: _loc('PAYMENT.getPaidButton'),
@@ -50,7 +73,39 @@ export function setEnrichers() {
 
   CONFIG.TextEditor.enrichers.push(
     {
-      pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
+      pattern: /@Gc\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
+      enricher: (match) => {
+        const str = match[0];
+        const inner = match[1];
+        const customTextOverride = match[2] ? match[2].replace(/[{}]/g, '') : null;
+        const rollOptions = parseGcRollOptions(inner);
+
+        if (rollOptions?.length) {
+          const label =
+            customTextOverride || rollOptions.map((optn) => `${optn.target}${formatEnricherMod(optn.modifier)}`).join(', ');
+          const rollOptionsData = encodeURIComponent(JSON.stringify(rollOptions));
+          return $(
+            `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-roll-options='${rollOptionsData}' data-label="${label}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${label}</a>`,
+          )[0];
+        }
+
+        const mod = Number(str.match(modRegex)[0]);
+        const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
+        const data = encodeURIComponent(JSON.stringify(json));
+        const skill = inner.replace(modRegex, '').replace(optionRegex, '').trim();
+        let customText = customTextOverride || skill;
+
+        if (json.attrs) {
+          customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
+        }
+
+        return $(
+          `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${customText}${formatEnricherMod(mod)}</a>`,
+        )[0];
+      },
+    },
+    {
+      pattern: /@(Rq|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
@@ -65,7 +120,7 @@ export function setEnrichers() {
         }
 
         return $(
-          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`,
+          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText}${formatEnricherMod(mod)}</a>`,
         )[0];
       },
     },
