@@ -654,6 +654,7 @@
         "movementPipHint": "Bewegung: {used}/{max} Schritt. Über GS hinaus kostet eine Aktion.",
         "noDefenses": "Anzahl Verteidigungen",
         "ongoing": "Laufende Handlungen",
+        "newRound": "Neue Kampfrunde",
         "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!",
         "waitInit": "Zurückstellen"
     },
@@ -926,6 +927,10 @@
         "MessageMode": "Würfelmodus",
         "SituationalModifiers": "Bedingte\nModifikatoren",
         "addTarget": "Ziel hinzufügen",
+        "tokenDispositionCount": "{count} ausgewählte Token",
+        "tokenDispositionHint": "Gesinnung für alle ausgewählten Token setzen.",
+        "tokenDispositionNoTokens": "Wähle zuerst einen oder mehrere Token auf der Karte aus.",
+        "tokenDispositionTitle": "Token-Gesinnung",
         "alreadyAddedCharacterpart": "Du hast bereits eine {category}. Möchtest du diese Überschreiben? Bereits hinzugefügte Modifikation der vorherigen {category} können nicht automatisch rückgängig gemacht werden.",
         "assassinate": "Meucheln",
         "assassinateDescr": "Opfer muss ahnungslos sein (Sinnesschärfe gegen Verbergen)",
@@ -2019,12 +2024,20 @@
         "fullTextSearch": "Volltextsuche (Deaktivieren verbessert Leistung, erfordert Neuladen der Welt)",
         "indexWorldItems": "Welt Items indexieren (Deaktivieren verbessert Leistung, erfordert Neuladen der Welt)",
         "info": "Suche was du brauchst und ziehe es per Drag & Drop auf den Heldenbogen oder die Map.",
+        "layoutBrowse": "Stöberkarten",
+        "layoutCompact": "Kompakte Karten",
+        "layoutList": "Listentabelle",
         "loading": "Lade {item}...",
         "noFilter": "Kein Filter",
+        "resultCount": "{shown} / {total} Ergebnisse",
         "search": "Suche",
         "searchCategoryDescription": "Filterkategorien",
         "searchPlaceholder": "Durchsuche die Bibliothek",
-        "selectAdvanced": "Wähle eine Kategorie"
+        "selectAdvanced": "Wähle eine Kategorie",
+        "settings": "Bibliothek-Einstellungen",
+        "source": "Quelle",
+        "viewMode": "Ansicht",
+        "worldItem": "Welt"
     },
     "LocalizedAbilityModifiers": {
         "at": "at",
@@ -2805,6 +2818,20 @@
         "selectActors": "Helden auswählen",
         "applyAllRegeneration": "Regeneration für alle anwenden",
         "regenApplied": "Regeneration angewendet"
+    },
+    "GROUPCHECK": {
+        "dialogTitle": "Gruppenprobe",
+        "editTitle": "Gruppenprobe bearbeiten",
+        "tabSkills": "Talente",
+        "tabSettings": "Einstellungen",
+        "tabOutcomes": "Ergebnisse",
+        "tabResults": "Würfe",
+        "addSkill": "Talent hinzufügen",
+        "partSuccess": "Teilerfolg",
+        "success": "Erfolg",
+        "noResults": "Noch keine Würfe.",
+        "noSkills": "Mindestens ein Talent hinzufügen.",
+        "minOneSkill": "Mindestens ein Talent erforderlich."
     },
     "RPr": "Routineprobe",
     "Racedescr": {

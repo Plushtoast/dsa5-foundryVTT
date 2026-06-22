@@ -654,6 +654,7 @@
     "movementPipHint": "Movement: {used}/{max} yards. Beyond speed costs one action.",
     "noDefenses": "Defense count",
     "ongoing": "Ongoing actions",
+    "newRound": "New combat round",
     "overusePipHint": "Extra action – exceeds your action budget this round!",
     "waitInit": "Wait"
   },
@@ -926,6 +927,10 @@
     "MessageMode": "Message mode",
     "SituationalModifiers": "Situational\nModifiers",
     "addTarget": "Add Target",
+    "tokenDispositionCount": "{count} selected token(s)",
+    "tokenDispositionHint": "Set the disposition for all selected tokens.",
+    "tokenDispositionNoTokens": "Select one or more tokens on the canvas first.",
+    "tokenDispositionTitle": "Token Disposition",
     "alreadyAddedCharacterpart": "You already have a {category}. Do you want to override it? Already added modifications of the former {category} can not be removed automatically.",
     "assassinate": "Assassinate",
     "assassinateDescr": "Approach victim undetected (Perception vs. Stealth)",
@@ -2020,12 +2025,20 @@
     "fullTextSearch": "Full text search (deactivate to increase performance, requires reloading of the world)",
     "indexWorldItems": "Index world Items (deactivate to increase performance, requires reloading of the world)",
     "info": "Search for everything and drag & drop it to the character sheet or the map.",
+    "layoutBrowse": "Browse cards",
+    "layoutCompact": "Compact cards",
+    "layoutList": "List table",
     "loading": "Loading {item}...",
     "noFilter": "No filter",
+    "resultCount": "{shown} / {total} results",
     "search": "Search",
     "searchCategoryDescription": "Filter categories",
     "searchPlaceholder": "Search the library",
-    "selectAdvanced": "Chose a category"
+    "selectAdvanced": "Chose a category",
+    "settings": "Library settings",
+    "source": "Source",
+    "viewMode": "View mode",
+    "worldItem": "World"
   },
   "LocalizedAbilityModifiers": {
     "at": "at",
@@ -2806,6 +2819,20 @@
     "selectActors": "Select Actors",
     "applyAllRegeneration": "Apply Regeneration to All",
     "regenApplied": "Regeneration applied"
+  },
+  "GROUPCHECK": {
+    "dialogTitle": "Group Check",
+    "editTitle": "Edit Group Check",
+    "tabSkills": "Skills",
+    "tabSettings": "Settings",
+    "tabOutcomes": "Outcomes",
+    "tabResults": "Results",
+    "addSkill": "Add Skill",
+    "partSuccess": "Partial Success",
+    "success": "Success",
+    "noResults": "No rolls yet.",
+    "noSkills": "Add at least one skill.",
+    "minOneSkill": "At least one skill is required."
   },
   "RPr": "Routine check",
   "Racedescr": {

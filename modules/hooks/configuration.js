@@ -641,6 +641,13 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    itemLibraryViewMode: {
+      name: 'DSASETTINGS.itemLibraryViewMode',
+      scope: 'client',
+      config: false,
+      default: 'list',
+      type: String,
+    },
     enableCombatFlow: {
       name: 'DSASETTINGS.enableCombatFlow',
       hint: 'DSASETTINGS.enableCombatFlowHint',

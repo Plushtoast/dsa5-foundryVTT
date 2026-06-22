@@ -1,19 +1,18 @@
-<div class="standard-form flexcol gap5px">
-    <div class="flexrow">
-        <div class="form-group libButton">
-            <label>{{ localize "Library.search"}}</label>
-            <div class="flexrow">
-                {{#each settings as |setting|}}
-                <a data-tooltip="Library.{{@key}}" data-key="{{@key}}"
-                    class="changeSettings {{ifThen setting.val 'on' ''}}">
-                    <i class="fas fa-toggle-off"></i> <i class="fas {{setting.icon}}"></i>
-                </a>
-                {{/each}}
-                <a data-tooltip="Library.info"><i class="fas fa-info"></i></a>                
-            </div>
-        </div>
-    </div>
-    <div class="flexrow">
+<div class="itemlibrary-header-toolbar dsap-2">
+    <div class="itemlibrary-search-wrap">
         <input class="input-text filterBy-search" name="librarySearch" type="search" placeholder="{{localize 'Library.searchPlaceholder'}}" />
+    </div>
+    <div class="itemlibrary-toolbar-group itemlibrary-view-toggle" role="group" aria-label="{{localize 'Library.viewMode'}}">
+        <button type="button" class="dsadesignbutton icon fa-solid fa-table-cells {{#if (eq viewMode 'compact')}}active on{{/if}}" data-action="selectLibraryView" data-view="compact" aria-pressed="{{#if (eq viewMode 'compact')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutCompact'}}" aria-label="{{localize 'Library.layoutCompact'}}"></button>
+        <button type="button" class="dsadesignbutton icon fa-solid fa-id-card {{#if (eq viewMode 'browse')}}active on{{/if}}" data-action="selectLibraryView" data-view="browse" aria-pressed="{{#if (eq viewMode 'browse')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutBrowse'}}" aria-label="{{localize 'Library.layoutBrowse'}}"></button>
+        <button type="button" class="dsadesignbutton icon fa-solid fa-list {{#if (eq viewMode 'list')}}active on{{/if}}" data-action="selectLibraryView" data-view="list" aria-pressed="{{#if (eq viewMode 'list')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutList'}}" aria-label="{{localize 'Library.layoutList'}}"></button>
+    </div>
+    <div class="itemlibrary-toolbar-group itemlibrary-settings" role="group" aria-label="{{localize 'Library.settings'}}">
+        {{#each settings as |setting|}}
+        <button type="button" data-tooltip="Library.{{@key}}" data-key="{{@key}}" class="dsadesignbutton icon changeSettings {{#unless setting.dialog}}{{#if setting.val}}on active{{/if}}{{/unless}}" {{#unless setting.dialog}}aria-pressed="{{#if setting.val}}true{{else}}false{{/if}}"{{/unless}}>
+            <i class="fas {{setting.icon}}" aria-hidden="true"></i>
+        </button>
+        {{/each}}
+        <button type="button" class="dsadesignbutton icon fa-solid fa-info" data-tooltip="Library.info" aria-label="{{localize 'Library.info'}}"></button>
     </div>
 </div>

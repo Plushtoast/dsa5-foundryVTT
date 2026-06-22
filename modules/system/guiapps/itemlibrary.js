@@ -4,9 +4,109 @@ import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
+import SpecialabilityData from '../../data/item/specialability.js';
 
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+
+const VIEW_MODES = ['compact', 'browse', 'list'];
+
+const BUILTIN_COLUMN_DEFS = {
+  img: { id: 'img', label: '', sortable: false },
+  name: { id: 'name', label: 'Name', sortable: true, includesImg: true, includesSource: true },
+  type: { id: 'type', label: 'Type', sortable: true },
+  compendium: { id: 'compendium', label: 'Library.source', sortable: true },
+  price: { id: 'price', label: 'price', sortable: true },
+};
+
+const COLUMN_OPTION_MAPS = {
+  specialAbilityCategories: SpecialabilityData.specialAbilityCategories,
+  patronCategories: { 0: 'PATRON.0', 1: 'PATRON.1', 2: 'PATRON.2', 3: 'PATRON.3' },
+  spellextensionCategories: {
+    spell: 'TYPES.Item.spell',
+    liturgy: 'TYPES.Item.liturgy',
+    ritual: 'TYPES.Item.ritual',
+    ceremony: 'TYPES.Item.ceremony',
+  },
+};
+
+const PLANT_TYPE_KEYS = ['healing', 'poison', 'physical', 'psychic', 'crop', 'defensive', 'supernatural'];
+
+function getListColumnConfig() {
+  return game.dsa5?.itemLibrary?.listColumnConfig ?? {};
+}
+
+function getPriceTypes() {
+  const configured = getListColumnConfig()._default?.priceTypes;
+  if (configured?.length) return new Set(configured);
+  return new Set([...DSA5.equipmentCategories, 'itempackage']);
+}
+
+function typeHasPrice(type) {
+  return getPriceTypes().has(type);
+}
+
+function getColumnOptions(col) {
+  if (col.optionsKey && COLUMN_OPTION_MAPS[col.optionsKey]) {
+    return COLUMN_OPTION_MAPS[col.optionsKey];
+  }
+  return col.optionsKey ? DSA5[col.optionsKey] : undefined;
+}
+
+function getTypeListColumns(type) {
+  const config = getListColumnConfig();
+  const columns = [...(config[type]?.columns ?? [])];
+  const apTypes = config._default?.apTypes ?? [];
+  const apColumn = config._default?.apColumn;
+  if (apColumn && apTypes.includes(type) && !columns.some(col => col.attr === apColumn.attr)) {
+    columns.unshift(apColumn);
+  }
+  return columns;
+}
+
+function getListDisplayFields(type) {
+  const typeColumns = getTypeListColumns(type);
+  if (typeColumns.length) {
+    return typeColumns.map(col => ({
+      label: col.label,
+      attr: col.attr,
+      type: col.optionsKey ? 'select' : 'text',
+      options: getColumnOptions(col),
+      optionsKey: col.optionsKey,
+      columnType: col.columnType,
+      raw: col.raw,
+    }));
+  }
+
+  return (ADVANCEDFILTERS[type] || [])
+    .filter(f => f.type === 'select' || f.type === 'text');
+}
+
+function resolveColumnFieldDef(col) {
+  return {
+    id: col.attr,
+    label: col.label,
+    sortable: col.columnType !== 'plantTypes',
+    attr: col.attr,
+    optionsKey: col.optionsKey,
+    columnType: col.columnType,
+    raw: col.raw,
+    fieldDef: {
+      label: col.label,
+      attr: col.attr,
+      type: col.optionsKey ? 'select' : 'text',
+      options: getColumnOptions(col),
+    },
+  };
+}
+
+function getSystemAttrValue(item, attrPath) {
+  if (item?.system) {
+    const value = foundry.utils.getProperty(item.system, attrPath);
+    if (value !== undefined && value !== null) return value;
+  }
+  return foundry.utils.getProperty(item, `system.${attrPath}`);
+}
 
 //todo check if items on index have permission
 
@@ -58,7 +158,7 @@ class SearchDocument {
       compendium: item.pack || ''
     };
 
-    if (DSA5.equipmentCategories.has(item.type)) {
+    if (typeHasPrice(item.type)) {
       object.price = foundry.utils.getProperty(item, "system.price.value") || 0;
     }
 
@@ -68,6 +168,14 @@ class SearchDocument {
 
     for (const field of fields) {
       object[field] = foundry.utils.getProperty(item, field) || "";
+    }
+
+    for (const field of getListDisplayFields(item.type)) {
+      if (field.columnType === 'plantTypes') {
+        object[field.attr] = foundry.utils.duplicate(item.system?.planttype ?? {});
+      } else {
+        object[field.attr] = getSystemAttrValue(item, field.attr) ?? '';
+      }
     }
 
     return object;
@@ -161,6 +269,14 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   searchDebounceMs = 200
 
+  viewMode = 'list'
+
+  listSort = { column: 'name', direction: 'asc' }
+
+  resultCounts = {}
+
+  _hoverToken = 0
+
   static TABS = {
     sheet: {
       tabs: [
@@ -178,8 +294,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     id: "DSA5ItemLibrary",
     tag: "aside",
     position: {
-      height: 800,
-      width: 800
+      height: 720,
+      width: 960
     },
     window: {
       title: "ItemLibrary",
@@ -196,7 +312,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       ],
     },
     actions: {
-      searchableAbility: this._onSearchableAbility
+      searchableAbility: DSA5ItemLibrary._onSearchableAbility,
+      selectLibraryView: DSA5ItemLibrary.prototype._selectLibraryView,
+      sortListColumn: DSA5ItemLibrary.prototype._sortListColumn,
+      showCompendiumFilter: DSA5ItemLibrary._showCompendiumFilter,
     },
     classes: ["dsa5", "sheet", "itemlibrary"]
   };
@@ -233,11 +352,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   constructor(app) {
     super(app)
 
+    this.viewMode = game.settings.get('dsa5', 'itemLibraryViewMode') || 'list';
+    if (!VIEW_MODES.includes(this.viewMode)) this.viewMode = 'list';
+
     this._debouncedFilterItems = foundry.utils.debounce((category) => {
       this.filterItems(category);
     }, this.searchDebounceMs);
 
     this.indexLoader = new ItemLibraryIndexLoader();
+    this._cachedListItems = {};
 
     this.loadSystemSpecificConfig().then(() => {
       this.prepareDataModels()
@@ -249,10 +372,70 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     clickableAbility(target);
   }
 
+  static _showCompendiumFilter(_event, _target) {
+    new LibraryModulsFilter().render(true);
+  }
+
+  _selectLibraryView(ev, target) {
+    const view = target.dataset.view;
+    if (!VIEW_MODES.includes(view) || this.viewMode === view) return;
+
+    this.viewMode = view;
+    game.settings.set('dsa5', 'itemLibraryViewMode', view);
+
+    const group = target.closest('.itemlibrary-view-toggle');
+    if (group) {
+      for (const btn of group.querySelectorAll('[data-action="selectLibraryView"]')) {
+        const active = btn.dataset.view === view;
+        btn.classList.toggle('active', active);
+        btn.classList.toggle('on', active);
+        btn.ariaPressed = `${active}`;
+      }
+    }
+
+    const category = $(this.element).find('.tab.active')[0]?.dataset.tab;
+    if (category) this.filterItems(category);
+  }
+
+  _sortListColumn(ev, target) {
+    const th = target.closest('th[data-sort-col]') ?? target;
+    if (!th?.dataset.sortCol || th.dataset.sortable !== 'true') return;
+
+    const column = th.dataset.sortCol;
+    if (this.listSort.column === column) {
+      this.listSort.direction = this.listSort.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.listSort = { column, direction: 'asc' };
+    }
+
+    const category = $(this.element).find('.tab.active')[0]?.dataset.tab;
+    if (category && this._cachedListItems[category]) {
+      this.renderResult(this._cachedListItems[category], category, false);
+    }
+  }
+
+  getPageSize() {
+    return this.getEffectiveViewMode() === 'list' ? 100 : this.pageSize;
+  }
+
+  getEffectiveViewMode(tab) {
+    const activeTab = tab ?? $(this.element)?.find('.tab.active')[0]?.dataset.tab;
+    if (this.viewMode === 'browse' && activeTab === 'JournalEntries') return 'compact';
+    return this.viewMode;
+  }
+
   async loadSystemSpecificConfig() {
     this.systemConfiguration = DSASystemConfiguration
     this.systemConfiguration.initialize()
     this.fullTextSearch = game.settings.get("dsa5", "indexDescription") && this.systemConfiguration.hasDescription
+    try {
+      this.listColumnConfig = await foundry.utils.fetchJsonWithTimeout(
+        'systems/dsa5/modules/system/guiapps/itemlibrary/list_columns.json'
+      );
+    } catch (err) {
+      console.warn('DSA5 | ItemLibrary: Could not load list_columns.json', err);
+      this.listColumnConfig = {};
+    }
   }
 
   prepareIndexes() {
@@ -283,6 +466,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const data = await super._prepareContext(_options)
     data.isGM = game.user.isGM
     data.models = this.models
+    data.viewMode = this.getEffectiveViewMode()
 
     if (this.advancedFiltering) {
       data.advancedFilter = await this.buildDetailFilter('none', 'none');
@@ -318,13 +502,13 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         icon: "fa-align-center",
         val: game.settings.get('dsa5', 'indexDescription')
       },
-      browseEnabled: {
-        icon: "fa-maximize",
-        val: this.browseEnabled
-      },
       filterDuplicateItems: {
         icon: "fa-filter",
         val: game.settings.get('dsa5', 'filterDuplicateItems')
+      },
+      moduleFilter: {
+        icon: "fa-cubes",
+        dialog: true,
       }
     }
   }
@@ -338,10 +522,14 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         val = !this.advancedFiltering
         this.advancedFiltering = val
         if (this.advancedFiltering) {
-          html.find('.advancedSearch').fadeIn();
-          this.setAdvancedFilters();
+          html.find('.itemlibrary-sidebar').fadeIn();
+          await this.setAdvancedFilters();
         } else {
-          html.find('.advancedSearch').fadeOut();
+          html.find('.itemlibrary-sidebar').fadeOut();
+        }
+        {
+          const category = html.find('.tab.active')[0]?.dataset.tab;
+          if (category) this.syncCategoryChipStates(category);
         }
         break
       case "indexWorldItems":
@@ -352,17 +540,21 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         val = !game.settings.get('dsa5', 'indexDescription')
         await game.settings.set('dsa5', 'indexDescription', val)
         break
-      case "browseEnabled":
-        val = !this.browseEnabled
-        this.browseEnabled = val
-        break
       case "filterDuplicateItems":
         val = !game.settings.get('dsa5', 'filterDuplicateItems')
         await game.settings.set('dsa5', 'filterDuplicateItems', val)
+        {
+          const category = html.find('.tab.active')[0]?.dataset.tab;
+          if (category) await this.filterItems(category);
+        }
         break
+      case "moduleFilter":
+        DSA5ItemLibrary._showCompendiumFilter();
+        return
     }
 
-    $(ev.currentTarget).toggleClass('on', val)
+    $(ev.currentTarget).toggleClass('on', val).toggleClass('active', val)
+    ev.currentTarget.ariaPressed = `${!!val}`;
   }
 
   prepareDataModels() {
@@ -411,8 +603,91 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     }
     const html = $(this.element)
     html.find('.filter[type="checkbox"]').prop('checked', false);
+    html.find('.library-filter-chip').removeClass('active');
     const templ = await this.buildDetailFilter('none', 'none')
-    html.find('.advancedSearch .advancedSearchContent').html(templ);
+    html.find('.itemlibrary-sidebar .advancedSearchContent').html(templ);
+  }
+
+  syncCategoryChipStates(tab) {
+    if (!this.element) return;
+    const tabEl = $(this.element).find(`[data-tab="${tab}"]`);
+    for (const chip of tabEl.find('.library-filter-chip')) {
+      const input = chip.querySelector('.filter');
+      const key = input?.dataset.type;
+      const selected = this.models[tab]?.find(x => x.key === key)?.selected ?? false;
+      input.checked = selected;
+      chip.classList.toggle('active', selected);
+    }
+  }
+
+  async _syncAdvancedSidebarForTab(tab) {
+    if (!this.advancedFiltering) return;
+    const html = $(this.element);
+    const selected = this.models[tab]?.filter(x => x.selected) || [];
+    if (selected.length === 1) {
+      const input = html.find(`[data-tab="${tab}"] .filter[data-type="${selected[0].key}"]`)[0];
+      if (input) {
+        const { category, type } = input.dataset;
+        const template = await this.buildDetailFilter(category, type);
+        html.find(`[data-tab="${tab}"] .itemlibrary-sidebar .advancedSearchContent`).html(template);
+      }
+    } else {
+      html.find(`[data-tab="${tab}"] .itemlibrary-sidebar .advancedSearchContent`).empty();
+    }
+  }
+
+  async selectSingleCategory(category, type, tab) {
+    const html = $(this.element);
+    html.find(`[data-tab="${tab}"] .filterCategories .filter`).prop('checked', false);
+    html.find(`[data-tab="${tab}"] .library-filter-chip`).removeClass('active');
+    for (const m of this.models[tab] ?? []) {
+      m.selected = false;
+    }
+
+    const input = html.find(`[data-tab="${tab}"] .filter[data-type="${type}"]`)[0];
+    if (!input) return;
+    input.checked = true;
+    const model = this.models[tab]?.find(x => x.key === type);
+    if (model) model.selected = true;
+    $(input).closest('.library-filter-chip').addClass('active');
+
+    if (this.advancedFiltering) {
+      const dataFilters = html.find('.detailFilters');
+      const subcategory = dataFilters.attr('data-subc');
+      if (subcategory && this.detailFilter[subcategory]) {
+        this.detailFilter[subcategory].next = undefined;
+      }
+      const template = await this.buildDetailFilter(category, type);
+      html.find('.tab.active .itemlibrary-sidebar .advancedSearchContent').html(template);
+    }
+
+    await this.filterItems(tab);
+  }
+
+  async _onCategoryContextMenu(ev) {
+    ev.preventDefault();
+    const chip = ev.currentTarget.closest?.('.library-filter-chip') ?? ev.currentTarget;
+    const input = chip.querySelector?.('.filter');
+    if (!input) return;
+    const { category, type } = input.dataset;
+    const tab = $(chip).closest('.tab').data('tab');
+
+    input.checked = !input.checked;
+    const isChecked = input.checked;
+    const model = this.models[tab]?.find(x => x.key === type);
+    if (model) model.selected = isChecked;
+    chip.classList.toggle('active', isChecked);
+
+    if (this.advancedFiltering) {
+      const dataFilters = $(this.element).find('.detailFilters');
+      const subcategory = dataFilters.attr('data-subc');
+      if (subcategory && this.detailFilter[subcategory]) {
+        this.detailFilter[subcategory].next = undefined;
+      }
+      await this._syncAdvancedSidebarForTab(tab);
+    }
+
+    await this.filterItems(tab);
   }
 
   async getRandomItems(category, limit) {
@@ -517,13 +792,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     const paginatedResults = returnAll ? allResults : allResults.slice(
       startIndex,
-      Math.min(startIndex + this.pageSize, allResults.length)
+      Math.min(startIndex + (returnAll ? allResults.length : this.getPageSize()), allResults.length)
     );
 
     if (indexWrapper) {
-      indexWrapper.next = startIndex + this.pageSize < allResults.length ?
-        startIndex + this.pageSize :
+      indexWrapper.next = startIndex + this.getPageSize() < allResults.length ?
+        startIndex + this.getPageSize() :
         undefined;
+      indexWrapper.totalResults = allResults.length;
+      indexWrapper.shownResults = Math.min(startIndex + paginatedResults.length, allResults.length);
     }
 
     return paginatedResults;
@@ -564,8 +841,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async advancedFilterStuff(documentGroup, page) {
     const dataFilters = $(this.element).find('.detailFilters');
     const subcategory = dataFilters.attr('data-subc');
-    const search = this.findIndex(documentGroup).search.toLowerCase();
-    if (!subcategory && !search) return [];
+    const search = this._syncSearchFromInput(documentGroup).toLowerCase();
+
+    if (!subcategory) {
+      return await this.filterStuff(documentGroup, page);
+    }
 
     if (subcategory) {
       const indexWrapper = this.detailFilter[subcategory];
@@ -573,10 +853,12 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       const startIndex = Number(page) || 0;
 
       const result = await this.executeAdvancedFilter(search, indexWrapper, selectSearches, textSearches, booleanSearches, [], startIndex);
+      this.resultCounts[documentGroup] = {
+        shown: indexWrapper?.shownResults ?? result.length,
+        total: indexWrapper?.totalResults ?? result.length,
+      };
       this.setBGImage(result, documentGroup);
       return this.filterDuplications(result);
-    } else {
-      return await this.filterStuff(documentGroup, page);
     }
   }
 
@@ -604,36 +886,69 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     item.sheet.render(true)
   }
 
+  _syncSearchFromInput(tab) {
+    const input = this.element?.querySelector('.filterBy-search');
+    const query = input?.value ?? '';
+    this.findIndex(tab).search = query;
+    return query;
+  }
+
+  _beginFreshFilter(tab) {
+    const { index } = this.selectIndex(tab);
+    index.next = undefined;
+    index._resultUuids = undefined;
+    index._resultCacheKey = undefined;
+    this._cachedListItems[tab] = undefined;
+    this._paginationInFlight = false;
+    const scrollRoot = this.getScrollRoot(tab);
+    if (scrollRoot) scrollRoot.scrollTop = 0;
+  }
+
+  async _ensureSearchResults(index, search, searchParams) {
+    const cacheKey = JSON.stringify({ search, tag: searchParams.tag ?? null });
+    if (index._resultCacheKey !== cacheKey || !index._resultUuids) {
+      index._resultUuids = await this.flattenedResults(
+        index,
+        search,
+        { ...searchParams, limit: this.filterLimit }
+      );
+      index._resultCacheKey = cacheKey;
+    }
+    return index._resultUuids;
+  }
+
   async filterStuff(category, page) {
     const { index, itemType } = this.selectIndex(category);
-    const search = index.search;
+    const search = this._syncSearchFromInput(category);
     const fields = this.systemConfiguration.getSearchFields(itemType, undefined, this.fullTextSearch);
     const collectTags = this.models[category]?.filter(x => x.selected).map(x => x.key) || [];
     const startIndex = Number(page) || 0;
 
-    const searchParams = { ...fields, limit: (page || 0) + this.pageSize + 1 };
+    const pageSize = this.getPageSize();
+    const searchParams = { ...fields };
     if (collectTags.length > 0) {
       searchParams.tag = collectTags;
     }
 
-    const searchResults = await this.flattenedResults(
-      index,
-      collectTags.length > 0 && search === "" ? "" : search,
-      searchParams
-    );
+    const searchResults = await this._ensureSearchResults(index, search, searchParams);
 
     const paginatedResults = searchResults.slice(
       startIndex,
-      Math.min(startIndex + this.pageSize, searchResults.length)
+      Math.min(startIndex + pageSize, searchResults.length)
     );
 
-    index.next = startIndex + this.pageSize < searchResults.length ?
-      startIndex + this.pageSize :
+    index.next = startIndex + pageSize < searchResults.length ?
+      startIndex + pageSize :
       undefined;
 
     const filteredItems = this.filterDuplications(
       paginatedResults.map(x => this._getStoredObject(index, x))
     );
+
+    this.resultCounts[category] = {
+      shown: startIndex + filteredItems.length,
+      total: searchResults.length
+    };
 
     this.setBGImage(filteredItems, category);
 
@@ -642,6 +957,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   changeTab(tab, group, options) {
     super.changeTab(tab, group, options)
+
+    const input = this.element?.querySelector('.filterBy-search');
+    if (input) input.value = this.findIndex(tab).search ?? '';
+    this._beginFreshFilter(tab);
 
     switch (tab) {
       case "Character":
@@ -656,33 +975,174 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         this.buildJournalEntryIndex()
         break
     }
+
+    this.filterItems(tab);
   }
 
   setBGImage(filterdItems, category) {
     $(this.element).find(`[data-tab="${category}"] .libcontainer`)[`${filterdItems.length ? "remove" : "add"}Class`]("libraryImg")
   }
 
-  async getItemTemplate(filteredItems, itemType) {
-    if (this.browseEnabled && ['Items', 'Actors', 'Character', 'Religion'].includes(itemType)) {
-      return filteredItems.map(x => {
-        return `<li class="uuid libItem loader col center" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></li>`
-      }).join("")
+  getListColumns(tab) {
+    const config = getListColumnConfig();
+    const defaultConfig = config._default ?? {};
+    const selected = this.models[tab]?.filter(x => x.selected) || [];
+    const showPrice = tab === 'Items' && (
+      selected.length === 1
+        ? typeHasPrice(selected[0].key)
+        : selected.some(x => typeHasPrice(x.key))
+    );
+
+    const leading = (defaultConfig.leading ?? ['img', 'name']).map(id => ({ ...BUILTIN_COLUMN_DEFS[id] }));
+    let middle = [];
+    let tail = [];
+
+    if (selected.length === 1) {
+      const type = selected[0].key;
+      middle = getTypeListColumns(type).map(resolveColumnFieldDef);
+      if (showPrice) tail.push({ ...BUILTIN_COLUMN_DEFS.price });
     } else {
-      const template = 'systems/dsa5/templates/system/itemlibrary/parts/libraryItem.hbs'
-      return await renderTemplate(template, { items: filteredItems })
+      let multi = [...(defaultConfig.multi ?? ['type'])].filter(id => id !== 'price');
+      if (showPrice) multi.push('price');
+      middle = multi.map(id => ({ ...BUILTIN_COLUMN_DEFS[id] })).filter(col => col.id);
     }
+
+    return [...leading, ...middle, ...tail].map(col => ({
+      ...col,
+      sorted: this.listSort.column === col.id,
+      sortDir: this.listSort.column === col.id ? this.listSort.direction : 'asc',
+    }));
+  }
+
+  resolveCompendiumLabel(packId) {
+    if (!packId) return _loc('Library.worldItem');
+    const pack = game.packs.get(packId);
+    if (pack) {
+      const moduleId = pack.metadata.packageName;
+      return `${pack.metadata.label} [${moduleId}]`;
+    }
+    const moduleId = packId.includes('.') ? packId.split('.')[0] : packId;
+    return `${packId} [${moduleId}]`;
+  }
+
+  resolveTypeLabel(documentName, type) {
+    const langKey = `TYPES.${documentName}.${type}`;
+    return game.i18n.has(langKey) ? _loc(langKey) : type;
+  }
+
+  formatPlantTypesCell(planttype) {
+    if (!planttype || typeof planttype !== 'object') return '-';
+    const active = PLANT_TYPE_KEYS.filter(key => planttype[key]);
+    if (!active.length) return '-';
+    return active.map(name => {
+      const tip = _loc(`PLANT.${name}`);
+      return `<span class="plantContainer ${name} library-list-plant-type" data-tooltip="${foundry.utils.escapeHTML(tip)}"><span></span></span>`;
+    }).join('');
+  }
+
+  formatListCellValue(item, column) {
+    const raw = item[column.id];
+    if (raw === undefined || raw === null || raw === '') return '-';
+
+    if (column.columnType === 'plantTypes') {
+      return this.formatPlantTypesCell(raw);
+    }
+
+    if (column.raw) return String(raw) || '-';
+
+    const options = column.optionsKey ? getColumnOptions(column) : column.fieldDef?.options;
+    if (options && options[raw] !== undefined) {
+      const label = options[raw];
+      if (typeof label === 'string' && game.i18n.has(label)) return _loc(label);
+      return String(label) || '-';
+    }
+
+    if (typeof raw === 'number' && column.attr?.endsWith('mod.value')) {
+      return raw > 0 ? `+${raw}` : String(raw);
+    }
+
+    return String(raw) || '-';
+  }
+
+  prepareRenderItems(items, tab) {
+    const { itemType } = this.selectIndex(tab);
+    const columns = this.getEffectiveViewMode(tab) === 'list' ? this.getListColumns(tab) : [];
+
+    const prepared = items.map(item => {
+      const row = {
+        ...item,
+        compendiumLabel: this.resolveCompendiumLabel(item.compendium),
+        typeLabel: this.resolveTypeLabel(itemType, item.type),
+      };
+
+      for (const col of columns) {
+        if (['img', 'name', 'type', 'compendium', 'price', 'typeLabel', 'compendiumLabel'].includes(col.id)) continue;
+        row[col.id] = this.formatListCellValue(item, col);
+      }
+      return row;
+    });
+
+    if (this.getEffectiveViewMode(tab) === 'list' && this.listSort.column) {
+      const col = this.listSort.column;
+      const dir = this.listSort.direction === 'desc' ? -1 : 1;
+      prepared.sort((a, b) => {
+        const av = (col === 'type' ? a.typeLabel : col === 'compendium' ? a.compendiumLabel : a[col]) ?? '';
+        const bv = (col === 'type' ? b.typeLabel : col === 'compendium' ? b.compendiumLabel : b[col]) ?? '';
+        return String(av).localeCompare(String(bv), game.i18n.lang, { sensitivity: 'base' }) * dir;
+      });
+    }
+
+    return prepared;
+  }
+
+  updateResultCount(category) {
+    const counts = this.resultCounts[category];
+    const el = $(this.element).find(`[data-tab="${category}"] [data-result-count]`);
+    if (!el.length) return;
+    if (!counts?.total) {
+      el.text('');
+      return;
+    }
+    el.text(_loc('Library.resultCount', { shown: counts.shown, total: counts.total }));
+  }
+
+  async getItemTemplate(filteredItems, itemType) {
+    const viewMode = this.getEffectiveViewMode(itemType);
+    const items = this.prepareRenderItems(filteredItems, itemType);
+
+    if (viewMode === 'browse' && ['Items', 'Actors', 'Character', 'Religion'].includes(itemType)) {
+      return items.map(x => {
+        return `<li class="uuid libItem loader col center library-item" data-uuid="${x.uuid}"><i class="fas fa-spinner fa-spin fa-4x"></i></li>`
+      }).join("")
+    }
+
+    if (viewMode === 'list') {
+      const columns = this.getListColumns(itemType);
+      return await renderTemplate('systems/dsa5/templates/system/itemlibrary/parts/libraryItemList.hbs', { items, columns });
+    }
+
+    return await renderTemplate('systems/dsa5/templates/system/itemlibrary/parts/libraryItem.hbs', { items });
+  }
+
+  getScrollRoot(category) {
+    const tab = $(this.element).find(`[data-tab="${category}"]`);
+    const results = tab.find('.dsa-choice-browser__results')[0];
+    return results ?? $(this.element).find('.window-content')[0];
   }
 
   getObserver(itemType) {
-    const observer = this.findIndex(itemType).observer ||= new IntersectionObserver(this.intersectionObserved.bind(this), { root: $(this.element).find('.window-content')[0] });
-    return observer
+    const root = this.getScrollRoot(itemType);
+    const index = this.findIndex(itemType);
+    if (index.observer) index.observer.disconnect();
+    index.observer = new IntersectionObserver(this.intersectionObserved.bind(this), { root });
+    return index.observer;
   }
 
   async renderBrowseItem(uuid) {
     const document = await fromUuid(uuid)
     const template = `systems/dsa5/templates/items/browse/${document.type}.hbs`
     const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext()) })
-    return `<div class="uuid libItem ${document.type} col" draggable="true" data-uuid="${uuid}">${item}</div>`
+    return `<li class="uuid libItem ${document.type} col library-item browser-item" draggable="true" data-uuid="${uuid}">${item}</li>`
   }
 
   intersectionObserved(entries, observer) {
@@ -698,21 +1158,49 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async renderResult(filteredItems, category, isPaged) {
-    const resultField = $(this.element).find(`[data-tab="${category}"] .searchResult .item-list`)
-    const innerhtml = $(await this.getItemTemplate(filteredItems, category))
+    if (isPaged) {
+      this._cachedListItems[category] = [...(this._cachedListItems[category] || []), ...filteredItems];
+    } else {
+      this._cachedListItems[category] = filteredItems;
+    }
+    const allItems = this._cachedListItems[category];
+    const tabEl = $(this.element).find(`[data-tab="${category}"]`);
+    const searchResult = tabEl.find('.searchResult');
+    const viewMode = this.getEffectiveViewMode(category);
+    searchResult.attr('data-view-mode', viewMode);
+    this.updateResultCount(category);
 
-    if (!isPaged) resultField.html(innerhtml)
-    else resultField.append(innerhtml)
+    const html = await this.getItemTemplate(isPaged ? filteredItems : allItems, category);
 
-    const items = resultField.find('.loader')
+    if (viewMode === 'list') {
+      if (!isPaged) searchResult.html(html);
+      else searchResult.find('.library-list-table tbody').append($(html).find('tbody').children());
+      return;
+    }
+
+    let resultField = searchResult.find('.item-list');
+    if (!resultField.length) {
+      searchResult.html(`<ul class="item-list" data-view-mode="${viewMode}"></ul>`);
+      resultField = searchResult.find('.item-list');
+    }
+    resultField.attr('data-view-mode', viewMode);
+
+    const innerhtml = $(html);
+    if (!isPaged) resultField.html(innerhtml);
+    else resultField.append(innerhtml);
+
+    const items = resultField.find('.loader');
     if (items.length > 0) {
-      const observer = this.getObserver(category)
-
-      for (const item of items) observer.observe(item)
+      const observer = this.getObserver(category);
+      for (const item of items) observer.observe(item);
     }
   }
 
   async filterItems(documentGroup, page) {
+    if (page === undefined || page === null) {
+      this._beginFreshFilter(documentGroup);
+    }
+
     const filteredItems = this.advancedFiltering && documentGroup != "JournalEntries" ?
       await this.advancedFilterStuff(documentGroup, page) :
       await this.filterStuff(documentGroup, page);
@@ -774,7 +1262,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const getDocumentsFunction = documentName === "JournalEntry"
       ? p => p.getDocuments()
       : documentName === "Actor"
-        ? p => p.getIndex({ fields: ["name", "img", "type"] })
+        ? p => p.getDocuments()
         : p => p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item).filter(x => x != 'information') });
 
     await Promise.all(packs.map(async (p, i) => {
@@ -892,7 +1380,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true });
     const target = $(this.element).find(`*[data-tab="${category}"]`);
 
-    target.find('.searchResult ul').html('');
+    target.find('.searchResult').empty().append('<ul class="item-list"></ul>');
     this.showLoading(target, category);
 
     this.detailFilter[subcategory] = {
@@ -1014,12 +1502,14 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   itemDragStart(ev) {
     ev.stopPropagation()
+    const target = ev.target.closest('.library-item') ?? ev.target;
+    if (!target?.dataset?.uuid) return;
     $(this.element).animate({ opacity: 0.2 }, 100);
-    const uuid = ev.target.dataset.uuid
-    const pay = ev.target.dataset.pay
+    const uuid = target.dataset.uuid
+    const pay = target.dataset.pay
     const { type } = foundry.utils.parseUuid(uuid);
     ev.dataTransfer.setData("text/plain", JSON.stringify({ type, uuid, dragSource: "itemlibrary", pay }));
-    ev.target.addEventListener("dragend", () => {
+    target.addEventListener("dragend", () => {
       window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: "" })))
     }, { once: true });
   }
@@ -1032,13 +1522,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const source = this
     this._debouncedInfiniteScroll ||= foundry.utils.debounce(ev => this._infiniteScroll(ev, source), 100);
     html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
+    html.on('contextmenu', '.library-filter-chip', ev => this._onCategoryContextMenu(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
-    html.on("mousedown", ".searchResult .browser-item", ev => this._onItemNameClick(ev))
-    html.on("mouseenter", ".searchResult .browser-item", ev => this._onItemHover(ev))
-    html.on('click', ".searchResult .browser-item", ev => this._openItem(ev))
+    html.on("mousedown", ".searchResult .library-item", ev => this._onItemNameClick(ev))
+    html.on("mouseenter", ".searchResult .library-item", ev => this._onItemHover(ev))
+    html.on("mouseleave", ".searchResult .library-item", () => this._onItemHoverLeave())
+    html.on('click', ".searchResult .library-item", ev => this._openItem(ev))
     this.element.addEventListener("dragstart", this.itemDragStart.bind(this));
-    html.find('.scrollable').on('scroll.infinit', this._debouncedInfiniteScroll);
+    html.find('.dsa-choice-browser__results.scrollable').on('scroll.infinit', this._debouncedInfiniteScroll);
     this.element.addEventListener("dragover", ev => this._onDragOver(ev));
     html.on('change', '.detailFilters input, .detailFilters select', () => {
       const category = $(this.element).find('.tab.active')[0].dataset.tab;
@@ -1058,19 +1550,28 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async _onItemHover(ev) {
-    const uuid = ev.currentTarget.dataset.uuid;
+    const target = ev.currentTarget;
+    const hoverToken = ++this._hoverToken;
+    const uuid = target.dataset.uuid;
     const item = await fromUuid(uuid);
+    if (hoverToken !== this._hoverToken) return;
 
-    if (item.documentName == "JournalEntry") return
+    if (item.documentName == "JournalEntry") return;
 
-    let tooltip = await item.toEmbed({}, { skipHeader: true })
+    let tooltip = await item.toEmbed({}, { skipHeader: true });
+    if (hoverToken !== this._hoverToken) return;
 
-    if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item)
+    if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item);
+    if (hoverToken !== this._hoverToken || !target.matches(':hover')) return;
 
-    game.tooltip.activate(ev.currentTarget, {
+    game.tooltip.activate(target, {
       html: tooltip,
       cssClass: 'itemLibraryTooltip',
-    })
+    });
+  }
+
+  _onItemHoverLeave() {
+    game.tooltip.deactivate();
   }
 
   _infiniteScroll(ev, source) {
@@ -1122,7 +1623,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   _onFilterBySearch(ev) {
     const category = $(this.element).find('.tab.active')[0].dataset.tab
-    this.findIndex(category).search = ev.currentTarget.value
+    this._syncSearchFromInput(category)
 
     if (this.advancedFiltering) {
       const dataFilters = $(this.element).find('.detailFilters');
@@ -1140,10 +1641,14 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     const tab = $(ev.currentTarget).closest('.tab').data('tab');
     const isChecked = ev.currentTarget.checked;
 
-    const model = this.models[tab]?.find(x => x.key === type);
-    if (model) {
-      model.selected = isChecked;
+    if (isChecked) {
+      await this.selectSingleCategory(category, type, tab);
+      return;
     }
+
+    const model = this.models[tab]?.find(x => x.key === type);
+    if (model) model.selected = false;
+    $(ev.currentTarget).closest('.library-filter-chip').removeClass('active');
 
     if (this.advancedFiltering) {
       const dataFilters = $(this.element).find('.detailFilters');
@@ -1151,13 +1656,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       if (subcategory && this.detailFilter[subcategory]) {
         this.detailFilter[subcategory].next = undefined;
       }
-
-      await this.setAdvancedFilters(category, type);
-      if (isChecked) {
-        const template = await this.buildDetailFilter(category, type);
-        $(this.element).find('.tab.active .advancedSearch .advancedSearchContent').html(template);
-        ev.currentTarget.checked = isChecked;
-      }
+      await this._syncAdvancedSidebarForTab(tab);
     }
 
     await this.filterItems(tab);
@@ -1165,6 +1664,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   _tearDown(options) {
     super._tearDown(options);
+    this._hoverToken++;
+    game.tooltip.deactivate();
     for (const key in this.indexes) {
       if (this.indexes[key].observer) {
         this.indexes[key].observer.disconnect();
@@ -1180,13 +1681,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   _onClickAction(event, target) {
-    if (target.classList.contains("disabled")) return
-
-    switch (target.dataset.action) {
-      case "showCompendiumFilter":
-        new LibraryModulsFilter().render(true)
-        break
-    }
+    if (target.classList.contains("disabled")) return;
+    super._onClickAction(event, target);
   }
 
   _onDragOver(ev) {
