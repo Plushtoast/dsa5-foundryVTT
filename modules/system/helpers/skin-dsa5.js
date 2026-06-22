@@ -74,8 +74,8 @@ export default class DSA5Skin {
     for (const key of Object.keys(styles)) {
       styles[key] = _loc(styles[key]);
     }
-    if (this.isDarkColorScheme()) {
-      return { [this.SKIN_NAKED]: styles[this.SKIN_NAKED] };
+    if (DSA5Skin.isDarkColorScheme()) {
+      return { [DSA5Skin.SKIN_NAKED]: styles[DSA5Skin.SKIN_NAKED] };
     }
     return styles;
   }

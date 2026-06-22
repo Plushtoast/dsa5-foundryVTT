@@ -499,8 +499,10 @@ export function setupConfiguration() {
       scope: 'client',
       config: true,
       default: 'dsa5-immersive',
-      type: String,
-      choices: DSA5Skin.getSettingChoices,
+      type: new foundry.data.fields.StringField({
+        choices: () => DSA5Skin.getSettingChoices(),
+        required: true,
+      }),
       onChange: async (val) => {
         if (DSA5Skin.isDarkColorScheme() && val !== DSA5Skin.SKIN_NAKED) {
           ui.notifications.warn(_loc('DSAError.darkModeSkinRestricted'));
