@@ -21,8 +21,14 @@ export class DSAPersonaEntry extends JournalListDataModel {
         2: 'springer',
         3: 'turm',
         4: 'koenig',
-        5: 'laeufer',
         6: 'boronsrad'
+    }
+
+    static _migrateData(source) {
+        super._migrateData(source);
+        for (const entry of Object.values(source.personae || {})) {
+            if (Number(entry?.garadan) === 5) entry.garadan = 2;
+        }
     }
 
     static SOCIAL_CONTACT_LEVELS = {
@@ -263,7 +269,8 @@ export class DSAPersonaEntry extends JournalListDataModel {
     static resolveGaradan(entry = {}, actor = null) {
         if (!this.supportsGaradan(entry)) return 0;
         const entryValue = Number(entry.garadan);
-        const value = entry.garadan === undefined ? Number(actor?.system?.merchant?.garadan ?? 0) : entryValue;
+        let value = entry.garadan === undefined ? Number(actor?.system?.merchant?.garadan ?? 0) : entryValue;
+        if (value === 5) value = 2;
         return Number.isFinite(value) && value > 0 ? value : 0;
     }
 
