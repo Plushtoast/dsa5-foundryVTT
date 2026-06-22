@@ -164,13 +164,15 @@ export class PersonaeDramatis {
         const unknownFaction = _loc("PERSONAE.UnknownFaction");
         const groups = new Map();
         for (const persona of personaeArray) {
-            const faction = persona.faction || unknownFaction;
-            let bucket = groups.get(faction);
-            if (!bucket) {
-                bucket = [];
-                groups.set(faction, bucket);
+            const factions = DSAPersonaEntry.parseFactions(persona.faction, unknownFaction);
+            for (const faction of factions) {
+                let bucket = groups.get(faction);
+                if (!bucket) {
+                    bucket = [];
+                    groups.set(faction, bucket);
+                }
+                bucket.push(persona);
             }
-            bucket.push(persona);
         }
         for (const bucket of groups.values()) {
             bucket.sort((a, b) => collator.compare(a?.name || '', b?.name || ''));
@@ -414,8 +416,9 @@ export class PersonaeDramatis {
                 if (query) {
                     const name = entry.querySelector('.persona-list-name')?.textContent || '';
                     const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
+                    const factions = entry.dataset.personaFactions || '';
                     const tags = entry.dataset.personaTags || '';
-                    matchesSearch = [name, faction, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+                    matchesSearch = [name, faction, factions, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 }
                 const isMatch = matchesImportant && matchesVisible && matchesSearch;
                 entry.hidden = !isMatch;

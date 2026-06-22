@@ -95,19 +95,27 @@ export class DSAPersonaEntry extends JournalListDataModel {
         await super._preUpdate(changed, options, user);
     }
 
-    async _onUpdate(changed, options, userId) {
+    _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
-        await this.#syncActorGaradan(changed);
-        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+        DSAPersonaEntry.refreshCalendarPicker();
+        void this.#syncActorGaradan(changed);
     }
 
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
-        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+        DSAPersonaEntry.refreshCalendarPicker();
+    }
+
+    static refreshCalendarPicker() {
+        void game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+    }
+
+    static #getPersonaeChanges(changed = {}) {
+        return changed.personae ?? changed.system?.personae ?? {};
     }
 
     async #fillActorFields(changed) {
-        for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
+        for (const [key, entry] of Object.entries(DSAPersonaEntry.#getPersonaeChanges(changed))) {
             if (!entry) continue;
             if (!entry.actor_uuid) continue;
             const actor = await fromUuid(entry.actor_uuid);
@@ -119,7 +127,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.type = isCreature ? 1 : 0;
             entry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
             if (isCreature) {
-                const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass?.value || "");
+                const creatureData = DSAPersonaEntry.splitOutsideCommas(actor.system.creatureClass?.value || "");
                 entry.faction = creatureData[0] || "";
                 entry.subtitle = creatureData[1] || "";
             } else {
@@ -130,7 +138,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
     }
 
     async #syncActorGaradan(changed) {
-        for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
+        for (const [key, entry] of Object.entries(DSAPersonaEntry.#getPersonaeChanges(changed))) {
             if (!entry || entry.garadan === undefined) continue;
 
             const persona = { ...this.personae?.[key], ...entry };
@@ -150,7 +158,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
         }
     }
 
-    #splitOutsideBrackets(s = "") {
+    static splitOutsideCommas(s = "") {
         const parts = [];
         let buf = "";
         const stack = [];
@@ -174,7 +182,12 @@ export class DSAPersonaEntry extends JournalListDataModel {
             buf += ch;
         }
         if (buf !== "" || s.endsWith(',')) parts.push(buf);
-        return parts.map(p => p.trim());
+        return parts.map(p => p.trim()).filter(Boolean);
+    }
+
+    static parseFactions(factionString, unknownLabel) {
+        const factions = DSAPersonaEntry.splitOutsideCommas(factionString || "");
+        return factions.length ? factions : [unknownLabel];
     }
 
     static async preparePersonaEntry(entry, document, key, heros) {
@@ -212,6 +225,9 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
         }
         entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "", { secrets: game.user.isGM });
+        const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
+        entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
+        entry.preparedFactionDisplay = entry.preparedFactions.join(", ");
         entry.uuid = document.uuid;
         entry.dramatisKey = key;
         await this.prepareContacts(entry, heros);
