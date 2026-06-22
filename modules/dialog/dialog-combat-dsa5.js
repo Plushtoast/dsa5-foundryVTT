@@ -418,7 +418,7 @@ export default class DSA5CombatDialog extends DialogShared {
     this.dialogData.renderData.rollModifiers.targetMovement.mod = Object.keys(DSA5.targetMovementOptions)[targetMove];
   }
 
-  setParryModifier(actor, jhtml) {
+  autoDetectAttackFromBehind(actor, jhtml) {
     if (!DPS.isEnabled || !actor) return;
 
     const attackFromBehindAngle = game.settings.get('dsa5', 'attackFromBehindAngle');
@@ -458,12 +458,6 @@ export default class DSA5CombatDialog extends DialogShared {
     testData = testData || this.dialogData.renderData;
     const source = this.dialogData.source;
     let actor;
-
-    if (this.dialogData.mode == 'parry' || source.type == 'dodge') {
-      if (!actor) actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
-
-      this.setParryModifier(actor, $(this.element));
-    }
 
     if (['meleeweapon', 'rangeweapon'].includes(source.type)) {
       if (!actor) actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
@@ -534,6 +528,14 @@ export default class DSA5CombatDialog extends DialogShared {
       const attackerIsRider = Riding.isRiding(attacker);
       if (advantageousPosition && (attackerIsRider || isRider)) advantageousPosition.checked = isRider && !attackerIsRider;
     }
+
+    if (
+      (this.dialogData.mode == 'parry' || this.dialogData.source.type == 'dodge') &&
+      this.recallData?.attackFromBehind === undefined
+    ) {
+      this.autoDetectAttackFromBehind(actor, html);
+    }
+
     await this.calculateModifier();
   }
 
