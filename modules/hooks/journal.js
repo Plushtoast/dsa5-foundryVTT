@@ -5,6 +5,12 @@ import { tinyNotification } from '../system/helpers/view_helper.js';
 import { bindImgToCanvasDragStart } from './imgTileDrop.js';
 
 export default function () {
+  Hooks.on('updateJournalEntryPage', (page, changed) => {
+    if (page.type !== 'dsapersonaedramatis') return;
+    if (!foundry.utils.hasProperty(changed, 'system.personae')) return;
+    game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+  });
+
   Hooks.on('renderJournalEntryPageSheet', (app, jhtml, data, options) => {
     if (!app.isView) return;
 

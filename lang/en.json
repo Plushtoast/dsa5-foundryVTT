@@ -2137,6 +2137,7 @@
     "manifesto": "Manifesto",
     "masterfulDodge": "Masterful Dodge",
     "masterfulParry": "Master Parry",
+    "masterfulRegeneration": "Masterful Regeneration",
     "metalworking": "Metalworking",
     "mightyAstralBody": "tbd",
     "mightyKarmaControl": "Powerful Control of the Karmic Body",
@@ -2182,6 +2183,7 @@
     "singing": "Singing",
     "skillSpecialization": "Skill Specialization",
     "smallEnergyControl": "Small Energy Control",
+    "stableRegeneration": "Stable Regeneration",
     "traditionFjarning": "Tradition (Fjarning)",
     "traditionKor": "Tradition (Church of Kor)",
     "traditionMagicalAlchemist": "Tradition (Magical Alchemist)",
@@ -2478,7 +2480,7 @@
           "label": "Description"
         },
         "faction": {
-          "hint": "The actor is grouped in the Bestiary by faction/type.",
+          "hint": "Comma-separated list of factions/types. The actor is grouped under each faction in the Bestiary.",
           "label": "Faction/Type"
         },
         "important": {
@@ -2875,6 +2877,10 @@
     "meleeweaponattack": "Improve Attack",
     "meleeweaponparry": "Improve Parry",
     "rangeweaponattack": "Improve Ranged Combat"
+  },
+  "REGENERATIONSKILLS": {
+    "AsP": "masterfulRegeneration",
+    "KaP": "stableRegeneration"
   },
   "SHEET": {
     "AnimalCompanion": "Animal Companion",
@@ -3326,6 +3332,7 @@
     "enricherInfoRoll": "Rolls the linked information check",
     "enricherInfoPost": "Posts the information to chat",
     "foreignSpell": "Unfamiliar tradition spells can not be modified",
+    "masterfulRegeneration": "Use a fixed value of 4 instead of the D6 for AsP regeneration (plus all other modifiers). If the die is not a D6, use the average roll rounded up.",
     "oneQualityPerLine": "Describe one quality level each line",
     "onlyGM": "Only visible to the gamemaster.",
     "onlySkilled": "Only show learned skills",
@@ -3334,6 +3341,7 @@
     "resizer": "Drag to move<br/>Mouse wheel to enlarge/decrease",
     "skillgm": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: Request group check<br>CTRL + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
     "strgx10": "<small>Left-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Right-<i class=\"fas fa-computer-mouse\"></i> -1<br/>& CTRL x10</small>",
+    "stableRegeneration": "Use a fixed value of 4 instead of the D6 for KaP regeneration (plus all other modifiers). If the die is not a D6, use the average roll rounded up.",
     "tokenhotbarMod": "Modifier/Value",
     "tokenhotbarMoney": "Left-<i class=\"fas fa-computer-mouse\"></i>: pay<br>Right-<i class=\"fas fa-computer-mouse\"></i>: get paid",
     "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
@@ -3658,7 +3666,11 @@
     "reset": "Reset",
     "showInCalendar": "Show in calendar",
     "showInCalendarHint": "The entries will be made visible under holidays and events in the calendar and will be available to players according to their visibility.",
-    "today": "Today"
+    "selectEvent": "Select an event",
+    "selectEventHint": "Click an event in the calendar to view its details here.",
+    "today": "Today",
+    "viewCalendar": "Calendar",
+    "viewTimeline": "Timeline"
   },
   "dsamenu": "TDE Menu",
   "duration": "Effect duration",

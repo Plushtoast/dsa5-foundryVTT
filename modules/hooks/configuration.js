@@ -648,6 +648,13 @@ export function setupConfiguration() {
       default: 'list',
       type: String,
     },
+    eventsViewMode: {
+      name: 'DSASETTINGS.eventsViewMode',
+      scope: 'client',
+      config: false,
+      default: 'timeline',
+      type: String,
+    },
     enableCombatFlow: {
       name: 'DSASETTINGS.enableCombatFlow',
       hint: 'DSASETTINGS.enableCombatFlowHint',

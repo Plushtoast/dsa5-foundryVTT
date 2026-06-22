@@ -2136,6 +2136,7 @@
         "manifesto": "Manifesto",
         "masterfulDodge": "Meisterliches Ausweichen",
         "masterfulParry": "Meisterparade",
+        "masterfulRegeneration": "Meisterliche Regeneration",
         "metalworking": "Metallbearbeitung",
         "mightyAstralBody": "Machtvoller Astralleib",
         "mightyKarmaControl": "Mächtige Kontrolle des Karmalkörpers",
@@ -2181,6 +2182,7 @@
         "singing": "Singen",
         "skillSpecialization": "Fertigkeitsspezialisierung",
         "smallEnergyControl": "Kleine Kraftkontrolle",
+        "stableRegeneration": "Stabile Regeneration",
         "traditionFjarning": "Tradition (Fjarningerschamanen)",
         "traditionKor": "Tradition (Korkirche)",
         "traditionMagicalAlchemist": "Tradition (Zauberalchimisten)",
@@ -2477,7 +2479,7 @@
                     "label": "Beschreibung"
                 },
                 "faction": {
-                    "hint": "Der Akteur wird über die Fraktion/den Typus im Bestiarium gruppiert.",
+                    "hint": "Kommagetrennte Liste von Fraktionen/Typen. Der Akteur wird im Bestiarium unter jeder Fraktion gruppiert.",
                     "label": "Fraktion/Typus"
                 },
                 "important": {
@@ -2874,6 +2876,10 @@
         "meleeweaponattack": "Attacke verbessern",
         "meleeweaponparry": "Parade verbessern",
         "rangeweaponattack": "Fernkampf verbessern"
+    },
+    "REGENERATIONSKILLS": {
+        "AsP": "masterfulRegeneration",
+        "KaP": "stableRegeneration"
     },
     "SHEET": {
         "AnimalCompanion": "Tiergefährte",
@@ -3325,6 +3331,7 @@
         "enricherInfoRoll": "Würfelt die verknüpfte Informationsprobe",
         "enricherInfoPost": "Sendet die Information in den Chat",
         "foreignSpell": "Fremdzauber können nicht modifiziert werden",
+        "masterfulRegeneration": "Statt dem W6 einen festen Wert von 4 in die AsP-Regeneration einbeziehen (zuzüglich aller Modifikatoren). Ist kein W6 im Einsatz, wird das durchschnittliche Würfelergebnis aufgerundet.",
         "oneQualityPerLine": "Beschreibe eine Qualitätsstufe pro Zeile",
         "onlyGM": "Nur für den Spielleiter sichtbar.",
         "onlySkilled": "Nur erlernte Talente anzeigen",
@@ -3333,6 +3340,7 @@
         "resizer": "Drag zum Verschieben<br/>Mausrad um zu verkleinern/vergrößern",
         "skillgm": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
         "strgx10": "<small>Links-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i>-1<br/>& STRG x10</small>",
+        "stableRegeneration": "Statt dem W6 einen festen Wert von 4 in die KaP-Regeneration einbeziehen (zuzüglich aller Modifikatoren). Ist kein W6 im Einsatz, wird das durchschnittliche Würfelergebnis aufgerundet.",
         "tokenhotbarMod": "Modifikator/Wert",
         "tokenhotbarMoney": "Links-<i class=\"fas fa-computer-mouse\"></i>: bezahlen<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: auszahlen",
         "tokenhotbarSkill": "Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
@@ -3664,7 +3672,11 @@
         "reset": "Zurücksetzen",
         "showInCalendar": "Im Kalender anzeigen",
         "showInCalendarHint": "Die Einträge werden unter Feiertage und Ereignisse im Kalender sichtbar gemacht und stehen entsprechend der Sichtbarkeit auch den Spielern zur Verfügung.",
-        "today": "Heute"
+        "selectEvent": "Ereignis auswählen",
+        "selectEventHint": "Klicke auf ein Ereignis im Kalender, um Details anzuzeigen.",
+        "today": "Heute",
+        "viewCalendar": "Kalender",
+        "viewTimeline": "Zeitleiste"
     },
     "dsamenu": "DSA Menü",
     "duration": "Wirkungsdauer",
