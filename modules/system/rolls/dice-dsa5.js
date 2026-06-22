@@ -25,6 +25,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
+import { RegenerationModifiers } from '../../actor/concerns/regeneration-modifiers.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -841,9 +842,20 @@ export default class DiceDSA5 {
 
         await this._situationalModifiers(testData);
 
+        let dieResult = Number(roll.terms[index].results[0].result);
+        const dieIndex = index / 2;
+        const dieFaces = roll.dice[dieIndex]?.faces ?? 6;
+
+        if (RegenerationModifiers.isSpecialAbilityEnabled(testData, actor, k)) {
+          dieResult = RegenerationModifiers.getFixedDieValue(dieFaces);
+          testData.roll = Roll.fromData(testData.roll);
+          testData.roll.editRollAtIndex([{ index: dieIndex, val: dieResult }]);
+          roll = testData.roll;
+        }
+
         chars.push({
           char: k,
-          res: roll.terms[index].results[0].result,
+          res: dieResult,
           die: 'd6',
         });
 
@@ -854,7 +866,7 @@ export default class DiceDSA5 {
           continue;
         }
 
-        const modifiedValue = (Number(roll.terms[index].results[0].result) + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor);
+        const modifiedValue = (dieResult + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor);
         result[k] = Math.round(Math.max(0, modifiedValue));
 
         index += 2;
