@@ -119,6 +119,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
     'systems/dsa5/templates/dialog/parts/message-mode.hbs',
+    'systems/dsa5/templates/dialog/parts/disposition-mode.hbs',
     'systems/dsa5/templates/dialog/parts/group-check-skill-row.hbs',
     'systems/dsa5/templates/chat/payment/batch-request.hbs',
     'systems/dsa5/templates/chat/payment/transaction-summary.hbs',

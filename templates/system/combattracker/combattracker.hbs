@@ -1,6 +1,6 @@
 <ol class="combat-tracker plain">
     {{#each turns}}
-    <li class="combatant {{ css }}" data-combatant-id="{{ id }}" data-action="activateCombatant">
+    <li class="combatant {{ css }}" data-combatant-id="{{ id }}" data-action="activateCombatant"{{#if dispositionStyle}} style="{{dispositionStyle}}"{{/if}}>
         <div class="aggroButton specImg" data-action="aggroButton" data-tooltip="attacktest"></div>
         {{!-- TODO: Targets --}}
 

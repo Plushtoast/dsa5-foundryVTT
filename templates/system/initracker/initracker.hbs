@@ -17,7 +17,10 @@
         </div>
         <ul class="iniTrackerList">
             {{#each turns}}
-            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem {{newRound}} {{css}}" style="background-image:url('{{img}}');">
+            {{#if newRound}}
+            <li class="iniRoundSeparator" role="separator" data-tooltip="{{localize 'COMBATTRACKER.newRound'}}" aria-label="{{localize 'COMBATTRACKER.newRound'}}"></li>
+            {{/if}}
+            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem {{newRound}} {{css}}" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
                 <div class="combatant-advanced">
                     {{#if defenseCount}}
                     <i class="fas def fa-shield-alt" data-defense-count="{{defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
@@ -62,7 +65,7 @@
         <ul class="waitingTackerList iniTrackerList">
             <li class="waitTitle" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns}}
-            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem" data-action="restoreInit" style="background-image:url('{{img}}');"></li>
+            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem {{css}}" data-action="restoreInit" style="background-image:url('{{img}}');{{dispositionBorderStyle}}"></li>
             {{/each}}
         </ul>
         {{/if}}

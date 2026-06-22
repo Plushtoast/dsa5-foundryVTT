@@ -2,6 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/helpers/token_disposition.js';
 
 const { getProperty } = foundry.utils;
 
@@ -122,6 +123,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       icons: effects,
       tooltip: this._formatEffectsTooltip(effects),
     };
+
+    const disposition = combatant.token?.disposition ?? CONST.TOKEN_DISPOSITIONS.NEUTRAL;
+    turn.dispositionStyle = dispositionBackgroundStyle(disposition);
+    turn.dispositionBorderStyle = dispositionBorderStyle(disposition);
 
     return turn;
   }

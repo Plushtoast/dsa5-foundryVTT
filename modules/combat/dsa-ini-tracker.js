@@ -4,6 +4,9 @@ import { DSA5CombatTracker } from './combat_tracker.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
+  /** Must match `.iniRoundSeparator` in inittracker.scss (bar width + horizontal margins). */
+  static ROUND_SEPARATOR_WIDTH = 12;
+
   static DEFAULT_OPTIONS = {
     position: {
       width: 440,
@@ -138,7 +141,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     data.isLastRound = data.turns[1]?.newRound;
 
-    options.position.width = itemWidth * actorCount + actorCount * 3 + 70;
+    const roundSeparators = data.turns?.filter((turn) => turn.newRound).length ?? 0;
+    options.position.width = itemWidth * actorCount + actorCount * 3 + 70
+      + roundSeparators * this.constructor.ROUND_SEPARATOR_WIDTH;
     options.position.height = itemWidth + 10;
 
     Object.assign(data, {

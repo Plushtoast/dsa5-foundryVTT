@@ -13,6 +13,7 @@ import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 import GroupActorSheet from '../../actor/group-sheet.js';
+import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -897,6 +898,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         onClick: () => {
           new HotbarSortManager(this.actor).render(true);
         }
+      },
+      {
+        label: 'DIALOG.tokenDispositionTitle',
+        icon: "<i class='fa-solid fa-flag'></i>",
+        visible: () => game.user.isGM && (canvas?.tokens?.controlled?.length > 0),
+        onClick: () => {
+          const tokens = canvas.tokens.controlled.map((token) => token.document);
+          TokenDispositionDialog.show(tokens);
+        },
       },
       {
         label: 'HOTBAR.ACTIONS.Clear',
