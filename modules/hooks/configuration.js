@@ -504,13 +504,8 @@ export function setupConfiguration() {
         required: true,
       }),
       onChange: async (val) => {
-        if (DSA5Skin.isDarkColorScheme() && val !== DSA5Skin.SKIN_NAKED) {
-          ui.notifications.warn(_loc('DSAError.darkModeSkinRestricted'));
-          await game.settings.set('dsa5', 'globalStyle', DSA5Skin.SKIN_NAKED);
-          DSA5Skin.applyBodyClasses(DSA5Skin.SKIN_NAKED);
-          return;
-        }
         DSA5Skin.applyBodyClasses(val);
+        if (!DSA5Skin.isValidCombination(val)) await DSA5Skin.promptFixCombination();
       },
     },
     selfControlOnPain: {

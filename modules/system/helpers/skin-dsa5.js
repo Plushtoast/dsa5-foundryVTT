@@ -42,7 +42,7 @@ export default class DSA5Skin {
   }
 
   static getRecommended() {
-    return this.isDarkColorScheme() ? this.SKIN_NAKED : this.SKIN_IMMERSIVE;
+    return this.SKIN_IMMERSIVE;
   }
 
   static resolveGlobalStyle(savedSkin = game.settings.get('dsa5', 'globalStyle')) {
@@ -74,43 +74,84 @@ export default class DSA5Skin {
     for (const key of Object.keys(styles)) {
       styles[key] = _loc(styles[key]);
     }
-    if (DSA5Skin.isDarkColorScheme()) {
-      return { [DSA5Skin.SKIN_NAKED]: styles[DSA5Skin.SKIN_NAKED] };
-    }
     return styles;
+  }
+
+  static async applyImmersiveLightCombination() {
+    await game.settings.set('dsa5', 'globalStyle', this.SKIN_IMMERSIVE);
+    this.applyBodyClasses(this.SKIN_IMMERSIVE);
+
+    const uiConfig = this.getUiConfig();
+    await game.settings.set('core', 'uiConfig', {
+      ...uiConfig,
+      colorScheme: {
+        ...uiConfig.colorScheme,
+        interface: 'light',
+        applications: 'light',
+      },
+    });
+  }
+
+  static async applyNakedDarkCombination() {
+    await game.settings.set('dsa5', 'globalStyle', this.SKIN_NAKED);
+    this.applyBodyClasses(this.SKIN_NAKED);
+
+    const uiConfig = this.getUiConfig();
+    await game.settings.set('core', 'uiConfig', {
+      ...uiConfig,
+      colorScheme: {
+        ...uiConfig.colorScheme,
+        interface: 'dark',
+        applications: 'dark',
+      },
+    });
   }
 
   static async promptFixCombination() {
     const dsaSkin = game.settings.get('dsa5', 'globalStyle');
     if (this.isValidCombination(dsaSkin)) return false;
 
-    const isDark = this.isDarkColorScheme();
-    const messageKey = isDark ? 'DSAError.invalidSkinCombinationDark' : 'DSAError.invalidSkinCombination';
-
-    const proceed = await foundry.applications.api.DialogV2.confirm({
-      content: `<p>${_loc(messageKey)}</p>`,
-      rejectClose: false,
-      modal: true,
-    });
-    if (!proceed) return false;
-
-    const recommended = this.getRecommended();
-    await game.settings.set('dsa5', 'globalStyle', recommended);
-    this.applyBodyClasses(recommended);
-
-    if (!isDark) {
-      const uiConfig = this.getUiConfig();
-      await game.settings.set('core', 'uiConfig', {
-        ...uiConfig,
-        colorScheme: {
-          ...uiConfig.colorScheme,
-          interface: 'light',
-          applications: 'light',
-        },
+    let choice;
+    try {
+      choice = await foundry.applications.api.DialogV2.wait({
+        window: { title: 'DSASETTINGS.globalStyle' },
+        content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
+        modal: true,
+        buttons: [
+          {
+            action: 'immersive',
+            icon: 'fa fa-sun',
+            label: 'DSAError.invalidSkinCombinationImmersive',
+            default: true,
+            callback: () => 'immersive',
+          },
+          {
+            action: 'naked',
+            icon: 'fa fa-moon',
+            label: 'DSAError.invalidSkinCombinationNaked',
+            callback: () => 'naked',
+          },
+          {
+            action: 'cancel',
+            icon: 'fas fa-times',
+            label: 'cancel',
+            callback: () => false,
+          },
+        ],
       });
+    } catch {
+      return false;
     }
 
-    return true;
+    if (choice === 'immersive') {
+      await this.applyImmersiveLightCombination();
+      return true;
+    }
+    if (choice === 'naked') {
+      await this.applyNakedDarkCombination();
+      return true;
+    }
+    return false;
   }
 
   static registerHooks() {
