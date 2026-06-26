@@ -390,7 +390,7 @@ export default class RollRequestService {
     const result = RollRequestService.buildResultPayload(postFunction.category, payload, postFunction.messageMode);
     if (postFunction.byGM) result.resultDetails = { ...result.resultDetails, byGM: true };
 
-    await this.#submitResult(postFunction.requestMessageId, postFunction.actorId, result);
+    await RollRequestService.#submitResult(postFunction.requestMessageId, postFunction.actorId, result);
   }
 
   static async resendToActor(messageId, actorId) {
