@@ -23,6 +23,21 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
         return 0;
     }
 
+    _initializeApplicationOptions(options) {
+        const applicationOptions = super._initializeApplicationOptions(options);
+        for (const [key, handler] of Object.entries(applicationOptions.actions ?? {})) {
+            const fn = typeof handler === 'object' ? handler.handler : handler;
+            const commitAndRun = async function(event, target) {
+                if (!this.isView && this.isEditable && this.form) await this.submit();
+                return fn?.call(this, event, target);
+            };
+            applicationOptions.actions[key] = typeof handler === 'object'
+                ? { ...handler, handler: commitAndRun }
+                : commitAndRun;
+        }
+        return applicationOptions;
+    }
+
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
         const entries = Object.entries(foundry.utils.duplicate(this.document.system[this.constructor.objectKey] || {}))
