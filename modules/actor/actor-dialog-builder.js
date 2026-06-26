@@ -52,6 +52,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                     if (regenerate) update[`system.status.regeneration.${k}Temp`] = 0;
                 }
                 Object.assign(testData, RegenerationModifiers.collectSpecialAbilityChoices(html));
+                RegenerationModifiers.applySpecialAbilityRollOptions(testData, actor);
                 mergeObject(testData.extra.options, options);
                 actor.update(update);
                 return { testData, cardOptions };

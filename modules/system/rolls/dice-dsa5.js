@@ -25,7 +25,7 @@ import CombatskillData from '../../data/item/combatskill.js';
 import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
-import { RegenerationModifiers } from '../../actor/concerns/regeneration-modifiers.js';
+import { ManualRollDialog } from './manual-roll-dialog.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -151,7 +151,7 @@ export default class DiceDSA5 {
     const configHandler = diceConfigs[type] || (() => this.#createAttributeRoll(testData, d3dColors));
     let roll = await configHandler();
 
-    roll = await DiceDSA5.manualRolls(roll, type, testData.extra.options);
+    roll = await ManualRollDialog.apply(roll, ManualRollDialog.getRollDescription(testData), testData.extra.options);
     await this.showDiceSoNice(roll, cardOptions.messageMode);
 
     testData.roll = roll;
@@ -842,16 +842,7 @@ export default class DiceDSA5 {
 
         await this._situationalModifiers(testData);
 
-        let dieResult = Number(roll.terms[index].results[0].result);
-        const dieIndex = index / 2;
-        const dieFaces = roll.dice[dieIndex]?.faces ?? 6;
-
-        if (RegenerationModifiers.isSpecialAbilityEnabled(testData, actor, k)) {
-          dieResult = RegenerationModifiers.getFixedDieValue(dieFaces);
-          testData.roll = Roll.fromData(testData.roll);
-          testData.roll.editRollAtIndex([{ index: dieIndex, val: dieResult }]);
-          roll = testData.roll;
-        }
+        const dieResult = Number(roll.terms[index].results[0].result);
 
         chars.push({
           char: k,
@@ -1581,125 +1572,7 @@ export default class DiceDSA5 {
    * @returns {Promise<Roll>} Modified or original roll
    */
   static async manualRolls(roll, description = '', options = {}) {
-    const { cheat, predefinedResult } = options;
-    const shouldShowDialog = this.#shouldShowManualRollDialog(cheat, predefinedResult, description);
-
-    if (!shouldShowDialog) {
-      return roll;
-    }
-
-    if (predefinedResult) {
-      roll.editRollAtIndex(predefinedResult);
-      return roll;
-    }
-
-    const diceInfo = this.#extractDiceInfo(roll);
-    const userInput = await this.#showManualRollDialog(diceInfo, description, cheat);
-
-    if (userInput.confirmed) {
-      roll.editRollAtIndex(userInput.changes);
-    }
-
-    return roll;
-  }
-
-  /**
-   * Determine if manual roll dialog should be shown
-   * @param {boolean} cheat - Cheat mode enabled
-   * @param {*} predefinedResult - Predefined result exists
-   * @param {string} description - Roll description
-   * @returns {boolean}
-   */
-  static #shouldShowManualRollDialog(cheat, predefinedResult, description) {
-    const allowPhysicalDice = game.settings.get('dsa5', 'allowPhysicalDice');
-    const isDamageRoll = description === 'CHAR.DAMAGE';
-
-    // Don't show dialog for damage rolls with predefined results unless cheating
-    if (predefinedResult && isDamageRoll && !cheat) {
-      return false;
-    }
-
-    return cheat || allowPhysicalDice;
-  }
-
-  /**
-   * Extract dice information from roll for dialog display
-   * @param {Roll} roll - Roll to extract dice from
-   * @returns {Array} Array of dice info objects
-   */
-  static #extractDiceInfo(roll) {
-    const dice = [];
-
-    roll.terms.forEach(term => {
-      if (term instanceof foundry.dice.terms.Die || term.class === 'Die') {
-        term.results.forEach(result => {
-          dice.push({
-            faces: term.faces,
-            val: result.result
-          });
-        });
-      }
-    });
-
-    return dice;
-  }
-
-  /**
-   * Show manual roll dialog and get user input
-   * @param {Array} diceInfo - Information about dice to display
-   * @param {string} description - Roll description
-   * @param {boolean} isCheat - Whether this is cheat mode
-   * @returns {Promise<Object>} User input result
-   */
-  static async #showManualRollDialog(diceInfo, description, isCheat) {
-    const content = await renderTemplate(DICE_CONSTANTS.TEMPLATES.MANUAL_ROLL, {
-      dice: diceInfo,
-      description,
-    });
-
-    const titleKey = isCheat ? 'DIALOG.cheat' : 'DSASETTINGS.allowPhysicalDice';
-
-    return new Promise((resolve) => {
-      new DSA5Dialog({
-        window: { title: titleKey },
-        content,
-        buttons: [
-          {
-            action: 'ok',
-            icon: 'fa fa-check',
-            label: 'yes',
-            callback: (event, button, dlg) => {
-              const changes = this.#extractChangesFromForm($(button.form));
-              resolve({ confirmed: true, changes });
-            },
-          },
-          {
-            action: 'cancel',
-            icon: 'fas fa-times',
-            label: 'cancel',
-            callback: () => resolve({ confirmed: false, changes: [] }),
-          },
-        ],
-      }).render(true);
-    });
-  }
-
-  /**
-   * Extract dice value changes from form
-   * @param {jQuery} form - Form element
-   * @returns {Array} Array of change objects
-   */
-  static #extractChangesFromForm(form) {
-    const changes = [];
-
-    form.find('.dieInput').each(function (index) {
-      const value = Number($(this).val());
-      if (value > 0) {
-        changes.push({ val: value, index });
-      }
-    });
-
-    return changes;
+    return ManualRollDialog.apply(roll, description, options);
   }
 
   static parseEffect(source) {

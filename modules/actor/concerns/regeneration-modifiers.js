@@ -71,4 +71,37 @@ export class RegenerationModifiers {
     }
     return values;
   }
+
+  static getSpecialAbilityPredefinedResult(actor, testData) {
+    const results = [];
+    let dieIndex = 0;
+
+    if (testData.regenerateLeP) dieIndex++;
+
+    if (actor.system.isMage && testData.regenerateAsP) {
+      if (this.isSpecialAbilityEnabled(testData, actor, 'AsP')) {
+        results.push({ index: dieIndex, val: this.getFixedDieValue(6) });
+      }
+      dieIndex++;
+    }
+
+    if (actor.system.isPriest && testData.regenerateKaP) {
+      if (this.isSpecialAbilityEnabled(testData, actor, 'KaP')) {
+        results.push({ index: dieIndex, val: this.getFixedDieValue(6) });
+      }
+      dieIndex++;
+    }
+
+    return results;
+  }
+
+  static applySpecialAbilityRollOptions(testData, actor) {
+    const predefinedResult = this.getSpecialAbilityPredefinedResult(actor, testData);
+    if (!predefinedResult.length) return;
+
+    testData.extra ??= {};
+    testData.extra.options ??= {};
+    testData.extra.options.cheat = true;
+    testData.extra.options.predefinedResult = predefinedResult.map((result) => ({ ...result }));
+  }
 }
