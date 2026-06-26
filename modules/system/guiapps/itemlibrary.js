@@ -1,267 +1,20 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
 import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
-import { DefaultAppv2 } from '../../actor/baseapp.js';
-import DSA5 from '../../config/config-dsa5.js';
+import { applyFontSize, FONT_SIZE_OPTIONS, getFontSizeLabel, setFontSizeIndex } from '../helpers/font-size-picker.js';
 import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
-import SpecialabilityData from '../../data/item/specialability.js';
+import DSASystemConfiguration from './itemlibrary/systemConfiguration.js';
+import SearchDocument, { AdvancedSearchDocument } from './itemlibrary/searchDocument.js';
+import LibraryModulsFilter from './itemlibrary/libraryModulesFilter.js';
+import ItemLibraryModuleOptions from './itemlibrary/moduleOptions.js';
+import ItemLibraryListColumns from './itemlibrary/listColumns.js';
 
-const { duplicate, mergeObject } = foundry.utils;
+const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 const VIEW_MODES = ['compact', 'browse', 'list'];
 
-const BUILTIN_COLUMN_DEFS = {
-  img: { id: 'img', label: '', sortable: false },
-  name: { id: 'name', label: 'Name', sortable: true, includesImg: true, includesSource: true },
-  type: { id: 'type', label: 'Type', sortable: true },
-  compendium: { id: 'compendium', label: 'Library.source', sortable: true },
-  price: { id: 'price', label: 'price', sortable: true },
-};
-
-const COLUMN_OPTION_MAPS = {
-  specialAbilityCategories: SpecialabilityData.specialAbilityCategories,
-  patronCategories: { 0: 'PATRON.0', 1: 'PATRON.1', 2: 'PATRON.2', 3: 'PATRON.3' },
-  spellextensionCategories: {
-    spell: 'TYPES.Item.spell',
-    liturgy: 'TYPES.Item.liturgy',
-    ritual: 'TYPES.Item.ritual',
-    ceremony: 'TYPES.Item.ceremony',
-  },
-};
-
-const PLANT_TYPE_KEYS = ['healing', 'poison', 'physical', 'psychic', 'crop', 'defensive', 'supernatural'];
-
-function getListColumnConfig() {
-  return game.dsa5?.itemLibrary?.listColumnConfig ?? {};
-}
-
-function getPriceTypes() {
-  const configured = getListColumnConfig()._default?.priceTypes;
-  if (configured?.length) return new Set(configured);
-  return new Set([...DSA5.equipmentCategories, 'itempackage']);
-}
-
-function typeHasPrice(type) {
-  return getPriceTypes().has(type);
-}
-
-function getColumnOptions(col) {
-  if (col.optionsKey && COLUMN_OPTION_MAPS[col.optionsKey]) {
-    return COLUMN_OPTION_MAPS[col.optionsKey];
-  }
-  return col.optionsKey ? DSA5[col.optionsKey] : undefined;
-}
-
-function getTypeListColumns(type) {
-  const config = getListColumnConfig();
-  const columns = [...(config[type]?.columns ?? [])];
-  const apTypes = config._default?.apTypes ?? [];
-  const apColumn = config._default?.apColumn;
-  if (apColumn && apTypes.includes(type) && !columns.some(col => col.attr === apColumn.attr)) {
-    columns.unshift(apColumn);
-  }
-  return columns;
-}
-
-function getListDisplayFields(type) {
-  const typeColumns = getTypeListColumns(type);
-  if (typeColumns.length) {
-    return typeColumns.map(col => ({
-      label: col.label,
-      attr: col.attr,
-      type: col.optionsKey ? 'select' : 'text',
-      options: getColumnOptions(col),
-      optionsKey: col.optionsKey,
-      columnType: col.columnType,
-      raw: col.raw,
-    }));
-  }
-
-  return (ADVANCEDFILTERS[type] || [])
-    .filter(f => f.type === 'select' || f.type === 'text');
-}
-
-function resolveColumnFieldDef(col) {
-  return {
-    id: col.attr,
-    label: col.label,
-    sortable: col.columnType !== 'plantTypes',
-    attr: col.attr,
-    optionsKey: col.optionsKey,
-    columnType: col.columnType,
-    raw: col.raw,
-    fieldDef: {
-      label: col.label,
-      attr: col.attr,
-      type: col.optionsKey ? 'select' : 'text',
-      options: getColumnOptions(col),
-    },
-  };
-}
-
-function getSystemAttrValue(item, attrPath) {
-  if (item?.system) {
-    const value = foundry.utils.getProperty(item.system, attrPath);
-    if (value !== undefined && value !== null) return value;
-  }
-  return foundry.utils.getProperty(item, `system.${attrPath}`);
-}
-
 //todo check if items on index have permission
-
-class SearchDocument {
-  static cachedKeys = {
-    Item: {},
-    Actor: {},
-  }
-
-  static getSearchFields(documentName, type) {
-    const cached = this.cachedKeys[documentName][type]
-
-    if (!cached) {
-      const fields = ["name", "img", "type"]
-      const descriptionKey = game.dsa5.itemLibrary.fullTextSearch ? this.getDescriptionKey(documentName, type) : undefined
-      this.cachedKeys[documentName][type] = { fields, descriptionKey }
-    }
-
-    return this.cachedKeys[documentName][type]
-  }
-
-  static getDescriptionKey(documentName, type) {
-    switch (documentName) {
-      case 'Actor':
-      case 'Item':
-        return 'system.description.value'
-      default:
-        return 'description.value'
-    }
-  }
-
-  static toJournalSearchableObject(item) {
-    return {
-      uuid: item.uuid,
-      name: item.name,
-      compendium: item.pack,
-      img: 'systems/dsa5/icons/categories/DSA-Auge.webp',
-      type: 'JournalEntry',
-      description: item.pages.map(x => x.text?.content).join(" ")
-    }
-  }
-
-  static toSearchableObject(item, documentName) {
-    if (documentName === "JournalEntry") return this.toJournalSearchableObject(item);
-
-    const { descriptionKey, fields } = this.getSearchFields(documentName, item.type);
-    const object = {
-      uuid: item.uuid,
-      compendium: item.pack || ''
-    };
-
-    if (typeHasPrice(item.type)) {
-      object.price = foundry.utils.getProperty(item, "system.price.value") || 0;
-    }
-
-    if (descriptionKey) {
-      object.description = foundry.utils.getProperty(item, descriptionKey) || "";
-    }
-
-    for (const field of fields) {
-      object[field] = foundry.utils.getProperty(item, field) || "";
-    }
-
-    for (const field of getListDisplayFields(item.type)) {
-      if (field.columnType === 'plantTypes') {
-        object[field.attr] = foundry.utils.duplicate(item.system?.planttype ?? {});
-      } else {
-        object[field.attr] = getSystemAttrValue(item, field.attr) ?? '';
-      }
-    }
-
-    return object;
-  }
-}
-
-class AdvancedSearchDocument extends SearchDocument {
-  static toSearchableObject(item, subcategory) {
-    const object = super.toSearchableObject(item, item.documentName)
-
-    const attrs = ADVANCEDFILTERS[subcategory] || [];
-    for (const attr of attrs) {
-      object[attr.attr] = attr.attr.split('.').reduce((prev, cure) => {
-        return prev[cure] === undefined ? {} : prev[cure];
-      }, item.system);
-    }
-    return object;
-  }
-}
-
-class DSASystemConfiguration {
-  static hasDescription = {
-    "Item": {
-      default: "system.description.value"
-    },
-    "Actor": {
-      default: "system.description.value"
-    },
-    "JournalEntry": {
-      default: "description"
-    }
-  }
-
-  static documentGroups = { "Items": 0, "Character": 0, "Religion": 0, "Actors": 1, "JournalEntries": 2 }
-  static documentNames = ["Item", "Actor", "JournalEntry"]
-
-  static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper"]
-
-  static initialize() {
-
-  }
-
-  static documentNameFromGroup(documentGroup) {
-    return this.documentNames[this.documentGroups[documentGroup]]
-  }
-
-  static categoryByType(documentName, type) {
-    switch (documentName) {
-      case "Item":
-        if (DSA5.equipmentCategories.has(type) || ["trap", "money", "disease"].includes(type)) return "Items"
-        if (DSA5.magicCategories.has(type)) return "Religion"
-        return "Character"
-      case "Actor":
-        return "Actors"
-      default:
-        return documentName;
-    }
-  }
-
-  static getDescription(item) {
-    const descriptionKey = this.getDescriptionKey(item)
-    return descriptionKey ? foundry.utils.getProperty(item, descriptionKey) : ""
-  }
-
-  static getDescriptionKey(item) {
-    return foundry.utils.getProperty(this.hasDescription, `${item.documentName}.${item.type}`) || foundry.utils.getProperty(this.hasDescription, `${item.documentName}.default`)
-  }
-
-  static async renderTooltip(item, fullTextSearch) {
-    const description = this.getDescription(item, fullTextSearch)
-    const langKey = `TYPES.${item.documentName}.${item.type}`
-    const type = game.i18n.has(langKey) ? _loc(langKey) : item.type
-    return await renderTemplate("systems/dsa5/templates/system/itemlibrary/parts/itemHover.hbs", { item, description, type })
-  }
-
-  static getSearchFields(documentName, type, fullTextSearch) {
-    const fields = { index: ["name"] }
-
-    if (fullTextSearch) {
-      const descriptionKey = this.getDescriptionKey({ documentName, type })
-
-      if (descriptionKey) fields.index.push("description")
-    }
-    return fields
-  }
-}
 
 export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   pageSize = 60
@@ -395,6 +148,32 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     const category = $(this.element).find('.tab.active')[0]?.dataset.tab;
     if (category) this.filterItems(category);
+    this._syncViewModeAttribute();
+  }
+
+  _syncViewModeAttribute() {
+    const mode = this.getEffectiveViewMode();
+    this.element?.setAttribute('data-view-mode', mode);
+    for (const el of this.element?.querySelectorAll('.itemlibrary-font-size') ?? []) {
+      el.hidden = mode !== 'list';
+    }
+  }
+
+  applyListFontSize(root = this.element) {
+    const tables = root?.querySelectorAll('.library-list-table');
+    if (!tables?.length) return;
+    const index = game.settings.get('dsa5', 'itemLibraryListFontSizeIndex');
+    applyFontSize($(tables), index);
+  }
+
+  async _onListFontSizeChange(ev) {
+    const index = Number(ev.currentTarget.value) || 0;
+    await setFontSizeIndex('itemLibraryListFontSizeIndex', index);
+    this.applyListFontSize();
+    const label = getFontSizeLabel(index);
+    for (const el of this.element?.querySelectorAll('.itemlibrary-font-size__value') ?? []) {
+      el.textContent = label;
+    }
   }
 
   _sortListColumn(ev, target) {
@@ -467,6 +246,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     data.isGM = game.user.isGM
     data.models = this.models
     data.viewMode = this.getEffectiveViewMode()
+
+    const listFontSizeIndex = game.settings.get('dsa5', 'itemLibraryListFontSizeIndex');
+    data.listFontSizeIndex = listFontSizeIndex;
+    data.listFontSizeMax = FONT_SIZE_OPTIONS.length;
+    data.listFontSizeLabel = getFontSizeLabel(listFontSizeIndex);
 
     if (this.advancedFiltering) {
       data.advancedFilter = await this.buildDetailFilter('none', 'none');
@@ -984,6 +768,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     if (this.advancedFiltering) await this._syncAdvancedSidebarForTab(tab);
     await this.filterItems(tab);
+    this._syncViewModeAttribute();
   }
 
   setBGImage(filterdItems, category) {
@@ -991,27 +776,27 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   getListColumns(tab) {
-    const config = getListColumnConfig();
+    const config = ItemLibraryListColumns.getListColumnConfig();
     const defaultConfig = config._default ?? {};
     const selected = this.models[tab]?.filter(x => x.selected) || [];
     const showPrice = tab === 'Items' && (
       selected.length === 1
-        ? typeHasPrice(selected[0].key)
-        : selected.some(x => typeHasPrice(x.key))
+        ? ItemLibraryListColumns.typeHasPrice(selected[0].key)
+        : selected.some(x => ItemLibraryListColumns.typeHasPrice(x.key))
     );
 
-    const leading = (defaultConfig.leading ?? ['img', 'name']).map(id => ({ ...BUILTIN_COLUMN_DEFS[id] }));
+    const leading = (defaultConfig.leading ?? ['img', 'name']).map(id => ({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS[id] }));
     let middle = [];
     let tail = [];
 
     if (selected.length === 1) {
       const type = selected[0].key;
-      middle = getTypeListColumns(type).map(resolveColumnFieldDef);
-      if (showPrice) tail.push({ ...BUILTIN_COLUMN_DEFS.price });
+      middle = ItemLibraryListColumns.getTypeListColumns(type).map(col => ItemLibraryListColumns.resolveColumnFieldDef(col));
+      if (showPrice) tail.push({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS.price });
     } else {
       let multi = [...(defaultConfig.multi ?? ['type'])].filter(id => id !== 'price');
       if (showPrice) multi.push('price');
-      middle = multi.map(id => ({ ...BUILTIN_COLUMN_DEFS[id] })).filter(col => col.id);
+      middle = multi.map(id => ({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS[id] })).filter(col => col.id);
     }
 
     return [...leading, ...middle, ...tail].map(col => ({
@@ -1039,7 +824,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
   formatPlantTypesCell(planttype) {
     if (!planttype || typeof planttype !== 'object') return '-';
-    const active = PLANT_TYPE_KEYS.filter(key => planttype[key]);
+    const active = ItemLibraryListColumns.PLANT_TYPE_KEYS.filter(key => planttype[key]);
     if (!active.length) return '-';
     return active.map(name => {
       const tip = _loc(`PLANT.${name}`);
@@ -1057,7 +842,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     if (column.raw) return String(raw) || '-';
 
-    const options = column.optionsKey ? getColumnOptions(column) : column.fieldDef?.options;
+    const options = column.optionsKey ? ItemLibraryListColumns.getColumnOptions(column) : column.fieldDef?.options;
     if (options && options[raw] !== undefined) {
       const label = options[raw];
       if (typeof label === 'string' && game.i18n.has(label)) return _loc(label);
@@ -1182,6 +967,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (viewMode === 'list') {
       if (!isPaged) searchResult.html(html);
       else searchResult.find('.library-list-table tbody').append($(html).find('tbody').children());
+      this.applyListFontSize(searchResult[0]);
       return;
     }
 
@@ -1468,43 +1254,13 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       moduleSelected = savedSettings.selects?.find(x => x[0] === 'compendium')?.[1] || false;
     }
 
-    const moduleOptions = DSA5ItemLibrary.collectModulOptions('.')
+    const moduleOptions = ItemLibraryModuleOptions.collect('.')
     const template = await renderTemplate(
       'systems/dsa5/templates/system/itemlibrary/parts/detailFilter.hbs',
       { fields, subcategory, moduleOptions, moduleSelected }
     );
     await indexPromise;
     return template;
-  }
-
-  static collectModulOptions(postfix = '') {
-    const options = {};
-    const moduleNameCache = new Map();
-
-    for (const pack of game.packs.filter(p => p.metadata.type === 'Item')) {
-      const packageName = pack.metadata.packageName;
-
-      if (options[packageName + postfix]) continue;
-
-      if (moduleNameCache.has(packageName)) {
-        options[packageName + postfix] = moduleNameCache.get(packageName);
-      } else {
-        let displayName;
-        if (game.i18n.has(`${packageName}.name`)) {
-          displayName = _loc(`${packageName}.name`);
-        } else if (packageName === 'dsa5') {
-          displayName = game.system.title;
-        } else {
-          const module = game.modules.get(packageName);
-          displayName = module?.title.replace(/The Dark Eye 5th Ed. - /i, '') || pack.metadata.label;
-        }
-
-        moduleNameCache.set(packageName, displayName);
-        options[packageName + postfix] = displayName;
-      }
-    }
-
-    return options;
   }
 
   itemDragStart(ev) {
@@ -1526,12 +1282,15 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     const html = $(this.element)
     tabSlider(html);
+    this._syncViewModeAttribute();
+    if (this.getEffectiveViewMode() === 'list') this.applyListFontSize();
     const source = this
     this._debouncedInfiniteScroll ||= foundry.utils.debounce(ev => this._infiniteScroll(ev, source), 100);
     html.find('.filterCategories .filter').on('change', ev => this.filterChanged(ev))
     html.on('contextmenu', '.library-filter-chip', ev => this._onCategoryContextMenu(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
+    html.on('change', '.itemlibrary-font-size__picker', ev => this._onListFontSizeChange(ev))
     html.on("mousedown", ".searchResult .library-item", ev => this._onItemNameClick(ev))
     html.on("mouseenter", ".searchResult .library-item", ev => this._onItemHover(ev))
     html.on("mouseleave", ".searchResult .library-item", () => this._onItemHoverLeave())
@@ -1735,56 +1494,5 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     } catch (e) {
       // nothing going on here
     }
-  }
-}
-
-class LibraryModulsFilter extends DefaultAppv2 {
-  static DEFAULT_OPTIONS = {
-    id: "LibraryModulsFilter",
-    position: {
-      width: 600
-    },
-    window: {
-      title: "DSASETTINGS.libraryModulsFilter",
-      icon: "fa-regular fa-globe",
-      minimizable: true,
-      resizable: true,
-    },
-    classes: ["dsa5"],
-  };
-
-  static PARTS = {
-    modules: {
-      template: "systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs"
-    }
-  }
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options)
-
-    mergeObject(data, {
-      moduleOptions: DSA5ItemLibrary.collectModulOptions(),
-      rejectedModules: game.settings.get('dsa5', 'libraryModulsFilter'),
-    });
-    return data;
-  }
-
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-
-    $(this.element).find('.moduleSelector').on('change', (ev) => this.moduleFilterChanged(ev));
-  }
-
-  async moduleFilterChanged(ev) {
-    const module = ev.currentTarget.id;
-
-    const data = game.settings.get('dsa5', 'libraryModulsFilter');
-    if (ev.currentTarget.checked) {
-      delete data[module];
-    } else {
-      data[module] = true;
-    }
-
-    game.settings.set('dsa5', 'libraryModulsFilter', data);
   }
 }

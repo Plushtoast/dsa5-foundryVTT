@@ -139,6 +139,13 @@ export function setupConfiguration() {
       default: 5,
       type: Number,
     },
+    itemLibraryListFontSizeIndex: {
+      name: 'itemLibraryListFontSizeIndex',
+      scope: 'client',
+      config: false,
+      default: 0,
+      type: Number,
+    },
     firstTimeStart: {
       name: 'firstTimeStart',
       scope: 'world',

@@ -2026,6 +2026,7 @@
         "layoutBrowse": "Stöberkarten",
         "layoutCompact": "Kompakte Karten",
         "layoutList": "Listentabelle",
+        "listFontSize": "Listen-Schriftgröße (0 = Standard)",
         "loading": "Lade {item}...",
         "moduleFilter": "Module permanent filtern",
         "noFilter": "Kein Filter",

@@ -2027,6 +2027,7 @@
     "layoutBrowse": "Browse cards",
     "layoutCompact": "Compact cards",
     "layoutList": "List table",
+    "listFontSize": "List font size (0 = default)",
     "loading": "Loading {item}...",
     "moduleFilter": "Filter modules permanent",
     "noFilter": "No filter",

@@ -2739,7 +2739,7 @@ input[type='search'] {
   .searchResult[data-view-mode="compact"] .item-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 8px;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -2780,17 +2780,30 @@ input[type='search'] {
 
     .row-section.wrap.col.third {
       flex: 0 0 auto;
-      max-width: 140px;
-      min-width: 72px;
+      max-width: 160px;
+      min-width: 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .row-section.wrap.col.third > .col.center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
     }
 
     .row-section.wrap.col.third img,
     .col.center img {
-      max-width: 120px;
+      max-width: 128px;
       width: 100%;
       height: auto;
       object-fit: contain;
       border: none;
+      margin: 0 auto;
+      display: block;
     }
   }
 
@@ -2829,11 +2842,15 @@ input[type='search'] {
     border: 1px solid var(--border-color);
     border-radius: 6px;
     background: rgba(255, 249, 241, 0.94);
-    min-width: 200px;
-    flex: 1 0 200px;
+    min-width: 240px;
+    flex: 1 0 240px;
     list-style-type: none;
     display: flex;
-    line-height: 24px;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    min-height: 52px;
+    line-height: 1.3;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 
     &:hover {
@@ -2842,32 +2859,60 @@ input[type='search'] {
     }
 
     a {
-      display: inline-block;
-      padding: 2px;
-      width: calc(100% - 44px);
-      height: 36px;
-      line-height: 32px;
+      display: flex;
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 2px 4px;
+      width: auto;
+      height: auto;
+      min-height: 40px;
+      line-height: 1.3;
+    }
+
+    .item-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 13px;
+      font-weight: 600;
     }
 
     .image {
-      height: 36px;
-      width: 36px;
-      display: inline-block;
+      flex: 0 0 44px;
+      height: 44px;
+      width: 44px;
+      display: block;
       background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
     }
 
     .priceDrag {
+      flex: 0 0 auto;
       padding-top: 4px;
-      min-width: 30px;
-      line-height: 10px;
-      font-size: 10px;
+      min-width: 34px;
+      line-height: 1.2;
+      font-size: 11px;
       cursor: grab;
       text-overflow: ellipsis;
       overflow: hidden;
+      text-align: center;
 
       &:hover {
         background: rgba(0, 0, 0, 0.3);
       }
+    }
+
+    .compendium {
+      max-width: 42%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
