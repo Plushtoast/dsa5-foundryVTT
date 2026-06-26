@@ -1186,6 +1186,16 @@ export default class DiceDSA5 {
     return formula.replace(dicePattern, 'd');
   }
 
+  /**
+   * Check whether a damage value can be rolled (e.g. "1d6+2" vs "speziell")
+   * @param {string} formula - Damage formula to validate
+   * @returns {boolean}
+   */
+  static isValidDamageFormula(formula) {
+    const normalized = `${formula ?? ''}`.trim();
+    return !!normalized && Roll.validate(this.replaceDieLocalization(normalized));
+  }
+
   static async evaluateDamage(testData, result, weapon, isRangeWeapon, doubleDamage) {
     let rollFormula = this.replaceDieLocalization(weapon.system.damage.value);
     const overrideDamage = [];
@@ -1240,7 +1250,13 @@ export default class DiceDSA5 {
     }
 
     const actor = this.#actorFromTestData(testData);
-    const damageRoll = testData.damageRoll || (await DiceDSA5.manualRolls(await new Roll(rollFormula, actor.system).evaluate(), 'CHAR.DAMAGE', testData.extra.options));
+    let damageRoll = testData.damageRoll;
+    if (!damageRoll) {
+      const roll = this.isValidDamageFormula(rollFormula)
+        ? await new Roll(rollFormula, actor.system).evaluate()
+        : await new Roll('0').evaluate();
+      damageRoll = await DiceDSA5.manualRolls(roll, 'CHAR.DAMAGE', testData.extra.options);
+    }
     let damage = damageRoll.total;
     let weaponroll = 0;
 
