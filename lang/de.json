@@ -1158,6 +1158,7 @@
         "AdvanceMaximumReached": "Maximale Steigerung bereits erreicht",
         "CastingTimeLimit": "Die Aktionsdauer ist bereits am Limit.",
         "DamagePermission": "Du musst \"Besitzerrechte\" für diesen Akteur haben um dessen Ressourcen zu editieren.",
+        "RollPermission": "Du musst \"Besitzerrechte\" für diesen Akteur haben, um Würfe auszuführen.",
         "InvalidJSON": "Das eingegebene JSON ist ungültig.",
         "MacroItemMissing": "Dein Charakter hat kein Item namens {item}. Stelle sicher, dass dir entweder ein Charakter zugeordnet ist oder du einen Token für den Wurf markierst.",
         "MissingChoices": "Noch nicht alle Optionen ausgefüllt.",

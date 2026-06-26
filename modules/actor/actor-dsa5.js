@@ -2096,7 +2096,16 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  canUserRoll(user = game.user) {
+    return user.isGM || this.isOwner;
+  }
+
   async basicTest({ testData, cardOptions }, options = {}) {
+    if (!this.canUserRoll()) {
+      ui.notifications.warn('DSAError.RollPermission', { localize: true });
+      return;
+    }
+
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 

@@ -1734,7 +1734,8 @@ a.img-entity-link {
 }
 
 .form-group.full-height .editor.prosemirror,
-.application .editor.prosemirror.active {
+.application .editor.prosemirror.active,
+.foreign-field-editor .editor.prosemirror {
   min-height: 300px;
 }
 

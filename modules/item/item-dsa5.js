@@ -494,6 +494,11 @@ export default class Itemdsa5 extends Item {
    *   - {CardOptions} cardOptions - Final chat card options used
    */
   async itemTest({ testData, cardOptions }, options = {}) {
+    if (this.actor && !this.actor.canUserRoll()) {
+      ui.notifications.warn('DSAError.RollPermission', { localize: true });
+      return;
+    }
+
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 

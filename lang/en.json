@@ -1159,6 +1159,7 @@
     "AdvanceMaximumReached": "Max advancements already reached",
     "CastingTimeLimit": "The duration is already at its limit.",
     "DamagePermission": "You need to have \"owner\" permissions to modify this actor's ressources.",
+    "RollPermission": "You need \"owner\" permissions on this actor to perform rolls.",
     "InvalidJSON": "The entered JSON is invalid.",
     "MacroItemMissing": "Your character has no item named {item}. Make sure to select a token or assign a character to yourself.",
     "MissingChoices": "There are missing choices.",

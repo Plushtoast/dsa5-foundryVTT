@@ -201,29 +201,32 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       library: this._openLibrary,
       locksheet: this._changeAdvanceLock,
       skillSelect: { handler: this._skillSelect, buttons: [0, 2] },
-      rollDisease: this._rollDisease,
       conditionEdit: this._conditionEdit,
       chCollapse: this._chCollapse,
       statusCreate: this._statusCreate,
       itemDropdown: this._itemDropdown,
       itemEdit: this._itemEdit,
-      chValue: this._chValue,
       itemContextMenu: this._itemContextMenu,
       weaponContextMenu: this._weaponContextMenu,
       statusContextMenu: this.#statusContextMenu,
       bulkInventoryContextMenu: this._bulkInventoryContextMenu,
-      chStatus: this._chStatus,
       filterTalents: this._filterTalents,
+      combatRules: this._combatRules,
+      collapseHeader: this._collapseHeader,
+      conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
+      editKeepField: this._editKeepField,
+      ...CompanionHandler.getSheetActions(),
+    },
+    ownerRollActions: {
+      rollDisease: this._rollDisease,
+      chValue: this._chValue,
+      chStatus: this._chStatus,
       chRegenerate: this._chRegenerate,
       chWeaponless: this._chWeaponless,
       chFallingDamage: this._chFallingDamage,
-      combatRules: this._combatRules,
       chRollCombat: this._chRollCombat,
-      collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
-      conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
       rollAnySkill: this._rollAnySkill,
-      ...CompanionHandler.getSheetActions(),
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
@@ -740,11 +743,26 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await item.system.swapNumberWeaponHands();
   }
 
+  static _editKeepField(_ev, target) {
+    const groupbox = target.closest('.keepFieldsEnabled');
+    if (!groupbox) return;
+
+    const attr = groupbox.dataset.attr;
+    const name = groupbox.dataset.name;
+    if (!attr) return;
+
+    new ForeignFieldEditor(this.actor.id, attr, name).render(true);
+  }
+
   static async _skillSelect(ev, target) {
     const itemId = this._getItemId(target);
     const skill = this.actor.items.get(itemId);
 
     if (ev.button == 0) {
+      if (!this.isEditable) {
+        ui.notifications.warn('DSAError.RollPermission', { localize: true });
+        return;
+      }
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
       this.actor.basicTest(setupData);
     } else if (ev.button == 2) skill.sheet.render(true);
@@ -1128,8 +1146,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     bindImgToCanvasDragStart(html, 'img.charimg');
 
     Riding.onRender(html, this.actor);
-
-    this._bindKeepFieldsEnabled(html);
 
     if (!this.isEditable) return;
 
@@ -1550,27 +1566,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         max: item.system.quantity.value - 1,
       }
     );
-  }
-
-  _bindKeepFieldsEnabled(html) {
-    if (!this.isEditable) {
-      const keepFields = html.find('.keepFieldsEnabled');
-      for (const k of keepFields) {
-        const attr = k.dataset.attr;
-        const name = k.dataset.name;
-        $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
-        $(k)
-          .find('.editor-edit')
-          .on('click', (ev) => this._openKeepFieldEditpage(ev));
-      }
-    }
-  }
-
-  _openKeepFieldEditpage(ev) {
-    const attr = ev.currentTarget.dataset.attr;
-    const name = ev.currentTarget.dataset.name;
-    const editor = new ForeignFieldEditor(this.actor.id, attr, name);
-    editor.render(true);
   }
 
   static async _onMacroUseItem(ev, target) {

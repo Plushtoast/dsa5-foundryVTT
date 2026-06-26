@@ -5,6 +5,7 @@ export const AppV2Mixin = (superclass) =>
 
     static DEFAULT_OPTIONS = {
       ownerActions: {},
+      ownerRollActions: {},
       majorButtons: [],
     };
 
@@ -113,19 +114,29 @@ export const AppV2Mixin = (superclass) =>
 
     _onClickAction(event, target) {
       const action = target.dataset.action;
-      let handler = this.options.ownerActions[action];
-      if (this.isEditable && handler) {
-        let buttons = [0];
-        if (typeof handler === 'object') {
-          buttons = handler.buttons;
-          handler = handler.handler;
+      const restrictedActions = [
+        [this.options.ownerActions, 'DSAError.DamagePermission'],
+        [this.options.ownerRollActions, 'DSAError.RollPermission'],
+      ];
+
+      for (const [actions, notificationKey] of restrictedActions) {
+        let handler = actions?.[action];
+        if (!handler) continue;
+
+        if (this.isEditable) {
+          let buttons = [0];
+          if (typeof handler === 'object') {
+            buttons = handler.buttons;
+            handler = handler.handler;
+          }
+          if (buttons.includes(event.button)) handler?.call(this, event, target);
+        } else {
+          ui.notifications.warn(notificationKey, { localize: true });
         }
-        if (buttons.includes(event.button)) handler?.call(this, event, target);
-      } else if (handler) {
-        ui.notifications.warn('DSAError.DamagePermission', { localize: true });
-      } else {
-        super._onClickAction(event, target);
+        return;
       }
+
+      super._onClickAction(event, target);
     }
 
     async _onDrop(event) {
