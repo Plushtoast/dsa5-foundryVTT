@@ -70,9 +70,9 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     const isAttackOrCounterAttack = this.dialogData.mode === 'attack' || this.dialogData.counterAttack;
     const dieClass = isAttackOrCounterAttack ? 'die-mu' : 'die-in';
     const modifier = this.dialogData.modifier || 0;
-    const clampedValue = Math.clamp(Math.round((this.dialogData.rollValue + modifier) * multiplier), 1, 20);
+    const displayValue = Math.round((this.dialogData.rollValue + modifier) * multiplier);
 
-    return `<span class="rollValue ${dieClass} d20">${clampedValue}</span>`;
+    return `<span class="rollValue ${dieClass} d20">${displayValue}</span>`;
   }
 
   async updateRollButton(targets, multiplier = 1) {
