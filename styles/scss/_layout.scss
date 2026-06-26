@@ -15,14 +15,6 @@
     }
   }
 
-  .vertical-tabs {
-    &.creature-sheet {
-      .tabs.right {
-        left: calc(100% - 10px);
-      }
-    }
-  }
-
   .application,
   .window-app {
     &.dialog .window-content {

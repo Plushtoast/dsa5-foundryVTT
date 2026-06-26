@@ -1030,6 +1030,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     const html = $(this.element);
     this.element.classList.toggle('vertical-tabs', game.settings.get('dsa5', 'tabsOutsideSheet'));
+    this._updateDetachedTabLayout();
     const posthand = (ev) => {
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };

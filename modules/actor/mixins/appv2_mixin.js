@@ -65,6 +65,41 @@ export const AppV2Mixin = (superclass) =>
       return frame;
     }
 
+    _updateDetachedTabLayout() {
+      if (!this.element?.classList.contains('actor')) return;
+
+      const detached = !!this.window.windowId;
+      this.element.classList.toggle('sheet-detached', detached);
+      if (detached && game.settings.get('dsa5', 'tabsOutsideSheet')) {
+        requestAnimationFrame(() => this._ensureVerticalTabSpace());
+      }
+    }
+
+    _ensureVerticalTabSpace() {
+      if (!this.window.windowId || !game.settings.get('dsa5', 'tabsOutsideSheet')) return;
+
+      const el = this.element;
+      const view = el?.ownerDocument?.defaultView;
+      const tabs = el?.querySelector('.tabs.right');
+      if (!tabs || !view) return;
+
+      const deficit = Math.ceil(tabs.getBoundingClientRect().right - view.innerWidth + 8);
+      if (deficit <= 0) return;
+
+      const width = Number(this.position?.width) || el.getBoundingClientRect().width;
+      this.setPosition({ width: width + deficit });
+
+      if (this.window.windowId === this.id) view.resizeBy?.(deficit, 0);
+    }
+
+    _onDetach(from, to) {
+      this._updateDetachedTabLayout();
+    }
+
+    _onAttach(from, to) {
+      this._updateDetachedTabLayout();
+    }
+
     async _onRender(context, options) {
       this.constructor.ensureDragHighlightCleanup();
       this.constructor.clearDragHighlights();
