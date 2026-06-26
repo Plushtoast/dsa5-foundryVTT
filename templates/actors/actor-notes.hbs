@@ -1,4 +1,5 @@
 <div class='tab scrollable gap0px {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
+    {{#if notesReadOnly}}<fieldset class="noBorder" disabled>{{/if}}
     <div class="groupbox">
         <legend class="table-title lineheight">{{localize "personalDetails"}}</legend>
         <div class="row-section">
@@ -114,4 +115,5 @@
         </div>
     </div>
     {{/if}}
+    {{#if notesReadOnly}}</fieldset>{{/if}}
 </div>
