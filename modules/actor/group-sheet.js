@@ -291,6 +291,25 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     return (groupActor.system.resolvedLocations ?? []).find((entry) => entry.actor?.id === depotActor.id);
   }
 
+  static #prepareDepotWeight(actor) {
+    const totalWeight = parseFloat(actor.system.totalWeight?.toFixed(3) ?? 0);
+    const carrycapacity = actor.system.carrycapacity ?? 0;
+    const encumbrance = actor.system.condition?.encumbered || 0;
+    let moneyWeight = actor.system.moneyWeight || 0;
+    moneyWeight = moneyWeight > 0 ? `<br>${_loc('purse')}: ${parseFloat(moneyWeight.toFixed(2))}` : '';
+    return {
+      totalWeight,
+      carrycapacity,
+      encumbrance,
+      encumbranceTooltip: _loc('encumbranceTooltip', {
+        totalWeight,
+        carrycapacity,
+        encumbrance,
+        moneyWeight,
+      }),
+    };
+  }
+
   static #getLocationItemContextOptions(groupActor, uuid) {
     const item = fromUuidSync(uuid);
     const locActor = item?.parent;
@@ -440,6 +459,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     context.locations = system.resolvedLocations.map((loc) => ({
       ...loc,
       permissionWarning: GroupData.playersMissingDepotPermission(loc.actor),
+      ...GroupActorSheet.#prepareDepotWeight(loc.actor),
       items: loc.actor.items
         .filter((i) => DSA5.equipmentCategories.has(i.type))
         .map((i) => {

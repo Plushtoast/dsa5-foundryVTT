@@ -24,6 +24,10 @@
           <div class="flexrow gap10px">
             <img src="{{loc.img}}" class="flex0" width="24" height="24" />
             <a class="flexgrow" data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>
+            <div data-tooltip="{{loc.encumbranceTooltip}}" class="hint">
+              <span><i class="fas fa-weight-hanging"></i></span>
+              <span>({{loc.totalWeight}} / {{loc.carrycapacity}})</span>
+            </div>
           </div>
           
           <div class="flexrow flexAlignEnd">
