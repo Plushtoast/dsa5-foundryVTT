@@ -1113,6 +1113,9 @@
                 "whoAreTheTwelveGodsDesc": "Erfahre alles über die Zwölfgötter Aventuriens."
             },
             "vttom": {
+                "comingSoonCta": "Demnächst",
+                "comingSoonDesc": "Ein eigener englischer Video-Kanal mit Tutorials, Anleitungen und Modul-Walkthroughs ist in Planung — bleib dran!",
+                "comingSoonTitle": "Video-Tutorials",
                 "cta": "Zum Kanal",
                 "desc": "VTTom erklärt alles rund um Das Schwarze Auge für Foundry VTT — Tutorials, Changelogs, Modul-Guides und vieles mehr."
             },
