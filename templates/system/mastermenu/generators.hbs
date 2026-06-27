@@ -1,14 +1,12 @@
 <div class='tab scrollable {{tabs.randomGen.cssClass}}' data-tab='randomGen' data-group='{{tabs.randomGen.group}}'>
   {{#unless randomCreation}}
-    <div class='row-section'>
-      <div class='col center'>
-        {{localize 'MASTER.gmMenuPlaceholder'}}
-      </div>
+    <div class="dsa-info-box dsam-2">
+      <p class="dsa-info-text">{{localize 'MASTER.gmMenuPlaceholder'}}</p>
     </div>
   {{/unless}}
-  <div class="flexcol gap10px">
-  {{#each randomCreation as |item ch|}}    
+  <div class="dsa-zuchtgrube-grid">
+    {{#each randomCreation as |item|}}
       {{>systems/dsa5/templates/wizard/breedcard.hbs item}}
-  {{/each}}
+    {{/each}}
   </div>
 </div>

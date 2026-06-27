@@ -1,11 +1,15 @@
-<fieldset class="open{{name}} breedcard tableOdd row-section position-relative">
-    <legend>{{localize title}}</legend>
-    <div class="row-section ">
-        <div class="col fourty center">
-            <img style="max-height:100px" src="{{icon}}"/>
-        </div>
-        <div class="col sixty flexcol">
-            <p>{{localize desc}}</p>            
-        </div>
-    </div>
-</fieldset>
+<article
+  class="dsa-zuchtgrube-card breedcard open{{name}} position-relative"
+  tabindex="0"
+  role="button"
+  aria-label="{{localize title}}. {{localize desc}}"
+  data-tooltip="{{localize desc}}"
+>
+  <div class="dsa-zuchtgrube-card__media">
+    <img src="{{icon}}" alt="" loading="lazy" />
+  </div>
+  <div class="dsa-zuchtgrube-card__body">
+    <h3 class="dsa-zuchtgrube-card__title">{{localize title}}</h3>
+    <span class="dsa-zuchtgrube-card__hint"><i class="fas fa-wand-magic-sparkles"></i> {{localize 'MASTER.randomGenOpen'}}</span>
+  </div>
+</article>

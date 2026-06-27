@@ -215,10 +215,6 @@
       background-image: url('../../icons/backgrounds/blackcreaturebot.webp');
     }
 
-    &.masterMenu:after {
-      background-image: url('../../icons/backgrounds/masterborder.webp');
-    }
-
     &.creature-sheet .window-resize-handle {
       bottom: 18px;
     }
@@ -545,7 +541,6 @@
   #sidebar .button:not(.icon),
   #sidebar button:not(.fshopButton):not(.icon):not(.inline-control):not(.roll),
   .initTracker button:not(.icon):not(.inline-control),
-  .masterMenu button:not(.icon):not(.inline-control),
   .sheetButton,
   .sidebar-popout button:not(.icon):not(.inline-control),
   .sidebar-popout .dice-tray button {

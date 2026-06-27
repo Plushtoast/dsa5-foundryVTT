@@ -2299,6 +2299,7 @@
         "payTT": "Ausnehmen",
         "payText": "Silber von {heros} einziehen.",
         "randomGen": "Zuchtgrube",
+        "randomGenOpen": "Öffnen",
         "randomPlayer": "Links-<i class=\"fas fa-computer-mouse\"></i>: Zufälliges Opfer<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: inklusive Pechmagnet",
         "sceneConfig": "Szeneneinstellung",
         "sightautomation": "Sichtmodifikatoren (auto)",

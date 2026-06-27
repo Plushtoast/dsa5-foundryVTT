@@ -3365,31 +3365,6 @@ h2 {
   }
 }
 
-.loadingZuchtgrube {
-  // box-shadow animation
-  position: relative;
-  animation: pulsingBoxShadow 1s infinite alternate;
-}
-
-.breedcard {
-  &:hover {
-    box-shadow: inset 0 0 20px var(--color-warm-1);
-    cursor: pointer;
-  }
-}
-
-.zuchtgrubeLoader {
-  position: absolute;
-  inset: 0;
-
-  span {
-    padding: 10px;
-    color: white;
-    white-space: nowrap;
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-}
-
 .dsafilepicker {
   ul {
     &.directory {
@@ -4451,15 +4426,8 @@ select.noAppearance {
   background-repeat: repeat-x;
 }
 
-.hero {
-  &.victim {
-    box-shadow: inset 0px 0px 10px #8a0202;
-  }
-}
-
 .badgePip,
-.smallBoxItem,
-.hero .actorItem {
+.smallBoxItem {
   display: inline-block;
   padding: 2px;
   border: 1px solid var(--border-color);
@@ -5695,3 +5663,4 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('companions.scss');
 //@include meta.load-css('dag-talent-tree.scss');
 @include meta.load-css('foundryfixes.scss');
+@include meta.load-css('mastermenu.scss');

@@ -2297,6 +2297,7 @@
     "payTT": "Loot player",
     "payText": "Take silverthalers from {heros}.",
     "randomGen": "Breeding pit",
+    "randomGenOpen": "Open",
     "randomPlayer": "Left-<i class=\"fas fa-computer-mouse\"></i>: Random victim<br>Right-<i class=\"fas fa-computer-mouse\"></i>: include Misfortune",
     "sceneConfig": "Scene config",
     "sightautomation": "Sight modifiers (auto)",
