@@ -1,6 +1,7 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
+import { resolveDetachedParent, renderApplication } from '../../mixins/detached-window-mixin.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import AdvantageRulesDSA5 from '../rules/advantage-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../rules/specialability-rules-dsa5.js';
@@ -421,6 +422,7 @@ export default class DiceDSA5 {
    */
   static #showDialog(testData, dialogOptions) {
     const dialog = DSA5Dialog.getDialogForItem(testData, dialogOptions.data);
+    const actor = this.#actorFromTestData(testData);
 
     return renderTemplate(dialogOptions.template, dialogOptions.data)
       .then(content => {
@@ -430,9 +432,16 @@ export default class DiceDSA5 {
             content,
             buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
           })
-            .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data)
+            .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data);
           dlg.testData = testData;
-          dlg.render(true);
+
+          const parent = resolveDetachedParent({
+            actor,
+            speaker: testData.extra.speaker,
+          });
+          if (parent) testData.extra.options._rollParentApp = parent;
+
+          renderApplication(dlg, { parent, actor, speaker: testData.extra.speaker });
         });
       });
   }

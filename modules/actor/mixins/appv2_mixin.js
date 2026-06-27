@@ -1,3 +1,5 @@
+import { pushInitiatingApp, popInitiatingApp } from '../../mixins/detached-window-mixin.js';
+
 export const AppV2Mixin = (superclass) =>
   class extends superclass {
     static dragHighlightCleanupBound = false;
@@ -133,7 +135,7 @@ export const AppV2Mixin = (superclass) =>
       return super._tearDown(options);
     }
 
-    _onClickAction(event, target) {
+    async _onClickAction(event, target) {
       const action = target.dataset.action;
       const restrictedActions = [
         [this.options.ownerActions, 'DSAError.DamagePermission'],
@@ -150,14 +152,21 @@ export const AppV2Mixin = (superclass) =>
             buttons = handler.buttons;
             handler = handler.handler;
           }
-          if (buttons.includes(event.button)) handler?.call(this, event, target);
+          if (buttons.includes(event.button)) {
+            pushInitiatingApp(this);
+            try {
+              await handler?.call(this, event, target);
+            } finally {
+              popInitiatingApp();
+            }
+          }
         } else {
           ui.notifications.warn(notificationKey, { localize: true });
         }
         return;
       }
 
-      super._onClickAction(event, target);
+      return super._onClickAction(event, target);
     }
 
     async _onDrop(event) {

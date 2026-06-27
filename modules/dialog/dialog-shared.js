@@ -5,9 +5,10 @@ import { ValueWidget } from '../system/helpers/valuewidget.js';
 
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
+import { DetachedWindowMixin } from '../mixins/detached-window-mixin.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
-export default class DialogShared extends foundry.applications.api.DialogV2 {
+export default class DialogShared extends DetachedWindowMixin(foundry.applications.api.DialogV2) {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
 
   static debounceRefreshOpenDialogTargets = foundry.utils.debounce(() => {
@@ -234,7 +235,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async addTarget(ev) {
-    (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true);
+    const dlg = await AddTargetDialog.getDialog(this.dialogData.speaker);
+    this.constructor.renderApplication(dlg, { parent: this });
   }
 
   _tearDown(options) {

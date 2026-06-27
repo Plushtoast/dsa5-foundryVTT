@@ -1,4 +1,5 @@
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
+import { renderApplication } from '../../mixins/detached-window-mixin.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 
@@ -120,7 +121,7 @@ export class ManualRollDialog {
     const titleKey = isCheat ? 'DIALOG.cheat' : 'DSASETTINGS.allowPhysicalDice';
 
     return new Promise((resolve) => {
-      new DSA5Dialog({
+      const dlg = new DSA5Dialog({
         window: { title: titleKey },
         content,
         buttons: [
@@ -140,7 +141,8 @@ export class ManualRollDialog {
             callback: () => resolve({ confirmed: false, changes: [] }),
           },
         ],
-      }).render(true);
+      });
+      renderApplication(dlg, { parent: options._rollParentApp });
     });
   }
 
