@@ -68,29 +68,46 @@ export const AppV2Mixin = (superclass) =>
 
     _updateDetachedTabLayout() {
       if (!this.element?.classList.contains('actor')) return;
+      if (!game.settings.get('dsa5', 'tabsOutsideSheet')) return;
 
-      const detached = !!this.window.windowId;
-      this.element.classList.toggle('sheet-detached', detached);
-      if (detached && game.settings.get('dsa5', 'tabsOutsideSheet')) {
+      if (this.window.windowId) {
         requestAnimationFrame(() => this._ensureVerticalTabSpace());
+        setTimeout(() => this._ensureVerticalTabSpace(), 50);
+      } else if (this._detachedResizeHandler) {
+        this.element?.ownerDocument?.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
+        this._detachedResizeHandler = null;
       }
     }
 
+    /**
+     * Narrow the sheet in a detached popup so vertical tabs (positioned outside .window-content)
+     * stay visible. Foundry's ResizeManager fills the window width on resize — re-run via listener.
+     */
     _ensureVerticalTabSpace() {
       if (!this.window.windowId || !game.settings.get('dsa5', 'tabsOutsideSheet')) return;
+      if (this.window.windowId !== this.id) return;
 
       const el = this.element;
       const view = el?.ownerDocument?.defaultView;
       const tabs = el?.querySelector('.tabs.right');
-      if (!tabs || !view) return;
+      const content = el?.querySelector('.window-content');
+      if (!tabs || !content || !view) return;
 
-      const deficit = Math.ceil(tabs.getBoundingClientRect().right - view.innerWidth + 8);
-      if (deficit <= 0) return;
+      const left = Number(this.position?.left) || 0;
+      const contentRect = content.getBoundingClientRect();
+      const tabsRect = tabs.getBoundingClientRect();
+      const gutter = Math.max(
+        Math.ceil(tabsRect.right - contentRect.right + 8),
+        Math.ceil(tabsRect.width + 8),
+      );
 
-      const width = Number(this.position?.width) || el.getBoundingClientRect().width;
-      this.setPosition({ width: width + deficit });
+      const targetWidth = view.innerWidth - left - gutter;
+      if (targetWidth > 0) this.setPosition({ width: targetWidth });
 
-      if (this.window.windowId === this.id) view.resizeBy?.(deficit, 0);
+      if (!this._detachedResizeHandler) {
+        this._detachedResizeHandler = () => this._ensureVerticalTabSpace();
+        view.addEventListener('resize', this._detachedResizeHandler, { passive: true });
+      }
     }
 
     _onDetach(from, to) {
@@ -98,16 +115,20 @@ export const AppV2Mixin = (superclass) =>
     }
 
     _onAttach(from, to) {
-      this._updateDetachedTabLayout();
+      from.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
+      this._detachedResizeHandler = null;
     }
 
     async _onRender(context, options) {
       this.constructor.ensureDragHighlightCleanup();
       this.constructor.clearDragHighlights();
       await super._onRender(context, options);
+      this._updateDetachedTabLayout();
     }
 
     _tearDown(options) {
+      this.element?.ownerDocument?.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
+      this._detachedResizeHandler = null;
       this.constructor.clearDragHighlights();
       return super._tearDown(options);
     }

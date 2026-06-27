@@ -242,7 +242,6 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   async _onRender(context, options) {
     await super._onRender(context, options);
     this.element.classList.toggle('vertical-tabs', game.settings.get('dsa5', 'tabsOutsideSheet'));
-    this._updateDetachedTabLayout();
 
     if (this.#hookIds.length === 0) {
       const rerenderBound = this.#onRelatedActorUpdate.bind(this);

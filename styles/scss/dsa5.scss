@@ -2202,12 +2202,22 @@ input[type='search'] {
   }
 }
 
-.dsa5.actor.vertical-tabs.sheet-detached {
-  margin-right: 45px;
+.application.dsa5.actor.vertical-tabs {
+  overflow: visible;
+}
+
+body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
+  z-index: 2;
 }
 
 .vertical-tabs {
-  overflow: unset;
+  --vertical-tab-left: calc(100% + 7px);
+
+  &.creature-sheet {
+    --vertical-tab-left: calc(100% - 10px);
+  }
+
+  overflow: visible;
 
   .sheet-body {
     flex: 1;
@@ -2233,6 +2243,7 @@ input[type='search'] {
     overflow: visible;
     flex-direction: column;
     gap: 0;
+    position: relative;
   }
 
   .tabs.right {
@@ -2240,7 +2251,7 @@ input[type='search'] {
     gap: 2px;
     flex-direction: column;
     position: absolute;
-    left: calc(100% + 7px);
+    left: var(--vertical-tab-left);
     top: 80px;
     z-index: -1;
     border: none;
