@@ -15,11 +15,9 @@
         {{/each}}
         <button type="button" class="dsadesignbutton icon fa-solid fa-info" data-tooltip="Library.info" aria-label="{{localize 'Library.info'}}"></button>
     </div>
-    <div class="itemlibrary-toolbar-group itemlibrary-font-size" data-tooltip="{{localize 'Library.listFontSize'}}" hidden>
-        <label class="itemlibrary-font-size__label">
+    <div class="itemlibrary-toolbar-group itemlibrary-font-size" hidden>
+        <button type="button" class="dsadesignbutton icon itemlibrary-font-size__button" data-action="selectListFontSize" data-tooltip="{{localize 'Library.listFontSize'}} ({{listFontSizeLabel}})" aria-label="{{localize 'Library.listFontSize'}} ({{listFontSizeLabel}})">
             <i class="fas fa-text-height" aria-hidden="true"></i>
-            <span class="itemlibrary-font-size__value">{{listFontSizeLabel}}</span>
-        </label>
-        <range-picker class="itemlibrary-font-size__picker" name="dsa5.itemLibraryListFontSizeIndex" value="{{listFontSizeIndex}}" min="0" max="{{listFontSizeMax}}" step="1"></range-picker>
+        </button>
     </div>
 </div>

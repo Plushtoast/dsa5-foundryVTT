@@ -282,7 +282,25 @@
         "searchEmpty": "Keine Bücher entsprechen der Suche.",
         "toggleToc": "Inhaltsverzeichnis ein-/ausblenden",
         "toc": "Kapitel",
-        "tryInit": "Mit Journals initialisieren"
+        "tryInit": "Mit Journals initialisieren",
+        "customBooks": "Eigene Inhalte",
+        "addCustomBook": "Kompendium hinzufügen",
+        "removeCustomBook": "Verbindung entfernen",
+        "removeCustomBookConfirm": "\"{title}\" aus dem Journalbrowser entfernen?",
+        "customBookHelp": "<p>Füge dein eigenes Journal-Kompendium zum Journalbrowser hinzu.</p><ul class=\"dsalist\"><li><strong>Eine Ordnerebene:</strong> Root-Ordner werden zu Kapiteln unter einer Sektion.</li><li><strong>Zwei Ordnerebenen:</strong> Root-Ordner werden zu Sektionen; Unterordner werden zu Kapiteln; Journaleinträge im Unterordner werden zu Seiten.</li><li>Mehr als zwei Ordnerebenen werden nicht unterstützt.</li></ul>",
+        "customBookTitlePlaceholder": "Anzeigename in der Bibliothek",
+        "customBookJournalCompendium": "Journal-Kompendium",
+        "customBookSelectCompendium": "Kompendium auswählen…",
+        "customBookCoverPath": "Cover-Bildpfad",
+        "customBookCoverHint": "Pfad zu einem Cover-Bild für die Bibliothek und die Buchstartseite.",
+        "customBookModuleName": "Modulname (optional)",
+        "customBookModuleNamePlaceholder": "mein-modul-id",
+        "customBookModuleNameHint": "Wird als Sektionstitel verwendet, wenn das Kompendium nur eine Ordnerebene hat. Entfällt, wenn Root-Ordner Unterordner enthalten.",
+        "customBookAdded": "Kompendium zum Journalbrowser hinzugefügt.",
+        "customBookRemoved": "Kompendium aus dem Journalbrowser entfernt.",
+        "customBookDuplicate": "Dieses Kompendium ist bereits verbunden.",
+        "customBookMissingCompendium": "Das ausgewählte Journal-Kompendium wurde nicht gefunden.",
+        "customBookInvalidForm": "Bitte fülle alle Pflichtfelder aus."
     },
     "CALENDAR": {
         "DSA": {

@@ -910,6 +910,12 @@ export function setupConfiguration() {
       default: {},
       type: Object,
     },
+    journalBrowserCustomBooks: {
+      scope: 'world',
+      config: false,
+      default: [],
+      type: Array,
+    },
     primaryParty: {
       name: 'primaryParty',
       scope: 'world',

@@ -6,6 +6,7 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import DSA5 from '../config/config-dsa5.js';
 import { slist } from '../system/helpers/view_helper.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
+import CustomBookDialog from './custom_book_dialog.js';
 import FlexSearch from '../../libs/flexsearch.bundle.module.min.js';
 
 const { mergeObject, duplicate } = foundry.utils;
@@ -30,6 +31,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.books = [];
     this.rshs = [];
     this.manuals = [];
+    this.customBooks = [];
     this.fulltextsearch = true;
     this.libraryViewMode = game.settings.get('dsa5', 'journalBrowserViewMode') || 'list';
   }
@@ -159,6 +161,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       getChapter: this._getChapter,
       subChapter: this._subChapter,
       selectLibraryView: this._selectLibraryView,
+      addCustomBook: this._addCustomBook,
+      removeCustomBook: this._removeCustomBook,
     },
     window: {
       title: 'Book.Wizard',
@@ -187,6 +191,13 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static PARTS = {
     main: {
       template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.hbs',
+      templates: [
+        'systems/dsa5/templates/wizard/adventure/adventure_intro.hbs',
+        'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_list.hbs',
+        'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_card.hbs',
+        'systems/dsa5/templates/wizard/adventure/parts/book_library_section_list.hbs',
+        'systems/dsa5/templates/wizard/adventure/parts/book_library_section_cards.hbs',
+      ],
     },
   };
 
@@ -194,6 +205,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     BookWizard.wizard = new BookWizard();
 
     game.dsa5.apps.journalBrowser = BookWizard.wizard;
+
+    Hooks.once('ready', () => BookWizard.wizard.loadCustomBooks());
 
     Hooks.on('renderJournalDirectory', (app, html) => {
       html = $(html);
@@ -205,6 +218,70 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       div.append(button);
       html.find('.header-actions:first-child').after(div);
     });
+  }
+
+  static #customBooksSettingKey = 'journalBrowserCustomBooks';
+
+  readCustomBooksSetting() {
+    return game.settings.get('dsa5', BookWizard.#customBooksSettingKey) || [];
+  }
+
+  loadCustomBooks() {
+    this.customBooks = this.readCustomBooksSetting().map((entry) => ({
+      id: entry.id,
+      title: entry.title,
+      journal: entry.journal,
+      splash: entry.splash,
+      moduleName: entry.moduleName || entry.title,
+    }));
+  }
+
+  static async _addCustomBook() {
+    if (!game.user.isGM) return;
+
+    const entry = await CustomBookDialog.prompt({
+      existingJournals: this.readCustomBooksSetting().map((book) => book.journal),
+    });
+    if (!entry) return;
+
+    const books = this.readCustomBooksSetting();
+    books.push(entry);
+    await game.settings.set('dsa5', BookWizard.#customBooksSettingKey, books);
+    this.loadCustomBooks();
+    ui.notifications.info('Book.customBookAdded', { localize: true });
+    await this.loadPage($(this.element));
+  }
+
+  static async _removeCustomBook(_ev, target) {
+    if (!game.user.isGM) return;
+
+    const id = target.dataset.itemid;
+    const book = this.customBooks.find((x) => x.id === id);
+    if (!book) return;
+
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: 'Book.removeCustomBook' },
+      content: `<p>${_loc('Book.removeCustomBookConfirm', { title: book.title })}</p>`,
+    });
+    if (!confirmed) return;
+
+    const books = this.readCustomBooksSetting().filter((entry) => entry.id !== id);
+    await game.settings.set('dsa5', BookWizard.#customBooksSettingKey, books);
+
+    const permissions = game.settings.get('dsa5', 'expansionPermissions');
+    if (permissions[id] !== undefined) {
+      delete permissions[id];
+      await game.settings.set('dsa5', 'expansionPermissions', permissions);
+    }
+
+    let recent = this.readRecentBooks().filter((entry) => !(entry.type === 'customBooks' && entry.id === id));
+    await game.settings.set('dsa5', BookWizard.#recentBooksKey(), JSON.stringify(recent));
+
+    this.loadCustomBooks();
+    ui.notifications.info('Book.customBookRemoved', { localize: true });
+
+    if (this.book?.id === id && this.currentType === 'customBooks') this.#resetBook();
+    await this.loadPage($(this.element));
   }
 
   #resetBook() {
@@ -235,30 +312,33 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     await game.settings.set('dsa5', 'expansionPermissions', config);
 
     const book = this[type].find((x) => x.id == id);
-    const json = await (await fetch(book.path)).json();
-    const moduleId = json.moduleName;
-    const module = game.modules.get(moduleId);
-    const documentTypes = ['Actor', 'JournalEntry', 'Scene'];
-    const scope = json.options?.scope?.split('-')[1];
 
-    for (const mPack of module?.packs ?? []) {
-      if (!documentTypes.includes(mPack.type)) continue;
-      if (mPack.flags?.dsalang != game.i18n.lang) continue;
-      if (scope && !mPack.id.includes(scope)) continue;
+    if (type !== 'customBooks' && book?.path) {
+      const json = await (await fetch(book.path)).json();
+      const moduleId = json.moduleName;
+      const module = game.modules.get(moduleId);
+      const documentTypes = ['Actor', 'JournalEntry', 'Scene'];
+      const scope = json.options?.scope?.split('-')[1];
 
-      const pack = game.packs.get(mPack.id);
-      if (!pack) continue;
-      const visibility = toggle ? 'OBSERVER' : 'NONE';
-      const ownership = {
-        ownership: {
-          PLAYER: visibility,
-          TRUSTED: visibility,
-          ASSISTANT: 'OWNER',
-          GAMEMASTER: 'OWNER',
-        },
-      };
+      for (const mPack of module?.packs ?? []) {
+        if (!documentTypes.includes(mPack.type)) continue;
+        if (mPack.flags?.dsalang != game.i18n.lang) continue;
+        if (scope && !mPack.id.includes(scope)) continue;
 
-      await pack.configure(ownership);
+        const pack = game.packs.get(mPack.id);
+        if (!pack) continue;
+        const visibility = toggle ? 'OBSERVER' : 'NONE';
+        const ownership = {
+          ownership: {
+            PLAYER: visibility,
+            TRUSTED: visibility,
+            ASSISTANT: 'OWNER',
+            GAMEMASTER: 'OWNER',
+          },
+        };
+
+        await pack.configure(ownership);
+      }
     }
     if (book) book.visible = toggle;
 
@@ -334,7 +414,14 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     if (this.#bookCoverCache.has(cacheKey)) return this.#bookCoverCache.get(cacheKey);
 
     const book = this[type]?.find((x) => x.id == id);
-    if (!book?.path) return null;
+    if (!book) return null;
+
+    if (type === 'customBooks' && book.splash) {
+      this.#bookCoverCache.set(cacheKey, book.splash);
+      return book.splash;
+    }
+
+    if (!book.path) return null;
 
     try {
       const json = await (await fetch(book.path)).json();
@@ -805,6 +892,27 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     this.currentType = type;
     this.book = this[type].find((x) => x.id == id);
+    if (!this.book) return;
+
+    if (type === 'customBooks') {
+      this.bookData = {
+        moduleName: this.book.moduleName || this.book.title,
+        journal: this.book.journal,
+        splash: this.book.splash,
+      };
+      const journal = game.packs.get(this.bookData.journal);
+      if (!journal) {
+        ui.notifications.error('Book.customBookMissingCompendium', { localize: true });
+        return;
+      }
+      await journal.getIndex();
+      this.journals = await journal.getDocuments();
+      this.checkChapters(journal);
+      await this.recordRecentBook(type, id);
+      this.loadPage(html);
+      return;
+    }
+
     await fetch(this.book.path)
       .then(async (r) => r.json())
       .then(async (json) => {
@@ -834,17 +942,35 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     if (this.bookData.chapters) return;
 
     this.bookData.isDynamic = true;
-    this.bookData.chapters = [
+    this.bookData.chapters = BookWizard.#buildChaptersFromCompendium(journal, this.bookData.moduleName);
+  }
+
+  static #buildChaptersFromCompendium(journal, sectionTitle) {
+    const folders = journal.folders ?? [];
+    const rootFolders = folders.filter((f) => !f.folder).sort(BookWizard.#sortFolders);
+    const useSections = rootFolders.some((root) => folders.some((f) => f.folder?.id === root.id));
+
+    if (useSections) {
+      return rootFolders.map((root) => {
+        const childFolders = folders.filter((f) => f.folder?.id === root.id).sort(BookWizard.#sortFolders);
+        const content = childFolders.length
+          ? childFolders.map((f) => ({ name: f.name, id: f.id }))
+          : [{ name: root.name, id: root.id }];
+
+        return { name: root.name, content };
+      });
+    }
+
+    return [
       {
-        name: _loc(`${this.bookData.moduleName}.name`),
-        content: journal.folders.map((x) => {
-          return {
-            name: x.name,
-            id: x.id,
-          };
-        }),
+        name: sectionTitle,
+        content: rootFolders.map((f) => ({ name: f.name, id: f.id })),
       },
     ];
+  }
+
+  static #sortFolders(a, b) {
+    return (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
   }
 
   async prefillActors(chapter) {
@@ -922,7 +1048,11 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
           return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_foundry.hbs');
         }
 
-        const chapter = this.bookData.chapters.find((x) => x.name == this.selectedType).content.find((x) => x.id == this.selectedChapter);
+        const section = this.bookData.chapters.find((x) => x.name == this.selectedType);
+        const chapter = section?.content?.find((x) => x.id == this.selectedChapter);
+        if (!chapter) {
+          return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.hbs', { book: this.book, bookData: this.bookData });
+        }
         const subChapters = this.getSubChapters();
         if (chapter.scenes || chapter.actors || subChapters.length == 0) {
           return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_chapter.hbs', {
@@ -941,25 +1071,87 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       const adventures = this.filterBooks(this.adventures);
       const rules = this.filterBooks(this.books);
       const rshs = this.filterBooks(this.rshs);
+      const customBooks = this.filterBooks(this.customBooks);
+      const showCustomBooksSection = game.user.isGM || customBooks.length > 0;
+      const bookSections = this.#buildBookLibrarySections({
+        manuals,
+        adventures,
+        rules,
+        rshs,
+        customBooks,
+        showCustomBooksSection,
+      });
 
       if (this.libraryViewMode === 'cards') {
-        await Promise.all([
-          this.#enrichBooksWithSplash('manuals', manuals),
-          this.#enrichBooksWithSplash('adventures', adventures),
-          this.#enrichBooksWithSplash('books', rules),
-          this.#enrichBooksWithSplash('rshs', rshs),
-        ]);
+        await Promise.all(bookSections.map((section) => this.#enrichBooksWithSplash(section.type, section.books)));
       }
 
       return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.hbs', {
-        rshs,
-        rules,
-        adventures,
-        manuals,
+        bookSections,
         isGM: game.user.isGM,
         libraryViewMode: this.libraryViewMode,
       });
     }
+  }
+
+  #buildBookLibrarySections({ manuals, adventures, rules, rshs, customBooks, showCustomBooksSection }) {
+    const enrich = (books, useTitle) =>
+      books.map((book) => ({
+        ...book,
+        displayName: useTitle ? book.title ?? book.id : book.id,
+      }));
+
+    const sections = [
+      {
+        type: 'manuals',
+        labelKey: null,
+        books: enrich(manuals, false),
+        show: true,
+        showEmpty: false,
+        allowRemove: false,
+        allowAdd: false,
+      },
+      {
+        type: 'adventures',
+        labelKey: 'Book.availableModules',
+        books: enrich(adventures, false),
+        show: adventures.length > 0,
+        showEmpty: false,
+        allowRemove: false,
+        allowAdd: false,
+      },
+      {
+        type: 'books',
+        labelKey: 'Book.availableRules',
+        books: enrich(rules, false),
+        show: true,
+        showEmpty: true,
+        allowRemove: false,
+        allowAdd: false,
+      },
+      {
+        type: 'rshs',
+        labelKey: 'Book.availableRSHs',
+        books: enrich(rshs, false),
+        show: true,
+        showEmpty: true,
+        allowRemove: false,
+        allowAdd: false,
+      },
+      {
+        type: 'customBooks',
+        labelKey: 'Book.customBooks',
+        books: enrich(customBooks, true),
+        show: showCustomBooksSection,
+        showEmpty: true,
+        allowRemove: true,
+        allowAdd: true,
+      },
+    ];
+
+    for (const section of sections) section.hasBooks = section.books.length > 0;
+
+    return sections;
   }
 
   filterBooks(books) {
@@ -996,15 +1188,21 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         const book = this[type]?.find((x) => x.id == id);
         if (!book) return null;
         if (!this.filterBooks([book]).length) return null;
-        return { id, type };
+        return { id, type, title: book.title ?? book.id };
       })
       .filter(Boolean);
+  }
+
+  static #journalFolderId(journal) {
+    return journal?.folder?.id ?? journal?._source?.folder ?? null;
   }
 
   getSubChapters() {
     let jrns;
     if (this.bookData.isDynamic) {
-      jrns = this.journals.filter((x) => x.folder.id == this.selectedChapter).sort((a, b) => (a.sort > b.sort ? 1 : -1));
+      jrns = this.journals
+        .filter((x) => BookWizard.#journalFolderId(x) === this.selectedChapter)
+        .sort((a, b) => (a.sort > b.sort ? 1 : -1));
     } else {
       jrns = this.journals.filter((x) => x.flags.dsa5.parent == this.selectedChapter).sort((a, b) => (a.flags.dsa5.sort > b.flags.dsa5.sort ? 1 : -1));
     }
@@ -1055,7 +1253,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   async #enrichBooksWithSplash(type, books) {
     await Promise.all(
       books.map(async (book) => {
-        book.splash = await this.#getBookSplash(type, book.id);
+        if (type !== 'customBooks') book.splash = await this.#getBookSplash(type, book.id);
       }),
     );
     return books;

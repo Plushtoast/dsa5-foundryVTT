@@ -2725,14 +2725,20 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     overflow: visible;
     min-height: 0;
 
-    &.libcontainer.libraryImg {
-      background-image: none;
-      margin-top: 0;
-      height: auto;
-      min-height: 0;
-    }
-
     .library-list-table {
+      margin: 0;
+    }
+  }
+
+  .searchResult:has(> .loader) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    text-align: center;
+
+    > .loader {
       margin: 0;
     }
   }

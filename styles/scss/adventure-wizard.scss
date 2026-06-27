@@ -261,6 +261,7 @@
       }
 
       .book-card.module-card {
+        position: relative;
         background: transparent;
         border: 1px solid var(--dsa-muted-border);
         border-radius: 6px;
@@ -292,6 +293,30 @@
         height: var(--button-size);
         min-height: var(--button-size);
         padding: 0;
+      }
+
+      .book-card__remove {
+        position: absolute;
+        top: 0.35rem;
+        left: 0.35rem;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 4px;
+        --button-size: 24px;
+        width: var(--button-size);
+        height: var(--button-size);
+        min-height: var(--button-size);
+        padding: 0;
+      }
+
+      .book-section-header {
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+
+        h2 {
+          margin: 0;
+        }
       }
 
       .module-card__cover {

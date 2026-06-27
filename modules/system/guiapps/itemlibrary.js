@@ -1,7 +1,7 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
 import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
-import { applyFontSize, FONT_SIZE_OPTIONS, getFontSizeLabel, setFontSizeIndex } from '../helpers/font-size-picker.js';
+import { applyFontSize, getFontSizeLabel, showFontSizeContextMenu } from '../helpers/font-size-picker.js';
 import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
 import DSASystemConfiguration from './itemlibrary/systemConfiguration.js';
 import SearchDocument, { AdvancedSearchDocument } from './itemlibrary/searchDocument.js';
@@ -69,6 +69,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       selectLibraryView: DSA5ItemLibrary.prototype._selectLibraryView,
       sortListColumn: DSA5ItemLibrary.prototype._sortListColumn,
       showCompendiumFilter: DSA5ItemLibrary._showCompendiumFilter,
+      selectListFontSize: DSA5ItemLibrary.prototype._selectListFontSize,
     },
     classes: ["dsa5", "sheet", "itemlibrary"]
   };
@@ -166,14 +167,22 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     applyFontSize($(tables), index);
   }
 
-  async _onListFontSizeChange(ev) {
-    const index = Number(ev.currentTarget.value) || 0;
-    await setFontSizeIndex('itemLibraryListFontSizeIndex', index);
-    this.applyListFontSize();
+  _updateListFontSizeLabel(index) {
     const label = getFontSizeLabel(index);
-    for (const el of this.element?.querySelectorAll('.itemlibrary-font-size__value') ?? []) {
-      el.textContent = label;
+    for (const btn of this.element?.querySelectorAll('.itemlibrary-font-size__button') ?? []) {
+      const tooltip = `${game.i18n.localize('Library.listFontSize')} (${label})`;
+      btn.dataset.tooltip = tooltip;
+      btn.setAttribute('aria-label', tooltip);
     }
+  }
+
+  async _selectListFontSize(_ev, target) {
+    await showFontSizeContextMenu(
+      $(this.element).find('.library-list-table'),
+      'itemLibraryListFontSizeIndex',
+      target,
+      { onSelect: index => this._updateListFontSizeLabel(index) },
+    );
   }
 
   _sortListColumn(ev, target) {
@@ -247,10 +256,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     data.models = this.models
     data.viewMode = this.getEffectiveViewMode()
 
-    const listFontSizeIndex = game.settings.get('dsa5', 'itemLibraryListFontSizeIndex');
-    data.listFontSizeIndex = listFontSizeIndex;
-    data.listFontSizeMax = FONT_SIZE_OPTIONS.length;
-    data.listFontSizeLabel = getFontSizeLabel(listFontSizeIndex);
+    data.listFontSizeLabel = getFontSizeLabel(game.settings.get('dsa5', 'itemLibraryListFontSizeIndex'));
 
     if (this.advancedFiltering) {
       data.advancedFilter = await this.buildDetailFilter('none', 'none');
@@ -1290,7 +1296,6 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     html.on('contextmenu', '.library-filter-chip', ev => this._onCategoryContextMenu(ev))
     html.find('.changeSettings').on('click', (ev) => this.onChangeSetting(ev))
     html.find(".filterBy-search").on('keyup', ev => this._onFilterBySearch(ev))
-    html.on('change', '.itemlibrary-font-size__picker', ev => this._onListFontSizeChange(ev))
     html.on("mousedown", ".searchResult .library-item", ev => this._onItemNameClick(ev))
     html.on("mouseenter", ".searchResult .library-item", ev => this._onItemHover(ev))
     html.on("mouseleave", ".searchResult .library-item", () => this._onItemHoverLeave())

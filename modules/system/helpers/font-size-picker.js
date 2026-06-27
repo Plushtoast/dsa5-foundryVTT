@@ -25,7 +25,7 @@ export async function setFontSizeIndex(settingKey, index) {
   await game.settings.set('dsa5', settingKey, Number(index) || 0);
 }
 
-function buildFontSizeMenuItems(element, settingKey) {
+function buildFontSizeMenuItems(element, settingKey, onSelect) {
   const $el = element instanceof jQuery ? element : $(element);
   const currentIndex = game.settings.get('dsa5', settingKey);
 
@@ -38,6 +38,7 @@ function buildFontSizeMenuItems(element, settingKey) {
         await setFontSizeIndex(settingKey, 0);
         $el.css('fontSize', '');
         tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: getFontSizeLabel(0) }));
+        onSelect?.(0);
       },
     },
   ];
@@ -53,6 +54,7 @@ function buildFontSizeMenuItems(element, settingKey) {
         await setFontSizeIndex(settingKey, index);
         const applied = applyFontSize($el, index);
         tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: applied }));
+        onSelect?.(index);
       },
     });
   }
@@ -60,13 +62,13 @@ function buildFontSizeMenuItems(element, settingKey) {
   return items;
 }
 
-export async function showFontSizeContextMenu(element, settingKey = 'journalFontSizeIndex', anchor) {
+export async function showFontSizeContextMenu(element, settingKey = 'journalFontSizeIndex', anchor, { onSelect } = {}) {
   const $el = element instanceof jQuery ? element : $(element);
   const menuAnchor = anchor ?? $el[0];
   if (!menuAnchor) return;
 
   const host = menuAnchor.closest?.('.window-app, .application') ?? menuAnchor;
-  const menu = new foundry.applications.ux.ContextMenu(host, '', buildFontSizeMenuItems($el, settingKey), {
+  const menu = new foundry.applications.ux.ContextMenu(host, '', buildFontSizeMenuItems($el, settingKey, onSelect), {
     jQuery: false,
     fixed: true,
     eventName: 'none',
@@ -76,6 +78,6 @@ export async function showFontSizeContextMenu(element, settingKey = 'journalFont
   ui.context = menu;
 }
 
-export async function increaseFontSize(element, settingKey = 'journalFontSizeIndex', anchor) {
-  await showFontSizeContextMenu(element, settingKey, anchor);
+export async function increaseFontSize(element, settingKey = 'journalFontSizeIndex', anchor, options = {}) {
+  await showFontSizeContextMenu(element, settingKey, anchor, options);
 }

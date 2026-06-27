@@ -282,7 +282,25 @@
         "searchEmpty": "No books match your search.",
         "toggleToc": "Toggle table of contents",
         "toc": "Chapter",
-    "tryInit": "Initialize with journals"
+    "tryInit": "Initialize with journals",
+    "customBooks": "Own content",
+    "addCustomBook": "Add compendium",
+    "removeCustomBook": "Remove connection",
+    "removeCustomBookConfirm": "Remove \"{title}\" from the journal browser?",
+    "customBookHelp": "<p>Add your own journal compendium to the journal browser.</p><ul class=\"dsalist\"><li><strong>One folder level:</strong> Root folders become chapters, grouped under one section.</li><li><strong>Two folder levels:</strong> Root folders become sections; subfolders become chapters; journal entries inside a subfolder become pages.</li><li>More than two folder levels are not supported.</li></ul>",
+    "customBookTitlePlaceholder": "Display name in the library",
+    "customBookJournalCompendium": "Journal compendium",
+    "customBookSelectCompendium": "Select a compendium…",
+    "customBookCoverPath": "Cover image path",
+    "customBookCoverHint": "Path to a cover image shown in the library and on the book cover page.",
+    "customBookModuleName": "Module name (optional)",
+    "customBookModuleNamePlaceholder": "my-module-id",
+    "customBookModuleNameHint": "Used as the section title when the compendium has only one folder level. Ignored when root folders contain subfolders.",
+    "customBookAdded": "Compendium added to the journal browser.",
+    "customBookRemoved": "Compendium removed from the journal browser.",
+    "customBookDuplicate": "This compendium is already connected.",
+    "customBookMissingCompendium": "The selected journal compendium could not be found.",
+    "customBookInvalidForm": "Please fill in all required fields."
   },
   "CALENDAR": {
     "DSA": {

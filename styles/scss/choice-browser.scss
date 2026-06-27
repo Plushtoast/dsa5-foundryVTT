@@ -291,36 +291,8 @@
   }
 
   .itemlibrary-font-size {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
-    flex: 0 1 auto;
-
     &[hidden] {
       display: none !important;
-    }
-
-    &__label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin: 0;
-      font-size: var(--font-size-12);
-      white-space: nowrap;
-      color: var(--bg-contrast-color);
-      cursor: default;
-    }
-
-    &__value {
-      min-width: 3.5em;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    &__picker {
-      flex: 0 1 110px;
-      min-width: 80px;
     }
   }
 
