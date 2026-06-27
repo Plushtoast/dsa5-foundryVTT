@@ -2,6 +2,7 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 
 /**
  * Utility class for building dropdown menus for Active Effect configurations
@@ -205,6 +206,8 @@ export default class EffectDropdownBuilder {
                 { name: `${skill} - ${partChecks}`, val: 'system.skillModifiers.TPM', type: 'custom', ph: demo },
                 { name: `${skill} - ${_loc('MODS.global')}`, val: 'system.skillModifiers.global', type: 'custom', ph: '1' },
                 { name: `${skill} - ${compensation}`, val: 'system.skillModifiers.CMP', type: 'custom', ph: demo },
+                { name: _loc('MAGICANALYSIS.effectMaxQs'), val: MagicAnalysisService.MAGIC_ANALYSIS_KEYS.max, type: 'add', ph: '1' },
+                { name: _loc('MAGICANALYSIS.effectStackQs'), val: MagicAnalysisService.MAGIC_ANALYSIS_KEYS.stack, type: 'add', ph: '1' },
             ],
         }];
 

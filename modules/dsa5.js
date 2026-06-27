@@ -86,6 +86,7 @@ import { ITEM_CONSTANTS } from './config/item-constants.js';
 import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
+import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -127,6 +128,7 @@ Hooks.once('init', () => {
       WorldCalendar: DSAWorldCalendar,
       SummoningAPI,
       ShapeshiftingAPI,
+      MagicAnalysisService,
       //DAGTalentTree,
     },
     queries: {

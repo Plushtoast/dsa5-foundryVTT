@@ -23,15 +23,28 @@ export default class InformationQueryService {
     return await renderTemplate(this.TEMPLATE, state);
   }
 
+  static _getInfoSystem(item, payload) {
+    if (payload.virtualInfo) return payload.virtualInfo;
+    return item?.system || {};
+  }
+
+  static _getInfoName(item, payload) {
+    if (payload.virtualInfo?.name) return payload.virtualInfo.name;
+    return item?.name || '';
+  }
+
   static async handleQuery(payload) {
     const item = await fromUuid(payload.itemUuid);
-    if (!item) {
+    if (!item && !payload.virtualInfo) {
       return { status: 'rejected' };
     }
 
+    const infoSystem = this._getInfoSystem(item, payload);
+    const infoName = this._getInfoName(item, payload);
+
     const qsEntries = [];
     for (let i = 1; i <= 6; i++) {
-      const text = item.system[`qs${i}`];
+      const text = infoSystem[`qs${i}`];
       if (text) {
         const enriched = await TextEditor.enrichHTML(text, {});
         qsEntries.push({
@@ -49,23 +62,27 @@ export default class InformationQueryService {
     let botchIncluded = false;
     let failIncluded = false;
 
-    if (item.system.crit) {
-      critText = await TextEditor.enrichHTML(item.system.crit, {});
+    if (infoSystem.crit) {
+      critText = await TextEditor.enrichHTML(infoSystem.crit, {});
       critIncluded = payload.successLevel > 1;
     }
-    if (item.system.botch) {
-      botchText = await TextEditor.enrichHTML(item.system.botch, {});
+    if (infoSystem.botch) {
+      botchText = await TextEditor.enrichHTML(infoSystem.botch, {});
       botchIncluded = payload.successLevel < -1;
     }
-    if (item.system.fail && !payload.rolledQS) {
-      failText = await TextEditor.enrichHTML(item.system.fail, {});
+    if (infoSystem.fail && !payload.rolledQS) {
+      failText = await TextEditor.enrichHTML(infoSystem.fail, {});
       failIncluded = true;
     }
+
+    const itemLink = item
+      ? await item.toAnchor().outerHTML
+      : `<span>${infoName}</span>`;
 
     const dialogData = {
       actorName: payload.actorName,
       playerName: payload.playerName,
-      itemLink: await item.toAnchor().outerHTML,
+      itemLink,
       skillName: payload.skillName,
       rolledQS: payload.rolledQS,
       qsEntries,
@@ -82,7 +99,7 @@ export default class InformationQueryService {
     try {
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
-          title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${item.name}`,
+          title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${infoName}`,
           resizable: true,
         },
         content,
@@ -128,27 +145,29 @@ export default class InformationQueryService {
   }
 
   static async postApprovedResult(item, payload, selected) {
+    const infoSystem = this._getInfoSystem(item, payload);
+    const infoName = this._getInfoName(item, payload);
     const msg = [];
 
     for (let i = 1; i <= 6; i++) {
-      if (selected[`qs${i}`] && item.system[`qs${i}`]) {
-        const enriched = await TextEditor.enrichHTML(item.system[`qs${i}`], {});
+      if (selected[`qs${i}`] && infoSystem[`qs${i}`]) {
+        const enriched = await TextEditor.enrichHTML(infoSystem[`qs${i}`], {});
         msg.push(enriched);
       }
     }
 
-    if (selected.crit && item.system.crit) {
-      msg.push(await TextEditor.enrichHTML(item.system.crit, {}));
+    if (selected.crit && infoSystem.crit) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.crit, {}));
     }
-    if (selected.botch && item.system.botch) {
-      msg.push(await TextEditor.enrichHTML(item.system.botch, {}));
+    if (selected.botch && infoSystem.botch) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.botch, {}));
     }
-    if (selected.fail && item.system.fail) {
-      msg.push(await TextEditor.enrichHTML(item.system.fail, {}));
+    if (selected.fail && infoSystem.fail) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.fail, {}));
     }
 
     if (msg.length > 0) {
-      msg.unshift(`<p><b>${item.name}</b></p>`);
+      msg.unshift(`<p><b>${infoName}</b></p>`);
 
       const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
       if (!whisperTargets.includes(payload.playerId)) {
@@ -161,22 +180,24 @@ export default class InformationQueryService {
     }
   }
 
-  static async createInformationQuery(result, uuid, item, { actor, skill } = {}) {
+  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo } = {}) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
       ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
       return;
     }
 
+    const infoName = virtualInfo?.name || item?.name || '';
     const payload = {
       itemUuid: uuid,
-      itemName: item.name,
-      skillName: skill?.name || item.system.skill || '',
+      itemName: infoName,
+      skillName: skill?.name || virtualInfo?.skill || item?.system?.skill || '',
       rolledQS: result.result.qualityStep || 0,
       successLevel: result.result.successLevel || 0,
       playerId: game.user.id,
       playerName: game.user.name,
       actorName: actor?.name || result.result.speaker?.alias || '',
+      virtualInfo,
     };
 
     const state = {
@@ -217,6 +238,18 @@ export default class InformationQueryService {
 
   static async informationEnricherRoll(ev) {
     const uuid = ev.currentTarget.dataset.uuid;
+    const subType = ev.currentTarget.dataset.subtype;
+
+    if (subType === 'magicalAnalysis') {
+      const gmOnline = game.users.some((user) => user.active && user.isGM);
+      if (!gmOnline) {
+        ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
+        return;
+      }
+      await game.dsa5.apps.MagicAnalysisService.startFromEnrichment(ev);
+      return;
+    }
+
     const modifier = Number(ev.currentTarget.dataset.mod) || 0;
     const skillName = ev.currentTarget.dataset.skill;
 

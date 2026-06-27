@@ -120,6 +120,10 @@ export class ActorDataModel extends DSADataModel {
         damage: [],
         damageThreshold: [],
       },
+      magicAnalysis: {
+        max: 0,
+        stack: 0,
+      },
       feature: {
         FP: [],
         step: [],

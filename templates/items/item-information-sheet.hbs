@@ -1,6 +1,12 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}'>
 
-  {{formGroup systemFields.skill value=document.system.skill localize=true choices=(selfObj allSkills) blank='-'}}
+  {{formGroup systemFields.subType value=document.system.subType localize=true choices=systemFields.subType.choices blank='-'}}
+  {{#if isMagicalAnalysis}}
+    {{formGroup systemFields.analysisTarget value=document.system.analysisTarget localize=true}}
+    {{formGroup systemFields.skill value=document.system.skill localize=true choices=(selfObj allSkills) blank='-' hint='MAGICANALYSIS.skillHint'}}
+  {{else}}
+    {{formGroup systemFields.skill value=document.system.skill localize=true choices=(selfObj allSkills) blank='-'}}
+  {{/if}}
   {{formGroup systemFields.modifier value=document.system.modifier localize=true}}
   <div class='form-group full-height'>
     <label>{{localize 'CHARAbbrev.QS'}} 1</label>

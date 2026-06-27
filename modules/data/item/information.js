@@ -9,6 +9,14 @@ const { TextEditor } = foundry.applications.ux;
 export default class InformationData extends ItemDataModel {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
+      subType: new StringField({
+        initial: 'default',
+        choices: {
+          default: 'INFORMATION.subType.default',
+          magicalAnalysis: 'INFORMATION.subType.magicalAnalysis',
+        },
+      }),
+      analysisTarget: new StringField({ initial: '' }),
       qs1: new HTMLField({ initial: '' }),
       qs2: new HTMLField({ initial: '' }),
       qs3: new HTMLField({ initial: '' }),
@@ -35,11 +43,17 @@ export default class InformationData extends ItemDataModel {
 
   async getSheetData(data) {
     data.allSkills = await DSA5_Utility.allSkillsList();
+    data.isMagicalAnalysis = data.document.system.subType === 'magicalAnalysis';
     foundry.utils.mergeObject(data, await this.enrichedProperties(data));
   }
 
   static async _postItem(item) {
-    const html = await renderTemplate('systems/dsa5/templates/chat/informationRequestRoll.hbs', { item });
+    if (item.system.subType === 'magicalAnalysis') {
+      const html = await renderTemplate('systems/dsa5/templates/chat/information/magic-analysis-request.hbs', { item });
+      UserMultipickDialog.getDialog(html);
+      return;
+    }
+    const html = await renderTemplate('systems/dsa5/templates/chat/information/request-roll.hbs', { item });
     UserMultipickDialog.getDialog(html);
   }
 }

@@ -2121,6 +2121,7 @@
     "artisticAbility": "Artistic Ability",
     "aspectKnowledge": "Aspect Knowledge",
     "assumeTradition": "Tradition (",
+    "analyzeArcaneStructure": "Analyze Arcane Structure",
     "automaticFail": "Automatic Failure",
     "automaticSuccess": "Automatic Succes",
     "blind": "Blind",
@@ -2168,6 +2169,8 @@
     "loyalty": "Loyalty",
     "magicalAttunement": "Magical Attunement",
     "magicalRestriction": "Magical Restriction",
+    "magicalLore": "Magical Lore",
+    "magieanalyse": "tbd",
     "manifesto": "Manifesto",
     "masterfulDodge": "Masterful Dodge",
     "masterfulParry": "Master Parry",
@@ -2185,6 +2188,7 @@
     "mute": "Mute",
     "naturalArmor": "Natural Armor",
     "obligations": "Obligations",
+    "odemArcanum": "Odem Arcanum",
     "painImmunity": "Immune to pain",
     "perception": "Perception",
     "poisonResistance": "Poison Resitance",
@@ -2205,6 +2209,7 @@
     "ruggedAnimal": "tbd",
     "ruggedFighter": "Rugged Fighter",
     "selfControl": "Self-Control",
+    "seeMagic": "See Magic",
     "senseOfRange": "Sense of Range",
     "sensitiveToPain": "Sensitive to Pain",
     "servantCloud": "tbd",
@@ -2214,6 +2219,7 @@
     "servantOre": "tbd",
     "servantWave": "tbd",
     "sharpshooter": "Sharpshooter",
+    "sightOnHeshinjasWork": "tbd",
     "singing": "Singing",
     "skillSpecialization": "Skill Specialization",
     "smallEnergyControl": "Small Energy Control",
@@ -4053,5 +4059,48 @@
   },
   "yes": "Yes",
   "zkModifier": "Toughness (Target)",
-  "zoo": "Zoo"
+  "zoo": "Zoo",
+  "INFORMATION": {
+    "subType": {
+      "default": "Standard",
+      "magicalAnalysis": "Magical Analysis"
+    }
+  },
+  "MAGICANALYSIS": {
+    "title": "Magical Analysis",
+    "subtitle": "Magical Analysis",
+    "start": "Start Magical Analysis",
+    "requestIntro": "A magical item is to be analyzed. Select your hero and begin the analysis.",
+    "progressIntro": "Apply divination spells or liturgies to raise the maximum QS, then roll Magical Lore.",
+    "notPossible": "Without Analyst or divination spells/liturgies, no Magical Analysis is possible.",
+    "failed": "The divination aids did not yield a usable quality level.",
+    "helperDone": "{name}: QS {qs}",
+    "maxQs": "Maximum QS for the Magical Lore check: {max}",
+    "rollMagiekunde": "Roll Magical Lore",
+    "noActor": "A player character or selected token is required.",
+    "mode": "Analysis content",
+    "modeDefault": "Automatic (from enchantment)",
+    "modeCustom": "Custom text",
+    "modeLinked": "Linked info item",
+    "linkedItem": "Info item UUID",
+    "skillHint": "Default: Magical Lore",
+    "defaultFail": "The hero has no idea about the subject matter.",
+    "defaultQs1": {
+      "moreThan10": "The enchantment has an FW of more than 10 (approx. {fw} FW).",
+      "lessThan10": "The enchantment has an FW of less than 10 (approx. {fw} FW)."
+    },
+    "defaultQs2": "The enchantment has an FW between {min} and {max} (approx. {fw} FW).",
+    "defaultQs3": {
+      "talisman": "Artifact type: talisman (permanent liturgy).",
+      "permanent": "Artifact type: permanently active artifact.",
+      "storage": "Artifact type: spell storage artifact.",
+      "selfCharging": "Artifact type: self-charging artifact."
+    },
+    "defaultQs4": {
+      "unknown": "Creator tradition: unknown.",
+      "tradition": "Creator tradition: {tradition}."
+    },
+    "effectMaxQs": "Magical Analysis (max QS)",
+    "effectStackQs": "Magical Analysis (+QS stacks)"
+  }
 }

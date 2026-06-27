@@ -1,0 +1,38 @@
+<div class="magic-analysis-progress">
+  <h3>{{localize 'MAGICANALYSIS.title'}}: {{item.name}}</h3>
+
+  {{#if progress.notPossible}}
+    <p>{{localize 'MAGICANALYSIS.notPossible'}}</p>
+  {{else}}
+    <p>{{localize 'MAGICANALYSIS.progressIntro'}}</p>
+
+    {{#each helperRows as |helper|}}
+      {{#if helper.done}}
+        <p>{{localize 'MAGICANALYSIS.helperDone' name=helper.name qs=helper.rolledQS}}</p>
+      {{else if helper.showButton}}
+        <button class='magicAnalysisHelperRoll'
+          data-spell='{{helper.id}}'
+          data-helper='{{helper.key}}'
+          data-actor='{{../actor.id}}'
+          data-uuid='{{../uuid}}'
+          data-progress='{{../progressJson}}'
+          data-start-msg='{{../startMsgId}}'
+          data-token='{{../tokenId}}'>
+          {{helper.name}}
+        </button>
+      {{/if}}
+    {{/each}}
+
+    {{#if progress.totalMaxQS}}
+      <p>{{localize 'MAGICANALYSIS.maxQs' max=progress.totalMaxQS}}</p>
+      <button class='magicAnalysisFinish'
+        data-actor='{{actor.id}}'
+        data-uuid='{{uuid}}'
+        data-progress='{{progressJson}}'
+        data-start-msg='{{startMsgId}}'
+        data-token='{{tokenId}}'>
+        {{localize 'MAGICANALYSIS.rollMagiekunde'}}
+      </button>
+    {{/if}}
+  {{/if}}
+</div>
