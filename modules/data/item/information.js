@@ -11,12 +11,13 @@ export default class InformationData extends ItemDataModel {
     return this.mergeSchema(super.defineSchema(), {
       subType: new StringField({
         initial: 'default',
+        required: true,
+        label: 'INFORMATION.type',
         choices: {
           default: 'INFORMATION.subType.default',
           magicalAnalysis: 'INFORMATION.subType.magicalAnalysis',
         },
       }),
-      analysisTarget: new StringField({ initial: '' }),
       qs1: new HTMLField({ initial: '' }),
       qs2: new HTMLField({ initial: '' }),
       qs3: new HTMLField({ initial: '' }),

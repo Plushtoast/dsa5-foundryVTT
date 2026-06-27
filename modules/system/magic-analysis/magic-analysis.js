@@ -166,14 +166,20 @@ export default class MagicAnalysisService {
     return { ...(await this.generateDefaults(sourceItem)), name: sourceItem.name };
   }
 
+  static _magicalAnalysisParentItem(informationItem) {
+    const parent = informationItem.parent;
+    if (!parent || parent.documentName !== 'Item' || parent.type === 'information') return null;
+    return parent;
+  }
+
   static async _resolveFromUuid(uuid) {
     const document = await fromUuid(uuid);
     if (!document) return null;
 
     if (document.type === 'information') {
-      if (document.system.subType === 'magicalAnalysis' && document.system.analysisTarget) {
-        const target = await fromUuid(document.system.analysisTarget);
-        if (target) return this._resolveContent(target, { informationItem: document });
+      if (document.system.subType === 'magicalAnalysis') {
+        const parentItem = this._magicalAnalysisParentItem(document);
+        if (parentItem) return this._resolveContent(parentItem, { informationItem: document });
       }
       return this._systemFromDocument(document);
     }

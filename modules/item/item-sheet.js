@@ -1342,6 +1342,24 @@ class InformationSheet extends ItemSheetdsa5 {
     }
     return data;
   }
+
+  _processFormData(event, form, formData) {
+    const data = super._processFormData(event, form, formData);
+    if (data.system?.subType === 'magicalAnalysis') {
+      const subTypeChanged = data.system.subType !== this.item.system.subType;
+      if (subTypeChanged || !data.system.skill) {
+        data.system.skill = MagicAnalysisService.MAGIEKUNDE_SKILL;
+      }
+    }
+    return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    if (this.isEditable && this.item.system.subType === 'magicalAnalysis' && !this.item.system.skill) {
+      await this.item.update({ 'system.skill': MagicAnalysisService.MAGIEKUNDE_SKILL });
+    }
+  }
 }
 
 class AmmunitionSheet extends ItemSheetObfuscation(Enchantable) {

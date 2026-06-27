@@ -4063,6 +4063,7 @@
     "zkModifier": "Zähigkeit (Ziel)",
     "zoo": "Zoo",
     "INFORMATION": {
+        "type": "Informationsart",
         "subType": {
             "default": "Standard",
             "magicalAnalysis": "Magische Analyse"

@@ -4061,6 +4061,7 @@
   "zkModifier": "Toughness (Target)",
   "zoo": "Zoo",
   "INFORMATION": {
+    "type": "Information Type",
     "subType": {
       "default": "Standard",
       "magicalAnalysis": "Magical Analysis"
