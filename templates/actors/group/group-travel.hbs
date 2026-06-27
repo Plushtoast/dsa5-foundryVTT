@@ -97,17 +97,4 @@
       {{/each}}
     </div>
   </div>
-
-  {{#if hasCampHelpers}}
-  <div class="groupbox">
-    <legend class="table-title lineheight">{{localize 'GROUP.camp'}}</legend>
-    <div class="group-helpers-container" data-section="travel-camp">
-      {{#each helpers.travel-camp as |helper|}}
-        <button type="button" data-action="groupHelperAction" data-group-helper="{{@key}}" class="group-helper-btn">
-          {{#if helper.icon}}<i class="{{helper.icon}}"></i>{{/if}} {{localize helper.label}}
-        </button>
-      {{/each}}
-    </div>
-  </div>
-  {{/if}}
 </div>

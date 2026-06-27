@@ -1855,6 +1855,7 @@
     "addMember": "Add Member",
     "alreadyMember": "This actor is already a member of the group.",
     "camp": "Camp",
+    "gmTools": "Gamemaster tools",
     "createEventsJournal": "Create Events Journal",
     "createNewGroup": "Create new group",
     "deploy": "Deploy Members",

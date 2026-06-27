@@ -7,6 +7,7 @@ import DSA5 from '../config/config-dsa5.js';
 import { slist } from '../system/helpers/view_helper.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
 import CustomBookDialog from './custom_book_dialog.js';
+import { bookLibraryPartTemplates } from '../actor/template-configs.js';
 import FlexSearch from '../../libs/flexsearch.bundle.module.min.js';
 
 const { mergeObject, duplicate } = foundry.utils;
@@ -191,17 +192,12 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static PARTS = {
     main: {
       template: 'systems/dsa5/templates/wizard/adventure/adventure_wizard.hbs',
-      templates: [
-        'systems/dsa5/templates/wizard/adventure/adventure_intro.hbs',
-        'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_list.hbs',
-        'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_card.hbs',
-        'systems/dsa5/templates/wizard/adventure/parts/book_library_section_list.hbs',
-        'systems/dsa5/templates/wizard/adventure/parts/book_library_section_cards.hbs',
-      ],
     },
   };
 
   static initHook() {
+    foundry.applications.handlebars.loadTemplates(bookLibraryPartTemplates);
+
     BookWizard.wizard = new BookWizard();
 
     game.dsa5.apps.journalBrowser = BookWizard.wizard;

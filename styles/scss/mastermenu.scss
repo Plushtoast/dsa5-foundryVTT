@@ -1,6 +1,4 @@
 .masterMenu {
-  --zuchtgrube-thumb-width: 80px;
-
   .heros {
     min-width: 0;
   }
@@ -33,93 +31,6 @@
 
   .isFolder > .col {
     min-width: 0;
-  }
-
-  .dsa-zuchtgrube-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    padding: 4px 2px 8px;
-    align-items: stretch;
-  }
-
-  .dsa-zuchtgrube-card {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    min-height: 72px;
-    margin: 0;
-    padding: 0;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--sheet-bg);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-    cursor: pointer;
-    overflow: hidden;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-
-    &:hover,
-    &:focus-visible {
-      border-color: var(--dsadesign1);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-      transform: translateY(-1px);
-    }
-
-    &__media {
-      flex: 0 0 var(--zuchtgrube-thumb-width);
-      width: var(--zuchtgrube-thumb-width);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      background: var(--dsa-muted-bg);
-      border-right: 1px solid var(--dsa-muted-border);
-
-      img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        max-width: calc(var(--zuchtgrube-thumb-width) - 16px);
-        max-height: 68px;
-        object-fit: contain;
-        object-position: center;
-        border: none;
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
-      }
-    }
-
-    &__body {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 4px;
-      padding: 8px 10px;
-      min-width: 0;
-    }
-
-    &__title {
-      margin: 0;
-      font-family: 'Modesto Condensed', sans-serif;
-      font-size: 0.98em;
-      line-height: 1.2;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
-    }
-
-    &__hint {
-      font-size: 0.7em;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--dsadesign1);
-      opacity: 0.85;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
 
   .breedcard:hover {

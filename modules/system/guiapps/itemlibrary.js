@@ -1474,7 +1474,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
 
     try {
       if (typeof effectiveCategory === 'string') this.setBGImage([1], effectiveCategory);
-      const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i>${_loc('Library.buildingIndex')}</div>`);
+      const loading = $(`<div class="loader"><i class="fa fa-4x fa-spinner fa-spin"></i><span class="loader-label">${_loc('Library.buildingIndex')}</span></div>`);
       loading.appendTo(target.find('.searchResult'));
     } catch (e) {
       // nothing going on here

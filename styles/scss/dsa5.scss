@@ -2730,6 +2730,11 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     }
   }
 
+  .searchResult.libraryImg,
+  .searchResult:has(> .loader) {
+    margin-top: 50px;
+  }
+
   .searchResult:has(> .loader) {
     display: flex;
     flex-direction: column;
@@ -2738,8 +2743,41 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     min-height: 300px;
     text-align: center;
 
+    > .item-list {
+      display: none;
+    }
+
     > .loader {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       margin: 0;
+      padding: 20px 32px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -8px -24px;
+        background: radial-gradient(ellipse at center, var(--bg-color) 30%, transparent 75%);
+        opacity: 0.92;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .loader-label {
+        display: inline-block;
+        padding: 4px 14px;
+        border-radius: 999px;
+        border: 1px solid var(--sheet-border);
+        background: var(--bg-color);
+        color: var(--button-color);
+        font-family: var(--boldFont);
+        font-size: var(--font-size-13);
+        line-height: 1.4;
+        white-space: nowrap;
+      }
     }
   }
 

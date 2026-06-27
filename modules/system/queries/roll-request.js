@@ -117,6 +117,10 @@ export default class RollRequestService {
     label = undefined,
     trapContext = undefined,
     whisper = undefined,
+    situationalModifiers = undefined,
+    subtitle = undefined,
+    opposable = undefined,
+    flowContext = undefined,
   }) {
     const recipients = await QueryOrchestrator.buildRecipients(actors);
 
@@ -129,6 +133,10 @@ export default class RollRequestService {
       finalized: false,
       recipients,
       ...(trapContext ? { trapContext } : {}),
+      ...(situationalModifiers ? { situationalModifiers } : {}),
+      ...(subtitle ? { subtitle } : {}),
+      ...(opposable !== undefined ? { opposable } : {}),
+      ...(flowContext ? { flowContext } : {}),
     };
 
     const message = await QueryOrchestrator.createRequest({
@@ -139,6 +147,21 @@ export default class RollRequestService {
 
     await this.dispatch(message.id);
     return message;
+  }
+
+  static #buildQueryPayload(state, { messageId, actorId, byGM = false } = {}) {
+    return {
+      messageId,
+      actorId,
+      category: state.category,
+      name: state.name,
+      modifier: state.modifier,
+      messageMode: state.messageMode,
+      situationalModifiers: state.situationalModifiers,
+      subtitle: state.subtitle,
+      opposable: state.opposable,
+      ...(byGM ? { byGM: true } : {}),
+    };
   }
 
   static async renderMessage(state) {
@@ -205,6 +228,11 @@ export default class RollRequestService {
 
     const message = game.messages.get(messageId);
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+
+    if (QueryOrchestrator.TERMINAL_STATES.has(result.status)) {
+      Hooks.callAll('dsa5.rollRequestResult', { messageId, actorId, result, state });
+    }
+
     const trapContext = state.trapContext;
     if (!trapContext || !QueryOrchestrator.TERMINAL_STATES.has(result.status)) return;
 
@@ -276,14 +304,7 @@ export default class RollRequestService {
       const result = await QueryOrchestrator.dispatchToRecipient(
         userId,
         this.QUERY_TYPE,
-        {
-          messageId,
-          actorId,
-          category: state.category,
-          name: state.name,
-          modifier: state.modifier,
-          messageMode: state.messageMode,
-        },
+        this.#buildQueryPayload(state, { messageId, actorId }),
       );
 
       if (!result) return;
@@ -308,6 +329,12 @@ export default class RollRequestService {
 
     try {
       const options = { modifier: payload.modifier, messageMode: payload.messageMode };
+      if (payload.situationalModifiers?.length) {
+        options.situationalModifiers = payload.situationalModifiers;
+      }
+      if (payload.subtitle) {
+        options.subtitle = payload.subtitle;
+      }
       if (payload.messageId) {
         options.postFunction = {
           functionName: 'game.dsa5.queries.RollRequestService.postRollRequestResult',
@@ -346,6 +373,10 @@ export default class RollRequestService {
 
       if (!setupData) {
         return { userId: game.user.id, status: 'cancelled' };
+      }
+
+      if (payload.opposable === false) {
+        setupData.testData.opposable = false;
       }
 
       const result = await actor.basicTest(setupData);
@@ -422,13 +453,7 @@ export default class RollRequestService {
     if (!state?.category) return;
 
     const result = await this.handleQuery({
-      messageId,
-      actorId,
-      category: state.category,
-      name: state.name,
-      modifier: state.modifier,
-      messageMode: state.messageMode,
-      byGM: true,
+      ...this.#buildQueryPayload(state, { messageId, actorId, byGM: true }),
     });
 
     await this.#submitResult(messageId, actorId, {
@@ -458,14 +483,7 @@ export default class RollRequestService {
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
     if (!state?.category) return;
 
-    const result = await this.handleQuery({
-      messageId,
-      actorId,
-      category: state.category,
-      name: state.name,
-      modifier: state.modifier,
-      messageMode: state.messageMode,
-    });
+    const result = await this.handleQuery(this.#buildQueryPayload(state, { messageId, actorId }));
 
     await this.#submitResult(messageId, actorId, result);
   }

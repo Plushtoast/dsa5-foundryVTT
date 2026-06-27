@@ -18,6 +18,7 @@ import PaymentRequestService from './system/queries/payment-requests.js';
 import TransactionSummaryService from './system/payment/transaction-summary.js';
 import InformationQueryService from './system/queries/information-query.js';
 import RollRequestService from './system/queries/roll-request.js';
+import ActorPickerDialog from './dialog/actor-picker-dialog.js';
 import { DSA5CombatTracker } from './combat/combat_tracker.js';
 import DSA5Combat from './combat/combat.js';
 import DSA5Combatant from './combat/combatant.js';
@@ -112,6 +113,7 @@ Hooks.once('init', () => {
       MoneyTracker,
       DidYouKnow,
       GroupAPI,
+      ActorPickerDialog,
       DSARegionTemplate,
       Riding,
       RuleChaos,

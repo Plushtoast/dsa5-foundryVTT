@@ -154,6 +154,11 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       template: 'systems/dsa5/templates/actors/group/group-travel.hbs',
       scrollable: [''],
     },
+    gmTools: {
+      template: 'systems/dsa5/templates/actors/group/group-gm-tools.hbs',
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/group/parts/group-helpers.hbs'],
+    },
     notes: {
       template: 'systems/dsa5/templates/actors/group/group-notes.hbs',
       scrollable: [''],
@@ -217,6 +222,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         { id: 'skills', label: 'GROUP.skills', icon: 'fas fa-graduation-cap' },
         { id: 'inventory', label: 'GROUP.inventory', icon: 'fas fa-suitcase' },
         { id: 'travel', label: 'GROUP.travel', icon: 'fas fa-route' },
+        { id: 'gmTools', label: 'GROUP.gmTools', icon: 'fas fa-mask' },
         { id: 'notes', label: 'GROUP.notes', icon: 'fas fa-book' },
       ],
       initial: 'members',
@@ -225,6 +231,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
+    if (!game.user.isGM || GroupAPI.getGmToolEntries(this.actor).length === 0) {
+      delete tabs.gmTools;
+    }
     const tabKeys = Object.keys(tabs);
     const hasActive = tabKeys.some((key) => tabs[key].active);
     if (!hasActive && tabKeys.length > 0) {
@@ -495,19 +504,11 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
     context.isPrimaryParty = game.settings.get('dsa5', 'primaryParty') === this.actor.uuid;
 
-    const campHelpers = GroupAPI.getHelpers('travel-camp').filter(
-      (h) => h.visible?.(this.actor) !== false && (!h.gmOnly || game.user.isGM)
-    );
+    context.gmTools = game.user.isGM ? await GroupAPI.prepareGmToolEntries(this.actor) : [];
     context.helpers = {
-      'travel-camp': campHelpers,
-      members: GroupAPI.getHelpers('members').filter(
-        (h) => h.visible?.(this.actor) !== false && (!h.gmOnly || game.user.isGM)
-      ),
-      custom: GroupAPI.getHelpers('custom').filter(
-        (h) => h.visible?.(this.actor) !== false && (!h.gmOnly || game.user.isGM)
-      ),
+      members: GroupAPI.getHelperEntries('members', this.actor),
+      custom: GroupAPI.getHelperEntries('custom', this.actor),
     };
-    context.hasCampHelpers = campHelpers.length > 0;
 
     await this._prepareEnrichedFields(context);
     return context;
@@ -810,25 +811,30 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static #groupHelperAction(event, target) {
-    const helperId = target.dataset.groupHelper;
+    const trigger = target.closest('[data-group-helper]');
+    const helperId = trigger?.dataset?.groupHelper;
+    if (!helperId) return;
     const helper = GroupAPI.helpers.get(helperId);
-    helper?.execute(this.actor, event, target.dataset);
+    helper?.execute(this.actor, event, trigger.dataset);
   }
 
   static async #awardAP() {
-    const actors = [...this.actor.system.actors];
-    GroupActorSheet.doGroupAwardAP(actors);
+    GroupActorSheet.doGroupAwardAP(this.actor);
   }
 
   static async #groupPayment(event, target) {
     if (!game.user.isGM) return;
-    const actors = [...this.actor.system.actors];
-    GroupActorSheet.doGroupPayment(actors, true);
+    GroupActorSheet.doGroupPayment(this.actor, true);
   }
 
-  static async doGroupPayment(actors, pay, amount = 0) {
+  static async doGroupPayment(groupActor, pay, amount = 0, preselectActors = null) {
     if (!game.user.isGM) return;
-    const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
+    const preselected = preselectActors
+      ? ActorPickerDialog.buildActorPickerData({
+          actors: (Array.isArray(preselectActors) ? preselectActors : [preselectActors]).filter(Boolean),
+        }).map((a) => ({ ...a, preselected: true }))
+      : [];
+
     const header = await renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
       description: '',
@@ -836,10 +842,11 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     });
 
     ActorPickerDialog.open({
-      actors: actorEntries,
+      groupActor,
+      actors: preselected,
+      showSourceToggle: true,
       title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
       header,
-      showSourceToggle: actors.length > 1,
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
         const description = form.querySelector('[name="description"]')?.value;
@@ -851,18 +858,24 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     });
   }
 
-  static async doGroupAwardAP(actors, amount = 0) {
-    const actorEntries = ActorPickerDialog.buildActorPickerData({ actors }).map((a) => ({ ...a, preselected: true }));
+  static async doGroupAwardAP(groupActor, amount = 0, preselectActors = null) {
+    const preselected = preselectActors
+      ? ActorPickerDialog.buildActorPickerData({
+          actors: (Array.isArray(preselectActors) ? preselectActors : [preselectActors]).filter(Boolean),
+        }).map((a) => ({ ...a, preselected: true }))
+      : [];
+
     const header = await renderTemplate('systems/dsa5/templates/dialog/parts/amount-input.hbs', {
       amount,
       text: _loc('MASTER.awardXPText', { heros: _loc('MASTER.theGroup') }),
     });
 
     ActorPickerDialog.open({
-      actors: actorEntries,
+      groupActor,
+      actors: preselected,
+      showSourceToggle: true,
       title: 'MASTER.awardXP',
       header,
-      showSourceToggle: actors.length > 1,
       callback: async ({ actorIds, form }) => {
         const number = Number(form.querySelector('.input-text')?.value);
         if (isNaN(number)) return;
@@ -1144,9 +1157,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     if (ownedMembers.length === 1) {
       openMerchant(ownedMembers[0]);
     } else {
-      const actorEntries = ActorPickerDialog.buildActorPickerData({ actors: ownedMembers });
       ActorPickerDialog.open({
-        actors: actorEntries,
+        groupActor: this.actor,
+        showSourceToggle: true,
         title: 'GROUP.tradeWithDepot',
         selectionMode: 'single',
         callback: ({ actorIds }) => {
@@ -1159,8 +1172,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   static async #groupGetPaid(event, target) {
     if (!game.user.isGM) return;
-    const actors = [...this.actor.system.actors];
-    GroupActorSheet.doGroupPayment(actors, false);
+    GroupActorSheet.doGroupPayment(this.actor, false);
   }
 
   static #heroSchip(event, target) {
@@ -1191,17 +1203,17 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       {
         label: _loc('PAYMENT.wage'),
         icon: '<i class="fas fa-piggy-bank"></i>',
-        onClick: () => GroupActorSheet.doGroupPayment([actor], false),
+        onClick: () => GroupActorSheet.doGroupPayment(app.actor, false, 0, actor),
       },
       {
         label: _loc('MASTER.payTT'),
         icon: '<i class="fas fa-coins"></i>',
-        onClick: () => GroupActorSheet.doGroupPayment([actor], true),
+        onClick: () => GroupActorSheet.doGroupPayment(app.actor, true, 0, actor),
       },
       {
         label: _loc('MASTER.awardXP'),
         icon: '<i class="fas fa-trophy"></i>',
-        onClick: () => GroupActorSheet.doGroupAwardAP([actor]),
+        onClick: () => GroupActorSheet.doGroupAwardAP(app.actor, 0, actor),
       },
       {
         label: _loc('SHEET.DeleteItem'),

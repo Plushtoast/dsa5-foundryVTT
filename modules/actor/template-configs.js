@@ -9,3 +9,11 @@ export const gearSearchPartTemplates = [
   'systems/dsa5/templates/actors/parts/actor-effect-config-attrs.hbs',
   'systems/dsa5/templates/actors/parts/purse.hbs',
 ];
+
+/** Book library intro (renderTemplate in BookWizard.getChapter, not ApplicationV2 root). */
+export const bookLibraryPartTemplates = [
+  'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_list.hbs',
+  'systems/dsa5/templates/wizard/adventure/parts/book_library_entry_card.hbs',
+  'systems/dsa5/templates/wizard/adventure/parts/book_library_section_list.hbs',
+  'systems/dsa5/templates/wizard/adventure/parts/book_library_section_cards.hbs',
+];
