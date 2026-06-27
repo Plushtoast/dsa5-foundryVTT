@@ -90,7 +90,11 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=owner editable=owner enriched=enrichedNotes}}
+                {{#if owner}}
+                {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true enriched=enrichedNotes}}
+                {{else}}
+                {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true disabled=true enriched=enrichedNotes}}
+                {{/if}}
             </div>
         </div>
     </div>
