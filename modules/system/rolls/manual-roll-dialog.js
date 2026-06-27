@@ -29,7 +29,7 @@ export class ManualRollDialog {
     }
 
     const diceInfo = this.#extractDiceInfo(roll);
-    const userInput = await this.#show(diceInfo, description, cheat);
+    const userInput = await this.#show(diceInfo, description, cheat, options);
 
     if (userInput.confirmed) {
       roll.editRollAtIndex(userInput.changes);
@@ -112,7 +112,7 @@ export class ManualRollDialog {
     return dice;
   }
 
-  static async #show(diceInfo, description, isCheat) {
+  static async #show(diceInfo, description, isCheat, options = {}) {
     const content = await renderTemplate(DICE_CONSTANTS.TEMPLATES.MANUAL_ROLL, {
       dice: diceInfo,
       description,

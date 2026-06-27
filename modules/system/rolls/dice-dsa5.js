@@ -897,11 +897,7 @@ export default class DiceDSA5 {
         result.description += DSATables.defaultParryCrit();
       }
     } else if (isDodge && result.successLevel == -3) {
-      if (await DSATables.tableEnabledFor('Defense')) {
-        result.description += DSATables.rollCritBotchButton('Defense', true, testData, testData);
-      } else {
-        result.description += await DSATables.defaultBotch();
-      }
+      result.description += DSATables.rollCritBotchButton('Defense', true, testData, testData);
     }
     return result;
   }
@@ -1545,10 +1541,9 @@ export default class DiceDSA5 {
         break;
       case -3:
         const isWeaponless = getProperty(source, 'system.combatskill.value') == _loc('LocalizedIDs.wrestle') || source.type == 'trait';
-        if (isAttack && isMelee && (await DSATables.tableEnabledFor('Melee'))) result.description += DSATables.rollCritBotchButton('Melee', isWeaponless, testData);
-        else if (isAttack && (await DSATables.tableEnabledFor('Range'))) result.description += DSATables.rollCritBotchButton('Range', false, testData);
-        else if (!isAttack && (await DSATables.tableEnabledFor('Defense'))) result.description += DSATables.rollCritBotchButton('Defense', isWeaponless, testData);
-        else result.description += await DSATables.defaultBotch();
+        if (isAttack && isMelee) result.description += DSATables.rollCritBotchButton('Melee', isWeaponless, testData);
+        else if (isAttack) result.description += DSATables.rollCritBotchButton('Range', false, testData);
+        else result.description += DSATables.rollCritBotchButton('Defense', isWeaponless, testData);
 
         result.description += this._weaponBotchCritEffect(source, 'self.botcheffect', actor);
         break;

@@ -72,15 +72,36 @@ export default class TableEffectContext {
     return TableEffectHelpers.evaluateTargetArg(args, this.applyTargets, this.targetResolutionContext());
   }
 
+  async appendRollToMessage(roll) {
+    const rollHtml = await roll.render();
+    if (!this.message) {
+      await ChatMessage.create(DSA5_Utility.chatDataSetup(rollHtml));
+      return;
+    }
+
+    let content = this.message.content;
+    const diceRollPattern = /<div class="dice-roll">[\s\S]*?<\/div>/;
+    if (diceRollPattern.test(content)) content = content.replace(diceRollPattern, rollHtml);
+    else {
+      content = content.replace(
+        /(<div class=['"]card-content hideAnchor['"]>[\s\S]*?)(<\/div>)/,
+        `$1${rollHtml}$2`,
+      );
+    }
+
+    this.message = await this.message.update({ content });
+  }
+
   async markApplied() {
     if (!this.message) return;
+    const message = game.messages.get(this.message.id) ?? this.message;
     const tt = _loc('ActiveEffects.appliedEffect', {
       source: _loc('table'),
       target: this.applyTargets.map((actor) => actor.name).join(', '),
     });
     const marker = TableTemplates.chatCheckMarker(tt);
-    await this.message.update({
-      content: this.message.content.replace(/hideAnchor">/, `hideAnchor">${marker}`),
+    this.message = await message.update({
+      content: message.content.replace(/hideAnchor">/, `hideAnchor">${marker}`),
     });
   }
 }

@@ -28,41 +28,15 @@ export default class DSATables {
     options.tableContext = DSATables.#decodeBotchContext(dataset.context);
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
-    const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
-    for (const tableResult of tableResults) {
-      const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
-      const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
-      const title = `${_loc('TABLENAMES.' + dataset.table)}`;
+    if (!table) return;
 
-      const content = await TableTemplates.tableCard({ result, title, hasEffect });
-
-      const effects = await this.buildEffects(tableResult, hasEffect);
-
-      ChatMessage.create({
-        user: game.user.id,
-        content,
-        whisper: options.whisper,
-        blind: options.blind,
-        flags: {
-          data: {
-            preData: {
-              source: {
-                effects,
-              },
-              extra: {
-                actor: { id: options.speaker.actor },
-                speaker: options.speaker,
-              },
-              situationalModifiers: [],
-            },
-            postData: {},
-          },
-          dsa5: {
-            hasEffect,
-            options,
-          },
-        },
-      });
+    if (await DSATables.tableEnabledFor(dataset.table)) {
+      const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
+      for (const tableResult of tableResults) {
+        await DSATables.#createBotchCardFromTableResult(tableResult, options);
+      }
+    } else if (table.defaultResult) {
+      await DSATables.#createBotchCardFromDefault(table.defaultResult, options);
     }
   }
 
@@ -142,7 +116,8 @@ export default class DSATables {
 
   static async tableEnabledFor(key) {
     const table = DSA5.systemTables.find((x) => x.name == key);
-    return table ? game.settings.get(table.setting.module, table.setting.key) : false;
+    if (!table?.setting?.module) return false;
+    return game.settings.get(table.setting.module, table.setting.key);
   }
 
   static rollCritBotchButton(table, weaponless, testData) {
@@ -163,8 +138,57 @@ export default class DSATables {
     }
   }
 
-  static async defaultBotch() {
-    return ', ' + _loc('selfDamage') + (await new Roll('1d6+2').evaluate()).total;
+  static async #createBotchCardFromTableResult(tableResult, options) {
+    const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
+    const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
+    const title = _loc(`TABLENAMES.${options.table}`);
+
+    await DSATables.#postBotchCard({ title, result, hasEffect, options });
+  }
+
+  static async #createBotchCardFromDefault(defaultResult, options) {
+    const hasEffect = defaultResult.effects || false;
+    const damageFormula = hasEffect?.selfDamage?.damage;
+    const previewTotal = damageFormula ? (await new Roll(damageFormula).evaluate()).total : '';
+    const result = `${_loc(defaultResult.description)}${previewTotal}`;
+
+    await DSATables.#postBotchCard({
+      title: _loc(`TABLENAMES.${options.table}`),
+      result,
+      hasEffect,
+      options,
+    });
+  }
+
+  static async #postBotchCard({ title, result, hasEffect, options }) {
+    const content = await TableTemplates.tableCard({ result, title, hasEffect });
+    const effects = await DSATables.buildEffects(undefined, hasEffect);
+
+    return ChatMessage.create({
+      user: game.user.id,
+      content,
+      whisper: options.whisper,
+      blind: options.blind,
+      flags: {
+        data: {
+          preData: {
+            source: {
+              effects,
+            },
+            extra: {
+              actor: { id: options.speaker.actor },
+              speaker: options.speaker,
+            },
+            situationalModifiers: [],
+          },
+          postData: {},
+        },
+        dsa5: {
+          hasEffect,
+          options,
+        },
+      },
+    });
   }
 
   static defaultAttackCrit(confirmed) {

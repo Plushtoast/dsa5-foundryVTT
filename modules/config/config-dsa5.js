@@ -354,6 +354,11 @@ DSA5.equipmentTypes = {
 DSA5.equipmentCategories = new Set(['meleeweapon', 'rangeweapon', 'equipment', 'ammunition', 'armor', 'poison', 'consumable', 'plant', 'book']);
 DSA5.magicCategories = new Set(['ritual', 'ceremony', 'spell', 'liturgy', 'blessing', 'magictrick', 'spellextension', 'magicalsign']);
 
+DSA5.defaultCombatBotchResult = {
+  description: 'selfDamage',
+  effects: { selfDamage: { target: 'self', damage: '1d6+2' } },
+};
+
 DSA5.systemTables = [
   {
     name: 'Defense',
@@ -361,6 +366,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'defenseBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Melee',
@@ -368,6 +374,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'meleeBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Range',
@@ -375,6 +382,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'rangeBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Liturgy',

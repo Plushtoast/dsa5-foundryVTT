@@ -1,6 +1,11 @@
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TableEffectHelpers from '../tableEffectHelpers.js';
 
+async function applyRollDamage(ctx, actor, roll) {
+  await actor.applyDamage(Math.round(roll.total));
+  await ctx.appendRollToMessage(roll);
+}
+
 export async function applyDamageToTargets(ctx, args, { defaultTarget, requireSource = true } = {}) {
   const targetArgs = {
     ...args,
@@ -11,8 +16,7 @@ export async function applyDamageToTargets(ctx, args, { defaultTarget, requireSo
 
   for (const actor of finalTargets) {
     const roll = await TableEffectHelpers.rollSourceDamage(ctx.source, args, ctx);
-    await actor.applyDamage(Math.round(roll.total));
-    await ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()));
+    await applyRollDamage(ctx, actor, roll);
   }
   return true;
 }
@@ -28,16 +32,15 @@ export async function selfDamage(ctx, args) {
   if (ctx.source) {
     for (const actor of finalTargets) {
       const roll = await TableEffectHelpers.rollSourceDamage(ctx.source, args, { damageActor: actor });
-      await actor.applyDamage(Math.round(roll.total));
-      ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()));
+      await applyRollDamage(ctx, actor, roll);
     }
     return true;
   }
 
   for (const actor of finalTargets) {
-    const roll = await new Roll('1d6').evaluate();
-    await actor.applyDamage(Math.round(roll.total));
-    ChatMessage.create(DSA5_Utility.chatDataSetup(await roll.render()));
+    const formula = args.damage || '1d6';
+    const roll = await new Roll(formula).evaluate();
+    await applyRollDamage(ctx, actor, roll);
   }
   return true;
 }
