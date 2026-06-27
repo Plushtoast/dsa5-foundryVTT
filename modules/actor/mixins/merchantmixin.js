@@ -8,6 +8,7 @@ import MoneyTracker from '../../system/orwell/money-tracker.js';
 import TransactionSummaryService from '../../system/payment/transaction-summary.js';
 import { InventoryBulkActionHelper } from '../../system/helpers/inventory-bulk-action.js';
 import { DefaultAppv2 } from '../baseapp.js';
+import { gearSearchPartTemplates } from '../template-configs.js';
 import { ItemFactory } from '../../item/item-factory.js';
 import { fetchBagItems, transferBagWithContents } from '../../hooks/itemDrop.js';
 
@@ -56,7 +57,11 @@ export const MerchantSheetMixin = (superclass) =>
       inventory: {
         template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs', 'systems/dsa5/templates/actors/parts/containerContent.hbs', 'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs'],
+        templates: [
+          ...gearSearchPartTemplates,
+          'systems/dsa5/templates/actors/parts/containerContent.hbs',
+          'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
+        ],
       },
       companion: super.PARTS.companion,
       status: super.PARTS.status,

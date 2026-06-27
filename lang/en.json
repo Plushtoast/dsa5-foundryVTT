@@ -61,6 +61,17 @@
       "seconds": "Seconds",
       "unit": "Time Unit"
     },
+    "defaultNames": {
+      "packMule": "Pack mule"
+    },
+    "configureValueHint": "Configure active effect",
+    "valueDialog": {
+      "title": "Configure {label}",
+      "totalValue": "Total {label}",
+      "baseValue": "Base value",
+      "effectName": "Effect name",
+      "deleteEffect": "Remove effect"
+    },
     "disposition": "Disposition",
     "excludeSelf": "Exclude Self",
     "hideOnToken": "Hide on Token",

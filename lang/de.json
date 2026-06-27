@@ -61,6 +61,17 @@
             "seconds": "Sekunden",
             "unit": "Zeiteinheit"
         },
+        "defaultNames": {
+            "packMule": "Packesel"
+        },
+        "configureValueHint": "Aktiven Effekt konfigurieren",
+        "valueDialog": {
+            "title": "{label} konfigurieren",
+            "totalValue": "Gesamt-{label}",
+            "baseValue": "Grundwert",
+            "effectName": "Effektname",
+            "deleteEffect": "Effekt entfernen"
+        },
         "disposition": "Disposition",
         "excludeSelf": "Selbst ausschließen",
         "hideOnToken": "Am Token verstecken",

@@ -693,4 +693,29 @@ export default class EffectDropdownBuilder {
         const supportedKeys = new Set(groups.flatMap((g) => g.subgroups.flatMap((s) => s.options.map((o) => o.val))));
         return changes.every((change) => !change?.key || supportedKeys.has(change.key));
     }
+
+    /**
+     * Finds a wizard change option by its key path (e.g. system.carryModifier).
+     * @param {string} key
+     * @returns {{ name: string, val: string, type: string, ph?: string }|null}
+     */
+    static findChangeOption(key) {
+        if (!key) return null;
+
+        for (const group of this._getGroupDefinitions()) {
+            for (const subgroup of group.subgroups) {
+                const option = subgroup.options.find((o) => o.val === key);
+                if (option) return { ...option };
+            }
+        }
+
+        for (const group of this._getEnhancementGroupDefinitions('equipment')) {
+            for (const subgroup of group.subgroups) {
+                const option = subgroup.options.find((o) => o.val === key);
+                if (option) return { ...option };
+            }
+        }
+
+        return null;
+    }
 }

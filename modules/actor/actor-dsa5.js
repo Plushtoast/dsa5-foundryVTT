@@ -20,6 +20,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import DSATriggers from '../system/automation/triggers.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
+import EffectDropdownBuilder from '../status/effect-dropdown-builder.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
 import { CombatSystem } from '../item/concerns/combat-system.js';
@@ -875,6 +876,8 @@ export default class Actordsa5 extends Actor {
         encumbrance,
         moneyWeight
       }),
+      carryEffectConfig: EffectDropdownBuilder.findChangeOption('system.carryModifier'),
+      carryEffectName: _loc('ActiveEffects.defaultNames.packMule'),
       isSwarm: this.isSwarm(),
       canSwarm: !this.prototypeToken.actorLink,
       wornRangedWeapons: rangeweapons,

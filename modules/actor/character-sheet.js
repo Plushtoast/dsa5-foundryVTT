@@ -1,4 +1,5 @@
 import ActorSheetDsa5 from './actor-sheet.js';
+import { gearSearchPartTemplates } from './template-configs.js';
 import CultureWizard from '../wizards/culture_wizard.js';
 import CareerWizard from '../wizards/career_wizard.js';
 import SpeciesWizard from '../wizards/species_wizard.js';
@@ -26,7 +27,7 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
     inventory: {
       template: 'systems/dsa5/templates/actors/actor-equipment.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
+      templates: [...gearSearchPartTemplates],
     },
     companion: super.PARTS.companion,
     status: super.PARTS.status,

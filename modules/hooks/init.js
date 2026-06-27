@@ -104,7 +104,6 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/parts/personaltrait.hbs',
     'systems/dsa5/templates/actors/parts/attributes.hbs',
     'systems/dsa5/templates/actors/parts/swarm.hbs',
-    'systems/dsa5/templates/actors/parts/carryandpurse.hbs',
     'systems/dsa5/templates/actors/parts/specialabilities.hbs',
     'systems/dsa5/templates/actors/parts/experienceBox.hbs',
     'systems/dsa5/templates/actors/parts/temperature.hbs',

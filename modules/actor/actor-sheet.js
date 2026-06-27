@@ -35,6 +35,7 @@ import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-acti
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
+import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -253,6 +254,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       onUseEffect: { handler: this._onMacroUseEffect, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
       unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
+      configureActorEffect: this._configureActorEffect,
       ...CompanionHandler.getOwnerSheetActions(),
     },
     form: {
@@ -628,6 +630,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   static async _configActor(ev, target) {
     new DialogActorConfig(this.actor, {}).render(true);
+  }
+
+  static _configureActorEffect(_ev, target) {
+    if (!this.isEditable) return;
+    const config = ActorActiveEffectValueDialog.parseTriggerConfig(target);
+    if (!config.key) return;
+    ActorActiveEffectValueDialog.show(this.actor, config);
   }
 
   static async _changeAdvanceLock(ev, target) {

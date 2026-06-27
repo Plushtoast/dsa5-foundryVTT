@@ -1,13 +1,43 @@
 <div class="actor-carry-box flexrow wrap gap5px">
     {{#if prepare.advanceAbility}}
     <div class="flex0 flexrow">
+        {{#if owner}}
+        {{#if prepare.carryEffectConfig}}
+        <a class="row-section gap2px"
+            data-action="configureActorEffect"
+            data-tooltip="{{prepare.encumbranceTooltip}}"
+            {{> systems/dsa5/templates/actors/parts/actor-effect-config-attrs.hbs
+                config=prepare.carryEffectConfig
+                effectName=prepare.carryEffectName
+                valueMode="derived-total"
+                basePath="characteristics.kk.value"
+                baseFactor=2
+                icon="icons/svg/pawprint.svg"
+            }}>
+            <span><i class="fas fa-weight-hanging"></i></span>
+            <span>{{prepare.totalWeight}}</span>
+            <span>/</span>
+            <b>{{prepare.carrycapacity}}</b>
+            <span>({{prepare.encumbrance}})</span>
+        </a>
+        {{else}}
         <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
             <span><i class="fas fa-weight-hanging"></i></span>
             <span>{{prepare.totalWeight}}</span>
             <span>/</span>
             <b>{{prepare.carrycapacity}}</b>
             <span>({{prepare.encumbrance}})</span>
-        </div>        
+        </div>
+        {{/if}}
+        {{else}}
+        <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
+            <span><i class="fas fa-weight-hanging"></i></span>
+            <span>{{prepare.totalWeight}}</span>
+            <span>/</span>
+            <b>{{prepare.carrycapacity}}</b>
+            <span>({{prepare.encumbrance}})</span>
+        </div>
+        {{/if}}
     </div>
     {{/if}}
     <div>
