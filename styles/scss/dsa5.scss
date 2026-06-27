@@ -805,9 +805,7 @@ select[multiple] option {
   background: linear-gradient(90deg, rgba(188, 136, 111, 0.8) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
-.bookWizardsheet .window-content .table-title,
 .dsajournal .window-content .label-text,
-.bookWizardsheet .window-content table tr:first-child,
 .dsajournal .window-content table tr:first-child {
   font-weight: bold;
   font-family: var(--boldFont);
@@ -816,11 +814,8 @@ select[multiple] option {
   background: rgb(188, 136, 111, 0.3);
 }
 
-.bookWizardsheet .window-content table,
 .dsajournal .window-content table,
-.bookWizardsheet .window-content table tr,
 .dsajournal .window-content table tr,
-.bookWizardsheet .window-content table td,
 .dsajournal .window-content table td {
   border-color: var(--border-color);
 }
@@ -2071,7 +2066,6 @@ a.img-entity-link {
 .privateMessageIndicator .fas,
 .chatIndicator .fas,
 .combatant:not(.active) .aggroButton,
-.tocCollapsing.expanded .col.three *,
 .tokenQuickHot .subbuttons .secondary:not(.shown),
 .hero .details {
   display: none;
@@ -3572,42 +3566,9 @@ a {
 }
 
 .noBorder,
-.bookWizardsheet .window-content .table-title.noBorder,
 .dialog-buttons img,
 .result-image {
   border: none;
-}
-
-.bookWizardsheet {
-  .window-content {
-    padding: 0;
-  }
-
-  .sheet.journal-entry {
-    background: none;
-
-    .toc {
-      .headings {
-        display: block;
-        margin: 0 0 0 18px;
-
-        li {
-          border-radius: 4px;
-          border: 1px solid transparent;
-          display: flex;
-          align-items: center;
-
-          &:last-child {
-            margin-bottom: 0.1rem;
-          }
-
-          &:hover {
-            background: #c9593f;
-          }
-        }
-      }
-    }
-  }
 }
 
 .disabledSection {
@@ -3903,68 +3864,6 @@ select.noAppearance {
   font-size: 11px;
 }
 
-.adventureWizard {
-  flex: 1;
-
-  .fa-toggle-on,
-  .fa-check {
-    color: green;
-  }
-
-  .fa-toggle-off,
-  .fa-times {
-    color: var(--dsa-danger);
-  }
-
-  .tocList {
-    list-style-type: none;
-    padding-left: 4px;
-    --scroll-margin: 0;
-
-    ul {
-      list-style-type: none;
-      padding-left: 0px;
-    }
-
-    .headings {
-      margin: 0 0 0 14px;
-    }
-
-    .heading-link {
-      text-indent: 0;
-      font-family: var(--normalFont);
-    }
-  }
-}
-
-.tocCollapsing.expanded .col {
-  &.three {
-    flex: 20px;
-  }
-
-  &.seventy {
-    flex: calc(100% - 20px);
-  }
-}
-
-.tocCollapserBox {
-  position: relative;
-  height: 0;
-}
-
-.tocCollapser {
-  position: absolute;
-  top: 30px;
-  left: 10px;
-  z-index: 1;
-  font-size: 10px;
-}
-
-.getChapter.selected,
-.subChapter.selected {
-  font-weight: bold;
-}
-
 .inputTooltipAvailable:after {
   content: '*';
   position: absolute;
@@ -3974,50 +3873,6 @@ select.noAppearance {
   color: #82817d;
 }
 
-.subChapter {
-  i:before {
-    color: var(--dsa-danger);
-    margin-right: 5px;
-  }
-}
-
-.scrollable.removeMargin {
-  margin-right: 0;
-  padding-right: 0;
-}
-
-.tocList {
-
-  ul,
-  ol {
-    padding: 0;
-  }
-
-  ul li {
-    display: block;
-    padding: 4px;
-    margin: 0;
-
-    li {
-      a {
-        padding: 4px;
-        width: 100%;
-      }
-    }
-
-    button {
-      border-color: transparent;
-      width: 100%;
-      justify-content: left;
-    }
-  }
-}
-
-.adventureWizard .cover {
-  width: 98%;
-  position: relative;
-}
-
 .scrollable {
   overflow-y: auto;
   max-height: 100%;
@@ -4025,95 +3880,6 @@ select.noAppearance {
 
 .height100 {
   height: 100%;
-}
-
-.adventureWizard {
-  max-height: 100%;
-
-  >div {
-    max-height: 100%;
-  }
-
-  .chapter {
-    padding: 10px;
-    margin-right: 8px;
-
-    * {
-      user-select: text;
-    }
-  }
-
-  .tocList {
-    scrollbar-width: 6px;
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    button {
-      height: unset;
-    }
-  }
-
-  .action-buttons {
-    gap: 8px;
-  }
-
-  .picto {
-    height: 40px;
-    line-height: 40px;
-  }
-
-  .breadcrumbs {
-    display: flex;
-    background-color: #cab7b461;
-    border-radius: 5px;
-    border-bottom: 1px solid #b5b3a4;
-    border-top: 1px solid #b5b3a4;
-    margin-top: 5px;
-
-    >div {
-      flex: 1;
-      max-width: 150px;
-      min-width: 150px;
-      border-radius: 5px;
-      padding: 3px;
-      margin: 1px;
-      box-shadow: inset 0px 0px 3px black;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      transition: all 0.3s ease-in-out;
-      text-align: center;
-
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(14, 12, 12, 0.3);
-        color: white;
-      }
-    }
-  }
-}
-
-.picto {
-  &.ten {
-    max-width: 10%;
-  }
-
-  &.fourty {
-    max-width: 40%;
-  }
-}
-
-.journalHeader .jrnIcons {
-  color: rgb(92, 92, 92);
-  float: right;
-  font-size: large;
-
-  a {
-    display: inline-block;
-    margin-right: 10px;
-  }
 }
 
 .position-relative {
@@ -4920,28 +4686,6 @@ input[type='text'].emphasize {
     &:before {
       content: '\f205';
     }
-  }
-}
-
-.searchMatch {
-  background-color: var(--copiedBG);
-  color: var(--bg-contrast-color);
-}
-
-.searchLines {
-  position: absolute;
-  top: 0px;
-  right: 0;
-  width: 16px;
-  bottom: 0;
-  pointer-events: none;
-
-  .marker {
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background-color: var(--dsa-surface-elevated);
-    pointer-events: none;
   }
 }
 
@@ -5929,6 +5673,7 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('personae.scss');
 @include meta.load-css('citydetails.scss');
 @include meta.load-css('patchviewer.scss');
+@include meta.load-css('adventure-wizard.scss');
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');

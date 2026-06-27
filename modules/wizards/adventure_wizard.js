@@ -14,6 +14,15 @@ const { TextEditor } = foundry.applications.ux;
 
 export default class BookWizard extends DragMixin(DefaultAppv2) {
   static wizard;
+  static RECENT_BOOKS_MAX = 5;
+
+  #bookSearch;
+  #bookCoverCache = new Map();
+  #bookLibraryHoverCleanup;
+  #previewRequest = 0;
+  #hoverShowTimer;
+  #hoverHideTimer;
+  #activePreviewKey;
 
   constructor(app) {
     super(app);
@@ -22,6 +31,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.rshs = [];
     this.manuals = [];
     this.fulltextsearch = true;
+    this.libraryViewMode = game.settings.get('dsa5', 'journalBrowserViewMode') || 'list';
   }
 
   static _toggleVisibility(ev, target) {
@@ -36,7 +46,20 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   }
 
   static _loadBook(ev, target) {
-    this.loadBook(target.textContent, $(this.element), target.dataset.type);
+    const entry = target.closest('.book-entry');
+    const id = entry?.dataset.bookId || target.textContent?.trim();
+    const type = target.dataset.type || entry?.dataset.bookType;
+    this.loadBook(id, $(this.element), type);
+  }
+
+  static async _selectLibraryView(ev, target) {
+    const view = target.dataset.view;
+    if (!view || view === this.libraryViewMode) return;
+    this.libraryViewMode = view;
+    await game.settings.set('dsa5', 'journalBrowserViewMode', view);
+    const html = $(this.element);
+    this._saveScrollPositions(html);
+    await this.loadPage(html);
   }
 
   static _pinJournal(ev, target) {
@@ -57,7 +80,12 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   static _fulltextsearch(ev, target) {
     this.fulltextsearch = !this.fulltextsearch;
-    target.classList.toggle('on');
+    target.classList.toggle('on', this.fulltextsearch);
+    target.classList.toggle('active', this.fulltextsearch);
+    target.setAttribute('aria-pressed', this.fulltextsearch ? 'true' : 'false');
+    const icon = target.querySelector('i');
+    icon?.classList.toggle('fa-toggle-on', this.fulltextsearch);
+    icon?.classList.toggle('fa-toggle-off', !this.fulltextsearch);
     this.filterToc(this.element.querySelector('.filterJournals').value);
   }
 
@@ -106,8 +134,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     if (this.searchString) this.filterToc(this.searchString);
   }
 
-  static _increaseFontSize(ev, target) {
-    increaseFontSize($(this.element).find('.chapter'));
+  static async _increaseFontSize(ev, target) {
+    await increaseFontSize($(this.element).find('.chapter'), 'journalFontSizeIndex', target);
   }
 
   static DEFAULT_OPTIONS = {
@@ -130,6 +158,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       movePage: this._movePage,
       getChapter: this._getChapter,
       subChapter: this._subChapter,
+      selectLibraryView: this._selectLibraryView,
     },
     window: {
       title: 'Book.Wizard',
@@ -150,7 +179,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       },
     ],
     position: {
-      width: 960,
+      width: 980,
       height: 860,
     },
   };
@@ -231,7 +260,11 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
       await pack.configure(ownership);
     }
-    this.render();
+    if (book) book.visible = toggle;
+
+    const html = $(this.element);
+    this._saveScrollPositions(html);
+    await this.loadPage(html);
   }
 
   async _onRender(context, options) {
@@ -268,6 +301,207 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     bindImgToCanvasDragStart(html);
 
     slist(html, '.breadcrumbs', this.resaveBreadCrumbs);
+
+    this.#bindBookLibrarySearch();
+    this.#bindBookLibraryHover();
+  }
+
+  #bindBookLibrarySearch() {
+    this.#bookSearch?.unbind();
+    if (!this.element.querySelector('.book-library')) return;
+
+    this.#bookSearch ??= new foundry.applications.ux.SearchFilter({
+      inputSelector: '.library-sidebar input[type=search]',
+      contentSelector: '.book-library',
+      callback: this.#onBookSearchFilter.bind(this),
+    });
+    this.#bookSearch.bind(this.element);
+    this.#restoreBookSearch();
+  }
+
+  #restoreBookSearch() {
+    if (!this.searchString) return;
+    const input = this.element.querySelector('.library-sidebar input[type=search]');
+    const library = this.element.querySelector('.book-library');
+    if (!input || !library) return;
+    input.value = this.searchString;
+    const rgx = new RegExp(foundry.applications.ux.SearchFilter.cleanQuery(this.searchString), 'i');
+    this.#onBookSearchFilter(null, this.searchString, rgx, library);
+  }
+
+  async #getBookSplash(type, id) {
+    const cacheKey = `${type}:${id}`;
+    if (this.#bookCoverCache.has(cacheKey)) return this.#bookCoverCache.get(cacheKey);
+
+    const book = this[type]?.find((x) => x.id == id);
+    if (!book?.path) return null;
+
+    try {
+      const json = await (await fetch(book.path)).json();
+      const splash = json.splash ?? null;
+      this.#bookCoverCache.set(cacheKey, splash);
+      return splash;
+    } catch {
+      this.#bookCoverCache.set(cacheKey, null);
+      return null;
+    }
+  }
+
+  #showLibraryCover(splash, title = '') {
+    const preview = this.element.querySelector('.tocList .library-preview');
+    if (!preview) return;
+
+    const stack = preview.querySelector('.libraryCoverStack');
+    const moduleLayer = preview.querySelector('.libraryCover-module');
+    const frame = preview.querySelector('.libraryCover-frame');
+    const titleEl = preview.querySelector('.libraryCoverTitle');
+    if (!stack || !moduleLayer || !frame || !titleEl) return;
+
+    if (!splash) {
+      frame.classList.remove('is-visible');
+      stack.classList.remove('has-cover');
+      titleEl.classList.remove('is-visible');
+      titleEl.textContent = '';
+      moduleLayer.style.removeProperty('background-image');
+      return;
+    }
+
+    const requestId = ++this.#previewRequest;
+    const img = new Image();
+    img.onload = () => {
+      if (requestId !== this.#previewRequest) return;
+      moduleLayer.style.backgroundImage = `url("${splash}")`;
+      stack.classList.add('has-cover');
+      frame.classList.add('is-visible');
+      titleEl.textContent = title;
+      titleEl.classList.add('is-visible');
+    };
+    img.src = splash;
+  }
+
+  async #previewBookCover(type, id, title) {
+    const splash = await this.#getBookSplash(type, id);
+    if (`${type}:${id}` !== this.#activePreviewKey) return;
+    this.#showLibraryCover(splash, title);
+  }
+
+  #resetLibraryCover() {
+    this.#previewRequest++;
+    this.#activePreviewKey = null;
+    this.#updatePreviewedEntry();
+    this.#showLibraryCover(null);
+  }
+
+  #updatePreviewedEntry(entry = null) {
+    for (const el of this.element.querySelectorAll('.book-entry.is-previewed')) {
+      el.classList.remove('is-previewed');
+      el.querySelector('[data-action="loadBook"]')?.classList.remove('active');
+    }
+    const link = entry?.querySelector('[data-action="loadBook"]');
+    if (link) {
+      entry.classList.add('is-previewed');
+      link.classList.add('active');
+    }
+  }
+
+  #clearHoverTimers() {
+    clearTimeout(this.#hoverShowTimer);
+    clearTimeout(this.#hoverHideTimer);
+    this.#hoverShowTimer = undefined;
+    this.#hoverHideTimer = undefined;
+  }
+
+  #schedulePreview(type, id, entry) {
+    if (this.libraryViewMode === 'cards') return;
+    this.#clearHoverTimers();
+
+    const key = `${type}:${id}`;
+    if (this.#activePreviewKey === key) return;
+
+    const title = entry.querySelector('[data-action="loadBook"]')?.textContent?.trim() || id;
+    const show = () => {
+      this.#activePreviewKey = key;
+      this.#updatePreviewedEntry(entry);
+      this.#previewBookCover(type, id, title);
+    };
+
+    if (this.#activePreviewKey) show();
+    else this.#hoverShowTimer = setTimeout(show, 150);
+  }
+
+  #scheduleReset() {
+    this.#clearHoverTimers();
+    this.#hoverHideTimer = setTimeout(() => this.#resetLibraryCover(), 250);
+  }
+
+  #bindBookLibraryHover() {
+    this.#bookLibraryHoverCleanup?.();
+    this.#bookLibraryHoverCleanup = undefined;
+    this.#clearHoverTimers();
+
+    if (!this.element.querySelector('.book-library') && !this.element.querySelector('.library-recent')) return;
+
+    const previewZone = (node) => node?.closest?.('.book-library, .library-recent, .library-preview');
+
+    const onMouseOver = (ev) => {
+      const entry = ev.target.closest('.book-entry');
+      if (!entry || entry.hidden) {
+        if (!previewZone(ev.target)) this.#scheduleReset();
+        return;
+      }
+      const { bookId, bookType } = entry.dataset;
+      if (bookId && bookType) {
+        this.#schedulePreview(bookType, bookId, entry);
+      }
+    };
+
+    const onMouseOut = (ev) => {
+      if (previewZone(ev.relatedTarget)) return;
+      this.#scheduleReset();
+    };
+
+    this.element.addEventListener('mouseover', onMouseOver);
+    this.element.addEventListener('mouseout', onMouseOut);
+    this.#bookLibraryHoverCleanup = () => {
+      this.element.removeEventListener('mouseover', onMouseOver);
+      this.element.removeEventListener('mouseout', onMouseOut);
+      this.#clearHoverTimers();
+    };
+  }
+
+  #onBookSearchFilter(_event, query, rgx, html) {
+    this.searchString = query;
+    let visibleCount = 0;
+    for (const entry of html.querySelectorAll('.book-entry')) {
+      if (!query) {
+        entry.hidden = false;
+        visibleCount++;
+        continue;
+      }
+      const title =
+        entry.querySelector('[data-action="loadBook"]')?.textContent?.trim() ||
+        entry.querySelector('h3')?.textContent?.trim() ||
+        entry.dataset.bookId ||
+        '';
+      entry.hidden = !rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(title));
+      if (!entry.hidden) visibleCount++;
+    }
+
+    for (const section of html.querySelectorAll('.book-section')) {
+      const visibleEntries = section.querySelectorAll('.book-entry:not([hidden])');
+      section.hidden = !!query && visibleEntries.length === 0;
+    }
+
+    const emptyMsg = html.querySelector('.book-search-empty');
+    if (emptyMsg) emptyMsg.hidden = !query || visibleCount > 0;
+  }
+
+  _tearDown(options) {
+    this.#bookSearch?.unbind();
+    this.#bookLibraryHoverCleanup?.();
+    this.#bookLibraryHoverCleanup = undefined;
+    this.#clearHoverTimers();
+    return super._tearDown(options);
   }
 
   async getPagy(chapter, journalId) {
@@ -591,6 +825,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
           this.scenes = entries;
         }
         this.checkChapters(journal);
+        await this.recordRecentBook(type, id);
         this.loadPage(html);
       });
   }
@@ -702,12 +937,27 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       }
       return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_cover.hbs', { book: this.book, bookData: this.bookData });
     } else {
+      const manuals = this.filterBooks(this.manuals);
+      const adventures = this.filterBooks(this.adventures);
+      const rules = this.filterBooks(this.books);
+      const rshs = this.filterBooks(this.rshs);
+
+      if (this.libraryViewMode === 'cards') {
+        await Promise.all([
+          this.#enrichBooksWithSplash('manuals', manuals),
+          this.#enrichBooksWithSplash('adventures', adventures),
+          this.#enrichBooksWithSplash('books', rules),
+          this.#enrichBooksWithSplash('rshs', rshs),
+        ]);
+      }
+
       return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.hbs', {
-        rshs: this.filterBooks(this.rshs),
-        rules: this.filterBooks(this.books),
-        adventures: this.filterBooks(this.adventures),
-        manuals: this.filterBooks(this.manuals),
+        rshs,
+        rules,
+        adventures,
+        manuals,
         isGM: game.user.isGM,
+        libraryViewMode: this.libraryViewMode,
       });
     }
   }
@@ -717,13 +967,38 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     for (const book of books) {
       if (bookPermissions[book.id] != undefined) book.visible = bookPermissions[book.id];
     }
-    return game.user.isGM
-      ? books
-      : books
-          .filter((x) => x.visible == undefined || x.visible)
-          .sort((a, b) => {
-            return a.id.localeCompare(b.id);
-          });
+    const filtered = game.user.isGM ? books : books.filter((x) => x.visible == undefined || x.visible);
+    return filtered.sort((a, b) => a.id.localeCompare(b.id, undefined, { sensitivity: 'base' }));
+  }
+
+  static #recentBooksKey() {
+    return `recentBooks_${game.world.id}`;
+  }
+
+  readRecentBooks() {
+    try {
+      return JSON.parse(game.settings.get('dsa5', BookWizard.#recentBooksKey())) || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async recordRecentBook(type, id) {
+    let recent = this.readRecentBooks().filter((book) => !(book.type === type && book.id === id));
+    recent.unshift({ type, id });
+    recent = recent.slice(0, BookWizard.RECENT_BOOKS_MAX);
+    await game.settings.set('dsa5', BookWizard.#recentBooksKey(), JSON.stringify(recent));
+  }
+
+  getRecentBooks() {
+    return this.readRecentBooks()
+      .map(({ type, id }) => {
+        const book = this[type]?.find((x) => x.id == id);
+        if (!book) return null;
+        if (!this.filterBooks([book]).length) return null;
+        return { id, type };
+      })
+      .filter(Boolean);
   }
 
   getSubChapters() {
@@ -769,8 +1044,21 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         fulltextsearch: this.fulltextsearch ? 'on' : '',
       });
     } else {
-      return '<div class="libraryImg"></div>';
+      return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_library_sidebar.hbs', {
+        recentBooks: this.getRecentBooks(),
+        libraryViewMode: this.libraryViewMode,
+        searchString: this.searchString ?? '',
+      });
     }
+  }
+
+  async #enrichBooksWithSplash(type, books) {
+    await Promise.all(
+      books.map(async (book) => {
+        book.splash = await this.#getBookSplash(type, book.id);
+      }),
+    );
+    return books;
   }
 
   //TODO this is gone in v2
@@ -803,6 +1091,15 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     chapter.html(template);
     this.markFindings(chapter);
     this._restoreScrollPositions(html);
+    this.#bindBookLibrarySearch();
+    this.#bindBookLibraryHover();
+    this.#updatePageNav(html);
+    if (this.libraryViewMode === 'cards') this.#resetLibraryCover();
+  }
+
+  #updatePageNav(html = $(this.element)) {
+    const footer = html.find('.tocPageNav')[0];
+    if (footer) footer.hidden = !this.book;
   }
 
   async _prepareContext(_options) {
@@ -817,6 +1114,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       breadcrumbs: this.renderBreadcrumbs(),
       toc,
       fontSize,
+      showPageNav: !!this.book,
     });
     return data;
   }

@@ -25,52 +25,57 @@ export async function setFontSizeIndex(settingKey, index) {
   await game.settings.set('dsa5', settingKey, Number(index) || 0);
 }
 
-export async function increaseFontSize(element, settingKey = 'journalFontSizeIndex') {
-  new FontPicker(element, settingKey).render(true);
+function buildFontSizeMenuItems(element, settingKey) {
+  const $el = element instanceof jQuery ? element : $(element);
+  const currentIndex = game.settings.get('dsa5', settingKey);
+
+  const items = [
+    {
+      name: 'font-default',
+      label: getFontSizeLabel(0),
+      icon: `<i class="fas ${currentIndex === 0 ? 'fa-check' : 'fa-font'}"></i>`,
+      onClick: async () => {
+        await setFontSizeIndex(settingKey, 0);
+        $el.css('fontSize', '');
+        tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: getFontSizeLabel(0) }));
+      },
+    },
+  ];
+
+  for (let i = 0; i < FONT_SIZE_OPTIONS.length; i++) {
+    const size = FONT_SIZE_OPTIONS[i];
+    const index = i + 1;
+    items.push({
+      name: `font-${size}`,
+      label: `${size}px`,
+      icon: `<i class="fas ${currentIndex === index ? 'fa-check' : 'fa-font'}"></i>`,
+      onClick: async () => {
+        await setFontSizeIndex(settingKey, index);
+        const applied = applyFontSize($el, index);
+        tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: applied }));
+      },
+    });
+  }
+
+  return items;
 }
 
-export class FontPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-  static DEFAULT_OPTIONS = {
-    window: {
-      title: 'SHEET.increaseFontSize',
-      icon: 'fas fa-arrows-up-down',
-    },
-    actions: {
-      changeSize: this._changeSize,
-    }
-  }
+export async function showFontSizeContextMenu(element, settingKey = 'journalFontSizeIndex', anchor) {
+  const $el = element instanceof jQuery ? element : $(element);
+  const menuAnchor = anchor ?? $el[0];
+  if (!menuAnchor) return;
 
-  constructor(element, settingKey = 'journalFontSizeIndex') {
-    super();
-    this.connected_element = element;
-    this.settingKey = settingKey;
-  }
+  const host = menuAnchor.closest?.('.window-app, .application') ?? menuAnchor;
+  const menu = new foundry.applications.ux.ContextMenu(host, '', buildFontSizeMenuItems($el, settingKey), {
+    jQuery: false,
+    fixed: true,
+    eventName: 'none',
+  });
+  ui.context?.close();
+  await menu.render(menuAnchor, { animate: true });
+  ui.context = menu;
+}
 
-  static PARTS = {
-    size: {
-      template: 'systems/dsa5/templates/dialog/fontSize.hbs',
-    }
-  }
-
-  static async _changeSize(ev, target) {
-    const newSize = target.dataset.size;
-
-    if (newSize == "-1") {
-      await setFontSizeIndex(this.settingKey, 0);
-      this.connected_element.css('fontSize', '');
-      tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size: 'Default ' }));
-    } else {
-      const newIndex = FONT_SIZE_OPTIONS.findIndex((x) => x == newSize) + 1;
-      await setFontSizeIndex(this.settingKey, newIndex);
-      const size = applyFontSize(this.connected_element, newIndex);
-      tinyNotification(_loc('CHATNOTIFICATION.fontsize', { size }));
-    }
-  }
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.fonts = FONT_SIZE_OPTIONS;
-    data.currentSize = game.settings.get('dsa5', this.settingKey);
-    return data;
-  }
+export async function increaseFontSize(element, settingKey = 'journalFontSizeIndex', anchor) {
+  await showFontSizeContextMenu(element, settingKey, anchor);
 }

@@ -610,6 +610,18 @@ export function setupConfiguration() {
       default: '',
       type: String,
     },
+    [`recentBooks_${game.world.id}`]: {
+      scope: 'client',
+      config: false,
+      default: '[]',
+      type: String,
+    },
+    journalBrowserViewMode: {
+      scope: 'client',
+      config: false,
+      default: 'list',
+      type: String,
+    },
     groupschips: {
       name: 'DSASETTINGS.groupschips',
       hint: 'DSASETTINGS.groupschips',
@@ -945,7 +957,7 @@ const exportSetting = (form) => {
   if (exportOnlyDSA) toExport = toExport.filter((x) => /^dsa5\./.test(x[0]));
 
   const exportData = {};
-  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.breadcrumbs_)/;
+  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
 
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;

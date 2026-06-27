@@ -1,17 +1,23 @@
 <section class='content adventureWizard'>
-  <div class='row-section columnFlex' style='max-height:100%;height:calc(100% - 10px);'>
-    {{{breadcrumbs}}}
-    <div class='tocCollapserBox'>
-      <a data-action='tocCollapser' class='tocCollapser'><i class='fas fa-chevron-left'></i></a>
-    </div>
-    <div class='row-section tocCollapsing position-relative' style='min-height: 100%;'>
-      <div class='col three flexcol' style="max-width:30%">
+  <div class='adventureWizard-body row-section columnFlex'>
+    <div class="book-pins dsapx-2">{{{breadcrumbs}}}</div>
+    <div class='row-section tocCollapsing position-relative'>
+      <div class='col three flexcol tocSidebar' style="max-width:30%">
+        <button type="button" class="tocCollapser icon noBorder dsadesignbutton" data-action="tocCollapser" data-tooltip="{{localize 'Book.toggleToc'}}" aria-label="{{localize 'Book.toggleToc'}}">
+          <i class="fas fa-chevron-left"></i>
+        </button>
         <div class='col tocList scrollable flex1'>
           {{{toc}}}
         </div>
-        <footer class='action-buttons flexrow flexAlignCenter'>
+        <footer class='tocPageNav action-buttons flexrow flexAlignCenter' {{#unless showPageNav}}hidden{{/unless}}>
           <button class='button_30px' data-action='movePage' type='button' data-direction='previous' data-tooltip='Previous Page'>
             <i class='fa-solid fa-chevron-left'></i>
+          </button>
+          <button class='button_30px' data-action='library' type='button' data-tooltip="{{localize 'Book.home'}}">
+            <i class='fas fa-book'></i>
+          </button>
+          <button class='button_30px' data-action='increaseFontSize' type='button' data-tooltip="{{localize 'SHEET.increaseFontSize'}}" aria-label="{{localize 'SHEET.increaseFontSize'}}">
+            <i class='fas fa-text-height'></i>
           </button>
           <button class='button_30px' data-action='movePage' type='button' data-direction='next' data-tooltip='Next Page'>
             <i class='fa-solid fa-chevron-right'></i>

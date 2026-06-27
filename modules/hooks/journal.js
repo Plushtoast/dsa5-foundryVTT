@@ -35,8 +35,8 @@ export default function () {
     buttons.unshift({
       label: 'SHEET.increaseFontSize',
       icon: 'fas fa-arrows-up-down',
-      onClick: async () => {
-        increaseFontSize($(sheet.element).find('.journal-entry-pages'))
+      onClick: async (event) => {
+        increaseFontSize($(sheet.element).find('.journal-entry-pages'), 'journalFontSizeIndex', event.currentTarget);
       },
     });
 

@@ -1,4 +1,4 @@
-<div class="sheet journal-entry flexcol" style="min-width:unset;min-height:100%">
+<div class="sheet journal-entry flexcol book-toc" style="min-width:unset">
     <div style="flex:none">
         {{#if book.id}}
         <h2 class="center" style="margin-top:0px;">
@@ -12,7 +12,9 @@
                 <input type="search" class="filterJournals" placeholder="{{localize 'Book.search'}}" value="{{searchString}}"/>
             </div>
             <div class="col ten libButton center">
-                <a data-action="fulltextsearch" class="{{fulltextsearch}}" data-tooltip="Book.fulltextsearch"><i class="fas fa-toggle-off"></i></a>
+                <button type="button" data-action="fulltextsearch" class="icon noBorder dsadesignbutton {{#if (eq fulltextsearch 'on')}}on active{{/if}}" data-tooltip="{{localize 'Book.fulltextsearch'}}" aria-pressed="{{#if (eq fulltextsearch 'on')}}true{{else}}false{{/if}}" aria-label="{{localize 'Book.fulltextsearch'}}">
+                    <i class="fas {{#if (eq fulltextsearch 'on')}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+                </button>
             </div>
         </div>
         {{/if}}

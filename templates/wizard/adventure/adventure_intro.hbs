@@ -1,72 +1,145 @@
-<div>
+<div class="book-library view-{{libraryViewMode}}">
     <h1>{{localize 'Book.Wizard'}}</h1>
     <p>{{localize 'Book.Description'}}</p>
-    <ul class="dsalist">
-        {{#each manuals as |item i|}}
-        <li>
-            <div class="row-section">
-                <div class="col ninety">
-                    <a data-type="manuals" data-action="loadBook">{{item.id}}</a>
-                </div>
-                <div class="col ten">
-                    {{#if ../isGM}}<a data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="manuals" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
-                </div>
-            </div>
-        </li>
-        {{/each}}
-    </ul>
-    {{#if adventures}}
-    <h2>{{localize 'Book.availableModules'}}</h2>
-    
-    <ul class="dsalist">
-        {{#each adventures as |item i|}}
-        <li>
-            <div class="row-section">
-                <div class="col ninety">
-                    <a data-type="adventures" data-action="loadBook">{{item.id}}</a>
-                </div>
-                <div class="col ten">
-                    {{#if ../isGM}}<a data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="adventures" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
-                </div>
-            </div>
-        </li>
-        {{/each}}
-    </ul>
-    {{/if}}
-    <h2>{{localize 'Book.availableRules'}}</h2>
-    <ul class="dsalist">
-        {{#if rules}} {{#each rules as |item i|}}
-        <li>
-            <div class="row-section">
-                <div class="col ninety">
-                    <a data-type="books" data-action="loadBook">{{item.id}}</a>
-                </div>
-                <div class="col ten">
-                    {{#if ../isGM}}<a data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="books" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
-                </div>
-            </div>
-        </li>
-        {{/each}} {{else}}
-        <li>{{localize 'Book.nothing'}}</li>
-        {{/if}}
-    </ul>
-    <h2>{{localize 'Book.availableRSHs'}}</h2>
-    <ul class="dsalist">
-        {{#if rshs}} {{#each rshs as |item i|}}
-        <li>
-            <div class="row-section">
-                <div class="col ninety">
-                    <a data-type="rshs" data-action="loadBook">{{item.id}}</a>
-                </div>
-                <div class="col ten">
-                    {{#if ../isGM}}<a data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="rshs" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></a>{{/if}}
-                </div>
+    <p class="book-search-empty" hidden>{{localize 'Book.searchEmpty'}}</p>
 
-            </div>
-        </li>
-
-        {{/each}} {{else}}
-        <li>{{localize 'Book.nothing'}}</li>
+    <div class="book-library-list">
+        <section class="book-section">
+            <ul class="book-list">
+                {{#each manuals as |item i|}}
+                <li class="book-entry" data-book-id="{{item.id}}" data-book-type="manuals">
+                    <div class="row-section book-entry-row">
+                        <div class="col ninety">
+                            <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook" data-type="manuals">{{item.id}}</button>
+                        </div>
+                        <div class="col ten">
+                            {{#if ../isGM}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="manuals" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                        </div>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </section>
+        {{#if adventures}}
+        <section class="book-section">
+            <h2>{{localize 'Book.availableModules'}}</h2>
+            <ul class="book-list">
+                {{#each adventures as |item i|}}
+                <li class="book-entry" data-book-id="{{item.id}}" data-book-type="adventures">
+                    <div class="row-section book-entry-row">
+                        <div class="col ninety">
+                            <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook" data-type="adventures">{{item.id}}</button>
+                        </div>
+                        <div class="col ten">
+                            {{#if ../isGM}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="adventures" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                        </div>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        </section>
         {{/if}}
-    </ul>
+        <section class="book-section">
+            <h2>{{localize 'Book.availableRules'}}</h2>
+            <ul class="book-list">
+                {{#if rules}} {{#each rules as |item i|}}
+                <li class="book-entry" data-book-id="{{item.id}}" data-book-type="books">
+                    <div class="row-section book-entry-row">
+                        <div class="col ninety">
+                            <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook" data-type="books">{{item.id}}</button>
+                        </div>
+                        <div class="col ten">
+                            {{#if ../isGM}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="books" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                        </div>
+                    </div>
+                </li>
+                {{/each}} {{else}}
+                <li>{{localize 'Book.nothing'}}</li>
+                {{/if}}
+            </ul>
+        </section>
+        <section class="book-section">
+            <h2>{{localize 'Book.availableRSHs'}}</h2>
+            <ul class="book-list">
+                {{#if rshs}} {{#each rshs as |item i|}}
+                <li class="book-entry" data-book-id="{{item.id}}" data-book-type="rshs">
+                    <div class="row-section book-entry-row">
+                        <div class="col ninety">
+                            <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook" data-type="rshs">{{item.id}}</button>
+                        </div>
+                        <div class="col ten">
+                            {{#if ../isGM}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="rshs" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                        </div>
+                    </div>
+                </li>
+                {{/each}} {{else}}
+                <li>{{localize 'Book.nothing'}}</li>
+                {{/if}}
+            </ul>
+        </section>
+    </div>
+
+    <div class="book-library-cards patchviewer">
+        <section class="book-section">
+            <div class="module-grid">
+                {{#each manuals as |item i|}}
+                <article class="module-card book-entry book-card" data-book-id="{{item.id}}" data-book-type="manuals">
+                    {{#if ../isGM}}<button type="button" class="book-card__toggle icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="manuals" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                    <button type="button" class="module-card__cover noBorder dsadesignbutton" data-action="loadBook" data-type="manuals" data-tooltip="{{item.id}}">
+                        {{#if item.splash}}<img src="{{item.splash}}" alt="{{item.id}}" loading="lazy">{{/if}}
+                    </button>
+                </article>
+                {{/each}}
+            </div>
+        </section>
+        {{#if adventures}}
+        <section class="book-section">
+            <h2>{{localize 'Book.availableModules'}}</h2>
+            <div class="module-grid">
+                {{#each adventures as |item i|}}
+                <article class="module-card book-entry book-card" data-book-id="{{item.id}}" data-book-type="adventures">
+                    {{#if ../isGM}}<button type="button" class="book-card__toggle icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="adventures" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                    <button type="button" class="module-card__cover noBorder dsadesignbutton" data-action="loadBook" data-type="adventures" data-tooltip="{{item.id}}">
+                        {{#if item.splash}}<img src="{{item.splash}}" alt="{{item.id}}" loading="lazy">{{/if}}
+                    </button>
+                </article>
+                {{/each}}
+            </div>
+        </section>
+        {{/if}}
+        <section class="book-section">
+            <h2>{{localize 'Book.availableRules'}}</h2>
+            {{#if rules}}
+            <div class="module-grid">
+                {{#each rules as |item i|}}
+                <article class="module-card book-entry book-card" data-book-id="{{item.id}}" data-book-type="books">
+                    {{#if ../isGM}}<button type="button" class="book-card__toggle icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="books" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                    <button type="button" class="module-card__cover noBorder dsadesignbutton" data-action="loadBook" data-type="books" data-tooltip="{{item.id}}">
+                        {{#if item.splash}}<img src="{{item.splash}}" alt="{{item.id}}" loading="lazy">{{/if}}
+                    </button>
+                </article>
+                {{/each}}
+            </div>
+            {{else}}
+            <p>{{localize 'Book.nothing'}}</p>
+            {{/if}}
+        </section>
+        <section class="book-section">
+            <h2>{{localize 'Book.availableRSHs'}}</h2>
+            {{#if rshs}}
+            <div class="module-grid">
+                {{#each rshs as |item i|}}
+                <article class="module-card book-entry book-card" data-book-id="{{item.id}}" data-book-type="rshs">
+                    {{#if ../isGM}}<button type="button" class="book-card__toggle icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="rshs" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+                    <button type="button" class="module-card__cover noBorder dsadesignbutton" data-action="loadBook" data-type="rshs" data-tooltip="{{item.id}}">
+                        {{#if item.splash}}<img src="{{item.splash}}" alt="{{item.id}}" loading="lazy">{{/if}}
+                    </button>
+                </article>
+                {{/each}}
+            </div>
+            {{else}}
+            <p>{{localize 'Book.nothing'}}</p>
+            {{/if}}
+        </section>
+    </div>
 </div>
