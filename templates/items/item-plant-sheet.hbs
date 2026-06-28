@@ -9,10 +9,6 @@
 
   </div>
 
-  {{#if isGM}}
-    {{{enrichedInformation}}}
-  {{/if}}
-
   {{formGroup systemFields.location.fields.landscape value=document.system.location.landscape localize=true}}
   {{formGroup systemFields.location.fields.region value=document.system.location.region localize=true}}
   {{formGroup systemFields.difficulty.fields.search value=document.system.difficulty.search localize=true}}

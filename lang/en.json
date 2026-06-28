@@ -4067,30 +4067,31 @@
       "magicalAnalysis": "Magical Analysis"
     }
   },
+  "INFORMABLE": {
+    "refs": {
+      "uuid": "Linked information item"
+    },
+    "unlink": "Remove link"
+  },
   "MAGICANALYSIS": {
     "title": "Magical Analysis",
     "subtitle": "Magical Analysis",
     "start": "Start Magical Analysis",
-    "requestIntro": "A magical item is to be analyzed. Select your hero and begin the analysis.",
     "progressIntro": "Apply divination spells or liturgies to raise the maximum QS, then roll Magical Lore.",
     "notPossible": "Without Analyst or divination spells/liturgies, no Magical Analysis is possible.",
-    "failed": "The divination aids did not yield a usable quality level.",
-    "helperDone": "{name}: QS {qs}",
     "maxQs": "Maximum QS for the Magical Lore check: {max}",
-    "rollMagiekunde": "Roll Magical Lore",
-    "noActor": "A player character or selected token is required.",
-    "mode": "Analysis content",
-    "modeDefault": "Automatic (from enchantment)",
-    "modeCustom": "Custom text",
-    "modeLinked": "Linked info item",
-    "linkedItem": "Info item UUID",
-    "skillHint": "Default: Magical Lore",
+    "dropHint": "Drop an information item onto the item sheet to link it.",
+    "unlink": "Remove link",
+    "noLinkedInfo": "No valid magical analysis information item found.",
+    "dialogTitle": "Start magical analysis",
+    "effectMaxQs": "Magical Analysis (max QS)",
+    "effectStackQs": "Magical Analysis (+QS stacks)",
     "defaultFail": "The hero has no idea about the subject matter.",
     "defaultQs1": {
-      "moreThan10": "The enchantment has an FW of more than 10 (approx. {fw} FW).",
-      "lessThan10": "The enchantment has an FW of less than 10 (approx. {fw} FW)."
+      "moreThan10": "The enchantment costs more than 10 SP (approx. {fw} SP).",
+      "lessThan10": "The enchantment costs less than 10 SP (approx. {fw} SP)."
     },
-    "defaultQs2": "The enchantment has an FW between {min} and {max} (approx. {fw} FW).",
+    "defaultQs2": "The enchantment costs between {min} and {max} SP (approx. {fw} SP).",
     "defaultQs3": {
       "talisman": "Artifact type: talisman (permanent liturgy).",
       "permanent": "Artifact type: permanently active artifact.",
@@ -4100,8 +4101,6 @@
     "defaultQs4": {
       "unknown": "Creator tradition: unknown.",
       "tradition": "Creator tradition: {tradition}."
-    },
-    "effectMaxQs": "Magical Analysis (max QS)",
-    "effectStackQs": "Magical Analysis (+QS stacks)"
+    }
   }
 }

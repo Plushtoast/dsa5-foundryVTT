@@ -1,0 +1,99 @@
+<div>
+  <h3>{{document.name}}</h3>
+  <div class='row-section'>
+    <div class='col row-section'>
+      <div class='row-section wrap col third'>
+        <div class='col center'>
+          <img src='{{document.img}}' style='width:100%;border:none;' />
+        </div>
+        {{#if document.pack}}
+          <div class='col compendium'>
+            <small>{{document.pack}}</small>
+          </div>
+        {{/if}}
+      </div>
+      <div class='col browseSpacer ten'></div>
+      <div class='row-section col sixty browseElement'>
+        <div class='col groupbox'>
+          <div class='row-section wrap'>
+            <div class='col table-title noBorder flexrow'>
+              <div>{{localize 'INFORMATION.type'}}</div>
+              <div class='flex0'>
+                {{#if document.uuid}}
+                  <button type='button' class='dsadesignbutton noBorder icon fas fa-info show-item' data-type='Item' data-uuid='{{document.uuid}}'></button>
+                {{/if}}
+              </div>
+            </div>
+            <div class='col'>
+              {{#if (eq document.system.subType 'magicalAnalysis')}}
+                {{localize 'INFORMATION.subType.magicalAnalysis'}}
+              {{else}}
+                {{localize 'INFORMATION.subType.default'}}
+              {{/if}}
+            </div>
+            {{#unless (eq document.system.subType 'magicalAnalysis')}}
+              <div class='col table-title noBorder'>{{localize 'TYPES.Item.skill'}}</div>
+              <div class='col'>{{localize document.system.skill}}</div>
+              <div class='col table-title noBorder'>{{localize 'Modifier'}}</div>
+              <div class='col'>{{document.system.modifier}}</div>
+            {{/unless}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{#if document.system.qs1}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 1</label>
+      <div class='form-fields'>{{{enrichedqs1}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.qs2}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 2</label>
+      <div class='form-fields'>{{{enrichedqs2}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.qs3}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 3</label>
+      <div class='form-fields'>{{{enrichedqs3}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.qs4}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 4</label>
+      <div class='form-fields'>{{{enrichedqs4}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.qs5}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 5</label>
+      <div class='form-fields'>{{{enrichedqs5}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.qs6}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CHARAbbrev.QS'}} 6</label>
+      <div class='form-fields'>{{{enrichedqs6}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.fail}}
+    <div class='form-group full-height'>
+      <label>{{localize 'Failure'}}</label>
+      <div class='form-fields'>{{{enrichedfail}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.botch}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CriticalFailure'}}</label>
+      <div class='form-fields'>{{{enrichedbotch}}}</div>
+    </div>
+  {{/if}}
+  {{#if document.system.crit}}
+    <div class='form-group full-height'>
+      <label>{{localize 'CriticalSuccess'}}</label>
+      <div class='form-fields'>{{{enrichedcrit}}}</div>
+    </div>
+  {{/if}}
+</div>

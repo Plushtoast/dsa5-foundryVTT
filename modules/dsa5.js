@@ -87,6 +87,7 @@ import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
+import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -129,6 +130,7 @@ Hooks.once('init', () => {
       SummoningAPI,
       ShapeshiftingAPI,
       MagicAnalysisService,
+      MagicAnalysisQueryService,
       //DAGTalentTree,
     },
     queries: {
@@ -137,6 +139,7 @@ Hooks.once('init', () => {
       TransactionSummaryService,
       InformationQueryService,
       RollRequestService,
+      MagicAnalysisQueryService,
     },
     animation: {      
       TokenScatter,
@@ -261,6 +264,7 @@ Hooks.once('init', () => {
   TransactionSummaryService.register();
   InformationQueryService.register();
   RollRequestService.register();
+  MagicAnalysisQueryService.register();
   DSA5ProseMirrorIntegration.register();
   DialogShared.registerTargetTokenHook();
 

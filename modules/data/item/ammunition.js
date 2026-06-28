@@ -3,10 +3,11 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
+export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate, InformableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       ammunitiongroup: new SchemaField({
@@ -24,6 +25,7 @@ export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTempl
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.domains = this.prepareDomains();
   }
 

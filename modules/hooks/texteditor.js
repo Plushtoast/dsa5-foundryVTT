@@ -1,4 +1,5 @@
 import DSA5 from '../config/config-dsa5.js';
+import InformationData from '../data/item/information.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -149,16 +150,8 @@ export function setEnrichers() {
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
-        if (!game.user.isGM) {
-          const templ = await renderTemplate('systems/dsa5/templates/items/infopreview-player.hbs', {
-            uuid,
-            document
-          });
-          return $(templ)[0];
-        }
 
-        const enriched = await document.system.enrichedProperties({ document });
-        const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { document, enriched });
+        const templ = await InformationData.renderInfoPreview(document, { isGM: game.user.isGM });
         return $(templ)[0];
       },
     },

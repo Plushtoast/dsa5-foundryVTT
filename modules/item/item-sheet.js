@@ -8,6 +8,7 @@ import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ItemSheetObfuscation } from './mixins/obfuscatemixin.js';
+import { InformableSheet } from './mixins/informablesheet.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import GroupCheck from '../system/rolls/group-check.js';
@@ -15,6 +16,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
 import MeleeweaponData from '../data/item/meleeweapon.js';
 import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
+import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -831,7 +833,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   }
 }
 
-class Enchantable extends ItemSheetdsa5 {
+class Enchantable extends InformableSheet(ItemSheetdsa5) {
   static TABS = {
     sheet: {
       tabs: [
@@ -856,8 +858,6 @@ class Enchantable extends ItemSheetdsa5 {
       poisonTogglePermanent: this._poisonTogglePermanent,
       poisonDelete: this._deletePoison,
       poisonShow: this._poisonShow,
-      magicAnalysisStart: this._magicAnalysisStart,
-      magicAnalysisMode: this._magicAnalysisMode,
     },
   };
 
@@ -907,33 +907,6 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
-  static async _magicAnalysisStart() {
-    await MagicAnalysisService.postAnalysisRequest(this.item);
-  }
-
-  static async _magicAnalysisMode(ev, target) {
-    const mode = target.value;
-    const magicAnalysis = foundry.utils.duplicate(this.item.getFlag('dsa5', 'magicAnalysis') || {});
-    magicAnalysis.mode = mode;
-    if (!magicAnalysis.custom) magicAnalysis.custom = {};
-    await this.item.update({ flags: { dsa5: { magicAnalysis } } });
-  }
-
-  async _saveMagicAnalysisCustom(field, value) {
-    const magicAnalysis = foundry.utils.duplicate(this.item.getFlag('dsa5', 'magicAnalysis') || { mode: 'custom' });
-    magicAnalysis.mode = 'custom';
-    if (!magicAnalysis.custom) magicAnalysis.custom = {};
-    magicAnalysis.custom[field] = value;
-    await this.item.update({ flags: { dsa5: { magicAnalysis } } });
-  }
-
-  async _saveMagicAnalysisLinked(value) {
-    const magicAnalysis = foundry.utils.duplicate(this.item.getFlag('dsa5', 'magicAnalysis') || { mode: 'linked' });
-    magicAnalysis.mode = 'linked';
-    magicAnalysis.linkedUuid = value;
-    await this.item.update({ flags: { dsa5: { magicAnalysis } } });
-  }
-
   static _poisonTogglePermanent(ev, target) {
     this.item.update({
       flags: {
@@ -971,16 +944,6 @@ class Enchantable extends ItemSheetdsa5 {
       }
       this.item.update({ flags: { dsa5: { enchantments } } });
     });
-
-    html.find('.magic-analysis-mode').on('change', (ev) => {
-      this.constructor._magicAnalysisMode(ev, ev.currentTarget);
-    });
-    html.find('.magic-analysis-custom').on('change', (ev) => {
-      this._saveMagicAnalysisCustom(ev.currentTarget.dataset.field, ev.currentTarget.value);
-    });
-    html.find('.magic-analysis-linked').on('change', (ev) => {
-      this._saveMagicAnalysisLinked(ev.currentTarget.value);
-    });
   }
 
   static PARTS = {
@@ -1012,6 +975,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   async _handleDrop(dragData) {
+    if (await this._linkInformationRef(dragData)) return;
     if (this.isEnchantable) {
       await this._enchant([dragData]);
       await this._enchantExtension(dragData);
@@ -1253,31 +1217,7 @@ class Enchantable extends ItemSheetdsa5 {
     data.enchantments = this.item.getFlag('dsa5', 'enchantments');
     data.poison = this.item.getFlag('dsa5', 'poison');
     data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0);
-    data.isGM = game.user.isGM;
     data.isEnchantableItem = this.isEnchantable;
-
-    const hasSpellEnchantments = data.enchantments?.length > 0;
-    const obfuscated = typeof this.isObfuscated === 'function' && this.isObfuscated('enchantment');
-    data.showMagicAnalysis = hasSpellEnchantments && this.isEnchantable && (game.user.isGM || !obfuscated);
-
-    data.magicAnalysis = this.item.getFlag('dsa5', 'magicAnalysis') || { mode: 'default', custom: {}, linkedUuid: '' };
-
-    if (game.user.isGM && data.showMagicAnalysis) {
-      const qsFields = ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'fail', 'botch', 'crit'];
-      data.magicAnalysisQsFields = qsFields.map((key) => ({
-        key,
-        label: ['fail', 'botch', 'crit'].includes(key) ? _loc(key) : `${_loc('CHARAbbrev.QS')} ${key.replace('qs', '')}`,
-        value: data.magicAnalysis.custom?.[key] || '',
-      }));
-
-      if (data.magicAnalysis.mode === 'default') {
-        const generated = await MagicAnalysisService.generateDefaults(this.item);
-        data.magicAnalysisPreview = qsFields.filter((k) => k.startsWith('qs')).map((key) => ({
-          label: `${_loc('CHARAbbrev.QS')} ${key.replace('qs', '')}`,
-          html: generated[key] || '',
-        }));
-      }
-    }
 
     return data;
   }
@@ -1334,9 +1274,15 @@ class InformationSheet extends ItemSheetdsa5 {
     },
   };
 
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
     data.isMagicalAnalysis = this.item.system.subType === 'magicalAnalysis';
+    if (data.isMagicalAnalysis) {
+      const parentItem = options.magicAnalysisParentUuid
+        ? await fromUuid(options.magicAnalysisParentUuid)
+        : null;
+      foundry.utils.mergeObject(data, await MagicAnalysisContentResolver.placeholders(parentItem));
+    }
     if (data.isMagicalAnalysis && !data.document.system.skill) {
       data.document.system.skill = MagicAnalysisService.MAGIEKUNDE_SKILL;
     }
@@ -1518,7 +1464,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   };
 }
 
-class PlantSheet extends ItemSheetObfuscation(EffectsEquipmentSheet) {
+class PlantSheet extends InformableSheet(ItemSheetObfuscation(EffectsEquipmentSheet)) {
   static PARTS = {
     header: super.PARTS.header,
     stat: {

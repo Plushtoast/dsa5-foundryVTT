@@ -4069,30 +4069,31 @@
             "magicalAnalysis": "Magische Analyse"
         }
     },
+    "INFORMABLE": {
+        "refs": {
+            "uuid": "Verknüpftes Info-Item"
+        },
+        "unlink": "Verknüpfung entfernen"
+    },
     "MAGICANALYSIS": {
         "title": "Magische Analyse",
         "subtitle": "Magische Analyse",
         "start": "Magische Analyse beginnen",
-        "requestIntro": "Ein magischer Gegenstand soll analysiert werden. Wähle deinen Helden und beginne die Analyse.",
         "progressIntro": "Wende Hellsichtzauber oder -liturgien an, um die maximale QS zu erhöhen, und würfle dann auf Magiekunde.",
         "notPossible": "Ohne Analytiker oder Hellsichtzauber/-liturgien ist keine Magische Analyse möglich.",
-        "failed": "Die Hellsicht-Hilfen haben keine verwertbare Qualitätsstufe erbracht.",
-        "helperDone": "{name}: QS {qs}",
         "maxQs": "Maximale QS für die Magiekunde-Probe: {max}",
-        "rollMagiekunde": "Magiekunde würfeln",
-        "noActor": "Es muss ein Spielercharakter oder ein ausgewählter Token vorhanden sein.",
-        "mode": "Analyse-Inhalt",
-        "modeDefault": "Automatisch (aus Verzauberung)",
-        "modeCustom": "Eigene Texte",
-        "modeLinked": "Verknüpftes Info-Item",
-        "linkedItem": "Info-Item UUID",
-        "skillHint": "Standard: Magiekunde",
+        "dropHint": "Ziehe ein Info-Item auf das Item-Sheet, um es zu verknüpfen.",
+        "unlink": "Verknüpfung entfernen",
+        "noLinkedInfo": "Kein gültiges Magische-Analyse-Info-Item gefunden.",
+        "dialogTitle": "Magische Analyse starten",
+        "effectMaxQs": "Magische Analyse (max. QS)",
+        "effectStackQs": "Magische Analyse (+QS stapelbar)",
         "defaultFail": "Der Held hat keine Ahnung von der Materie.",
         "defaultQs1": {
-            "moreThan10": "Die Verzauberung weist einen FW von mehr als 10 auf (ca. {fw} FW).",
-            "lessThan10": "Die Verzauberung weist einen FW von weniger als 10 auf (ca. {fw} FW)."
+            "moreThan10": "Die Verzauberung kostet mehr als 10 FP (ca. {fw} FP).",
+            "lessThan10": "Die Verzauberung kostet weniger als 10 FP (ca. {fw} FP)."
         },
-        "defaultQs2": "Die Verzauberung weist einen FW zwischen {min} und {max} auf (ca. {fw} FW).",
+        "defaultQs2": "Die Verzauberung kostet zwischen {min} und {max} FP (ca. {fw} FP).",
         "defaultQs3": {
             "talisman": "Art des Artefakts: Talisman (dauerhafte Liturgie).",
             "permanent": "Art des Artefakts: Dauerhaft wirkendes Artefakt.",
@@ -4102,8 +4103,6 @@
         "defaultQs4": {
             "unknown": "Tradition des Erschaffers: unbekannt.",
             "tradition": "Tradition des Erschaffers: {tradition}."
-        },
-        "effectMaxQs": "Magische Analyse (max. QS)",
-        "effectStackQs": "Magische Analyse (+QS stapelbar)"
+        }
     }
 }

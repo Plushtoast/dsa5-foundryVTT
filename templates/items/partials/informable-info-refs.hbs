@@ -1,0 +1,17 @@
+{{#if isGM}}{{#if hasInformationRef}}
+  <div class='groupbox informable-info-refs-section'>
+    <legend class='table-title lineheight'>
+      {{localize 'TYPES.Item.information'}}
+      <i class='fas fa-mask' data-tooltip='TT.onlyGM'></i>
+    </legend>
+
+    {{#each informationRefs as |ref|}}
+      <div class='informable-info-ref row-section wrap' data-ref-id='{{ref.id}}'>
+        <div class='col ninety'>{{{ref.preview}}}</div>
+        <div class='col ten center flexrow flexAlignEnd'>
+          <a class='ench' data-action='infoRefUnlink' data-ref-id='{{ref.id}}' data-tooltip='INFORMABLE.unlink'><i class='fas fa-trash'></i></a>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+{{/if}}{{/if}}

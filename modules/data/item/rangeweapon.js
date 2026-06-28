@@ -9,6 +9,7 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
@@ -16,7 +17,7 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
 
   static defineSchema() {
@@ -58,6 +59,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];

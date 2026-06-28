@@ -20,6 +20,7 @@ import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
 import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
+import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
@@ -95,6 +96,9 @@ export function connectSocket() {
         break;
       case 'queryResult':
         await QueryOrchestrator.handleResult(data.payload);
+        break;
+      case 'magicAnalysisStepResult':
+        await MagicAnalysisQueryService.handleRemoteStepResult(data.payload);
         break;
       case 'deleteEffectsByUuid':
         MaintainedEffects.deleteByUuid(data.payload?.uuids || []);

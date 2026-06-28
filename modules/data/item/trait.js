@@ -4,10 +4,11 @@ import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import DSA5 from '../../config/config-dsa5.js';
 import RangeweaponData from './rangeweapon.js';
+import InformableTemplate from './templates/informable.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
-export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate) {
+export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate, InformableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       traitType: new SchemaField({
@@ -56,6 +57,7 @@ export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, Descri
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.ranges = DSA5.meleeRanges;
   }
 

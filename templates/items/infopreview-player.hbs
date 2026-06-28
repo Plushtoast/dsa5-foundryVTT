@@ -1,5 +1,5 @@
 {{#if (eq document.system.subType 'magicalAnalysis')}}
-<a class="roll-button magicAnalysisEnricherRoll" data-tooltip="{{localize 'TT.enricherInfoRoll'}}" data-uuid="{{uuid}}" data-subtype="magicalAnalysis">
+<a class="roll-button magicAnalysisEnricherRoll" data-tooltip="{{localize 'TT.enricherInfoRoll'}}" data-uuid="{{uuid}}" data-subtype="magicalAnalysis"{{#if parentUuid}} data-parent-uuid="{{parentUuid}}"{{/if}}>
   <em class="fas fa-comment"></em> {{document.name}} ({{localize 'MAGICANALYSIS.title'}})
 </a>
 {{else}}

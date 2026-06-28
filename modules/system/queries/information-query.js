@@ -1,6 +1,10 @@
 import QueryOrchestrator from './query-orchestrator.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
+import MagicAnalysisQueryService from './magic-analysis-query.js';
+import MagicAnalysisContentResolver from '../magic-analysis/magic-analysis-content-resolver.js';
+
+const { duplicate } = foundry.utils;
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -28,6 +32,21 @@ export default class InformationQueryService {
     return item?.system || {};
   }
 
+  static async _resolveInfoSystem(item, payload) {
+    if (payload.virtualInfo) return payload.virtualInfo;
+
+    const infoSystem = item?.system?.toObject?.() ?? duplicate(item?.system || {});
+    if (infoSystem.subType !== 'magicalAnalysis') return infoSystem;
+
+    let parentItem = null;
+    if (payload.parentUuid) parentItem = await fromUuid(payload.parentUuid);
+
+    return MagicAnalysisContentResolver.resolveRollContent(
+      { ...infoSystem, name: item?.name },
+      { parentItem },
+    );
+  }
+
   static _getInfoName(item, payload) {
     if (payload.virtualInfo?.name) return payload.virtualInfo.name;
     return item?.name || '';
@@ -39,7 +58,7 @@ export default class InformationQueryService {
       return { status: 'rejected' };
     }
 
-    const infoSystem = this._getInfoSystem(item, payload);
+    const infoSystem = await this._resolveInfoSystem(item, payload);
     const infoName = this._getInfoName(item, payload);
 
     const qsEntries = [];
@@ -145,7 +164,7 @@ export default class InformationQueryService {
   }
 
   static async postApprovedResult(item, payload, selected) {
-    const infoSystem = this._getInfoSystem(item, payload);
+    const infoSystem = await this._resolveInfoSystem(item, payload);
     const infoName = this._getInfoName(item, payload);
     const msg = [];
 
@@ -180,7 +199,7 @@ export default class InformationQueryService {
     }
   }
 
-  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo } = {}) {
+  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid } = {}) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
       ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
@@ -198,6 +217,7 @@ export default class InformationQueryService {
       playerName: game.user.name,
       actorName: actor?.name || result.result.speaker?.alias || '',
       virtualInfo,
+      parentUuid: parentUuid || null,
     };
 
     const state = {
@@ -246,7 +266,11 @@ export default class InformationQueryService {
         ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
         return;
       }
-      await game.dsa5.apps.MagicAnalysisService.startFromEnrichment(ev);
+      const parentUuid = ev.currentTarget.dataset.parentUuid;
+      await MagicAnalysisQueryService.openStartDialog({
+        informationUuid: uuid,
+        parentUuid: parentUuid || undefined,
+      });
       return;
     }
 
@@ -311,39 +335,54 @@ export default class InformationQueryService {
   static async postInformationRoll(postFunction, result, source) {
     const msg = [];
     const item = await fromUuid(postFunction.uuid);
+    if (!item) return;
+
+    const infoSystem = item.system.subType === 'magicalAnalysis'
+      ? await MagicAnalysisContentResolver.resolveRollContent(
+        { ...item.system.toObject(), name: item.name },
+        { parentItem: postFunction.parentUuid ? await fromUuid(postFunction.parentUuid) : null },
+      )
+      : item.system;
+
     const availableQs = result.result.qualityStep || 0;
 
     for (let i = 1; i <= availableQs; i++) {
       const qs = `qs${i}`;
-      if (item.system[qs]) msg.push(item.system[qs]);
+      if (infoSystem[qs]) msg.push(infoSystem[qs]);
     }
 
-    if (result.result.successLevel > 1 && item.system.crit) {
-      msg.push(item.system.crit);
-    } else if (result.result.successLevel < -1 && item.system.botch) {
-      msg.push(item.system.botch);
-    } else if (item.system.fail && !availableQs) {
-      msg.push(item.system.fail);
+    if (result.result.successLevel > 1 && infoSystem.crit) {
+      msg.push(infoSystem.crit);
+    } else if (result.result.successLevel < -1 && infoSystem.botch) {
+      msg.push(infoSystem.botch);
+    } else if (infoSystem.fail && !availableQs) {
+      msg.push(infoSystem.fail);
     }
 
     if (msg.length > 0) {
-      await Promise.all(
-        msg.map(async (x) => {
-          const enriched = await TextEditor.enrichHTML(x, {});
-          return enriched;
-        }),
-      );
-      msg.unshift(`<p><b>${item.name}</b></p>`);
+      const enriched = await Promise.all(msg.map((x) => TextEditor.enrichHTML(x, {})));
+      enriched.unshift(`<p><b>${item.name}</b></p>`);
 
-      const chatData = DSA5_Utility.chatDataSetup(msg.join(''));
+      const chatData = DSA5_Utility.chatDataSetup(enriched.join(''));
       if (postFunction.recipients.length) chatData['whisper'] = postFunction.recipients;
 
       ChatMessage.create(chatData);
     }
   }
 
-  static chatListeners(html) {
-    html.on('click', '.informationRequestRoll', (ev) => InformationQueryService.informationRequestRoll(ev));
-    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
+  static handlePreviewClick(ev, root) {
+    const requestRoll = ev.target.closest('.informationRequestRoll');
+    if (requestRoll && root.contains(requestRoll)) {
+      void this.informationRequestRoll(ev);
+      return true;
+    }
+
+    const enricherRoll = ev.target.closest('.informationEnricherRoll');
+    if (enricherRoll && root.contains(enricherRoll)) {
+      void this.informationEnricherRoll(ev);
+      return true;
+    }
+
+    return false;
   }
 }

@@ -15,8 +15,7 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import EquipmentDamageDialog from '../../dialog/dialog-equipmentdamage.js';
 import DSATables from '../../tables/dsatables.js';
 import GroupCheck from './group-check.js';
-import InformationQueryService from '../queries/information-query.js';
-import MagicAnalysisService from '../magic-analysis/magic-analysis.js';
+import InformationData from '../data/item/information.js';
 import { DSARegionTemplate } from '../automation/measuretemplate.js';
 import TableEffects from '../../tables/tableEffects.js';
 import CreatureType from '../automation/creature-type.js';
@@ -2413,7 +2412,6 @@ export default class DiceDSA5 {
     html.on('click', '.resistEffect', (ev) => DSAActiveEffectConfig.resistEffect(ev));
     html.on('click', '.resistPain', (ev) => DiceDSA5.rollResistPain(ev));
     GroupCheck.chatListeners(html);
-    InformationQueryService.chatListeners(html);
-    MagicAnalysisService.chatListeners(html);
+    InformationData.attachPreviewListeners(html[0]);
   }
 }

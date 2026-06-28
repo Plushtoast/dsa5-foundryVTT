@@ -9,6 +9,7 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
@@ -20,7 +21,7 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
   static NOT_TWO_HANDED_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons']);
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
@@ -99,6 +100,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
     data.isShield = RuleChaos.isShield(data.document);
     data.showImprovisedToggle = this.hasImprovisedName;
