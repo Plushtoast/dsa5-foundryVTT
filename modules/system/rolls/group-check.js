@@ -1,6 +1,7 @@
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import GroupCheckConfigDialog from '../../dialog/group-check-dialog.js';
+import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -39,6 +40,7 @@ export default class GroupCheck {
       postFunction: {
         cummulative: messageId,
         functionName: 'game.dsa5.apps.GroupCheck.autoEditGroupCheckRoll',
+        speaker: RollDialogBuilder.buildSpeaker(actor, tokenId),
       },
     };
     switch (category) {
@@ -50,27 +52,30 @@ export default class GroupCheck {
 
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
           const result = await actor.basicTest(setupData);
-          await GroupCheck.editGroupCheckRoll(messageId, result, name, category);
+          await GroupCheck.editGroupCheckRoll(messageId, result, name, category, options.postFunction);
         });
     }
   }
 
   static async autoEditGroupCheckRoll(postFunction, result, source) {
-    await GroupCheck.editGroupCheckRoll(postFunction.cummulative, result, source.name, source.type);
+    await GroupCheck.editGroupCheckRoll(postFunction.cummulative, result, source.name, source.type, postFunction);
   }
 
-  static async editGroupCheckRoll(messageId, result, target, type) {
-    const isCrit = result.result.successLevel > 1;
+  static async editGroupCheckRoll(messageId, result, target, type, postFunction) {
+    const rollResult = result.result;
+    const isCrit = rollResult.successLevel > 1;
     const critMultiplier = isCrit ? 2 : 1;
-    const actor = DSA5_Utility.getSpeaker(result.result.speaker);
+    const actor = DSA5_Utility.getSpeaker(postFunction?.speaker ?? rollResult.speaker);
+    if (!actor) return;
+
     const update = {
-      messageId: result.result.messageId,
+      messageId: rollResult.messageId,
       actor: actor.name,
-      qs: (result.result.qualityStep || 0) * critMultiplier,
-      success: result.result.successLevel,
+      qs: (rollResult.qualityStep || 0) * critMultiplier,
+      success: rollResult.successLevel,
       target,
       type,
-      botched: result.result.successLevel < -1,
+      botched: rollResult.successLevel < -1,
     };
 
     await GroupCheck.updateGCResult(messageId, update);
@@ -132,7 +137,7 @@ export default class GroupCheck {
         },
       });
     }
-    $('#chat-log').find(`[data-message-id="${message.id}"`).appendTo('#chat-log');
+    $('#chat-log').find(`[data-message-id="${message.id}"]`).appendTo('#chat-log');
   }
 
   static showRQMessage(target, modifier = 0, customLabel = undefined, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
