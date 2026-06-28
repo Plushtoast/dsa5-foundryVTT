@@ -254,9 +254,10 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
+          const macroContext = new OnUseEffect(effect.parent ?? effect);
           const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
-          await fn.call(this, effect, actor);
+          await fn.call(macroContext, effect, actor);
         } catch (err) {
           ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
@@ -384,9 +385,11 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
+              const macroContext = new OnUseEffect(source);
+              macroContext.currentOnUseArgs = options;
               const syncFunction = Object.getPrototypeOf(function () { }).constructor;
               const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', ef.system.macroArgs.macro);
-              fn.call(this, ef, callMacro, actor, msg, source, options);
+              fn.call(macroContext, ef, callMacro, actor, msg, source, options);
             } catch (err) {
               ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
               console.error(err);
@@ -532,8 +535,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                       macroCallResults.push(resultPromise);
                       return resultPromise;
                     };
+                    const macroContext = new OnUseEffect(source);
+                    macroContext.currentOnUseArgs = options;
                     const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
-                    await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                    try {
+                      await fn.call(macroContext, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                    } finally {
+                      macroContext.currentOnUseArgs = undefined;
+                    }
                     const macroResults = await Promise.all(macroCallResults);
                     msg += macroResults.map((result) => collectResultMessage(result)).join('');
                     const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
