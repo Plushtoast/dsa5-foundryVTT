@@ -15,7 +15,7 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import EquipmentDamageDialog from '../../dialog/dialog-equipmentdamage.js';
 import DSATables from '../../tables/dsatables.js';
 import GroupCheck from './group-check.js';
-import InformationData from '../data/item/information.js';
+import InformationData from '../../data/item/information.js';
 import { DSARegionTemplate } from '../automation/measuretemplate.js';
 import TableEffects from '../../tables/tableEffects.js';
 import CreatureType from '../automation/creature-type.js';
