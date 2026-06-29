@@ -6,6 +6,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import DSAStringField from '../fields/dsa_string_field.js';
 import AoeTemplate from './templates/aoe.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import { ItemFactory } from '../../item/item-factory.js';
 
@@ -13,12 +14,6 @@ const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields
 const { TextEditor } = foundry.applications.ux;
 
 export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
-  get detail_name() {
-    if (this.detailsObfuscated && !game.user.isGM) return super.detail_name;
-
-    return `${super.detail_name} (${_loc('CHARAbbrev.QS')} ${this.QL})`;
-  }
-
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       equipmentType: new SchemaField({
@@ -35,12 +30,9 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
   }
 
   async getSheetData(data) {
-    const availableSteps = data.document.system.QLList.split('\n');
     data.calculatedPrice = ItemFactory.getSubClass(data.document.type).consumablePrice(data.document);
-    data.availableSteps = Object.fromEntries(availableSteps.map((_, i) => [i + 1, i + 1]));
+    data.availableSteps = Object.fromEntries(data.document.system.QLList.split('\n').map((_, i) => [i + 1, i + 1]));
     data.enrichedIngredients = await TextEditor.enrichHTML(data.document.system.ingredients, { secrets: data.document.isOwner });
-    data.currentStep = availableSteps[data.document.system.QL - 1] || '';
-    data.detail_name = this.detail_name;
   }
 
   static chatData(data, name) {
@@ -54,7 +46,6 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
     item.system.preparedWeight = this.parent.system.preparedWeight;
-    item.name = this.parent.system.detail_name;
     this.constructor._prepareConsumable(item);
     return item;
   }
@@ -67,48 +58,49 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
     }
     return item;
   }
-  
 
- //	Sammeln alle relevanten Consumables des Actors 
-
+  // Sammeln aller relevanten Consumables des Actors 
   static addConsumableModifiers(situationalModifiers, actor, testData) {
       if (!actor) return;
       
-      const consumables = actor.items.filter(x => x.type == "consumable" && x.system.quantity.value > 0);
-      const targetName = testData.source.name; 
-      const targetType = testData.source.type;
+      const consumables = actor.items.filter(x => x.type === "consumable" && x.system.quantity.value > 0);
+      const targetName = testData.source?.name || ""; 
+      const targetType = testData.source?.type || "";
       const typeLabel = game.i18n.localize("TYPES.Item.consumable");
+
+      // Modifikator-Typen
+      const typeConditions = [
+          { type: "FP", keywords: [".FP", "SkillPoints"] },
+          { type: "QL", keywords: [".QL", "qualityStep"] },
+          { type: "FW", keywords: [".FW", "talentValue"] }
+      ];
 
       for (let item of consumables) {
           const relevantEffect = item.effects.find(e => {
               if (e.disabled || e.transfer) return false;
               return e.changes.some(change => {
-                  const key = change.key;
-                  const val = typeof change.value === "string" ? change.value : String(change.value);
-                  return key.includes(targetName) || val.includes(targetName) || 
-                         (targetType == "spell" && key.includes("spell"));
+                  return change.key.includes(targetName) || String(change.value).includes(targetName) || 
+                         (targetType === "spell" && change.key.includes("spell"));
               });
           });
 
           if (relevantEffect) {
+              // Den exakten Change finden
               let change = relevantEffect.changes.find(c => 
-                  c.key.includes(targetName) || 
-                  (typeof c.value === "string" && c.value.includes(targetName))
+                  c.key.includes(targetName) || String(c.value).includes(targetName)
               ) || relevantEffect.changes[0];
 
-              let modType = "";
-              if (change.key.includes(".FP") || change.key.includes("SkillPoints")) modType = "FP";
-              else if (change.key.includes(".QL") || change.key.includes("qualityStep")) modType = "QL";
-              else if (change.key.includes(".FW") || change.key.includes("talentValue")) modType = "FW";
+              // Typ bestimmen
+              const foundMatch = typeConditions.find(cond => cond.keywords.some(kw => change.key.includes(kw)));
+              let modType = foundMatch ? foundMatch.type : "";
 
-              let numericPart = change.value;
-              if (typeof numericPart === "string" && isNaN(Number(numericPart))) {
-                   const match = String(numericPart).match(/-?\d+/);
-                   if (match) numericPart = match[0];
-              }
+              // Zahlenwert per Regex 
+              const match = String(change.value).match(/-?\d+/);
+              let numericPart = match ? match[0] : change.value;
 
               if (!numericPart && numericPart != 0) continue;
 
+              // Verrechnungsmodus
               let finalValue = numericPart;
               switch (parseInt(change.mode)) {
                   case 1: finalValue = `*${numericPart}`; break; 
@@ -130,9 +122,7 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
       }
   }
 
-
- //	Verbrauch ausführen (Menge -1 oder Item löschen)
-
+  // Verbrauch ausführen (Menge -1 oder Item löschen)
   async consumeItem() {
       const item = this.parent;
       const newQty = item.system.quantity.value - 1;
@@ -144,17 +134,15 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
       }
   }
 
-
-//	Prüft ausgewählte Modifikatoren und löst Verbrauch aus 
-   
+  // Prüft ausgewählte Modifikatoren und löst Verbrauch aus 
   static async triggerConsumptions(testData, actor) {
       if (!actor || !testData.situationalModifiers) return;
 
       for (let mod of testData.situationalModifiers) {
           if (mod.consumableId && mod.selected) {
               let item = actor.items.get(mod.consumableId);
-              if (item) {
-				await item.system.consumeItem();
+              if (item && item.system?.consumeItem) {
+                  await item.system.consumeItem();
               }
           }
       }
