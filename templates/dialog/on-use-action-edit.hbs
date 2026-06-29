@@ -12,9 +12,14 @@
         </div>
     </div>
     <div class="form-group stacked">
-        <label>{{localize 'SHEET.onUseActionMacro'}}</label>
+        <label class="row-section">
+            <span class="col ninety">{{localize 'SHEET.onUseActionMacro'}}</span>
+            <span class="col ten flexrow flexAlignEnd">
+                <i class="fas fa-info-circle" data-tooltip="ActiveEffects.placeholder.onUseEffect"></i>
+            </span>
+        </label>
         <div class="form-fields">
-            <code-mirror language="javascript" indent="2" name="macro" data-tooltip="ActiveEffects.placeholder.onUseEffect">{{~action.macro~}}</code-mirror>
+            <code-mirror language="javascript" indent="2" name="macro">{{~action.macro~}}</code-mirror>
         </div>
     </div>
 </div>

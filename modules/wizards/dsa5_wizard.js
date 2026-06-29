@@ -273,6 +273,21 @@ export default class WizardDSA5 extends DefaultAppv2 {
     WizardDSA5.flashElem(choice.closest('div'));
   }
 
+  _getAPCostContainer(target) {
+    return $(target).closest('.dsa-card-panel[data-cost]');
+  }
+
+  _apCostFrom(element, fallback = 0) {
+    const cost = Number($(element).attr('data-cost'));
+    return Number.isFinite(cost) ? cost : fallback;
+  }
+
+  _updateAPCost(parent, apCost) {
+    const elem = parent.find('.apCost');
+    elem.text(apCost);
+    WizardDSA5.flashElem(elem, 'emphasize2');
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = $(this.element);

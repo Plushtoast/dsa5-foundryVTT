@@ -1,0 +1,21 @@
+<section class="book-section">
+    {{#if section.labelKey}}
+        {{#if section.allowAdd}}
+        <div class="flexrow book-section-header">
+            <h2 class="flex1">{{localize section.labelKey}}</h2>
+            {{#if isGM}}<button type="button" class="dsadesignbutton icon noBorder fa-solid fa-plus" data-action="addCustomBook" data-tooltip="{{localize 'Book.addCustomBook'}}" aria-label="{{localize 'Book.addCustomBook'}}"></button>{{/if}}
+        </div>
+        {{else}}
+        <h2>{{localize section.labelKey}}</h2>
+        {{/if}}
+    {{/if}}
+    {{#if section.hasBooks}}
+    <div class="module-grid">
+        {{#each section.books as |item|}}
+        {{> systems/dsa5/templates/wizard/adventure/parts/book_library_entry_card.hbs section=../section item=item isGM=../isGM}}
+        {{/each}}
+    </div>
+    {{else if section.showEmpty}}
+    <p>{{localize 'Book.nothing'}}</p>
+    {{/if}}
+</section>

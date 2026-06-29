@@ -226,6 +226,20 @@ export function tabSlider(html) {
   }
 }
 
+const clickListenerControllers = new WeakMap();
+
+export function bindClickListener(element, listener) {
+  if (!(element instanceof Element)) {
+    throw new TypeError('bindClickListener requires a DOM Element');
+  }
+
+  clickListenerControllers.get(element)?.abort();
+  const controller = new AbortController();
+  clickListenerControllers.set(element, controller);
+  element.addEventListener('click', listener, { signal: controller.signal });
+  return controller;
+}
+
 const appHeight = () => {
   const doc = document.documentElement;
   doc.style.setProperty('--app-height', `${window.innerHeight}px`);

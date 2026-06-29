@@ -2,10 +2,11 @@ import DescriptionTemplate from './templates/description.js';
 import { ItemDataModel } from '../baseitem.js';
 import { DSATrapRegionBehavior } from '../regionbehaviors/trap.js';
 import AoeTemplate from './templates/aoe.js';
+import InformableTemplate from './templates/informable.js';
 
 const { StringField } = foundry.data.fields;
 
-export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, AoeTemplate) {
+export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, AoeTemplate, InformableTemplate) {
   static LOCALIZATION_PREFIXES = ["REGIONBEHAVIOR_DSATrap"];
 
   static defineSchema() {

@@ -25,6 +25,7 @@ export class PatchViewer extends DefaultAppv2 {
     }
 
     static DEFAULT_OPTIONS = {
+        id: 'dsa5-patch-viewer',
         classes: ['dsa5', 'largeDialog', 'patches'],
         position: {
             width: 960,
@@ -170,7 +171,7 @@ export class PatchViewer extends DefaultAppv2 {
         ],
         links: [
             { hrefKey: '{vttInfoUrl}',                                                       icon: 'fa-solid fa-circle-info',   labelKey: 'DSA5.welcomeApp.links.vttInfo' },
-            { href: 'https://github.com/Plushtoast/dsa5-foundryVTT/wiki',                    icon: 'fa-solid fa-book',          label: 'Wiki' },
+            { href: 'https://plushtoast.github.io/dsa5-foundryVTT-wiki/',                    icon: 'fa-solid fa-book',          label: 'Wiki' },
             { href: 'https://www.youtube.com/channel/UCgVzSn5NkMaO-PDxhCiAAjA',              icon: 'fa-brands fa-youtube',      label: 'YouTube' },
             { href: 'https://discord.gg/4GJPAEhfMb',                                        icon: 'fa-brands fa-discord',      label: 'Discord' },
             { href: 'https://github.com/Plushtoast/dsa5-foundryVTT/issues',                  icon: 'fa-brands fa-github',       label: 'GitHub' },

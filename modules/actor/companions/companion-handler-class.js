@@ -4,6 +4,7 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import CompanionConfig from './companion-config.js';
 import { CompanionTrainingApp } from './companion-training-app.js';
 import { CompanionSkillSelectionApp } from './companion-skill-selection-app.js';
+import CompanionHotbar from './companion-hotbar.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { Trade } from '../trade.js';
 
@@ -354,6 +355,9 @@ export default class CompanionHandler {
 
         const item = compActor.items.get(itemId);
         if (!item) return;
+
+        const tokenId = compActor.getActiveTokens()[0]?.id || null;
+        if (await CompanionHotbar.executeHotbarRoll(compActor, item, tokenId)) return;
 
         const onUse = new OnUseEffect(item);
         await onUse.executeOnUseEffect(OnUseEffect.buildExecutionOptions(ev));

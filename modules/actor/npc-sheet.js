@@ -17,11 +17,7 @@ export default class ActorSheetdsa5NPC extends ActorSheetdsa5Character {
     skills: super.PARTS.skills,
     magic: super.PARTS.magic,
     religion: super.PARTS.religion,
-    inventory: {
-      template: 'systems/dsa5/templates/actors/actor-equipment.hbs',
-      scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs'],
-    },
+    inventory: super.PARTS.inventory,
     companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: super.PARTS.notes,

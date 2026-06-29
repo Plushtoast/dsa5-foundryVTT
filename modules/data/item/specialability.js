@@ -51,6 +51,8 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
     general: 'SpecCategory.general',
     generalStyle: 'SpecCategory.generalStyle',
     extGeneral: 'SpecCategory.extGeneral',
+    
+    pact: 'SpecCategory.pact',
 
     animal: 'SpecCategory.animal',
 
@@ -72,7 +74,6 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
     magicalStyle: 'SpecCategory.magicalStyle',
     extMagical: 'SpecCategory.extMagical',
     staff: 'SpecCategory.staff',
-    pact: 'SpecCategory.pact',
     homunculus: 'SpecCategory.homunculus',
     magicalsign: 'SpecCategory.magicalsign',
     sikaryan: 'SpecCategory.sikaryan',
@@ -80,7 +81,7 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
 
   static sortedSpecs = (() => {
     const combat = new Set(['Combat', 'command']);
-    const magical = new Set(['magical', 'magicalStyle', 'extMagical', 'pact', 'homunculus', 'magicalsign', 'sikaryan']);
+    const magical = new Set(['magical', 'magicalStyle', 'extMagical', 'homunculus', 'magicalsign', 'sikaryan']);
     const clerical = new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'ceremonial', 'vision', 'prayer']);
     const unUsed = new Set(['staff']);
     const allCategories = Object.keys(SpecialabilityData.specialAbilityCategories);

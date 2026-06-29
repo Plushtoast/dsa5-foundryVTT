@@ -1,0 +1,32 @@
+<div id="practical-application">
+  {{#if rolled}}
+    <div class="center marginBottom">
+      <p>{{instruction}}</p>
+      <p>{{limitText}} {{maxText}}</p>
+    </div>
+
+    <div class="row-section marginBottom">
+      {{#each distribution}}
+        <div class="columnFlex center">
+          <b>{{this.label}}</b>
+          <a data-action="adjustPraxis" data-idx="{{this.idx}}" data-delta="1"><i class="fas fa-chevron-up"></i></a>
+          <input type="number" class="input-text" value="{{this.value}}" readonly>
+          <a data-action="adjustPraxis" data-idx="{{this.idx}}" data-delta="-1"><i class="fas fa-chevron-down"></i></a>
+        </div>
+      {{/each}}
+    </div>
+    <hr>
+    <div class="row-section gap5px">
+      <button type="button" data-action="confirmPraxis" class="col two dsa5 button"><i class="fas fa-check"></i> {{localize "ok"}}</button>
+      <button type="button" data-action="cancelPraxis" class="col two dsa5 button"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </div>
+  {{else}}
+    <p class="center marginBottom">{{description}}</p>
+
+    <div class="row-section gap5px wrap">
+      {{#each skills}}
+        <button type="button" data-action="rollKnowledge" data-id="{{this.id}}" class="col two dsa5 button">{{this.name}}</button>
+      {{/each}}
+    </div>
+  {{/if}}
+</div>

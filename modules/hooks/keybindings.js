@@ -51,7 +51,7 @@ export default function () {
   game.keybindings.register('dsa5', 'openGroupSheet', {
     name: 'GROUP.openGroupSheet',
     hint: 'KEYBINDINGS.openGroupSheet',
-    editable: [],
+    editable: [{ key: 'KeyG' }],
     onDown: () => GroupActorSheet.openPartySheet(),
   });
 }

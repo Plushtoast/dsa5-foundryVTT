@@ -64,7 +64,7 @@ export class ActorDataModel extends DSADataModel {
       carryModifier: 0,
       aspModifier: 0,
       kapModifier: 0,
-      vulnerabilities: [],
+      vulnerabilities: { combatskill: [] },
       resistances: {
         effects: [],
       },
@@ -115,8 +115,14 @@ export class ActorDataModel extends DSADataModel {
         step: [],
         parry: [],
         attack: [],
+        CMP: [],
+        defenseCount: [],
         damage: [],
         damageThreshold: [],
+      },
+      magicAnalysis: {
+        max: 0,
+        stack: 0,
       },
       feature: {
         FP: [],

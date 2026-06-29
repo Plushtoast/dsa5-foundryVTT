@@ -1,6 +1,10 @@
 import QueryOrchestrator from './query-orchestrator.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
+import MagicAnalysisQueryService from './magic-analysis-query.js';
+import MagicAnalysisContentResolver from '../magic-analysis/magic-analysis-content-resolver.js';
+
+const { duplicate } = foundry.utils;
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -23,15 +27,43 @@ export default class InformationQueryService {
     return await renderTemplate(this.TEMPLATE, state);
   }
 
+  static _getInfoSystem(item, payload) {
+    if (payload.virtualInfo) return payload.virtualInfo;
+    return item?.system || {};
+  }
+
+  static async _resolveInfoSystem(item, payload) {
+    if (payload.virtualInfo) return payload.virtualInfo;
+
+    const infoSystem = item?.system?.toObject?.() ?? duplicate(item?.system || {});
+    if (infoSystem.subType !== 'magicalAnalysis') return infoSystem;
+
+    let parentItem = null;
+    if (payload.parentUuid) parentItem = await fromUuid(payload.parentUuid);
+
+    return MagicAnalysisContentResolver.resolveRollContent(
+      { ...infoSystem, name: item?.name },
+      { parentItem },
+    );
+  }
+
+  static _getInfoName(item, payload) {
+    if (payload.virtualInfo?.name) return payload.virtualInfo.name;
+    return item?.name || '';
+  }
+
   static async handleQuery(payload) {
     const item = await fromUuid(payload.itemUuid);
-    if (!item) {
+    if (!item && !payload.virtualInfo) {
       return { status: 'rejected' };
     }
 
+    const infoSystem = await this._resolveInfoSystem(item, payload);
+    const infoName = this._getInfoName(item, payload);
+
     const qsEntries = [];
     for (let i = 1; i <= 6; i++) {
-      const text = item.system[`qs${i}`];
+      const text = infoSystem[`qs${i}`];
       if (text) {
         const enriched = await TextEditor.enrichHTML(text, {});
         qsEntries.push({
@@ -49,22 +81,27 @@ export default class InformationQueryService {
     let botchIncluded = false;
     let failIncluded = false;
 
-    if (item.system.crit) {
-      critText = await TextEditor.enrichHTML(item.system.crit, {});
+    if (infoSystem.crit) {
+      critText = await TextEditor.enrichHTML(infoSystem.crit, {});
       critIncluded = payload.successLevel > 1;
     }
-    if (item.system.botch) {
-      botchText = await TextEditor.enrichHTML(item.system.botch, {});
+    if (infoSystem.botch) {
+      botchText = await TextEditor.enrichHTML(infoSystem.botch, {});
       botchIncluded = payload.successLevel < -1;
     }
-    if (item.system.fail && !payload.rolledQS) {
-      failText = await TextEditor.enrichHTML(item.system.fail, {});
+    if (infoSystem.fail && !payload.rolledQS) {
+      failText = await TextEditor.enrichHTML(infoSystem.fail, {});
       failIncluded = true;
     }
+
+    const itemLink = item
+      ? await item.toAnchor().outerHTML
+      : `<span>${infoName}</span>`;
 
     const dialogData = {
       actorName: payload.actorName,
       playerName: payload.playerName,
+      itemLink,
       skillName: payload.skillName,
       rolledQS: payload.rolledQS,
       qsEntries,
@@ -81,9 +118,13 @@ export default class InformationQueryService {
     try {
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
-          title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${item.name}`,
+          title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${infoName}`,
+          resizable: true,
         },
         content,
+        position: {
+          width: 600,
+        },
         buttons: [
           {
             action: 'approve',
@@ -123,27 +164,29 @@ export default class InformationQueryService {
   }
 
   static async postApprovedResult(item, payload, selected) {
+    const infoSystem = await this._resolveInfoSystem(item, payload);
+    const infoName = this._getInfoName(item, payload);
     const msg = [];
 
     for (let i = 1; i <= 6; i++) {
-      if (selected[`qs${i}`] && item.system[`qs${i}`]) {
-        const enriched = await TextEditor.enrichHTML(item.system[`qs${i}`], {});
+      if (selected[`qs${i}`] && infoSystem[`qs${i}`]) {
+        const enriched = await TextEditor.enrichHTML(infoSystem[`qs${i}`], {});
         msg.push(enriched);
       }
     }
 
-    if (selected.crit && item.system.crit) {
-      msg.push(await TextEditor.enrichHTML(item.system.crit, {}));
+    if (selected.crit && infoSystem.crit) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.crit, {}));
     }
-    if (selected.botch && item.system.botch) {
-      msg.push(await TextEditor.enrichHTML(item.system.botch, {}));
+    if (selected.botch && infoSystem.botch) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.botch, {}));
     }
-    if (selected.fail && item.system.fail) {
-      msg.push(await TextEditor.enrichHTML(item.system.fail, {}));
+    if (selected.fail && infoSystem.fail) {
+      msg.push(await TextEditor.enrichHTML(infoSystem.fail, {}));
     }
 
     if (msg.length > 0) {
-      msg.unshift(`<p><b>${item.name}</b></p>`);
+      msg.unshift(`<p><b>${infoName}</b></p>`);
 
       const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
       if (!whisperTargets.includes(payload.playerId)) {
@@ -156,22 +199,25 @@ export default class InformationQueryService {
     }
   }
 
-  static async createInformationQuery(result, uuid, item) {
+  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid } = {}) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
       ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
       return;
     }
 
+    const infoName = virtualInfo?.name || item?.name || '';
     const payload = {
       itemUuid: uuid,
-      itemName: item.name,
-      skillName: result.result.speaker ? result.source?.name || '' : '',
+      itemName: infoName,
+      skillName: skill?.name || virtualInfo?.skill || item?.system?.skill || '',
       rolledQS: result.result.qualityStep || 0,
       successLevel: result.result.successLevel || 0,
       playerId: game.user.id,
       playerName: game.user.name,
-      actorName: result.result.speaker?.alias || '',
+      actorName: actor?.name || result.result.speaker?.alias || '',
+      virtualInfo,
+      parentUuid: parentUuid || null,
     };
 
     const state = {
@@ -212,6 +258,22 @@ export default class InformationQueryService {
 
   static async informationEnricherRoll(ev) {
     const uuid = ev.currentTarget.dataset.uuid;
+    const subType = ev.currentTarget.dataset.subtype;
+
+    if (subType === 'magicalAnalysis') {
+      const gmOnline = game.users.some((user) => user.active && user.isGM);
+      if (!gmOnline) {
+        ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
+        return;
+      }
+      const parentUuid = ev.currentTarget.dataset.parentUuid;
+      await MagicAnalysisQueryService.openStartDialog({
+        informationUuid: uuid,
+        parentUuid: parentUuid || undefined,
+      });
+      return;
+    }
+
     const modifier = Number(ev.currentTarget.dataset.mod) || 0;
     const skillName = ev.currentTarget.dataset.skill;
 
@@ -237,7 +299,7 @@ export default class InformationQueryService {
     setupData.testData.opposable = false;
     const result = await actor.basicTest(setupData);
 
-    await this.createInformationQuery(result, uuid, item);
+    await this.createInformationQuery(result, uuid, item, { actor, skill });
   }
 
   static async informationRequestRoll(ev) {
@@ -273,39 +335,54 @@ export default class InformationQueryService {
   static async postInformationRoll(postFunction, result, source) {
     const msg = [];
     const item = await fromUuid(postFunction.uuid);
+    if (!item) return;
+
+    const infoSystem = item.system.subType === 'magicalAnalysis'
+      ? await MagicAnalysisContentResolver.resolveRollContent(
+        { ...item.system.toObject(), name: item.name },
+        { parentItem: postFunction.parentUuid ? await fromUuid(postFunction.parentUuid) : null },
+      )
+      : item.system;
+
     const availableQs = result.result.qualityStep || 0;
 
     for (let i = 1; i <= availableQs; i++) {
       const qs = `qs${i}`;
-      if (item.system[qs]) msg.push(item.system[qs]);
+      if (infoSystem[qs]) msg.push(infoSystem[qs]);
     }
 
-    if (result.result.successLevel > 1 && item.system.crit) {
-      msg.push(item.system.crit);
-    } else if (result.result.successLevel < -1 && item.system.botch) {
-      msg.push(item.system.botch);
-    } else if (item.system.fail && !availableQs) {
-      msg.push(item.system.fail);
+    if (result.result.successLevel > 1 && infoSystem.crit) {
+      msg.push(infoSystem.crit);
+    } else if (result.result.successLevel < -1 && infoSystem.botch) {
+      msg.push(infoSystem.botch);
+    } else if (infoSystem.fail && !availableQs) {
+      msg.push(infoSystem.fail);
     }
 
     if (msg.length > 0) {
-      await Promise.all(
-        msg.map(async (x) => {
-          const enriched = await TextEditor.enrichHTML(x, {});
-          return enriched;
-        }),
-      );
-      msg.unshift(`<p><b>${item.name}</b></p>`);
+      const enriched = await Promise.all(msg.map((x) => TextEditor.enrichHTML(x, {})));
+      enriched.unshift(`<p><b>${item.name}</b></p>`);
 
-      const chatData = DSA5_Utility.chatDataSetup(msg.join(''));
+      const chatData = DSA5_Utility.chatDataSetup(enriched.join(''));
       if (postFunction.recipients.length) chatData['whisper'] = postFunction.recipients;
 
       ChatMessage.create(chatData);
     }
   }
 
-  static chatListeners(html) {
-    html.on('click', '.informationRequestRoll', (ev) => InformationQueryService.informationRequestRoll(ev));
-    html.on('click', '.informationEnricherRoll', (ev) => InformationQueryService.informationEnricherRoll(ev));
+  static handlePreviewClick(ev, root) {
+    const requestRoll = ev.target.closest('.informationRequestRoll');
+    if (requestRoll && root.contains(requestRoll)) {
+      void this.informationRequestRoll(ev);
+      return true;
+    }
+
+    const enricherRoll = ev.target.closest('.informationEnricherRoll');
+    if (enricherRoll && root.contains(enricherRoll)) {
+      void this.informationEnricherRoll(ev);
+      return true;
+    }
+
+    return false;
   }
 }

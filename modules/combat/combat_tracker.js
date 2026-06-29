@@ -2,6 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/helpers/token_disposition.js';
 
 const { getProperty } = foundry.utils;
 
@@ -111,8 +112,9 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       else if (aiming.length > 0) turn.ongoing = aiming[0].progress;
     }
     const effects = [];
+    const defeatedStatus = CONFIG.specialStatusEffects.DEFEATED;
     for (const e of combatant.actor?.temporaryEffects || []) {
-      if (e.statuses.has('defeated')) turn.defeated = true;
+      if (e.statuses.has(defeatedStatus) || e.statuses.has('defeated')) turn.isDefeated = true;
       else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.system?.visibility?.hidePlayers) && !e.system?.visibility?.hideOnToken) {
         effects.push({ img: e.img, name: e.name });
       }
@@ -121,6 +123,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       icons: effects,
       tooltip: this._formatEffectsTooltip(effects),
     };
+
+    const disposition = combatant.token?.disposition ?? CONST.TOKEN_DISPOSITIONS.NEUTRAL;
+    turn.dispositionStyle = dispositionBackgroundStyle(disposition);
+    turn.dispositionBorderStyle = dispositionBorderStyle(disposition);
 
     return turn;
   }
@@ -297,7 +303,7 @@ class RepeatingEffectsHelper {
     if (!DSA5_Utility.isActiveGM()) return;
 
     for (const turn of combat.turns) {
-      if (!turn.defeated) {
+      if (!turn.defeated && turn.actor) {
         if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
         if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
 

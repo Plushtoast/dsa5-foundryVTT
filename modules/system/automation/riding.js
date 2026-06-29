@@ -26,6 +26,7 @@ export default class Riding {
         y: token.y,
         hidden: token.hidden,
       });
+      TokenDocument.implementation.applySourceTokenPlacement(token, horseTokenSource);
       const horseToken = (await scene.createEmbeddedDocuments('Token', [horseTokenSource]))[0];
       const tokenUpdate = {
         'flags.dsa5.horseTokenId': horseToken.id,
@@ -62,16 +63,19 @@ export default class Riding {
     if (!horseId) return;
 
     const scene = token.parent;
-    const horse = this.getHorse(token.actor);
-    if (scene && (data.x || data.y) && horse) {
-      const waypoint = {
-          x: data.x ?? token.x,
-          y: data.y ?? token.y,
-          rotation: data.rotation ?? token.rotation,
-          elevation: data.elevation ? data.elevation - 1 : token.elevation - 1,
-        }
-      horse.token.move(waypoint);
-    }
+    if (!scene || (!data.x && !data.y)) return;
+
+    const horseToken = scene.tokens.get(horseId);
+    if (!horseToken) return;
+
+    const waypoint = {
+      x: data.x ?? token.x,
+      y: data.y ?? token.y,
+      rotation: data.rotation ?? token.rotation,
+      elevation: data.elevation !== undefined ? data.elevation - 1 : (token.elevation ?? 0) - 1,
+    };
+
+    horseToken.update(waypoint, { noHooks: true });
   }
 
   static rollLoyalty(actor, options = {}) {
@@ -274,7 +278,9 @@ export default class Riding {
     }
 
     if (riderToken && !horse.token) {
-      horse = (await canvas.scene.createEmbeddedDocuments('Token', [await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y })]))[0].actor;
+      const horseTokenData = await horse.getTokenDocument({ x: riderToken.x, y: riderToken.y });
+      TokenDocument.implementation.applySourceTokenPlacement(riderToken, horseTokenData);
+      horse = (await canvas.scene.createEmbeddedDocuments('Token', [horseTokenData]))[0].actor;
     }
 
     const actorUpdate = {

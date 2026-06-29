@@ -12,7 +12,9 @@ import Actordsa5 from '../../actor/actor-dsa5.js';
 import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
-const { getProperty, mergeObject } = foundry.utils;
+import GroupActorSheet from '../../actor/group-sheet.js';
+import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js';
+const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static BASEBARHEIGHT = 45;
@@ -22,6 +24,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
     skillgm: 'systems/dsa5/icons/categories/Skill.webp',
     enchantment: 'systems/dsa5/icons/categories/enchantment.webp',
+    effect: 'icons/svg/aura.svg',
   };
   static WEAPON_POSITIONS = [
     "left:calc(50% - 74px);top:75px;",
@@ -35,6 +38,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     gm: 'gmMenu',
     skillgm: 'TYPES.Item.skill',
     enchantment: 'enchantment',
+    effect: 'statuseffects',
   };
 
   static DEFAULT_OPTIONS = {
@@ -42,6 +46,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       categoryFilter: this.#filterCategory,
       weapon: this.#onRollWeapon,
       collapseBar: this.#onCollapse,
+      openPartySheet: this.#openPartySheet,
       toggleFreeAction: this.#onToggleFreeAction,
       quickButton: { handler: this.#quickButton, buttons: [0, 2] },
       companionClick: this.#companionClick,
@@ -116,6 +121,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     }).bind(this.element);
 
+    if (game.user.isGM) {
+      this.element.querySelectorAll('.partyDrag').forEach((element) => {
+        element.addEventListener('dragstart', (event) => this._onDragStartParty(event));
+      });
+    }
+
     const container = this.element.querySelector('.rangeContainer');
     if (!container) return;
 
@@ -131,6 +142,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   _canDragDropEdit() {
     return this.editMode;
+  }
+
+  _onDragStartParty(event) {
+    const uuid = event.currentTarget?.dataset.uuid;
+    if (!uuid) return;
+
+    event.dataTransfer.setData('text/plain', JSON.stringify({ type: 'Actor', uuid }));
+    event.dataTransfer.effectAllowed = 'copy';
   }
 
   async _onDragStartEdit(event) {
@@ -420,6 +439,16 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.element.classList.toggle('collapsedBar');
   }
 
+  static async #openPartySheet() {
+    await GroupActorSheet.openPartySheet();
+  }
+
+  #primaryPartyActor() {
+    const partyUuid = game.settings.get('dsa5', 'primaryParty');
+    const party = partyUuid ? fromUuidSync(partyUuid) : null;
+    return party?.type === 'group' ? party : null;
+  }
+
   static #onToggleFreeAction(ev, target) {
     if (!game.combat || !this.actor) return;
 
@@ -526,7 +555,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
           break;
         case 'trait':
           if (TokenHotbar2.traitTypes.has(x.system.traitType.value)) {
-            groups.attacks.push(this.tokenHotbar?._traitEntry(x, actor.system));
+            const traitEntry = this.tokenHotbar?._traitEntry(x, actor.system);
+            if (traitEntry) groups.attacks.push(traitEntry);
           }
           break;
         case 'consumable':
@@ -555,6 +585,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       }
     }
+
+    for (const effect of actor.allApplicableEffects()) {
+      if (effect.notApplicable || (!game.user.isGM && effect.system?.visibility?.hidePlayers)) continue;
+      if (OnUseEffect.hasOnUseEffect(effect)) {
+        this.#pushSkill(groups, 'effect', this.tokenHotbar?._actionEntry(effect, 'onUse', { id: effect.uuid, subfunction: 'onUseEffect' }));
+      }
+    }
   }
 
   #pushSkill(groups, key, entry) {
@@ -573,7 +610,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     if (sortMode === 'custom') {
       this.#sortSkillList(groups.skills.skill);
       this.#sortSkillList(groups.skills.skillgm);
-      this.#applySavedOrdering(groups);
     } else {
       for (const key of Object.keys(groups.skills)) {
         const list = groups.skills[key];
@@ -596,6 +632,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         }
       }
     }
+
+    this.#applySavedOrdering(groups);
   }
 
   #applyHotbarFilters(groups) {
@@ -604,6 +642,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const hidden = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHidden') || [];
     const hiddenGroups = this.actor.prototypeToken.getFlag('dsa5', 'hotbarHiddenGroups') || [];
     const favorites = this.actor.prototypeToken.getFlag('dsa5', 'hotbarFavorites') || [];
+    const savedOrder = this.actor.prototypeToken.getFlag('dsa5', 'hotbarControls') || {};
 
     if (hiddenGroups.length > 0 && groups.skills.skill) {
       groups.skills.skill = groups.skills.skill.filter((item) => !hiddenGroups.includes(item.addClass));
@@ -616,9 +655,11 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       }
     }
 
-    if (favorites.length > 0 && game.settings.get('dsa5', 'hotbarSortMode') !== 'custom') {
+    if (favorites.length > 0) {
       for (const key of Object.keys(groups.skills)) {
         if (!groups.skills[key]) continue;
+        if (savedOrder[key]?.length) continue;
+
         const favs = groups.skills[key].filter((item) => favorites.includes(item.id));
         const rest = groups.skills[key].filter((item) => !favorites.includes(item.id));
         groups.skills[key] = [...favs, ...rest];
@@ -767,6 +808,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     context.collapseBar = this.collapseBar;
     context.editMode = this.editMode ? 'wiggle-animation' : '';
+    const party = this.#primaryPartyActor();
+    context.showPartyButton = game.user.isGM || !!party;
+    context.partyActorUuid = party?.uuid;
     const actor = this.actor;
 
     const groups = { skills: {}, attacks: [], functions: [] };
@@ -854,6 +898,15 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         onClick: () => {
           new HotbarSortManager(this.actor).render(true);
         }
+      },
+      {
+        label: 'DIALOG.tokenDispositionTitle',
+        icon: "<i class='fa-solid fa-flag'></i>",
+        visible: () => game.user.isGM && (canvas?.tokens?.controlled?.length > 0),
+        onClick: () => {
+          const tokens = canvas.tokens.controlled.map((token) => token.document);
+          TokenDispositionDialog.show(tokens);
+        },
       },
       {
         label: 'HOTBAR.ACTIONS.Clear',
@@ -1069,7 +1122,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       positionIndex += this.#addHumanoidWeapon(positions, humanoidWeapons, positionIndex);
     }
 
-    positionIndex += this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
+    this.#addAnimalWeapon(positions, animalWeapons, positionIndex);
 
     //TODO add weapon editing later
     /*if (this.editMode && false) {

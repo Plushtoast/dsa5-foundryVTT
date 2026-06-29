@@ -1,0 +1,31 @@
+<div class="events-month-grid">
+    <div class="events-weekday-header" style="grid-template-columns: repeat({{daysPerWeek}}, minmax(0, 1fr));">
+        {{#each weekdayHeaders}}
+        <div class="events-weekday-label" data-tooltip="{{#if fullName}}{{fullName}}{{else}}{{lookup ../weekdayFullNames @index}}{{/if}}">{{#if abbreviation}}{{abbreviation}}{{else}}{{this}}{{/if}}</div>
+        {{/each}}
+    </div>
+    {{#each weeks}}
+    <div class="events-week-row" style="grid-template-columns: repeat({{../daysPerWeek}}, minmax(0, 1fr));">
+        {{#each days}}
+        {{#if empty}}
+        <div class="events-day-cell is-outside"></div>
+        {{else}}
+        <div class="events-day-cell{{#if isToday}} is-today{{/if}}">
+            <div class="events-day-number">{{dayOfMonth}}</div>
+            <div class="events-day-events">
+                {{#each events}}
+                <button type="button" class="event-compact" data-action="selectEvent" data-juuid="{{juuid}}" data-key="{{calendarKey}}" data-uuid="{{juuid}}" data-category="{{category}}" style="--event-color: {{chipColor}};">
+                    <i class="event-compact__icon {{categoryIcon}}"></i>
+                    <span class="event-compact__title">{{title}}</span>
+                </button>
+                {{/each}}
+                {{#if overflowCount}}
+                <div class="event-compact-overflow" data-tooltip="{{overflowTooltip}}">+{{overflowCount}}</div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+        {{/each}}
+    </div>
+    {{/each}}
+</div>

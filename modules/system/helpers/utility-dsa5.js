@@ -73,9 +73,8 @@ export default class DSA5_Utility {
     filterEntry = () => true,
     mapEntry = entry => entry,
   }) {
-    const results = [];
-
-    for (const pack of game.packs.filter(pack => pack.documentName === documentName && packFilter(pack))) {
+    const packs = game.packs.filter(pack => pack.documentName === documentName && packFilter(pack));
+    const results = await Promise.all(packs.map(async (pack) => {
       const index = await pack.getIndex({ fields });
       const documentCache = new Map();
       const getDocument = async (id) => {
@@ -83,14 +82,16 @@ export default class DSA5_Utility {
         return await documentCache.get(id);
       };
 
-      for (const entry of index) {
+      const entries = await Promise.all(index.map(async (entry) => {
         const context = { pack, getDocument };
-        if (!(await filterEntry(entry, context))) continue;
-        results.push(await mapEntry(entry, context));
-      }
-    }
+        if (!(await filterEntry(entry, context))) return null;
+        return await mapEntry(entry, context);
+      }));
 
-    return results;
+      return entries.filter(Boolean);
+    }));
+
+    return results.flat();
   }
 
   static async getEnhancementEffects({ enhancementType, targetType } = {}) {

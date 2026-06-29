@@ -1,0 +1,50 @@
+<div class="library-sidebar view-{{libraryViewMode}}">
+
+    <div class="flexrow lineheight library-sidebar-tools gap5px">
+
+        <i class="fas flex0 fa-search" aria-hidden="true"></i>
+
+
+        <input type="search" name="search" autocomplete="off" placeholder="{{localize 'Book.search'}}"
+            aria-label="{{localize 'Book.search'}}" value="{{searchString}}">
+
+
+        <button type="button"
+                class="dsadesignbutton icon noBorder fa-solid fa-list {{#if (eq libraryViewMode 'list')}}active on{{/if}}"
+                data-action="selectLibraryView" data-view="list"
+                aria-pressed="{{#if (eq libraryViewMode 'list')}}true{{else}}false{{/if}}"
+                data-tooltip="{{localize 'Library.layoutList'}}"
+                aria-label="{{localize 'Library.layoutList'}}"></button>
+
+        <button type="button"
+                class="dsadesignbutton icon noBorder fa-solid fa-id-card {{#if (eq libraryViewMode 'cards')}}active on{{/if}}"
+                data-action="selectLibraryView" data-view="cards"
+                aria-pressed="{{#if (eq libraryViewMode 'cards')}}true{{else}}false{{/if}}"
+                data-tooltip="{{localize 'Library.layoutBrowse'}}"
+                aria-label="{{localize 'Library.layoutBrowse'}}"></button>
+
+
+    </div>
+    {{#if recentBooks.length}}
+    <section class="library-recent">
+        <h3>{{localize 'Book.recentlyOpened'}}</h3>
+        <ul class="book-list">
+            {{#each recentBooks}}
+            <li class="book-entry" data-book-id="{{id}}" data-book-type="{{type}}">
+                <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook"
+                    data-type="{{type}}">{{title}}</button>
+            </li>
+            {{/each}}
+        </ul>
+    </section>
+    {{/if}}
+    <div class="library-preview">
+        <div class="libraryCoverStack">
+            <div class="libraryCover libraryCover-default"></div>
+            <div class="libraryCover-frame">
+                <div class="libraryCover libraryCover-module"></div>
+            </div>
+        </div>
+        <p class="libraryCoverTitle"></p>
+    </div>
+</div>

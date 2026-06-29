@@ -4,6 +4,8 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import DSABaseEffectConfig from './base_effect_config.js';
+import ActiveEffectScopedRules from './active_effect_scoped_rules.js';
+import { tabSlider } from '../system/helpers/view_helper.js';
 
 const { mergeObject, getProperty, duplicate, isPlainObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -25,14 +27,18 @@ async function callMacro(packName, name, actor, item, qs, args = {}) {
     if (documents.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
       const fn = new AsyncFunction('actor', 'item', 'source', 'qs', 'args', documents[0].command);
+      const that = new OnUseEffect(item);
+      const previousArgs = that.currentOnUseArgs;
+      that.currentOnUseArgs = args;
       try {
         args.result = result;
-        const that = new OnUseEffect(item);
         await fn.call(that, actor, item, item, qs, args);
       } catch (err) {
         ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
         console.error(err);
         result.error = true;
+      } finally {
+        that.currentOnUseArgs = previousArgs;
       }
     } else {
       ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
@@ -80,6 +86,10 @@ Hooks.once('i18nInit', () => {
 });
 
 export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
+  static DEFAULT_OPTIONS = {
+    classes: ['dsa5']
+  }
+
   static AdvantageRuleItems = new Set(['armor', 'meleeweapon', 'rangeweapon']);
   static macroIndexes = [
     DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
@@ -123,7 +133,15 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     details: super.PARTS.details,
     duration: foundry.applications.sheets.ActiveEffectConfig.PARTS.duration,
     changes: super.PARTS.changes,
-    advanced: { template: 'systems/dsa5/templates/status/advanced_effect.hbs' },
+    advanced: {
+      template: 'systems/dsa5/templates/status/advanced_effect.hbs',
+      templates: [
+        'systems/dsa5/templates/system/dsatabs.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-aura.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-automation.hbs',
+        'systems/dsa5/templates/status/parts/advanced-effect-config.hbs',
+      ],
+    },
     actions: super.PARTS.actions,
     footer: super.PARTS.footer,
   };
@@ -139,6 +157,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
       ],
       initial: 'details',
       labelPrefix: 'EFFECT.TABS',
+    },
+    advanced: {
+      tabs: [
+        { id: 'config', icon: 'fa-solid fa-sliders', label: 'ActiveEffects.advancedTabs.config' },
+        { id: 'aura', icon: 'fa-solid fa-person-rays', label: 'ActiveEffects.advancedTabs.aura' },
+        { id: 'automation', icon: 'fa-solid fa-gears', label: 'ActiveEffects.advancedTabs.automation' },
+      ],
+      initial: 'config',
     },
   };
 
@@ -228,9 +254,10 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
         ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
       } else {
         try {
+          const macroContext = new OnUseEffect(effect.parent ?? effect);
           const AsyncFunction = Object.getPrototypeOf(async function () { }).constructor;
           const fn = new AsyncFunction('effect', 'actor', onRemoveMacro);
-          await fn.call(this, effect, actor);
+          await fn.call(macroContext, effect, actor);
         } catch (err) {
           ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
           console.error(err);
@@ -246,6 +273,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     const document = this.document;
     switch (partId) {
       case 'advanced': {
+        const advancedTabs = this._prepareTabs('advanced');
         const isItemEffect = document.parent?.documentName === 'Item';
         const messageReceivers = ['players', 'player', 'playergm', 'gm'].reduce((obj, e) => {
           obj[e] = `ActiveEffects.messageReceivers.${e}`;
@@ -287,11 +315,32 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             },
             isWeapon,
           });
+        } else if (document.parent?.documentName === 'Actor') {
+          const effectConfigs = {
+            hasSpellEffects: true,
+            hasDamageTransformation: false,
+            hasArmorTransformation: false,
+            hasTriggerEffects: false,
+            hasSuccessEffects: false,
+          };
+          const advancedFunctions = DSAActiveEffectConfig.buildAdvancedFunctions(effectConfigs);
+          const advancedFunctionChoices = advancedFunctions.reduce((obj, e) => {
+            obj[e.index] = e.name;
+            return obj;
+          }, {});
+          mergeObject(partContext, {
+            advancedFunctions,
+            advancedFunctionChoices,
+            effectConfigs,
+            macroIndexes: DSAActiveEffectConfig.macroIndexes,
+          });
         }
 
         mergeObject(partContext, {
+          advancedTabs,
           isItemEffect,
           messageReceivers,
+          scopedRuleSummaries: ActiveEffectScopedRules.summaries(document),
           config: this.getConfig(),
         });
         break;
@@ -304,6 +353,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     await super._onRender(context, options);
 
     const html = $(this.element);
+    tabSlider(html);
     html.find('[name="system.advancedFunction"]').on('change', (ev) => {
       const effect = this.document;
       effect.system.advancedFunction = Number($(ev.currentTarget).val());
@@ -318,7 +368,6 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
     });
     html.find('[name="system.aura.isAura"]').on('change', (ev) => {
       html.find('.auraDetails').toggleClass('dsahidden', !ev.currentTarget.checked);
-      html.find('.auraBox').toggleClass('groupbox', ev.currentTarget.checked);
     });
     if (this.document.statuses.size && game.i18n.has(this.document.description)) {
       html.find('[data-tab="details"] .editor').replaceWith(`<p>${_loc(this.document.description)}</p>`);
@@ -336,9 +385,11 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
           } else {
             try {
+              const macroContext = new OnUseEffect(source);
+              macroContext.currentOnUseArgs = options;
               const syncFunction = Object.getPrototypeOf(function () { }).constructor;
               const fn = new syncFunction('ef', 'callMacro', 'actor', 'msg', 'source', 'options', ef.system.macroArgs.macro);
-              fn.call(this, ef, callMacro, actor, msg, source, options);
+              fn.call(macroContext, ef, callMacro, actor, msg, source, options);
             } catch (err) {
               ui.notifications.error(`There was an error in your macro syntax. See the console (F12) for details`);
               console.error(err);
@@ -373,6 +424,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
 
       const specStep = Number(effectSystem.specStep) || 0;
       try {
+        const advancedFunctionIndexes = DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES;
         const customEf = Number(effectSystem.advancedFunction);
         const qs = Math.min(testData?.qualityStep || 0, 6);
         const resistRoll = effectSystem.resistRoll;
@@ -417,7 +469,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
 
           if (customEf) {
             switch (customEf) {
-              case 1: //Systemeffekt
+              case advancedFunctionIndexes.SYSTEM_EFFECT:
                 {
                   let value = `${effectSystem.macroArgs.conditionValue}` || '1';
                   if (/,/.test(value)) {
@@ -431,12 +483,13 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                     name: `${source.name} (${effectName})`,
                     duration: ef.duration,
                   };
+                  if (origin) effectData.origin = origin;
                   if (onDelayed) mergeObject(effectData, delayedData);
 
                   await actor.addTimedCondition(effectId, value, false, false, effectData);
                 }
                 break;
-              case 2: //Macro
+              case advancedFunctionIndexes.MACRO:
                 if (!game.user.can('MACRO_SCRIPT')) {
                   ui.notifications.warn(`You are not allowed to use JavaScript macros.`);
                 } else {
@@ -467,7 +520,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                     );
                     const macroCallResults = [];
                     const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
-                      const macroArgs = args || {};
+                      const macroArgs = mergeObject(
+                        {
+                          regionEvent: options.regionEvent,
+                          messageMode: options.messageMode,
+                        },
+                        args || {},
+                        { inplace: false },
+                      );
                       if (options.maintenance.parentEffectUuid) {
                         macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
                       }
@@ -475,8 +535,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                       macroCallResults.push(resultPromise);
                       return resultPromise;
                     };
+                    const macroContext = new OnUseEffect(source);
+                    macroContext.currentOnUseArgs = options;
                     const fn = new AsyncFunction('effect', 'actor', 'callMacro', 'msg', 'source', 'sourceActor', 'testData', 'qs', 'options', command);
-                    await fn.call(this, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                    try {
+                      await fn.call(macroContext, ef, actor, callMacroProxy, msg, source, sourceActor, testData, qs, options);
+                    } finally {
+                      macroContext.currentOnUseArgs = undefined;
+                    }
                     const macroResults = await Promise.all(macroCallResults);
                     msg += macroResults.map((result) => collectResultMessage(result)).join('');
                     const maintainedTargetUuids = MaintainedEffects.collectTargetUuids(
@@ -495,7 +561,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                   }
                 }
                 break;
-              case 3: // Creature Link
+              case advancedFunctionIndexes.CREATURE:
                 {
                   const links = (effectSystem.macroArgs.creatureLinks || '').split(',').filter(Boolean);
                   const creatures = links
@@ -655,12 +721,12 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             },
           },
         );
-        if (effectApplied) {
+        if (effectApplied && ((!options.suppressInfoMessage && !options.regionEvent) || msg)) {
           const appliedEffect = _loc('ActiveEffects.appliedEffect', {
             target: actor.token?.name || actor.name,
             source: effectNames.join(', '),
           });
-          const infoMsg = `${appliedEffect}${msg || ''}`;
+          const infoMsg = options.suppressInfoMessage || options.regionEvent ? msg : `${appliedEffect}${msg || ''}`;
           await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
         }
         if (resistRolls.length) {

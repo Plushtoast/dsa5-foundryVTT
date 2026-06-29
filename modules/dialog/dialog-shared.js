@@ -5,9 +5,10 @@ import { ValueWidget } from '../system/helpers/valuewidget.js';
 
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
+import { DetachedWindowMixin } from '../mixins/detached-window-mixin.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
-export default class DialogShared extends foundry.applications.api.DialogV2 {
+export default class DialogShared extends DetachedWindowMixin(foundry.applications.api.DialogV2) {
   static roman = ['', ' I', ' II', ' III', ' IV', ' V', ' VI', ' VII', ' VIII', ' IX', ' X'];
 
   static debounceRefreshOpenDialogTargets = foundry.utils.debounce(() => {
@@ -70,9 +71,9 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
     const isAttackOrCounterAttack = this.dialogData.mode === 'attack' || this.dialogData.counterAttack;
     const dieClass = isAttackOrCounterAttack ? 'die-mu' : 'die-in';
     const modifier = this.dialogData.modifier || 0;
-    const clampedValue = Math.clamp(Math.round((this.dialogData.rollValue + modifier) * multiplier), 1, 20);
+    const displayValue = Math.round((this.dialogData.rollValue + modifier) * multiplier);
 
-    return `<span class="rollValue ${dieClass} d20">${clampedValue}</span>`;
+    return `<span class="rollValue ${dieClass} d20">${displayValue}</span>`;
   }
 
   async updateRollButton(targets, multiplier = 1) {
@@ -234,7 +235,8 @@ export default class DialogShared extends foundry.applications.api.DialogV2 {
   }
 
   async addTarget(ev) {
-    (await AddTargetDialog.getDialog(this.dialogData.speaker)).render(true);
+    const dlg = await AddTargetDialog.getDialog(this.dialogData.speaker);
+    this.constructor.renderApplication(dlg, { parent: this });
   }
 
   _tearDown(options) {

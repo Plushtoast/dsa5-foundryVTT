@@ -1,7 +1,7 @@
 <div data-id='{{key}}' class='standard-form'>
   {{#unless actor}}
   <div class="flexrow flexAlignCenter">
-    <div class="center"><i class="fas fa-warning"></i> {{localize 'PERSONAE.FIELDS.personae.actor_uuid.warning'}}</div>
+    <div class="center"><i class="fas fa-unlink"></i> {{localize 'PERSONAE.FIELDS.personae.actor_uuid.warning'}}</div>
   </div>
   {{/unless}}
   <div class='form-group'>
@@ -20,11 +20,14 @@
 
   {{formGroup document.system.schema.fields.personae.element.fields.type value=elem.type localize=true name=(concat 'system.personae.' key '.type')}}
 
+  {{formGroup document.system.schema.fields.personae.element.fields.important value=elem.important localize=true name=(concat 'system.personae.' key '.important')}}
+
   {{formGroup document.system.schema.fields.personae.element.fields.actor_uuid value=elem.actor_uuid localize=true name=(concat 'system.personae.' key '.actor_uuid')}}
   {{formGroup document.system.schema.fields.personae.element.fields.tags value=elem.tags localize=true name=(concat 'system.personae.' key '.tags')}}
 
   {{#if (eq elem.type 0)}}
   {{formGroup document.system.schema.fields.personae.element.fields.garadan value=elem.garadan localize=true name=(concat 'system.personae.' key '.garadan')}}
+  {{formGroup document.system.schema.fields.personae.element.fields.showGaradanGMOnly value=elem.showGaradanGMOnly localize=true name=(concat 'system.personae.' key '.showGaradanGMOnly')}}
   {{/if}}
 
   <div class='form-group'>

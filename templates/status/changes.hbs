@@ -6,18 +6,9 @@
         <button type="button" class="ui-control icon {{this.icon}}" data-action="filterWizardCategory" {{{ifThen (eq this.key @root.wizardCategory) 'aria-pressed="true"' ''}}} data-category="{{this.key}}" data-tooltip="{{this.label}}"></button>
         {{/each}}
     </nav>
-    {{/if}}
     <header class="row-section">
-        {{#if wizardMode}}
         <div class="col seventy">{{localize "ActiveEffects.wizardEffect"}}</div>
         <div class="col third center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
-        {{else}}
-        <div class="col fourty">{{localize "EFFECT.FIELDS.changes.element.key.label"}}</div>
-        <div class="col five center">{{localize "EFFECT.FIELDS.changes.element.type.label"}}</div>
-        <div class="col third center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
-        <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.phase.label"}}</div>
-        <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.priority.label"}}</div>
-        {{/if}}
         <div class="col ten center">
             <a data-action="toggleWizardMode" data-tooltip="{{#if wizardMode}}ActiveEffects.wizardExpertMode{{else}}ActiveEffects.wizardSimpleMode{{/if}}">
                 <i class="fa-solid {{#if wizardMode}}fa-code{{else}}fa-wand-magic-sparkles{{/if}}"></i>
@@ -66,4 +57,7 @@
         {{/with}}
         {{/each}}
     </ul>
+    {{else}}
+    {{> systems/dsa5/templates/status/parts/change-list-advanced.hbs changes=source.system.changes changePath="system.changes" showWizardToggle=true}}
+    {{/if}}
 </section>

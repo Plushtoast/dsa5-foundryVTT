@@ -97,7 +97,7 @@
       <div class="flexcol gap5px">
       {{#each objectiveEntries as |objective|}}
         <div class='flexrow'>
-          <button type='button' data-action='toggleObjectiveDone' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{ifThen objective.done "fa-square-check" "fa-square"}}'></button>
+          <button type='button' data-action='toggleObjectiveDone' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{stateIcon}}' data-tooltip='{{localize stateTooltip}}'></button>
           {{#if ../isGM}}
             <button type='button' data-action='toggleObjectiveVisibility' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{ifThen objective.visible "fa-eye" "fa-eye-slash"}}'></button>
           {{/if}}
@@ -113,18 +113,21 @@
 
   <div class='form-group stacked'>
     <div class='flexrow'>
-      <span class='label'><b>{{localize 'DSAQUESTLOG.linkedPages'}}</b></span>
-      <button type='button' data-action='addLinkedPage' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addLinkedPage"}}'></button>
+      <span class='label'><b>{{localize 'DSAQUESTLOG.linkedDocuments'}}</b></span>
+      <button type='button' data-action='addLinkedDocument' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addLinkedDocument"}}'></button>
     </div>
     <div class='form-fields'>
       <div class="flexcol gap5px">
-      {{#each linkedPageEntries as |link|}}
-        <div class='flexrow'>
+      {{#each linkedDocumentEntries as |link|}}
+        <div class='flexrow' style="align-items:flex-end">
           {{formInput ../document.system.schema.fields.quests.element.fields.linkedPages.element.fields.uuid value=link.uuid localize=true name=(concat 'system.quests.' ../key '.linkedPages.' link.linkKey '.uuid')}}
-          <button type='button' data-action='removeLinkedPage' data-key='{{../key}}' data-link-key='{{link.linkKey}}' class='fas icon fa-trash' data-tooltip='delete'></button>
+          {{#if ../isGM}}
+            <button type='button' data-action='toggleLinkedDocumentVisibility' data-key='{{../key}}' data-link-key='{{link.linkKey}}' class='fas icon {{ifThen link.visible "fa-eye" "fa-eye-slash"}}' data-tooltip='{{localize "DSAQUESTLOG.toggleLinkedDocumentVisibility"}}'></button>
+          {{/if}}
+          <button type='button' data-action='removeLinkedDocument' data-key='{{../key}}' data-link-key='{{link.linkKey}}' class='fas icon fa-trash' data-tooltip='delete'></button>
         </div>
       {{else}}
-        <div class='small'>{{localize 'DSAQUESTLOG.noLinkedPages'}}</div>
+        <div class='small'>{{localize 'DSAQUESTLOG.noLinkedDocuments'}}</div>
       {{/each}}
       </div>
     </div>

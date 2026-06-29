@@ -2,6 +2,7 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSA5SpellDialog from '../dialog/dialog-spell-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 
 /**
  * Utility class for building dropdown menus for Active Effect configurations
@@ -205,6 +206,8 @@ export default class EffectDropdownBuilder {
                 { name: `${skill} - ${partChecks}`, val: 'system.skillModifiers.TPM', type: 'custom', ph: demo },
                 { name: `${skill} - ${_loc('MODS.global')}`, val: 'system.skillModifiers.global', type: 'custom', ph: '1' },
                 { name: `${skill} - ${compensation}`, val: 'system.skillModifiers.CMP', type: 'custom', ph: demo },
+                { name: _loc('MAGICANALYSIS.effectMaxQs'), val: MagicAnalysisService.MAGIC_ANALYSIS_KEYS.max, type: 'add', ph: '1' },
+                { name: _loc('MAGICANALYSIS.effectStackQs'), val: MagicAnalysisService.MAGIC_ANALYSIS_KEYS.stack, type: 'add', ph: '1' },
             ],
         }];
 
@@ -245,6 +248,7 @@ export default class EffectDropdownBuilder {
         const PA = _loc('CHARAbbrev.PA');
         const damage = _loc('CHARAbbrev.damage');
         const defenseMalus = _loc('MODS.defenseMalus');
+        const compensation = _loc('MODS.compensation');
 
         const subgroups = [
             {
@@ -281,6 +285,7 @@ export default class EffectDropdownBuilder {
                     { name: `${combatskill} - ${AT}`, val: 'system.skillModifiers.combat.attack', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${PA}`, val: 'system.skillModifiers.combat.parry', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${_loc('KTW')}`, val: 'system.skillModifiers.combat.step', type: 'custom', ph: csdemo },
+                    { name: `${combatskill} - ${compensation}`, val: 'system.skillModifiers.combat.CMP', type: 'custom', ph: `${csdemo}, * 1, attack:* 1, maneuver:* 1` },
                     { name: `${combatskill} - ${damage}`, val: 'system.skillModifiers.combat.damage', type: 'custom', ph: csdemo },
                     { name: `${combatskill} - ${_loc('damageThreshold')}`, val: 'system.skillModifiers.combat.damageThreshold', type: 'custom', ph: csdemo },
                 ],
@@ -368,6 +373,7 @@ export default class EffectDropdownBuilder {
         const feature = _loc('feature');
         const damage = _loc('damage');
         const foreign = _loc('DSASETTINGS.enableForeignSpellModifer');
+        const spellPreferences = _loc('spellpreferences');
         const spell = _loc('TYPES.Item.spell');
         const ritual = _loc('TYPES.Item.ritual');
         const liturgy = _loc('TYPES.Item.liturgy');
@@ -399,6 +405,7 @@ export default class EffectDropdownBuilder {
                     { name: `${advanced} - ${AsPCost}`, val: 'system.skillModifiers.conditional.AsPCost', type: 'custom', ph: descriptor },
                     { name: `${feature} - ${KaPCost}`, val: 'system.skillModifiers.feature.KaPCost', type: 'custom', ph: featureHint },
                     { name: `${advanced} - ${KaPCost}`, val: 'system.skillModifiers.conditional.KaPCost', type: 'custom', ph: descriptor },
+                    { name: spellPreferences, val: 'system.spellpreferences.value', type: 'override', ph: `${spell} 1, ${spell} 2` },
                 ],
             },
         ];
@@ -688,5 +695,30 @@ export default class EffectDropdownBuilder {
         const groups = this._getEnhancementGroupDefinitions(targetType);
         const supportedKeys = new Set(groups.flatMap((g) => g.subgroups.flatMap((s) => s.options.map((o) => o.val))));
         return changes.every((change) => !change?.key || supportedKeys.has(change.key));
+    }
+
+    /**
+     * Finds a wizard change option by its key path (e.g. system.carryModifier).
+     * @param {string} key
+     * @returns {{ name: string, val: string, type: string, ph?: string }|null}
+     */
+    static findChangeOption(key) {
+        if (!key) return null;
+
+        for (const group of this._getGroupDefinitions()) {
+            for (const subgroup of group.subgroups) {
+                const option = subgroup.options.find((o) => o.val === key);
+                if (option) return { ...option };
+            }
+        }
+
+        for (const group of this._getEnhancementGroupDefinitions('equipment')) {
+            for (const subgroup of group.subgroups) {
+                const option = subgroup.options.find((o) => o.val === key);
+                if (option) return { ...option };
+            }
+        }
+
+        return null;
     }
 }

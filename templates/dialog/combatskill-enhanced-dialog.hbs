@@ -31,7 +31,7 @@
             {{#if showAttack}}
             <div class="form-group" >
                 <label data-tooltip="DIALOGDESCRIPTION.opportunityAttack">{{localize "MODS.opportunityAttack"}} [<span class="opportunityAttackLabel">{{rollModifiers.opportunityAttack.mod}}</span>]</label>
-                <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="{{rollModifiers.opportunityAttack.mod}}">
+                <input type="checkbox" class="opportunityAttack" name="opportunityAttack" value="{{rollModifiers.opportunityAttack.mod}}" {{checked forceOpportunityAttack}} {{disabled forceOpportunityAttack}}>
             </div>
             <div class="form-group" data-tooltip="DIALOG.assassinateDescr">
                 <label>{{localize "DIALOG.assassinate"}}</label>

@@ -10,6 +10,8 @@ import { QuestLogFeature } from './questlog.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
+const EVENTS_VIEW_MODES = ['timeline', 'calendar'];
+
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static #yearCache = new Map();
   static #holidayDefsCache = null;
@@ -36,6 +38,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       scrollToToday: this.#scrollToToday,
       scrollMonthPrev: this.#scrollBackward,
       scrollMonthNext: this.#scrollForward,
+      switchEventsView: this.#switchEventsView,
+      selectEvent: this.#selectEvent,
+      eventsCalendarPrev: this.#eventsCalendarPrev,
+      eventsCalendarNext: this.#eventsCalendarNext,
+      eventsCalendarToday: this.#eventsCalendarToday,
       confirmDateChange: this.#confirmDateChange,
       cancelDateChange: this.#cancelDateChange,
     }
@@ -58,7 +65,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     events: {
       template: 'systems/dsa5/templates/system/calendar/holidays.hbs',
-      templates: ['systems/dsa5/templates/journal/calendarcard.hbs']
+      templates: [
+        'systems/dsa5/templates/journal/calendarcard.hbs',
+        'systems/dsa5/templates/system/calendar/event-compact.hbs',
+        'systems/dsa5/templates/system/calendar/event-detail.hbs',
+        'systems/dsa5/templates/system/calendar/events-month-grid.hbs',
+      ]
     },
     calendar: {
       template: 'systems/dsa5/templates/system/calendar/calendar.hbs',
@@ -80,6 +92,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   #temporaryTime = null;
   #pendingScrollToToday = false;
   #eventsTabObserver = null;
+  #eventsViewMode = null;
+  #eventsCalendarYear = null;
+  #eventsCalendarMonth = null;
+  #selectedEventKey = null;
+  #eventsCalendarEntries = new Map();
 
   get title() {
     return _loc(DSAWorldCalendar.selectedCalendar().name);
@@ -324,6 +341,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   static async #filterCategory(ev, target) {
     const isOn = !target.classList.contains('toggleOn');
     target.classList.toggle('toggleOn', isOn);
+
+    if (this.#getEventsViewMode() === 'calendar') {
+      await this.#renderEventsCalendarMonth();
+      return;
+    }
+
     const searchOptions = {
       category: new Set(),
       uuid: new Set(),
@@ -465,6 +488,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       acc[key] = { key, name: val, color: DSACalendarEntry.CATEGORY_COLORS[key], icon: DSACalendarEntry.CATEGORY_ICONS[key] };
       return acc;
     }, {});
+    context.eventsViewMode = this.#getEventsViewMode();
   }
 
   async #onDateChange(ev) {
@@ -548,14 +572,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     this.#search ??= new foundry.applications.ux.SearchFilter({
       inputSelector: "input.calendarSearch[type=search]",
-      contentSelector: ".eventscontainer",
+      contentSelector: ".events-tab-container",
       callback: this.#onSearchFilter.bind(this)
     });
     this.#search.bind(this.element);
 
     const scrollContainer = this.element.querySelector('[data-tab="events"].tab');
     const sticky = this.element.querySelector('.position-fake-sticky');
-    scrollContainer.addEventListener('scroll', (ev) => {
+    scrollContainer?.addEventListener('scroll', (ev) => {
+      if (!sticky) return;
       const scrollTop = scrollContainer.scrollTop != 0 ? scrollContainer.scrollTop - 20 : scrollContainer.scrollTop;
       sticky.style.transform = `translateY(${scrollTop}px)`;
     });
@@ -563,7 +588,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#personaeDramatis.onRenderListeners();
     this.#questLog.onRenderListeners();
 
-    this._setupInfiniteScroll();
+    if (this.#getEventsViewMode() === 'calendar') {
+      this.#initEventsCalendarDate();
+      await this.#renderEventsCalendarMonth();
+    } else {
+      this._setupInfiniteScroll();
+    }
   }
 
   _tearDown(options) {
@@ -573,12 +603,22 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#questLog._tearDown(options);
     this.#eventsTabObserver?.disconnect();
     this.#eventsTabObserver = null;
-    if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
-    if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
-    this._evtState = null;
+    this.#disconnectInfiniteScroll();
   }
 
   #onSearchFilter(_event, query, rgx, html) {
+    if (this.#getEventsViewMode() === 'calendar') {
+      for (const entry of this.element.querySelectorAll('.event-compact')) {
+        if (!query) {
+          entry.hidden = false;
+          continue;
+        }
+        const title = entry.querySelector('.event-compact__title')?.textContent || '';
+        entry.hidden = !rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(title));
+      }
+      return;
+    }
+
     for (const entry of html.querySelectorAll(".event-card")) {
       if (!query) {
         entry.hidden = false;
@@ -601,7 +641,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
   }
 
-  async openDocumentSheet(documentOrUuid, { currentKey = null, close = true } = {}) {
+  async openDocumentSheet(documentOrUuid, { currentKey = null, pageId = null, close = true } = {}) {
     const document = typeof documentOrUuid === 'string' ? await fromUuid(documentOrUuid) : documentOrUuid;
     if (!document?.sheet?.render) return null;
 
@@ -609,6 +649,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     if (currentKey) {
       document.sheet.render({ force: true, currentKey });
+    } else if (pageId) {
+      document.sheet.render(true, { pageId });
     } else {
       document.sheet.render(true);
     }
@@ -625,6 +667,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.calendarRenderer?.destroy();
     this.calendarRenderer = null;
     this.#temporaryTime = null;
+    this.#eventsViewMode = null;
   }
 
   _drawCalendar() {
@@ -886,21 +929,266 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   /* =====================
+   * Events view modes (timeline / calendar)
+   * ===================== */
+
+  #getEventsViewMode() {
+    if (this.#eventsViewMode === null) this.#eventsViewMode = 'timeline';
+    return this.#eventsViewMode;
+  }
+
+  #initEventsCalendarDate() {
+    if (this.#eventsCalendarYear === null) {
+      const components = this.actualTimeComponents();
+      this.#eventsCalendarYear = components.year;
+      this.#eventsCalendarMonth = components.month;
+    }
+  }
+
+  #disconnectInfiniteScroll() {
+    if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
+    if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
+    this._evtState = null;
+  }
+
+  static async #switchEventsView(ev, target) {
+    const view = target.dataset.view;
+    if (!EVENTS_VIEW_MODES.includes(view) || view === this.#getEventsViewMode()) return;
+
+    this.#eventsViewMode = view;
+
+    for (const btn of this.element.querySelectorAll('[data-action="switchEventsView"]')) {
+      btn.classList.toggle('toggleOn', btn.dataset.view === view);
+    }
+
+    this.element.querySelector('.events-layout')?.classList.toggle('timeline-mode', view === 'timeline');
+    this.element.querySelector('.searchOptions')?.classList.toggle('has-calendar-nav', view === 'calendar');
+    this.element.querySelector('.events-calendar-nav')?.classList.toggle('dsahidden', view !== 'calendar');
+    this.element.querySelector('.events-view-timeline')?.classList.toggle('dsahidden', view !== 'timeline');
+    this.element.querySelector('.events-view-calendar')?.classList.toggle('dsahidden', view !== 'calendar');
+
+    if (view === 'timeline') {
+      this.#selectedEventKey = null;
+      this._setupInfiniteScroll();
+    } else {
+      this.#disconnectInfiniteScroll();
+      this.#initEventsCalendarDate();
+      await this.#renderEventsCalendarMonth();
+    }
+  }
+
+  static async #selectEvent(ev, target) {
+    const juuid = target.dataset.juuid;
+    const key = target.dataset.key;
+    if (!juuid || !key) return;
+
+    const eventKey = `${juuid}-${key}`;
+    const entry = this.#eventsCalendarEntries.get(eventKey);
+    if (!entry) return;
+
+    this.#selectedEventKey = eventKey;
+    this.element.querySelectorAll('.event-compact.selected').forEach(el => el.classList.remove('selected'));
+    target.classList.add('selected');
+    await this.#renderEventDetail(entry);
+  }
+
+  static async #eventsCalendarPrev() {
+    await this.#navigateEventsCalendarMonth(-1);
+  }
+
+  static async #eventsCalendarNext() {
+    await this.#navigateEventsCalendarMonth(1);
+  }
+
+  static async #eventsCalendarToday() {
+    const components = this.actualTimeComponents();
+    this.#eventsCalendarYear = components.year;
+    this.#eventsCalendarMonth = components.month;
+    this.#selectedEventKey = null;
+    await this.#renderEventsCalendarMonth();
+  }
+
+  async #navigateEventsCalendarMonth(delta) {
+    this.#initEventsCalendarDate();
+    const calendar = game.time.calendar;
+    const monthCount = calendar.months.values.length;
+    let month = this.#eventsCalendarMonth + delta;
+    let year = this.#eventsCalendarYear;
+
+    while (month < 0) {
+      month += monthCount;
+      year -= 1;
+    }
+    while (month >= monthCount) {
+      month -= monthCount;
+      year += 1;
+    }
+
+    this.#eventsCalendarMonth = month;
+    this.#eventsCalendarYear = year;
+    this.#selectedEventKey = null;
+    await this.#renderEventsCalendarMonth();
+  }
+
+  async #buildMonthGrid(year, monthIndex) {
+    const calendar = game.time.calendar;
+    const monthData = calendar.months.values[monthIndex];
+    const daysPerWeek = calendar.days.values.length;
+
+    let dayOffset = 0;
+    for (let m = 0; m < monthIndex; m++) {
+      dayOffset += calendar.months.values[m].days;
+    }
+
+    const firstComponents = calendar.timeToComponents(
+      calendar.componentsToTime({ year, month: monthIndex, day: dayOffset, hour: 0, minute: 0, second: 0 })
+    );
+    const startDow = ((firstComponents.dayOfWeek % daysPerWeek) + daysPerWeek) % daysPerWeek;
+    const today = this.actualTimeComponents();
+
+    const entries = await this.constructor.fromYearCache(year);
+    const monthEntries = entries.filter(entry =>
+      entry.from.month === monthIndex && (entry.recurring || entry.from.year === year)
+    );
+
+    const weeks = [];
+    let currentWeek = [];
+
+    for (let i = 0; i < startDow; i++) {
+      currentWeek.push({ empty: true });
+    }
+
+    for (let dom = 1; dom <= monthData.days; dom += 1) {
+      const dayEvents = monthEntries.filter(entry => {
+        const start = entry.from.dayOfMonth;
+        const end = entry.to?.dayOfMonth ?? start;
+        return start <= dom && dom <= end;
+      }).map(entry => {
+        const calendarKey = entry.calendarKey ?? entry.title;
+        const eventKey = `${entry.juuid}-${calendarKey}`;
+        this.#eventsCalendarEntries.set(eventKey, entry);
+        const chipColor = String(entry.color || '').slice(0, 7);
+        return {
+          ...entry,
+          calendarKey,
+          chipColor,
+          categoryIcon: DSACalendarEntry.CATEGORY_ICONS[entry.category],
+        };
+      });
+
+      const overflow = dayEvents.slice(3);
+      currentWeek.push({
+        empty: false,
+        dayOfMonth: dom,
+        isToday: today.year === year && today.month === monthIndex && today.dayOfMonth + 1 === dom,
+        events: dayEvents.slice(0, 3),
+        overflowCount: overflow.length,
+        overflowTooltip: overflow.map(e => e.title).join(', '),
+      });
+
+      if (currentWeek.length === daysPerWeek) {
+        weeks.push({ days: currentWeek });
+        currentWeek = [];
+      }
+    }
+
+    if (currentWeek.length) {
+      while (currentWeek.length < daysPerWeek) currentWeek.push({ empty: true });
+      weeks.push({ days: currentWeek });
+    }
+
+    return {
+      weeks,
+      weekdayHeaders: calendar.days.values.map(d => ({
+        abbreviation: calendar.translate(d.abbreviation),
+        fullName: calendar.translate(d.name),
+      })),
+      weekdayFullNames: calendar.days.values.map(d => calendar.translate(d.name)),
+      daysPerWeek,
+      monthName: calendar.translate(monthData.name),
+      year,
+      yearSuffix: calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix),
+      monthIndex,
+    };
+  }
+
+  async #renderEventsCalendarMonth() {
+    const gridContainer = this.element?.querySelector('.events-month-grid-container');
+    if (!gridContainer) return;
+
+    this.#initEventsCalendarDate();
+    this.#eventsCalendarEntries.clear();
+
+    const gridData = await this.#buildMonthGrid(this.#eventsCalendarYear, this.#eventsCalendarMonth);
+    const html = await renderTemplate('systems/dsa5/templates/system/calendar/events-month-grid.hbs', gridData);
+    gridContainer.innerHTML = html;
+
+    const titleEl = this.element.querySelector('.events-calendar-title');
+    if (titleEl) {
+      titleEl.textContent = `${gridData.monthName} ${gridData.year} ${gridData.yearSuffix}`;
+    }
+
+    this._applyActiveFiltersToNewContent(gridContainer);
+    this._applyActiveSearchToNewContent(gridContainer);
+
+    if (this.#selectedEventKey) {
+      const entry = this.#eventsCalendarEntries.get(this.#selectedEventKey);
+      if (entry) {
+        const btn = gridContainer.querySelector(`.event-compact[data-juuid="${entry.juuid}"][data-key="${entry.calendarKey}"]`);
+        btn?.classList.add('selected');
+        await this.#renderEventDetail(entry);
+      } else {
+        this.#selectedEventKey = null;
+        this.#renderEventDetailEmpty();
+      }
+    } else {
+      this.#renderEventDetailEmpty();
+    }
+  }
+
+  #renderEventDetailEmpty() {
+    const container = this.element?.querySelector('.event-details-container');
+    if (!container) return;
+    container.innerHTML = `<div class="no-selection">
+      <div class="no-selection-content">
+        <i class="fas fa-calendar-day"></i>
+        <h3>${_loc('dsacalendar.selectEvent')}</h3>
+        <p>${_loc('dsacalendar.selectEventHint')}</p>
+      </div>
+    </div>`;
+  }
+
+  async #renderEventDetail(entry) {
+    const container = this.element?.querySelector('.event-details-container');
+    if (!container) return;
+
+    const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+    const displayYear = entry.recurring ? this.#eventsCalendarYear : entry.from.year;
+    const html = await renderTemplate('systems/dsa5/templates/journal/calendarcard.hbs', {
+      ...entry,
+      yearSuffix,
+      displayYear,
+    });
+    container.innerHTML = html;
+  }
+
+  /* =====================
    * Events Virtual Scroller
    * ===================== */
 
   _setupInfiniteScroll() {
+    if (this.#getEventsViewMode() === 'calendar') return;
+
     const container = this.element.querySelector('.eventscontainer');
     const root = this.element.querySelector('[data-tab="events"].tab');
     if (!container || !root) return;
 
-    if (container.dataset.vscrollInit === '1' && this._evtState?.container === container) return;
+    if (container.dataset.vscrollInit === '1') {
+      this.#connectInfiniteScrollObservers(container, root);
+      return;
+    }
 
-    if (this._evtState?.topObserver) this._evtState.topObserver.disconnect();
-    if (this._evtState?.bottomObserver) this._evtState.bottomObserver.disconnect();
-    this._evtState = null;
-
-    if (container.dataset.vscrollInit === '1') return;
+    this.#disconnectInfiniteScroll();
 
     const topSentinel = document.createElement('div');
     topSentinel.className = 'events-sentinel top';
@@ -909,15 +1197,34 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     container.prepend(topSentinel);
     container.append(bottomSentinel);
 
+    container.dataset.vscrollInit = '1';
+
     const components = this.actualTimeComponents();
+    this.#connectInfiniteScrollObservers(container, root);
+    this._renderInitialYearChunk(components.year, components);
+  }
+
+  #connectInfiniteScrollObservers(container, root) {
+    if (this._evtState?.topObserver) return;
+
+    const topSentinel = container.querySelector('.events-sentinel.top');
+    const bottomSentinel = container.querySelector('.events-sentinel.bottom');
+    if (!topSentinel || !bottomSentinel) return;
+
+    const components = this.actualTimeComponents();
+    const loadedYears = new Set(
+      Array.from(container.querySelectorAll('.year-chunk[data-year]')).map(el => Number(el.dataset.year))
+    );
+    const yearValues = loadedYears.size ? Array.from(loadedYears) : [components.year];
+
     this._evtState = {
       root,
       container,
       topSentinel,
       bottomSentinel,
-      earliestYear: components.year,
-      latestYear: components.year,
-      loadedYears: new Set(),
+      earliestYear: Math.min(...yearValues),
+      latestYear: Math.max(...yearValues),
+      loadedYears,
       isLoadingTop: false,
       isLoadingBottom: false,
       keepYears: 5,
@@ -944,10 +1251,6 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     bottomObserver.observe(bottomSentinel);
     this._evtState.topObserver = topObserver;
     this._evtState.bottomObserver = bottomObserver;
-
-    container.dataset.vscrollInit = '1';
-
-    this._renderInitialYearChunk(components.year, components);
   }
 
   async _renderInitialYearChunk(year, components) {
@@ -1084,7 +1387,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       const type = elm.dataset.filterType;
       if (type) searchOptions[type].add(elm.dataset.filter);
     }
-    for (const card of scopeElement.querySelectorAll('.event-card')) {
+    for (const card of scopeElement.querySelectorAll('.event-card, .event-compact')) {
       let isVisible = true;
       for (const [type, values] of Object.entries(searchOptions)) {
         if (!values.size) { isVisible = false; break; }
@@ -1095,11 +1398,20 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
   }
 
-  //todo not sure if it is needed
   _applyActiveSearchToNewContent(scopeElement) {
     const input = this.element.querySelector('input.calendarSearch[type=search]');
     const query = input?.value?.trim() || '';
     if (!query) return;
+
+    if (this.#getEventsViewMode() === 'calendar') {
+      const rgx = new RegExp(foundry.applications.ux.SearchFilter.cleanQuery(query), 'i');
+      for (const entry of scopeElement.querySelectorAll('.event-compact')) {
+        const title = entry.querySelector('.event-compact__title')?.textContent || '';
+        entry.hidden = !rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(title));
+      }
+      return;
+    }
+
     this.#search.search = query;
   }
 

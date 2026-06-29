@@ -1,0 +1,117 @@
+<div class="magical-alchemist-dialog scrollable flexcol gap10px">
+    {{> systems/dsa5/templates/system/dsatabs.hbs tabs=tabs}}
+
+    <section class="content">
+        {{#if tabs.reroll}}
+        <section class="tab {{tabs.reroll.cssClass}}" data-tab="reroll" data-group="{{tabs.reroll.group}}">
+            <div class="description flexcol gap5px">
+                <strong>{{localize "MAGICAL_ALCHEMIST.descTitle"}}</strong>
+                <p>{{localize "MAGICAL_ALCHEMIST.descOpt2"}}</p>
+            </div>
+
+            <hr>
+
+            <div class="row-section flexgap">
+                <div class="col fourty result-preview lineheight">
+                    <div><strong>{{localize "Fw"}}:</strong> <span class="fw-preview">{{previewFW}}</span></div>
+                    <div><strong>{{localize "qualityStep"}}:</strong> <span class="qs-preview">{{previewQS}}</span></div>
+                    <div><strong>{{localize "cost"}}:</strong> <span class="asp-cost">{{cost}}</span> {{localize "AsP"}}</div>
+                    <div><strong>{{localize "astralenergy"}}:</strong> {{currentAsP}}</div>
+                </div>
+
+                <div class="col sixty flexcol gap10px center">
+                    <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
+                        {{#each dice as |die|}}
+                        <div class="die-group columnFlex flex0 center" data-index="{{die.index}}">
+                            <a class="dieButton {{#if die.selected}}dieSelected{{/if}}" data-action="toggleDie" data-index="{{die.index}}">
+                                <span data-tooltip="{{die.tooltip}}" class="{{die.cssClass}} die-{{die.attr}} d20">{{die.currentValue}}</span>
+                            </a>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if tabs.addFP}}
+        <section class="tab {{tabs.addFP.cssClass}}" data-tab="addFP" data-group="{{tabs.addFP.group}}">
+            <div class="description flexcol gap5px">
+                <strong>{{localize "MAGICAL_ALCHEMIST.descTitle"}}</strong>
+                <p>{{localize "MAGICAL_ALCHEMIST.descOpt1"}}</p>
+            </div>
+
+            <hr>
+
+            <div class="row-section flexgap">
+                <div class="col fourty result-preview lineheight">
+                    <div><strong>{{localize "Fw"}}:</strong> <span class="fw-preview">{{previewFW}}</span></div>
+                    <div><strong>{{localize "qualityStep"}}:</strong> <span class="qs-preview">{{previewQS}}</span></div>
+                    <div><strong>{{localize "cost"}}:</strong> <span class="asp-cost">{{cost}}</span> {{localize "AsP"}}</div>
+                    <div><strong>{{localize "astralenergy"}}:</strong> {{currentAsP}}</div>
+                </div>
+
+                <div class="col sixty flexcol gap10px center">
+                    <div class="card-content hide-option roll-result flexrow center flexAlignCenter">
+                        {{#each dice as |die|}}
+                        <div class="die-group columnFlex center flex0" data-index="{{die.index}}">
+                            <span data-tooltip="{{die.tooltip}}" class="{{die.cssClass}} die-{{die.attr}} d20">{{die.currentValue}}</span>
+                        </div>
+                        {{/each}}
+                    </div>
+
+                    <div class="add-fp-controls row-section center margin-top">
+                        <div class="col fourty lineheight right flexrow">
+                            <label>{{localize "MODS.FP"}}:</label>
+                        </div>
+                        <div class="col five columnFlex center gap5px">
+                            <a data-action="adjustFP" data-delta="1"><i class="fas fa-chevron-up"></i></a>
+                            <input type="number" class="fp-input input-text center" value="{{addedFP}}" readonly>
+                            <a data-action="adjustFP" data-delta="-1"><i class="fas fa-chevron-down"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if tabs.improve}}
+        <section class="tab {{tabs.improve.cssClass}}" data-tab="improve" data-group="{{tabs.improve.group}}">
+            <div class="description flexcol gap5px">
+                <strong>{{localize "MAGICAL_ALCHEMIST.descTitle"}}</strong>
+                <p>{{localize "MAGICAL_ALCHEMIST.descOpt3"}}</p>
+            </div>
+
+            <hr>
+
+            <div class="row-section flexgap">
+                <div class="col fourty result-preview lineheight">
+                    <div><strong>{{localize "Fw"}}:</strong> <span class="fw-preview">{{previewFW}}</span></div>
+                    <div><strong>{{localize "qualityStep"}}:</strong> <span class="qs-preview">{{previewQS}}</span></div>
+                    <div><strong>{{localize "cost"}}:</strong> <span class="asp-cost">{{cost}}</span> {{localize "AsP"}}</div>
+                    <div><strong>{{localize "astralenergy"}}:</strong> {{currentAsP}}</div>
+                </div>
+
+                <div class="col sixty flexcol gap10px center">
+                    <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
+                        {{#each dice as |die|}}
+                        <div class="die-group columnFlex center flex0" data-index="{{die.index}}">
+                            <div class="improve-controls columnFlex center gap5px">
+                                <a class="improve-btn up" data-action="adjustDie" data-delta="1" data-index="{{die.index}}" {{#unless die.canIncrease}}style="visibility: hidden;"{{/unless}}><i class="fas fa-chevron-up"></i></a>
+                                <span data-tooltip="{{die.tooltip}}" class="{{die.cssClass}} die-{{die.attr}} d20">{{die.currentValue}}</span>
+                                <a class="improve-btn down" data-action="adjustDie" data-delta="-1" data-index="{{die.index}}" {{#unless die.canDecrease}}style="visibility: hidden;"{{/unless}}><i class="fas fa-chevron-down"></i></a>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {{/if}}
+    </section>
+
+    <footer class="row-section gap5px margin-top">
+        <button type="button" data-action="confirm" class="col two dsa5 button"><i class="fas fa-check"></i> {{localize "confirm"}}</button>
+        <button type="button" data-action="close" class="col two dsa5 button"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </footer>
+</div>

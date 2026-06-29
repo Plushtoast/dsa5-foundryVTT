@@ -46,7 +46,7 @@
       }
 
       &.selected {
-        box-shadow: inset 0px 0px 10px 5px rgba(188, 136, 111, 0.8);
+        box-shadow: inset 0px 0px 10px 5px var(--personae-gold-alpha-3);
 
         label > span {
           font-weight: 700;

@@ -1,6 +1,6 @@
 /* Common Variables */
 :root {
-  --personae-gold: #937b48;
+  --personae-gold: var(--dsadesign1);
   --personae-gold-alpha-1: rgba(147, 123, 72, 0.1);
   --personae-gold-alpha-2: rgba(147, 123, 72, 0.2);
   --personae-gold-alpha-3: rgba(147, 123, 72, 0.3);
@@ -69,7 +69,8 @@
   background: linear-gradient(90deg, var(--dsadesign1) 0%, var(--personae-gold-alpha-3) 100%);
   border-bottom: 1px solid var(--border-color);
 
-  .list-add-button {
+  .list-add-button,
+  .list-context-menu {
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 999px;
   }
@@ -172,6 +173,18 @@
     background: var(--personae-gold-alpha-1);
     border-left: 4px solid var(--dsadesign1);
     margin-bottom: 0.25rem;
+    cursor: pointer;
+
+    .faction-title {
+      gap: 0.5rem;
+      min-width: 0;
+    }
+
+    .faction-collapse-indicator {
+      color: var(--dsadesign1);
+      font-size: 0.8rem;
+      transition: var(--personae-transition);
+    }
 
     .faction-name {
       margin: 0;
@@ -188,6 +201,16 @@
       border-radius: 12px;
       font-size: 0.8rem;
       font-weight: normal;
+    }
+  }
+
+  &.collapsed {
+    .faction-body {
+      display: none;
+    }
+
+    .faction-collapse-indicator {
+      transform: rotate(-90deg);
     }
   }
 }
@@ -272,6 +295,18 @@
     i {
       font-size: 0.8rem;
     }
+  }
+}
+
+/* Important persona golden shine */
+.persona-list-image.persona-important,
+.persona-detail-image.persona-important {
+  img {
+    border-color: var(--dsadesign1);
+    box-shadow:
+      0 0 4px var(--dsadesign1),
+      0 0 10px rgba(212, 175, 55, 0.7),
+      0 0 16px rgba(212, 175, 55, 0.5);
   }
 }
 
@@ -469,6 +504,17 @@
         align-items: center;
         gap: 0.5rem;
       }
+
+      .broken-actor-link {
+        cursor: default;
+        opacity: 0.85;
+      }
+    }
+
+    > .broken-actor-link {
+      align-self: flex-start;
+      margin-top: 0.25rem;
+      opacity: 0.85;
     }
   }
 
@@ -533,6 +579,27 @@
 }
 
 .questlog-badge {
+  border: 0;
+  line-height: 1.2;
+
+  &.questlog-document-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+
+  &.questlog-document-badge.invisible {
+    opacity: 0.8;
+  }
+
+  &.questlog-document-badge.missing {
+    opacity: 0.8;
+  }
+
   &.questlog-badge-secondary,
   &.questlog-badge-owner,
   &.questlog-badge-group {
@@ -542,6 +609,39 @@
   &.questlog-badge-audience-2 {
     background: rgba(150, 20, 20, 0.18);
   }
+}
+
+.questlog-document-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.questlog-document-open,
+.questlog-document-toggle {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  min-height: 0;
+}
+
+.questlog-document-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0 0.25rem 0.75rem;
+}
+
+.questlog-document-toggle {
+  align-self: stretch;
+  padding: 0.25rem 0.65rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.questlog-document-type {
+  opacity: 0.9;
+  font-weight: bold;
 }
 
 .questlog-list {
@@ -572,6 +672,14 @@
 
   &.is-done {
     opacity: 0.8;
+  }
+
+  &.is-failed {
+    border-color: rgba(150, 20, 20, 0.45);
+  }
+
+  &.invisible {
+    opacity: 0.5;
   }
 }
 
@@ -606,7 +714,7 @@
 }
 
 /* Dark Theme */
-.dark-theme {
+body.theme-dark {
   .personae-list-column,
   .personae-details-column {
     background: rgba(255, 255, 255, 0.05);
@@ -872,7 +980,7 @@
 }
 
 /* Dark Theme Adjustments */
-.dark-theme {
+body.theme-dark {
   .relationship-slider {
     &::-webkit-slider-thumb {
       background: var(--sheet-background);

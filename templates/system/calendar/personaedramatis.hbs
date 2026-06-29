@@ -16,9 +16,7 @@
                             <input type="search" class="search-input actorsearch" placeholder="{{localize 'Book.search'}}" />
                             <i class="fas fa-search"></i>
                         </div>
-                        {{#if isGM}}
-                        <button type="button" class="icon fas fa-plus list-add-button" data-action="newPersona" data-tooltip="{{localize 'PERSONAE.Add'}}"></button>
-                        {{/if}}
+                        <button type="button" class="icon fas fa-bars list-context-menu noBorder dsadesignbutton" data-action="personaeListMenu" data-tooltip="{{localize 'JOURNAL.ActionShow'}}"></button>
                     </div>
                 </div>
                 
@@ -26,16 +24,20 @@
                     <!-- Personae Dramatis List -->
                     <div class="list-content{{#unless (eq lastActiveListType '0')}} hidden{{/unless}}" data-list-type="0">
                         {{#each personae.personae0 as |factionGroup|}}
-                        <div class="faction-group">
-                            <div class="faction-header">
-                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                        <div class="faction-group{{ifThen factionGroup.isCollapsed ' collapsed' ''}}" data-group-key="{{factionGroup.collapseKey}}">
+                            <div class="faction-header" data-action="togglePersonaGroup" role="button" tabindex="0" aria-expanded="{{ifThen factionGroup.isCollapsed 'false' 'true'}}">
+                                <div class="faction-title flexrow flexAlignCenter">
+                                    <i class="fas fa-chevron-down faction-collapse-indicator flex0"></i>
+                                    <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                </div>
                                 <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
+                            <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
-                                <div class="persona-list-image">
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-factions="{{persona.faction}}" data-persona-tags="{{persona.tags}}" data-persona-important="{{persona.important}}" data-persona-visible="{{persona.visible}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
+                                <div class="persona-list-image{{ifThen important ' persona-important' ''}}">
                                     <img src="{{img}}" alt="{{name}}" />
-                                    {{#if garadanClass}}
+                                    {{#if garadanVisible}}
                                     <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
                                     {{/if}}
                                 </div>
@@ -61,6 +63,7 @@
                                 </div>
                             </div>
                             {{/each}}
+                            </div>
                         </div>
                         {{else}}
                         <div class="no-personae-list">
@@ -68,7 +71,7 @@
                                 <i class="fas fa-users"></i>
                                 <p>{{localize "PERSONAE.NoPersonsInList"}}</p>
                                 {{#if ../isGM}}
-                                <button type="button" class="flexrow add-persona-small">
+                                <button type="button" class="flexrow add-persona-small" data-action="newPersona">
                                     <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
                                 </button>
                                 {{/if}}
@@ -80,14 +83,18 @@
                     <!-- Beasts List -->
                     <div class="list-content{{#unless (eq lastActiveListType '1')}} hidden{{/unless}}" data-list-type="1">
                         {{#each personae.personae1 as |factionGroup|}}
-                        <div class="faction-group">
-                            <div class="faction-header">
-                                <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                        <div class="faction-group{{ifThen factionGroup.isCollapsed ' collapsed' ''}}" data-group-key="{{factionGroup.collapseKey}}">
+                            <div class="faction-header" data-action="togglePersonaGroup" role="button" tabindex="0" aria-expanded="{{ifThen factionGroup.isCollapsed 'false' 'true'}}">
+                                <div class="faction-title flexrow flexAlignCenter">
+                                    <i class="flex0 fas fa-chevron-down faction-collapse-indicator"></i>
+                                    <h4 class="faction-name">{{factionGroup.faction}}</h4>
+                                </div>
                                 <span class="faction-count">{{factionGroup.members.length}}</span>
                             </div>
+                            <div class="faction-body">
                             {{#each factionGroup.members as |persona|}}
-                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-persona-dramatis-key="{{dramatisKey}}" data-persona-tags="{{persona.tags}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor'>
-                                <div class="persona-list-image">
+                            <div class="persona-list-item{{ifThen persona.visible '' ' invisible'}}" data-persona-uuid="{{uuid}}" data-persona-juuid="{{juuid}}" data-key="{{dramatisKey}}" data-persona-factions="{{persona.faction}}" data-persona-tags="{{persona.tags}}" data-persona-important="{{persona.important}}" data-persona-visible="{{persona.visible}}" data-actor-uuid="{{persona.actor_uuid}}" data-action='selectActor' tabindex="0">
+                                <div class="persona-list-image{{ifThen important ' persona-important' ''}}">
                                     <img src="{{img}}" alt="{{name}}" />
                                 </div>
                                 <div class="persona-list-info">
@@ -112,6 +119,7 @@
                                 </div>
                             </div>
                             {{/each}}
+                            </div>
                         </div>
                         {{else}}
                         <div class="no-personae-list">
@@ -119,7 +127,7 @@
                                 <i class="fas fa-dragon"></i>
                                 <p>{{localize "PERSONAE.NoBeasts"}}</p>
                                 {{#if ../isGM}}
-                                <button type="button" class="flexrow add-persona-small">
+                                <button type="button" class="flexrow add-persona-small" data-action="newPersona">
                                     <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
                                 </button>
                                 {{/if}}

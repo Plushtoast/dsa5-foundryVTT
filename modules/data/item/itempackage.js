@@ -107,23 +107,26 @@ export default class ItempackageData extends ItemDataModel.mixin(DescriptionTemp
   }
 
   static async collectAvailablePackages() {
-    const seen = new Set();
     const packages = await DSA5_Utility.collectIndexedCompendiumEntries({
       documentName: 'Item',
       fields: ['name', 'system.price.value', 'type'],
-      filterEntry: (entry) => entry.type === 'itempackage' && !seen.has(entry.name),
-      mapEntry: (entry, { pack }) => {
-        seen.add(entry.name);
-        return {
-          name: entry.name,
-          uuid: `Compendium.${pack.collection}.${entry._id}`,
-          price: entry.system?.price?.value ?? 0,
-        };
-      },
+      filterEntry: (entry) => entry.type === 'itempackage',
+      mapEntry: (entry, { pack }) => ({
+        name: entry.name,
+        uuid: `Compendium.${pack.collection}.${entry._id}`,
+        price: entry.system?.price?.value ?? 0,
+      }),
     });
 
-    packages.sort((a, b) => a.name.localeCompare(b.name));
-    return packages;
+    const seen = new Set();
+    const uniquePackages = packages.filter((entry) => {
+      if (seen.has(entry.name)) return false;
+      seen.add(entry.name);
+      return true;
+    });
+
+    uniquePackages.sort((a, b) => a.name.localeCompare(b.name));
+    return uniquePackages;
   }
 
   static async postPackagesChatCard() {
@@ -136,10 +139,10 @@ export default class ItempackageData extends ItemDataModel.mixin(DescriptionTemp
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
-  static async _showPackageByUuid(uuid, whispers) {
+  static async _showPackageByUuid(uuid, _whispers) {
     const item = await fromUuid(uuid);
     if (!item) return;
-    await item.system.showContents(whispers);
+    await item.sheet.render({ force: true, tab: { sheet: 'details' } });
   }
 
   static chatListeners(html) {

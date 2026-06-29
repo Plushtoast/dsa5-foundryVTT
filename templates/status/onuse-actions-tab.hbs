@@ -20,10 +20,39 @@
                 <span>{{action.name}}</span>
             </div>
             <div class="col five flexrow flexAlignEnd">
-                {{#if canEditMacros}}
+                {{#if ../canEditMacros}}
                 <button type="button" class="icon dsadesignbutton noBorder fa fa-edit" data-action="editOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.editOnUseAction"></button>
                 <button type="button" class="icon dsadesignbutton noBorder fa fa-trash" data-action="deleteOnUseAction" data-id="{{action.id}}" data-tooltip="SHEET.removeOnUseAction"></button>
                 {{/if}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+    <div class="row-section wrap margin-top">
+        <div class="col row-section skills table-title lineheight">
+            <div class="col ten"></div>
+            <div class="col eighty">{{localize 'SHEET.afterUseEffects'}}</div>
+            <div class="col ten flexrow flexAlignEnd">
+                <button type="button" class="icon noBorder dsadesignbutton fa fa-plus" data-action="addAfterUse"
+                    data-tooltip="SHEET.addAfterUse"></button>
+            </div>
+        </div>
+        {{#unless afterUse.length}}
+        <div class="col droparea" style="margin:5px;">
+            <p>{{localize 'SHEET.afterUseEffectsHint'}}</p>
+        </div>
+        {{/unless}}
+        {{#each afterUse as |followup|}}
+        <div class="row-section col skills statusEffect margin-top lineheight" data-after-use-id="{{followup.id}}">
+            <div class="col ten flexrow">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <div class="col seventy flexrow">
+                <span>{{ifThen followup.name followup.name (localize 'SHEET.afterUseEffect')}}</span>
+            </div>
+            <div class="col five flexrow flexAlignEnd">
+                <button type="button" class="icon dsadesignbutton noBorder fa fa-edit" data-action="editAfterUse" data-id="{{followup.id}}" data-tooltip="SHEET.editAfterUse"></button>
+                <button type="button" class="icon dsadesignbutton noBorder fa fa-trash" data-action="deleteAfterUse" data-id="{{followup.id}}" data-tooltip="SHEET.removeAfterUse"></button>
             </div>
         </div>
         {{/each}}

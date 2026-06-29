@@ -1,19 +1,16 @@
-<div class="sheet journal-entry flexcol" style="min-width:unset;min-height:100%">
+<div class="sheet journal-entry flexcol book-toc" style="min-width:unset">
     <div style="flex:none">
         {{#if book.id}}
         <h2 class="center" style="margin-top:0px;">
             <a data-action="loadBook">{{book.id}}</a>
         </h2>
-        <div class="row-section lineheight" style="margin-bottom:10px">
-            <div class="col ten center">
-                <i class="fas fa-search"></i>
-            </div>
-            <div class="col eighty">
-                <input type="search" class="filterJournals" placeholder="{{localize 'Book.search'}}" value="{{searchString}}"/>
-            </div>
-            <div class="col ten libButton center">
-                <a data-action="fulltextsearch" class="{{fulltextsearch}}" data-tooltip="Book.fulltextsearch"><i class="fas fa-toggle-off"></i></a>
-            </div>
+        <div class="flexrow dsamx-2 gap5px dsamb-4">
+            <i class="fas fa-search flex0"></i>
+            
+            <input type="search" class="filterJournals" placeholder="{{localize 'Book.search'}}" value="{{searchString}}"/>
+            <button type="button" data-action="fulltextsearch" class="icon noBorder dsadesignbutton {{#if (eq fulltextsearch 'on')}}on active{{/if}}" data-tooltip="{{localize 'Book.fulltextsearch'}}" aria-pressed="{{#if (eq fulltextsearch 'on')}}true{{else}}false{{/if}}" aria-label="{{localize 'Book.fulltextsearch'}}">
+                <i class="fas {{#if (eq fulltextsearch 'on')}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i>
+            </button>
         </div>
         {{/if}}
     </div>

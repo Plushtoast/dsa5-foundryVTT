@@ -581,7 +581,12 @@ export default class DSA5ChatAutoCompletion {
     });
 
     html.on('click', '.request-GC', (ev) => {
-      GroupCheck.showGCMessage(ev.currentTarget.dataset.name, Number(ev.currentTarget.dataset.modifier) || 0);
+      const target = ev.currentTarget;
+      let configuration = {};
+      if (target.dataset.rollOptions) {
+        configuration = { rollOptions: JSON.parse(decodeURIComponent(target.dataset.rollOptions)) };
+      }
+      GroupCheck.showGCMessage(target.dataset.name, Number(target.dataset.modifier) || 0, configuration);
       ev.stopPropagation();
       return false;
     });

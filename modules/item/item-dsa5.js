@@ -25,6 +25,7 @@ import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
+import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -493,6 +494,11 @@ export default class Itemdsa5 extends Item {
    *   - {CardOptions} cardOptions - Final chat card options used
    */
   async itemTest({ testData, cardOptions }, options = {}) {
+    if (this.actor && !this.actor.canUserRoll()) {
+      ui.notifications.warn('DSAError.RollPermission', { localize: true });
+      return;
+    }
+
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 
@@ -902,8 +908,9 @@ class SpellItemDSA5 extends Itemdsa5 {
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
     const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
     const applicableSpellTypes = [SPELL, RITUAL];
+    const hasPreferencePenalty = SpellPreferenceRule.isEnabled() && SpellPreferenceRule.hasPreferences(actor);
 
-    if (!game.settings.get('dsa5', 'enableForeignSpellModifer') ||
+    if (!(game.settings.get('dsa5', 'enableForeignSpellModifer') || hasPreferencePenalty) ||
       !enabledActorTypes.includes(actor.type) ||
       !applicableSpellTypes.includes(source.type)) return;
 
@@ -922,9 +929,10 @@ class SpellItemDSA5 extends Itemdsa5 {
     const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
 
     if (data.isForeign) {
+      const basePenalty = hasPreferencePenalty ? -4 : -2;
       situationalModifiers.push({
-        name: _loc('DSASETTINGS.enableForeignSpellModifer'),
-        value: -2 + modOffset,
+        name: _loc(hasPreferencePenalty ? 'DSASETTINGS.enableWitchSpellPreferences' : 'DSASETTINGS.enableForeignSpellModifer'),
+        value: basePenalty + modOffset,
         selected: true,
       });
     }
@@ -1254,7 +1262,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
           const dmgMod = {
             name: `${currentAmmo.name} - ${_loc('MODS.damage')}`,
-            value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
+            value: currentAmmo.system.damageMod.replace(/[wWD]/g, 'd') || 0,
             type: 'dmg',
             selected: true,
             ref: { id: source.system.currentAmmo.value },

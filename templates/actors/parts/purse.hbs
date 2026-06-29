@@ -1,8 +1,8 @@
 <div class="flexrow actor-purse-content wrap flexAlignCenter">
   {{#each prepare.money.coins}}
     <div class='number-input item position-relative' data-item-id='{{_id}}' data-tooltip="{{localize name}}">
-      <i class="withContext" data-action='itemEdit' style="background-image: url('{{img}}')"></i>
-      <input class='withContext money-change' type='number' value='{{system.quantity.value}}' />
+      <i{{#unless ../purseReadOnly}} class="withContext" data-action='itemEdit'{{/unless}} style="background-image: url('{{img}}')"></i>
+      <input{{#unless ../purseReadOnly}} class='withContext money-change'{{/unless}} type='number' value='{{system.quantity.value}}'{{#if ../purseReadOnly}} disabled readonly{{/if}} />
     </div>
   {{/each}}
 </div>

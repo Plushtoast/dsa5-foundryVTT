@@ -1,0 +1,70 @@
+<div class='citydetails-editor'>
+  <div class='personae-two-column citydetails-two-column'>
+    <div class='personae-list-column citydetails-list-column'>
+      <div class='personae-list-header citydetails-list-header'>
+        <div class='flexrow'>
+          <div class='list-search flex1'>
+            <input type='search' class='search-input citydetails-search' placeholder='{{localize "Book.search"}}' value='{{search}}' />
+            <i class='fas fa-search'></i>
+          </div>
+
+          <button type='button' data-action='addEntry' class='fas icon fa-plus' data-tooltip='{{localize "DSACITYDETAILS.Add"}}'></button>
+        </div>
+      </div>
+
+      <div class='personae-list citydetails-list eventscontainer scrollable'>
+        {{#each sortedEntries as |detail key|}}
+          <div class='persona-list-item citydetails-list-item{{ifThen detail.visible '' ' invisible'}} {{ifThen (eq ../currentKey key) 'selected' ''}}' data-key='{{key}}' data-action='selectEntry'>
+            <div class='persona-list-image citydetails-list-image'>
+              {{#if detail.img}}
+                <img src='{{detail.img}}' alt='{{detail.name}}' />
+              {{else}}
+                <i class='fas fa-dungeon'></i>
+              {{/if}}
+            </div>
+            <div class='persona-list-info citydetails-list-info'>
+              <h5 class='persona-list-name citydetails-list-name'>{{detail.name}}</h5>
+              <div class='persona-list-meta citydetails-list-meta'>
+                <span class='persona-type'>{{detail.kindLabel}}</span>
+                {{#if detail.typeText}}<span class='persona-type'>{{detail.typeText}}</span>{{/if}}
+                {{#unless detail.visible}}<span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>{{/unless}}
+              </div>
+            </div>
+            <div class='persona-list-status'>
+              <i class='fas fa-chevron-right'></i>
+            </div>
+          </div>
+        {{/each}}
+        {{#unless sortedEntries.length}}
+          <div class='no-personae-list'>
+            <div class='empty-state-small'>
+              <i class='fas fa-dungeon'></i>
+              <p>{{localize 'DSACITYDETAILS.empty'}}</p>
+              {{#if ../isGM}}
+                <button type='button' class='flexrow add-persona-small' data-action='addEntry'>
+                  <div class='flex0'><i class='fas fa-plus'></i></div><div>{{localize 'DSACITYDETAILS.Add'}}</div>
+                </button>
+              {{/if}}
+            </div>
+          </div>
+        {{/unless}}
+      </div>
+    </div>
+
+    <div class='personae-details-column citydetails-details-column'>
+      <div class='persona-details-container citydetails-details-container scrollable'>
+        {{#if detailHTML}}
+          {{{detailHTML}}}
+        {{else}}
+          <div class='no-selection'>
+            <div class='no-selection-content'>
+              <i class='fas fa-dungeon'></i>
+              <h3>{{localize 'DSACITYDETAILS.SelectDetail'}}</h3>
+              <p>{{localize 'DSACITYDETAILS.SelectDetailHint'}}</p>
+            </div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</div>

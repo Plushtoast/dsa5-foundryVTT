@@ -21,8 +21,14 @@ export class DSAPersonaEntry extends JournalListDataModel {
         2: 'springer',
         3: 'turm',
         4: 'koenig',
-        5: 'laeufer',
         6: 'boronsrad'
+    }
+
+    static _migrateData(source) {
+        super._migrateData(source);
+        for (const entry of Object.values(source.personae || {})) {
+            if (Number(entry?.garadan) === 5) entry.garadan = 2;
+        }
     }
 
     static SOCIAL_CONTACT_LEVELS = {
@@ -40,7 +46,6 @@ export class DSAPersonaEntry extends JournalListDataModel {
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
         const GaradanChoices = foundry.utils.deepClone(MerchantTemplate.GARADAN_CHOICES);
-        GaradanChoices[0] = "-";
         return {
             personae: new TypedObjectField(new SchemaField({
                 name: new StringField({ required: true, initial: 'New Entry', label: "PERSONAE.FIELDS.personae.name.label" }),
@@ -49,6 +54,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
                 description: new HTMLField({ label: "PERSONAE.FIELDS.personae.description.label" }),
                 actor_uuid: new DocumentUUIDField({ type: "Actor", label: "PERSONAE.FIELDS.personae.actor_uuid.label", hint: "PERSONAE.FIELDS.personae.actor_uuid.hint" }),
                 visible: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.visible.label" }),
+                important: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.important.label", hint: "PERSONAE.FIELDS.personae.important.hint" }),
                 showSpecies: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showSpecies.label" }),
                 showCulture: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showCulture.label" }),
                 showProfession: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showProfession.label" }),
@@ -62,6 +68,11 @@ export class DSAPersonaEntry extends JournalListDataModel {
                     label: 'Garadan',
                     choices: GaradanChoices,
                 }),
+                showGaradanGMOnly: new BooleanField({
+                    initial: true,
+                    label: 'PERSONAE.FIELDS.personae.showGaradanGMOnly.label',
+                    hint: 'PERSONAE.FIELDS.personae.showGaradanGMOnly.hint',
+                }),
                 socialContact: new TypedObjectField(new SchemaField({
                     level: new NumberField({ label: "PERSONAE.FIELDS.personae.socialContact.level.label", initial: 5, choices: DSAPersonaEntry.SOCIAL_CONTACT_LEVELS }),
                 })),
@@ -72,12 +83,17 @@ export class DSAPersonaEntry extends JournalListDataModel {
     static createEntryData(options = {}) {
         const { actor, ...overrides } = options;
         const entry = { ...overrides };
-        if (actor) {
+        if (this.isValidActor(actor)) {
             entry.name = actor.name;
             entry.type = actor.type === 'creature' ? 1 : 0;
             entry.actor_uuid = actor.uuid;
+            if (this.supportsGaradan(entry)) entry.garadan = this.resolveGaradan(entry, actor);
         }
         return entry;
+    }
+
+    static isValidActor(actor) {
+        return !!actor && actor.type !== 'group';
     }
 
     async _preUpdate(changed, options, user) {
@@ -87,16 +103,25 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
-        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+        DSAPersonaEntry.refreshCalendarPicker();
+        void this.#syncActorGaradan(changed);
     }
 
     _onCreate(data, options, userId) {
         super._onCreate(data, options, userId);
-        game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+        DSAPersonaEntry.refreshCalendarPicker();
+    }
+
+    static refreshCalendarPicker() {
+        void game.dsa5?.apps?.CalendarPicker?.refreshPersonae?.();
+    }
+
+    static #getPersonaeChanges(changed = {}) {
+        return changed.personae ?? changed.system?.personae ?? {};
     }
 
     async #fillActorFields(changed) {
-        for (const [key, entry] of Object.entries(changed.system?.personae || {})) {
+        for (const [key, entry] of Object.entries(DSAPersonaEntry.#getPersonaeChanges(changed))) {
             if (!entry) continue;
             if (!entry.actor_uuid) continue;
             const actor = await fromUuid(entry.actor_uuid);
@@ -106,9 +131,9 @@ export class DSAPersonaEntry extends JournalListDataModel {
             const isCreature = actor.type === "creature";
             entry.name = actor.name;
             entry.type = isCreature ? 1 : 0;
-            entry.garadan = actor.system.merchant?.garadan || 1;
+            entry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
             if (isCreature) {
-                const creatureData = this.#splitOutsideBrackets(actor.system.creatureClass?.value || "");
+                const creatureData = DSAPersonaEntry.splitOutsideCommas(actor.system.creatureClass?.value || "");
                 entry.faction = creatureData[0] || "";
                 entry.subtitle = creatureData[1] || "";
             } else {
@@ -118,7 +143,28 @@ export class DSAPersonaEntry extends JournalListDataModel {
         }
     }
 
-    #splitOutsideBrackets(s = "") {
+    async #syncActorGaradan(changed) {
+        for (const [key, entry] of Object.entries(DSAPersonaEntry.#getPersonaeChanges(changed))) {
+            if (!entry || entry.garadan === undefined) continue;
+
+            const persona = { ...this.personae?.[key], ...entry };
+            if (!DSAPersonaEntry.supportsGaradan(persona)) continue;
+
+            const actorUuid = persona.actor_uuid;
+            if (!actorUuid) continue;
+
+            const actor = await fromUuid(actorUuid);
+            if (!actor) continue;
+
+            const garadan = DSAPersonaEntry.resolveGaradan(persona);
+            const current = DSAPersonaEntry.resolveGaradan({ garadan: actor.system.merchant?.garadan });
+            if (garadan === current) continue;
+
+            await actor.update({ 'system.merchant.garadan': garadan });
+        }
+    }
+
+    static splitOutsideCommas(s = "") {
         const parts = [];
         let buf = "";
         const stack = [];
@@ -142,34 +188,52 @@ export class DSAPersonaEntry extends JournalListDataModel {
             buf += ch;
         }
         if (buf !== "" || s.endsWith(',')) parts.push(buf);
-        return parts.map(p => p.trim());
+        return parts.map(p => p.trim()).filter(Boolean);
+    }
+
+    static parseFactions(factionString, unknownLabel) {
+        const factions = DSAPersonaEntry.splitOutsideCommas(factionString || "");
+        return factions.length ? factions : [unknownLabel];
     }
 
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
-        if (!entry.actor) return;
+        entry.actorMissing = !!entry.actor_uuid && !entry.actor;
         entry.preparedTags = [];
         entry.isGM = game.user.isGM;
-        const isCreature = entry.actor.type === "creature";
-        if (isCreature) {
-            if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
-        } else {
-            entry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '';
-            if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
-            if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
-            if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
-        }
-        entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
-        if (entry.showActorDescription) {
+        if (entry.actor) {
+            const isCreature = entry.actor.type === "creature";
+            entry.garadan = this.resolveGaradan(entry, entry.actor);
+            entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
             if (isCreature) {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
+                if (entry.showSpecies && entry.actor.system.creatureClass.value) entry.preparedTags.push(entry.actor.system.creatureClass.value);
             } else {
-                entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "", { secrets: game.user.isGM });
+                if (entry.showSpecies && entry.actor.system.details?.species.value) entry.preparedTags.push(entry.actor.system.details.species.value);
+                if (entry.showCulture && entry.actor.system.details?.culture.value) entry.preparedTags.push(entry.actor.system.details.culture.value);
+                if (entry.showProfession && entry.actor.system.details?.career.value) entry.preparedTags.push(entry.actor.system.details.career.value);
+            }
+            entry.garadanVisible = this.shouldShowGaradan(entry, { isGM: entry.isGM });
+            entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
+            if (entry.showActorDescription) {
+                if (isCreature) {
+                    entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.description?.value || "", { secrets: game.user.isGM });
+                } else {
+                    entry.preparedDescription = await TextEditor.enrichHTML(entry.actor.system.details?.biography.value || "", { secrets: game.user.isGM });
+                }
+            } else {
+                entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
             }
         } else {
+            entry.garadan = this.resolveGaradan(entry);
+            entry.garadanClass = this.shouldShowGaradan(entry, { isGM: entry.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
+            entry.garadanVisible = this.shouldShowGaradan(entry, { isGM: entry.isGM });
+            entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
             entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
         }
         entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "", { secrets: game.user.isGM });
+        const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
+        entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
+        entry.preparedFactionDisplay = entry.preparedFactions.join(", ");
         entry.uuid = document.uuid;
         entry.dramatisKey = key;
         await this.prepareContacts(entry, heros);
@@ -200,5 +264,24 @@ export class DSAPersonaEntry extends JournalListDataModel {
             }
             return acc;
         }, []);
+    }
+
+    static resolveGaradan(entry = {}, actor = null) {
+        if (!this.supportsGaradan(entry)) return 0;
+        const entryValue = Number(entry.garadan);
+        let value = entry.garadan === undefined ? Number(actor?.system?.merchant?.garadan ?? 0) : entryValue;
+        if (value === 5) value = 2;
+        return Number.isFinite(value) && value > 0 ? value : 0;
+    }
+
+    static supportsGaradan(entry = {}) {
+        return Number(entry.type) !== 1;
+    }
+
+    static shouldShowGaradan(entry = {}, { isGM = false } = {}) {
+        if (!this.supportsGaradan(entry)) return false;
+        if (!this.resolveGaradan(entry)) return false;
+        if (!isGM && entry.showGaradanGMOnly !== false) return false;
+        return true;
     }
 }

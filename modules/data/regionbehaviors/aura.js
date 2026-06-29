@@ -60,7 +60,30 @@ export class DSAAuraRegionBehavior extends DSARegionBehaviorBase {
   static async #onTokenExit(event) {
     if (!event.user.isSelf) return;
     const { token, movement } = event.data;
+    if (!token.actor) return;
+
+    const effect = event.data.effect ?? await fromUuid(this.effectUuid);
+
     const resumeMovement = movement ? token.pauseMovement() : undefined;
+    if (effect && Number(effect.system?.advancedFunction) === DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO) {
+      const data = effect.toObject();
+      delete data._id;
+      delete data.system?.aura?.isAura;
+      data.name = `${effect.name} (Aura)`;
+
+      if (data.duration) {
+        const v = data.duration.value;
+        data.duration.value = (v != null && Number.isFinite(Number(v))) ? Math.round(Number(v)) : null;
+      }
+
+      await DSAActiveEffectConfig.applyAdvancedFunction(
+        token.actor, [data], { name: effect.name }, { qualityStep: 0 }, effect.parent,
+        {
+          origin: this.parent.uuid,
+          regionEvent: this.buildMacroRegionEvent(event),
+        }
+      );
+    }
     await this.removeEffects(token);
     await resumeMovement?.();
   }

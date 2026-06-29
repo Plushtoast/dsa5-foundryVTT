@@ -1,10 +1,13 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
+import ListKeyboardNavigation from './list_keyboard_navigation.js';
 
 export class QuestLogFeature {
     static #parent;
     static #lastSelectedQuest = null;
+    static #collapsedGroups = new Set();
 
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         QuestLogFeature.#parent = parent;
@@ -21,6 +24,10 @@ export class QuestLogFeature {
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
+        toggleQuestObjectiveState: QuestLogFeature.toggleQuestObjectiveState,
+        toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
+        toggleLinkedDocumentVisibility: QuestLogFeature.toggleLinkedDocumentVisibility,
+        toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
     };
 
     async _preparePartContext(context, _options) {
@@ -69,7 +76,7 @@ export class QuestLogFeature {
     }
 
     static #groupQuests(quests) {
-        const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+        const collator = new Intl.Collator(game.i18n?.lang, { sensitivity: 'base', numeric: true });
         const groups = new Map();
         for (const quest of quests) {
             const key = quest.groupLabel || _loc('DSAQUESTLOG.ungrouped');
@@ -82,13 +89,25 @@ export class QuestLogFeature {
                 if (!!a.pinToTop !== !!b.pinToTop) return a.pinToTop ? -1 : 1;
                 const statusOrder = DSAQuestLogEntry.STATUS_SORT_ORDER[a.status] - DSAQuestLogEntry.STATUS_SORT_ORDER[b.status];
                 if (statusOrder) return statusOrder;
-                return (a.title || '').localeCompare(b.title || '', game.i18n?.lang || undefined, { sensitivity: 'base' });
+                return (a.title || '').localeCompare(b.title || '', game.i18n?.lang, { sensitivity: 'base' });
             });
         }
 
         return Array.from(groups.entries())
             .sort(([left], [right]) => collator.compare(left, right))
-            .map(([group, questsInGroup]) => ({ group, quests: questsInGroup }));
+            .map(([group, questsInGroup]) => ({ group, quests: questsInGroup, isCollapsed: QuestLogFeature.#collapsedGroups.has(group) }));
+    }
+
+    static toggleQuestGroup(event, target) {
+        const group = target.closest('.faction-group');
+        const key = group?.dataset.groupKey;
+        if (!group || !key) return;
+
+        const collapsed = !group.classList.contains('collapsed');
+        group.classList.toggle('collapsed', collapsed);
+        target.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) QuestLogFeature.#collapsedGroups.add(key);
+        else QuestLogFeature.#collapsedGroups.delete(key);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -124,6 +143,13 @@ export class QuestLogFeature {
         container.innerHTML = detailHTML;
     }
 
+    static #visibleQuestItems() {
+        const list = QuestLogFeature.#parent.element.querySelector('.tab[data-tab="questlog"].active .questlog-list');
+        if (!list) return [];
+
+        return Array.from(list.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
+    }
+
     static async newQuest() {
         await DSAQuestLogEntry.startCreation(QuestLogFeature.#parent, QuestLogFeature.#parent?.actualTimeComponents?.() ?? game.time.calendar.timeToComponents(game.time.worldTime));
     }
@@ -153,7 +179,29 @@ export class QuestLogFeature {
         const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
         if (!page || !objective) return;
 
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.done`]: !objective.done });
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+    }
+
+    static async toggleQuestObjectiveState(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, objectiveKey } = target.dataset;
+        const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
+        if (!page || !objective) return;
+
+        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+    }
+
+    static async toggleObjectiveVisibility(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, objectiveKey } = target.dataset;
+        const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
+        if (!page || !objective) return;
+
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.visible`]: !objective.visible });
     }
 
     static async openQuestReference(event, target) {
@@ -162,8 +210,31 @@ export class QuestLogFeature {
         await QuestLogFeature.openReference({ uuid, entryKey });
     }
 
+    static async toggleLinkedDocumentVisibility(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const { questKey, linkKey } = target.dataset;
+        const reference = page?.system?.quests?.[questKey]?.linkedPages?.[linkKey];
+        if (!page || !reference) return;
+
+        await page.update({ [`system.quests.${questKey}.linkedPages.${linkKey}.visible`]: reference.visible === false });
+    }
+
     static async openReference({ uuid, entryKey = null }) {
-        await QuestLogFeature.#parent.openDocumentSheet(uuid, { currentKey: entryKey });
+        const document = await fromUuid(uuid);
+        if (!document) return;
+
+        if (document.documentName === 'JournalEntryPage') {
+            await QuestLogFeature.#parent.openDocumentSheet(document.parent, { pageId: document.id });
+            return;
+        }
+
+        if (document.documentName === 'JournalEntry') {
+            await QuestLogFeature.#parent.openDocumentSheet(document);
+            return;
+        }
+
+        await QuestLogFeature.#parent.openDocumentSheet(document, { currentKey: entryKey });
     }
 
     onRenderListeners() {
@@ -173,10 +244,18 @@ export class QuestLogFeature {
             callback: this.#onSearchFilter.bind(this),
         });
         this.#search.bind(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: QuestLogFeature.#parent,
+            tabId: 'questlog',
+            getItems: () => QuestLogFeature.#visibleQuestItems(),
+            selectItem: (event, item) => QuestLogFeature.selectQuest(event, item),
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     _tearDown() {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 
     #onSearchFilter(_event, query, rgx, html) {

@@ -24,6 +24,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 regnerationCampLocations: DSA5.regnerationCampLocations,
                 showAspModifier: actor.system.isMage,
                 showKapModifier: actor.system.isPriest,
+                specialAbilityOptions: RegenerationModifiers.getSpecialAbilityOptions(actor),
                 situationalModifiers,
                 modifier: options.modifier || 0,
             },
@@ -50,6 +51,8 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                     testData[`regenerate${k}`] = regenerate;
                     if (regenerate) update[`system.status.regeneration.${k}Temp`] = 0;
                 }
+                Object.assign(testData, RegenerationModifiers.collectSpecialAbilityChoices(html));
+                RegenerationModifiers.applySpecialAbilityRollOptions(testData, actor);
                 mergeObject(testData.extra.options, options);
                 actor.update(update);
                 return { testData, cardOptions };

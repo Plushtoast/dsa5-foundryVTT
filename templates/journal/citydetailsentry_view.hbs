@@ -1,0 +1,42 @@
+<div class='scrollable standard-form citydetails-view'>
+  <div class='flexrow citydetails-view-search'>
+    <input type='search' placeholder='{{localize "Library.search"}}' value='{{search}}'>
+  </div>
+
+  <div class='dsa5-citydetails citygen-cards eventscontainer'>
+    {{#each sortedEntries as |detail|}}
+      <article class='citydetails-detail-view citygen-card' data-key='{{detail.detailKey}}'>
+        <div class='citygen-card__top'>
+          {{#if detail.hasImage}}
+            <div class='citygen-card__imgwrap'><img class='citygen-card__img' src='{{detail.img}}' alt='{{detail.name}}'></div>
+          {{/if}}
+          <div class='citygen-card__body'>
+            <h2 class='citygen-card__name citydetails-detail-name'>{{detail.name}}</h2>
+            <div class='citygen-card__meta citydetails-detail-meta'>
+              {{#if detail.hasTypeText}}
+                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.typeText'}}</span><span class='citygen-card__meta-value'>{{detail.typeText}}</span></div>
+              {{/if}}
+              {{#if detail.hasQuality}}
+                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.quality'}}</span><span class='citygen-card__meta-value'>{{detail.qualityText}}{{#if detail.qualityQS}} ({{localize 'CHARAbbrev.QS'}} {{detail.qualityQS}}){{/if}}</span></div>
+              {{/if}}
+              {{#if detail.hasPrice}}
+                <div class='citygen-card__meta-line'><span class='citygen-card__meta-label'>{{localize 'DSACITYDETAILS.price'}}</span><span class='citygen-card__meta-value'>{{detail.priceText}}{{#if detail.priceQS}} ({{localize 'CHARAbbrev.QS'}} {{detail.priceQS}}){{/if}}</span></div>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        {{#if detail.preparedDescription}}
+          <div class='citygen-card__desc citydetails-detail-content'><span class='citygen-card__desc-label'>{{localize 'Description'}}</span><div class='citygen-card__desc-body'>{{{detail.preparedDescription}}}</div></div>
+        {{/if}}
+        {{#if ../isGM}}{{#if detail.preparedGMNotes}}
+          <div class='citygen-card__desc'><span class='citygen-card__desc-label'>{{localize 'GM Notes'}}</span><div class='citygen-card__desc-body'>{{{detail.preparedGMNotes}}}</div></div>
+        {{/if}}{{/if}}
+      </article>
+    {{else}}
+      <div class='citygen-placeholder'>
+        <div class='citygen-placeholder__icon'><i class='fas fa-dungeon'></i></div>
+        <div class='citygen-placeholder__title'>{{localize 'DSACITYDETAILS.empty'}}</div>
+      </div>
+    {{/each}}
+  </div>
+</div>

@@ -472,11 +472,6 @@ export default class DSAActiveEffect extends ActiveEffect {
       if (system?.source !== undefined) delete system.source;
     }
 
-    if (source.system?.description) {
-      if (!source.description) source.description = source.system.description;
-      delete source.system.description;
-    }
-
     if (!source.flags?.dsa5) return super.migrateData(source);
 
     const flags = source.flags.dsa5;
@@ -534,7 +529,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
     const remainingKeys = Object.keys(flags);
     if (remainingKeys.length > 0) {
-      console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
+      //console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
     } else {
       delete source.flags.dsa5;
     }

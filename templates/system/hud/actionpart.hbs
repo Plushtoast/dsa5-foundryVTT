@@ -5,6 +5,12 @@
             <button type="button" class="icon plain fas fa-ellipsis-vertical function"
                 data-action="configMenu" data-tooltip="CALENDAR.DSA.config">
             </button>
+            {{#if showPartyButton}}
+            <button type="button" class="icon plain fas fa-users function{{#if partyActorUuid}} partyDrag{{/if}}"
+                data-action="openPartySheet" data-tooltip="GROUP.openGroupSheet"{{#if partyActorUuid}}
+                draggable="true" data-uuid="{{partyActorUuid}}"{{/if}}>
+            </button>
+            {{/if}}
             <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
                 data-action="collapseBar" data-tooltip="TT.collapseBar">
             </button>
@@ -117,6 +123,12 @@
                 data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}">
             </button>
             {{/each}}
+            {{#if showPartyButton}}
+            <button type="button" class="icon plain fas fa-users function collapsibleBarPart{{#if partyActorUuid}} partyDrag{{/if}}"
+                data-action="openPartySheet" data-tooltip="GROUP.openGroupSheet"{{#if partyActorUuid}}
+                draggable="true" data-uuid="{{partyActorUuid}}"{{/if}}>
+            </button>
+            {{/if}}
             <button type="button" class="icon plain fas {{ifThen collapseBar  'fa-chevron-up' 'fa-chevron-down'}} function"
                 data-action="collapseBar" data-tooltip="TT.collapseBar">
             </button>

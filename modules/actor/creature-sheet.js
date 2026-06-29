@@ -1,4 +1,5 @@
 import ActorSheetDsa5 from './actor-sheet.js';
+import { gearSearchPartTemplates } from './template-configs.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
@@ -35,7 +36,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     inventory: {
       template: 'systems/dsa5/templates/actors/creature/creature-loot.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
+      templates: [...gearSearchPartTemplates],
     },
     companion: {
       template: 'systems/dsa5/templates/actors/companions/actor-owner.hbs',
@@ -51,8 +52,17 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
 
   static LIMITEDPARTS = {
     sheet: super.PARTS.sheet,
-    limited: {
+    header: {
+      template: 'systems/dsa5/templates/actors/limited/creature-limited-header.hbs',
+    },
+    tabs: super.PARTS.tabs,
+    main: {
       template: 'systems/dsa5/templates/actors/limited/creature-limited.hbs',
+      scrollable: [''],
+    },
+    notes: {
+      template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
+      scrollable: [''],
     }
   }
 
@@ -61,6 +71,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     { key: 'enrichedBehaviour', path: 'behaviour.value' },
     { key: 'enrichedFlight', path: 'flight.value' },
     { key: 'enrichedSpecialrules', path: 'specialRules.value' },
+    { key: 'enrichedOwnerdescription', path: 'details.notes.ownerdescription' },
   ];
 
   async _cleverDeleteItem(itemId) {

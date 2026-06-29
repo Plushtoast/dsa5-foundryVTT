@@ -3,6 +3,7 @@ import DSA5 from '../config/config-dsa5.js';
 import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import { createMagicalAction } from './magical-actions/magical-action-registry.js';
+import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
 const { mergeObject, getProperty } = foundry.utils;
 export class ItemDialogBuilder extends RollDialogBuilder {
     /**
@@ -33,7 +34,8 @@ export class ItemDialogBuilder extends RollDialogBuilder {
             },
         });
         const actorModMod = getProperty(actor, `system.${sheet}Stats.spellextension`) || 0;
-        const maxMods = Math.max(0, Math.floor(Number(spell.system.talentValue.value) / 4) + actorModMod);
+        const spellPreferenceBonus = SpellPreferenceRule.hasPreference(actor, spell) ? 1 : 0;
+        const maxMods = Math.max(0, Math.floor(Number(spell.system.talentValue.value) / 4) + actorModMod + spellPreferenceBonus);
         const data = {
             messageMode: options.messageMode,
             spellCost: spell.system.AsPCost.value,
@@ -118,6 +120,9 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         const data = {
             messageMode: options.messageMode,
             mode,
+            damageModifier: options.damageModifier || 0,
+            forceOpportunityAttack: options.forceOpportunityAttack,
+            opportunityAttackManeuvers: options.opportunityAttackManeuvers,
         };
         const situationalModifiers = actor ?
             DSA5StatusEffects.getRollModifiers(actor, weapon, { mode }) : [];

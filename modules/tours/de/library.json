@@ -16,27 +16,34 @@
       },
       {
         "id": "step-1",
-        "selector": "[data-tab=\"Items\"] .filterCategories",
+        "selector": "[data-tab=\"Items\"] .library-filter-chips",
         "title": "Filter",
         "appTab": "Items",
-        "content": "Das Suchergebnis lässt sich weiter durch das Einschränken der Kategorie verfeinern."
+        "content": "Das Suchergebnis lässt sich über Filter-Chips verfeinern. Linksklick wählt eine Kategorie, Rechtsklick schaltet mehrere Kategorien um."
       },
       {
         "id": "step-2",
+        "selector": "[data-action=\"selectLibraryView\"]",
+        "title": "Ansicht",
+        "appTab": "Items",
+        "content": "Wechsle zwischen kompakten Karten, Stöberkarten mit Details und einer sortierbaren Listentabelle."
+      },
+      {
+        "id": "step-3",
         "selector": "[data-key=\"advanced\"]",
         "title": "Detailfilter",
         "appTab": "Items",
         "content": "Zusätzlich kannst du den Detailfilter aktivieren, um die jeweilige Kategorie nach speziellen Attributen zu durchsuchen."
       },
       {
-        "id": "step-3",
+        "id": "step-4",
         "selector": "[data-key=\"indexWorldItems\"]",
         "title": "Welt Items indexieren",
         "appTab": "Items",
         "content": "Hier kannst du das Durchsuchen der Weltgegenstände aktivieren oder deaktivieren. Weltgegenstände ist alles was nicht in Kompendien zu finden ist. Das erhöht ein bisschen die Leistung."
       },
       {
-        "id": "step-4",
+        "id": "step-5",
         "selector": "[data-key=\"fullTextSearch\"]",
         "title": "Volltextsuche",
         "appTab": "Items",

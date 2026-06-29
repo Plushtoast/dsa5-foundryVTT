@@ -141,6 +141,24 @@ export class DSAToken extends Token {
 }
 
 export class DSATokenDocument extends TokenDocument {
+  /**
+   * Copy placement fields from a source token onto token creation data
+   * so spawned tokens stay on the same scene level and elevation.
+   * @param {TokenDocument|object|null} sourceToken
+   * @param {object} tokenData
+   * @returns {object}
+   */
+  static applySourceTokenPlacement(sourceToken, tokenData) {
+    if (!sourceToken || !tokenData) return tokenData;
+
+    const source = sourceToken.document ?? sourceToken;
+    for (const key of ['elevation', 'level', 'depth', 'sort']) {
+      if (source[key] !== undefined) tokenData[key] = source[key];
+    }
+
+    return tokenData;
+  }
+
   _inferMovementAction() {
     if (this.hasStatusEffect("prone")) return "crawl";
 

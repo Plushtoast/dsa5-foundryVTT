@@ -17,10 +17,17 @@
                 <div class='personae-list questlog-list scrollable'>
                     {{#if questGroups.length}}
                         {{#each questGroups as |group|}}
-                            <div class='faction-group quest-group'>
-                                <div class='faction-header'>{{group.group}}</div>
+                            <div class='faction-group quest-group{{ifThen group.isCollapsed " collapsed" ""}}' data-group-key='{{group.group}}'>
+                                <div class='faction-header' data-action='toggleQuestGroup' role='button' tabindex='0' aria-expanded='{{ifThen group.isCollapsed "false" "true"}}'>
+                                    <div class='faction-title flexrow flexAlignCenter'>
+                                        <i class='fas fa-chevron-down faction-collapse-indicator'></i>
+                                        <h4 class='faction-name'>{{group.group}}</h4>
+                                    </div>
+                                    <span class='faction-count'>{{group.quests.length}}</span>
+                                </div>
+                                <div class='faction-body'>
                                 {{#each group.quests as |quest|}}
-                                    <div class='persona-list-item{{ifThen quest.isVisibleToPlayers "" " invisible"}} {{ifThen (and @root.detailData (eq @root.detailData.questKey quest.questKey) (eq @root.detailData.uuid quest.uuid)) "selected" ""}}' data-quest-uuid='{{quest.uuid}}' data-quest-key='{{quest.questKey}}' data-action='selectQuest'>
+                                    <div class='persona-list-item{{ifThen quest.isVisibleToPlayers "" " invisible"}} {{ifThen (and @root.detailData (eq @root.detailData.questKey quest.questKey) (eq @root.detailData.uuid quest.uuid)) "selected" ""}}' data-quest-uuid='{{quest.uuid}}' data-quest-key='{{quest.questKey}}' data-action='selectQuest' tabindex='0'>
                                         <div class='persona-list-image center flexAlignCenter'>
                                             <i class='fas {{ifThen quest.pinToTop "fa-star" "fa-scroll"}}'></i>
                                         </div>
@@ -41,6 +48,7 @@
                                         </div>
                                     </div>
                                 {{/each}}
+                                </div>
                             </div>
                         {{/each}}
                     {{else}}

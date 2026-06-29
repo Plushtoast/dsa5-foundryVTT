@@ -52,20 +52,20 @@ export default class ChatCommandService {
     });
   }
 
-  static async openPaymentDialog(mode) {
+  static async openPaymentDialog(mode, { amount = '', description = '' } = {}) {
     if (!game.user.isGM) return;
 
     const pay = mode === 'pay';
     const actorEntries = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));
     const header = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
-      amount: '',
-      description: '',
+      amount,
+      description,
       text: _loc(pay ? 'MASTER.payText' : 'MASTER.getPaidText', { heros: _loc('MASTER.theGroup') }),
     });
 
     ActorPickerDialog.open({
       actors: actorEntries,
-      title: pay ? 'MASTER.payTT' : 'PAYMENT.payButton',
+      title: pay ? 'PAYMENT.requestTitlePay' : 'PAYMENT.requestTitleGetPaid',
       header,
       showSourceToggle: true,
       callback: ({ actorIds, form }) => {
@@ -80,7 +80,7 @@ export default class ChatCommandService {
   }
 
   static groupCheck(name, modifier) {
-    GroupCheck.showGCMessage(name, modifier);
+    GroupCheck.openDialog({ name, modifier });
   }
 
   static speakerAbilityRoll(name, type, options = {}) {

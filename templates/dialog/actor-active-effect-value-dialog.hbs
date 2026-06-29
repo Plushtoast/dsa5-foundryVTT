@@ -1,0 +1,34 @@
+<div class="standard-form">
+    {{#if values.baseValue}}
+    <p class="hint">{{localize "ActiveEffects.valueDialog.baseValue"}}: {{values.baseValue}}</p>
+    {{/if}}
+    <div class="row-section lineheight">
+        <div class="col fourty table-title">
+            <label for="displayValue">{{localize "ActiveEffects.valueDialog.totalValue" label=label}}</label>
+        </div>
+        <div class="col sixty">
+            <input id="displayValue" name="displayValue" type="number" step="any" value="{{values.displayValue}}" />
+        </div>
+    </div>
+    <div class="row-section lineheight">
+        <div class="col fourty table-title">
+            <label for="effectName">{{localize "ActiveEffects.valueDialog.effectName"}}</label>
+        </div>
+        <div class="col sixty">
+            <input id="effectName" name="effectName" type="text" value="{{effectName}}" />
+        </div>
+    </div>
+    <div class="dialog-buttons flexrow">
+        <button type="button" data-action="save">
+            <i class="fas fa-check"></i> {{localize "Save"}}
+        </button>
+        {{#if hasEffect}}
+        <button type="button" data-action="deleteEffect">
+            <i class="fas fa-trash"></i> {{localize "ActiveEffects.valueDialog.deleteEffect"}}
+        </button>
+        {{/if}}
+        <button type="button" data-action="cancel">
+            <i class="fas fa-times"></i> {{localize "cancel"}}
+        </button>
+    </div>
+</div>

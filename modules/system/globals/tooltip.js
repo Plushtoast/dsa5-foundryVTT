@@ -45,6 +45,9 @@ export class GlobalToolTipHandler {
             case 'rangeweaponDetails':
                 description = await GlobalToolTipHandler._rangeweaponDetailsTooltip(data, actor);
                 break;
+            case 'spellDetails':
+                description = await GlobalToolTipHandler._spellDetailsTooltip(data, actor);
+                break;
             default:
                 return;
         }
@@ -117,6 +120,16 @@ export class GlobalToolTipHandler {
 
     static async _handleOnUseTooltip(data, actor) {
         const item = actor?.items.get(data.id);
+        if (!item) {
+            if (data.subfunction !== 'onUseEffect') return {};
+
+            const effect = actor?.effects.get(data.id) || (data.id?.includes('.') ? await fromUuid(data.id) : null);
+            if (!effect) return {};
+
+            const description = game.i18n.has(effect.description) ? _loc(effect.description) : effect.description;
+            return { description };
+        }
+
         let description;
         switch (item.type) {
             case 'specialability':
@@ -182,6 +195,13 @@ export class GlobalToolTipHandler {
             LZ,
             reloadProgress: resolved.system.reloadTime.progress,
         });
+    }
+
+    static async _spellDetailsTooltip(data, actor) {
+        const item = actor?.items.get(data.id);
+        if (!item) return;
+
+        return await renderTemplate('systems/dsa5/templates/tooltips/spell_details.hbs', { item });
     }
 
     static async _handleEnchantmentTooltip(data, actor) {

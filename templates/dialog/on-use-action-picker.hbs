@@ -1,10 +1,12 @@
-<div class="standard-form dsa5">
-    <div class="row-section wrap gap5px dsa-5grid" style="--grid-min:88px;--grid-max:1fr;">
+<div class="selection on-use-action-picker">
+    <div class="row-section wrap">
         {{#each actions as |action|}}
-        <button type="button" class="dsadesignbutton" data-action-id="{{action.id}}" data-tooltip="{{action.name}}">
-            <img src="{{action.img}}" style="width:48px;height:48px;object-fit:contain;" />
-            <span>{{action.name}}</span>
-        </button>
+        <div class="col two flexrow">
+            <button type="button" class="reactClick row-section" data-action-id="{{action.id}}" data-tooltip="{{action.name}}">
+                <img class="col ten" src="{{action.img}}" />
+                <div class="col eighty">{{action.name}}</div>
+            </button>
+        </div>
         {{/each}}
     </div>
 </div>

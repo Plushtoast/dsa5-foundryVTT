@@ -1,15 +1,18 @@
-<div class="scrollable">
-    <section class="content" data-cost="{{culture.system.APValue.value}}">
-        <p style="margin-bottom:10px;">{{{description}}}</p>
+<div class="scrollable dsa-card-page">
+    <section class="dsa-card-panel dsap-4" data-cost="{{culture.system.APValue.value}}">
+        <div class="dsa-card-panel__body">
+            <div class="dsa-card-content">
+                <p>{{{description}}}</p>
+            </div>
 
-        {{> systems/dsa5/templates/system/dsatabs.hbs}}
+            {{> systems/dsa5/templates/system/dsatabs.hbs}}
 
-        <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}">
-            {{> systems/dsa5/templates/items/browse/culture.hbs document=culture}}
-        </div>
+            <div class="tab {{tabs.description.cssClass}}" data-tab="description" data-group="{{tabs.description.group}}">
+                {{> systems/dsa5/templates/items/browse/culture.hbs document=culture}}
+            </div>
 
-        {{#if vantagesToChose}}
-        <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
+            {{#if vantagesToChose}}
+            <div class="tab {{tabs.vantagesToChose.cssClass}}" data-tab="vantagesToChose" data-group="{{tabs.vantagesToChose.group}}">
             <p>{{localize 'WIZARD.vantageDescriptionCulture'}}</p>
             {{#if advantagesToChose}}
             <h2>{{localize 'recommendedAdvantages'}}</h2>
@@ -18,7 +21,7 @@
                 <div class="col two flexrow">
                     <input type="checkbox" id="advantage_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                     <label for="advantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
+                    <button type="button" class="icon fas fa-info noBorder dsadesignbutton show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
@@ -30,54 +33,57 @@
                 <div class="col two flexrow">
                     <input type="checkbox" id="disadvantage_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
                     <label for="disadvantage_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
+                    <button type="button" class="icon fas fa-info noBorder dsadesignbutton show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                 </div>
                 {{/each}}
             </div>
             {{/if}}
-        </div>
-        {{/if}}
-        <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
-            <h2>{{localize 'LocalizedIDs.localKnowledge'}}</h2>
-            <p>{{localize 'WIZARD.localKnowledgeDescr'}}</p>
-            <div class="row-section">
-                <div class="col">
-                    <input type="text" class="localKnowledge" placeholder="{{culture.system.localKnowledge.value}}" />
-                </div>
-            </div>
-            {{#if languagesToChose}}
-            <h2>{{localize 'language'}}</h2>
-            <p class="allowedCount_1" data-count="1">{{localize 'WIZARD.chose'}} 1.</p>
-            <div class="row-section wrap">
-                {{#each languages as |item i|}}
-                <div class="col two flexrow">
-                    <input type="checkbox" id="language_{{i}}" class="flex0 optional exclusive exclusive_1" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#unless ../languagesToSelect}}disabled checked{{/unless}}>
-                    <label for="language_{{i}}">{{item.replaceName}} {{roman item.step}}</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
-                </div>
-                {{/each}}
             </div>
             {{/if}}
-            {{#if writingsToChose}}
-            <h2>{{localize 'writing'}}</h2>
-            <div class="row-section wrap">
-                {{#each writings as |item i|}}
-                <div class="col two flexrow">
-                    <input type="checkbox" id="writing_{{i}}" class="optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
-                    <label for="writing_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
-                    <button type="button" class="icon fas fa-info show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
+            <div class="tab {{tabs.generalToChose.cssClass}}" data-tab="generalToChose" data-group="{{tabs.generalToChose.group}}">
+                <h2>{{localize 'LocalizedIDs.localKnowledge'}}</h2>
+                <p>{{localize 'WIZARD.localKnowledgeDescr'}}</p>
+                <div class="row-section">
+                    <div class="col">
+                        <input type="text" class="localKnowledge" placeholder="{{culture.system.localKnowledge.value}}" />
+                    </div>
                 </div>
-                {{/each}}
+                {{#if languagesToChose}}
+                <h2>{{localize 'language'}}</h2>
+                <p class="allowedCount_1" data-count="1">{{localize 'WIZARD.chose'}} 1.</p>
+                <div class="row-section wrap">
+                    {{#each languages as |item i|}}
+                    <div class="col two flexrow">
+                        <input type="checkbox" id="language_{{i}}" class="flex0 optional exclusive exclusive_1" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#unless ../languagesToSelect}}disabled checked{{/unless}}>
+                        <label for="language_{{i}}">{{item.replaceName}} {{roman item.step}}</label>
+                        <button type="button" class="icon fas fa-info noBorder dsadesignbutton show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{#if writingsToChose}}
+                <h2>{{localize 'writing'}}</h2>
+                <div class="row-section wrap">
+                    {{#each writings as |item i|}}
+                    <div class="col two flexrow">
+                        <input type="checkbox" id="writing_{{i}}" class="flex0 optional" data-cost="{{item.apCost}}" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#if item.disabled}}disabled{{/if}}>
+                        <label for="writing_{{i}}">{{item.replaceName}} {{roman item.step}} ({{item.apCost}} AP)</label>
+                        <button type="button" class="icon fas fa-info noBorder dsadesignbutton show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
             </div>
-            {{/if}}
         </div>
     </section>
-    <div class="dialog-buttons flexrow">
-        <button class="dialog-button ok default" data-button="ok">
-        <i class="fas fa-check"></i> {{localize 'ok'}}
-    </button>
-        <button class="dialog-button default" data-action="close">
-        <i class="fas fa-close"></i> {{localize 'cancel'}}
-    </button>
-    </div>
+    <section class="dsa-card-panel dsap-3">
+        <div class="dsa-card-panel__actions dsa-card-panel__actions--end dialog-buttons">
+            <button class="dialog-button ok default" data-button="ok">
+            <i class="fas fa-check"></i> {{localize 'ok'}}
+        </button>
+            <button class="dialog-button default" data-action="close">
+            <i class="fas fa-close"></i> {{localize 'cancel'}}
+        </button>
+        </div>
+    </section>
 </div>

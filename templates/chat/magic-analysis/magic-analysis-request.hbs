@@ -1,0 +1,53 @@
+<div class='dsa5 magic-analysis-request-card'>
+  <p class='flexrow flexAlignCenter gap5px roll-request-header'>
+    <b>{{localize 'MAGICANALYSIS.title'}}</b>
+    {{#if itemLink}}
+      <span class='ellipsis chat-button-gm maskfield'>{{{itemLink}}}</span>
+    {{/if}}
+  </p>
+
+  {{#if notPossible}}
+    <p>{{localize 'MAGICANALYSIS.notPossible'}}</p>
+  {{else}}
+    <p class='very-small'>{{localize 'MAGICANALYSIS.progressIntro'}}</p>
+
+    {{#if actorEntry}}
+      <div class='flexrow flexAlignCenter roll-request-row gap5px'>
+        {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs actorEntry}}
+      </div>
+    {{/if}}
+
+    {{#if steps.length}}
+      <div class='roll-request-rows'>
+        {{#each steps}}
+          <div class='flexrow flexAlignCenter roll-request-row gap5px' data-step-id='{{stepId}}' data-status='{{status}}'>
+            <span class='ellipsis flex1'>{{name}}</span>
+            {{#if resultLabel}}
+              <b class='roll-request-result-label flex0 flexAlignRight'>{{resultLabel}}</b>
+            {{/if}}
+            <div class='roll-request-row-side flexrow flex0 flexAlignEnd gap2px'>
+              {{#if canRoll}}
+                <button type='button' class='magic-analysis-action icon fas fa-dice' data-action='roll' data-step-id='{{stepId}}' data-tooltip='{{localize "ROLLREQUEST.rollAction"}}' aria-label='{{localize "ROLLREQUEST.rollAction"}}'></button>
+              {{/if}}
+              {{#if canGMRoll}}
+                <button type='button' class='magic-analysis-action icon fas fa-dice roll-request-gm' data-action='rollOnBehalf' data-step-id='{{stepId}}' data-tooltip='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}'></button>
+              {{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if totalMaxQs}}
+      <p class='very-small'>{{localize 'MAGICANALYSIS.maxQs' max=totalMaxQs}}</p>
+    {{/if}}
+
+    {{#unless finalized}}
+      {{#if isGM}}
+        <div class='roll-request-gm flexrow gap5px margin-top'>
+          <button type='button' class='magic-analysis-action icon fas fa-check' data-action='finalize' data-tooltip='{{localize "DSAQUERIES.COMMANDS.finalize"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.finalize"}}'></button>
+        </div>
+      {{/if}}
+    {{/unless}}
+  {{/if}}
+</div>

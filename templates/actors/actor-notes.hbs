@@ -1,4 +1,5 @@
 <div class='tab scrollable gap0px {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
+    {{#if notesReadOnly}}<fieldset class="noBorder" disabled>{{/if}}
     <div class="groupbox">
         <legend class="table-title lineheight">{{localize "personalDetails"}}</legend>
         <div class="row-section">
@@ -81,11 +82,19 @@
         </div>
     </div>
     <div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
-        <legend class="table-title lineheight">{{localize "Notes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+        <legend class="table-title lineheight">{{localize "Notes"}}
+            {{#unless owner}}
+            <button type="button" class="icon fas fa-edit noBorder dsadesignbutton keep-field-edit" data-action="editKeepField" data-tooltip="{{localize 'Edit'}}"></button>
+            {{/unless}}
+            <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
+                {{#if owner}}
                 {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true enriched=enrichedNotes}}
+                {{else}}
+                {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true disabled=true enriched=enrichedNotes}}
+                {{/if}}
             </div>
         </div>
     </div>
@@ -110,4 +119,5 @@
         </div>
     </div>
     {{/if}}
+    {{#if notesReadOnly}}</fieldset>{{/if}}
 </div>

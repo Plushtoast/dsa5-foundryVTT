@@ -12,7 +12,7 @@
         <div class='charname headerInput flexrow'>
           <h3 class="headerName ellipsis">{{formInput fields.name value=document.name placeholder=(localize 'Name')}}</h3>
           {{#if isGM}}
-            <button type="button" class="icon fas fa-star{{#unless isPrimaryParty}}-half-stroke{{/unless}} flexAlignEnd dsadesignbutton noBorder" data-action="setPrimaryParty" data-tooltip="GROUP.setPrimaryParty"></button>
+            <button type="button" class="icon fas fa-star{{#unless isPrimaryParty}}-half-stroke{{/unless}} flexAlignEnd dsadesignbutton noBorder" data-action="setPrimaryParty" data-tooltip="{{ifThen isPrimaryParty 'GROUP.unsetPrimaryParty' 'GROUP.setPrimaryParty'}}"></button>
             <button type="button" class="icon fas fa-users-cog flexAlignEnd dsadesignbutton noBorder" data-action="shareOwnership" data-tooltip="GROUP.shareOwnership"></button>
           {{/if}}
           <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>

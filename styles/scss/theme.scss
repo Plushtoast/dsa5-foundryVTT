@@ -1,3 +1,14 @@
+.dsa5-chat-context-icon {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 2.5px;
+    margin-right: 8px;
+    border: none;
+    margin-bottom: 0;
+}
+
 .dsa5 {
     .droparea {
         padding: 16px;
@@ -20,11 +31,11 @@
     }
 
     .dsa-info-box {
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--dsa-muted-bg);
         border-radius: 5px;
         padding: 10px 15px;
         margin-bottom: 15px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--dsa-muted-border);
     }
 
     .dsa-info-text {
@@ -35,7 +46,7 @@
         color: var(--color-text-dark-primary);
 
         &.darkred {
-            color: darkred;
+            color: var(--dsa-danger);
             font-weight: bold;
         }
 
@@ -103,4 +114,225 @@
     .dmargin0 {
         margin: 0;
     }
+
+    .underlined-header {
+        margin: 0 0 10px 0;
+        border-bottom: 1px solid var(--dsa-underline-border);
+        font-family: 'Modesto Condensed', sans-serif;
+        font-size: 1.2em;
+    }
+
+    .cursor-drag {
+        cursor: grab;
+    }
+
+    --dsa-icon-card-thumb-width: 80px;
+
+    .dsa-icon-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        padding: 4px 2px 8px;
+        align-items: stretch;
+    }
+
+    .dsa-icon-card {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 72px;
+        margin: 0;
+        padding: 0;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--sheet-bg);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+        overflow: hidden;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--dsadesign1);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        &__media {
+            flex: 0 0 var(--dsa-icon-card-thumb-width);
+            width: var(--dsa-icon-card-thumb-width);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            background: var(--dsa-muted-bg);
+            border-right: 1px solid var(--dsa-muted-border);
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                max-width: calc(var(--dsa-icon-card-thumb-width) - 16px);
+                max-height: 68px;
+                object-fit: contain;
+                object-position: center;
+                border: none;
+                filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+            }
+
+            i {
+                font-size: 2em;
+                opacity: 0.85;
+            }
+        }
+
+        &__body {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px 10px;
+            min-width: 0;
+        }
+
+        &__title {
+            margin: 0;
+            font-family: 'Modesto Condensed', sans-serif;
+            font-size: 0.98em;
+            line-height: 1.2;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            overflow: hidden;
+        }
+
+        &__hint {
+            font-size: 0.7em;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: var(--dsadesign1);
+            opacity: 0.85;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .group-gm-tools {
+        margin-top: 8px;
+        width: 100%;
+
+        .group-helpers-grid {
+            padding: 0;
+        }
+
+        .group-helper-panel {
+            grid-column: 1 / -1;
+        }
+    }
+
+    $dsa-spacing-scale: (
+        0: 0,
+        1: 4px,
+        2: 8px,
+        3: 12px,
+        4: 16px,
+        5: 20px,
+        6: 24px,
+    );
+
+@mixin dsa-space-utility($prefix, $property, $value) {
+    .#{$prefix} {
+        #{$property}: $value !important;
+    }
+}
+
+@each $step, $space in $dsa-spacing-scale {
+    @include dsa-space-utility('dsam-#{$step}', margin, $space);
+    @include dsa-space-utility('dsap-#{$step}', padding, $space);
+
+    .dsamx-#{$step},
+    .dsalmx-#{$step} {
+        margin-left: $space !important;
+        margin-right: $space !important;
+    }
+
+    .dsamy-#{$step},
+    .dsalmy-#{$step} {
+        margin-top: $space !important;
+        margin-bottom: $space !important;
+    }
+
+    .dsamt-#{$step},
+    .dsalmt-#{$step} {
+        margin-top: $space !important;
+    }
+
+    .dsamb-#{$step},
+    .dsalmb-#{$step} {
+        margin-bottom: $space !important;
+    }
+
+    .dsaml-#{$step},
+    .dsalml-#{$step} {
+        margin-left: $space !important;
+    }
+
+    .dsamr-#{$step},
+    .dsalmr-#{$step} {
+        margin-right: $space !important;
+    }
+
+    .dsapx-#{$step},
+    .dsalpx-#{$step} {
+        padding-left: $space !important;
+        padding-right: $space !important;
+    }
+
+    .dsapy-#{$step},
+    .dsalpy-#{$step} {
+        padding-top: $space !important;
+        padding-bottom: $space !important;
+    }
+
+    .dsapt-#{$step},
+    .dsalpt-#{$step} {
+        padding-top: $space !important;
+    }
+
+    .dsapb-#{$step},
+    .dsalpb-#{$step} {
+        padding-bottom: $space !important;
+    }
+
+    .dsapl-#{$step},
+    .dsalpl-#{$step} {
+        padding-left: $space !important;
+    }
+
+    .dsapr-#{$step},
+    .dsalpr-#{$step} {
+        padding-right: $space !important;
+    }
+}
+
+.dsams-auto,
+.dsalms-auto {
+    margin-left: auto !important;
+}
+
+.dsamr-auto,
+.dsalmr-auto,
+.dsame-auto,
+.dsalme-auto {
+    margin-right: auto !important;
+}
+
+.dsamx-auto,
+.dsalmx-auto {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
 }

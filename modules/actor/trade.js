@@ -395,7 +395,8 @@ export class Trade extends DefaultAppv2 {
 
   async finishTrade() {
     let transferSummary = [];
-    if (DSA5_Utility.isActiveGM()) {
+    const updated = DSA5_Utility.isActiveGM();
+    if (updated) {
       transferSummary = await Trade.updateData(this.tradeData);
       await TransactionSummaryService.finalizeTradeSummary(this.tradeData, 'completed', transferSummary);
     }
@@ -406,6 +407,7 @@ export class Trade extends DefaultAppv2 {
         id: this.tradeData.id,
         tradeData: this.tradeData,
         transferSummary,
+        updated,
       },
     });
 
@@ -546,6 +548,11 @@ export class Trade extends DefaultAppv2 {
 
   static async tradeWasFinished(data) {
     const app = this.findTradeApp(data.payload.id);
+
+    if (DSA5_Utility.isActiveGM() && !data.payload.updated) {
+      const transferSummary = await Trade.updateData(data.payload.tradeData);
+      await TransactionSummaryService.finalizeTradeSummary(data.payload.tradeData, 'completed', transferSummary);
+    }
 
     if (app) app.close({ skipSocket: true });
   }

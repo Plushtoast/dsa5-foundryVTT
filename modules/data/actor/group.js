@@ -283,6 +283,43 @@ export default class GroupData extends ActorDataModel {
     });
   }
 
+  static isLootDepotActor(actor) {
+    return actor?.system?.merchant?.merchantType === 'loot';
+  }
+
+  static getUnlockedLootDepots(party) {
+    return party.system.resolvedLocations.filter(
+      (loc) => !loc.locked && this.isLootDepotActor(loc.actor)
+    );
+  }
+
+  static getDepotPermissionPlayers(depotActor) {
+    return game.users
+      .filter((user) => !user.isGM)
+      .map((user) => ({
+        id: user.id,
+        name: user.name,
+        allowedMerchant: depotActor.testUserPermission(user, 'LIMITED', false),
+        buyingFactor: foundry.utils.getProperty(depotActor.system, `merchant.factors.buyingFactor.${user.id}`),
+        sellingFactor: foundry.utils.getProperty(depotActor.system, `merchant.factors.sellingFactor.${user.id}`),
+      }));
+  }
+
+  static playersMissingDepotPermission(depotActor) {
+    return game.users
+      .filter((user) => !user.isGM)
+      .some((user) => !depotActor.testUserPermission(user, 'LIMITED', false));
+  }
+
+  static async setDepotUserPermission(depotActor, userIds, allow) {
+    const curPermissions = foundry.utils.duplicate(depotActor.ownership);
+    const newPerm = allow ? CONST.DOCUMENT_OWNERSHIP_LEVELS.LIMITED : CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE;
+    for (const id of userIds) {
+      curPermissions[id] = newPerm;
+    }
+    await depotActor.update({ ownership: curPermissions }, { diff: false, recursive: false, noHook: true });
+  }
+
   async removeLocation(key) {
     await this.parent.update({ [`system.locations.${key}`]: _del });
   }

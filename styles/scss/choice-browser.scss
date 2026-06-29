@@ -1,0 +1,319 @@
+.dsa5 {
+  .dsa-choice-browser {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .dsa-choice-browser__toolbar {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .dsa-choice-browser__toolbar-count {
+    flex: 0 1 auto;
+    font-size: var(--font-size-12);
+    color: var(--color-text-dark-secondary);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dsa-choice-browser__results {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .library-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-height: 72px;
+    overflow-y: auto;
+    min-width: 0;
+  }
+
+  .library-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    cursor: pointer;
+
+    input.filter {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    label {
+      display: inline-block;
+      padding: 2px 8px;
+      border: 1px solid var(--color-border-light-tertiary);
+      border-radius: 999px;
+      background: var(--oddColor);
+      font-size: var(--font-size-12);
+      line-height: 1.4;
+      cursor: pointer;
+      white-space: nowrap;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
+      min-width: 0;
+    }
+
+    &:hover label {
+      border-color: var(--dsadesign1);
+    }
+
+    &.active label,
+    input.filter:checked + label {
+      background: rgba(0, 0, 0, 0.65);
+      border-color: rgba(0, 0, 0, 0.65);
+      color: #fff;
+    }
+  }
+
+  .library-list-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: var(--font-size-12);
+
+    .library-list-plant-types {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      align-items: center;
+
+      .plantContainer.library-list-plant-type {
+        --plantContainerSize: 22px;
+        height: var(--plantContainerSize);
+        width: var(--plantContainerSize);
+        cursor: default;
+
+        span {
+          opacity: 1;
+        }
+      }
+    }
+
+    thead.library-list-thead {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: var(--table-title-bg);
+    }
+
+    .library-list-header-row .library-list-th {
+      background: transparent;
+      padding: 6px 8px;
+      text-align: left;
+      font-weight: bold;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+      cursor: default;
+      user-select: none;
+      box-shadow: none;
+
+      &.sortable {
+        cursor: pointer;
+
+        &:hover {
+          color: var(--bg-contrast-color);
+          text-decoration: underline;
+        }
+      }
+
+      .sort-indicator {
+        margin-left: 4px;
+        opacity: 0.5;
+        font-size: 10px;
+      }
+
+      &.sorted-asc .sort-indicator,
+      &.sorted-desc .sort-indicator {
+        opacity: 1;
+      }
+    }
+
+    td {
+      padding: 4px 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      vertical-align: middle;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .library-list-td--name {
+      max-width: none;
+      white-space: normal;
+    }
+
+    .library-list-namecell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .library-list-nameblock {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      gap: 1px;
+    }
+
+    .library-list-name {
+      font-weight: 600;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .library-list-source {
+      font-size: 10px;
+      color: #696767;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    tbody tr.library-item {
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(188, 136, 111, 0.12);
+      }
+
+      &:nth-child(even) {
+        background: var(--oddColor);
+      }
+
+      &:nth-child(even):hover {
+        background: rgba(188, 136, 111, 0.12);
+      }
+    }
+
+    .library-list-img {
+      width: 28px;
+      height: 28px;
+      flex: 0 0 28px;
+      object-fit: contain;
+      border: none;
+      border-radius: 2px;
+    }
+
+    .library-list-price {
+      cursor: grab;
+      text-align: center;
+      min-width: 36px;
+      white-space: nowrap;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+
+  .itemlibrary-header-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .itemlibrary-search-wrap {
+    flex: 1 1 200px;
+    max-width: 360px;
+    min-width: 140px;
+  }
+
+  .itemlibrary-toolbar-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--dsa-muted-bg);
+  }
+
+  .itemlibrary-view-toggle .dsadesignbutton,
+  .itemlibrary-settings .dsadesignbutton {
+    min-width: 34px;
+    min-height: 30px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--oddColor);
+    color: var(--bg-contrast-color);
+
+    &:hover:not(.on):not(.active) {
+      background: var(--dsadesign1);
+      border-color: var(--dsadesign1);
+      color: #fff;
+      text-shadow: none;
+    }
+
+    &.active,
+    &.on {
+      background: rgba(0, 0, 0, 0.75);
+      border-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      text-shadow: none;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.88);
+        border-color: rgba(0, 0, 0, 0.88);
+        color: #fff;
+      }
+    }
+  }
+
+  .itemlibrary-font-size {
+    &[hidden] {
+      display: none !important;
+    }
+  }
+
+  .itemlibrary-body {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    gap: 8px;
+
+    .itemlibrary-main {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    .itemlibrary-sidebar {
+      overflow-y: auto;
+      min-height: 0;
+      align-self: stretch;
+    }
+  }
+}

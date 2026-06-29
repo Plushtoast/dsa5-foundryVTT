@@ -1,6 +1,7 @@
 import { SUMMONING_PRESETS } from './summoning_presets.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TokenScatter from '../../animation/token-scatter.js';
+import { DSATokenDocument } from '../../hooks/token.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -8,18 +9,28 @@ export class SummoningExecutor {
   /**
    * GM-side execution: resolve creature, create tokens, scatter.
    * @param {object} payload
-   * @param {string} payload.summonerUuid
-   * @param {string} [payload.creatureName]   – lookup by name in world actors / packs
-   * @param {string} [payload.creatureUuid]   – lookup by compendium UUID directly
+    * @param {string} payload.summonerUuid
+    * @param {string} [payload.creatureName]   – lookup by name in world actors / packs
+    * @param {string} [payload.creatureUuid]   – lookup by compendium UUID directly
+    * @param {object} [payload.creatureData]   – actor data to create if no named/UUID creature exists
    * @param {number} payload.count
    * @param {{x: number, y: number, sceneId: string}} payload.position
    * @param {string} [payload.preset="default"]
    * @param {object} [payload.overrides]
    * @param {boolean} [payload.linkToSummoner]  – create tracking effect; removing it despawns tokens
    * @param {object}  [payload.linkEffectData]  – override name/icon for the tracking effect
+   * @param {object}  [payload.summonedActorUpdates]
+   * @param {object[]} [payload.summonedItems]
+   * @param {object[]} [payload.summonedEffects]
+   * @param {object[]} [payload.summonedEmbeddedUpdates]
+   * @param {object[]} [payload.summonerEffectUpdates]
+   * @param {string[]} [payload.summonerItemDeletes]
+   * @param {boolean} [payload.restoreSummonedWounds]
+   * @param {string} [payload.summonedLight]
+   * @param {string} [payload.summonerLight]
    */
   static async execute(payload) {
-    const { summonerUuid, creatureName, creatureUuid, count, position, preset = "default", overrides, linkToSummoner, linkEffectData } = payload;
+    const { summonerUuid, creatureName, creatureUuid, creatureData, count, position, preset = "default", overrides, linkToSummoner, linkEffectData, summonedActorUpdates, summonedItems, summonedEffects, summonedEmbeddedUpdates, summonerEffectUpdates, summonerItemDeletes, restoreSummonedWounds, summonedLight, summonerLight } = payload;
     const config = mergeObject(
       foundry.utils.deepClone(SUMMONING_PRESETS[preset] || SUMMONING_PRESETS.default),
       overrides || {},
@@ -28,7 +39,7 @@ export class SummoningExecutor {
     const scene = game.scenes.get(position.sceneId);
     if (!scene) return;
 
-    const creature = await this._resolveCreature(creatureName, creatureUuid, config);
+    const creature = await this._resolveCreature(creatureName, creatureUuid, creatureData, config);
     if (!creature) {
       ui.notifications.error(game.i18n.format('CONJURATION.creatureNotFound', { creature: creatureName || creatureUuid }));
       return;
@@ -55,8 +66,24 @@ export class SummoningExecutor {
       }
     }
 
+    await this._customizeSummonedTokens(createdTokens, {
+      summonedActorUpdates,
+      summonedItems,
+      summonedEffects,
+      summonedEmbeddedUpdates,
+      restoreSummonedWounds,
+    });
+
+    await this._applyLight(createdTokens.map((token) => token.object).filter(Boolean), summonedLight);
+
     if (linkToSummoner && summoner) {
       await this._createTrackingEffect(summoner, createdTokens, scene, creature, linkEffectData);
+    }
+
+    if (summoner) {
+      await this._updateSummonerEffects(summoner, createdTokens, scene, summonerEffectUpdates);
+      await this._deleteSummonerItems(summoner, summonerItemDeletes);
+      await this._applyLight(summoner.token ? [summoner.token] : summoner.getActiveTokens(), summonerLight);
     }
 
     return createdTokens;
@@ -77,15 +104,15 @@ export class SummoningExecutor {
     }
   }
 
-  static async _resolveCreature(creatureName, creatureUuid, config) {
+  static async _resolveCreature(creatureName, creatureUuid, creatureData, config) {
     if (creatureUuid) {
       try {
         const doc = await fromUuid(creatureUuid);
-        if (doc) return doc;
+        if (doc?.documentName === "Actor") return this._ensureWorldActor(doc, config);
       } catch { /* fall through to name search */ }
     }
 
-    if (!creatureName) return null;
+    if (!creatureName && !creatureData) return null;
 
     let creature = game.actors.find(x => x.name === creatureName);
     if (creature) return creature;
@@ -104,11 +131,34 @@ export class SummoningExecutor {
       }
     }
 
+    if (creatureData) {
+      const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+      const obj = mergeObject(foundry.utils.deepClone(creatureData), { folder: folder.id }, { inplace: false });
+      return await Actor.create(obj);
+    }
+
     return null;
   }
 
+  static async _ensureWorldActor(actor, config) {
+    if (!actor.inCompendium && !actor.pack) return actor;
+
+    const existing = game.actors.find(x => x.getFlag('core', 'sourceId') === actor.uuid) || game.actors.find(x => x.name === actor.name);
+    if (existing) return existing;
+
+    const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+    const obj = actor.toObject();
+    obj.folder = folder.id;
+    obj.flags ??= {};
+    obj.flags.core ??= {};
+    obj.flags.core.sourceId ??= actor.uuid;
+    return Actor.create(obj);
+  }
+
   static async _buildTokenDocument(creature, summoner, position, config, scene) {
-    const tokenData = await creature.getTokenDocument({
+    const summonerToken = summoner?.token ?? summoner?.getActiveTokens?.()?.[0]?.document;
+
+    const tokenDocument = await creature.getTokenDocument({
       name: creature.name,
       x: position.x,
       y: position.y,
@@ -121,32 +171,120 @@ export class SummoningExecutor {
       },
     }, { parent: scene });
 
-    return tokenData;
+    const tokenData = tokenDocument.toObject?.() ?? tokenDocument;
+    DSATokenDocument.applySourceTokenPlacement(summonerToken, tokenData);
+    return mergeObject(tokenData, config.tokenOverrides || {}, { inplace: false });
+  }
+
+  static async _customizeSummonedTokens(tokens, options) {
+    const { summonedActorUpdates, summonedItems, summonedEffects, summonedEmbeddedUpdates, restoreSummonedWounds } = options;
+    for (const token of tokens) {
+      const actor = token.actor;
+      if (!actor) continue;
+
+      if (summonedActorUpdates) await actor.update(foundry.utils.deepClone(summonedActorUpdates));
+
+      if (summonedItems?.length) {
+        await actor.createEmbeddedDocuments("Item", foundry.utils.deepClone(summonedItems));
+      }
+
+      if (summonedEffects?.length) {
+        await actor.createEmbeddedDocuments("ActiveEffect", foundry.utils.deepClone(summonedEffects));
+      }
+
+      if (summonedEmbeddedUpdates?.length) {
+        await this._updateEmbeddedDocuments(actor, summonedEmbeddedUpdates, token, null);
+      }
+
+      if (restoreSummonedWounds) {
+        await actor.update({ "system.status.wounds.value": actor.system?.status?.wounds?.max ?? actor.system?.status?.wounds?.value ?? 0 });
+      }
+    }
+  }
+
+  static async _updateEmbeddedDocuments(actor, updates, token, scene) {
+    for (const entry of updates) {
+      const collectionName = entry.collection || "Item";
+      const collection = actor.getEmbeddedCollection?.(collectionName);
+      if (!collection) continue;
+
+      const documents = Array.from(collection);
+      const document = documents.find((doc) => this._matchesDocument(doc, entry.match));
+      if (!document) continue;
+
+      await document.update(this._resolvePlaceholders(entry.update || {}, token, scene));
+    }
+  }
+
+  static async _updateSummonerEffects(summoner, tokens, scene, updates = []) {
+    if (!updates?.length) return;
+    const token = tokens[0];
+    if (!token) return;
+
+    for (const entry of updates) {
+      const effect = summoner.effects.find((doc) => this._matchesDocument(doc, entry.match));
+      if (!effect) continue;
+
+      await effect.update(this._resolvePlaceholders(entry.update || {}, token, scene));
+    }
+  }
+
+  static async _deleteSummonerItems(summoner, itemIds = []) {
+    const ids = itemIds.filter((id) => summoner.items.has(id));
+    if (ids.length) await summoner.deleteEmbeddedDocuments("Item", ids);
+  }
+
+  static async _applyLight(tokens, lightKey) {
+    if (!lightKey || !tokens?.length || !game.dsa5.apps.LightDialog) return;
+    await game.dsa5.apps.LightDialog.applyVisionOrLight(true, lightKey, tokens);
+  }
+
+  static _matchesDocument(document, match = {}) {
+    return Object.entries(match).every(([key, value]) => foundry.utils.getProperty(document, key) === value);
+  }
+
+  static _resolvePlaceholders(data, token, scene) {
+    const cloned = foundry.utils.deepClone(data);
+    const replace = (value) => {
+      if (value === "__TOKEN_UUID__") return token.uuid;
+      if (value === "__TOKEN_ID__") return token.id;
+      if (value === "__SCENE_ID__") return scene?.id;
+      return value;
+    };
+
+    const walk = (value) => {
+      if (Array.isArray(value)) return value.map(walk);
+      if (value && typeof value === "object") {
+        for (const [key, child] of Object.entries(value)) value[key] = walk(child);
+        return value;
+      }
+      return replace(value);
+    };
+
+    return walk(cloned);
   }
 
   static async _scatterTokens(tokens, position, scene, range) {
     const gridSize = scene.grid.size;
     const positions = TokenScatter.scatterPositions(position.x, position.y, tokens.length, gridSize * range);
-    const updates = [];
+    const targets = [];
 
     for (let i = 0; i < tokens.length; i++) {
       const snapped = scene.grid.getSnappedPoint(positions[i], { mode: CONST.GRID_SNAPPING_MODES.TOP_LEFT_VERTEX });
-      updates.push({
-        _id: tokens[i].id,
-        x: snapped.x,
-        y: snapped.y,
-      });
+      targets.push({ x: snapped.x, y: snapped.y });
     }
 
-    if (updates.length) {
-      await scene.updateEmbeddedDocuments("Token", updates);
-    }
+    if (!targets.length) return;
+
+    await TokenScatter.animateThenPersist(tokens, targets, {
+      persist: (token, target) => token.update({ x: target.x, y: target.y }),
+    });
   }
 
   static async _createTrackingEffect(summoner, tokens, scene, creature, overrideData = {}) {
     const tokenIds = tokens.map(t => t.id);
     const sceneId = scene.id;
-    const effectData = {
+    let effectData = {
       name: overrideData.name || `${game.i18n.localize("PLAYER.conjuration")}: ${creature.name}`,
       icon: overrideData.icon || creature.img || "icons/svg/pawprint.svg",
       description: overrideData.name || `${game.i18n.localize("PLAYER.conjuration")}: ${creature.name}`,
@@ -159,8 +297,7 @@ export class SummoningExecutor {
       system: {
         macroArgs: {
           onRemove: `
-            const { SummoningExecutor } = await import("../wizards/summoning/summoning_executor.js");
-            await SummoningExecutor.despawn(
+            await game.dsa5.apps.SummoningAPI.despawn(
               ${JSON.stringify(tokenIds)},
               "${sceneId}"
             );
@@ -168,9 +305,8 @@ export class SummoningExecutor {
         },
       },
     };
-    if (overrideData.duration) {
-      effectData.duration = overrideData.duration;
-    }
+
+    effectData = mergeObject(effectData, overrideData || {}, { inplace: false });
     await summoner.createEmbeddedDocuments("ActiveEffect", [effectData]);
   }
 }

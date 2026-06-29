@@ -5,10 +5,11 @@ import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate) {
+export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, InformableTemplate) {
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1 };
 
   static defineSchema() {
@@ -31,6 +32,7 @@ export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, De
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.domains = this.prepareDomains();
   }
 

@@ -20,6 +20,7 @@ import APTracker from '../system/orwell/ap-tracker.js';
 import DSATriggers from '../system/automation/triggers.js';
 import DSA5CombatDialog from '../dialog/dialog-combat-dsa5.js';
 import DSAActiveEffect from '../status/dsa_active_effects.js';
+import EffectDropdownBuilder from '../status/effect-dropdown-builder.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
 import { CombatSystem } from '../item/concerns/combat-system.js';
@@ -29,10 +30,14 @@ import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilitie
 import { FateRolls } from './concerns/faterolls.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+
+/** Prevents postUpdateConditions from re-entering while condition effects are being synced. */
+const postUpdateConditionsLocks = new WeakMap();
 
 export default class Actordsa5 extends Actor {
   static DEFAULT_ICON = 'icons/svg/mystery-man-black.svg';
@@ -57,41 +62,53 @@ export default class Actordsa5 extends Actor {
   }
 
   static async deferredEffectAddition(effect, actor, target) {
-    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
-    const isChange = current != target;
     const attr = `changing${effect}`;
-    actor[attr] = isChange;
+    if (actor[attr]) return;
 
-    if (isChange) await actor.addCondition(effect, target, true, true).then(() => (actor[attr] = undefined));
+    const current = actor.effects.find((x) => x.statuses.has(effect))?.system?.condition?.auto || 0;
+    if (current == target) return;
+
+    actor[attr] = true;
+    try {
+      await actor.addCondition(effect, target, true, true);
+    } finally {
+      actor[attr] = undefined;
+    }
   }
 
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
-    if (!actor.system.status?.wounds) return;
+    if (!actor?.system?.status?.wounds) return;
+    if (postUpdateConditionsLocks.get(actor)) return;
 
-    const data = actor.system;
-    const isMerchant = actor.isMerchant();
+    postUpdateConditionsLocks.set(actor, true);
+    try {
+      const data = actor.system;
+      const isMerchant = actor.isMerchant();
 
-    if (!TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) {
-      const pain = actor.woundPain(data);
-      await this.deferredEffectAddition('inpain', actor, pain);
+      if (!TraitRulesDSA5.hasTrait(actor, 'LocalizedIDs.painImmunity')) {
+        const pain = actor.woundPain(data);
+        await this.deferredEffectAddition('inpain', actor, pain);
+      }
+
+      let newEncumbrance = data.armorEncumbrance;
+      if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant) {
+        newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
+      }
+
+      await this.deferredEffectAddition('encumbered', actor, newEncumbrance);
+
+      const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
+      await this.deferredEffectAddition('stunned', actor, brawlingPoints);
+
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
+      if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.deaf')) await actor.addCondition('deaf');
+
+      if (isMerchant) await actor.prepareMerchant();
+    } finally {
+      postUpdateConditionsLocks.delete(actor);
     }
-
-    let newEncumbrance = data.armorEncumbrance;
-    if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant) {
-      newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
-    }
-
-    await this.deferredEffectAddition('encumbered', actor, newEncumbrance);
-
-    const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
-    await this.deferredEffectAddition('stunned', actor, brawlingPoints);
-
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
-    if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.deaf')) await actor.addCondition('deaf');
-
-    if (isMerchant) await actor.prepareMerchant();
   }
 
   static async _onCreateOperation(documents, operation, user) {
@@ -330,24 +347,42 @@ export default class Actordsa5 extends Actor {
 
   getCombatEffectSkillModifier(name, mode) {
     const result = [];
-    const keys = ['step', mode];
+    const keys = ['step', mode, 'CMP'];
 
     for (const k of keys) {
+      const modifiers = this.system.skillModifiers.combat[k] || [];
       result.push(
-        ...this.system.skillModifiers.combat[k]
-          .filter((x) => x.target == name)
+        ...modifiers
+          .filter((x) => {
+            if (this.#combatCompensationScope(x.target) == 'attack' && mode != 'attack') return false;
+            const target = this.#combatModifierTarget(x.target);
+            return target == name || target == '*';
+          })
           .map((f) => {
             return {
-              name: `${f.target || f.source} - ${_loc(`CHAR.${k.toUpperCase()}`)}`,
+              name: `${this.#combatModifierTarget(f.target) || f.source} - ${_loc(k == 'CMP' ? 'MODS.compensation' : `CHAR.${k.toUpperCase()}`)}`,
               value: f.value,
               source: f.source,
               type: k,
+              compensationScope: k == 'CMP' ? this.#combatCompensationScope(f.target) : undefined,
               selected: true,
+              ref: f.ref || null,
             };
           }),
       );
     }
     return result;
+  }
+
+  #combatModifierTarget(target) {
+    const value = `${target || ''}`;
+    const [scope, scopedTarget] = value.split(/:(.*)/s);
+    return ['attack', 'maneuver'].includes(scope) ? scopedTarget : value;
+  }
+
+  #combatCompensationScope(target) {
+    const scope = `${target || ''}`.split(':')[0];
+    return ['attack', 'maneuver'].includes(scope) ? scope : 'all';
   }
 
   prepareSheet(sheetInfo) {
@@ -473,7 +508,7 @@ export default class Actordsa5 extends Actor {
 
   _onDeleteDescendantDocuments(...args) {
     super._onDeleteDescendantDocuments(...args);
-    if (args[1] == 'effects') this.#syncEmanations();
+    if (args[1] == 'effects') this.#syncEmanations(args[2]);
     this.#renderCompanionOwnerSheets();
   }
 
@@ -494,9 +529,9 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  #syncEmanations() {
+  #syncEmanations(deletedEffects = []) {
     for (const token of this.getActiveTokens()) {
-      DSAAura.ensureEmanations(token);
+      DSAAura.ensureEmanations(token, { deletedEffects });
     }
   }
 
@@ -522,6 +557,7 @@ export default class Actordsa5 extends Actor {
 
   schipshtml() {
     const schips = [];
+    if (this.type == 'group') return schips;
     for (let i = 1; i <= this.system.status.fatePoints.max; i++) {
       schips.push({
         value: i,
@@ -796,9 +832,6 @@ export default class Actordsa5 extends Actor {
 
     money.coins = money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
 
-    specAbs.magical.push(...specAbs.pact);
-    specAbs.clerical.push(...specAbs.ceremonial);
-
     for (const traditionAbility of specAbs.staff) {
       const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
       if (artifact) {
@@ -843,6 +876,8 @@ export default class Actordsa5 extends Actor {
         encumbrance,
         moneyWeight
       }),
+      carryEffectConfig: EffectDropdownBuilder.findChangeOption('system.carryModifier'),
+      carryEffectName: _loc('ActiveEffects.defaultNames.packMule'),
       isSwarm: this.isSwarm(),
       canSwarm: !this.prototypeToken.actorLink,
       wornRangedWeapons: rangeweapons,
@@ -988,7 +1023,23 @@ export default class Actordsa5 extends Actor {
     return false;
   }
 
-  setupWeapon(item, mode, options, tokenId) {
+  _withDefaultOppose(options = {}, mode) {
+    if (options.oppose || !['parry', 'dodge'].includes(mode)) return options;
+
+    const opposeFlag = this.flags.oppose;
+    if (!opposeFlag?.startMessageId || !opposeFlag?.messageId) return options;
+
+    return {
+      ...options,
+      oppose: {
+        startMessageId: opposeFlag.startMessageId,
+        attackMessageId: opposeFlag.messageId,
+      },
+    };
+  }
+
+  setupWeapon(item, mode, options = {}, tokenId) {
+    options = this._withDefaultOppose(options, mode);
     options['mode'] = mode;
     return ItemFactory.getSubClass(item.type).setupDialog(null, options, item, this, tokenId);
   }
@@ -1034,6 +1085,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupWeaponless(statusId, options = {}, tokenId) {
+    options = this._withDefaultOppose(options, statusId);
     const attributes = [];
     if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyAstralBody')) attributes.push(_loc('magical'));
     if (SpecialabilityRulesDSA5.hasAbility(this, 'LocalizedIDs.mightyKarmalBody')) attributes.push(_loc('blessed'));
@@ -1260,7 +1312,9 @@ export default class Actordsa5 extends Actor {
     const fallingDamage = await actor.basicTest(setupData, {
       suppressMessage: true,
     });
+    fallingDamage.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
     const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', fallingDamage);
+    result.result.chatCardDamage = fallingDamage.result.damage;
 
     if (!result.result.other) result.result.other = [];
 
@@ -1322,6 +1376,7 @@ export default class Actordsa5 extends Actor {
   }
 
   setupDodge(options = {}, tokenId) {
+    options = this._withDefaultOppose(options, 'dodge');
     const statusId = 'dodge';
     const testData = {
       source: {
@@ -1904,9 +1959,8 @@ export default class Actordsa5 extends Actor {
     // active means force add
 
     if (overlay) {
-      if (active) return false;
-
-      this.removeCondition(statusId, 1, false);
+      if (active) return await this.addCondition(statusId, 1, false, false);
+      if (active === false || existing) return await this.removeCondition(statusId, 1, false);
     } else {
       if (!existing || Number.isNumeric(existing.system?.condition?.value)) {
 
@@ -1976,9 +2030,10 @@ export default class Actordsa5 extends Actor {
       try {
         const effect = await fromUuid(uuid);
         const charges = effect?.system?.charges;
-        const value = Number(charges?.value);
-        if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
         if (effect.disabled) return;
+        if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
+        await ActiveEffectLifecycle.applyAfterUse(effect);
+        if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
         await effect.consumeCharges(1);
       } catch (e) {
         console.error('Failed to consume effect charges', uuid, e);
@@ -2044,7 +2099,16 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  canUserRoll(user = game.user) {
+    return user.isGM || this.isOwner;
+  }
+
   async basicTest({ testData, cardOptions }, options = {}) {
+    if (!this.canUserRoll()) {
+      ui.notifications.warn('DSAError.RollPermission', { localize: true });
+      return;
+    }
+
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 

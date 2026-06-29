@@ -18,3 +18,6 @@ A clear and concise description of any alternative solutions or features you've 
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
+
+**Optional UX recommendations*
+TDE/DSA is a very complex system with ever growing features. Propose good user interface as well if you have good ideas. Players will be grateful for easy usage.

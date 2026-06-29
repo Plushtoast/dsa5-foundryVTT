@@ -204,7 +204,7 @@ export default class DSA5StatusEffects {
   }
 
   static immuneToEffect(target, effect, silent = true) {
-    if (!effect.id || effect.system.condition.max == null) return;
+    if (!effect.id || effect.system?.condition?.max == null) return;
 
     const immunities = getProperty(target, 'system.immunities') || [];
     let res;
@@ -256,11 +256,11 @@ export default class DSA5StatusEffects {
   static async createEffect(actor, effect, value, auto) {
     //const immune = this.immuneToEffect(actor, effect)
     effect.name = _loc(effect.name);
+    effect.system ??= {};
+    effect.system.condition ??= {};
     this.immuneToEffect(actor, effect, false);
     //if (immune) return immune
 
-    effect.system ??= {};
-    effect.system.condition ??= {};
     const conditionData = effect.system.condition;
 
     // Stack math only applies to cumulative conditions that define a max level.
@@ -389,9 +389,10 @@ export default class DSA5StatusEffects {
 
     for (const [key, val] of Object.entries(actor.system.condition)) {
       if (val) {
-        const ef = duplicate(DSA5.statusEffects.find((x) => x.id == key));
+        const statusEffect = DSA5.statusEffects.find((x) => x.id == key);
+        if (!statusEffect) continue;
 
-        if (!ef) continue;
+        const ef = duplicate(statusEffect);
 
         const effectClass = game.dsa5.config.statusEffectClasses[key] || DSA5StatusEffects;
         ef.system.condition.value = val;
@@ -414,11 +415,9 @@ export default class DSA5StatusEffects {
 
     for (const ef of actor.effects) {
       if (ef.disabled) continue;
+
       const charges = ef.system?.charges;
-      if (charges) {
-        const value = Number(charges.value);
-        if (Number.isFinite(value) && value <= 0) continue;
-      }
+      if (charges && Number.isFinite(charges.value) && charges.value <= 0) continue;
 
       for (const coreId of [...ef.statuses]) {
         if (finishedCoreIds.includes(coreId)) continue;

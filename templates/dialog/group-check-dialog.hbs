@@ -1,0 +1,93 @@
+<div class='group-check-dialog'>
+  <nav class='sheet-tabs tabs' data-group='groupCheck'>
+    <a class='tabelement active' data-tab='skills'><label>{{localize 'GROUPCHECK.tabSkills'}}</label></a>
+    <a class='tabelement' data-tab='settings'><label>{{localize 'GROUPCHECK.tabSettings'}}</label></a>
+    {{#if showOutcomes}}
+      <a class='tabelement' data-tab='outcomes'><label>{{localize 'GROUPCHECK.tabOutcomes'}}</label></a>
+    {{/if}}
+    {{#if isEdit}}
+      <a class='tabelement' data-tab='results'><label>{{localize 'GROUPCHECK.tabResults'}}</label></a>
+    {{/if}}
+  </nav>
+
+  <section class='tab active gc-tab-panel' data-tab='skills'>
+    <div class='gc-skill-row gc-skill-header lineheight table-title'>
+      <div><label>{{localize 'skill'}}</label></div>
+      <div class='center'><label>{{localize 'ABBR.modifiers'}}</label></div>
+      <div class='gc-action-col'></div>
+    </div>
+    <div class='gc-skills-list'>
+      {{#each rollOptions as |optn|}}
+        {{> systems/dsa5/templates/dialog/parts/group-check-skill-row.hbs skills=../skills modifier=optn.modifier selectedValue=optn.selectedValue}}
+      {{/each}}
+    </div>
+    <div class='row-section'>
+      <button type='button' class='gc-add-skill icon fas fa-plus noBorder dsadesignbutton' data-tooltip='{{localize "GROUPCHECK.addSkill"}}'></button>
+    </div>
+  </section>
+
+  <section class='tab gc-tab-panel' data-tab='settings'>
+    <div class='row-section lineheight'>
+      <div class='col fourty table-title'><label>{{localize 'probes'}}</label></div>
+      <div class='col sixty'><input name='maxRolls' class='quantity-click' type='number' min='0' value='{{maxRolls}}' /></div>
+    </div>
+    <div class='row-section lineheight'>
+      <div class='col fourty table-title'><label>{{localize 'cummulatedQS'}}</label></div>
+      <div class='col sixty'><input name='targetQs' class='quantity-click' type='number' min='0' value='{{targetQs}}' /></div>
+    </div>
+    {{#unless isEdit}}
+      <div class='row-section lineheight'>
+        <div class='col fourty table-title'><label>{{localize 'DIALOG.MessageMode'}}</label></div>
+        <div class='col sixty'>{{> systems/dsa5/templates/dialog/parts/message-mode.hbs messageMode=messageMode}}</div>
+      </div>
+    {{/unless}}
+  </section>
+
+  {{#if showOutcomes}}
+    <section class='tab gc-tab-panel' data-tab='outcomes'>
+      <div class='row-section lineheight'>
+        <div class='col fourty table-title'><label>{{localize 'GROUPCHECK.partSuccess'}}</label></div>
+        <div class='col sixty'><textarea name='partsuccess' rows='4' style='width:100%;'>{{partsuccess}}</textarea></div>
+      </div>
+      <div class='row-section lineheight'>
+        <div class='col fourty table-title'><label>{{localize 'GROUPCHECK.success'}}</label></div>
+        <div class='col sixty'><textarea name='success' rows='4' style='width:100%;'>{{success}}</textarea></div>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if isEdit}}
+    <section class='tab gc-tab-panel' data-tab='results'>
+      {{#if results.length}}
+        <div class='gc-result-row gc-result-header lineheight table-title'>
+          <div><label>{{localize 'Name'}}</label></div>
+          <div><label>{{localize 'skill'}}</label></div>
+          <div class='center'><label>{{localize 'CHARAbbrev.QS'}}</label></div>
+          <div class='gc-action-col'></div>
+        </div>
+        {{#each results as |item i|}}
+          <div
+            class='gc-result-row lineheight'
+            data-message-id='{{item.messageId}}'
+            data-actor='{{item.actor}}'
+            data-target='{{item.target}}'
+            data-type='{{item.type}}'
+            data-success='{{item.success}}'
+            data-botched='{{item.botched}}'
+          >
+            <div class='gc-result-name'>{{item.actor}}</div>
+            <div class='gc-result-skill'>{{item.target}}</div>
+            <div class='center'>
+              <input name='resultQs' class='quantity-click gc-result-qs' type='number' value='{{item.qs}}' />
+            </div>
+            <div class='center gc-action-col'>
+              <button type='button' class='gc-remove-result icon fas fa-trash noBorder dsadesignbutton' data-tooltip='{{localize "Delete"}}'></button>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <p class='hint'>{{localize 'GROUPCHECK.noResults'}}</p>
+      {{/if}}
+    </section>
+  {{/if}}
+</div>
