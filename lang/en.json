@@ -505,6 +505,11 @@
         "mode": "Display Mode",
         "roughTime": "Rough time of day"
       },
+      "widgetTimeFormat": {
+        "hint": "Display time in the calendar widget using 24-hour format (HH:MM:SS). Applies to all users.",
+        "label": "Widget Time Format",
+        "use24Hour": "24-hour format"
+      },
       "season": "Season",
       "second": "Second",
       "smallBackward": "Left-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 min",
@@ -677,6 +682,7 @@
     "5": "Punch-Up",
     "6": "Advanced Combat Style Special Ability (Special Maneuver)",
     "7": "Advanced Combat Style Special Ability (Passive)",
+    "8": "Advanced Combat Style Special Ability (Basic Maneuver)",
     "subcategory": "Sub category"
   },
   "COMBATTRACKER": {

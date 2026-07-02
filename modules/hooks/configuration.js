@@ -412,6 +412,7 @@ export function setupConfiguration() {
         "lightByDayTime": false,
         "moonAddsLight": false,
         'autoDayTimes': false,
+        "use24HourFormat": false,
         "moon": {
           "darknessAdjust": 0.15,
         },

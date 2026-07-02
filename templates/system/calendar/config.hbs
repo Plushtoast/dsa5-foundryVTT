@@ -59,6 +59,15 @@
 
     <div class='tab scrollable innerscroll standard-form {{configTabs.calendar_config.cssClass}}' data-tab='calendar_config' data-group='{{configTabs.calendar_config.group}}'>
         <fieldset>
+            <legend>{{localize 'CALENDAR.DSA.widgetTimeFormat.label'}}</legend>
+            <p class="hint">{{localize 'CALENDAR.DSA.widgetTimeFormat.hint'}}</p>
+            <div class="form-group">
+                <label for="{{rootId}}-use24HourFormat">{{localize 'CALENDAR.DSA.widgetTimeFormat.use24Hour'}}</label>
+                <input id="{{rootId}}-use24HourFormat" type="checkbox" name="use24HourFormat" class="settingChange" {{checked calendarConfig.use24HourFormat}}>
+            </div>
+        </fieldset>
+
+        <fieldset>
             <legend>{{localize 'CALENDAR.DSA.playerDateVisibility.label'}}</legend>
             <p class="hint">{{localize 'CALENDAR.DSA.playerDateVisibility.hint'}}</p>
             <div class="form-group">

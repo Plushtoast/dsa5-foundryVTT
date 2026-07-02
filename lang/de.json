@@ -505,6 +505,11 @@
                 "mode": "Anzeigemodus",
                 "roughTime": "Ungefähre Tageszeit"
             },
+            "widgetTimeFormat": {
+                "hint": "Zeigt die Uhrzeit im Kalender im 24-Stunden-Format (HH:MM:SS) an. Gilt für alle Nutzer.",
+                "label": "Widget-Uhrzeit",
+                "use24Hour": "24-Stunden-Format"
+            },
             "season": "Jahreszeit",
             "second": "Sekunde",
             "smallBackward": "Links-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min",
@@ -677,6 +682,7 @@
         "5": "Prügelei",
         "6": "Erweiterte Kampfstilsonderfertigkeit (Spezialmanöver)",
         "7": "Erweiterte Kampfstilsonderfertigkeit (passiv)",
+        "8": "Erweiterte Kampfstilsonderfertigkeit (Basismanöver)",
         "subcategory": "Subkategorie"
     },
     "COMBATTRACKER": {

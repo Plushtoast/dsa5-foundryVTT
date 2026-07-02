@@ -140,6 +140,18 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     return `${hourPart} ${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
   }
 
+  static format24Hour(calendar, components, _options) {
+    const yyyy = `${components.year} ${calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix)}`;
+    const month = calendar.months.values[components.month];
+    const mm = calendar.translate(month.name);
+    const dd = components.dayOfMonth + 1;
+    const h = components.hour.toString().padStart(2, '0');
+    const m = components.minute.toString().padStart(2, '0');
+    const s = components.second.toString().padStart(2, '0');
+
+    return `${h}:${m}:${s}, ${dd}. ${mm} ${yyyy}`;
+  }
+
   static async seasonParts(calendar, components, _options) {
     const season = calendar.seasons.values[components.season];
     const daysCount = calendar.days.values.length;
