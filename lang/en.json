@@ -1785,7 +1785,8 @@
       "specialAttributes": "Comma-separated attribute flags (e.g. magic, rustResistant) added to the item.",
       "targetType": "Which item type this enhancement can be applied to."
     },
-    "invalidKeys": "Enhancement effects may only modify system attributes (system.* keys).",
+    "invalidKeys": "Enhancement effects may only use system attributes (system.* keys) or @actor.system.* for wearer changes.",
+    "useActorNamespace": "Wearer changes require the @actor. prefix (e.g. @actor.system.status.regeneration.AsPConditional).",
     "materialCost": "Material Cost (S)",
     "onlyOnItems": "Enhancement effects can only be placed on items.",
     "settings": "Enhancement Settings",
@@ -1796,6 +1797,7 @@
     "types": {
       "creationTechnique": "Creation Technique",
       "improvement": "Improvement",
+      "powersource": "Power Source",
       "material": "Material"
     },
     "unsupportedItemType": "This item type does not support enhancements.",
@@ -1803,6 +1805,21 @@
       "general": "General"
     },
     "wrongTargetType": "This enhancement does not match the item type."
+  },
+  "POWERSOURCE": {
+    "barTooltip": "Stored ASP from power sources",
+    "confirm": "Pay costs",
+    "current": "Current charge",
+    "dialogTitle": "Split ASP costs",
+    "invalidAllocation": "The allocation does not match the total cost or available values.",
+    "max": "Maximum charge",
+    "notEnoughCharge": "The power source does not contain enough ASP.",
+    "paidFromSource": "{amount} ASP from {name} ({remaining} remaining)",
+    "paidInfo": "{name} pays {personal} ASP and {sources}.",
+    "paidInfoSourcesOnly": "{name} pays {sources}.",
+    "paymentDescription": "Choose how to split the ASP cost between your pool and power sources.",
+    "totalCost": "Total cost",
+    "anchoredSpellReduction": "Anchored spells"
   },
   "Equipment": {
     "alchemy": "Alchemy",
@@ -3641,6 +3658,9 @@
   "distribution": "Traditions",
   "doNothing": "No Reaction",
   "dodge": "Dodge",
+  "Domains": {
+    "rustResistant": "Rust-resistant"
+  },
   "domains": "Domains",
   "doppelganger": "Doppelganger",
   "doubleDamage": "{x}-times damage",

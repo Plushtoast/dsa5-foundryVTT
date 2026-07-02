@@ -23,7 +23,14 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     stat: { template: 'systems/dsa5/templates/status/enhancement-effect-stat.hbs' },
     tabs: { template: 'systems/dsa5/templates/system/dsatabs.hbs' },
     description: { template: 'systems/dsa5/templates/status/enhancement-effect-description.hbs', scrollable: [''] },
-    details: { template: 'systems/dsa5/templates/status/enhancement-effect-details.hbs', scrollable: [''] },
+    details: {
+      template: 'systems/dsa5/templates/status/enhancement-effect-details.hbs',
+      scrollable: [''],
+      templates: [
+        'systems/dsa5/templates/status/parts/enhancement-effect-powersource-fields.hbs',
+        'systems/dsa5/templates/status/parts/enhancement-effect-crafting-fields.hbs',
+      ],
+    },
     changes: super.PARTS.changes,
     actions: super.PARTS.actions,
   };
@@ -100,7 +107,11 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
           return obj;
         }, {});
         const slotLimits = DSAEnhancementEffectDataModel.getSlotLimits(this._targetType);
-        mergeObject(partContext, { targetTypes, enhancementTypes, slotLimits });
+        mergeObject(partContext, {
+          targetTypes,
+          enhancementTypes,
+          slotLimits,
+        });
         break;
       }
       case 'changes': {

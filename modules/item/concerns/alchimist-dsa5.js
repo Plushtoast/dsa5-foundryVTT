@@ -299,11 +299,8 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         if (!this._hasPendingChange()) return;
 
         const cost = this._getCost();
-        if (this.dsaActor.system.status.astralenergy.value < cost) {
-            return ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
-        }
-
-        await this.dsaActor.update({ 'system.status.astralenergy.value': this.dsaActor.system.status.astralenergy.value - cost });
+        const paid = await this.dsaActor.applyMana(cost, 'AsP');
+        if (!paid) return;
 
         const data = foundry.utils.duplicate(this.message.flags.data);
         const originalRollData = this.originalRoll.toJSON();
@@ -413,7 +410,7 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         dialog?.element?.querySelector?.('form')?.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    static consumeAnalysisCost(chatOptions, testData, rerenderMessage) {
+    static async consumeAnalysisCost(chatOptions, testData, rerenderMessage) {
         if (rerenderMessage) return;
 
         const cost = Number(testData?.preData?.extra?.options?.[this.ANALYSIS_COST_OPTION]) || 0;
@@ -426,7 +423,7 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         const actor = DSA5_Utility.getSpeaker(testData.preData.extra.speaker);
         if (!actor) return;
 
-        if ((Number(actor.system.status.astralenergy.value) || 0) < cost) {
+        if (actor.getTotalAvailableAsP() < cost) {
             ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
             return;
         }
@@ -436,7 +433,7 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         const content = `<h5 class="center"><b>${_loc('MAGICAL_ALCHEMIST.name')}</b></h5>
             <p><b>${foundry.utils.escapeHTML(actor.name)}</b>: ${actionLabel} (${_loc('cost')}: ${cost} ${_loc('AsP')})</p>`;
         ChatMessage.create(DSA5_Utility.chatDataSetup(content));
-        actor.update({ 'system.status.astralenergy.value': actor.system.status.astralenergy.value - cost });
+        await actor.applyMana(cost, 'AsP');
     }
 
     static async handleMagicalAlchemist(message) {
@@ -459,7 +456,7 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
 
     static async _rescueBotch(message, actor) {
         const cost = this.COSTS.rescue;
-        if (actor.system.status.astralenergy.value < cost) {
+        if (actor.getTotalAvailableAsP() < cost) {
             return ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
         }
 
@@ -470,7 +467,8 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         });
 
         if (confirmed) {
-            await actor.update({ 'system.status.astralenergy.value': actor.system.status.astralenergy.value - cost });
+            const paid = await actor.applyMana(cost, 'AsP');
+            if (!paid) return;
             const failureLabel = _loc('Failure');
             const updateData = {
                 'flags.data.postData.successLevel': -1,

@@ -28,6 +28,8 @@ import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { FateRolls } from './concerns/faterolls.js';
+import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
+import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
@@ -179,8 +181,7 @@ export default class Actordsa5 extends Actor {
     this.tokenActiveEffectChanges ??= {};
     this.tokenActiveEffectChanges[phase] = [];
 
-    const overrides = {};
-
+    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
     const appliedArtifacts = this.items
       .filter(x =>
         ['rangeweapon', 'meleeweapon', 'equipment', 'armor'].includes(x.type) &&
@@ -189,9 +190,20 @@ export default class Actordsa5 extends Actor {
       )
       .map(x => x.system.artifact);
 
-    const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
+    if (phase === 'initial') {
+      EnhancementHelper.preparePowersources(this, {
+        shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts),
+      });
+    }
+
+    const overrides = {};
+
     const changes = this.collectActorEffectChanges(phase);
     this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase);
+    changes.push(...EnhancementHelper.collectActorChanges(this, {
+      phase,
+      shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts),
+    }));
     changes.sort((a, b) => a.priority - b.priority);
 
     const ActiveEffectImpl = foundry.documents.ActiveEffect.implementation;
@@ -1224,17 +1236,117 @@ export default class Actordsa5 extends Actor {
     await this.update(update);
   }
 
-  async applyMana(rollFormula, type) {
+  getTotalAvailableAsP() {
+    const personal = Number(this.system.status.astralenergy.value) || 0;
+    return personal + (this.powersource?.value ?? 0);
+  }
+
+  async applyAspAllocation(totalCost, allocation, options = {}) {
+    const personal = allocation.personal || 0;
+    const lep = allocation.lep || 0;
+    const ksSources = allocation.sources || [];
+    const ksTotal = ksSources.reduce((sum, s) => sum + s.amount, 0);
+
+    if (personal + lep + ksTotal !== totalCost) {
+      ui.notifications.error('POWERSOURCE.invalidAllocation', { localize: true });
+      return false;
+    }
+
+    if (personal > this.system.status.astralenergy.value) {
+      ui.notifications.error('DSAError.NotEnoughAsP', { localize: true });
+      return false;
+    }
+
+    for (const src of ksSources) {
+      const item = this.items.get(src.itemId);
+      const effect = item?.effects.get(src.effectId);
+      const current = Number(effect?.system?.powersource?.value) || 0;
+      if (!effect || src.amount > current) {
+        ui.notifications.error('POWERSOURCE.notEnoughCharge', { localize: true });
+        return false;
+      }
+    }
+
+    if (personal > 0) {
+      await this.update({
+        'system.status.astralenergy.value': this.system.status.astralenergy.value - personal,
+      });
+    }
+
+    for (const src of ksSources) {
+      const item = this.items.get(src.itemId);
+      const effect = item.effects.get(src.effectId);
+      const current = Number(effect.system.powersource.value) || 0;
+      await item.updateEmbeddedDocuments('ActiveEffect', [{
+        _id: src.effectId,
+        'system.powersource.value': current - src.amount,
+      }]);
+    }
+
+    if (lep > 0) await this.applyDamage(lep);
+
+    if (ksTotal > 0) {
+      const parts = ksSources.map((src) => {
+        const item = this.items.get(src.itemId);
+        const effect = item?.effects.get(src.effectId);
+        const remaining = Number(effect?.system?.powersource?.value) || 0;
+        return _loc('POWERSOURCE.paidFromSource', {
+          amount: src.amount,
+          name: src.name,
+          remaining,
+        });
+      });
+      let content = _loc('POWERSOURCE.paidInfo', {
+        name: this.name,
+        personal,
+        sources: parts.join(', '),
+      });
+      if (personal <= 0) {
+        content = _loc('POWERSOURCE.paidInfoSourcesOnly', {
+          name: this.name,
+          sources: parts.join(', '),
+        });
+      }
+      ChatMessage.create({
+        ...DSA5_Utility.chatDataSetup(content),
+        speaker: options.speaker ?? ChatMessage.getSpeaker({ actor: this }),
+      });
+    }
+
+    Hooks.callAll('dsa5.postApplyMana', this, {
+      personal,
+      lep,
+      sources: ksSources,
+      totalCost,
+    }, options);
+
+    return true;
+  }
+
+  async applyMana(rollFormula, type, options = {}) {
     const state = type == 'AsP' ? 'astralenergy' : 'karmaenergy';
     const amount = (await new Roll(`${rollFormula}`).evaluate()).total;
+    if (amount <= 0) return true;
+
+    if (type === 'AsP' && !options.skipPowerSource && (this.powersource?.segments ?? []).some((s) => s.value > 0)) {
+      if (this.getTotalAvailableAsP() < amount) {
+        ui.notifications.error('DSAError.NotEnoughAsP', { localize: true });
+        return false;
+      }
+      if (Hooks.call('dsa5.preApplyMana', this, amount, options) === false) return false;
+
+      const allocation = await AspPaymentDialog.prompt(this, amount, options);
+      if (!allocation) return false;
+      return this.applyAspAllocation(amount, allocation, options);
+    }
+
     const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
     if (newVal >= 0) {
       await this.update({ [`system.status.${state}.value`]: newVal });
       return true;
-    } else {
-      ui.notifications.error(`DSAError.NotEnough${type}`, { localize: true });
-      return false;
     }
+    ui.notifications.error(`DSAError.NotEnough${type}`, { localize: true });
+    return false;
   }
 
   async fatererollDamage(infoMsg, cardOptions, newTestData, message, data, schipsource) {

@@ -959,6 +959,7 @@ DSA5.enhancementTypes = {
     material: 'Enhancement.types.material',
     creationTechnique: 'Enhancement.types.creationTechnique',
     improvement: 'Enhancement.types.improvement',
+    powersource: 'Enhancement.types.powersource',
 };
 
 DSA5.SKILL = SKILL;

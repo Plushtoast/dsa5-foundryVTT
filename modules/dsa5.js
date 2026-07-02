@@ -86,6 +86,8 @@ import { ITEM_CONSTANTS } from './config/item-constants.js';
 import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
+import AspPaymentDialog from './dialog/asp-payment-dialog.js';
+import EnhancementHelper from './system/enhancement/enhancement-helper.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
 
@@ -181,6 +183,11 @@ Hooks.once('init', () => {
     },
     api: {
       RollDialogBurgerMenuRule,
+      AspPaymentDialog,
+      PowerSourceHelper: {
+        getAnchoredSpellReduction: (item) => EnhancementHelper.getAnchoredSpellReduction(item),
+        getAnchoredSpellChargeCost: (cost, item) => EnhancementHelper.getAnchoredSpellChargeCost(cost, item),
+      },
     },
     macro: MacroDSA5,
     dataModels: {

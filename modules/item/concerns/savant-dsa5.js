@@ -296,11 +296,8 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         if (!this._hasPendingChange()) return;
 
         const cost = this._getCost();
-        if (this.dsaActor.system.status.astralenergy.value < cost) {
-            return ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
-        }
-
-        await this.dsaActor.update({ 'system.status.astralenergy.value': this.dsaActor.system.status.astralenergy.value - cost });
+        const paid = await this.dsaActor.applyMana(cost, 'AsP');
+        if (!paid) return;
 
         const data = foundry.utils.duplicate(this.message.flags.data);
         const originalRollData = this.originalRoll.toJSON();
@@ -435,7 +432,7 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
 
     static async _rescueBotch(message, actor) {
         const cost = this.COSTS.rescue;
-        if (actor.system.status.astralenergy.value < cost) {
+        if (actor.getTotalAvailableAsP() < cost) {
             return ui.notifications.warn('DSAError.NotEnoughAsP', { localize: true });
         }
 
@@ -446,7 +443,8 @@ export class SavantDSA5 extends HandlebarsApplicationMixin(ApplicationV2) {
         });
 
         if (confirmed) {
-            await actor.update({ 'system.status.astralenergy.value': actor.system.status.astralenergy.value - cost });
+            const paid = await actor.applyMana(cost, 'AsP');
+            if (!paid) return;
             const failureLabel = _loc('Failure');
             const updateData = {
                 'flags.data.postData.successLevel': -1,

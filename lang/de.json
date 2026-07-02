@@ -1787,7 +1787,8 @@
             "specialAttributes": "Kommagetrennte Attribut-Flags (z.B. magic, rustResistant), die dem Gegenstand hinzugefügt werden.",
             "targetType": "Auf welchen Gegenstandstyp diese Verbesserung angewendet werden kann."
         },
-        "invalidKeys": "Verbesserungseffekte dürfen nur Systemattribute (system.*-Schlüssel) verändern.",
+        "invalidKeys": "Verbesserungseffekte dürfen nur Systemattribute (system.*-Schlüssel) oder @actor.system.* für Trägeränderungen verwenden.",
+        "useActorNamespace": "Änderungen am Trägerakteur benötigen das Präfix @actor. (z. B. @actor.system.status.regeneration.AsPConditional).",
         "materialCost": "Materialkosten (S)",
         "onlyOnItems": "Verbesserungseffekte können nur auf Gegenständen platziert werden.",
         "settings": "Verbesserungseinstellungen",
@@ -1798,6 +1799,7 @@
         "types": {
             "creationTechnique": "Herstellungstechnik",
             "improvement": "Verbesserung",
+            "powersource": "Kraftspeicher",
             "material": "Material"
         },
         "unsupportedItemType": "Dieser Gegenstandstyp unterstützt keine Verbesserungen.",
@@ -1805,6 +1807,21 @@
             "general": "Allgemein"
         },
         "wrongTargetType": "Diese Verbesserung passt nicht zum Gegenstandstyp."
+    },
+    "POWERSOURCE": {
+        "barTooltip": "Gespeicherte AsP aus Kraftspeichern",
+        "confirm": "Kosten bezahlen",
+        "current": "Aktuelle Ladung",
+        "dialogTitle": "AsP-Kosten aufteilen",
+        "invalidAllocation": "Die Aufteilung entspricht nicht den Gesamtkosten oder den verfügbaren Werten.",
+        "max": "Maximale Ladung",
+        "notEnoughCharge": "Der Kraftspeicher enthält nicht genug AsP.",
+        "paidFromSource": "{amount} AsP aus {name} ({remaining} verbleibend)",
+        "paidInfo": "{name} zahlt {personal} AsP und {sources}.",
+        "paidInfoSourcesOnly": "{name} zahlt {sources}.",
+        "paymentDescription": "Lege fest, wie die AsP-Kosten auf deinen Vorrat und Kraftspeicher aufgeteilt werden.",
+        "totalCost": "Gesamtkosten",
+        "anchoredSpellReduction": "Verankerte Zauber"
     },
     "Equipment": {
         "alchemy": "Alchimie",
@@ -3650,6 +3667,9 @@
     "distribution": "Verbreitung",
     "doNothing": "Keine Reaktion",
     "dodge": "Ausweichen",
+    "Domains": {
+        "rustResistant": "Resistenz gegen Rost"
+    },
     "domains": "Domänen",
     "doppelganger": "Doppelgänger",
     "doubleDamage": "{x}-facher Schaden",

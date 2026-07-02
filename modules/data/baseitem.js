@@ -1,6 +1,7 @@
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5Payment from '../system/payment/payment.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { DSADataModel } from './abstract.js';
 
 import { ItemFactory } from '../item/item-factory.js';
@@ -159,6 +160,8 @@ export class ItemDataModel extends DSADataModel {
       item.structureMax = item.system.structure.max;
       item.structureCurrent = item.system.structure.value;
     }
+
+    EnhancementHelper.applyItemStructure(item);
 
     // Handle enchantment classes
     const enchants = foundry.utils.getProperty(item, 'flags.dsa5.enchantments');

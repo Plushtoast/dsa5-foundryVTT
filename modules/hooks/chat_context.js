@@ -302,7 +302,9 @@ class ActionHandler {
     const costsMana = getProperty(calculatedSpellModifiers, 'costsMana');
 
     const payType = MANA_TYPES.includes(sourceType) || costsMana ? 'AsP' : 'KaP';
-    const manaApplied = await actor.applyMana(calculatedSpellModifiers.finalcost, payType);
+    const manaApplied = await actor.applyMana(calculatedSpellModifiers.finalcost, payType, {
+      speaker: message.speaker,
+    });
 
     if (maintain && maintain !== '0' && manaApplied && cardData.postData.successLevel > 0) {
       await MaintainedEffects.createForMessage(message.id, actor, maintain, cardData.preData.source.name, payType);

@@ -3,10 +3,11 @@ import { onUseActionsField, OnUseActionMixin } from '../shared/onuse-action-sche
 import DSANumberField from '../fields/dsa_number_field.js';
 import DSAStringField from '../fields/dsa_string_field.js';
 
-const { SchemaField } = foundry.data.fields;
+const { SchemaField, NumberField } = foundry.data.fields;
 
 export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foundry.data.ActiveEffectTypeDataModel) {
   static ALLOWED_ENHANCEMENT_KEY_PREFIX = 'system.';
+  static ACTOR_CHANGE_REGEX = /^@actor\./;
 
   static TARGET_TYPES = {
     equipment: 'TYPES.Item.equipment',
@@ -82,6 +83,11 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       tooltip: 'Enhancement.hints.specialAttributes',
     });
 
+    schema.powersource = new SchemaField({
+      value: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.current' }),
+      max: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.max' }),
+    }, { required: false, nullable: true });
+
     schema.onUseActions = onUseActionsField();
 
     return schema;
@@ -95,7 +101,20 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
   }
 
   static validateChangeKeys(changes) {
-    return changes.every(c => !c.key || c.key.startsWith(DSAEnhancementEffectDataModel.ALLOWED_ENHANCEMENT_KEY_PREFIX));
+    return changes.every((change) => {
+      if (!change?.key) return true;
+      if (this.ACTOR_CHANGE_REGEX.test(change.key)) {
+        return change.key.replace(this.ACTOR_CHANGE_REGEX, '').startsWith(this.ALLOWED_ENHANCEMENT_KEY_PREFIX);
+      }
+      return change.key.startsWith(this.ALLOWED_ENHANCEMENT_KEY_PREFIX);
+    });
+  }
+
+  static hasMisplacedActorKeys(changes) {
+    return changes.some((change) => {
+      if (!change?.key || this.ACTOR_CHANGE_REGEX.test(change.key)) return false;
+      return /^system\.(status\.regeneration\.|skillModifiers\.conditional\.)/.test(change.key);
+    });
   }
 
   static getSlotLimits(targetType) {
@@ -141,10 +160,14 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       return false;
     }
 
-    // Validate change keys — only system.* keys allowed
     const changes = this.changes ?? [];
     if (changes.length && !DSAEnhancementEffectDataModel.validateChangeKeys(changes)) {
       ui.notifications.warn('Enhancement.invalidKeys', { localize: true });
+      return false;
+    }
+
+    if (DSAEnhancementEffectDataModel.hasMisplacedActorKeys(changes)) {
+      ui.notifications.warn('Enhancement.useActorNamespace', { localize: true });
       return false;
     }
 
@@ -160,6 +183,10 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
     if (usedSlots + (this.slotCost || 1) > maxSlots) {
       ui.notifications.warn('Enhancement.slotsFull', { localize: true });
       return false;
+    }
+
+    if (this.enhancementType === 'powersource' && !this.powersource) {
+      this.powersource = { value: 0, max: 0 };
     }
   }
 }

@@ -10,7 +10,7 @@
             <i class="fa-solid fa-wand-magic-sparkles"></i>
         </a>
         {{/if}}
-        <a data-action="addChange"><i class="fa-regular fa-square-plus"></i></a>
+        <a data-action="{{#if addAction}}{{addAction}}{{else}}addChange{{/if}}"><i class="fa-regular fa-square-plus"></i></a>
     </div>
 </header>
 
@@ -32,7 +32,7 @@
         <div class="col ten center priority">
             {{formInput ../changeFields.priority name=(concat ../changePath "." i ".priority") value=change.priority placeholder=(lookup ../changePriorities change.type)}}
         </div>
-        <div class="col ten flexrow center controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
+        <div class="col ten flexrow center controls"><a data-action="{{#if deleteAction}}{{deleteAction}}{{else}}deleteChange{{/if}}"><i class="fa-solid fa-trash"></i></a></div>
     </li>
     {{/each}}
 </ul>

@@ -4464,6 +4464,46 @@ select.noAppearance {
   background-repeat: repeat-x;
 }
 
+.healthbar.powersource-bar {
+  .powersource-segments {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .powersource-segment {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    overflow: hidden;
+    border-left: 1px solid rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+
+    .powersource-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      opacity: 0.95;
+    }
+
+    &.color-0 .powersource-fill { background: linear-gradient(90deg, #6b3fa0, #8f5fd1); }
+    &.color-1 .powersource-fill { background: linear-gradient(90deg, #4f2d7a, #7a4eb8); }
+    &.color-2 .powersource-fill { background: linear-gradient(90deg, #8c4fb8, #b07de0); }
+    &.color-3 .powersource-fill { background: linear-gradient(90deg, #5a3385, #9168c4); }
+    &.color-4 .powersource-fill { background: linear-gradient(90deg, #7340a8, #a178d8); }
+  }
+
+  .powersource-label {
+    font-size: 0.85em;
+    opacity: 0.9;
+  }
+}
+
 .badgePip,
 .smallBoxItem {
   display: inline-block;

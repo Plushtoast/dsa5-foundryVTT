@@ -36,6 +36,7 @@ import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
+import PowersourceBar from '../system/enhancement/powersource-bar.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -437,6 +438,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     sheetData.limited = this.actor.limited;
     sheetData.owner = this.actor.isOwner;
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
+    PowersourceBar.prepareSheetContext(this.actor, sheetData.prepare);
     sheetData.isGM = game.user.isGM;
     sheetData.horseSpeeds = Object.keys(Riding.speedKeys).reduce((acc, key) => {
       acc[key] = `RIDING.speeds.${key}`;
@@ -1594,7 +1596,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const item = this.actor.items.get(this._getItemId(target));
 
     const cost = Number(getProperty(item, 'system.AsPCost'));
-    const paid = this.actor.applyMana(cost, 'AsP');
+    const paid = await this.actor.applyMana(cost, 'AsP');
 
     if (!paid) return;
 

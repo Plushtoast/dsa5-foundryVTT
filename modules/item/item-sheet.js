@@ -1719,10 +1719,8 @@ class MagictrickSheetDSA5 extends MacroOnlyEffectsSheet {
   }
 
   async setupEffect() {
-    if (this.actor.system.status.astralenergy.value < 1)
-      return ui.notifications.error('DSAError.NotEnoughAsP', { localize: true });
-
-    await this.actor.update({ 'system.status.astralenergy.value': (this.actor.system.status.astralenergy.value -= 1), });
+    const paid = await this.actor.applyMana(1, 'AsP');
+    if (!paid) return;
     const cantrip = this.item.system.chatDataToString();
     const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
       item: this.item,
