@@ -127,7 +127,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     const dropDown = EffectDropdownBuilder.buildEnhancementDropdownMenu(this._targetType);
     html.find('.changes .ol .key').append(dropDown);
     html
-      .find('.selMenu')
+      .find('.changes .selMenu')
       .select2({ width: 'element' })
       .on('change', (ev) => {
         const elem = $(ev.currentTarget);
@@ -140,7 +140,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
         parent.find('.value input').val(exampleValue).attr('placeholder', '');
         elem.trigger('blur');
       });
-    html.find('.select2').each((i, el) => {
+    html.find('.changes .select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
   }

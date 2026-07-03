@@ -3658,9 +3658,6 @@
   "distribution": "Traditions",
   "doNothing": "No Reaction",
   "dodge": "Dodge",
-  "Domains": {
-    "rustResistant": "Rust-resistant"
-  },
   "domains": "Domains",
   "doppelganger": "Doppelganger",
   "doubleDamage": "{x}-times damage",

@@ -3667,9 +3667,6 @@
     "distribution": "Verbreitung",
     "doNothing": "Keine Reaktion",
     "dodge": "Ausweichen",
-    "Domains": {
-        "rustResistant": "Resistenz gegen Rost"
-    },
     "domains": "Domänen",
     "doppelganger": "Doppelgänger",
     "doubleDamage": "{x}-facher Schaden",

@@ -578,6 +578,15 @@ export default class EffectDropdownBuilder {
             });
         }
 
+        if (targetType === 'equipment') {
+            groups.push({
+                key: 'powersource',
+                icon: 'fa-solid fa-gem',
+                label: _loc('Enhancement.types.powersource'),
+                subgroups: this._getEnhancementPowersourceOptions(),
+            });
+        }
+
         groups.push({
             key: 'general',
             icon: 'fa-solid fa-box',
@@ -586,6 +595,31 @@ export default class EffectDropdownBuilder {
         });
 
         return groups.filter((g) => g.subgroups.some((s) => s.options.length));
+    }
+
+    static _getEnhancementPowersourceOptions() {
+        const regenerate = _loc('regenerate');
+        const astralEnergy = _loc('CHARAbbrev.AsP');
+        const advanced = _loc('advanced');
+        const conditionalHint = `${_loc('Description')} 1`;
+
+        return [{
+            sub: _loc('Enhancement.types.powersource'),
+            options: [
+                {
+                    name: `${_loc('POWERSOURCE.anchoredSpellReduction')} (Artefakt)`,
+                    val: 'system.powersource.anchoredSpellReduction',
+                    type: 'add',
+                    ph: '1',
+                },
+                {
+                    name: `${regenerate} (${advanced}) - ${astralEnergy}`,
+                    val: '@actor.system.status.regeneration.AsPConditional',
+                    type: 'custom',
+                    ph: conditionalHint,
+                },
+            ],
+        }];
     }
 
     static _getEnhancementCombatOptions(targetType) {

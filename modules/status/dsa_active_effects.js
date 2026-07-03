@@ -3,6 +3,7 @@ const { setProperty, getType, isPlainObject, hasProperty } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
+  static actorChangeRegex = /^@actor\./;
   static deprecatedDataRegex = /^data\./;
   static migrationConfig = {
     advancedFunction: { path: 'advancedFunction', type: 'number' },
@@ -306,6 +307,11 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   // key: "@meleeweapon.Rondrakamm (2H).system.attack.value"
+  // key: "@actor.system.status.regeneration.AsPConditional" (item enhancement → parent actor)
+  static resolveActorChangeKey(key) {
+    return key.replace(this.actorChangeRegex, '');
+  }
+
   _getModifiedItems(actor, change) {
     const [type, itemName, ...keyParts] = change.key.replace(/^@/, '').split('.');
     const key = keyParts.join('.');
