@@ -56,7 +56,12 @@ export const AppV2Mixin = (superclass) =>
       const frame = await super._renderFrame(options);
       if (!this.hasFrame) return frame;
 
+      const seen = new Set();
+
       for (const btn of this.options.majorButtons) {
+        if (seen.has(btn.action)) continue;
+        seen.add(btn.action);
+
         const visible = typeof btn.visible === 'function' ? btn.visible.call(this) : (btn.visible ?? true);
         if (!visible) continue;
 

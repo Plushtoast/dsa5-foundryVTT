@@ -200,7 +200,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   applyTooltip(target, modifier) {
     delete target.dataset.tooltip;
     target.dataset.tooltipHtml = this.buildTooltip(modifier);
-    target.dataset.tooltipClass = 'dsatooltip';
+    target.dataset.tooltipClass = 'dsatooltip dsatooltip-item';
   }
 
   refreshActiveTooltip(target) {

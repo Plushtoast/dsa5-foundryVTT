@@ -1,9 +1,7 @@
 import { ItemLibraryBase } from './itemlibrary.js';
 
-const { mergeObject } = foundry.utils;
-
 export default class ItemLibraryEmbed extends ItemLibraryBase {
-  static DEFAULT_OPTIONS = mergeObject(ItemLibraryBase.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = {
     id: 'DSA5ItemLibraryEmbed',
     tag: 'div',
     window: {
@@ -16,13 +14,13 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
       height: 'auto',
     },
     classes: ['dsa5', 'sheet', 'itemlibrary', 'itemlibrary-embedded'],
-  }, { inplace: false });
+  };
 
-  static PARTS = mergeObject(ItemLibraryBase.PARTS, {
+  static PARTS = {
     tabs: {
       template: 'systems/dsa5/templates/system/itemlibrary/parts/tabs-embed.hbs',
     },
-  }, { inplace: false });
+  };
 
   constructor({ mountElement, hostApp, ...options } = {}) {
     super(options);

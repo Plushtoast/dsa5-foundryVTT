@@ -103,7 +103,7 @@
                 <div class="companion-hotbar-row">
                     {{#each prepareCompanion.hotbarRow1 as |slot|}}
                     <div class="slot primary companion-slot" {{#if slot}}data-action="executeCompanionSkill"
-                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}" data-tooltip-class="dsa5 dsatooltip"
+                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}" data-tooltip-class="dsa5 dsatooltip dsatooltip-item"
                         {{/if}}
                         style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
                     </div>
@@ -114,7 +114,7 @@
                 <div class="companion-hotbar-row">
                     {{#each prepareCompanion.hotbarRow2 as |slot|}}
                     <div class="slot primary companion-slot" {{#if slot}}data-action="executeCompanionSkill"
-                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}" data-tooltip-class="dsa5 dsatooltip"
+                        data-item-id="{{slot.id}}" data-tooltip="{{slot.tooltip}}" data-tooltip-class="dsa5 dsatooltip dsatooltip-item"
                         {{/if}}
                         style="background: {{#if slot}}url('{{slot.img}}') center/cover{{else}}rgba(0,0,0,0.1){{/if}}; cursor: {{#if slot}}pointer{{else}}default{{/if}};">
                     </div>

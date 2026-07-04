@@ -461,6 +461,26 @@
     }
   }
 
+  // Immersive HTML tooltips: override dsatooltip tokens; parchment frame on inner .itemTooltip.
+  #tooltip.dsatooltip.dsatooltip-item {
+    --dsa-tooltip-bg: transparent;
+    --dsa-tooltip-color: #191813;
+    --dsa-tooltip-heading-color: #191813;
+    --dsa-tooltip-border-color: transparent;
+    --dsa-tooltip-box-shadow: none;
+    --dsa-tooltip-table-title-bg: rgba(188, 136, 111, 0.28);
+    --dsa-tooltip-image-filter: none;
+    padding: 0;
+
+    .itemTooltip {
+      background-image: url('../../icons/backgrounds/macrobg.webp');
+      background-size: cover;
+      padding: 8px;
+      border: 2px solid #5e442a;
+      border-radius: 5px;
+    }
+  }
+
   .itemTooltip {
     background-image: url('../../icons/backgrounds/macrobg.webp');
     background-size: cover;

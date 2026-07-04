@@ -1577,6 +1577,4 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 }
 
-export default class DSA5ItemLibrary extends ItemLibraryBase {
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(ItemLibraryBase.DEFAULT_OPTIONS, {}, { inplace: false });
-}
+export default class DSA5ItemLibrary extends ItemLibraryBase {}

@@ -63,13 +63,13 @@ export class GlobalToolTipHandler {
         const tooltipConnector = target.closest('.tooltipConnector');
         game.tooltip.activate(tooltipConnector || target, {
             html: tooltip,
-            cssClass: 'dsatooltip'
+            cssClass: 'dsatooltip dsatooltip-item'
         });
 
         if (tooltipConnector) return;
 
         target.dataset.tooltipHtml = tooltip;
-        target.dataset.tooltipClass = 'dsatooltip';
+        target.dataset.tooltipClass = 'dsatooltip dsatooltip-item';
     }
 
     static async _handleSkillGmTooltip(data) {
