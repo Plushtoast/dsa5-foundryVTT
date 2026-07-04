@@ -4131,6 +4131,18 @@
         "defaultQs4": {
             "unknown": "Tradition des Erschaffers: unbekannt.",
             "tradition": "Tradition des Erschaffers: {tradition}."
-        }
+        },
+        "defaultQsGeneric": {
+            "1": "Eingrenzung der FP; mehr oder weniger als 10 FP.",
+            "2": "Genauere Eingrenzung der FP; bis auf 3 FP genau.",
+            "3": "Art des Artefakts (Zauberspeicher-Artefakt, selbst aufladendes Artefakt, dauerhaft wirkendes Artefakt).",
+            "4": "Tradition des Artefakterschaffers.",
+            "5": "Genauere Erklärung der Wirkung.",
+            "6": "Nebeneffekte des Artefakts."
+        },
+        "defaultCrit": "Der Held kennt Herkunft, wirkenden Zauber und Auslöser eines alten Artefaktes.",
+        "defaultBotch": "Der Held hat falsche Vorstellungen und irrt sich, sodass es zu einem gravierenden Fehlurteil kommt.",
+        "sheetHint": "Platzhalter zeigen Regelwerk-Standardtexte bzw. Werte vom verknüpften Item. Eigene Einträge ergänzen die Vorgabe bei der Analyse.",
+        "sheetSkillNote": "Probe immer auf Magiekunde (Artefakte)."
     }
 }

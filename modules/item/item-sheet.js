@@ -1281,7 +1281,10 @@ class InformationSheet extends ItemSheetdsa5 {
       const parentItem = options.magicAnalysisParentUuid
         ? await fromUuid(options.magicAnalysisParentUuid)
         : null;
-      foundry.utils.mergeObject(data, await MagicAnalysisContentResolver.placeholders(parentItem));
+      foundry.utils.mergeObject(
+        data,
+        await MagicAnalysisContentResolver.placeholders(parentItem),
+      );
     }
     if (data.isMagicalAnalysis && !data.document.system.skill) {
       data.document.system.skill = MagicAnalysisService.MAGIEKUNDE_SKILL;

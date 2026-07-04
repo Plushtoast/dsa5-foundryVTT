@@ -25,6 +25,7 @@ export default class MagicAnalysisContentResolver {
 
     for (const key of ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail']) {
       merged[key] = this.mergeField(defaults[key], infoSystem[key]);
+      if (!merged[key]?.trim()) merged[key] = defaults[key] || '';
     }
 
     merged.skill = infoSystem.skill || defaults.skill;
@@ -34,12 +35,12 @@ export default class MagicAnalysisContentResolver {
 
   static async placeholders(parentItem) {
     const defaults = await MagicAnalysisDefaults.generate(parentItem);
-    const placeholders = {};
+    const hints = {};
 
     for (const key of ['qs1', 'qs2', 'qs3', 'qs4', 'qs5', 'qs6', 'crit', 'botch', 'fail']) {
-      placeholders[`placeholder${key.charAt(0).toUpperCase()}${key.slice(1)}`] = this.plainText(defaults[key]);
+      hints[`default${key.charAt(0).toUpperCase()}${key.slice(1)}`] = this.plainText(defaults[key]);
     }
 
-    return placeholders;
+    return hints;
   }
 }

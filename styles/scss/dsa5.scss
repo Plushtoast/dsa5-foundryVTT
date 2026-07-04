@@ -1621,6 +1621,15 @@ a.img-entity-link {
       margin-left: auto;
     }
 
+    .magic-analysis-step-name {
+      min-width: 0;
+      max-width: 14rem;
+    }
+
+    .magic-analysis-step-row[data-status='skipped'] .magic-analysis-step-name {
+      opacity: 0.65;
+    }
+
     .magic-analysis-result-divider {
       margin: 0.75rem 0 0.5rem;
       border: none;

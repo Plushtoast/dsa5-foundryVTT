@@ -9,18 +9,34 @@ export default class MagicAnalysisDefaults {
     const fw = primary?.fw ?? 0;
 
     return {
-      qs1: this._qs1(fw),
-      qs2: this._qs2(fw),
-      qs3: this._qs3(primary, enchantments),
-      qs4: await this._qs4(primary),
-      qs5: await this._qs5(enchantments),
-      qs6: '',
-      crit: '',
-      botch: '',
-      fail: `<p>${_loc('MAGICANALYSIS.defaultFail')}</p>`,
+      qs1: this._qs1(fw) || this._genericQs(1),
+      qs2: this._qs2(fw) || this._genericQs(2),
+      qs3: this._qs3(primary, enchantments) || this._genericQs(3),
+      qs4: (await this._qs4(primary)) || this._genericQs(4),
+      qs5: (await this._qs5(enchantments)) || this._genericQs(5),
+      qs6: this._genericQs(6),
+      crit: this._genericCrit(),
+      botch: this._genericBotch(),
+      fail: this._genericFail(),
       skill: this.magiekundeSkill(),
       modifier: 0,
     };
+  }
+
+  static _genericQs(level) {
+    return `<p>${_loc(`MAGICANALYSIS.defaultQsGeneric.${level}`)}</p>`;
+  }
+
+  static _genericCrit() {
+    return `<p>${_loc('MAGICANALYSIS.defaultCrit')}</p>`;
+  }
+
+  static _genericBotch() {
+    return `<p>${_loc('MAGICANALYSIS.defaultBotch')}</p>`;
+  }
+
+  static _genericFail() {
+    return `<p>${_loc('MAGICANALYSIS.defaultFail')}</p>`;
   }
 
   static _qs1(fw) {

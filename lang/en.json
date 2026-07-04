@@ -4129,6 +4129,18 @@
     "defaultQs4": {
       "unknown": "Creator tradition: unknown.",
       "tradition": "Creator tradition: {tradition}."
-    }
+    },
+    "defaultQsGeneric": {
+      "1": "Narrow down SP cost: more or less than 10 SP.",
+      "2": "More precise SP cost: within 3 SP.",
+      "3": "Artifact type (spell storage, self-charging, permanently active).",
+      "4": "Tradition of the artifact's creator.",
+      "5": "More detailed explanation of the effect.",
+      "6": "Side effects of the artifact."
+    },
+    "defaultCrit": "The hero knows the origin, active spell, and trigger of an ancient artifact.",
+    "defaultBotch": "The hero forms false ideas and errs, leading to a grave misjudgment.",
+    "sheetHint": "Placeholders show rulebook defaults or values from the linked item. Custom entries supplement the preset during analysis.",
+    "sheetSkillNote": "Check is always Magical Lore (artifacts)."
   }
 }

@@ -1,5 +1,6 @@
 import MagicAnalysisQueryService from '../../system/queries/magic-analysis-query.js';
 import MagicAnalysisService from '../../system/magic-analysis/magic-analysis.js';
+import MagicAnalysisContentResolver from '../../system/magic-analysis/magic-analysis-content-resolver.js';
 import InformationQueryService from '../../system/queries/information-query.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import { bindClickListener } from '../../system/helpers/view_helper.js';
@@ -124,6 +125,9 @@ export default class InformationData extends ItemDataModel {
     data.allSkills = await DSA5_Utility.allSkillsList();
     data.isMagicalAnalysis = data.document.system.subType === 'magicalAnalysis';
     foundry.utils.mergeObject(data, await this.enrichedProperties(data));
+    if (data.isMagicalAnalysis) {
+      foundry.utils.mergeObject(data, await MagicAnalysisContentResolver.placeholders(null));
+    }
   }
 
   static async _postItem(item) {

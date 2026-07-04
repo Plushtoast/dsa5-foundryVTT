@@ -23,11 +23,12 @@
               <b class='roll-request-result-label flex0 flexAlignRight'>{{resultLabel}}</b>
             {{/if}}
             <div class='roll-request-row-side flexrow flex0 flexAlignEnd gap2px'>
+              <span class='roll-request-row-title magic-analysis-step-name ellipsis'>{{name}}</span>
               {{#if canRoll}}
-                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice' data-action='roll' data-step-id='{{stepId}}' data-tooltip='{{name}}' aria-label='{{name}}'></button>
+                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice' data-action='roll' data-step-id='{{stepId}}' data-tooltip='{{localize "ROLLREQUEST.rollAction"}}' aria-label='{{localize "ROLLREQUEST.rollAction"}}: {{name}}'></button>
               {{/if}}
               {{#if canGMRoll}}
-                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice roll-request-gm' data-action='rollOnBehalf' data-step-id='{{stepId}}' data-tooltip='{{name}}' aria-label='{{name}}'></button>
+                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice roll-request-gm' data-action='rollOnBehalf' data-step-id='{{stepId}}' data-tooltip='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}: {{name}}'></button>
               {{/if}}
             </div>
           </div>
