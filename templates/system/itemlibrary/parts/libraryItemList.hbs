@@ -11,7 +11,7 @@
     </thead>
     <tbody>
         {{#each items as |item|}}
-        <tr class="browser-item library-item" data-uuid="{{item.uuid}}" draggable="true" data-tooltip-direction="RIGHT" data-tooltip="{{item.name}}">
+        <tr class="browser-item library-item {{item.type}}" data-uuid="{{item.uuid}}" draggable="true" data-tooltip-direction="RIGHT" data-tooltip="{{item.name}}">
             {{#each ../columns as |col|}}
             <td class="library-list-td library-list-td--{{col.id}}">
                 {{#if (eq col.id 'name')}}

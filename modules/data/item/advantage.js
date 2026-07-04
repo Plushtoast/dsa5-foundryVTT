@@ -21,7 +21,7 @@ export default class AdvantageData extends ItemDataModel.mixin(OnUseTemplate, De
         value: new StringField({
           initial: 'general',
           required: true,
-          label: 'subcategory',
+          label: 'COMBATSKILLCATEGORY.subcategory',
           choices: AdvantageData.vantageSubcategories,
         }),
       }),
