@@ -3288,6 +3288,11 @@
     "vampire": "Vampiric gifts",
     "vision": "Vision Special Abilities"
   },
+  "VantageSubcategory": {
+    "general": "General",
+    "tiergefährten": "Animal Companions",
+    "ahnenblut": "Ancestral Blood"
+  },
   "Spent": "Spent",
   "StF": "Improvement cost",
   "Success": "Success",

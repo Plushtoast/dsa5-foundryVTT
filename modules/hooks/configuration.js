@@ -663,6 +663,19 @@ export function setupConfiguration() {
       default: 'list',
       type: String,
     },
+    chargenDisplayMode: {
+      name: 'CHARGEN.displayModeSetting',
+      scope: 'client',
+      config: false,
+      default: 'fullscreen',
+      type: String,
+    },
+    chargenUtilityWidth: {
+      scope: 'client',
+      config: false,
+      default: 380,
+      type: Number,
+    },
     eventsViewMode: {
       name: 'DSASETTINGS.eventsViewMode',
       scope: 'client',

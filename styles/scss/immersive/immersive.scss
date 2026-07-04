@@ -325,7 +325,7 @@
     background-size: 101% 1400px;
   }
 
-  .character-sheet .standard-form {
+  .character-sheet .standard-form:not(.itemlibrary-tab) {
     border-color: black;
     border-style: double;
     border-width: 10px;

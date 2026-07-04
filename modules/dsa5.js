@@ -46,7 +46,8 @@ import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
 import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
-import { clickableAbility, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
+import { clickableAbility, resizeListener, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
+import { ensureAboveFullscreenApps, renderApplicationAboveFullscreen, renderDocumentSheetAboveFullscreen } from './system/helpers/fullscreen-sheet.js';
 import CareerWizard from './wizards/career_wizard.js';
 import SpeciesWizard from './wizards/species_wizard.js';
 import CultureWizard from './wizards/culture_wizard.js';
@@ -172,7 +173,11 @@ Hooks.once('init', () => {
     view: {
       tinyNotification,
       tabSlider,
+      resizeListener,
       clickableAbility,
+      ensureAboveFullscreenApps,
+      renderApplicationAboveFullscreen,
+      renderDocumentSheetAboveFullscreen,
     },
     dialogs: {
       DialogReactDSA5,

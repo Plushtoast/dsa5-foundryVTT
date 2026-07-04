@@ -1,0 +1,11 @@
+<div class="navWrapper itemlibrary-tabs-embed">
+    <div class="left-btn"><i class="fas fa-angle-left"></i></div>
+    <div class="right-btn"><i class="fas fa-angle-right"></i></div>
+    <nav class="sheet-tabs tabs" aria-roledescription="Form Tab Navigation">
+        {{#each tabs}}
+        <a class="tabelement {{cssClass}}" data-action="tab" data-group="{{group}}" data-tab="{{id}}" data-tooltip="{{localize label}}" aria-label="{{localize label}}">
+            <label><i class="{{icon}}" aria-hidden="true"></i><span class="tabelement-label ellipsis">{{localize label}}</span></label>
+        </a>
+        {{/each}}
+    </nav>
+</div>

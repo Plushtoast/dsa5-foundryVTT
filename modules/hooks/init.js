@@ -205,10 +205,12 @@ Hooks.once('setup', () => {
   SpecialabilityRulesDSA5.setupFunctions();
 });
 
-Hooks.once('i18nInit', () => {
+Hooks.once('i18nInit', async () => {
   setupKnownEquipmentModifiers();
 
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
+  const { default: ItemLibraryEmbed } = await import('../system/guiapps/itemlibrary-embed.js');
+  game.dsa5.apps.ItemLibraryEmbed = ItemLibraryEmbed;
 
   foundry.helpers.Localization.localizeDataModel(CONFIG.RegionBehavior.dataModels.DSATrap);
   //foundry.helpers.Localization.localizeDataModel(CONFIG.JournalEntryPage.dataModels.dsacalendar);

@@ -16,7 +16,7 @@ const VIEW_MODES = ['compact', 'browse', 'list'];
 
 //todo check if items on index have permission
 
-export default class DSA5ItemLibrary extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   pageSize = 60
   filterLimit = 10000
 
@@ -65,11 +65,11 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       ],
     },
     actions: {
-      searchableAbility: DSA5ItemLibrary._onSearchableAbility,
-      selectLibraryView: DSA5ItemLibrary.prototype._selectLibraryView,
-      sortListColumn: DSA5ItemLibrary.prototype._sortListColumn,
-      showCompendiumFilter: DSA5ItemLibrary._showCompendiumFilter,
-      selectListFontSize: DSA5ItemLibrary.prototype._selectListFontSize,
+      searchableAbility: ItemLibraryBase._onSearchableAbility,
+      selectLibraryView: ItemLibraryBase.prototype._selectLibraryView,
+      sortListColumn: ItemLibraryBase.prototype._sortListColumn,
+      showCompendiumFilter: ItemLibraryBase._showCompendiumFilter,
+      selectListFontSize: ItemLibraryBase.prototype._selectListFontSize,
     },
     classes: ["dsa5", "sheet", "itemlibrary"]
   };
@@ -106,20 +106,81 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   constructor(app) {
     super(app)
 
-    this.viewMode = game.settings.get('dsa5', 'itemLibraryViewMode') || 'list';
+    this.viewMode = this.getDefaultViewMode();
     if (!VIEW_MODES.includes(this.viewMode)) this.viewMode = 'list';
 
     this._debouncedFilterItems = foundry.utils.debounce((category) => {
       this.filterItems(category);
     }, this.searchDebounceMs);
 
-    this.indexLoader = new ItemLibraryIndexLoader();
+    this.indexLoader = ItemLibraryIndexLoader.getShared();
     this._cachedListItems = {};
+    this._initPromise = null;
 
-    this.loadSystemSpecificConfig().then(() => {
-      this.prepareDataModels()
-      this.prepareIndexes()
-    })
+    this._initLibrary();
+  }
+
+  _getMainItemLibrary() {
+    const main = game.dsa5?.itemLibrary;
+    return main && main !== this ? main : null;
+  }
+
+  _linkIndexStateFrom(source) {
+    this.indexes = source.indexes;
+    this.detailFilter = source.detailFilter;
+    this.detailStoreBySubcategory = source.detailStoreBySubcategory;
+    this.candidateUuidsBySubcategory = source.candidateUuidsBySubcategory;
+  }
+
+  _initLibrary() {
+    if (!this._initPromise) {
+      this._initPromise = (async () => {
+        await this.loadSystemSpecificConfig();
+        this.prepareDataModels();
+        const owner = this._getMainItemLibrary();
+        if (owner) {
+          await owner.whenReady();
+          this._linkIndexStateFrom(owner);
+        } else {
+          this.prepareIndexes();
+        }
+      })();
+    }
+    return this._initPromise;
+  }
+
+  whenReady() {
+    return this._initLibrary();
+  }
+
+  get embedded() {
+    return false;
+  }
+
+  getMountTarget() {
+    return null;
+  }
+
+  getDefaultViewMode() {
+    return game.settings.get('dsa5', 'itemLibraryViewMode') || 'list';
+  }
+
+  _attachToMountTarget() {
+    const mount = this.getMountTarget();
+    if (!mount || !this.element) return;
+    if (this.element.parentElement !== mount) {
+      mount.replaceChildren(this.element);
+    }
+    this.element.classList.add('itemlibrary-embedded-root');
+    if (this.embedded) {
+      this.element.classList.add('tooltipConnector');
+      this.element.dataset.tooltipDirection = 'LEFT';
+    }
+  }
+
+  _getLibraryTooltipAnchor(target) {
+    if (!this.embedded) return target;
+    return target.closest('.tooltipConnector') || this.element || target;
   }
 
   static _onSearchableAbility(ev, target) {
@@ -266,15 +327,21 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     return data
   }
 
+  _getExcludedTabIds() {
+    if (this.embedded) return ['Actors', 'JournalEntries'];
+    if (!game.user.isGM) return ['Actors'];
+    return [];
+  }
+
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
-    if (!game.user.isGM) delete tabs.Actors;
+    for (const id of this._getExcludedTabIds()) delete tabs[id];
     return tabs;
   }
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    if (!game.user.isGM) delete parts.Actors;
+    for (const id of this._getExcludedTabIds()) delete parts[id];
     return parts;
   }
 
@@ -673,6 +740,10 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   async _openItem(ev) {
     const uuid = $(ev.currentTarget).data("uuid")
     const item = await fromUuid(uuid)
+    if (this.embedded) {
+      await game.dsa5.view.renderDocumentSheetAboveFullscreen(item);
+      return;
+    }
     item.sheet.render(true)
   }
 
@@ -752,6 +823,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
   }
 
   async changeTab(tab, group, options) {
+    await this.whenReady();
     super.changeTab(tab, group, options)
 
     const input = this.element?.querySelector('.filterBy-search');
@@ -1134,6 +1206,7 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
         itemType = 'JournalEntry';
         break;
     }
+    if (!this.indexes) return { index: undefined, itemType };
     return { index: this.indexes[itemType], itemType };
   }
 
@@ -1316,7 +1389,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       this._debouncedFilterItems(category);
     });
 
-    this.buildItemIndex()
+    this.buildItemIndex();
+    this._attachToMountTarget();
   }
 
   async _onItemHover(ev) {
@@ -1334,7 +1408,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
     if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item);
     if (hoverToken !== this._hoverToken || !target.matches(':hover')) return;
 
-    game.tooltip.activate(target, {
+    const tooltipTarget = this._getLibraryTooltipAnchor(target);
+    game.tooltip.activate(tooltipTarget, {
       html: tooltip,
       cssClass: 'itemLibraryTooltip',
     });
@@ -1500,4 +1575,8 @@ export default class DSA5ItemLibrary extends foundry.applications.api.Handlebars
       // nothing going on here
     }
   }
+}
+
+export default class DSA5ItemLibrary extends ItemLibraryBase {
+  static DEFAULT_OPTIONS = foundry.utils.mergeObject(ItemLibraryBase.DEFAULT_OPTIONS, {}, { inplace: false });
 }

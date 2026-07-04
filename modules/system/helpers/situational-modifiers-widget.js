@@ -230,8 +230,8 @@ export class SituationalModifiersWidget extends HTMLDivElement {
 
     const rawText = {
       specialability: item.system.rule?.value,
-      advantage: item.system.description?.value,
-      disadvantage: item.system.description?.value,
+      advantage: item.system.rule?.value,
+      disadvantage: item.system.rule?.value,
       equipment: item.system.effect?.value,
       meleeweapon: item.system.effect?.value,
       rangeweapon: item.system.effect?.value,

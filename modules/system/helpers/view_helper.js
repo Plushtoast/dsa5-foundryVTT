@@ -174,7 +174,9 @@ function columnLayout(html) {
 }
 
 export function resizeListener(html) {
-  //observer html for widtht ch
+  const el = html?.[0];
+  if (!(el instanceof Element)) return;
+
   const observer = new ResizeObserver((entries) => {
     for (const entry of entries) {
       if (entry.contentRect.width > 0) {
@@ -182,7 +184,7 @@ export function resizeListener(html) {
       }
     }
   });
-  observer.observe(html[0]);
+  observer.observe(el);
 }
 
 export function tabSlider(html) {

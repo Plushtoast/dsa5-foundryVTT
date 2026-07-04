@@ -133,10 +133,9 @@ export class GlobalToolTipHandler {
         let description;
         switch (item.type) {
             case 'specialability':
-                description = item.system.rule?.value;
-                break;
             case 'advantage':
             case 'disadvantage':
+                description = item.system.rule?.value;
                 break;
             default:
                 description = item.system.description?.value;

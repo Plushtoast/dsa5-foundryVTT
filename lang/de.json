@@ -3290,6 +3290,11 @@
         "vampire": "Vampirische Gaben",
         "vision": "Vision-Sonderfertigkeiten"
     },
+    "VantageSubcategory": {
+        "general": "Allgemein",
+        "tiergefährten": "Tiergefährten",
+        "ahnenblut": "Ahnenblut"
+    },
     "Spent": "Ausgegeben",
     "StF": "Steigerungsfaktor",
     "Success": "Erfolg",

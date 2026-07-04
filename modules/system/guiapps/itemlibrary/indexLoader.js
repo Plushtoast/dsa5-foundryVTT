@@ -10,6 +10,16 @@ export default class ItemLibraryIndexLoader {
     this._buildToken = 0;
   }
 
+  static _shared = null;
+
+  /** @returns {ItemLibraryIndexLoader} */
+  static getShared() {
+    if (!ItemLibraryIndexLoader._shared) {
+      ItemLibraryIndexLoader._shared = new ItemLibraryIndexLoader();
+    }
+    return ItemLibraryIndexLoader._shared;
+  }
+
   get enabled() {
     return this._enabled;
   }
@@ -40,6 +50,11 @@ export default class ItemLibraryIndexLoader {
       await this._worker.ready;
       return this._worker;
     } catch (err) {
+      if (game.workers?.has?.(this.workerName)) {
+        this._worker = game.workers.get(this.workerName);
+        await this._worker.ready;
+        return this._worker;
+      }
       console.warn("DSA5 | ItemLibraryIndexLoader: failed to create worker", err);
       this._enabled = false;
       this._worker = null;

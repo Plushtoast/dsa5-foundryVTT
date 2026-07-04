@@ -2685,6 +2685,22 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 }
 
 .itemlibrary {
+  &.itemlibrary-embedded {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+
+    > form,
+    > .window-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+  }
+
   .navWrapper {
     margin-bottom: 8px;
   }
@@ -2984,7 +3000,8 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   right: -11px;
 }
 
-.itemLibraryTooltip {
+#tooltip.itemLibraryTooltip,
+.itemLibraryTooltip.tooltipBox {
   text-align: left;
   padding: 0.25rem;
   background-color: #12100e;
@@ -3017,15 +3034,10 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   }
 
   .table-title {
-    background: none;
+    background: rgba(188, 136, 111, 0.28);
     color: #e0c080;
     font-weight: bold;
-    text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000,
-      0px 0px 3px #fff;
+    text-shadow: none;
   }
 
   .col.browseElement {
@@ -5444,11 +5456,33 @@ input[type='checkbox'].autoCheckbox {
 }
 
 #tooltip.dsatooltip {
-  padding: 1px;
-  background: #000;
+  padding: 0.25rem;
+  background: #12100e;
+  color: #e9dfc7;
+  border: 2px solid #5e442a;
+  border-radius: 6px;
+  box-shadow: 0 0 0 3px #2d2215 inset;
 
   .itemTooltip {
     padding: 8px;
+    color: #e9dfc7;
+
+    h1,
+    h2,
+    h3 {
+      color: #e0c080;
+      text-shadow: none;
+    }
+
+    .table-title {
+      background: rgba(188, 136, 111, 0.28);
+      color: #e0c080;
+      text-shadow: none;
+    }
+
+    .col:not(.table-title) {
+      color: #e9dfc7;
+    }
   }
 
   .effects-tooltip img {
