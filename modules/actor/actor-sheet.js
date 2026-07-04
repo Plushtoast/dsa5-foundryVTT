@@ -444,6 +444,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       acc[key] = `RIDING.speeds.${key}`;
       return acc;
     }, {});
+    sheetData.ridingModes = sheetData.systemFields?.horse?.fields?.isRiding?.choices ?? {};
     await DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
     await this.prepareEnrichedFields(sheetData, this.constructor.propertiesToEnrich);
     return sheetData;

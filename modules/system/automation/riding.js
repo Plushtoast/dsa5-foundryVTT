@@ -120,7 +120,10 @@ export default class Riding {
         return m;
       },
     });
-    html.find('.riding-toggle select').on('change', (ev) => this.toggleIsRiding(actor, ev.currentTarget.value));
+    html.find('.riding-toggle select').on('change', (ev) => {
+      ev.preventDefault();
+      this.toggleIsRiding(actor, ev.currentTarget.value);
+    });
     html.find('.showHorse').on('click', () => this.getHorse(actor).sheet.render(true));
     html.find('.horse-delete').on('click', () => this.clearMount(actor));
     html.find('.horse-loyalty').on('click', () => this.rollLoyalty(actor));
@@ -131,7 +134,8 @@ export default class Riding {
     });
   }
 
-  static async toggleIsRiding(value) {
+  static async toggleIsRiding(actor, value) {
+    value = Number(value);
     await actor.update({
       'system.horse.isRiding': value,
     });
