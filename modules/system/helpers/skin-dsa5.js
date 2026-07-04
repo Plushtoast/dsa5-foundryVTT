@@ -114,8 +114,10 @@ export default class DSA5Skin {
     let choice;
     try {
       choice = await foundry.applications.api.DialogV2.wait({
+        id: 'dsa5-skin-selection-dialog',
+        classes: ['dialog', 'dsa5', 'dsa5-skin-selection-dialog'],
         window: { title: 'DSASETTINGS.globalStyle' },
-        content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
+        content: `<div class="dsa-skin-selection-dialog-content"><p>${_loc('DSAError.invalidSkinCombination')}</p></div>`,
         modal: true,
         buttons: [
           {
