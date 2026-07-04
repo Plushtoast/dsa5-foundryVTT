@@ -118,6 +118,7 @@ export default function () {
     }
 
     RollRequestService.handleRenderMessage(msg, html);
+    MagicAnalysisQueryService.handleRenderMessage(msg, html);
     if (game.settings.get('dsa5', 'expandChatModifierlist')) {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });

@@ -1611,6 +1611,26 @@ a.img-entity-link {
       box-shadow: inset 3px 0 0 #7a1f19;
     }
   }
+
+  &.magic-analysis-request-card {
+    .magic-analysis-step-row {
+      padding-left: 26px;
+    }
+
+    .magic-analysis-step-row .roll-request-row-side {
+      margin-left: auto;
+    }
+
+    .magic-analysis-result-divider {
+      margin: 0.75rem 0 0.5rem;
+      border: none;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .magic-analysis-result-heading {
+      margin: 0 0 0.35rem;
+    }
+  }
 }
 
 .roll-request-card-regeneration {

@@ -1,8 +1,8 @@
-<div class='dsa5 magic-analysis-request-card'>
+<div class='dsa5 roll-request-card magic-analysis-request-card'>
   <p class='flexrow flexAlignCenter gap5px roll-request-header'>
     <b>{{localize 'MAGICANALYSIS.title'}}</b>
     {{#if itemLink}}
-      <span class='ellipsis chat-button-gm maskfield'>{{{itemLink}}}</span>
+      <span class='flexAlignEnd ellipsis chat-button-gm'>{{{itemLink}}}</span>
     {{/if}}
   </p>
 
@@ -12,25 +12,22 @@
     <p class='very-small'>{{localize 'MAGICANALYSIS.progressIntro'}}</p>
 
     {{#if actorEntry}}
-      <div class='flexrow flexAlignCenter roll-request-row gap5px'>
-        {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs actorEntry}}
-      </div>
-    {{/if}}
-
-    {{#if steps.length}}
       <div class='roll-request-rows'>
+        <div class='roll-request-row magic-analysis-actor-row'>
+          {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs actorEntry}}
+        </div>
+
         {{#each steps}}
-          <div class='flexrow flexAlignCenter roll-request-row gap5px' data-step-id='{{stepId}}' data-status='{{status}}'>
-            <span class='ellipsis flex1'>{{name}}</span>
+          <div class='flexrow flexAlignCenter roll-request-row magic-analysis-step-row gap5px' data-step-id='{{stepId}}' data-status='{{status}}'>
             {{#if resultLabel}}
               <b class='roll-request-result-label flex0 flexAlignRight'>{{resultLabel}}</b>
             {{/if}}
             <div class='roll-request-row-side flexrow flex0 flexAlignEnd gap2px'>
               {{#if canRoll}}
-                <button type='button' class='magic-analysis-action icon fas fa-dice' data-action='roll' data-step-id='{{stepId}}' data-tooltip='{{localize "ROLLREQUEST.rollAction"}}' aria-label='{{localize "ROLLREQUEST.rollAction"}}'></button>
+                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice' data-action='roll' data-step-id='{{stepId}}' data-tooltip='{{name}}' aria-label='{{name}}'></button>
               {{/if}}
               {{#if canGMRoll}}
-                <button type='button' class='magic-analysis-action icon fas fa-dice roll-request-gm' data-action='rollOnBehalf' data-step-id='{{stepId}}' data-tooltip='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}'></button>
+                <button type='button' class='roll-request-action magic-analysis-action icon fas fa-dice roll-request-gm' data-action='rollOnBehalf' data-step-id='{{stepId}}' data-tooltip='{{name}}' aria-label='{{name}}'></button>
               {{/if}}
             </div>
           </div>
@@ -43,11 +40,24 @@
     {{/if}}
 
     {{#unless finalized}}
-      {{#if isGM}}
-        <div class='roll-request-gm flexrow gap5px margin-top'>
-          <button type='button' class='magic-analysis-action icon fas fa-check' data-action='finalize' data-tooltip='{{localize "DSAQUERIES.COMMANDS.finalize"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.finalize"}}'></button>
-        </div>
-      {{/if}}
+      <div class='roll-request-gm flexrow gap5px margin-top'>
+        <button type='button' class='roll-request-action magic-analysis-action' data-action='finalize' data-tooltip='{{localize "DSAQUERIES.COMMANDS.finalize"}}' aria-label='{{localize "DSAQUERIES.COMMANDS.finalize"}}'><i class='fas fa-check'></i></button>
+      </div>
     {{/unless}}
+
+    {{#if approval}}
+      {{#if (eq approval.phase 'pending')}}
+        <p class='very-small margin-top'><i class='fas fa-spinner fa-spin'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.pending'}}</p>
+      {{else if (eq approval.phase 'approved')}}
+        {{#if approval.resultHtml}}
+          <hr class='magic-analysis-result-divider'>
+          <p class='table-title magic-analysis-result-heading'><b>{{localize 'result'}}</b></p>
+          <div class='magic-analysis-result'>{{{approval.resultHtml}}}</div>
+        {{/if}}
+      {{else if (eq approval.phase 'rejected')}}
+        <hr class='magic-analysis-result-divider'>
+        <p class='very-small margin-top'><i class='fas fa-times icon-red'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.rejected'}}</p>
+      {{/if}}
+    {{/if}}
   {{/if}}
 </div>

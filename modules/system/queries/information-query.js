@@ -52,15 +52,7 @@ export default class InformationQueryService {
     return item?.name || '';
   }
 
-  static async handleQuery(payload) {
-    const item = await fromUuid(payload.itemUuid);
-    if (!item && !payload.virtualInfo) {
-      return { status: 'rejected' };
-    }
-
-    const infoSystem = await this._resolveInfoSystem(item, payload);
-    const infoName = this._getInfoName(item, payload);
-
+  static async buildApprovalData(infoSystem, { rolledQS, successLevel }) {
     const qsEntries = [];
     for (let i = 1; i <= 6; i++) {
       const text = infoSystem[`qs${i}`];
@@ -69,7 +61,7 @@ export default class InformationQueryService {
         qsEntries.push({
           qs: i,
           text: enriched,
-          included: i <= payload.rolledQS,
+          included: i <= rolledQS,
         });
       }
     }
@@ -83,27 +75,18 @@ export default class InformationQueryService {
 
     if (infoSystem.crit) {
       critText = await TextEditor.enrichHTML(infoSystem.crit, {});
-      critIncluded = payload.successLevel > 1;
+      critIncluded = successLevel > 1;
     }
     if (infoSystem.botch) {
       botchText = await TextEditor.enrichHTML(infoSystem.botch, {});
-      botchIncluded = payload.successLevel < -1;
+      botchIncluded = successLevel < -1;
     }
-    if (infoSystem.fail && !payload.rolledQS) {
+    if (infoSystem.fail && !rolledQS) {
       failText = await TextEditor.enrichHTML(infoSystem.fail, {});
       failIncluded = true;
     }
 
-    const itemLink = item
-      ? await item.toAnchor().outerHTML
-      : `<span>${infoName}</span>`;
-
-    const dialogData = {
-      actorName: payload.actorName,
-      playerName: payload.playerName,
-      itemLink,
-      skillName: payload.skillName,
-      rolledQS: payload.rolledQS,
+    return {
       qsEntries,
       critText,
       botchText,
@@ -111,9 +94,37 @@ export default class InformationQueryService {
       critIncluded,
       botchIncluded,
       failIncluded,
+      rolledQS,
+      successLevel,
     };
+  }
 
+  static async buildApprovedResultHtml(infoSystem, selected, infoName) {
+    const parts = [];
+
+    for (let i = 1; i <= 6; i++) {
+      if (selected[`qs${i}`] && infoSystem[`qs${i}`]) {
+        parts.push(await TextEditor.enrichHTML(infoSystem[`qs${i}`], {}));
+      }
+    }
+
+    if (selected.crit && infoSystem.crit) {
+      parts.push(await TextEditor.enrichHTML(infoSystem.crit, {}));
+    }
+    if (selected.botch && infoSystem.botch) {
+      parts.push(await TextEditor.enrichHTML(infoSystem.botch, {}));
+    }
+    if (selected.fail && infoSystem.fail) {
+      parts.push(await TextEditor.enrichHTML(infoSystem.fail, {}));
+    }
+
+    if (!parts.length) return '';
+    return `<p><b>${infoName}</b></p>${parts.join('')}`;
+  }
+
+  static async promptApprovalDialog({ dialogData, infoName, approvalData }) {
     const content = await renderTemplate(this.APPROVAL_TEMPLATE, dialogData);
+    const { qsEntries, critText, botchText, failText } = approvalData;
 
     try {
       const result = await foundry.applications.api.DialogV2.wait({
@@ -153,8 +164,7 @@ export default class InformationQueryService {
       });
 
       if (result?.action === 'approve') {
-        await this.postApprovedResult(item, payload, result.selected);
-        return { status: 'approved' };
+        return { status: 'approved', selected: result.selected };
       }
 
       return { status: 'rejected' };
@@ -163,40 +173,56 @@ export default class InformationQueryService {
     }
   }
 
+  static async handleQuery(payload) {
+    const item = await fromUuid(payload.itemUuid);
+    if (!item && !payload.virtualInfo) {
+      return { status: 'rejected' };
+    }
+
+    const infoSystem = await this._resolveInfoSystem(item, payload);
+    const infoName = this._getInfoName(item, payload);
+
+    const approvalData = await this.buildApprovalData(infoSystem, {
+      rolledQS: payload.rolledQS,
+      successLevel: payload.successLevel,
+    });
+
+    const itemLink = item
+      ? await item.toAnchor().outerHTML
+      : `<span>${infoName}</span>`;
+
+    const dialogData = {
+      actorName: payload.actorName,
+      playerName: payload.playerName,
+      itemLink,
+      skillName: payload.skillName,
+      ...approvalData,
+    };
+
+    const result = await this.promptApprovalDialog({ dialogData, infoName, approvalData });
+
+    if (result.status === 'approved') {
+      await this.postApprovedResult(item, payload, result.selected);
+      return { status: 'approved' };
+    }
+
+    return { status: 'rejected' };
+  }
+
   static async postApprovedResult(item, payload, selected) {
     const infoSystem = await this._resolveInfoSystem(item, payload);
     const infoName = this._getInfoName(item, payload);
-    const msg = [];
+    const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
+    if (!resultHtml) return;
 
-    for (let i = 1; i <= 6; i++) {
-      if (selected[`qs${i}`] && infoSystem[`qs${i}`]) {
-        const enriched = await TextEditor.enrichHTML(infoSystem[`qs${i}`], {});
-        msg.push(enriched);
-      }
+    const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
+    if (!whisperTargets.includes(payload.playerId)) {
+      whisperTargets.push(payload.playerId);
     }
 
-    if (selected.crit && infoSystem.crit) {
-      msg.push(await TextEditor.enrichHTML(infoSystem.crit, {}));
-    }
-    if (selected.botch && infoSystem.botch) {
-      msg.push(await TextEditor.enrichHTML(infoSystem.botch, {}));
-    }
-    if (selected.fail && infoSystem.fail) {
-      msg.push(await TextEditor.enrichHTML(infoSystem.fail, {}));
-    }
-
-    if (msg.length > 0) {
-      msg.unshift(`<p><b>${infoName}</b></p>`);
-
-      const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
-      if (!whisperTargets.includes(payload.playerId)) {
-        whisperTargets.push(payload.playerId);
-      }
-
-      const chatData = DSA5_Utility.chatDataSetup(msg.join(''));
-      chatData.whisper = whisperTargets;
-      await ChatMessage.create(chatData);
-    }
+    const chatData = DSA5_Utility.chatDataSetup(resultHtml);
+    chatData.whisper = whisperTargets;
+    await ChatMessage.create(chatData);
   }
 
   static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid } = {}) {

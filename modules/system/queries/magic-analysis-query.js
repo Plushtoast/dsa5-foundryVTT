@@ -197,10 +197,11 @@ export default class MagicAnalysisQueryService {
       }
       : null;
 
+    const designatedUserId = state.recipients?.[0]?.designatedUserId;
     const steps = (state.steps || []).map((step) => ({
       ...step,
       resultLabel: this.buildStepResultLabel(step),
-      canGMRoll: !state.finalized && game.user.isGM && step.canRoll,
+      canGMRoll: !state.finalized && step.canRoll && !designatedUserId,
     }));
 
     let itemLink = '';
@@ -211,13 +212,43 @@ export default class MagicAnalysisQueryService {
     }
 
     return await renderTemplate(this.TEMPLATE, {
-      isGM: game.user.isGM,
       finalized: state.finalized,
       notPossible: state.notPossible,
       itemLink,
       actorEntry,
       steps,
       totalMaxQs: state.progress?.totalMaxQS || 0,
+      approval: state.approval || null,
+    });
+  }
+
+  static handleRenderMessage(msg, html) {
+    const state = foundry.utils.getProperty(msg.message, 'flags.dsa5.magicAnalysisRequest');
+    if (!state) return;
+
+    const actor = game.actors.get(state.actorId);
+    const recipient = state.recipients?.[0];
+    const designatedUserId = recipient?.designatedUserId;
+    const canSelfRoll = designatedUserId === game.user.id
+      || (actor?.isOwner && !designatedUserId);
+
+    if (!game.user.isGM) {
+      html.find('.roll-request-gm').remove();
+    }
+
+    html.find('.magic-analysis-step-row').each((_idx, element) => {
+      const row = $(element);
+      const rollBtn = row.find('.magic-analysis-action[data-action="roll"]');
+      const gmBtn = row.find('.magic-analysis-action[data-action="rollOnBehalf"]');
+
+      if (canSelfRoll) {
+        gmBtn.remove();
+      } else if (game.user.isGM) {
+        rollBtn.remove();
+      } else {
+        gmBtn.remove();
+        if (!canSelfRoll) rollBtn.remove();
+      }
     });
   }
 
@@ -320,34 +351,115 @@ export default class MagicAnalysisQueryService {
 
   static async completeMagiekunde(messageId, state, rollResult) {
     const actor = game.actors.get(state.actorId);
+    const recipient = state.recipients?.[0];
+    const rolledQS = rollResult.result.qualityStep || 0;
+    const successLevel = rollResult.result.successLevel || 0;
+    const playerId = recipient?.designatedUserId || rollResult.userId || game.user.id;
+    const playerUser = game.users.get(playerId);
     const skillName = state.infoContent?.skill || MagicAnalysisService._magiekundeSkill();
-    const skill = actor?.items.find((i) => i.name === skillName && i.type === 'skill');
 
-    await InformationQueryService.createInformationQuery(
-      rollResult,
-      state.informationUuid || state.itemUuid,
-      { name: state.infoContent.name, system: state.infoContent },
-      {
-        actor,
-        skill: skill || { name: skillName },
-        virtualInfo: state.infoContent,
-        parentUuid: state.parentUuid,
-      },
-    );
+    const approvalData = await InformationQueryService.buildApprovalData(state.infoContent, {
+      rolledQS,
+      successLevel,
+    });
 
     await QueryOrchestrator.enqueueMessageUpdate(messageId, async (currentState) => {
       currentState.finalized = true;
       const magiekunde = currentState.steps.find((entry) => entry.type === 'magiekunde');
       if (magiekunde) {
-        const successLevel = rollResult.result.successLevel || 0;
         magiekunde.status = successLevel > 1 ? 'critical' : successLevel < -1 ? 'botch' : successLevel > 0 ? 'success' : 'failure';
-        magiekunde.resultDetails = {
-          qualityStep: rollResult.result.qualityStep,
-          successLevel,
-        };
+        magiekunde.resultDetails = { qualityStep: rolledQS, successLevel };
         magiekunde.canRoll = false;
       }
+
+      currentState.approval = {
+        phase: 'pending',
+        actorName: actor?.name || '',
+        playerName: playerUser?.name || '',
+        skillName,
+        playerId,
+        ...approvalData,
+      };
+
       this.refreshAnalysisState(currentState);
+      return currentState;
+    });
+
+    if (game.user.isGM) {
+      void this.#promptAndApplyApproval(messageId);
+    }
+  }
+
+  static async #promptAndApplyApproval(messageId) {
+    const message = game.messages.get(messageId);
+    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    if (state.approval?.phase !== 'pending') return;
+
+    let itemLink = '';
+    const linkUuid = this.#resolveLinkUuid(state);
+    if (linkUuid) {
+      const item = await fromUuid(linkUuid);
+      if (item) itemLink = (await item.toAnchor()).outerHTML;
+    }
+
+    const approval = state.approval;
+    const dialogData = {
+      actorName: approval.actorName,
+      playerName: approval.playerName,
+      itemLink,
+      skillName: approval.skillName,
+      qsEntries: approval.qsEntries,
+      critText: approval.critText,
+      botchText: approval.botchText,
+      failText: approval.failText,
+      critIncluded: approval.critIncluded,
+      botchIncluded: approval.botchIncluded,
+      failIncluded: approval.failIncluded,
+      rolledQS: approval.rolledQS,
+    };
+
+    const infoName = state.itemName || state.infoContent?.name || '';
+    const result = await InformationQueryService.promptApprovalDialog({
+      dialogData,
+      infoName,
+      approvalData: approval,
+    });
+
+    if (result.status === 'approved') {
+      await this.#applyApproval(messageId, result.selected);
+    } else {
+      await this.#rejectApproval(messageId);
+    }
+  }
+
+  static async #applyApproval(messageId, selected) {
+    if (!game.user.isGM) return;
+
+    const message = game.messages.get(messageId);
+    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    if (state.approval?.phase !== 'pending') return;
+
+    const infoName = state.itemName || state.infoContent?.name || '';
+    const resultHtml = await InformationQueryService.buildApprovedResultHtml(
+      state.infoContent,
+      selected,
+      infoName,
+    );
+
+    await QueryOrchestrator.enqueueMessageUpdate(messageId, async (currentState) => {
+      if (currentState.approval?.phase !== 'pending') return currentState;
+      currentState.approval.phase = 'approved';
+      currentState.approval.resultHtml = resultHtml;
+      return currentState;
+    });
+  }
+
+  static async #rejectApproval(messageId) {
+    if (!game.user.isGM) return;
+
+    await QueryOrchestrator.enqueueMessageUpdate(messageId, async (currentState) => {
+      if (currentState.approval?.phase !== 'pending') return currentState;
+      currentState.approval.phase = 'rejected';
       return currentState;
     });
   }
@@ -440,18 +552,18 @@ export default class MagicAnalysisQueryService {
     if (!button) return;
 
     const action = button.dataset.action;
-    const stepId = button.dataset.stepId;
     const messageId = button.closest('.message')?.dataset.messageId;
-    if (!messageId || !stepId) return;
+    if (!messageId) return;
 
     switch (action) {
       case 'roll':
-        void this.triggerRollFromCard(messageId, stepId);
+      case 'rollOnBehalf': {
+        const stepId = button.dataset.stepId;
+        if (!stepId) return;
+        if (action === 'roll') void this.triggerRollFromCard(messageId, stepId);
+        else if (game.user.isGM) void this.triggerRollFromCard(messageId, stepId, true);
         break;
-      case 'rollOnBehalf':
-        if (!game.user.isGM) return;
-        void this.triggerRollFromCard(messageId, stepId, true);
-        break;
+      }
       case 'finalize':
         if (!game.user.isGM) return;
         void this.finalizeRequest(messageId);
