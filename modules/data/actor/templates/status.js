@@ -4,6 +4,13 @@ import DSANumberField from '../../fields/dsa_number_field.js';
 
 const { SchemaField, NumberField, StringField, BooleanField } = foundry.data.fields;
 
+const energyZoneField = () => new SchemaField({
+  value: new DSANumberField({ initial: 0 }),
+  max: new NumberField({ initial: 0 }),
+  failed: new BooleanField({ initial: false }),
+  resistPenalty: new NumberField({ initial: 0 }),
+});
+
 export default class StatusTemplate extends DSADataModel {
   static defineSchema() {
     return {
@@ -88,6 +95,14 @@ export default class StatusTemplate extends DSADataModel {
           LePMod: new DSANumberField({ initial: 0 }),
           AsPMod: new DSANumberField({ initial: 0 }),
           KaPMod: new DSANumberField({ initial: 0 }),
+        }),
+        energyZones: new SchemaField({
+          head: energyZoneField(),
+          leftarm: energyZoneField(),
+          rightarm: energyZoneField(),
+          leftleg: energyZoneField(),
+          rightleg: energyZoneField(),
+          value: energyZoneField(),
         }),
       }),
     };

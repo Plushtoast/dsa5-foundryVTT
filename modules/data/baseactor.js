@@ -381,6 +381,8 @@ export class ActorDataModel extends DSADataModel {
       data.status.wounds.multiplier + data.status.wounds.gearmodifier
     );
 
+    Hooks.call('dsa5PrepareEnergyZones', this.parent, data);
+
     data.status.fatePoints.max = Number(data.status.fatePoints.current) +
       Number(data.status.fatePoints.modifier) + data.status.fatePoints.gearmodifier;
 

@@ -1209,14 +1209,21 @@ export default class Actordsa5 extends Actor {
 
   async applyDamage(rollFormula, options = {}) {
     const roll = await new Roll(`${rollFormula}`).evaluate();
-    const amount = roll.total;
-    if (game.combat?.isBrawling) {
+    const hookOptions = { ...options, roll, amount: roll.total, updateData: {} };
+    await DSA5_Utility.callAsyncHooks('preApplyDamage', [this, hookOptions]);
+
+    const amount = hookOptions.amount;
+    if (Object.keys(hookOptions.updateData).length > 0) {
+      await this.update(hookOptions.updateData);
+    } else if (game.combat?.isBrawling) {
       const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
       await this.update({ 'system.status.temporaryLeP.value': newVal });
     } else {
       const newVal = Math.min(this.system.status.wounds.max, this.system.status.wounds.value - amount);
       await this.update({ 'system.status.wounds.value': newVal });
     }
+
+    if (hookOptions.afterApply) await hookOptions.afterApply(this, hookOptions);
 
     if (options.msg) {
       const renderedRoll = await roll.render();
@@ -1228,12 +1235,17 @@ export default class Actordsa5 extends Actor {
     const LePRolled = await new Roll(`${LeP || 0}`).evaluate();
     const KaPRolled = await new Roll(`${KaP || 0}`).evaluate();
     const AsPRolled = await new Roll(`${AsP || 0}`).evaluate();
-    const update = {
-      'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + LePRolled.total),
-      'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + KaPRolled.total),
-      'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + AsPRolled.total),
+    const hookOptions = {
+      heal: true,
+      lepAmount: LePRolled.total,
+      updateData: {
+        'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + LePRolled.total),
+        'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + KaPRolled.total),
+        'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + AsPRolled.total),
+      },
     };
-    await this.update(update);
+    await DSA5_Utility.callAsyncHooks('preApplyDamage', [this, hookOptions]);
+    await this.update(hookOptions.updateData);
   }
 
   getTotalAvailableAsP() {

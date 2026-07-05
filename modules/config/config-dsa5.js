@@ -321,6 +321,7 @@ DSA5.gearModifyableCalculatedAttributes = ['fatePoints', 'initiative', 'speed', 
 DSA5.asyncHooks = {
   postProcessDSARoll: [],
   postProcessOpposedResult: [],
+  preApplyDamage: [],
 };
 
 DSA5.characteristics = {

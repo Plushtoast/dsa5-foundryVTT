@@ -56,6 +56,14 @@ const updateMessageWithCheckmark = async (message, flagPath, contentPattern, rep
   }
 };
 
+const resolveOpposedHit = (message, defenderSpeaker) => {
+  const opposedMeta = getProperty(message, 'flags.dsa5.opposedMeta');
+  if (!opposedMeta?.attackerMessageId || !defenderSpeaker?.token) return null;
+
+  const attackerMessage = game.messages.get(opposedMeta.attackerMessageId);
+  return getProperty(attackerMessage, `flags.data.postData.hits.${defenderSpeaker.token}`) || null;
+};
+
 export const applyDamage = async (li, mode, factor = 1) => {
   const message = getMessageFromLi(li);
   const cardData = message.flags.opposeData;
@@ -71,7 +79,8 @@ export const applyDamage = async (li, mode, factor = 1) => {
     return ui.notifications.error('DSAError.DamagePermission', { localize: true });
   }
 
-  await actor.applyDamage(cardData.damage[mode] * factor);
+  const hit = resolveOpposedHit(message, defenderSpeaker);
+  await actor.applyDamage(cardData.damage[mode] * factor, { hit, messageId: message.id });
 
   await updateMessageWithCheckmark(
     message,
