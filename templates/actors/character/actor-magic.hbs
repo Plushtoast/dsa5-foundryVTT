@@ -1,48 +1,7 @@
 <div class='tab scrollable gap0px {{tabs.magic.cssClass}}' data-tab='magic' data-group='{{tabs.magic.group}}'>
     {{> systems/dsa5/templates/actors/parts/spells.hbs}}
 
-    <div class="actor-tradition-artefacts groupbox">
-        <div class="row-section wrap inverseRowtable">
-            <div class="col">
-                <div class="row-section skills table-title lineheight">
-                    <div class="title-type col third">{{localize "SpecCategory.staff"}}</div>
-                    <div class="col third center">{{localize "Category"}}</div>
-                    <div class="title-volume col third center">{{localize "volume"}}</div>
-                    <div class='col ten center flexAlignCenter flexrow'>
-                        <button type="button" data-action='selectTraditionartifact' class='icon fas fa-plus noBorder dsadesignbutton very-small' data-tooltip='SHEET.selectTraditionartifact'></button>
-                    </div>
-                </div>
-            </div>
-            {{#each prepare.traditionArtifacts as |item i|}}
-            <div class="actor-tradition-artefact-item-wrapper col spells item" data-item-id="{{item._id}}">
-                <div class="actor-tradition-artefact-item row-section skills lineheight">
-                    <div class="actor-tradition-artefact-name col third"><a data-action="itemEdit">{{item.name}}</a></div>
-                    <div class="actor-tradition-artefact-type col third center">{{item.system.artifact}}</div>
-                    <div class="actor-tradition-artefact-volume col third center">{{item.volumeFinal}} / {{item.volume}}</div>
-                    <div class="actor-tradition-artefact-action col ten very-small flexrow flexAlignCenter">
-                        <button type="button" class="icon fas fa-trash noBorder dsadesignbutton" data-action="traditionDelete" data-tooltip="SHEET.DeleteItem"></button>
-                    </div>
-                </div>
-                {{#if item.abilities}}
-                <div class="row-section expandDetails shown">
-                    <div class="row-section wrap cards col">
-                    {{#each item.abilities as |ab i|}}
-                    <div class="item flexrow" data-item-id="{{ab._id}}">
-                        {{#if ab.AEpayable}}
-                        <button type="button" data-tooltip="SHEET.payAECost" data-action="traditionPayCost" class="noBorder dsadesignbutton icon fas fa-wand-magic-sparkles"></button>{{/if}}
-                        {{#if ab.OnUseEffect}}
-                        <button type="button" data-tooltip="SHEET.onUseEffect" class="icon fas fa-dice-six noBorder dsadesignbutton" data-action="onUseItem"></button>
-                        {{/if}}
-                        <a data-action="itemEdit">{{ab.name}}{{roman ab.system.step.value ab.system.maxRank.value}}</a>
-                    </div>
-                    {{/each}}
-                    </div>
-                </div>
-                {{/if}}
-            </div>
-            {{/each}}
-        </div>
-    </div>
+    {{> systems/dsa5/templates/actors/parts/tradition-items.hbs kind="magical" items=prepare.traditionArtifacts showVolume=true titleKey="SpecCategory.staff" typeField="artifact" i18nPrefix="traditionArtifacts" pickerTitle="SHEET.selectTraditionartifact"}}
 
     {{> systems/dsa5/templates/actors/parts/specblock.hbs currentCat="magical"}}
 

@@ -89,6 +89,18 @@
                             <div class="col">
                                 {{document.system.circle}}
                             </div>
+                            {{else if (eq document.system.category.value 'ceremonial')}}
+                            <div class="col table-title noBorder">
+                                {{localize "SpecCategory.ceremonial"}}
+                            </div>
+                            <div class="col">
+                                {{#if document.system.ceremonialItem}}
+                                {{localize (concat 'ceremonialItems.' document.system.ceremonialItem)}}
+                                {{else}}
+                                -
+                                {{/if}}
+                            </div>
+
                             {{else if (eq document.system.category.value 'staff')}}
                             <div class="col table-title noBorder">
                                 {{localize "SpecCategory.staff"}}

@@ -29,6 +29,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { FateRolls } from './concerns/faterolls.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
+import { getAppliedTraditionItems, prepareTraditionItems } from './tradition-items.js';
 import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
@@ -182,27 +183,24 @@ export default class Actordsa5 extends Actor {
     this.tokenActiveEffectChanges[phase] = [];
 
     const disableWeaponAdvantages = !game.settings.get('dsa5', 'enableWeaponAdvantages');
-    const appliedArtifacts = this.items
-      .filter(x =>
-        ['rangeweapon', 'meleeweapon', 'equipment', 'armor'].includes(x.type) &&
-        x.system.isArtifact &&
-        (x.system.worn.value || (x.type == 'equipment' && !x.system.worn.wearable))
-      )
-      .map(x => x.system.artifact);
+    const appliedTraditionItems = {
+      magical: getAppliedTraditionItems(this, 'magical'),
+      ceremonial: getAppliedTraditionItems(this, 'ceremonial'),
+    };
 
     if (phase === 'initial') {
       EnhancementHelper.preparePowersources(this, {
-        shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts),
+        shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedTraditionItems),
       });
     }
 
     const overrides = {};
 
     const changes = this.collectActorEffectChanges(phase);
-    this.collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase);
+    this.collectItemEffectChanges(changes, appliedTraditionItems, disableWeaponAdvantages, phase);
     changes.push(...EnhancementHelper.collectActorChanges(this, {
       phase,
-      shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts),
+      shouldApply: (item, effect) => this.shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedTraditionItems),
     }));
     changes.sort((a, b) => a.priority - b.priority);
 
@@ -265,7 +263,7 @@ export default class Actordsa5 extends Actor {
     return changes;
   }
 
-  collectItemEffectChanges(changes, appliedArtifacts, disableWeaponAdvantages, phase) {
+  collectItemEffectChanges(changes, appliedTraditionItems, disableWeaponAdvantages, phase) {
     for (const item of this.items) {
       for (const e of item.effects) {
         if (DSAActiveEffect.isEnhancementEffect(e)) continue;
@@ -277,7 +275,7 @@ export default class Actordsa5 extends Actor {
         let apply = true;
         let multiply = 1;
 
-        apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedArtifacts);
+        apply = this.shouldApplyItemEffect(item, e, disableWeaponAdvantages, appliedTraditionItems);
         multiply = item.system.effectMultiplier;
 
         const advancedFunction = e.system.advancedFunction;
@@ -311,7 +309,7 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedArtifacts) {
+  shouldApplyItemEffect(item, effect, disableWeaponAdvantages, appliedTraditionItems) {
     switch (item.type) {
       case 'meleeweapon':
       case 'rangeweapon':
@@ -347,7 +345,9 @@ export default class Actordsa5 extends Actor {
           case 'Combat':
             return item.system.appliesCombatEffect;
           case 'staff':
-            return item.system.permanentEffects || appliedArtifacts.includes(item.system.artifact);
+            return item.system.permanentEffects || appliedTraditionItems.magical.includes(item.system.artifact);
+          case 'ceremonial':
+            return item.system.permanentEffects || appliedTraditionItems.ceremonial.includes(item.system.ceremonialItem);
           default:
             return true;
         }
@@ -594,6 +594,7 @@ export default class Actordsa5 extends Actor {
     const rangeweapons = [];
     const meleeweapons = [];
     const traditionArtifacts = [];
+    const ceremonialItems = [];
     const availableAmmunition = [];
 
     const specAbs = Object.fromEntries(Object.keys(SpecialabilityData.specialAbilityCategories).map(x => [x, []]));
@@ -691,9 +692,11 @@ export default class Actordsa5 extends Actor {
         if (sheetInfo.details && sheetInfo.details.includes(i._id)) i.detailed = 'shown';
 
         if (itemSystem.isArtifact) {
-          i.volume = DSA5.traditionArtifacts[itemSystem.artifact] || 0;
-          i.volumeFinal = 0;
           traditionArtifacts.push(i);
+        }
+
+        if (itemSystem.isCeremonial) {
+          ceremonialItems.push(i);
         }
 
         switch (itemType) {
@@ -844,19 +847,8 @@ export default class Actordsa5 extends Actor {
 
     money.coins = money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
 
-    for (const traditionAbility of specAbs.staff) {
-      const artifact = traditionArtifacts.find(x => x.system.artifact === traditionAbility.system.artifact);
-      if (artifact) {
-        if (!artifact.abilities) artifact.abilities = [];
-
-        artifact.abilities.push(traditionAbility);
-        const vol = Number(traditionAbility.system.volume) || 0;
-        const volAttr = vol > 0 ? 'volumeFinal' : 'volume';
-        artifact[volAttr] += Math.abs(vol) * Number(traditionAbility.system.step.value);
-      } else {
-        specAbs.magical.push(traditionAbility);
-      }
-    }
+    prepareTraditionItems(traditionArtifacts, specAbs, 'magical');
+    prepareTraditionItems(ceremonialItems, specAbs, 'ceremonial');
 
     const wrestle = _loc('LocalizedIDs.wrestle');
     const brawling = combatskills.find(x => x.name === wrestle);
@@ -871,6 +863,7 @@ export default class Actordsa5 extends Actor {
     return {
       totalWeight,
       traditionArtifacts,
+      ceremonialItems,
       armorSum: totalArmor,
       sortedSpecs: SpecialabilityData.sortedSpecs,
       spellArmor: this.system.spellArmor || 0,

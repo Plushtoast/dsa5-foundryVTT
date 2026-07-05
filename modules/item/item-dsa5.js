@@ -580,6 +580,10 @@ export default class Itemdsa5 extends Item {
         continue;
       }
 
+      if (change.key === 'system.reloadTime.value') {
+        if (this._applyEnhancementReloadTime(change)) continue;
+      }
+
       const result = DSAActiveEffect.applyChange(this, change, { replacementData });
       if (foundry.utils.isPlainObject(result)) Object.assign(this.overrides, result);
 
@@ -619,6 +623,18 @@ export default class Itemdsa5 extends Item {
     }).join('/');
 
     foundry.utils.setProperty(this, 'system.reach.value', result);
+  }
+
+  _applyEnhancementReloadTime(change) {
+    const value = `${change.value ?? ''}`.trim();
+    const halfMatch = value.match(/^half(?:\+(\d+))?\/(\d+)$/);
+    if (!halfMatch) return false;
+
+    const base = Number(String(this._source?.system?.reloadTime?.value ?? '').split('/')[0]) || 1;
+    const loaded = Math.max(1, Math.ceil(base / 2) + (Number(halfMatch[1]) || 0));
+    const empty = Number(halfMatch[2]) || 6;
+    foundry.utils.setProperty(this, 'system.reloadTime.value', `${loaded}/${empty}`);
+    return true;
   }
 
   _replicateProtectionToZones(change) {

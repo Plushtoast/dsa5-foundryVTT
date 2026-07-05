@@ -21,6 +21,11 @@
     {{formGroup systemFields.distribution value=document.system.distribution localize=true}}  
     {{formGroup systemFields.step.fields.circle value=document.system.step.circle localize=true}}  
 
+  {{else if (eq document.system.category.value 'ceremonial')}}
+
+    {{formGroup systemFields.ceremonialItem value=document.system.ceremonialItem localize=true sort=true blank='-'}}
+    {{formGroup systemFields.permanentEffects value=document.system.permanentEffects localize=true tooltip='permanentEffectsHint' rootId=rootId}}
+
   {{else if (eq document.system.category.value 'staff')}}
 
     {{formGroup systemFields.artifact value=document.system.artifact localize=true sort=true blank='-'}}  

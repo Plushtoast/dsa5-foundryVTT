@@ -99,6 +99,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
     'systems/dsa5/templates/actors/parts/healthbar.hbs',
     'systems/dsa5/templates/items/traditionArtifact.hbs',
+    'systems/dsa5/templates/actors/parts/tradition-items.hbs',
     'systems/dsa5/templates/status/advanced_functions.hbs',
     'systems/dsa5/templates/actors/parts/information.hbs',
     'systems/dsa5/templates/actors/parts/personaltrait.hbs',

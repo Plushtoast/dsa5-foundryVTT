@@ -6,12 +6,13 @@ import EncumbranceTemplate from './templates/encumbrance.js';
 import StructureTemplate from './templates/structure.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate, InformableTemplate) {
+export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, CeremonialItemTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate, InformableTemplate) {
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
 
   static defineSchema() {
@@ -37,7 +38,8 @@ export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, Descri
         initial: 0,
         label: 'COMBATSKILLCATEGORY.subcategory',
       }),
-      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
     });
   }
 

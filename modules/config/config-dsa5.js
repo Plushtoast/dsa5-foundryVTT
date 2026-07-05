@@ -514,6 +514,142 @@ DSA5.traditionArtifacts = {
   Schweinetrommel: 12
 };
 
+DSA5.ceremonialItemGroups = {
+  Angrosch: {
+    Angroschanhänger: 'Angroschanhänger',
+    Angroschhammer: 'Angroschhammer',
+  },
+  Aves: {
+    Silberflöte: 'Silberflöte',
+    Avesstab: 'Avesstab',
+  },
+  Boron: {
+    'Dunkles Buch': 'Dunkles Buch',
+    Rabenschnabel: 'Rabenschnabel',
+  },
+  "Chr'Ssir'Ssr": {
+    Sturmschwingen: 'Sturmschwingen',
+    'Coelestin-Metallband': 'Coelestin-Metallband',
+  },
+  Efferd: {
+    Efferdbart: 'Efferdbart',
+    Muschelkette: 'Muschelkette',
+  },
+  Firun: {
+    Firunsmesser: 'Firunsmesser',
+    Firunsbogen: 'Firunsbogen',
+  },
+  Gravesh: {
+    'Kupferroter Schleifstein': 'Kupferroter Schleifstein',
+    Graveshhammer: 'Graveshhammer',
+  },
+  "H'Szint": {
+    Schlangenlederarmband: 'Schlangenlederarmband',
+    Schlangenstab: 'Schlangenstab',
+  },
+  Hesinde: {
+    'Buch der Schlange': 'Buch der Schlange',
+    Erkenntnisstab: 'Erkenntnisstab',
+  },
+  Ifirn: {
+    Ifirnsmantel: 'Ifirnsmantel',
+    Ifirnsbogen: 'Ifirnsbogen',
+  },
+  Ingerimm: {
+    'Laterne des ewigen Feuers': 'Laterne des ewigen Feuers',
+    Ingerimmshammer: 'Ingerimmshammer',
+  },
+  Kor: {
+    Mantikorkette: 'Mantikorkette',
+    Korspieß: 'Korspieß',
+  },
+  Levthan: {
+    Widderkeule: 'Widderkeule',
+    Füllhorn: 'Füllhorn',
+  },
+  Marbo: {
+    Stundenglas: 'Stundenglas',
+    Marbodolch: 'Marbodolch',
+  },
+  'Namenloser Kult': {
+    Gesichtslarve: 'Gesichtslarve',
+    'Opferdolch des Namenlosen': 'Opferdolch des Namenlosen',
+  },
+  Nandus: {
+    Einhornstirnband: 'Einhornstirnband',
+    'Trigon-Amulett': 'Trigon-Amulett',
+  },
+  Numinoru: {
+    Muschelhorn: 'Muschelhorn',
+    Bimssteinkette: 'Bimssteinkette',
+  },
+  Peraine: {
+    'Grüne Handschuhe': 'Grüne Handschuhe',
+    Saatgutbeutel: 'Saatgutbeutel',
+  },
+  Phex: {
+    Mondamulett: 'Mondamulett',
+    'Grauer Umhang': 'Grauer Umhang',
+  },
+  Praios: {
+    Schutzkugel: 'Schutzkugel',
+    Sonnenzepter: 'Sonnenzepter',
+  },
+  Rahja: {
+    'Roter Schleier': 'Roter Schleier',
+    'Schmuck der Schönen Göttin': 'Schmuck der Schönen Göttin',
+  },
+  Rondra: {
+    Rondrakamm: 'Rondrakamm',
+    Schwertfibel: 'Schwertfibel',
+  },
+  Schamane: {
+    Knochenkeule: 'Knochenkeule',
+    Geisterfetisch: 'Geisterfetisch',
+  },
+  Shinxir: {
+    Vitis: 'Vitis',
+    Hornissenstachel: 'Hornissenstachel',
+  },
+  Swafnir: {
+    Flukenamulett: 'Flukenamulett',
+    Walschild: 'Walschild',
+  },
+  Travia: {
+    'Amulett des Heiligen Badilak': 'Amulett des Heiligen Badilak',
+    Gänsebeutel: 'Gänsebeutel',
+  },
+  Tsa: {
+    Prisma: 'Prisma',
+    'Buntes Gewand': 'Buntes Gewand',
+  },
+  Zsahh: {
+    Regenbogenstein: 'Regenbogenstein',
+    Eidechsenkleidung: 'Eidechsenkleidung',
+  },
+};
+
+DSA5.getCeremonialItemChoices = function getCeremonialItemChoices() {
+  const choices = {};
+  const groups = [];
+  const sortedDeities = Object.keys(DSA5.ceremonialItemGroups).sort((a, b) => a.localeCompare(b, 'de'));
+
+  for (const deity of sortedDeities) {
+    const groupKey = `ceremonialItems.groups.${deity}`;
+    groups.push(groupKey);
+
+    for (const [key] of Object.entries(DSA5.ceremonialItemGroups[deity])) {
+      choices[key] = { label: `ceremonialItems.${key}`, group: groupKey };
+    }
+  }
+
+  return { choices, groups };
+};
+
+DSA5.ceremonialItems = Object.fromEntries(
+  Object.values(DSA5.ceremonialItemGroups).flatMap((items) => Object.entries(items)),
+);
+
 DSA5.areaTargetTypes = {
   cube: 'rectangle',
   line: 'line',

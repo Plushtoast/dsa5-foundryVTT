@@ -269,6 +269,14 @@ export default class Migrakel {
               },
             });
           }
+          if (find.system.category.value == 'ceremonial') {
+            mergeObject(update, {
+              system: {
+                ceremonialItem: getProperty(find, 'system.ceremonialItem') || '',
+                permanentEffects: getProperty(find, 'system.permanentEffects') || false,
+              },
+            });
+          }
         }
         this.updateMacro(update, find);
         return update;

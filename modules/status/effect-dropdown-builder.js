@@ -587,6 +587,15 @@ export default class EffectDropdownBuilder {
             });
         }
 
+        if (targetType === 'rangeweapon') {
+            groups.push({
+                key: 'attachment',
+                icon: 'fa-solid fa-puzzle-piece',
+                label: _loc('Enhancement.wizardCategories.attachment'),
+                subgroups: this._getEnhancementAttachmentOptions(),
+            });
+        }
+
         groups.push({
             key: 'general',
             icon: 'fa-solid fa-box',
@@ -595,6 +604,36 @@ export default class EffectDropdownBuilder {
         });
 
         return groups.filter((g) => g.subgroups.some((s) => s.options.length));
+    }
+
+    static _getEnhancementAttachmentOptions() {
+        const ammunitionType = _loc('ammunitiongroup');
+        const magazine = _loc('mag');
+        const reloadTime = _loc('reloadTime');
+
+        return [{
+            sub: _loc('Enhancement.types.attachment'),
+            options: [
+                {
+                    name: `${ammunitionType} → ${magazine}`,
+                    val: 'system.ammunitiongroup.value',
+                    type: 'override',
+                    ph: 'mag',
+                },
+                {
+                    name: `${reloadTime} (half LZ / mag swap)`,
+                    val: 'system.reloadTime.value',
+                    type: 'override',
+                    ph: '6',
+                },
+                {
+                    name: `${reloadTime} (custom dual)`,
+                    val: 'system.reloadTime.value',
+                    type: 'override',
+                    ph: '2/6',
+                },
+            ],
+        }];
     }
 
     static _getEnhancementPowersourceOptions() {

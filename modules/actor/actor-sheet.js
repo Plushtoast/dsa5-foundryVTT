@@ -23,6 +23,7 @@ import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import { Trade } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
+import { TRADITION_ITEM_KINDS, buildTraditionItemUpdate } from './tradition-items.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
@@ -242,11 +243,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemToggle: this._itemToggle,
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
       traditionDelete: this._deleteTraditionArtifact,
+      traditionItemDelete: this._deleteTraditionItem,
       swapWeaponHand: this._swapWeaponHand,
       swapWeaponHandSlot: this._swapWeaponHandSlot,
       toggleWeaponOffHand: this._toggleWeaponOffHand,
       toggleIgnoreWeaponHandLimits: this._toggleIgnoreWeaponHandLimits,
       selectTraditionartifact: this._selectTraditionArtifact,
+      selectTraditionItem: this._selectTraditionItem,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
       conditionValue: { handler: this._conditionValue, buttons: [0, 2] },
@@ -1639,7 +1642,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   static _selectTraditionArtifact(ev, target) {
     if (!this.isEditable) return;
 
-    new TraditionArtifactpicker(this.actor).render(true);
+    new TraditionItemPicker(this.actor, 'magical').render(true);
+  }
+
+  static _selectTraditionItem(ev, target) {
+    if (!this.isEditable) return;
+
+    const kind = target.dataset.traditionKind;
+    if (!TRADITION_ITEM_KINDS[kind]) return;
+
+    new TraditionItemPicker(this.actor, kind).render(true);
   }
 
   static _deleteTraditionArtifact(ev, target) {
@@ -1647,6 +1659,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     const item = this.actor.items.get(this._getItemId(target));
     item.update({ 'system.isArtifact': false });
+  }
+
+  static _deleteTraditionItem(ev, target) {
+    if (!this.isEditable) return;
+
+    const kind = target.dataset.traditionKind;
+    const config = TRADITION_ITEM_KINDS[kind];
+    if (!config) return;
+
+    const item = this.actor.items.get(this._getItemId(target));
+    item.update({ [`system.${config.flagField}`]: false });
   }
 
   _tearDown(options) {
@@ -2204,10 +2227,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 }
 
-class TraditionArtifactpicker extends DefaultAppv2 {
-  constructor(actor, optns = {}) {
-    super(optns);
+class TraditionItemPicker extends DefaultAppv2 {
+  constructor(actor, kind = 'magical', optns = {}) {
+    const config = TRADITION_ITEM_KINDS[kind];
+    super(foundry.utils.mergeObject({ window: { title: config.pickerTitle } }, optns, { inplace: false }));
     this.actor = actor;
+    this.kind = kind;
+    this.config = config;
   }
 
   static DEFAULT_OPTIONS = {
@@ -2219,7 +2245,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
       resizable: true,
     },
     actions: {
-      selectAsArtifact: this._selectAsArtifact
+      selectAsTraditionItem: this._selectAsTraditionItem
     }
   };
 
@@ -2231,12 +2257,19 @@ class TraditionArtifactpicker extends DefaultAppv2 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
+    data.items = this.actor.items
+      .filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type))
+      .map((x) => {
+        const copy = x;
+        copy.enchantClass = x.system[this.config.flagField] ? 'rar' : (copy.enchantClass || 'common');
+        return copy;
+      });
     return data;
   }
 
-  static async _selectAsArtifact(ev, target) {
+  static async _selectAsTraditionItem(ev, target) {
     const item = this.actor.items.get(target.dataset.itemId);
-    await item.update({ 'system.isArtifact': !item.system.isArtifact });
+    const enabled = !item.system[this.config.flagField];
+    await item.update(buildTraditionItemUpdate(item, this.kind, enabled));
   }
 }

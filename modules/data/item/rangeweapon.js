@@ -4,6 +4,7 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
@@ -17,8 +18,8 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2, attachment: 2 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -54,7 +55,8 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
         offHand: new ScopableBooleanField({ label: 'offHand', initial: false }),
         requiresBothHands: new BooleanField({ initial: true }),
       }),
-      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
     });
   }
 

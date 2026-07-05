@@ -4,6 +4,7 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
@@ -21,7 +22,7 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
   static NOT_TWO_HANDED_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons']);
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
@@ -78,6 +79,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       }),
       isNotImprovised: new DSABooleanField({ initial: false, label: 'WEAPON.notImprovised', tooltip: 'WEAPON.notImprovisedHint' }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
       preventsBrawlAttackDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlAttackDamage', tooltip: 'BRAWLING.preventsBrawlAttackDamageHint' }),
       preventsBrawlParryDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlParryDamage', tooltip: 'BRAWLING.preventsBrawlParryDamageHint' }),
     });
