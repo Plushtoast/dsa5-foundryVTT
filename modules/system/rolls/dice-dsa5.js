@@ -356,6 +356,14 @@ export default class DiceDSA5 {
       situationalModifiers.push(...moreModifiers);
     }
 
+    Hooks.call('dsa5.prepareRollSituationalModifiers', actor, situationalModifiers, {
+      source: testData.source,
+      rollType: testData.source?.type,
+      mode: testData.mode,
+      testData,
+      speaker: testData.extra?.speaker,
+    });
+
     return situationalModifiers;
   }
 

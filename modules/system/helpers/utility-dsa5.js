@@ -338,6 +338,8 @@ export default class DSA5_Utility {
   }
 
   static getSpeaker(speaker) {
+    if (!speaker) return null;
+
     let actor = ChatMessage.getSpeakerActor(speaker);
     if (speaker.emptyActor) return this.emptyActor(12, 'Alrik', speaker.emptyActor);
 
