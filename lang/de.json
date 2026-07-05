@@ -1810,6 +1810,9 @@
     },
     "POWERSOURCE": {
         "barTooltip": "Gespeicherte AsP aus Kraftspeichern",
+        "chargeDialogTitle": "Kraftspeicher",
+        "chargeDialogHint": "Passe die aktuelle Ladung jedes Kraftspeichers an.",
+        "chargeDialogEmpty": "Dieser Charakter hat keine Kraftspeicher.",
         "confirm": "Kosten bezahlen",
         "current": "Aktuelle Ladung",
         "dialogTitle": "AsP-Kosten aufteilen",

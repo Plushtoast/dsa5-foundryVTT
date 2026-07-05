@@ -117,6 +117,10 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
     });
   }
 
+  get detail_name() {
+    return this.parent.name;
+  }
+
   static getSlotLimits(targetType) {
     const mapping = {
       equipment: 'EquipmentData',

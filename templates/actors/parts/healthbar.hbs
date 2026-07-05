@@ -32,7 +32,7 @@
                 {{#if prepare.powersourceBarLayout}}
                 <div class="powersource-segments">
                     {{#each prepare.powersourceBarLayout.segments}}
-                    <div class="powersource-segment color-{{colorIndex}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
+                    <div class="powersource-segment color-{{colorIndex}}{{#if @first}} first-segment{{/if}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
                         <div class="powersource-fill" style="width: calc(100% * {{fillRatio}});"></div>
                     </div>
                     {{/each}}
@@ -42,7 +42,7 @@
                     {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
                     <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
                     {{#if prepare.powersourceBar}}
-                    <span class="powersource-label" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
+                    <span class="nobr powersource-label" data-action="powersourceEdit" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -68,7 +68,7 @@
             {{#if prepare.powersourceBarLayout}}
             <div class="powersource-segments">
                 {{#each prepare.powersourceBarLayout.segments}}
-                <div class="powersource-segment color-{{colorIndex}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
+                <div class="powersource-segment color-{{colorIndex}}{{#if @first}} first-segment{{/if}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
                     <div class="powersource-fill" style="width: calc(100% * {{fillRatio}});"></div>
                 </div>
                 {{/each}}
@@ -78,7 +78,7 @@
                 {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
                 <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
                 {{#if prepare.powersourceBar}}
-                <span class="powersource-label" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
+                <span class="nobr powersource-label" data-action="powersourceEdit" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
                 {{/if}}
             </div>
         </div>

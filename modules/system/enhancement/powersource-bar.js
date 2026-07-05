@@ -19,7 +19,7 @@ export default class PowersourceBar {
     const totalMax = personalMax + ksMax;
     if (totalMax <= 0) return null;
 
-    let offset = personalMax / totalMax;
+    let offset = personalValue / totalMax;
     const segments = (powersource?.segments || []).map((segment) => {
       const width = segment.max / totalMax;
       const layout = {

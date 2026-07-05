@@ -1,7 +1,7 @@
 import DSABaseEffectConfig from './base_effect_config.js';
 import DSAEnhancementEffectDataModel from '../data/activeeffect/enhancement-effect.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
-import { tabSlider, svgAutoFit } from '../system/helpers/view_helper.js';
+import { bindItemHeaderTitle, tabSlider } from '../system/helpers/view_helper.js';
 
 const { mergeObject } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
@@ -56,27 +56,9 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     const html = $(this.element);
     tabSlider(html);
 
-    const toObserve = html.find('header.item-header h1');
-    if (toObserve.length) {
-      const svg = toObserve.find('svg');
-      if (svg.length) {
-        const observer = new ResizeObserver((entries) => {
-          svgAutoFit(svg, entries[0].contentRect.width);
-        });
-        observer.observe(toObserve.get(0));
-        const input = toObserve.find('input');
-        if (!input.get(0).disabled) {
-          svg.on('click', () => {
-            svg.hide();
-            input.show();
-            input.trigger('focus');
-          });
-          input.on('blur', () => {
-            svg.show();
-            input.hide();
-          });
-        }
-      }
+    const renderedParts = options.parts;
+    if (!renderedParts || renderedParts.includes('header')) {
+      bindItemHeaderTitle(html);
     }
   }
 

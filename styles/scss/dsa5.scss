@@ -4532,6 +4532,10 @@ select.noAppearance {
     border-left: 1px solid rgba(0, 0, 0, 0.35);
     pointer-events: auto;
 
+    &.first-segment {
+      border-left: none;
+    }
+
     .powersource-fill {
       position: absolute;
       top: 0;
@@ -4550,6 +4554,12 @@ select.noAppearance {
   .powersource-label {
     font-size: 0.85em;
     opacity: 0.9;
+    cursor: pointer;
+    text-decoration: underline dotted;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 

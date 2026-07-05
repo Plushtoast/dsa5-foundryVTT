@@ -18,17 +18,20 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
     },
     position: { width: 560, height: 'auto' },
     actions: {
-      shiftCost: AspPaymentDialog.#onShiftCost,
-      confirm: AspPaymentDialog.#onConfirm,
+      shiftCost: this.#onShiftCost,
+      confirm: this.#onConfirm,
     },
   };
 
-  constructor(actor, totalCost, options = {}) {
-    super(options);
+  #resolve;
+
+  constructor(actor, totalCost, paymentOptions = {}) {
+    super();
     this.actor = actor;
     this.totalCost = totalCost;
-    this.options = options;
-    this.sources = AspPaymentDialog.#buildSources(actor, options);
+    this.paymentOptions = paymentOptions;
+    this.#resolve = paymentOptions.resolve;
+    this.sources = AspPaymentDialog.#buildSources(actor, paymentOptions);
     this.#initializeAllocations();
   }
 
@@ -105,7 +108,7 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
     if (personal) {
       personal.allocated = Math.min(
         personal.available,
-        Math.max(this.options.minPersonalAsP ?? 0, 0),
+        Math.max(this.paymentOptions.minPersonalAsP ?? 0, 0),
         this.totalCost,
       );
     }
@@ -133,7 +136,7 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
       currentLeP: this.actor.system.status.wounds.value,
       currentAsP: this.actor.system.status.astralenergy.value,
       sources: this.sources,
-      includeLeP: !!this.options.includeLeP,
+      includeLeP: !!this.paymentOptions.includeLeP,
     };
   }
 
@@ -157,7 +160,7 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
       source.allocated = parseInt(input?.value, 10) || 0;
     }
     this.#validateAllocations();
-    this.render();
+    this.render({ parts: ['content'] });
   }
 
   #validateAllocations() {
@@ -186,33 +189,43 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
   }
 
   static #onShiftCost(event, target) {
-    const dir = target.dataset.dir;
-    const sourceId = target.dataset.id;
-    const index = this.sources.findIndex((s) => s.id === sourceId);
-    if (index < 0) return;
+    const dir = target.closest('[data-dir]')?.dataset.dir;
+    const sourceId = target.closest('[data-id]')?.dataset.id;
+    const source = this.sources.find((s) => s.id === sourceId);
+    if (!source || !dir) return;
 
-    const neighborIndex = dir === 'left' ? index - 1 : index + 1;
-    if (neighborIndex < 0 || neighborIndex >= this.sources.length) return;
+    const delta = dir === 'right' ? 1 : -1;
+    const neighbors = this.#shiftNeighbors(source);
 
-    const source = this.sources[index];
-    const neighbor = this.sources[neighborIndex];
-
-    if (dir === 'left') {
-      if (source.allocated < Math.min(source.available, source.maxAlloc ?? source.available)) {
-        if (neighbor.allocated > (neighbor.min ?? 0)) {
-          source.allocated++;
-          neighbor.allocated--;
-        }
+    for (const neighbor of neighbors) {
+      if (delta > 0) {
+        const sourceMax = Math.min(source.available, source.maxAlloc ?? source.available);
+        if (source.allocated >= sourceMax) break;
+        if (neighbor.allocated <= (neighbor.min ?? 0)) continue;
+        source.allocated++;
+        neighbor.allocated--;
+        break;
       }
-    } else if (neighbor.allocated < Math.min(neighbor.available, neighbor.maxAlloc ?? neighbor.available)) {
-      if (source.allocated > (source.min ?? 0)) {
-        source.allocated--;
-        neighbor.allocated++;
-      }
+
+      if (source.allocated <= (source.min ?? 0)) break;
+      const neighborMax = Math.min(neighbor.available, neighbor.maxAlloc ?? neighbor.available);
+      if (neighbor.allocated >= neighborMax) continue;
+      source.allocated--;
+      neighbor.allocated++;
+      break;
     }
 
     this.#validateAllocations();
-    this.render();
+    this.render({ parts: ['content'] });
+  }
+
+  #shiftNeighbors(source) {
+    const index = this.sources.indexOf(source);
+    if (index < 0) return [];
+
+    const right = this.sources.slice(index + 1);
+    const left = this.sources.slice(0, index).reverse();
+    return [...right, ...left];
   }
 
   static async #onConfirm() {
@@ -224,23 +237,21 @@ export default class AspPaymentDialog extends HandlebarsApplicationMixin(Applica
     }
 
     const allocation = AspPaymentDialog.#parseAllocation(this.sources);
-    const applied = await this.actor.applyAspAllocation(this.totalCost, allocation, this.options);
-    if (!applied) return;
 
     this.#resolved = true;
-    if (typeof this.options.onConfirm === 'function') {
-      await this.options.onConfirm(allocation);
+    if (typeof this.paymentOptions.onConfirm === 'function') {
+      await this.paymentOptions.onConfirm(allocation);
     }
-    if (typeof this.options.resolve === 'function') {
-      this.options.resolve(allocation);
+    if (typeof this.#resolve === 'function') {
+      this.#resolve(allocation);
     }
     this.close({ skipResolve: true });
   }
 
   close(options = {}) {
-    if (!options.skipResolve && typeof this.options.resolve === 'function' && !this.#resolved) {
+    if (!options.skipResolve && typeof this.#resolve === 'function' && !this.#resolved) {
       this.#resolved = true;
-      this.options.resolve(null);
+      this.#resolve(null);
     }
     return super.close(options);
   }

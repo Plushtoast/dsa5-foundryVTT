@@ -2,7 +2,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5 from '../config/config-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import { itemFromDrop, svgAutoFit, tabSlider } from '../system/helpers/view_helper.js';
+import { bindItemHeaderTitle, itemFromDrop, tabSlider } from '../system/helpers/view_helper.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
@@ -264,27 +264,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     this.#lockOverrides(html);
 
-    const toObserve = html.find('header.item-header h1');
-    if (toObserve.length) {
-      const svg = toObserve.find('svg');
-      if (svg) {
-        const observer = new ResizeObserver(function (entries) {
-          svgAutoFit(svg, entries[0].contentRect.width);
-        });
-        observer.observe(toObserve.get(0));
-        const input = toObserve.find('input');
-        if (!input.get(0).disabled) {
-          svg.on('click', () => {
-            svg.hide();
-            input.show();
-            input.trigger('focus');
-          });
-          input.on('blur', () => {
-            svg.show();
-            input.hide();
-          });
-        }
-      }
+    const renderedParts = options.parts;
+    if (!renderedParts || renderedParts.includes('header')) {
+      bindItemHeaderTitle(html);
     }
 
   }

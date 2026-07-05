@@ -37,6 +37,7 @@ import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
+import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -256,6 +257,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
       unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
       configureActorEffect: this._configureActorEffect,
+      powersourceEdit: this._powersourceEdit,
       ...CompanionHandler.getOwnerSheetActions(),
     },
     form: {
@@ -1611,6 +1613,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     } else {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
     }
+  }
+
+  static _powersourceEdit(ev, target) {
+    PowersourceChargeDialog.show(this.actor);
   }
 
   static _selectTraditionArtifact(ev, target) {

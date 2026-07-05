@@ -1808,6 +1808,9 @@
   },
   "POWERSOURCE": {
     "barTooltip": "Stored ASP from power sources",
+    "chargeDialogTitle": "Power sources",
+    "chargeDialogHint": "Adjust the current charge of each power source.",
+    "chargeDialogEmpty": "This character has no power sources.",
     "confirm": "Pay costs",
     "current": "Current charge",
     "dialogTitle": "Split ASP costs",

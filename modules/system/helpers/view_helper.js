@@ -4,6 +4,7 @@ export function svgAutoFit(elem, width = 320, height = 40) {
     viewBox: `0 0 ${width} ${height}`,
   });
   const text = elem.find('text')[0];
+  if (!text) return;
   const bbox = text.getBBox();
   const textWidth = bbox.width;
   const textHeight = bbox.height;
@@ -15,6 +16,49 @@ export function svgAutoFit(elem, width = 320, height = 40) {
   if (isFinite(scale)) {
     text.setAttribute("transform", `matrix(${scale}, 0, 0, ${scale}, ${centerX}, ${centerY})`);
   }
+}
+
+const itemHeaderTitleControllers = new WeakMap();
+
+export function bindItemHeaderTitle(html) {
+  html.find('header.item-header h1').each((_, h1El) => {
+    if (itemHeaderTitleControllers.has(h1El)) return;
+
+    const h1 = $(h1El);
+    const svg = h1.find('svg');
+    const input = h1.find('input.item-name');
+    if (!svg.length || !input.length || input.prop('disabled')) return;
+
+    const controller = new AbortController();
+    itemHeaderTitleControllers.set(h1El, controller);
+    const { signal } = controller;
+
+    const fitSvg = () => svgAutoFit(svg, h1El.getBoundingClientRect().width);
+
+    const observer = new ResizeObserver(() => fitSvg());
+    observer.observe(h1El);
+    fitSvg();
+
+    svg[0].addEventListener(
+      'click',
+      () => {
+        svg.hide();
+        input.show().trigger('focus');
+      },
+      { signal },
+    );
+
+    input[0].addEventListener(
+      'blur',
+      () => {
+        svg.find('text').text(input.val());
+        input.hide();
+        svg.show();
+        fitSvg();
+      },
+      { signal },
+    );
+  });
 }
 
 export function delay(ms) {
