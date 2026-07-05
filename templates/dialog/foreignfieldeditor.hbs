@@ -1,5 +1,9 @@
 <section class="standard-form">
     <div class="form-group full-height">
-        {{formInput notesField value=fieldContent editable=true enriched=enrichedContent}}
+        {{formInput notesField name="fieldContent" value=fieldContent toggled=false enriched=enrichedContent}}
     </div>
+    <footer class="form-footer">
+        <button type="button" data-action="save"><i class="fas fa-check"></i> {{localize "save"}}</button>
+        <button type="button" data-action="cancel"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </footer>
 </section>

@@ -583,6 +583,7 @@ export const MerchantSheetMixin = (superclass) =>
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;
       data.notesReadOnly = this.merchantSheetActivated() && !this.isEditable;
+      data.notesInlineEditable = data.owner && !data.notesReadOnly;
 
       return data;
     }

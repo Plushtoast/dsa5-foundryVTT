@@ -1,5 +1,4 @@
 <div class='tab scrollable gap0px {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
-    {{#if notesReadOnly}}<fieldset class="noBorder" disabled>{{/if}}
     <div class="groupbox">
         <legend class="table-title lineheight">{{localize "personalDetails"}}</legend>
         <div class="row-section">
@@ -8,26 +7,26 @@
                     <div class="col morph">
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.gender.fields.value value=document.system.details.gender.value placeholder=(localize 'Gender')}}
+                                {{formInput systemFields.details.fields.gender.fields.value value=document.system.details.gender.value placeholder=(localize 'Gender') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Gender"}}</span>
                             </div>
 
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.family.fields.value value=document.system.details.family.value placeholder=(localize 'Family')}}
+                                {{formInput systemFields.details.fields.family.fields.value value=document.system.details.family.value placeholder=(localize 'Family') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Family"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
                             <div class="headerInput col third">
-                                {{formInput systemFields.details.fields.age.fields.value value=document.system.details.age.value placeholder=(localize 'Age')}}
+                                {{formInput systemFields.details.fields.age.fields.value value=document.system.details.age.value placeholder=(localize 'Age') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Age"}}</span>
                             </div>
                              <div class="headerInput col third">
-                                {{formInput systemFields.details.fields.height.fields.value value=document.system.details.height.value placeholder=(localize 'Height')}}
+                                {{formInput systemFields.details.fields.height.fields.value value=document.system.details.height.value placeholder=(localize 'Height') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Height"}}</span>
                             </div>
                             <div class="headerInput col third">
-                                {{formInput systemFields.details.fields.weight.fields.value value=document.system.details.weight.value placeholder=(localize 'Weight')}}
+                                {{formInput systemFields.details.fields.weight.fields.value value=document.system.details.weight.value placeholder=(localize 'Weight') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Weight"}}</span>
                             </div>
                         </div>
@@ -35,21 +34,21 @@
                     <div class="col morph">
                         <div class="col row-section">                            
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.Home.fields.value value=document.system.details.Home.value placeholder=(localize 'Home')}}
+                                {{formInput systemFields.details.fields.Home.fields.value value=document.system.details.Home.value placeholder=(localize 'Home') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Home"}}</span>
                             </div>
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.socialstate.fields.value value=document.system.details.socialstate.value localize=true}}
+                                {{formInput systemFields.details.fields.socialstate.fields.value value=document.system.details.socialstate.value localize=true disabled=(not owner)}}
                                 <span class="label-details">{{localize "Socialstate"}}</span>
                             </div>
                         </div>
                         <div class="col row-section">
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.haircolor.fields.value value=document.system.details.haircolor.value placeholder=(localize 'Hair_color')}}
+                                {{formInput systemFields.details.fields.haircolor.fields.value value=document.system.details.haircolor.value placeholder=(localize 'Hair_color') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Hair_color"}}</span>
                             </div>
                             <div class="headerInput col two">
-                                {{formInput systemFields.details.fields.eyecolor.fields.value value=document.system.details.eyecolor.value placeholder=(localize 'Eye_color')}}
+                                {{formInput systemFields.details.fields.eyecolor.fields.value value=document.system.details.eyecolor.value placeholder=(localize 'Eye_color') disabled=(not owner)}}
                                 <span class="label-details">{{localize "Eye_color"}}</span>
                             </div>
                         </div>
@@ -57,7 +56,7 @@
                     </div>
                     <div class="col row-section">
                         <div class="headerInput col">
-                            {{formInput systemFields.details.fields.distinguishingmark.fields.value value=document.system.details.distinguishingmark.value placeholder=(localize 'Distinguishing_mark')}}
+                            {{formInput systemFields.details.fields.distinguishingmark.fields.value value=document.system.details.distinguishingmark.value placeholder=(localize 'Distinguishing_mark') disabled=(not owner)}}
                             <span class="label-details">{{localize "Distinguishing_mark"}}</span>
                         </div>
 
@@ -77,20 +76,20 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{formInput systemFields.details.fields.biography.fields.value value=document.system.details.biography.value toggled=true enriched=enrichedBiography}}
+                {{formInput systemFields.details.fields.biography.fields.value value=document.system.details.biography.value toggled=true enriched=enrichedBiography disabled=(not owner)}}
             </div>
         </div>
     </div>
     <div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
-        <legend class="table-title lineheight">{{localize "Notes"}}
-            {{#unless owner}}
+        <legend class="table-title lineheight flexrow">{{localize "Notes"}}
+            {{#unless notesInlineEditable}}
             <button type="button" class="icon fas fa-edit noBorder dsadesignbutton keep-field-edit" data-action="editKeepField" data-tooltip="{{localize 'Edit'}}"></button>
             {{/unless}}
             <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{#if owner}}
+                {{#if notesInlineEditable}}
                 {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true enriched=enrichedNotes}}
                 {{else}}
                 {{formInput systemFields.details.fields.notes.fields.value value=document.system.details.notes.value toggled=true disabled=true enriched=enrichedNotes}}
@@ -98,13 +97,13 @@
             </div>
         </div>
     </div>
-    {{#if document.isOwner}}
+    {{#if owner}}
    <div class="groupbox">
         <legend class="table-title lineheight">{{localize "ownerNotes"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription}}
+                {{formInput systemFields.details.fields.notes.fields.ownerdescription value=document.system.details.notes.ownerdescription toggled=true enriched=enrichedOwnerdescription disabled=(not owner)}}
             </div>
         </div>
    </div>
@@ -114,10 +113,9 @@
                     data-tooltip="SHEET.collapse"></i></a></legend>
         <div class="row-section">
             <div class="col notes-box">
-                {{formInput systemFields.details.fields.notes.fields.gmdescription value=document.system.details.notes.gmdescription toggled=true enriched=enrichedGmdescription}}
+                {{formInput systemFields.details.fields.notes.fields.gmdescription value=document.system.details.notes.gmdescription toggled=true enriched=enrichedGmdescription disabled=notesReadOnly}}
             </div>
         </div>
     </div>
     {{/if}}
-    {{#if notesReadOnly}}</fieldset>{{/if}}
 </div>

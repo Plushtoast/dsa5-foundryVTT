@@ -194,6 +194,7 @@
                     "behavior.value",
                     "flight.value",
                     "specialRules.value",
+                    "details.notes.value",
                     "details.notes.ownerdescription"
                 ]
             },

@@ -439,6 +439,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     sheetData.systemFields = this.document.system.schema?.fields;
     sheetData.limited = this.actor.limited;
     sheetData.owner = this.actor.isOwner;
+    sheetData.notesReadOnly = this.showLimited() && !this.isEditable;
+    sheetData.notesInlineEditable = sheetData.owner && !sheetData.notesReadOnly;
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
     PowersourceBar.prepareSheetContext(this.actor, sheetData.prepare);
     sheetData.isGM = game.user.isGM;
@@ -757,6 +759,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await item.system.swapNumberWeaponHands();
   }
 
+  _toggleDisabled(disabled) {
+    super._toggleDisabled(disabled);
+    if (!disabled) return;
+    this.element?.querySelectorAll('.keep-field-edit[data-action="editKeepField"]').forEach((button) => {
+      button.disabled = false;
+    });
+  }
+
   static _editKeepField(_ev, target) {
     const groupbox = target.closest('.keepFieldsEnabled');
     if (!groupbox) return;
@@ -765,7 +775,14 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const name = groupbox.dataset.name;
     if (!attr) return;
 
-    new ForeignFieldEditor(this.actor.id, attr, name).render(true);
+    const dialogId = `foreign-field-editor-${this.actor.id}-${attr.replace(/^system\./, '').replace(/\./g, '-')}`;
+    const existing = foundry.applications.instances.get(dialogId);
+    if (existing) {
+      existing.bringToTop();
+      return;
+    }
+
+    new ForeignFieldEditor(this.actor.id, attr, name, { id: dialogId }).render(true);
   }
 
   static async _skillSelect(ev, target) {

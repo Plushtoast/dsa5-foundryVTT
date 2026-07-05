@@ -1,10 +1,10 @@
-const { getProperty, expandObject } = foundry.utils;
+const { getProperty } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
-import { FormAppv2 } from '../../actor/formapp.js';
+import { DefaultAppv2 } from '../../actor/baseapp.js';
 
-export default class ForeignFieldEditor extends FormAppv2 {
-  constructor(actorId, field, name) {
-    super();
+export default class ForeignFieldEditor extends DefaultAppv2 {
+  constructor(actorId, field, name, options = {}) {
+    super(options);
     this.editfield = field;
     this.actorId = actorId;
     this.fieldname = name;
@@ -16,17 +16,16 @@ export default class ForeignFieldEditor extends FormAppv2 {
 
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'foreign-field-editor'],
+    tag: 'form',
     window: {
       resizable: true,
     },
     position: {
       width: 600,
-      height: 600,
     },
-    form: {
-      handler: ForeignFieldEditor.#onSubmitForm,
-      submitOnChange: false,
-      closeOnSubmit: true,
+    actions: {
+      save: ForeignFieldEditor.#save,
+      cancel: ForeignFieldEditor.#cancel,
     },
   };
 
@@ -45,8 +44,10 @@ export default class ForeignFieldEditor extends FormAppv2 {
     return `${actor?.name ?? ''} - ${_loc(this.fieldname)}`;
   }
 
-  static async #onSubmitForm(_event, _form, formData) {
-    const updateData = expandObject(formData.object).fieldContent;
+  static async #save(_event) {
+    const editor = this.element?.querySelector('prose-mirror');
+    editor?.save();
+    const updateData = editor?.value ?? '';
     game.socket.emit('system.dsa5', {
       type: 'updateKeepField',
       payload: {
@@ -55,6 +56,11 @@ export default class ForeignFieldEditor extends FormAppv2 {
         updateData,
       },
     });
+    await this.close();
+  }
+
+  static async #cancel(_event) {
+    await this.close();
   }
 
   async _prepareContext(_options) {
