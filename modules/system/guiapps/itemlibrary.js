@@ -370,8 +370,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     }
   }
 
-  async onChangeSetting(ev) {
-    const key = ev.currentTarget.dataset.key
+  async applyLibrarySetting(key) {
     let val
     const html = $(this.element)
     switch (key) {
@@ -408,8 +407,18 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       case "moduleFilter":
         DSA5ItemLibrary._showCompendiumFilter();
         return
+      default:
+        return
     }
 
+    return { key, val }
+  }
+
+  async onChangeSetting(ev) {
+    const result = await this.applyLibrarySetting(ev.currentTarget.dataset.key)
+    if (!result) return
+
+    const { val } = result
     $(ev.currentTarget).toggleClass('on', val).toggleClass('active', val)
     ev.currentTarget.ariaPressed = `${!!val}`;
   }
@@ -740,11 +749,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   async _openItem(ev) {
     const uuid = $(ev.currentTarget).data("uuid")
     const item = await fromUuid(uuid)
-    if (this.embedded) {
-      await game.dsa5.view.renderDocumentSheetAboveFullscreen(item);
-      return;
-    }
-    item.sheet.render(true)
+    item.sheet.render(true);
   }
 
   _syncSearchFromInput(tab) {
