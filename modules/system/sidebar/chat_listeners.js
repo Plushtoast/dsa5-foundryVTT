@@ -112,10 +112,15 @@ export default class DSA5ChatListeners {
     const actor = DSA5_Utility.emptyActor(attrs);
 
     if (json.attrs) {
-      const attrs = json.attrs.split(',');
+      const attrValues = json.attrs.split(',');
 
-      for (let i = 1; i <= attrs.length; i++) {
-        actor.system.characteristics[skill.system[`characteristic${i}`].value].initial = Number(attrs[i - 1]) || 12;
+      for (let i = 1; i <= attrValues.length; i++) {
+        const charKey = skill.system[`characteristic${i}`].value;
+        const val = Number(attrValues[i - 1]) || 12;
+        actor.system.characteristics[charKey].initial = val;
+        if (actor.emptyActor?.system?.characteristics?.[charKey]) {
+          actor.emptyActor.system.characteristics[charKey].initial = val;
+        }
       }
       actor.prepareData();
     }
