@@ -4,6 +4,7 @@ import DSA5Payment from '../system/payment/payment.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
 import RollRequestService from '../system/queries/roll-request.js';
 import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
+import InformationQueryService from '../system/queries/information-query.js';
 import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
@@ -26,6 +27,7 @@ export default function () {
     DSA5Payment.chatListeners(jhtml);
     PaymentRequestService.chatListeners(jhtml);
     RollRequestService.chatListeners(jhtml);
+    InformationQueryService.chatListeners(jhtml);
     MagicAnalysisQueryService.chatListeners(html);
     TrapState.chatListeners(jhtml);
 
@@ -50,6 +52,7 @@ export default function () {
     DSA5Payment.chatListeners(chatNotifications);
     PaymentRequestService.chatListeners(chatNotifications);
     RollRequestService.chatListeners(chatNotifications);
+    InformationQueryService.chatListeners(chatNotifications);
     MagicAnalysisQueryService.chatListeners(domElement);
     DSA5ChatListeners.chatListeners(chatNotifications);
     ItempackageData.chatListeners(chatNotifications);

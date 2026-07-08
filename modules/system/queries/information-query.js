@@ -396,6 +396,10 @@ export default class InformationQueryService {
     }
   }
 
+  static chatListeners(html) {
+    html.on('click', '.informationRequestRoll', (ev) => this.informationRequestRoll(ev));
+  }
+
   static handlePreviewClick(ev, root) {
     const requestRoll = ev.target.closest('.informationRequestRoll');
     if (requestRoll && root.contains(requestRoll)) {
