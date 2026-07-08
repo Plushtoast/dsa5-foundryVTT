@@ -1237,6 +1237,16 @@ class TraitSheet extends Enchantable {
 }
 
 class InformationSheet extends ItemSheetdsa5 {
+  static DEFAULT_OPTIONS = {
+    majorButtons: [
+      {
+        label: 'SHEET.PostItem',
+        icon: 'fas fa-dice-d20',
+        action: 'showItemHead',
+      },
+    ],
+  };
+
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/items/item-header.hbs',
