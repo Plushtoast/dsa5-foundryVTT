@@ -150,13 +150,20 @@ export default class QueryOrchestrator {
 
     await this.enqueueMessageUpdate(messageId, async (state) => {
       const recipient = state.recipients.find((entry) => entry.actorId === actorId);
-      if (!recipient || state.finalized) return state;
+      if (!recipient) return state;
+
+      const linkedRollId = result.resultDetails?.messageId;
+      const isLinkedRollRefresh = state.finalized
+        && linkedRollId
+        && recipient.resultDetails?.messageId === linkedRollId;
+
+      if (state.finalized && !isLinkedRollRefresh) return state;
 
       recipient.status = result.status;
       recipient.resultDetails = result.resultDetails ?? null;
       recipient.designatedUserId = recipient.designatedUserId || result.userId || null;
 
-      if (this.canAutoFinalize(state)) state.finalized = true;
+      if (!state.finalized && this.canAutoFinalize(state)) state.finalized = true;
       return state;
     });
   }
