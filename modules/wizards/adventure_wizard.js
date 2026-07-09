@@ -764,6 +764,25 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     page?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  static #sortedJournalPages(journal) {
+    const categoryMap = {};
+    const uncategorized = [];
+    const sortPages = (a, b) => a.sort - b.sort;
+
+    for (const page of journal.pages.contents) {
+      const { category } = page;
+      if (category && journal.categories.has(category)) {
+        (categoryMap[category] ??= []).push(page);
+      } else {
+        uncategorized.push(page);
+      }
+    }
+
+    uncategorized.sort(sortPages);
+    const categories = journal.categories.contents.sort(JournalEntry.sortCategories);
+    return categories.flatMap(({ id }) => (categoryMap[id] ?? []).sort(sortPages)).concat(uncategorized);
+  }
+
   async _renderHeadings(toc, shiftFirst = false) {
     let headings = Object.values(toc);
 
@@ -784,7 +803,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.content = journal.id;
     let content = '';
     const pageTocs = [];
-    for (const page of journal.pages) {
+    for (const page of BookWizard.#sortedJournalPages(journal)) {
       const sheet = journal.sheet.getPageSheet(page.id);
       let view;
       let pageContent;
