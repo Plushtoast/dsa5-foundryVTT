@@ -589,6 +589,9 @@
   }
 
   .dsajournal {
+    .journal-sidebar {
+      margin-left: 20px;
+    }
     .window-content {
       --color-light-1: var(--color-dark-1);
     }
