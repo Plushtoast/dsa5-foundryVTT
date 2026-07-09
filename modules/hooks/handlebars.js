@@ -158,5 +158,6 @@ export default function () {
         return acc;
       }, {});
     },
+    tooltipWithKeybinding: (labelKey, actionId) => DSA5_Utility.tooltipWithKeybinding(labelKey, actionId),
   });
 }

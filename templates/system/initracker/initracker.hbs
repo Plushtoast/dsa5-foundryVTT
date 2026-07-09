@@ -9,10 +9,10 @@
             data-action="previousRound" data-tooltip="COMBAT.RoundPrev"
             aria-label="{{ localize "COMBAT.RoundPrev" }}"></button>
             <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
-            data-tooltip="COMBAT.TurnPrev" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
+            data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
             {{else if control}}
             <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
-            data-tooltip="COMBAT.TurnPrev" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
+            data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
             {{/if}}
         </div>
         <ul class="iniTrackerList">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="token-initiative">
                     {{#if (and initiative isOwner)}}
-                    <a class="aggroButton specImg" data-action="aggroButton" data-tooltip="attacktest"></a> {{else if isOwner}}
+                    <a class="aggroButton specImg" data-action="aggroButton" data-tooltip-text="{{tooltipWithKeybinding 'attacktest' 'attacktest'}}"></a> {{else if isOwner}}
                     <button type="button" class="combatant-control roll" data-action="rollInitiative"
                     data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
@@ -77,10 +77,10 @@
             <button type="button" class="inline-control combat-control icon fa-solid fa-step-forward" data-action="nextRound"
             data-tooltip="COMBAT.RoundNext" aria-label="{{ localize "COMBAT.RoundNext" }}"></button>
             <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
-            data-tooltip="COMBAT.TurnNext" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
+            data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
             {{else if control}}
             <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
-            data-tooltip="COMBAT.TurnNext" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
+            data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
             {{/if}} 
             {{/if}}
         </div>
@@ -103,7 +103,7 @@
     {{else}}
     {{#if (or control user.isGM)}}
     <div class="row-section">
-        <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
         <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
     </div>    
     {{/if}}

@@ -499,4 +499,23 @@ export default class DSA5_Utility {
   static dedup(arr) {
     return [...new Set((arr || []).filter(Boolean))];
   }
+
+  static getKeybindingDisplay(actionId, namespace = 'dsa5') {
+    if (!actionId || !game.keybindings?.actions?.has(`${namespace}.${actionId}`)) return '';
+
+    try {
+      const bindings = game.keybindings.get(namespace, actionId);
+      const binding = bindings?.find((b) => b?.key);
+      if (!binding) return '';
+      return foundry.applications.sidebar.apps.ControlsConfig.humanizeBinding(binding);
+    } catch {
+      return '';
+    }
+  }
+
+  static tooltipWithKeybinding(labelKey, actionId, namespace = 'dsa5') {
+    const label = _loc(labelKey);
+    const keyString = this.getKeybindingDisplay(actionId, namespace);
+    return keyString ? `${label} (${keyString})` : label;
+  }
 }

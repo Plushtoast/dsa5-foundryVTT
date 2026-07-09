@@ -15,7 +15,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       template: 'systems/dsa5/templates/system/combattracker/combattracker.hbs',
     },
     footer: {
-      template: 'templates/sidebar/tabs/combat/footer.hbs',
+      template: 'systems/dsa5/templates/system/combattracker/footer.hbs',
     },
   };
 
