@@ -54,6 +54,7 @@ export const DSAKalender = {
     ],
   },
   moon: {
+    phaseOffset: 16,
     values: [
       { name: 'ToteMada', dayStart: 0, lightAdjust: 0 },
       { name: 'AuffuellenderKelch', dayStart: 1, lightAdjust: 0.25 },
