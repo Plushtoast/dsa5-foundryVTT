@@ -11,6 +11,13 @@ const { randomID } = foundry.utils;
 
 const PLANT_INFO_REF_PATTERN = /@Info\[([^\]]+)\]/g;
 
+function toItemUuid(uuid) {
+  const parts = uuid.split('.');
+  return parts[0] === 'Compendium' && parts.length === 4
+    ? `${parts[0]}.${parts[1]}.${parts[2]}.Item.${parts[3]}`
+    : uuid;
+}
+
 export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate, InformableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -60,17 +67,17 @@ export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, Descri
     }
 
     const uuids = [...source.infos.matchAll(PLANT_INFO_REF_PATTERN)]
-      .map((match) => match[1].trim())
+      .map((match) => toItemUuid(match[1].trim()))
       .filter(Boolean);
 
-    if (!uuids.length) return;
-
-    source.refs ??= {};
-    const existing = new Set(Object.values(source.refs).map((ref) => ref?.uuid).filter(Boolean));
-    for (const uuid of uuids) {
-      if (existing.has(uuid)) continue;
-      source.refs[randomID()] = { uuid };
-      existing.add(uuid);
+    if (uuids.length) {
+      source.refs ??= {};
+      const existing = new Set(Object.values(source.refs).map((ref) => ref?.uuid).filter(Boolean));
+      for (const uuid of uuids) {
+        if (existing.has(uuid)) continue;
+        source.refs[randomID()] = { uuid };
+        existing.add(uuid);
+      }
     }
     delete source.infos;
   }
