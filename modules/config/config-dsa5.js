@@ -1096,6 +1096,7 @@ DSA5.enhancementTypes = {
     material: 'Enhancement.types.material',
     creationTechnique: 'Enhancement.types.creationTechnique',
     improvement: 'Enhancement.types.improvement',
+    attachment: 'Enhancement.types.attachment',
     powersource: 'Enhancement.types.powersource',
 };
 

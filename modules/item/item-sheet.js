@@ -15,6 +15,7 @@ import GroupCheck from '../system/rolls/group-check.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
 import MeleeweaponData from '../data/item/meleeweapon.js';
+import TraitData from '../data/item/trait.js';
 import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 
@@ -1233,6 +1234,24 @@ class TraitSheet extends Enchantable {
 
   get isPoisonable() {
     return ['meleeAttack', 'rangeAttack'].includes(this.item.system.traitType.value);
+  }
+
+  get hasRollEffect() {
+    if (!this.actor || this.item.system.traitType?.value !== 'familiar') return false;
+    if (OnUseEffect.hasOnUseEffect(this.item)) return false;
+    return TraitData.getFamiliarActivationAspCost(this.item) > 0;
+  }
+
+  async setupEffect() {
+    const paid = await TraitData.payFamiliarActivationAsp(this.actor, this.item);
+    if (!paid) return;
+
+    const cantrip = this.item.system.chatDataToString();
+    const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
+      item: this.item,
+      cantrip,
+    });
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
   }
 }
 
