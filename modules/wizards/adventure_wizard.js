@@ -783,10 +783,9 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     return categories.flatMap(({ id }) => (categoryMap[id] ?? []).sort(sortPages)).concat(uncategorized);
   }
 
-  async _renderHeadings(toc, shiftFirst = false) {
+  async _renderHeadings(toc) {
     let headings = Object.values(toc);
-
-    if (shiftFirst) headings.shift();
+    if (!headings.length) return '';
 
     headings.sort((a, b) => a.order - b.order);
 
@@ -803,38 +802,47 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.content = journal.id;
     let content = '';
     const pageTocs = [];
-    for (const page of BookWizard.#sortedJournalPages(journal)) {
+    const pages = BookWizard.#sortedJournalPages(journal);
+    const multiplePages = pages.length > 1;
+
+    for (const page of pages) {
       const sheet = journal.sheet.getPageSheet(page.id);
       let view;
       let pageContent;
-      let shiftFirstTocHeading = false;
       const pageName = page.name.replace(/ Text$/gi, '');
       const equalName = journal.name == pageName;
+      const showPageTitle = multiplePages && !equalName;
 
       if (sheet.isV2) {
         const oldShow = sheet.page?.title?.show;
-        if (oldShow != undefined) {
-          shiftFirstTocHeading = !equalName;
-          sheet.page.title.show = shiftFirstTocHeading;
-        }
+        if (oldShow != undefined) sheet.page.title.show = showPageTitle;
         await sheet.render(true);
         view = sheet.element;
         pageContent = view;
-
         if (oldShow != undefined) sheet.page.title.show = oldShow;
       } else {
         const data = await sheet.getData();
         view = (await sheet._renderInner(data)).get();
         pageContent = view[view.length - 1];
+        if (showPageTitle) {
+          const pageSlug = pageName.slugify().replace(/["']/g, '').substring(0, 64);
+          pageContent = `<h2 id="${pageSlug}" data-anchor="${pageSlug}">${pageName}</h2>${pageContent}`;
+        }
       }
 
-      const pageToc = JournalEntryPage.implementation.buildTOC(view);
-      pageTocs.push(await this._renderHeadings(pageToc, shiftFirstTocHeading));
+      let tocSource = view;
+      if (!sheet.isV2 && showPageTitle) {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = pageContent;
+        tocSource = wrapper;
+      }
+
+      const pageToc = JournalEntryPage.implementation.buildTOC(tocSource);
+      pageTocs.push(await this._renderHeadings(pageToc));
 
       pageContent = await this.showSearchResults(pageContent);
 
       if (page.type == 'video') pageContent = `<div class="video-container">${pageContent}</div>`;
-      if (!sheet.isV2 && !equalName) pageContent = `<h2 data-anchor="${page.name.slugify()}">${pageName}</h2>${pageContent}`;
 
       content += `<div style="clear: both">${pageContent}</div>`;
     }
