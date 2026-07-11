@@ -696,6 +696,15 @@
     "overusePipHint": "Extra action – exceeds your action budget this round!",
     "waitInit": "Wait"
   },
+  "COMBAT.MODE": {
+    "standard": "Standard combat",
+    "brawling": "Brawling",
+    "navalMkr": "Naval combat (MKR)",
+    "tooltip": "Choose combat mode: Standard, Brawling, or Mass Combat Round (MKR).",
+    "standardHint": "Standard initiative and normal combat rules.",
+    "brawlingHint": "Brawling rules: unarmed fighting, disarming, temporary bruises.",
+    "navalMkrHint": "Ship combat in Mass Combat Rounds (MKR) with hero actions, movement, attacks, and damage report."
+  },
   "COMMON_KNOWLEDGE": {
     "applied": "Common Knowledge was used.",
     "tooDifficult": "The test is too difficult."
@@ -2158,6 +2167,7 @@
     "automaticSuccess": "Automatic Succes",
     "blind": "Blind",
     "bodyControl": "Body Control",
+    "boatsAndShips": "Sailing",
     "braniborian": "Braniborians",
     "callDjinn": "Call Djinn",
     "circumvent": "Circumvent",
@@ -2262,6 +2272,7 @@
     "traditionPhex": "Tradition (Church of Phex)",
     "traditionSavant": "Tradition (Savant)",
     "traditionWitch": "Tradition (Witch)",
+    "treatWounds": "Treat Wounds",
     "vinsaltStyle": "tbd",
     "visionOfTheDeity": "Vision of the Deity",
     "visionOfTrueFaith": "Vision of True Faith",
@@ -2272,6 +2283,7 @@
     "weakRegenerationLeP": "Weak Regeneration (Life Points)",
     "weaponAptitude": "Weapon Aptitude",
     "weaponThrow": "Weapon Throw",
+    "warfare": "Warfare",
     "wildMagic": "Wild Magic",
     "willpower": "Willpower",
     "winhallStyle": "Winhall Style",
@@ -2838,6 +2850,14 @@
     "trapDetected": "{actor} detected the trap '{trap}'.",
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
+  },
+  "REGIONBEHAVIOR_DSANavalWaterTerrain": {
+    "FIELDS": {
+      "waterTerrain": {
+        "label": "Water terrain type",
+        "hint": "Terrain for pursuit chases and effective ship speed. Also affects movement cost in the region (like terrain modifier)."
+      }
+    }
   },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {
@@ -3482,6 +3502,7 @@
   "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
   "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
   "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",
+  "TYPES.RegionBehavior.DSANavalWaterTerrain": "Water terrain (TDE)",
   "Test": "Test",
   "Total": "Total",
   "UNITS": {
@@ -3857,6 +3878,7 @@
     "cargoCapacity": "Cargo capacity",
     "price": "Price",
     "distanceRE": "Distance (RE)",
+    "woundedCrew": "Seriously wounded crew",
     "baseSpeed": "Base speed (GS)",
     "ramSpeed": "Ram speed",
     "travelModes": "Travel modes",
@@ -3870,6 +3892,29 @@
     "gunnery": "Gunnery (FK)",
     "hullArmor": "Hull armor (RS)",
     "siegeFKPenalty": "Board weapon (no Artillery SF)",
+    "boardWeaponCrewTooltip": "Rules require 2 crew per board gun — not enforced automatically.",
+    "boardWeaponShotsPerMkr": "Shots/MKR: {count} (via reload time)",
+    "boardWeaponReloadStatus": "Reload: {progress}/{lz}",
+    "boardWeaponNoReload": "No reload time",
+    "boardWeaponDamageTooltip": "DP: {tp} · SP: {stp}",
+    "boardWeaponAttacksPhaseOnly": "Board weapon attacks are intended during the MKR attacks phase.",
+    "boardWeaponNotLoaded": "{weapon} is not loaded ({progress}/{lz}).",
+    "boardWeaponNotLoadedHint": "Weapon must be reloaded first.",
+    "boardWeaponOperatorMissing": "Assigned gunner not found.",
+    "boardWeaponCrewFireMode": "Crew fires (ship FK, no hero penalty).",
+    "boardWeaponHeroFireMode": "Hero operates (−4 FK, without Artillery SF).",
+    "vehicleRamWeapon": "Ship ram",
+    "ramWeapon": "Ram",
+    "ramCrewTooltip": "Ram attack — only at ram speed (1 MKR), then 6 MKR cooldown.",
+    "ramReady": "Ram ready",
+    "ramCooldownStatus": "Ram CD: {mkr} MKR",
+    "ramCooldownHint": "Ram attack still on cooldown.",
+    "ramOnCooldown": "Ram attack on cooldown ({mkr} MKR remaining).",
+    "ramNotCapable": "This vehicle has no ram speed.",
+    "ramSpeedHint": "Ram speed: {speed}",
+    "ramContactHint": "Requires contact (≤ 1 RE) with target.",
+    "ramCrewFireMode": "Crew rams (ship FK).",
+    "ramHeroFireMode": "{name} steers the ram.",
     "tabCombat": "Board weapons",
     "boardRangedWeapons": "Ranged board weapons",
     "boardMeleeWeapons": "Melee board weapons",
@@ -3904,6 +3949,107 @@
       "medium": "Medium",
       "heavy": "Heavy",
       "siege": "Siege (rams)"
+    },
+    "mkr": {
+      "barTooltip": "Progress within the current Mass Combat Round (MKR). One MKR lasts about 60 combat rounds (CR).",
+      "nextMkr": "Next MKR",
+      "nextMkrTooltip": "Ends the current MKR early and jumps to the start of the next MKR (hero actions).",
+      "cyclePhase": "Next phase",
+      "cyclePhaseTooltip": "Cycles the MKR phase (hero actions → movement → attacks → damage report) without spending CR.",
+      "started": "<p><b>Naval combat (MKR)</b> started — MKR {mkr}, round {round}.</p>",
+      "advanced": "<p><b>MKR {mkr}</b> begins (round {round}). Hero actions!</p>",
+      "heroActionsOnlyTooltip": "Hero actions are only available during the hero actions MKR phase.",
+      "noCharacter": "No assigned character — only the player or GM can trigger hero actions.",
+      "missingSkill": "The character does not have the skill “{skill}”.",
+      "missingRepairSkill": "Woodworking or Clothworking required.",
+      "repairPickTitle": "Repair",
+      "repairPickText": "Which skill should be used for the repair?",
+      "pickHero": "Choose hero for the roll",
+      "repairTooltip": "Woodworking +2 (carpentry) or Clothworking +2 (sewing). 1 SP per QS.",
+      "sailTooltip": "Boats & Ships −1 (combat maneuver). Evasion: −1 AT/MKR per QS (max −6). Attack: +1 FK/MKR per QS (max +6).",
+      "driveTooltip": "Boats & Ships −1 (combat maneuver) — land vehicle equivalent of sail maneuver.",
+      "commandsTooltip": "Warfare +0 (sea battles). QS/2 guns at FK 12 in attacks phase.",
+      "healTooltip": "Treat Wounds +0 — one seriously wounded crew saved per success.",
+      "reDistanceTooltip": "1 Range Unit (RE) ≈ 16 yards — abstract distance for boarding and flee.",
+      "reDistanceLabel": "{re} RE",
+      "fleeTooltip": "Flee possible at 5 RE (≈ 80 yards) distance.",
+      "boardingTooltip": "Boarding possible at 1 RE (≈ 16 yards) distance.",
+      "ramCooldownTooltip": "Ram attack cooldown in MKR — reduced by 1 on each MKR advance.",
+      "phase": {
+        "heroActions": "Hero actions",
+        "movement": "Movement",
+        "attacks": "Attacks",
+        "damageReport": "Damage report",
+        "heroActionsTooltip": "Heroes repair, sail/drive, command guns, and treat wounded.",
+        "movementTooltip": "Ships move (1 RE/MKR). Flee from 5 RE. Chase GS from terrain type.",
+        "attacksTooltip": "Board weapons, commanded guns, and boarding.",
+        "damageReportTooltip": "Structure damage and crew casualties (1d3−1 per hit)."
+      },
+      "action": {
+        "repair": "Repair",
+        "sail": "Sail",
+        "drive": "Drive",
+        "commands": "Commands",
+        "heal": "Treat wounded"
+      },
+      "result": {
+        "repair": "<p><b>{vehicle}</b> — Repair: QS {qs}, {healed} SP restored.</p>",
+        "sail": "<p><b>{vehicle}</b> — Sail maneuver: QS {qs}, {maneuver}.</p>",
+        "drive": "<p><b>{vehicle}</b> — Drive maneuver: QS {qs}, {maneuver}.</p>",
+        "commands": "<p><b>{vehicle}</b> — Commands: QS {qs}, {guns} guns prepared.</p>",
+        "heal": "<p><b>{vehicle}</b> — Treat wounds: {saved} crew member(s) saved.</p>"
+      },
+      "maneuverPickTitle": {
+        "sail": "Sail maneuver",
+        "drive": "Drive maneuver"
+      },
+      "maneuverPickText": "Which maneuver applies this MKR?",
+      "maneuverEvade": "Evasion",
+      "maneuverAttack": "Attack",
+      "maneuverEvadeBlocked": "Evasion maneuver prevented the hit (−{penalty} effective AT).",
+      "maneuverAttackBonus": "Attack maneuver",
+      "commandedGunsPrompt": "{count} commanded guns can fire in the attacks phase. Mark a target and fire.",
+      "fireCommandedGuns": "Fire commanded guns",
+      "commandedGunsFired": "{count} commanded gun shots fired.",
+      "noCommandedGuns": "No commanded guns this MKR.",
+      "noUncrewedGuns": "No uncrewed board weapons available.",
+      "pickTargetFirst": "Please mark a target first.",
+      "damageReportTitle": "Damage report",
+      "damageReportEmpty": "No pending hits in this damage report.",
+      "damageReportHit": "<b>{vehicle}</b> — Hit from {attacker}: {stp} SP, {crew} crew seriously wounded.",
+      "boardingAction": "Boarding",
+      "boardingActionTooltip": "Check two selected ships/tokens (≤ 1 RE) and announce boarding.",
+      "boardingTitle": "Boarding possible",
+      "boardingPair": "{a} ↔ {b} ({steps} yards)",
+      "boardingHandoff": "Switch to regular combat (brawl or hero attacks) for deck fighting.",
+      "boardingPhaseOnly": "Boarding is only available during the attacks phase.",
+      "boardingSelectTwo": "Select at least two tokens/ships for boarding check.",
+      "boardingTooFar": "No selected ships within 1 RE (16 yards).",
+      "chase": {
+        "terrainLabel": "Terrain",
+        "terrainTooltip": "Deprecated — use scene regions (terrain modifier or water terrain).",
+        "fallbackTerrainLabel": "Default terrain",
+        "fallbackTerrainTooltip": "Terrain for ships outside scene regions. Inside regions, terrain modifier or water terrain applies.",
+        "sceneRegionsShort": "terrain regions",
+        "sceneRegionsTooltip": "Scene regions with terrain modifier or DSA water terrain on this map.",
+        "terrainModifierLabel": "Terrain modifier ×{difficulty}",
+        "sourceNavalRegion": "Water terrain region",
+        "sourceTerrainModifier": "Terrain modifier region",
+        "sourceCombatDefault": "Default combat terrain",
+        "effectiveSpeed": "Effective GS (chase)",
+        "effectiveSpeedTooltip": "Base speed × terrain factor by propulsion (row/sail) or scene region terrain modifier. Applies to pursuit chases.",
+        "skillSubstitute": "Boats & Ships instead of Body Control",
+        "multiplierBlocked": "immobile",
+        "terrain": {
+          "open": "Open water",
+          "passable": "Passable water",
+          "normal": "Normal water",
+          "difficultSeas": "Difficult (heavy seas)",
+          "difficultShoals": "Difficult (shoals)",
+          "severeStorm": "Severe (storm)",
+          "severeShoals": "Severe (shoals)"
+        }
+      }
     }
   },
   "locationTypes": {

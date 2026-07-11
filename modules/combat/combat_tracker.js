@@ -3,6 +3,9 @@ import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/helpers/token_disposition.js';
+import NavalCombat from './mkr/naval-combat.js';
+import NavalCombatDamage from './mkr/naval-combat-damage.js';
+import NavalChase from './mkr/naval-chase.js';
 
 const { getProperty } = foundry.utils;
 
@@ -10,6 +13,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/system/combattracker/header.hbs',
+      templates: ['systems/dsa5/templates/system/combattracker/mkr-bar.hbs'],
     },
     tracker: {
       template: 'systems/dsa5/templates/system/combattracker/combattracker.hbs',
@@ -22,10 +26,30 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   static DEFAULT_OPTIONS = {
     actions: {
       convertToBrawl: this._convertToBrawl,
+      nextMkr: this._nextMkr,
+      advanceMkrPhase: this._advanceMkrPhase,
+      navalBoarding: this._navalBoarding,
+      setWaterTerrain: this._setWaterTerrain,
       aggroButton: this._onAggroButtonClicked,
       combatRules: this._onCombatRulesButtonClicked,
     },
   };
+
+  static _nextMkr() {
+    game.combat?.nextMkr();
+  }
+
+  static _advanceMkrPhase() {
+    game.combat?.advanceMkrPhase();
+  }
+
+  static _navalBoarding() {
+    NavalCombatDamage.initiateBoarding();
+  }
+
+  static _setWaterTerrain(_ev, target) {
+    game.combat?.setWaterTerrain(target.value);
+  }
 
   static _onAggroButtonClicked() {
     DSA5CombatTracker.runActAttackDialog();
@@ -128,12 +152,42 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     turn.dispositionStyle = dispositionBackgroundStyle(disposition);
     turn.dispositionBorderStyle = dispositionBorderStyle(disposition);
 
+    if (combatant.actor?.type === 'vehicle') {
+      turn.vehicleImmobile = combatant.actor.system.isImmobile;
+      turn.vehicleSinking = combatant.actor.system.isSinking;
+    }
+
     return turn;
   }
 
   async _prepareCombatContext(context, options) {
     await super._prepareCombatContext(context, options);
-    context.isBrawling = game.combat?.isBrawling;
+    const combat = game.combat;
+    context.isBrawling = combat?.isBrawling;
+    context.combatMode = NavalCombat.resolveCombatMode(combat);
+    context.isNavalMkr = NavalCombat.isNavalMkrActive(combat);
+    context.combatModeIcon = {
+      standard: 'fa-shield',
+      brawling: 'fa-hand-fist fa-rotate-90',
+      navalMkr: 'fa-ship',
+    }[context.combatMode] ?? 'fa-shield';
+    context.combatModeTooltip = 'COMBAT.MODE.tooltip';
+
+    if (context.isNavalMkr) {
+      this.#prepareNavalMkrContext(context, combat);
+    }
+  }
+
+  #prepareNavalMkrContext(context, combat) {
+    context.mkr = NavalCombat.getMkrProgress(combat);
+    context.mkrPhase = combat?.system?.mkrPhase;
+    context.waterTerrain = combat?.system?.waterTerrain ?? 'normal';
+    context.waterTerrainLabel = NavalChase.getTerrainLabel(context.waterTerrain);
+    context.waterTerrainOptions = NavalChase.WATER_TERRAIN_IDS.map((id) => ({
+      id,
+      label: _loc(`VEHICLE.mkr.chase.terrain.${id}`),
+    }));
+    context.sceneNavalRegions = NavalChase.listSceneNavalRegions();
   }
 
   _canSortInitiative(event) {
@@ -206,6 +260,18 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     await combatant.update(update);
   }
 
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+
+    if (game.user.isGM) {
+      this._createContextMenu(this._getCombatModeContextOptions.bind(this), '.combat-mode-control', {
+        eventName: 'click',
+        fixed: true,
+        parentClassHooks: false,
+      });
+    }
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -222,6 +288,29 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         drop: this._dropInitiativeSort.bind(this)
       }
     }).bind(this.element);
+  }
+
+  _getCombatModeContextOptions() {
+    return [
+      {
+        label: _loc('COMBAT.MODE.standard'),
+        icon: '<i class="fas fa-shield"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('standard'),
+      },
+      {
+        label: _loc('COMBAT.MODE.brawling'),
+        icon: '<i class="fas fa-hand-fist"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('brawling'),
+      },
+      {
+        label: _loc('COMBAT.MODE.navalMkr'),
+        icon: '<i class="fas fa-ship"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('navalMkr'),
+      },
+    ];
   }
 }
 

@@ -1440,12 +1440,105 @@ a.img-entity-link {
   gap: 5px;
   flex-wrap: wrap;
 
+  &.disabled .combat-action {
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
   .combat-action {
     display: block;
     color: var(--color-text-secondary);
     padding: 1px 5px;
     border: 1px solid var(--color-text-secondary);
     border-radius: 5px;
+  }
+}
+
+.mkr-loop-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--color-border-light-tertiary);
+
+  .mkr-loop-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mkr-phase-badge {
+    font-size: var(--font-size-12);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border-light-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  .mkr-progress-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border-light-tertiary);
+    overflow: hidden;
+  }
+
+  .mkr-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1a5c8a, #2a8fd4);
+    transition: width 0.2s ease;
+  }
+
+  .mkr-kr-label {
+    font-size: var(--font-size-12);
+    color: var(--color-text-secondary);
+  }
+
+  .mkr-terrain-picker,
+  .mkr-terrain-readonly,
+  .mkr-terrain-regions {
+    font-size: var(--font-size-12);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mkr-terrain-regions i {
+    opacity: 0.85;
+  }
+
+  .mkr-terrain-picker select {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.naval-chase-speed-value small {
+  color: var(--color-text-secondary);
+}
+
+.vehicle-reload-badge {
+  display: block;
+  font-size: var(--font-size-10);
+  color: var(--color-text-secondary);
+}
+
+.board-weapon-unloaded {
+  opacity: 0.55;
+}
+
+.board-weapon-damage {
+  font-size: var(--font-size-12);
+  white-space: nowrap;
+}
+
+.vehicle-status-badge {
+  margin-left: 4px;
+  color: var(--color-text-secondary);
+
+  &.sinking {
+    color: #c0392b;
   }
 }
 

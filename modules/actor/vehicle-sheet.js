@@ -4,11 +4,12 @@ import DSA5 from '../config/config-dsa5.js';
 import Actordsa5 from './actor-dsa5.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import { RollDialogBuilder } from '../dialog/dialog-builder.js';
+import NavalCombat from '../combat/mkr/naval-combat.js';
+import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
+import NavalChase from '../combat/mkr/naval-chase.js';
+import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
 
 const { duplicate } = foundry.utils;
-
-const SIEGE_FK_MODIFIER = -4;
 
 export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
@@ -17,6 +18,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       assignWeaponCrew: ActorSheetdsa5Vehicle._assignWeaponCrew,
       clearWeaponCrew: ActorSheetdsa5Vehicle._clearWeaponCrew,
       pickWeaponAmmo: ActorSheetdsa5Vehicle._pickWeaponAmmo,
+      navalHeroAction: ActorSheetdsa5Vehicle._navalHeroAction,
     },
   };
 
@@ -90,6 +92,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   }
 
   async _prepareContext(options) {
+    if (this.isEditable) await NavalBoardWeapons.ensureRamWeapon(this.actor);
+
     const context = await super._prepareContext(options);
     const travelModes = this.actor.system.details.travelModes ?? [];
     context.prepare.vehicleTravelModeOptions = Object.entries(DSA5.vehicleTravelModes).map(([value, label]) => ({
@@ -98,7 +102,35 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       checked: travelModes.includes(value),
     }));
     this.#prepareVehicleCombatContext(context.prepare);
+    this.#prepareNavalHeroContext(context.prepare);
+    this.#prepareNavalChaseContext(context.prepare);
+    this.#filterRamFromInventory(context.prepare);
     return context;
+  }
+
+  #prepareNavalChaseContext(prepare) {
+    if (!NavalCombat.isNavalMkrActive()) {
+      prepare.navalChaseSummary = null;
+      return;
+    }
+
+    const token = canvas.tokens?.placeables?.find((t) => t.actor?.id === this.actor.id);
+    prepare.navalChaseSummary = NavalChase.getChaseSummary(this.actor, token?.document);
+  }
+
+  #prepareNavalHeroContext(prepare) {
+    if (!NavalCombat.isNavalMkrActive()) {
+      prepare.navalHeroActionsEnabled = false;
+      prepare.showNavalSail = false;
+      prepare.showNavalDrive = false;
+      return;
+    }
+
+    const propulsion = this.actor.system.details.propulsion;
+    const travelModes = this.actor.system.details.travelModes ?? [];
+    prepare.navalHeroActionsEnabled = NavalCombat.canUseHeroActions();
+    prepare.showNavalSail = ['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea');
+    prepare.showNavalDrive = propulsion === 'land' || travelModes.includes('land');
   }
 
   #prepareVehicleCombatContext(prepare) {
@@ -115,6 +147,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       weapon.attackTooltip = operator
         ? _loc('VEHICLE.attackOperator', { name: operator.name, value: weapon.attack })
         : _loc('VEHICLE.attackCrew', { value: weapon.attack });
+      NavalBoardWeapons.enrich(weapon, this.actor, operator);
       return weapon;
     };
 
@@ -125,13 +158,26 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     };
 
     prepare.wornRangedWeapons = (prepare.wornRangedWeapons ?? []).map(enrichRangedWeapon);
-    prepare.wornMeleeWeapons = (prepare.wornMeleeWeapons ?? []).map(enrichWeapon);
+
+    const canRam = NavalBoardWeapons.isRamCapable(this.actor);
+    prepare.wornMeleeWeapons = (prepare.wornMeleeWeapons ?? [])
+      .filter((weapon) => !NavalBoardWeapons.isRamWeapon(weapon) || canRam)
+      .map(enrichWeapon);
     prepare.vehicleGunnerySkills = (prepare.combatskills ?? [])
       .filter((skill) => skill?.name === _loc('LocalizedIDs.Crossbows'))
       .map((skill) => ({
         ...skill,
         displayName: skill.name,
       }));
+  }
+
+  #filterRamFromInventory(prepare) {
+    const filterItems = (items) => (items ?? []).filter((item) => !NavalBoardWeapons.isRamWeapon(item));
+
+    if (prepare.inventory?.meleeweapons?.items) {
+      prepare.inventory.meleeweapons.items = filterItems(prepare.inventory.meleeweapons.items);
+      prepare.inventory.meleeweapons.show = prepare.inventory.meleeweapons.items.length > 0;
+    }
   }
 
   #computeWeaponAttack(weapon, operator, vehicleSkills) {
@@ -274,53 +320,20 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const item = Actordsa5.buildSubweapon(itemDoc, dataset.subweapon) ?? itemDoc?.toObject?.() ?? itemDoc;
     if (!item) return;
 
-    let rollingActor = this.actor;
-    const options = {};
     const operatorUuid = this.actor.system.weaponOperators?.[dataset.itemId];
+    const setup = await NavalBoardWeapons.resolveFireSetup(this.actor, item, mode, {
+      tokenId: this.getTokenId(),
+      operatorUuid,
+    });
+    if (!setup) return;
 
-    if (operatorUuid) {
-      const operator = await fromUuid(operatorUuid);
-      if (operator) {
-        rollingActor = operator;
-        options.vehicleSpeaker = RollDialogBuilder.buildSpeaker(this.actor, this.getTokenId());
-      }
-    } else if (item.system?.siegeRules && mode === 'attack') {
-      const choice = await foundry.applications.api.DialogV2.wait({
-        window: { title: _loc('VEHICLE.siegeFireMode') },
-        content: `<p>${_loc('VEHICLE.siegeFireModeHint')}</p>`,
-        buttons: [
-          { action: 'crew', label: _loc('VEHICLE.fireAsCrew'), icon: 'fas fa-users', default: true },
-          { action: 'hero', label: _loc('VEHICLE.fireAsHero'), icon: 'fas fa-user' },
-          { action: 'cancel', label: _loc('cancel'), icon: 'fas fa-times' },
-        ],
-      });
+    const setupData = await setup.rollingActor.setupWeapon(item, mode, setup.options, this.getTokenId());
+    if (setupData) await setup.rollingActor.basicTest(setupData);
+  }
 
-      if (!choice || choice === 'cancel') return;
-
-      if (choice === 'hero') {
-        const [operatorId] = await ActorPickerDialog.open({
-          title: 'VEHICLE.pickOperator',
-          selectionMode: 'single',
-          showSourceToggle: true,
-          entryFilter: (entry) => {
-            const actor = game.actors.get(entry.id);
-            return actor && DSA5_Utility.actorCapabilities(actor).canOperateSiegeWeapon;
-          },
-        });
-        if (!operatorId) return;
-        rollingActor = game.actors.get(operatorId);
-        if (!rollingActor) return;
-        options.vehicleSpeaker = RollDialogBuilder.buildSpeaker(this.actor, this.getTokenId());
-      }
-
-      options.situationalModifiers = [{
-        name: _loc('VEHICLE.siegeFKPenalty'),
-        value: SIEGE_FK_MODIFIER,
-        selected: true,
-      }];
-    }
-
-    const setupData = await rollingActor.setupWeapon(item, mode, options, this.getTokenId());
-    if (setupData) await rollingActor.basicTest(setupData);
+  static async _navalHeroAction(_ev, target) {
+    const action = target.dataset.heroAction;
+    if (!action) return;
+    await NavalHeroActionHandler.execute(this.actor, action);
   }
 }

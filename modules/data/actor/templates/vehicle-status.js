@@ -41,6 +41,7 @@ export default class VehicleStatusTemplate extends DSADataModel {
       combatState: new SchemaField({
         distanceRE: new NumberField({ initial: 0, min: 0, label: 'VEHICLE.distanceRE' }),
         ramCooldownMKR: new NumberField({ initial: 0, min: 0 }),
+        woundedCrew: new NumberField({ initial: 0, min: 0, label: 'VEHICLE.woundedCrew' }),
       }),
     };
   }

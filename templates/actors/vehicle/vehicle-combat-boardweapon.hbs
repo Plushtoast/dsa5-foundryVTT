@@ -3,15 +3,22 @@
     <div class="combat-item-image col zerofive image {{item.system.damageToolTip.css}}" data-tooltip="{{item.system.damageToolTip.msg}}" style="background-image: url('{{item.img}}')"></div>
     <div class="combat-item-name col four ellipsis">
       <a data-action="itemEdit">{{item.name}}</a>
+      {{#if item.boardWeaponReloadLabel}}
+      <span class="vehicle-reload-badge small" data-tooltip="{{item.boardWeaponShotsLabel}}">{{item.boardWeaponReloadLabel}}</span>
+      {{/if}}
     </div>
     <div class="combat-item-skill col fifteen center small ellipsis" data-tooltip="{{item.combatskillLabel}}">
       {{item.combatskillLabel}}
     </div>
     <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
-      <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack" data-tooltip="{{item.attackTooltip}}">{{item.attack}}</a>
+      <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack {{#unless item.isBoardWeaponLoaded}}board-weapon-unloaded{{/unless}}" data-tooltip="{{item.boardWeaponFireTooltip}}">{{item.attack}}</a>
     </div>
-    <div class="combat-item-damage col ten center">
+    <div class="combat-item-damage col ten center" data-tooltip="{{item.damageTooltip}}">
+      {{#if item.damageDisplay}}
+      <span class="board-weapon-damage">{{item.damageDisplay}}</span>
+      {{else}}
       <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
+      {{/if}}
     </div>
     {{#if showAmmoColumn}}
     <div class="col ten flexrow vehicle-ammo-cell">
@@ -26,7 +33,7 @@
       {{/if}}
     </div>
     {{/if}}
-    <div class="col five center small vehicle-crew-cell" data-tooltip="VEHICLE.crewOperator">
+    <div class="col five center small vehicle-crew-cell" data-tooltip="{{item.boardWeaponCrewTooltip}}">
       {{#if item.crewOperatorName}}
       <a data-action="assignWeaponCrew" data-item-id="{{item._id}}" class="vehicle-crew-link ellipsis">{{item.crewOperatorName}}</a>
       <button type="button" data-action="clearWeaponCrew" data-item-id="{{item._id}}" class="icon fas fa-times noBorder dsadesignbutton very-small vehicle-crew-clear" data-tooltip="VEHICLE.clearCrew"></button>

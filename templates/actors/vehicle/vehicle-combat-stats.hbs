@@ -46,6 +46,15 @@
     <div class="vehicle-stat-field">
       {{formGroup systemFields.combatState.fields.distanceRE value=document.system.combatState.distanceRE localize=true label='VEHICLE.short.distanceRE' tooltip='VEHICLE.distanceRE'}}
     </div>
+    {{#if prepare.navalChaseSummary}}
+    <div class="vehicle-stat-field vehicle-stats-fullrow naval-chase-speed" data-tooltip="VEHICLE.mkr.chase.effectiveSpeedTooltip">
+      <label>{{localize "VEHICLE.mkr.chase.effectiveSpeed"}}</label>
+      <span class="naval-chase-speed-value">
+        {{prepare.navalChaseSummary.effectiveSpeed}}
+        <small>({{prepare.navalChaseSummary.baseSpeed}} {{prepare.navalChaseSummary.multiplierLabel}}, {{prepare.navalChaseSummary.terrainLabel}}{{#if prepare.navalChaseSummary.regionHint}} · {{prepare.navalChaseSummary.regionHint}}{{/if}})</small>
+      </span>
+    </div>
+    {{/if}}
     <div class="vehicle-stat-field vehicle-stats-fullrow">
       <label data-tooltip="{{localize 'VEHICLE.travelModes'}}">{{localize "VEHICLE.short.travelModes"}}</label>
       <div class="flexrow gap5px wrap">

@@ -696,6 +696,15 @@
         "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!",
         "waitInit": "Zurückstellen"
     },
+    "COMBAT.MODE": {
+        "standard": "Normaler Kampf",
+        "brawling": "Prügelei",
+        "navalMkr": "Seegefecht (MKR)",
+        "tooltip": "Kampfmodus wählen: Normal, Prügelei oder Massenkampfrunde (MKR).",
+        "standardHint": "Standardinitiative und normale Kampfregeln.",
+        "brawlingHint": "Prügelei-Regeln: Raufen, entwaffnen, temporäre Blessuren.",
+        "navalMkrHint": "Schiffsgefecht in Massenkampfrunden (MKR) mit Heldenaktionen, Bewegung, Angriffen und Schadensbericht."
+    },
     "COMMON_KNOWLEDGE": {
         "applied": "Allgemeinwissen wurde verwendet.",
         "tooDifficult": "Die Probe ist zu schwer."
@@ -2160,6 +2169,7 @@
         "automaticSuccess": "Automatischer Erfolg",
         "blind": "Blind",
         "bodyControl": "Körperbeherrschung",
+        "boatsAndShips": "Boote & Schiffe",
         "braniborian": "Braniborier",
         "callDjinn": "Dschinnenruf",
         "circumvent": "Unterlaufen",
@@ -2264,6 +2274,7 @@
         "traditionPhex": "Tradition (Phexkirche)",
         "traditionSavant": "Tradition (Meistertalentierte)",
         "traditionWitch": "Tradition (Hexen)",
+        "treatWounds": "Heilkunde Wunden",
         "vinsaltStyle": "Vinsalt-Stil",
         "visionOfTheDeity": "Vision der Gottheit",
         "visionOfTrueFaith": "Vision des Wahren Glaubens",
@@ -2274,6 +2285,7 @@
         "weakRegenerationLeP": "Schlechte Regeneration (Lebensenergie)",
         "weaponAptitude": "Waffenbegabung",
         "weaponThrow": "Waffenwurf",
+        "warfare": "Kriegskunst",
         "wildMagic": "Wilde Magie",
         "willpower": "Willenskraft",
         "winhallStyle": "Winhall-Stil",
@@ -2860,6 +2872,14 @@
             "once": "Einmalig beim Betreten",
             "recurring": "Jede Runde",
             "whileInZone": "Solange in Zone"
+        }
+    },
+    "REGIONBEHAVIOR_DSANavalWaterTerrain": {
+        "FIELDS": {
+            "waterTerrain": {
+                "label": "Wasser-Geländetyp",
+                "hint": "Geländetyp für Verfolgungsjagden und effektive Schiffsgeschwindigkeit. Beeinflusst auch die Bewegungskosten in der Region (wie Geländemodifikator)."
+            }
         }
     },
     "RIDING": {
@@ -3484,6 +3504,7 @@
     "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
     "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
     "TYPES.RegionBehavior.DSAZone": "Zone (DSA)",
+    "TYPES.RegionBehavior.DSANavalWaterTerrain": "Wasser-Geländetyp (DSA)",
     "Test": "Probe",
     "Total": "Gesamt",
     "UNITS": {
@@ -3866,6 +3887,7 @@
         "cargoCapacity": "Ladungskapazität",
         "price": "Preis",
         "distanceRE": "Distanz (RE)",
+        "woundedCrew": "Schwer verwundete Besatzung",
         "baseSpeed": "Grundgeschwindigkeit (GS)",
         "ramSpeed": "Rammgeschwindigkeit",
         "travelModes": "Reisemodi",
@@ -3879,6 +3901,29 @@
         "gunnery": "Geschütz-FK",
         "hullArmor": "Rumpf-RS",
         "siegeFKPenalty": "Bordwaffe (ohne SF Geschütze bedienen)",
+        "boardWeaponCrewTooltip": "Laut Regeln brauchen Bordgeschütze 2 Personen als Bedienung — nicht automatisch erzwungen.",
+        "boardWeaponShotsPerMkr": "Schüsse/MKR: {count} (über Nachladezeit)",
+        "boardWeaponReloadStatus": "Nachladen: {progress}/{lz}",
+        "boardWeaponNoReload": "Keine Nachladezeit",
+        "boardWeaponDamageTooltip": "TP: {tp} · StP: {stp}",
+        "boardWeaponAttacksPhaseOnly": "Bordwaffen-Angriffe sind in der MKR-Phase „Angriffe“ vorgesehen.",
+        "boardWeaponNotLoaded": "{weapon} ist nicht geladen ({progress}/{lz}).",
+        "boardWeaponNotLoadedHint": "Waffe muss erst nachgeladen werden.",
+        "boardWeaponOperatorMissing": "Zugewiesener Schütze nicht gefunden.",
+        "boardWeaponCrewFireMode": "Besatzung feuert (Schiff-FK, kein Held-Malus).",
+        "boardWeaponHeroFireMode": "Held bedient (−4 FK, ohne SF Geschütze bedienen).",
+        "vehicleRamWeapon": "Schiffsramm",
+        "ramWeapon": "Ramm",
+        "ramCrewTooltip": "Rammangriff — nur bei Rammgeschwindigkeit (1 MKR), danach 6 MKR Abklingzeit.",
+        "ramReady": "Ramm bereit",
+        "ramCooldownStatus": "Ramm-CD: {mkr} MKR",
+        "ramCooldownHint": "Rammangriff noch in Abklingzeit.",
+        "ramOnCooldown": "Rammangriff in Abklingzeit ({mkr} MKR verbleibend).",
+        "ramNotCapable": "Dieses Fahrzeug hat keine Rammgeschwindigkeit.",
+        "ramSpeedHint": "Rammgeschwindigkeit: {speed}",
+        "ramContactHint": "Kontakt (≤ 1 RE) zum Ziel vorausgesetzt.",
+        "ramCrewFireMode": "Besatzung rammt (Schiff-FK).",
+        "ramHeroFireMode": "{name} steuert den Ramm.",
         "tabCombat": "Bordwaffen",
         "boardRangedWeapons": "Fernkampf-Bordwaffen",
         "boardMeleeWeapons": "Nahkampf-Bordwaffen",
@@ -3913,6 +3958,107 @@
             "medium": "Mittel",
             "heavy": "Schwer",
             "siege": "Belagerung (Ramm)"
+        },
+        "mkr": {
+            "barTooltip": "Fortschritt innerhalb der aktuellen Massenkampfrunde (MKR). Eine MKR dauert etwa 60 Kampfrunden (KR).",
+            "nextMkr": "Nächste MKR",
+            "nextMkrTooltip": "Beendet die aktuelle MKR vorzeitig und springt zum Beginn der nächsten MKR (Heldenaktionen).",
+            "cyclePhase": "Nächste Phase",
+            "cyclePhaseTooltip": "Wechselt die MKR-Phase (Heldenaktionen → Bewegung → Angriffe → Schadensbericht) ohne KR zu verbrauchen.",
+            "started": "<p><b>Seegefecht (MKR)</b> gestartet — MKR {mkr}, Runde {round}.</p>",
+            "advanced": "<p><b>MKR {mkr}</b> beginnt (Runde {round}). Heldenaktionen!</p>",
+            "heroActionsOnlyTooltip": "Heldenaktionen sind nur in der MKR-Phase „Heldenaktionen“ verfügbar.",
+            "noCharacter": "Kein zugewiesener Charakter — nur der Spieler oder der SL kann Heldenaktionen auslösen.",
+            "missingSkill": "Der Charakter hat die Fertigkeit „{skill}“ nicht.",
+            "missingRepairSkill": "Holzbearbeitung oder Stoffbearbeitung erforderlich.",
+            "repairPickTitle": "Reparatur",
+            "repairPickText": "Welche Fertigkeit soll für die Reparatur genutzt werden?",
+            "pickHero": "Held für die Probe wählen",
+            "repairTooltip": "Holzbearbeitung +2 (Zimmermannsarbeiten) oder Stoffbearbeitung +2 (Schneidern). Pro QS 1 StP reparieren.",
+            "sailTooltip": "Boote & Schiffe −1 (Kampfmanöver). Ausweichen: −1 AT/MKR pro QS (max. −6). Angriff: +1 FK/MKR pro QS (max. +6).",
+            "driveTooltip": "Boote & Schiffe −1 (Kampfmanöver) — Landfahrzeug-Äquivalent zum Segelmanöver.",
+            "commandsTooltip": "Kriegskunst +0 (Seegefechte). QS/2 Geschütze mit FK 12 in der Angriffsphase.",
+            "healTooltip": "Heilkunde Wunden +0 — pro Erfolg eine schwer verwundete Besatzung gerettet.",
+            "reDistanceTooltip": "1 Reichweiteneinheit (RE) ≈ 16 Schritt — abstrakte Distanz für Enterung und Flucht.",
+            "reDistanceLabel": "{re} RE",
+            "fleeTooltip": "Flucht bei 5 RE (≈ 80 Schritt) Entfernung möglich.",
+            "boardingTooltip": "Enterung bei 1 RE (≈ 16 Schritt) Entfernung möglich.",
+            "ramCooldownTooltip": "Ramm-Angriff-Cooldown in MKR — wird bei jedem MKR-Wechsel um 1 reduziert.",
+            "phase": {
+                "heroActions": "Heldenaktionen",
+                "movement": "Bewegung",
+                "attacks": "Angriffe",
+                "damageReport": "Schadensbericht",
+                "heroActionsTooltip": "Helden führen Reparatur, Segeln/Fahren, Befehle und Wundversorgung aus.",
+                "movementTooltip": "Schiffe bewegen sich (1 RE/MKR). Flucht ab 5 RE. Verfolgungs-GS siehe Geländetyp.",
+                "attacksTooltip": "Bordwaffen, befohlene Geschütze und Enterung.",
+                "damageReportTooltip": "Strukturschaden und Besatzungsverluste (1d3−1 pro Treffer)."
+            },
+            "action": {
+                "repair": "Reparieren",
+                "sail": "Segeln",
+                "drive": "Fahren",
+                "commands": "Befehle",
+                "heal": "Verwundete versorgen"
+            },
+            "result": {
+                "repair": "<p><b>{vehicle}</b> — Reparatur: QS {qs}, {healed} StP wiederhergestellt.</p>",
+                "sail": "<p><b>{vehicle}</b> — Segelmanöver: QS {qs}, {maneuver}.</p>",
+                "drive": "<p><b>{vehicle}</b> — Fahrmanöver: QS {qs}, {maneuver}.</p>",
+                "commands": "<p><b>{vehicle}</b> — Befehle: QS {qs}, {guns} Geschütze vorbereitet.</p>",
+                "heal": "<p><b>{vehicle}</b> — Wundversorgung: {saved} Besatzungsmitglied(er) gerettet.</p>"
+            },
+            "maneuverPickTitle": {
+                "sail": "Segelmanöver",
+                "drive": "Fahrmanöver"
+            },
+            "maneuverPickText": "Welches Manöver soll in dieser MKR gelten?",
+            "maneuverEvade": "Ausweichen",
+            "maneuverAttack": "Angriff",
+            "maneuverEvadeBlocked": "Ausweich-Manöver verhindert den Treffer (−{penalty} effektive AT).",
+            "maneuverAttackBonus": "Angriffs-Manöver",
+            "commandedGunsPrompt": "{count} befohlene Geschütze können in der Angriffsphase abgefeuert werden. Ziel markieren und abschießen.",
+            "fireCommandedGuns": "Befohlene Geschütze abfeuern",
+            "commandedGunsFired": "{count} befohlene Geschütz-Schüsse abgefeuert.",
+            "noCommandedGuns": "Keine befohlenen Geschütze in dieser MKR.",
+            "noUncrewedGuns": "Keine unbemannten Bordgeschütze verfügbar.",
+            "pickTargetFirst": "Bitte zuerst ein Ziel markieren.",
+            "damageReportTitle": "Schadensbericht",
+            "damageReportEmpty": "Keine ausstehenden Treffer in diesem Schadensbericht.",
+            "damageReportHit": "<b>{vehicle}</b> — Treffer von {attacker}: {stp} StP, {crew} schwer verwundete Besatzung.",
+            "boardingAction": "Enterung",
+            "boardingActionTooltip": "Zwei markierte Schiffe/Tokens prüfen (≤ 1 RE) und Enterung ankündigen.",
+            "boardingTitle": "Enterung möglich",
+            "boardingPair": "{a} ↔ {b} ({steps} Schritt)",
+            "boardingHandoff": "Wechselt für Deckkampf in den regulären Kampf (Prügelei oder Heldenangriffe).",
+            "boardingPhaseOnly": "Enterung ist nur in der Angriffsphase möglich.",
+            "boardingSelectTwo": "Markiere mindestens zwei Tokens/Schiffe für die Enterungsprüfung.",
+            "boardingTooFar": "Keine markierten Schiffe innerhalb von 1 RE (16 Schritt).",
+            "chase": {
+                "terrainLabel": "Geländetyp",
+                "terrainTooltip": "Veraltet — nutze Szenen-Regionen (Geländemodifikator oder Wasser-Geländetyp).",
+                "fallbackTerrainLabel": "Standard-Gelände",
+                "fallbackTerrainTooltip": "Geländetyp für Schiffe außerhalb von Szenen-Regionen. In Regionen gilt der Geländemodifikator oder Wasser-Geländetyp.",
+                "sceneRegionsShort": "Gelände-Regionen",
+                "sceneRegionsTooltip": "Szenen-Regionen mit Geländemodifikator oder Wasser-Geländetyp (DSA) auf dieser Karte.",
+                "terrainModifierLabel": "Geländemodifikator ×{difficulty}",
+                "sourceNavalRegion": "Wasser-Gelände-Region",
+                "sourceTerrainModifier": "Geländemodifikator-Region",
+                "sourceCombatDefault": "Standard-Gelände (Kampf)",
+                "effectiveSpeed": "Effektive GS (Verfolgung)",
+                "effectiveSpeedTooltip": "Grundgeschwindigkeit × Geländefaktor nach Antrieb (Ruder/Segel) oder Geländemodifikator der Szenen-Region. Gilt für Verfolgungsjagden.",
+                "skillSubstitute": "Boote & Schiffe statt Körperbeherrschung",
+                "multiplierBlocked": "manövrierunfähig",
+                "terrain": {
+                    "open": "Offenes Gelände",
+                    "passable": "Gangbares Gelände",
+                    "normal": "Normales Gelände",
+                    "difficultSeas": "Beschwerlich (Seegang)",
+                    "difficultShoals": "Beschwerlich (Untiefen)",
+                    "severeStorm": "Schwierig (Sturm)",
+                    "severeShoals": "Schwierig (Untiefen)"
+                }
+            }
         }
     },
     "locationTypes": {

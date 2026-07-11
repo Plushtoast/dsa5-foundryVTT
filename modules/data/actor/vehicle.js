@@ -3,6 +3,7 @@ import MerchantTemplate from './templates/merchant.js';
 import VehicleStatusTemplate from './templates/vehicle-status.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import VehicleRamWeapon from './vehicle-ram-weapon.js';
 
 const { SchemaField, StringField, NumberField, BooleanField, HTMLField, ArrayField, TypedObjectField } = foundry.data.fields;
 const { getProperty, mergeObject } = foundry.utils;
@@ -89,6 +90,7 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       });
     }
     if (impact) items.push(impact);
+    items.push(VehicleRamWeapon.buildItemData());
     return items;
   }
 

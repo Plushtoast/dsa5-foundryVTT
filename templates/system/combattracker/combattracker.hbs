@@ -23,6 +23,11 @@
         {{!-- Name & Controls --}}
         <div class="token-name">
             <strong class="name">{{ name }}</strong>
+            {{#if vehicleSinking}}
+            <span class="vehicle-status-badge sinking" data-tooltip="VEHICLE.sinking"><i class="fas fa-water"></i></span>
+            {{else if vehicleImmobile}}
+            <span class="vehicle-status-badge immobile" data-tooltip="VEHICLE.immobile"><i class="fas fa-anchor"></i></span>
+            {{/if}}
             <div class="combatant-controls">
                 {{#if @root.user.isGM}}
                 <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"

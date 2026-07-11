@@ -2,6 +2,31 @@
 
   <div class="vehicle-combat-layout flexcol gap10px">
 
+    <div class="combat-actions vehicle-hero-actions {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}">
+      <button type="button" data-action="navalHeroAction" data-hero-action="repair" class="combat-action item" data-tooltip="VEHICLE.mkr.repairTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-hammer"></i> {{localize "VEHICLE.mkr.action.repair"}}
+      </button>
+      {{#if prepare.showNavalSail}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="sail" class="combat-action item" data-tooltip="VEHICLE.mkr.sailTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-wind"></i> {{localize "VEHICLE.mkr.action.sail"}}
+      </button>
+      {{/if}}
+      {{#if prepare.showNavalDrive}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="drive" class="combat-action item" data-tooltip="VEHICLE.mkr.driveTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-horse"></i> {{localize "VEHICLE.mkr.action.drive"}}
+      </button>
+      {{/if}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="commands" class="combat-action item" data-tooltip="VEHICLE.mkr.commandsTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-flag"></i> {{localize "VEHICLE.mkr.action.commands"}}
+      </button>
+      <button type="button" data-action="navalHeroAction" data-hero-action="heal" class="combat-action item" data-tooltip="VEHICLE.mkr.healTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-kit-medical"></i> {{localize "VEHICLE.mkr.action.heal"}}
+      </button>
+      {{#unless prepare.navalHeroActionsEnabled}}
+      <span class="hint" data-tooltip="VEHICLE.mkr.heroActionsOnlyTooltip"><i class="fas fa-circle-info"></i></span>
+      {{/unless}}
+    </div>
+
     <div class="vehicle-combat-main flexcol">
 
       <div class="groupbox vehicle-board-weapons">

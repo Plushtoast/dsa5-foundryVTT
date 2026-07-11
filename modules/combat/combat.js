@@ -1,5 +1,8 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import NavalCombat from './mkr/naval-combat.js';
+import NavalCombatDamage from './mkr/naval-combat-damage.js';
+import NavalChase from './mkr/naval-chase.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Combat extends Combat {
@@ -15,6 +18,18 @@ export default class DSA5Combat extends Combat {
 
   get isBrawling() {
     return this.system.isBrawling;
+  }
+
+  get combatMode() {
+    return NavalCombat.resolveCombatMode(this);
+  }
+
+  get isNavalMkr() {
+    return NavalCombat.isNavalMkrActive(this);
+  }
+
+  getMkrProgress() {
+    return NavalCombat.getMkrProgress(this);
   }
 
   _onCreate(data, options, userId) {
@@ -95,7 +110,11 @@ export default class DSA5Combat extends Combat {
 
     await Actordsa5.updateDocuments(actorUpdates);
     await game.canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
-    await this.update({ 'system.isBrawling': goBrawling });
+    await this.update({
+      'system.isBrawling': goBrawling,
+      'system.combatMode': goBrawling ? 'brawling' : 'standard',
+      ...this.#navalResetFields(),
+    });
 
     if (chatMessages.length) {
       await this.showBrawlingDamage(chatMessages);
@@ -258,5 +277,107 @@ export default class DSA5Combat extends Combat {
         });
       }
     }
+  }
+
+  #navalResetFields() {
+    return {
+      'system.mkrRound': 0,
+      'system.mkrKrStart': 0,
+      'system.mkrPhase': 'heroActions',
+      'system.maneuverModifiers': {},
+      'system.commandedGuns': [],
+      'system.pendingHits': [],
+      'system.waterTerrain': 'normal',
+    };
+  }
+
+  async setCombatMode(mode) {
+    if (!game.user.isGM) return;
+
+    const current = this.combatMode;
+    if (current === mode) return;
+
+    if (mode === 'brawling') {
+      await this.convertToBrawl(true);
+      return;
+    }
+
+    if (mode === 'standard') {
+      if (this.isBrawling) await this.convertToBrawl(false);
+      else if (current === 'navalMkr') await this.update({ 'system.combatMode': 'standard', ...this.#navalResetFields() });
+      else await this.update({ 'system.combatMode': 'standard' });
+      return;
+    }
+
+    if (mode === 'navalMkr') {
+      if (this.isBrawling) await this.convertToBrawl(false);
+
+      const round = Math.max(1, this.round || 1);
+      await this.update({
+        'system.combatMode': 'navalMkr',
+        'system.isBrawling': false,
+        'system.mkrRound': 1,
+        'system.mkrKrStart': round,
+        'system.mkrPhase': 'heroActions',
+        'system.krPerMkr': this.system.krPerMkr || NavalCombat.DEFAULT_KR_PER_MKR,
+        'system.maneuverModifiers': {},
+        'system.commandedGuns': [],
+        'system.pendingHits': [],
+        'system.waterTerrain': 'normal',
+      });
+      await this.#announceMkrChat('VEHICLE.mkr.started', { mkr: 1, round });
+    }
+  }
+
+  async nextMkr() {
+    if (!game.user.isGM || !this.isNavalMkr) return;
+
+    const krPerMkr = this.system.krPerMkr || NavalCombat.DEFAULT_KR_PER_MKR;
+    const mkrKrStart = this.system.mkrKrStart ?? this.round ?? 1;
+    const nextRound = mkrKrStart + krPerMkr;
+    const mkrRound = (this.system.mkrRound || 1) + 1;
+
+    await this.#tickVehicleRamCooldown();
+    await this.update({
+      round: nextRound,
+      'system.mkrRound': mkrRound,
+      'system.mkrKrStart': nextRound,
+      'system.mkrPhase': 'heroActions',
+      'system.commandedGuns': [],
+      'system.pendingHits': [],
+    });
+    await this.#announceMkrChat('VEHICLE.mkr.advanced', { mkr: mkrRound, round: nextRound });
+  }
+
+  async setWaterTerrain(terrain) {
+    if (!game.user.isGM || !this.isNavalMkr) return;
+    if (!NavalChase.WATER_TERRAIN_IDS.includes(terrain)) return;
+    await this.update({ 'system.waterTerrain': terrain });
+  }
+
+  async advanceMkrPhase() {
+    if (!game.user.isGM || !this.isNavalMkr) return;
+
+    const next = NavalCombat.nextPhase(this.system.mkrPhase || 'heroActions');
+    await this.update({ 'system.mkrPhase': next });
+
+    if (next === 'attacks') await NavalCombatDamage.promptCommandedGuns(this);
+    if (next === 'damageReport') await NavalCombatDamage.processDamageReport(this);
+  }
+
+  async #tickVehicleRamCooldown() {
+    const updates = [];
+    for (const comb of this.combatants) {
+      if (comb.actor?.type !== 'vehicle') continue;
+      const cd = comb.actor.system.combatState?.ramCooldownMKR ?? 0;
+      if (cd > 0) {
+        updates.push({ _id: comb.actor.id, 'system.combatState.ramCooldownMKR': cd - 1 });
+      }
+    }
+    if (updates.length) await Actordsa5.updateDocuments(updates);
+  }
+
+  async #announceMkrChat(key, data) {
+    ChatMessage.create(DSA5_Utility.chatDataSetup(_loc(key, data)));
   }
 }

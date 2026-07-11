@@ -1,6 +1,21 @@
 <nav class="combat-controls" data-tooltip-direction="UP">
     {{~#if hasCombat~}}
 
+    {{#if isNavalMkr}}
+    {{#if user.isGM}}
+    {{#if combat.round}}
+    <button type="button" class="inline-control combat-control icon fa-solid fa-ship" data-action="nextMkr"
+            data-tooltip="VEHICLE.mkr.nextMkrTooltip" aria-label="{{ localize 'VEHICLE.mkr.nextMkr' }}"></button>
+    <button type="button" class="inline-control combat-control icon fa-solid fa-forward" data-action="advanceMkrPhase"
+            data-tooltip="VEHICLE.mkr.cyclePhaseTooltip" aria-label="{{ localize 'VEHICLE.mkr.cyclePhase' }}"></button>
+    {{#if (eq mkrPhase 'attacks')}}
+    <button type="button" class="inline-control combat-control icon fa-solid fa-people-arrows" data-action="navalBoarding"
+            data-tooltip="VEHICLE.mkr.boardingActionTooltip" aria-label="{{ localize 'VEHICLE.mkr.boardingAction' }}"></button>
+    {{/if}}
+    {{/if}}
+    {{/if}}
+    {{/if}}
+
     {{!-- GM Controls --}}
     {{#if user.isGM}}
     {{#if combat.round}}

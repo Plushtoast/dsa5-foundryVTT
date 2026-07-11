@@ -50,7 +50,9 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
+        stp: new ScopableStringField({ initial: '', label: 'stpDamage' }),
       }),
+      vehicleRam: new BooleanField({ initial: false, label: 'VEHICLE.vehicleRamWeapon' }),
       atmod: new SchemaField({
         value: new ScopableNumberField({ initial: 0, label: 'atmod' }),
         offhandMod: new ScopableNumberField({ initial: 0 }),
