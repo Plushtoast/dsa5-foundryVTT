@@ -1,0 +1,51 @@
+import { MerchantSheetMixin } from './mixins/merchantmixin.js';
+import ActorSheetdsa5Vehicle from './vehicle-sheet.js';
+import { gearSearchPartTemplates } from './template-configs.js';
+
+export default class VehicleMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Vehicle) {
+  static MERCHANTPARTS = {
+    merchant: {
+      ...super.MERCHANTPARTS.merchant,
+      notes: {
+        template: 'systems/dsa5/templates/actors/vehicle/vehicle-notes.hbs',
+        scrollable: [''],
+      },
+    },
+    loot: super.MERCHANTPARTS.loot,
+    epic: {
+      ...super.MERCHANTPARTS.epic,
+      notes: {
+        template: 'systems/dsa5/templates/actors/vehicle/vehicle-notes.hbs',
+        scrollable: [''],
+      },
+    },
+  };
+
+  static PARTS = {
+    sheet: super.PARTS.sheet,
+    header: {
+      template: 'systems/dsa5/templates/actors/vehicle/vehicle-header.hbs',
+      templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/vehicle/vehicle-header-part.hbs', 'systems/dsa5/templates/actors/parts/vehicle-healthbar.hbs'],
+    },
+    tabs: super.PARTS.tabs,
+    main: {
+      template: 'systems/dsa5/templates/actors/vehicle/vehicle-main.hbs',
+      scrollable: [''],
+    },
+    combat: super.PARTS.combat,
+    inventory: {
+      template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
+      scrollable: [''],
+      templates: [
+        ...gearSearchPartTemplates,
+        'systems/dsa5/templates/actors/parts/containerContent.hbs',
+        'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
+      ],
+    },
+    status: super.PARTS.status,
+    notes: {
+      template: 'systems/dsa5/templates/actors/vehicle/vehicle-notes.hbs',
+      scrollable: [''],
+    },
+  };
+}

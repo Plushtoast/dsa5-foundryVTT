@@ -211,6 +211,13 @@
                     "details.biography",
                     "details.notes"
                 ]
+            },
+            "vehicle": {
+                "htmlFields": [
+                    "description.value",
+                    "details.notes.value",
+                    "details.notes.ownerdescription"
+                ]
             }
         },
         "Item": {

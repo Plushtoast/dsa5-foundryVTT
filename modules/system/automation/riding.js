@@ -197,6 +197,8 @@ export default class Riding {
   static getHorse(actor, returnEmptyHorse = false) {
     let horse;
     const horseData = actor.system.horse;
+    if (!horseData) return undefined;
+
     const hasTokenData = !foundry.utils.isEmpty(horseData.token || {});
 
     if (hasTokenData && !horseData.actorLink) horse = DSA5_Utility.getSpeaker(horseData.token);

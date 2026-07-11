@@ -879,7 +879,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     if (trackedActors.actors && trackedActors.actors.length > 0) {
       heros = game.actors
         .filter((x) => {
-          return trackedActors.actors.includes(x.id) && (!skipGroupActors || x.type != "group");
+          return trackedActors.actors.includes(x.id) && (!skipGroupActors || x.type != "group") && x.type !== 'vehicle';
         })
         .sort((a, b) => {
           return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id);

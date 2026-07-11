@@ -731,18 +731,37 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         <label>${_loc('Name')}</label>
         <input type="text" name="name" value="${defaultName}" autofocus />
       </div>
+      <div class="form-group">
+        <label>${_loc('GROUP.locationKind')}</label>
+        <select name="locationKind">
+          <option value="depot">${_loc('GROUP.locationKindDepot')}</option>
+          <option value="vehicle">${_loc('GROUP.locationKindVehicle')}</option>
+        </select>
+        <p class="hint">${_loc('GROUP.locationKindHint')}</p>
+      </div>
     </form>`;
 
-    const name = await foundry.applications.api.DialogV2.prompt({
+    const result = await foundry.applications.api.DialogV2.prompt({
       window: { title: 'GROUP.addLocation' },
       content,
       ok: {
         label: _loc('ok'),
-        callback: (event, button) => button.form.elements.name.value.trim(),
+        callback: (event, button) => {
+          const form = button.form;
+          const name = form.elements.name.value.trim();
+          if (!name) return null;
+          return {
+            name,
+            asVehicle: form.elements.locationKind.value === 'vehicle',
+          };
+        },
       },
     });
-    if (!name) return;
-    await this.actor.system.createAndLinkLocation(name, '', 'loot');
+    if (!result) return;
+    await this.actor.system.createAndLinkLocation(result.name, '', {
+      merchantType: 'loot',
+      asVehicle: result.asVehicle,
+    });
   }
 
   static #removeLocation(event, target) {

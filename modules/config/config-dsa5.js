@@ -684,6 +684,95 @@ DSA5.locationTypes = {
   sea: 'locationTypes.sea',
 };
 
+DSA5.vehicleTravelModes = {
+  vehicle: 'locationTypes.vehicle',
+  river: 'locationTypes.river',
+  sea: 'locationTypes.sea',
+};
+
+DSA5.vehiclePropulsion = {
+  row: 'VEHICLE.propulsion.row',
+  sail: 'VEHICLE.propulsion.sail',
+  land: 'VEHICLE.propulsion.land',
+  mixed: 'VEHICLE.propulsion.mixed',
+};
+
+DSA5.vehicleArmament = {
+  none: 'VEHICLE.armament.none',
+  light: 'VEHICLE.armament.light',
+  medium: 'VEHICLE.armament.medium',
+  heavy: 'VEHICLE.armament.heavy',
+  siege: 'VEHICLE.armament.siege',
+};
+
+DSA5.actorCapabilities = {
+  character: {
+    hasTalents: true,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: true,
+    canOperateSiegeWeapon: true,
+    canJoinCombat: true,
+  },
+  npc: {
+    hasTalents: true,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: true,
+    canOperateSiegeWeapon: true,
+    canJoinCombat: true,
+  },
+  creature: {
+    hasTalents: false,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: true,
+  },
+  vehicle: {
+    hasTalents: false,
+    hasMagic: false,
+    hasWounds: false,
+    hasFatePoints: false,
+    hasRiding: false,
+    usesCharacterItemPrep: false,
+    hasStructurePoints: true,
+    hasCrew: true,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: true,
+  },
+  group: {
+    hasTalents: false,
+    hasMagic: false,
+    hasWounds: false,
+    hasFatePoints: false,
+    hasRiding: false,
+    usesCharacterItemPrep: false,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: false,
+  },
+};
+
 DSA5.targetMovementOptions = {
   0: 'rangeMovementOptions.SLOW',
   '-2': 'rangeMovementOptions.FAST',

@@ -39,6 +39,7 @@ import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
 import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
+import { combatPartTemplates } from './template-configs.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -155,7 +156,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs'],
+      templates: [...combatPartTemplates],
     },
     skills: {
       template: 'systems/dsa5/templates/actors/actor-talents.hbs',
@@ -453,6 +454,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }, {});
     sheetData.ridingModes = sheetData.systemFields?.horse?.fields?.isRiding?.choices ?? {};
     await DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
+    sheetData.conditions ??= [];
+    sheetData.cumulativeConditions ??= [];
+    sheetData.transferedConditions ??= [];
+    sheetData.manualConditions ??= [];
+    sheetData.prepare.itemModifiers ??= this.actor.system.itemModifiers ?? {};
     await this.prepareEnrichedFields(sheetData, this.constructor.propertiesToEnrich);
     return sheetData;
   }
@@ -2142,7 +2148,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
 
     const itemData = item.toObject();
-    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    const data = TextEditor.getDragEventData(event);
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 
     let container_id;

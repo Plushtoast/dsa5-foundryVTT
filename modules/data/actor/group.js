@@ -353,9 +353,25 @@ export default class GroupData extends ActorDataModel {
     return folder;
   }
 
-  async createLocationActor(name, merchantType = 'loot') {
+  async createLocationActor(name, { merchantType = 'loot', asVehicle = false, travelMode = '' } = {}) {
     const folder = await this.getOrCreateLocationFolder();
-    const actor = await Actor.create({
+
+    if (asVehicle) {
+      return await Actor.create({
+        name,
+        type: 'vehicle',
+        folder: folder.id,
+        flags: { core: { sheetClass: 'dsa5.VehicleMerchantSheetDSA5' } },
+        system: {
+          merchant: { merchantType },
+          details: {
+            travelModes: travelMode ? [travelMode] : ['sea', 'river', 'vehicle'],
+          },
+        },
+      });
+    }
+
+    return await Actor.create({
       name,
       type: 'npc',
       folder: folder.id,
@@ -364,11 +380,10 @@ export default class GroupData extends ActorDataModel {
         merchant: { merchantType },
       },
     });
-    return actor;
   }
 
-  async createAndLinkLocation(name, type = '', merchantType = 'loot') {
-    const actor = await this.createLocationActor(name, merchantType);
+  async createAndLinkLocation(name, type = '', { merchantType = 'loot', asVehicle = false } = {}) {
+    const actor = await this.createLocationActor(name, { merchantType, asVehicle, travelMode: type });
     await this.addLocation(actor, type);
     return actor;
   }

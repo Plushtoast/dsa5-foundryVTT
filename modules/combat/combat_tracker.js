@@ -231,7 +231,7 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot') return false;
+  if (actor.system.merchant.merchantType == 'loot' && actor.type !== 'vehicle') return false;
 
   if (data.combat.isBrawling) {
     const conf = data.brawlingChange();
@@ -248,7 +248,7 @@ Hooks.on('deleteCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot') return false;
+  if (actor.system.merchant.merchantType == 'loot' && actor.type !== 'vehicle') return false;
 
   if (data.combat.isBrawling) {
     data.undoBrawlingChange().then(async (conf) => {

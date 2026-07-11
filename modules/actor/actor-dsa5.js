@@ -55,6 +55,11 @@ export default class Actordsa5 extends Actor {
       return await super.create(data, options);
     }
 
+    if (data.type === 'vehicle') {
+      await CONFIG.Actor.dataModels.vehicle.prepareCreateData(data);
+      return await super.create(data, options);
+    }
+
     data.items = [].concat(...(await Promise.all([DSA5_Utility.allSkills(), DSA5_Utility.allCombatSkills(), DSA5_Utility.allMoneyItems()])));
 
     if (data.type != 'character') mergeObject(data, { system: { status: { fatePoints: { current: 0, value: 0 } } } });
@@ -95,7 +100,7 @@ export default class Actordsa5 extends Actor {
       }
 
       let newEncumbrance = data.armorEncumbrance;
-      if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant) {
+      if ((actor.type != 'creature' || actor.canAdvance) && !isMerchant && actor.type !== 'vehicle') {
         newEncumbrance += Math.max(0, Math.ceil((data.totalWeight - data.carrycapacity - 4) / 4));
       }
 
@@ -399,8 +404,182 @@ export default class Actordsa5 extends Actor {
 
   prepareSheet(sheetInfo) {
     const preparedData = { system: { characteristics: {} } };
-    mergeObject(preparedData, this.prepareItems(sheetInfo));
+    const prep = DSA5_Utility.actorCapabilities(this).usesCharacterItemPrep
+      ? this.prepareItems(sheetInfo)
+      : this.prepareLootItems(sheetInfo);
+    mergeObject(preparedData, prep);
     return preparedData;
+  }
+
+  #initInventoryBuckets() {
+    const inventory = {
+      meleeweapons: { items: [], show: false, dataType: 'meleeweapon' },
+      rangeweapons: { items: [], show: false, dataType: 'rangeweapon' },
+      armor: { items: [], show: false, dataType: 'armor' },
+      ammunition: { items: [], show: false, dataType: 'ammunition' },
+      plant: { items: [], show: false, dataType: 'plant' },
+      poison: { items: [], show: false, dataType: 'poison' },
+      book: { items: [], show: false, dataType: 'book' },
+    };
+
+    for (const t in DSA5.equipmentTypes) {
+      inventory[t] = { items: [], show: false, dataType: t };
+    }
+    inventory.misc.show = true;
+
+    return inventory;
+  }
+
+  prepareLootItems(sheetInfo) {
+    const combatskills = [];
+    const wornweapons = [];
+    const armor = [];
+    const rangeweapons = [];
+    const meleeweapons = [];
+    const availableAmmunition = [];
+    const traits = Object.fromEntries(Object.keys(DSA5.traitCategories).map(x => [x, []]));
+    const inventory = this.#initInventoryBuckets();
+    const money = { coins: [], total: 0, show: true };
+    let totalArmor = this.system.totalArmor || 0;
+    const containers = new Map();
+    const preparedItems = [];
+
+    for (const it of this.items.contents) {
+      if (it.type === 'equipment' && it.system.equipmentType.value === 'bags') {
+        containers.set(it.id, []);
+      }
+      preparedItems.push(it.system.prepareEmbeddedItemSheet());
+    }
+
+    preparedItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    for (const i of preparedItems) {
+      try {
+        const itemSystem = i.system;
+        const itemType = i.type;
+        const parent_id = itemSystem.parent_id;
+
+        if (itemType === 'ammunition') availableAmmunition.push(i);
+
+        if (parent_id && parent_id !== i._id && containers.has(parent_id)) {
+          containers.get(parent_id).push(i);
+          continue;
+        }
+
+        if (sheetInfo.details?.includes(i._id)) i.detailed = 'shown';
+
+        switch (itemType) {
+          case 'trait':
+            traits[itemSystem.traitType.value].push(i);
+            break;
+          case 'combatskill':
+            combatskills.push(i);
+            break;
+          case 'ammunition':
+            inventory.ammunition.items.push(i);
+            inventory.ammunition.show = true;
+            break;
+          case 'meleeweapon':
+            inventory.meleeweapons.show = true;
+            inventory.meleeweapons.items.push(i);
+            if (i.toggleValue) wornweapons.push(i);
+            break;
+          case 'rangeweapon':
+            inventory.rangeweapons.items.push(i);
+            inventory.rangeweapons.show = true;
+            break;
+          case 'armor':
+            inventory.armor.items.push(i);
+            inventory.armor.show = true;
+            if (itemSystem.worn.value) {
+              for (const property in itemSystem.protection) {
+                itemSystem.protection[property] = EquipmentDamage.armorWearModifier(i, itemSystem.protection[property]);
+              }
+              totalArmor += Number(itemSystem.protection.value);
+              armor.push(i);
+            }
+            break;
+          case 'book':
+          case 'poison':
+          case 'plant':
+            inventory[itemType].items.push(i);
+            inventory[itemType].show = true;
+            break;
+          case 'consumable':
+          case 'equipment':
+            inventory[itemSystem.equipmentType.value].items.push(i);
+            inventory[itemSystem.equipmentType.value].show = true;
+            break;
+          case 'money':
+            money.coins.push(i);
+            money.total += itemSystem.quantity.value * itemSystem.price.value;
+            break;
+        }
+      } catch (error) {
+        this._itemPreparationError(i, error);
+      }
+    }
+
+    for (const elem of inventory.bags.items) {
+      this._setBagContent(elem, containers);
+    }
+
+    if (combatskills.length) {
+      if (DSA5_Utility.actorCapabilities(this).hasStructurePoints) {
+        const gunnery = Number(this.system.status.gunnery?.value ?? 12);
+        const crossbowsSkill = combatskills.find((skill) => skill.name === _loc('LocalizedIDs.Crossbows'));
+        if (crossbowsSkill) crossbowsSkill.system.attack.value = gunnery;
+      }
+
+      for (const wep of inventory.rangeweapons.items) {
+        try {
+          if (wep.system.worn.value) {
+            rangeweapons.push(Actordsa5._prepareRangeWeapon(wep, availableAmmunition, combatskills, this));
+          }
+        } catch (error) {
+          this._itemPreparationError(wep, error);
+        }
+      }
+
+      const otherWeapons = wornweapons.filter(x => !RuleChaos.isWieldedTwohanded(x));
+      for (const wep of wornweapons) {
+        try {
+          meleeweapons.push(Actordsa5._prepareMeleeWeapon(wep, combatskills, this, otherWeapons.filter(x => x._id !== wep._id)));
+        } catch (error) {
+          this._itemPreparationError(wep, error);
+        }
+      }
+    }
+
+    money.coins.sort((a, b) => b.system.price.value - a.system.price.value);
+
+    const wrestle = _loc('LocalizedIDs.wrestle');
+    const brawling = combatskills.find(x => x.name === wrestle);
+
+    return {
+      armorSum: totalArmor,
+      spellArmor: 0,
+      liturgyArmor: 0,
+      money,
+      brawling: {
+        attack: brawling?.system.attack.value || 0,
+        parry: brawling?.system.parry.value || 0,
+      },
+      wornRangedWeapons: rangeweapons,
+      wornMeleeWeapons: meleeweapons,
+      wornArmor: armor,
+      inventory,
+      traits,
+      combatskills,
+      canAdvance: false,
+      magic: { hasSpells: false, hasPrayers: false },
+      sortedSpecs: SpecialabilityData.sortedSpecs,
+      specAbs: Object.fromEntries(Object.keys(SpecialabilityData.specialAbilityCategories).map(x => [x, []])),
+      languagePoints: '',
+      itemModifiers: this.system.itemModifiers ?? {},
+      demonmarks: [],
+      diseases: [],
+    };
   }
 
   static canAdvance(actorData) {
@@ -569,11 +748,15 @@ export default class Actordsa5 extends Actor {
 
   schipshtml() {
     const schips = [];
-    if (this.type == 'group') return schips;
-    for (let i = 1; i <= this.system.status.fatePoints.max; i++) {
+    if (!DSA5_Utility.actorCapabilities(this).hasFatePoints) return schips;
+
+    const fatePoints = this.system.status.fatePoints;
+    if (!fatePoints?.max) return schips;
+
+    for (let i = 1; i <= fatePoints.max; i++) {
       schips.push({
         value: i,
-        cssClass: i <= this.system.status.fatePoints.value ? 'fullSchip' : 'emptySchip',
+        cssClass: i <= fatePoints.value ? 'fullSchip' : 'emptySchip',
       });
     }
     return schips;
@@ -622,20 +805,7 @@ export default class Actordsa5 extends Actor {
     const groupschips = this.hasPlayerOwner ? RuleChaos.getGroupSchips() : [];
     const schips = this.schipshtml();
 
-    const inventory = {
-      meleeweapons: { items: [], show: false, dataType: 'meleeweapon' },
-      rangeweapons: { items: [], show: false, dataType: 'rangeweapon' },
-      armor: { items: [], show: false, dataType: 'armor' },
-      ammunition: { items: [], show: false, dataType: 'ammunition' },
-      plant: { items: [], show: false, dataType: 'plant' },
-      poison: { items: [], show: false, dataType: 'poison' },
-      book: { items: [], show: false, dataType: 'book' },
-    };
-
-    for (const t in DSA5.equipmentTypes) {
-      inventory[t] = { items: [], show: false, dataType: t };
-    }
-    inventory['misc'].show = true;
+    const inventory = this.#initInventoryBuckets();
 
     const money = {
       coins: [],
@@ -823,7 +993,7 @@ export default class Actordsa5 extends Actor {
       }
     }
 
-    if (combatskills.length) {  
+    if (combatskills.length) {
       for (const wep of inventory.rangeweapons.items) {
         try {
           if (wep.system.worn.value) {
@@ -1211,6 +1381,11 @@ export default class Actordsa5 extends Actor {
     } else if (game.combat?.isBrawling) {
       const newVal = Math.min(this.system.status.temporaryLeP.max, this.system.status.temporaryLeP.value - amount);
       await this.update({ 'system.status.temporaryLeP.value': newVal });
+    } else if (DSA5_Utility.actorCapabilities(this).hasStructurePoints) {
+      const pool = options.damagePool === 'crew' ? 'crew' : 'structurePoints';
+      const status = this.system.status[pool];
+      const newVal = Math.min(status.max, status.value - amount);
+      await this.update({ [`system.status.${pool}.value`]: newVal });
     } else {
       const newVal = Math.min(this.system.status.wounds.max, this.system.status.wounds.value - amount);
       await this.update({ 'system.status.wounds.value': newVal });
@@ -1588,7 +1763,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {
-    const skill = combatskills.find(i => i.name === item.system.combatskill.value);
+    const skill = combatskills.find((s) => s.name === item.system.combatskill.value);
 
     if (!skill) {
       if (isBaseWeapon) {
@@ -1745,9 +1920,14 @@ export default class Actordsa5 extends Actor {
     return isTwoHandedWeapon(item);
   }
 
+  _ignoresWeaponHandLimits() {
+    return !!getProperty(this, 'system.config.ignoreWeaponHandLimits')
+      || !DSA5_Utility.actorCapabilities(this).usesCharacterItemPrep;
+  }
+
   canEquipWeaponOffHand(item) {
     if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return false;
-    return !!getProperty(this, 'system.config.ignoreWeaponHandLimits') || !this._isTwoHandedWeapon(item);
+    return this._ignoresWeaponHandLimits() || !this._isTwoHandedWeapon(item);
   }
 
   async toggleWeaponOffHand(itemId) {
@@ -1771,7 +1951,7 @@ export default class Actordsa5 extends Actor {
     const item = this.items.get(itemId);
     if (!item || !['meleeweapon', 'rangeweapon'].includes(item.type)) return;
 
-    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    const ignoreHandLimits = this._ignoresWeaponHandLimits();
 
     // If it isn't equipped yet, interpret this as an equip request (main/offhand/auto).
     if (!item.system.worn.value) {
@@ -1835,7 +2015,7 @@ export default class Actordsa5 extends Actor {
     if (!item) return;
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
 
-    const ignoreHandLimits = this.system.config.ignoreWeaponHandLimits;
+    const ignoreHandLimits = this._ignoresWeaponHandLimits();
 
     if (ignoreHandLimits) {
       if (!equip) {
@@ -1921,7 +2101,7 @@ export default class Actordsa5 extends Actor {
     if (item.type !== 'meleeweapon' && item.type !== 'rangeweapon') return;
     if (!item.system?.worn?.value) return;
 
-    const ignoreHandLimits = !!getProperty(this, 'system.config.ignoreWeaponHandLimits');
+    const ignoreHandLimits = this._ignoresWeaponHandLimits();
     if (ignoreHandLimits) {
       const targetHand = desiredHand === 'offhand' ? 'offhand' : 'main';
       const currentHand = getProperty(item, 'system.worn.offHand') ? 'offhand' : 'main';
@@ -1995,7 +2175,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {
-    const skill = combatskills.find((i) => i.name == item.system.combatskill.value);
+    const skill = combatskills.find((s) => s.name === item.system.combatskill.value);
     item.calculatedRange = item.system.reach.value;
 
     let currentAmmo;

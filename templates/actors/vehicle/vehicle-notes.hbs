@@ -1,0 +1,16 @@
+<div class='tab scrollable {{tabs.notes.cssClass}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
+  <div class="groupbox">
+    <legend class="table-title lineheight">{{localize "Description"}}</legend>
+    {{formInput systemFields.description.fields.value enriched=prepare.enrichedDescription toggled=true}}
+  </div>
+  <div class="groupbox" style="margin-top:10px;">
+    <legend class="table-title lineheight">{{localize "Notes"}}</legend>
+    {{formInput systemFields.details.fields.notes.fields.value enriched=prepare.enrichedNotes toggled=true}}
+  </div>
+  {{#if owner}}
+  <div class="groupbox" style="margin-top:10px;">
+    <legend class="table-title lineheight">{{localize "ownerNotes"}}</legend>
+    {{formInput systemFields.details.fields.notes.fields.ownerdescription enriched=prepare.enrichedOwnerdescription toggled=true}}
+  </div>
+  {{/if}}
+</div>

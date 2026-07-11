@@ -219,7 +219,7 @@ export default function () {
   const randomWeaponSelection = async (token) => {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    if (game.settings.get('dsa5', 'randomWeaponSelection') && token.actor.type != 'character') {
+    if (game.settings.get('dsa5', 'randomWeaponSelection') && !['character', 'vehicle', 'group'].includes(token.actor.type)) {
       const meleeweapons = [];
       const shields = [];
       const rangeweapons = [];

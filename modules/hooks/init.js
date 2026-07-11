@@ -23,6 +23,8 @@ import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
 import ActorSheetdsa5NPC from './../actor/npc-sheet.js';
+import ActorSheetdsa5Vehicle from './../actor/vehicle-sheet.js';
+import VehicleMerchantSheetDSA5 from '../actor/vehicle-merchant-sheet.js';
 import ItemSheetdsa5 from './../item/item-sheet.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import BookWizard from '../wizards/adventure_wizard.js';
@@ -138,6 +140,8 @@ Hooks.once('init', () => {
     { sheetClass: ActorSheetdsa5Character, types: ['character'], makeDefault: true },
     { sheetClass: ActorSheetdsa5Creature, types: ['creature'], makeDefault: true },
     { sheetClass: ActorSheetdsa5NPC, types: ['npc'], makeDefault: true },
+    { sheetClass: ActorSheetdsa5Vehicle, types: ['vehicle'], makeDefault: true },
+    { sheetClass: VehicleMerchantSheetDSA5, types: ['vehicle'] },
     { sheetClass: MerchantSheetDSA5, types: ['npc'] },
     { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
     { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },

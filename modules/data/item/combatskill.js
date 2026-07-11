@@ -40,7 +40,9 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate, 
 
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
-    this.constructor._calculateCombatSkillValues(item, this.actor.system);
+    if (DSA5_Utility.actorCapabilities(this.actor).usesCharacterItemPrep) {
+      this.constructor._calculateCombatSkillValues(item, this.actor.system);
+    }
     return item;
   }
 

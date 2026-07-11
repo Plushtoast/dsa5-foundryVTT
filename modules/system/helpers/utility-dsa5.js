@@ -52,6 +52,11 @@ export default class DSA5_Utility {
     return game.i18n.lang === 'de' ? 'dsa5.skills' : 'dsa5.skillsen';
   }
 
+  static actorCapabilities(actor) {
+    const type = actor?.type ?? 'character';
+    return DSA5.actorCapabilities[type] ?? DSA5.actorCapabilities.character;
+  }
+
   static async getCompendiumEntries(compendium, itemType) {
     const pack = await game.packs.get(compendium);
     if (!pack) {
