@@ -2191,6 +2191,7 @@
     "darksight": "Darksight",
     "deaf": "Deaf",
     "disarmTraps": "Disarm Traps",
+    "driving": "Driving",
     "drivingArcher": "Driving Archer",
     "earthencraft": "Earthencraft",
     "elementalAlly": "Elemental Ally",
@@ -2303,7 +2304,9 @@
     "woodworking": "Woodworking",
     "wrestle": "Brawling",
     "zoologyDomesticated": "Animal Lore (Domesticated Animals)",
-    "zoologyWild": "Animal Lore (Wild Animals)"
+    "zoologyWild": "Animal Lore (Wild Animals)",
+    "swimming": "Swimming",
+    "flying": "Flying"
   },
   "LocalizedSkills": {
     "Fast-Talk": "Fast-Talk",
@@ -4536,7 +4539,7 @@
     "distanceTooltip": "Distance to the fleeing target (set by the GM at the start; not initiative).",
     "fleeingDistanceHint": "Fleeing — chasers track distance to this target.",
     "action": "Chase action",
-    "actionTooltip": "Roll the chase skill for the current combatant (Body Control / riding / boats…).",
+    "actionTooltip": "Pick a chase skill (Body Control, Riding, Driving, Swimming, Flying, Sailing) and roll movement.",
     "maxRounds": "Max CR",
     "maxRoundsTooltip": "How many combat rounds until escape succeeds without a catch (default 5). GM may extend.",
     "rolledTooltip": "Already rolled the chase action this round.",
@@ -4547,6 +4550,9 @@
     "botchNoMove": "{name} makes no progress this round (botch).",
     "distanceUnset": "Set this chaser starting distance before rolling the chase action.",
     "noChaserDistance": "No chaser has a starting distance set - fleer movement was not applied.",
-    "terrainDialogTooltip": "Temporary terrain for this chase action only. Prefills from the combat tracker; does not change the shared chase terrain."
+    "terrainDialogTooltip": "Temporary terrain for this chase action only. Prefills from the combat tracker; does not change the shared chase terrain.",
+    "pickSkillTitle": "Chase skill",
+    "pickSkill": "Choose how you move this round (locomotion).",
+    "caughtConsequences": "<p><b>{chaser}</b> has caught <b>{fleer}</b> (distance 0).</p><ul><li>The fleer is now in attack range.</li><li>If the chaser can combine movement and attack in 1 CR (e.g. Charge / Ride Down), they may attack in the catch CR.</li><li>The fleer has their back turned: defense <b>−2</b> unless they abort the flight at the start of the CR and face the chaser.</li><li>Otherwise the chaser may make a pass-by attack (Passierschlag).</li></ul>"
   }
 }

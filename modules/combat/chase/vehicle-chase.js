@@ -1,5 +1,4 @@
 import Chase from './chase.js';
-import NavalCombat from '../mkr/naval-combat.js';
 
 export const VEHICLE_CHASE_TERRAIN_IDS = [
   'open',
@@ -81,7 +80,7 @@ export default class VehicleChase extends Chase {
   }
 
   static defaultSkillFor(actor) {
-    return NavalCombat.boatsSkillFor(actor);
+    return this.skillFor(actor, 'boatsAndShips');
   }
 
   static maybeSubstituteChaseSkill(actor, skill) {

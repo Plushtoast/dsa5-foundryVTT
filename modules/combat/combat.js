@@ -498,7 +498,12 @@ export default class DSA5Combat extends Combat {
     if (!game.user.isGM || !this.isChase) return;
     const combatant = this.combatants.get(combatantId);
     if (!combatant) return;
-    await combatant.update({ 'system.chaseDistance': Math.max(0, Number(distance) || 0) });
+    const previous = Chase.getDistance(combatant);
+    const next = Math.max(0, Number(distance) || 0);
+    await combatant.update({ 'system.chaseDistance': next });
+    if (next <= 0 && previous !== null && previous > 0) {
+      await Chase.announceCatch(this, combatant);
+    }
   }
 
   async advanceMkrPhase() {

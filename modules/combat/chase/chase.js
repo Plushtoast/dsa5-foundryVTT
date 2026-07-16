@@ -14,6 +14,16 @@ export const CHASE_TERRAIN_MULTIPLIERS = {
 
 export const DEFAULT_CHASE_MAX_ROUNDS = 5;
 
+/** Fortbewegungsarten — LocalizedIDs keys for chase locomotion skills. */
+export const CHASE_LOCOMOTION_SKILL_KEYS = [
+  'bodyControl',
+  'riding',
+  'driving',
+  'swimming',
+  'flying',
+  'boatsAndShips',
+];
+
 /**
  * Basis Verfolgungsjagd (Fokusregel Stufe I).
  * Vehicle / ship chase extends this via VehicleChase.
@@ -127,15 +137,75 @@ export default class Chase {
     return _loc(this.distanceUnitKey());
   }
 
-  /** Default chase skill item for an actor (Körperbeherrschung). */
-  static defaultSkillFor(actor) {
-    if (!actor) return null;
-    const name = _loc('LocalizedIDs.bodyControl');
-    return actor.items.find((i) => i.type === 'skill' && i.name === name) ?? null;
+  /** LocalizedIDs keys for Fortbewegungsarten skill choices. */
+  static locomotionSkillKeys(actor = null, combat = game.combat) {
+    if (actor?.type === 'vehicle') return ['boatsAndShips'];
+    const keys = [...CHASE_LOCOMOTION_SKILL_KEYS];
+    if (this.isVehicleChase(combat)) {
+      return ['boatsAndShips', ...keys.filter((k) => k !== 'boatsAndShips')];
+    }
+    return keys;
   }
 
   /**
-   * While chase is active, Körperbeherrschung rolls use the chase skill.
+   * Resolve a chase locomotion skill on the actor by LocalizedIDs name.
+   * @param {Actor} actor
+   * @param {string} key LocalizedIDs key
+   */
+  static skillFor(actor, key) {
+    if (!actor || !key) return null;
+    const name = _loc(`LocalizedIDs.${key}`);
+    return actor.items.find((i) => i.type === 'skill' && i.name === name) ?? null;
+  }
+
+  /** Entries for the Verfolgungsaktion skill picker. */
+  static chaseSkillsFor(actor, combat = game.combat) {
+    if (!actor) return [];
+    return this.locomotionSkillKeys(actor, combat).flatMap((key) => {
+      const item = this.skillFor(actor, key);
+      if (!item) return [];
+      return [{
+        key,
+        name: item.name,
+        value: Number(item.system?.talentValue?.value) || 0,
+        item,
+      }];
+    });
+  }
+
+  /** Ask which Fortbewegungsart skill to roll. */
+  static async pickChaseSkill(actor, combat = game.combat) {
+    const skills = this.chaseSkillsFor(actor, combat);
+    if (!skills.length) {
+      ui.notifications.warn('CHASE.noSkill', { localize: true });
+      return null;
+    }
+    if (skills.length === 1) return skills[0].item;
+
+    const key = await foundry.applications.api.DialogV2.wait({
+      window: { title: _loc('CHASE.pickSkillTitle') },
+      content: `<p>${_loc('CHASE.pickSkill')}</p>`,
+      buttons: [
+        ...skills.map((s) => ({
+          action: s.key,
+          label: `${s.name} (${s.value})`,
+        })),
+        { action: 'cancel', label: 'cancel', icon: 'fas fa-times' },
+      ],
+    });
+
+    if (!key || key === 'cancel') return null;
+    return skills.find((s) => s.key === key)?.item ?? null;
+  }
+
+  /** Default chase skill item for an actor (Körperbeherrschung / Boote & Schiffe). */
+  static defaultSkillFor(actor) {
+    const keys = this.locomotionSkillKeys(actor);
+    return this.skillFor(actor, keys[0]);
+  }
+
+  /**
+   * While chase is active, Körperbeherrschung rolls can be substituted by the mode default.
    * Basis: same skill. VehicleChase overrides to Boote & Schiffe.
    */
   static maybeSubstituteChaseSkill(actor, skill) {
@@ -202,11 +272,8 @@ export default class Chase {
     if (!actor || !this.isChaseActive()) return;
 
     const Handler = this.handlerFor();
-    const skill = Handler.defaultSkillFor(actor);
-    if (!skill) {
-      ui.notifications.warn('CHASE.noSkill', { localize: true });
-      return;
-    }
+    const skill = await Handler.pickChaseSkill(actor);
+    if (!skill) return;
 
     const postFunction = {
       functionName: 'game.dsa5.chase.updateDistanceFromRoll',
@@ -319,6 +386,26 @@ export default class Chase {
     return (combat?.combatants ?? []).some((c) => this.isCaught(c));
   }
 
+  /**
+   * Chat reminder for catch consequences (Sturmangriff / Passierschlag / PA −2).
+   * @param {Combat} combat
+   * @param {Combatant} chaser
+   */
+  static async announceCatch(combat, chaser) {
+    if (!combat || !chaser) return;
+
+    const fleers = [...combat.combatants]
+      .filter((c) => this.getRole(c) === 'fleeing')
+      .map((c) => c.name)
+      .filter(Boolean);
+    const fleer = fleers.length ? fleers.join(', ') : _loc('CHASE.role.fleeing');
+
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(_loc('CHASE.caughtConsequences', {
+      chaser: chaser.name,
+      fleer,
+    })));
+  }
+
   static chaseRoundsElapsed(combat = game.combat) {
     if (!combat) return 0;
     const start = combat.system.chaseStartRound ?? combat.round ?? 1;
@@ -419,6 +506,7 @@ export default class Chase {
         ? Number(combatant.system.chaseDistanceBefore)
         : Math.max(0, (current ?? 0) + previous);
       const next = Math.max(0, before - amount);
+      const newlyCaught = next <= 0 && current !== null && current > 0;
       updates.push({
         _id: combatant.id,
         'system.chaseDistance': next,
@@ -436,6 +524,10 @@ export default class Chase {
           unit,
         }));
       }
+
+      if (updates.length) await combat.applyChaseDistanceUpdates(updates);
+      if (newlyCaught) await this.announceCatch(combat, combatant);
+      return;
     }
 
     if (updates.length) await combat.applyChaseDistanceUpdates(updates);
@@ -454,11 +546,14 @@ export default class Chase {
     if (!combat) return;
 
     const updates = [];
+    const newlyCaught = [];
     for (const { combatantId, delta } of chaserMoves) {
       const combatant = combat.combatants.get(combatantId);
       if (!combatant || this.getRole(combatant) !== 'chasing') continue;
-      const next = Math.max(0, (this.getDistance(combatant) ?? 0) + fleerDelta - (Number(delta) || 0));
+      const current = this.getDistance(combatant) ?? 0;
+      const next = Math.max(0, current + fleerDelta - (Number(delta) || 0));
       updates.push({ _id: combatantId, 'system.chaseDistance': next });
+      if (next <= 0 && current > 0) newlyCaught.push(combatant);
     }
 
     if (fleerId && !chaserMoves.length) {
@@ -470,6 +565,7 @@ export default class Chase {
     }
 
     if (updates.length) await combat.applyChaseDistanceUpdates(updates);
+    for (const chaser of newlyCaught) await this.announceCatch(combat, chaser);
   }
 
   static #patchSetupSkill() {
