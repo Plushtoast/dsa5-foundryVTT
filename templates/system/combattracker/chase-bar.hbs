@@ -1,0 +1,38 @@
+{{#if isChase}}
+
+<div class="chase-bar" data-tooltip="CHASE.barTooltip">
+  <div class="chase-bar-header">
+    <strong class="chase-bar-label">{{localize (ifThen isVehicleChase "COMBAT.MODE.vehicleChase" "COMBAT.MODE.chase")}}</strong>
+    <span class="chase-round-badge" data-tooltip="CHASE.escapeTooltip">
+      KR {{chase.elapsed}}/
+      {{#if user.isGM}}
+      <input type="number" class="chase-max-rounds-input" name="chaseMaxRounds" min="1" step="1"
+             value="{{chase.maxRounds}}"
+             data-tooltip="CHASE.maxRoundsTooltip" aria-label="{{localize "CHASE.maxRounds"}}">
+      {{else}}
+      {{chase.maxRounds}}
+      {{/if}}
+    </span>
+  </div>
+
+  {{#if chase.caught}}
+  <div class="chase-outcome-banner caught">{{localize "CHASE.caught"}}</div>
+  {{else if chase.escaped}}
+  <div class="chase-outcome-banner escaped">{{localize "CHASE.escaped"}}</div>
+  {{/if}}
+
+  {{#if user.isGM}}
+  <label class="chase-terrain-picker" data-tooltip="CHASE.terrainDropdownTooltip">
+    <span class="chase-terrain-label">{{localize "CHASE.terrainLabel"}}</span>
+    <select data-action="setChaseTerrain">
+      {{#each chaseTerrainOptions}}
+      <option value="{{id}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
+      {{/each}}
+    </select>
+  </label>
+  {{else}}
+  <span class="chase-terrain-readonly" data-tooltip="CHASE.terrainDropdownTooltip">{{chaseTerrainLabel}}</span>
+  {{/if}}
+</div>
+
+{{/if}}

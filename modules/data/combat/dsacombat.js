@@ -4,20 +4,11 @@ const { BooleanField, NumberField, StringField, ArrayField, TypedObjectField, Ob
 
 const MKR_PHASES = ['heroActions', 'movement', 'attacks', 'damageReport'];
 const DEFAULT_KR_PER_MKR = 60;
+const DEFAULT_CHASE_MAX_ROUNDS = 5;
 
 const MKR_PHASE_CHOICES = Object.fromEntries(
   MKR_PHASES.map((phase) => [phase, `VEHICLE.mkr.phase.${phase}`]),
 );
-
-const WATER_TERRAIN_CHOICES = {
-  open: 'VEHICLE.mkr.chase.terrain.open',
-  passable: 'VEHICLE.mkr.chase.terrain.passable',
-  normal: 'VEHICLE.mkr.chase.terrain.normal',
-  difficultSeas: 'VEHICLE.mkr.chase.terrain.difficultSeas',
-  difficultShoals: 'VEHICLE.mkr.chase.terrain.difficultShoals',
-  severeStorm: 'VEHICLE.mkr.chase.terrain.severeStorm',
-  severeShoals: 'VEHICLE.mkr.chase.terrain.severeShoals',
-};
 
 export class DSACombatDataModel extends DSADataModel {
   static defineSchema() {
@@ -30,6 +21,8 @@ export class DSACombatDataModel extends DSADataModel {
             standard: 'COMBAT.MODE.standard',
             brawling: 'COMBAT.MODE.brawling',
             navalMkr: 'COMBAT.MODE.navalMkr',
+            chase: 'COMBAT.MODE.chase',
+            vehicleChase: 'COMBAT.MODE.vehicleChase',
           },
         }),
         mkrRound: new NumberField({ initial: 0, min: 0 }),
@@ -39,7 +32,9 @@ export class DSACombatDataModel extends DSADataModel {
         maneuverModifiers: new TypedObjectField(new ObjectField(), { initial: {} }),
         commandedGuns: new ArrayField(new ObjectField(), { initial: [] }),
         pendingHits: new ArrayField(new ObjectField(), { initial: [] }),
-        waterTerrain: new StringField({ initial: 'normal', choices: WATER_TERRAIN_CHOICES }),
+        chaseTerrain: new StringField({ initial: 'normal' }),
+        chaseStartRound: new NumberField({ initial: 0, min: 0 }),
+        chaseMaxRounds: new NumberField({ initial: DEFAULT_CHASE_MAX_ROUNDS, min: 1 }),
     });
   }
 }

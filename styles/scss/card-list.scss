@@ -62,4 +62,17 @@
       }
     }
   }
+
+  &.compact {
+    &, ul {
+      > li {
+        margin-bottom: 4px;
+
+        label {
+          padding: 4px 8px;
+          gap: 4px;
+        }
+      }
+    }
+  }
 }

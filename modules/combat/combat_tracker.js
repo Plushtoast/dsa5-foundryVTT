@@ -4,8 +4,8 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/helpers/token_disposition.js';
 import NavalCombat from './mkr/naval-combat.js';
-import NavalCombatDamage from './mkr/naval-combat-damage.js';
-import NavalChase from './mkr/naval-chase.js';
+import Chase from './chase/chase.js';
+import ChaseCombatTracker from './chase/chase-combat-tracker.js';
 
 const { getProperty } = foundry.utils;
 
@@ -13,7 +13,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/system/combattracker/header.hbs',
-      templates: ['systems/dsa5/templates/system/combattracker/mkr-bar.hbs'],
+      templates: [
+        'systems/dsa5/templates/system/combattracker/mkr-bar.hbs',
+        'systems/dsa5/templates/system/combattracker/chase-bar.hbs',
+      ],
     },
     tracker: {
       template: 'systems/dsa5/templates/system/combattracker/combattracker.hbs',
@@ -28,8 +31,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       convertToBrawl: this._convertToBrawl,
       nextMkr: this._nextMkr,
       advanceMkrPhase: this._advanceMkrPhase,
-      navalBoarding: this._navalBoarding,
-      setWaterTerrain: this._setWaterTerrain,
+      setChaseTerrain: this._setChaseTerrain,
+      setChaseMaxRounds: this._setChaseMaxRounds,
+      setChaseRole: this._setChaseRole,
+      setChaseDistance: this._setChaseDistance,
       aggroButton: this._onAggroButtonClicked,
       combatRules: this._onCombatRulesButtonClicked,
     },
@@ -43,12 +48,34 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     game.combat?.advanceMkrPhase();
   }
 
-  static _navalBoarding() {
-    NavalCombatDamage.initiateBoarding();
+  static _setChaseTerrain(_ev, target) {
+    game.combat?.setChaseTerrain(target.value);
   }
 
-  static _setWaterTerrain(_ev, target) {
-    game.combat?.setWaterTerrain(target.value);
+  static _setChaseMaxRounds(_ev, target) {
+    game.combat?.setChaseMaxRounds(target.value);
+  }
+
+  static _setChaseRole(_ev, target) {
+    const combatantId = target.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    game.combat?.setCombatantChaseRole(combatantId, target.value);
+  }
+
+  static async _setChaseDistance(_ev, target) {
+    const combatantId = target.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    const current = Number(target.dataset.distance) || 0;
+    const value = await foundry.applications.api.DialogV2.prompt({
+      window: { title: 'CHASE.setDistance' },
+      content: `<p><label>${_loc('CHASE.distance')}</label></p><input type="number" name="distance" min="0" step="1" value="${current}">`,
+      ok: {
+        label: 'Confirm',
+        callback: (_event, button) => Number(button.form.elements.distance.value),
+      },
+    });
+    if (value === null || value === undefined || Number.isNaN(value)) return;
+    game.combat?.setCombatantChaseDistance(combatantId, value);
   }
 
   static _onAggroButtonClicked() {
@@ -72,7 +99,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (!game.combat) return;
 
     const combatant = game.combat.combatant;
-    if(!combatant) return;
+    if (!combatant) return;
 
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
@@ -157,7 +184,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       turn.vehicleSinking = combatant.actor.system.isSinking;
     }
 
-    return turn;
+    return ChaseCombatTracker.enrichTurn(turn, combatant, combat);
   }
 
   async _prepareCombatContext(context, options) {
@@ -170,24 +197,35 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       standard: 'fa-shield',
       brawling: 'fa-hand-fist fa-rotate-90',
       navalMkr: 'fa-ship',
+      chase: 'fa-person-running',
+      vehicleChase: 'fa-sailboat',
     }[context.combatMode] ?? 'fa-shield';
     context.combatModeTooltip = 'COMBAT.MODE.tooltip';
+    context.combatRulesTooltip = {
+      standard: 'COMBATTRACKER.rulesHint.standard',
+      brawling: 'COMBATTRACKER.rulesHint.brawling',
+      navalMkr: 'COMBATTRACKER.rulesHint.navalMkr',
+      chase: 'COMBATTRACKER.rulesHint.chase',
+      vehicleChase: 'COMBATTRACKER.rulesHint.vehicleChase',
+    }[context.combatMode] ?? 'COMBATTRACKER.rulesHint.standard';
 
     if (context.isNavalMkr) {
       this.#prepareNavalMkrContext(context, combat);
+    }
+    ChaseCombatTracker.prepareCombatContext(context, combat);
+  }
+
+  async _prepareTrackerContext(context, options) {
+    await super._prepareTrackerContext(context, options);
+    if (game.combat && Chase.isChaseActive(game.combat)) {
+      // Always inject section headers (even empty) as drop targets for roles.
+      context.turns = ChaseCombatTracker.reorderTurns(context.turns ?? [], game.combat);
     }
   }
 
   #prepareNavalMkrContext(context, combat) {
     context.mkr = NavalCombat.getMkrProgress(combat);
     context.mkrPhase = combat?.system?.mkrPhase;
-    context.waterTerrain = combat?.system?.waterTerrain ?? 'normal';
-    context.waterTerrainLabel = NavalChase.getTerrainLabel(context.waterTerrain);
-    context.waterTerrainOptions = NavalChase.WATER_TERRAIN_IDS.map((id) => ({
-      id,
-      label: _loc(`VEHICLE.mkr.chase.terrain.${id}`),
-    }));
-    context.sceneNavalRegions = NavalChase.listSceneNavalRegions();
   }
 
   _canSortInitiative(event) {
@@ -206,7 +244,27 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   _dragOverInitiativeSort(event) {
     event.preventDefault();
+    const isChase = Chase.isChaseActive(game.combat);
+    const section = isChase ? event.target.closest('.chase-section-header[data-chase-role]') : null;
     const fieldset = event.target.closest('.combatant');
+
+    if (section) {
+      if (this.lastFieldset) {
+        this.lastFieldset.classList.remove('dragSortMarker');
+        this.lastFieldset = null;
+      }
+      if (this.lastSection !== section) {
+        if (this.lastSection) this.lastSection.classList.remove('dragSortMarker');
+        section.classList.add('dragSortMarker');
+        this.lastSection = section;
+      }
+      return;
+    }
+
+    if (this.lastSection) {
+      this.lastSection.classList.remove('dragSortMarker');
+      this.lastSection = null;
+    }
 
     if (fieldset) {
       if (this.lastFieldset !== fieldset) {
@@ -224,24 +282,50 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   async _dropInitiativeSort(event) {
     event.preventDefault();
+    if (this.lastSection) {
+      this.lastSection.classList.remove('dragSortMarker');
+      this.lastSection = null;
+    }
     if (this.lastFieldset) {
       this.lastFieldset.classList.remove('dragSortMarker');
       this.lastFieldset = null;
     }
-
-    const hoverTarget = event.target.closest('.combatant');
-    if (!hoverTarget) return;
 
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
 
     if (data.type !== 'CombatantSort') return;
 
     const combatantId = data.data.combatantId;
+    const combatant = game.combat.combatants.get(combatantId);
+    if (!combatant) return;
+
+    if (Chase.isChaseActive(game.combat)) {
+      const sectionTarget = event.target.closest('.chase-section-header[data-chase-role]');
+      let targetRole;
+
+      if (sectionTarget) {
+        targetRole = sectionTarget.dataset.chaseRole || 'chasing';
+      } else {
+        const roleTarget = event.target.closest('.combatant');
+        if (roleTarget) {
+          const targetCombatant = game.combat.combatants.get(roleTarget.dataset.combatantId);
+          targetRole = Chase.getRole(targetCombatant);
+        }
+      }
+
+      if (targetRole && combatant.system?.chaseRole !== targetRole) {
+        await game.combat?.setCombatantChaseRole(combatantId, targetRole);
+        return;
+      }
+    }
+
+    const hoverTarget = event.target.closest('.combatant');
+    if (!hoverTarget) return;
+
     const targetId = hoverTarget.dataset.combatantId;
 
     if (targetId === combatantId) return;
 
-    const combatant = game.combat.combatants.get(combatantId);
     const targetCombatant = game.combat.combatants.get(targetId);
 
     const roundInitiative = targetCombatant.properInitiative;
@@ -288,6 +372,71 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         drop: this._dropInitiativeSort.bind(this)
       }
     }).bind(this.element);
+
+    for (const input of this.element.querySelectorAll('.chase-distance-input')) {
+      input.addEventListener('change', (ev) => this.#onChaseDistanceChange(ev));
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
+
+    for (const input of this.element.querySelectorAll('.chase-max-rounds-input')) {
+      input.addEventListener('change', (ev) => {
+        game.combat?.setChaseMaxRounds(ev.currentTarget.value);
+      });
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
+  }
+
+  async #onChaseDistanceChange(event) {
+    if (!game.user.isGM) return;
+    const input = event.currentTarget;
+    const combatantId = input.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    await game.combat?.setCombatantChaseDistance(combatantId, input.value);
+  }
+
+  _getEntryContextOptions() {
+    const options = super._getEntryContextOptions();
+    if (!Chase.isChaseActive(game.combat)) return options;
+
+    options.unshift(
+      {
+        label: 'CHASE.role.fleeing',
+        icon: '<i class="fas fa-person-running"></i>',
+        visible: () => game.user.isGM,
+        callback: (li) => game.combat?.setCombatantChaseRole(li.dataset.combatantId, 'fleeing'),
+      },
+      {
+        label: 'CHASE.role.chasing',
+        icon: '<i class="fas fa-bullseye"></i>',
+        visible: () => game.user.isGM,
+        callback: (li) => game.combat?.setCombatantChaseRole(li.dataset.combatantId, 'chasing'),
+      },
+      {
+        label: 'CHASE.setDistance',
+        icon: '<i class="fas fa-ruler"></i>',
+        visible: (li) => {
+          if (!game.user.isGM) return false;
+          const c = game.combat?.combatants.get(li.dataset.combatantId);
+          return Chase.getRole(c) === 'chasing';
+        },
+        callback: async (li) => {
+          const combatant = game.combat?.combatants.get(li.dataset.combatantId);
+          if (!combatant) return;
+          const current = Number(combatant.system.chaseDistance) || 0;
+          const value = await foundry.applications.api.DialogV2.prompt({
+            window: { title: 'CHASE.setDistance' },
+            content: `<p><label>${_loc('CHASE.distance')}</label></p><input type="number" name="distance" min="0" step="1" value="${current}">`,
+            ok: {
+              label: 'Confirm',
+              callback: (_event, button) => Number(button.form.elements.distance.value),
+            },
+          });
+          if (value === null || value === undefined || Number.isNaN(value)) return;
+          await game.combat.setCombatantChaseDistance(combatant.id, value);
+        },
+      },
+    );
+    return options;
   }
 
   _getCombatModeContextOptions() {
@@ -305,6 +454,18 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         onClick: () => game.combat?.setCombatMode('brawling'),
       },
       {
+        label: _loc('COMBAT.MODE.chase'),
+        icon: '<i class="fas fa-person-running"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('chase'),
+      },
+      {
+        label: _loc('COMBAT.MODE.vehicleChase'),
+        icon: '<i class="fas fa-sailboat"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('vehicleChase'),
+      },
+      {
         label: _loc('COMBAT.MODE.navalMkr'),
         icon: '<i class="fas fa-ship"></i>',
         visible: () => !!game.combat,
@@ -320,7 +481,23 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot' && actor.type !== 'vehicle') return false;
+  if (!actor) return;
+
+  const combat = data.combat ?? game.combat;
+  if (Chase.isChaseActive(combat) && data.system?.chaseRole !== 'fleeing') {
+    data.updateSource?.({ 'system.chaseRole': 'chasing' })
+      ?? foundry.utils.setProperty(data, 'system.chaseRole', 'chasing');
+  }
+
+  if (actor.type === 'vehicle') {
+    const allowed = NavalCombat.isNavalMkrActive(combat) || Chase.isVehicleChase(combat);
+    if (!allowed) {
+      ui.notifications.warn('VEHICLE.combat.mkrOnly', { localize: true });
+      return false;
+    }
+  } else if (actor.system.merchant?.merchantType === 'loot') {
+    return false;
+  }
 
   if (data.combat.isBrawling) {
     const conf = data.brawlingChange();
@@ -337,7 +514,8 @@ Hooks.on('deleteCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot' && actor.type !== 'vehicle') return false;
+  if (!actor) return;
+  if (actor.system.merchant?.merchantType === 'loot' && actor.type !== 'vehicle') return false;
 
   if (data.combat.isBrawling) {
     data.undoBrawlingChange().then(async (conf) => {

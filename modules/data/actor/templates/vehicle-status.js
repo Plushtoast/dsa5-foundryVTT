@@ -15,8 +15,8 @@ export default class VehicleStatusTemplate extends DSADataModel {
           max: new NumberField({ initial: 0 }),
         }),
         crew: new SchemaField({
-          initial: new NumberField({ initial: 50, label: 'VEHICLE.crewMax' }),
-          value: new DSANumberField({ initial: 50 }),
+          initial: new NumberField({ initial: 50, label: 'VEHICLE.crewCapacity' }),
+          value: new DSANumberField({ initial: 50, label: 'VEHICLE.crewCurrent' }),
           max: new NumberField({ initial: 0 }),
         }),
         hullArmor: new SchemaField({

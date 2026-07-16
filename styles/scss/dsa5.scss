@@ -1468,12 +1468,17 @@ a.img-entity-link {
     gap: 8px;
   }
 
+  .mkr-loop-label {
+    color: var(--color-text-primary);
+    font-weight: 700;
+  }
+
   .mkr-phase-badge {
     font-size: var(--font-size-12);
     padding: 1px 6px;
     border-radius: 4px;
     border: 1px solid var(--color-border-light-secondary);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
   }
 
   button.mkr-phase-badge.mkr-phase-control {
@@ -1481,10 +1486,13 @@ a.img-entity-link {
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    max-width: 9rem;
+    max-width: 14rem;
+    justify-content: center;
     background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
     line-height: 1.2;
     cursor: pointer;
+    font-variant-numeric: lining-nums;
+    font-weight: 600;
 
     .mkr-phase-control-label {
       overflow: hidden;
@@ -1519,26 +1527,174 @@ a.img-entity-link {
 
   .mkr-kr-label {
     font-size: var(--font-size-12);
-    color: var(--color-text-secondary);
+    color: var(--color-text-primary);
+  }
+}
+
+.chase-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--color-border-light-tertiary);
+
+  .chase-bar-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
-  .mkr-terrain-picker,
-  .mkr-terrain-readonly,
-  .mkr-terrain-regions {
+  .chase-bar-label {
+    color: var(--color-text-primary);
+    font-weight: 700;
+  }
+
+  .chase-round-badge {
     font-size: var(--font-size-12);
-    color: var(--color-text-secondary);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border-light-secondary);
+    color: var(--color-text-primary);
+  }
+
+  .chase-outcome-banner {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    font-size: var(--font-size-12);
+    font-weight: 700;
+    line-height: 1.3;
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: #fff;
+
+    &.caught {
+      background: rgba(180, 80, 40, 0.92);
+    }
+
+    &.escaped {
+      background: rgba(40, 120, 70, 0.92);
+    }
+  }
+
+  .chase-terrain-picker,
+  .chase-terrain-readonly {
+    font-size: var(--font-size-12);
+    color: var(--color-text-primary);
     display: flex;
     align-items: center;
     gap: 6px;
   }
 
-  .mkr-terrain-regions i {
-    opacity: 0.85;
-  }
-
-  .mkr-terrain-picker select {
+  .chase-terrain-picker select {
     flex: 1;
     min-width: 0;
+  }
+}
+
+.chase-section-header {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  font-size: var(--font-size-12);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding: 4px 8px 2px;
+  opacity: 0.9;
+  border-radius: 4px;
+
+  &.empty {
+    min-height: 2.25rem;
+    margin: 2px 0 6px;
+    border: 1px dashed var(--color-border-light-tertiary);
+    opacity: 1;
+  }
+
+  &.dragSortMarker {
+    outline: 1px dashed var(--color-border-highlight, var(--color-border-light-primary));
+    background: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.chase-section-drop-hint {
+  font-weight: 400;
+  font-size: var(--font-size-11);
+  opacity: 0.75;
+}
+
+.chase-max-rounds-input {
+  width: 2.5rem;
+  text-align: center;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--color-border-light-tertiary);
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+.chase-distance-input {
+  width: 3.25rem;
+  text-align: right;
+}
+
+.chase-distance-unit {
+  margin-left: 2px;
+  font-size: var(--font-size-11);
+  color: var(--color-text-secondary);
+}
+
+.chase-distance-fleeing {
+  color: var(--color-text-secondary);
+  opacity: 0.7;
+}
+
+.chase-rolled-badge,
+.chase-rolled-mark {
+  color: var(--color-text-success, #2e7d32);
+  margin-left: 4px;
+  font-size: var(--font-size-11);
+}
+
+.combatant.chase-rolled {
+  opacity: 0.72;
+}
+
+.aggroButton.chaseAction {
+  border-color: rgba(73, 111, 215, 0.8);
+}
+
+.chase-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 4px;
+  font-size: var(--font-size-11);
+  padding: 0 5px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-light-secondary);
+  color: var(--color-text-secondary);
+  vertical-align: middle;
+
+  .chase-rolled-icon {
+    color: var(--color-text-success, #2e7d32);
+    font-size: 0.95em;
+  }
+
+  &.fleeing {
+    border-color: rgba(73, 111, 215, 0.6);
+  }
+
+  &.chasing {
+    border-color: rgba(180, 80, 40, 0.6);
+  }
+
+  &.rolled {
+    border-color: rgba(46, 125, 50, 0.55);
   }
 }
 
@@ -1546,9 +1702,9 @@ a.img-entity-link {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  padding-right: 4px;
-  margin-right: 2px;
-  border-right: 1px solid var(--color-border-light-tertiary);
+  padding-left: 4px;
+  margin-left: 2px;
+  border-left: 1px solid var(--color-border-light-tertiary);
 }
 
 .naval-chase-speed-value small {
@@ -2644,26 +2800,44 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     min-width: 0;
   }
 
-  .vehicle-stats-panel {
-    margin-top: 4px;
+  .vehicle-stats-panels {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    min-width: 0;
+    align-items: start;
+  }
 
+  .vehicle-stats-panel {
     .vehicle-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px 16px;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: stretch;
     }
 
     .vehicle-stat-field {
       min-width: 0;
-    }
 
-    .vehicle-stats-fullrow {
-      grid-column: 1 / -1;
-    }
+      .form-group {
+        margin-bottom: 0;
+      }
 
-    .form-group {
-      margin-bottom: 0;
+      .form-fields,
+      input:not([type='checkbox']),
+      select {
+        flex: 0 0 50%;
+        max-width: 50%;
+        width: 50%;
+        min-width: 5rem;
+      }
+
+      .flexrow,
+      .naval-chase-speed-value {
+        flex: 1 1 auto;
+        max-width: none;
+        width: auto;
+      }
     }
   }
 
@@ -4224,7 +4398,8 @@ select.noAppearance {
   }
 
   .actions,
-  .ongoing {
+  .ongoing,
+  .chase-distance-overlay {
     font-size: 10px;
     background: #6f3900;
     width: 14px;
@@ -4244,6 +4419,21 @@ select.noAppearance {
     left: 0;
     right: auto;
     background: #6d0400;
+  }
+
+  .chase-distance-overlay {
+    left: 0;
+    right: auto;
+    min-width: 14px;
+    width: auto;
+    padding: 0 3px;
+    background: #1a4a8a;
+    border-radius: 8px;
+
+    &.unset {
+      background: #444;
+      opacity: 0.85;
+    }
   }
 
   i {

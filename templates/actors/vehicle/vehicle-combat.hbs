@@ -22,6 +22,9 @@
       <button type="button" data-action="navalHeroAction" data-hero-action="heal" class="combat-action item" data-tooltip="VEHICLE.mkr.healTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
         <i class="fas fa-kit-medical"></i> {{localize "VEHICLE.mkr.action.heal"}}
       </button>
+      <button type="button" data-action="navalBoarding" class="combat-action item" data-tooltip="VEHICLE.mkr.boardingActionTooltip" {{#unless prepare.navalBoardingEnabled}}disabled{{/unless}}>
+        <i class="fas fa-people-arrows"></i> {{localize "VEHICLE.mkr.boardingAction"}}
+      </button>
       {{#unless prepare.navalHeroActionsEnabled}}
       <span class="hint" data-tooltip="VEHICLE.mkr.heroActionsOnlyTooltip"><i class="fas fa-circle-info"></i></span>
       {{/unless}}

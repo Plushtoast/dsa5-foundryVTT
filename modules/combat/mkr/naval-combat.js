@@ -3,6 +3,8 @@ export const RE_PER_STEP = 16;
 export const DEFAULT_KR_PER_MKR = 60;
 
 export default class NavalCombat {
+  static DEFAULT_KR_PER_MKR = DEFAULT_KR_PER_MKR;
+
   static isNavalMkrActive(combat = game.combat) {
     return combat?.system?.combatMode === 'navalMkr';
   }
@@ -13,6 +15,10 @@ export default class NavalCombat {
     return combat.isBrawling ? 'brawling' : 'standard';
   }
 
+  static normalizePhase(phase) {
+    return MKR_PHASES.includes(phase) ? phase : MKR_PHASES[0];
+  }
+
   static getMkrProgress(combat = game.combat) {
     if (!this.isNavalMkrActive(combat)) {
       return null;
@@ -21,7 +27,8 @@ export default class NavalCombat {
     const krPerMkr = combat.system.krPerMkr || DEFAULT_KR_PER_MKR;
     const mkrKrStart = combat.system.mkrKrStart ?? 0;
     const krElapsed = Math.max(0, (combat.round || 0) - mkrKrStart);
-    const phase = combat.system.mkrPhase || MKR_PHASES[0];
+    const phase = this.normalizePhase(combat.system.mkrPhase || MKR_PHASES[0]);
+    const phaseIndex = Math.max(0, MKR_PHASES.indexOf(phase));
 
     return {
       mkrRound: combat.system.mkrRound || 1,
@@ -30,6 +37,8 @@ export default class NavalCombat {
       progress: Math.clamp(krElapsed / krPerMkr, 0, 1),
       progressPercent: Math.round(Math.clamp(krElapsed / krPerMkr, 0, 1) * 100),
       phase,
+      phaseIndex,
+      phaseRoman: ['I', 'II', 'III', 'IV'][phaseIndex] ?? 'I',
       phaseLabel: _loc(`VEHICLE.mkr.phase.${phase}`),
       phaseTooltip: _loc(`VEHICLE.mkr.phase.${phase}Tooltip`),
     };
@@ -45,7 +54,8 @@ export default class NavalCombat {
   }
 
   static nextPhase(current) {
-    const idx = MKR_PHASES.indexOf(current);
+    const phase = this.normalizePhase(current);
+    const idx = MKR_PHASES.indexOf(phase);
     return MKR_PHASES[(idx + 1) % MKR_PHASES.length];
   }
 

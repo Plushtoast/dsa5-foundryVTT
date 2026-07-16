@@ -5,12 +5,12 @@
     <strong class="mkr-loop-label">MKR {{mkr.mkrRound}}</strong>
     {{#if (and user.isGM combat.round)}}
     <button type="button" class="mkr-phase-badge mkr-phase-control" data-action="advanceMkrPhase"
-            data-tooltip="VEHICLE.mkr.cyclePhaseTooltip" aria-label="{{ localize 'VEHICLE.mkr.cyclePhase' }}">
-      <span class="mkr-phase-control-label">{{mkr.phaseLabel}}</span>
+            data-tooltip-text="{{mkr.phaseTooltip}}" aria-label="{{mkr.phaseLabel}} — {{ localize 'VEHICLE.mkr.cyclePhase' }}">
+      <span class="mkr-phase-control-label">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
       <i class="fa-solid fa-chevron-right" inert></i>
     </button>
     {{else}}
-    <span class="mkr-phase-badge" data-tooltip="{{mkr.phaseTooltip}}">{{mkr.phaseLabel}}</span>
+    <span class="mkr-phase-badge" data-tooltip-text="{{mkr.phaseTooltip}}">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
     {{/if}}
   </div>
 
@@ -19,29 +19,6 @@
   </div>
 
   <span class="mkr-kr-label">KR {{mkr.krElapsed}}/{{mkr.krPerMkr}}</span>
-
-  {{#if sceneNavalRegions.length}}
-  <span class="mkr-terrain-regions" data-tooltip="VEHICLE.mkr.chase.sceneRegionsTooltip">
-    <i class="fas fa-water"></i> {{sceneNavalRegions.length}} {{localize "VEHICLE.mkr.chase.sceneRegionsShort"}}
-  </span>
-  {{/if}}
-
-  {{#if user.isGM}}
-
-  <label class="mkr-terrain-picker" data-tooltip="VEHICLE.mkr.chase.fallbackTerrainTooltip">
-    <span class="mkr-terrain-label">{{localize "VEHICLE.mkr.chase.fallbackTerrainLabel"}}</span>
-    <select data-action="setWaterTerrain">
-      {{#each waterTerrainOptions}}
-      <option value="{{id}}" {{#if (eq ../waterTerrain id)}}selected{{/if}}>{{localize label}}</option>
-      {{/each}}
-    </select>
-  </label>
-
-  {{else}}
-  <span class="mkr-terrain-readonly" data-tooltip="VEHICLE.mkr.chase.fallbackTerrainTooltip">{{waterTerrainLabel}}</span>
-  {{/if}}
-
 </div>
 
 {{/if}}
-

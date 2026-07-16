@@ -10,6 +10,55 @@
     }
   }
 
+  /* Chase / MKR bars on parchment sidebar — dark text for readable contrast. */
+  .chase-bar,
+  .mkr-loop-bar {
+    color: #191813;
+
+    .chase-bar-label,
+    .mkr-loop-label,
+    .chase-round-badge,
+    .chase-terrain-picker,
+    .chase-terrain-readonly,
+    .chase-terrain-label,
+    .mkr-phase-badge,
+    .mkr-phase-control-label,
+    .mkr-kr-label {
+      color: #191813;
+    }
+
+    .chase-round-badge,
+    .mkr-phase-badge {
+      border-color: rgba(25, 24, 19, 0.45);
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .chase-outcome-banner.caught {
+      color: #fff;
+      background: rgba(180, 80, 40, 0.92);
+    }
+
+    .chase-outcome-banner.escaped {
+      color: #fff;
+      background: rgba(40, 120, 70, 0.92);
+    }
+
+    .chase-max-rounds-input {
+      color: #191813;
+      border-color: rgba(25, 24, 19, 0.45);
+    }
+
+    button.mkr-phase-badge.mkr-phase-control {
+      color: #191813;
+      background: rgba(255, 255, 255, 0.45);
+
+      &:hover {
+        color: #000;
+        border-color: rgba(25, 24, 19, 0.7);
+      }
+    }
+  }
+
   /*.sidebar-tab .directory-list .directory-item {
         &.collapsed {
             color: white;

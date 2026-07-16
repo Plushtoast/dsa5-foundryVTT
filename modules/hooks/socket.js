@@ -139,6 +139,12 @@ export function connectSocket() {
       case 'updateActionCount':
         if (game.combat) game.combat.updateActionCount(data.payload.speaker, data.payload.cost);
         break;
+      case 'markChaseRolled':
+        if (game.combat) game.combat.markChaseRolled(data.payload.combatantId);
+        break;
+      case 'applyChaseDistanceUpdates':
+        if (game.combat) game.combat.applyChaseDistanceUpdates(data.payload.updates);
+        break;
       case 'toggleFreeAction':
         if (game.combat) game.combat.toggleFreeAction(data.payload.speaker);
         break;

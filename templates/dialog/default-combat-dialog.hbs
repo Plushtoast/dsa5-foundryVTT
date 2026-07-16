@@ -1,7 +1,9 @@
 <div class='form-group'>
   <label>{{localize 'Modifier'}}</label>
   <div class='form-fields'>
-    {{#if showAttack}}
+    {{#if rangeOptions}}
+    <span class="center" data-tooltip='CHAR.ATTACK'>{{localize 'CHARAbbrev.FK'}}</span>
+    {{else if showAttack}}
     <span class="center" data-tooltip='CHAR.ATTACK'>{{localize 'CHARAbbrev.attack'}}</span>
     {{else if showDefense}}
     <span class="center" data-tooltip='CHAR.PARRY'>{{localize 'CHARAbbrev.parry'}}/{{localize 'CHARAbbrev.AW'}}/{{localize 'CHARAbbrev.VW'}}</span>

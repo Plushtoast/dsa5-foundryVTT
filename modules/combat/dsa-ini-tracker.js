@@ -1,6 +1,9 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DSA5CombatTracker } from './combat_tracker.js';
+import Chase from './chase/chase.js';
+import ChaseCombatTracker from './chase/chase-combat-tracker.js';
+import NavalCombat from './mkr/naval-combat.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
@@ -19,7 +22,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       frame: false,
     },
     actions: {
-      convertToBrawl: this._onConvertToBrawl,
+      nextMkr: this._onNextMkr,
       aggroButton: function () {
         DSA5CombatTracker.runActAttackDialog();
       },
@@ -43,8 +46,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     },
   };
 
-  static _onConvertToBrawl() {
-    game.combat?.convertToBrawl();
+  static _onNextMkr() {
+    if (!game.user.isGM) return;
+    game.combat?.nextMkr();
   }
 
   setPosition(position) {
@@ -89,6 +93,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
 
     const combatStarted = data.combat.round;
+    if (data.turns && data.combat) {
+      data.turns = ChaseCombatTracker.prepareIniTurns(data.turns, data.combat);
+    }
     const turnsToUse = data.turns;
 
     const waitingTurns = [];
@@ -96,7 +103,12 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    const unRolled = data.turns.some((x) => x.isOwner && !x.initiative && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
+    const isChase = Chase.isChaseActive(data.combat);
+    const unRolled = !isChase && data.turns.some((x) => {
+      if (x.isChaseSection || !x.isOwner || x.initiative) return false;
+      if (!game.user.isGM) return true;
+      return data.combat.combatants.get(x.id)?.isNPC;
+    });
     if (turnsToUse.length) {
       const filteredTurns = [];
 
@@ -109,6 +121,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
       while (!(toAdd == 0 || loops == actorCount)) {
         const turn = duplicate(turnsToUse[index]);
         const combatant = data.combat.combatants.get(turn.id);
+        if (!combatant) {
+          index++;
+          if (index >= turnsToUse.length) {
+            index = 0;
+            loops++;
+          }
+          continue;
+        }
         if (started && index == startIndex) turn.css = turn.css.replace('active', '');
 
         if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
@@ -121,8 +141,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
         if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
           turn.round = data.combat.round + loops;
           if (turn.isOwner && combatant.actor) {
-            turn.maxLP = combatant.actor.system.status.wounds.max;
-            turn.currentLP = combatant.actor.system.status.wounds.value;
+            const status = combatant.actor.system.status;
+            const pool = status.structurePoints ?? status.wounds;
+            turn.maxLP = pool?.max ?? 0;
+            turn.currentLP = pool?.value ?? 0;
           }
           if (currentRound && currentRound != turn.round) turn.newRound = 'newRound';
 
@@ -151,6 +173,17 @@ export default class DSAIniTracker extends DefaultAppv2 {
       unRolled,
       waitingTurns,
     });
+
+    const combatMode = NavalCombat.resolveCombatMode(data.combat);
+    data.combatMode = combatMode;
+    data.combatModeIcon = {
+      standard: 'fa-shield',
+      brawling: 'fa-hand-fist fa-rotate-90',
+      navalMkr: 'fa-ship',
+      chase: 'fa-person-running',
+      vehicleChase: 'fa-sailboat',
+    }[combatMode] ?? 'fa-shield';
+    data.combatModeTooltip = 'COMBAT.MODE.tooltip';
 
     this.conditionalPanToCurrentCombatant(data);
 
@@ -238,6 +271,13 @@ export default class DSAIniTracker extends DefaultAppv2 {
     await super._onFirstRender(context, options);
 
     this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".iniTrackerList:not(.waitingTackerList) .combatant", { fixed: true });
+    if (game.user.isGM) {
+      this._createContextMenu(() => ui.combat._getCombatModeContextOptions(), '.combat-mode-control', {
+        eventName: 'click',
+        fixed: true,
+        parentClassHooks: false,
+      });
+    }
   }
 
   _getDsaIniTrackerEntryContextOptions() {

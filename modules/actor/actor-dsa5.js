@@ -86,11 +86,18 @@ export default class Actordsa5 extends Actor {
 
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
-    if (!actor?.system?.status?.wounds) return;
     if (postUpdateConditionsLocks.get(actor)) return;
+
+    const isVehicle = actor.type === 'vehicle';
+    if (!isVehicle && !actor?.system?.status?.wounds) return;
 
     postUpdateConditionsLocks.set(actor, true);
     try {
+      if (isVehicle) {
+        await this.syncVehicleStructureConditions(actor);
+        return;
+      }
+
       const data = actor.system;
       const isMerchant = actor.isMerchant();
 
@@ -116,6 +123,40 @@ export default class Actordsa5 extends Actor {
       if (isMerchant) await actor.prepareMerchant();
     } finally {
       postUpdateConditionsLocks.delete(actor);
+    }
+  }
+
+  /** StP gates as sheet active effects: fixated→immobile, dead→sinking (names via addTimedCondition). */
+  static async syncVehicleStructureConditions(actor) {
+    const stp = Number(actor.system.status.structurePoints?.value ?? 0);
+    const wantSinking = stp <= 0;
+    const wantImmobile = stp <= 10 && !wantSinking;
+
+    const findStpEffect = (key) => actor.effects.find((e) => e.getFlag('dsa5', 'vehicleStpCondition') === key);
+    const immobile = findStpEffect('immobile');
+    const sinking = findStpEffect('sinking');
+
+    if (wantImmobile && !immobile) {
+      await actor.addTimedCondition('fixated', 1, false, false, {
+        name: _loc('VEHICLE.immobile'),
+        description: _loc('VEHICLE.immobile'),
+        flags: { dsa5: { vehicleStpCondition: 'immobile' } },
+      });
+    } else if (!wantImmobile && immobile) {
+      await immobile.delete();
+    }
+
+    if (wantSinking && !sinking) {
+      await actor.addTimedCondition('dead', 1, false, false, {
+        name: _loc('VEHICLE.sinking'),
+        description: _loc('VEHICLE.sinking'),
+        flags: {
+          dsa5: { vehicleStpCondition: 'sinking' },
+          core: { overlay: true },
+        },
+      });
+    } else if (!wantSinking && sinking) {
+      await sinking.delete();
     }
   }
 

@@ -1,21 +1,6 @@
 <nav class="combat-controls" data-tooltip-direction="UP">
     {{~#if hasCombat~}}
 
-    {{#if isNavalMkr}}
-    {{#if user.isGM}}
-    {{#if combat.round}}
-    <div class="combat-controls-mkr">
-    <button type="button" class="inline-control combat-control icon fa-solid fa-ship" data-action="nextMkr"
-            data-tooltip="VEHICLE.mkr.nextMkrTooltip" aria-label="{{ localize 'VEHICLE.mkr.nextMkr' }}"></button>
-    {{#if (eq mkrPhase 'attacks')}}
-    <button type="button" class="inline-control combat-control icon fa-solid fa-people-arrows" data-action="navalBoarding"
-            data-tooltip="VEHICLE.mkr.boardingActionTooltip" aria-label="{{ localize 'VEHICLE.mkr.boardingAction' }}"></button>
-    {{/if}}
-    </div>
-    {{/if}}
-    {{/if}}
-    {{/if}}
-
     {{!-- GM Controls --}}
     {{#if user.isGM}}
     {{#if combat.round}}
@@ -23,19 +8,18 @@
             data-action="previousRound" data-tooltip aria-label="{{ localize "COMBAT.RoundPrev" }}"></button>
     <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
-    {{#if isNavalMkr}}
-    <button type="button" class="inline-control combat-control icon fa-solid fa-xmark" data-action="endCombat"
-            data-tooltip="COMBAT.End" aria-label="{{ localize "COMBAT.End" }}"></button>
-    {{else}}
-    <button type="button" class="combat-control combat-control-lg" data-action="endCombat">
+    <button type="button" class="combat-control combat-control-lg ellipsis" data-action="endCombat">
         <i class="fa-solid fa-xmark" inert></i>
         <span>{{ localize "COMBAT.End" }}</span>
     </button>
-    {{/if}}
     <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
     <button type="button" class="inline-control combat-control icon fa-solid fa-forward-step" data-action="nextRound"
             data-tooltip aria-label="{{ localize "COMBAT.RoundNext" }}"></button>
+    {{#if isNavalMkr}}
+    <button type="button" class="inline-control combat-control icon fa-solid fa-ship" data-action="nextMkr"
+            data-tooltip="VEHICLE.mkr.nextMkrTooltip" aria-label="{{ localize 'VEHICLE.mkr.nextMkr' }}"></button>
+    {{/if}}
     {{else}}
     <button type="button" class="combat-control combat-control-lg" data-action="startCombat">
         <i class="fa-solid fa-swords" inert></i>

@@ -1,5 +1,5 @@
-import DSA5 from '../../config/config-dsa5.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
+import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import NavalCombat from './naval-combat.js';
 import NavalBoardWeapons from './naval-board-weapons.js';
@@ -7,7 +7,6 @@ import VehicleRamWeapon from '../../data/actor/vehicle-ram-weapon.js';
 
 const { duplicate, randomID } = foundry.utils;
 
-const MKR_ATTACK_PHASES = ['attacks', 'damageReport'];
 const STRUCTURE_ATTACK_SIZES = new Set(['big', 'giant']);
 
 export default class NavalCombatDamage {
@@ -60,7 +59,7 @@ export default class NavalCombatDamage {
 
   static async postProcessOpposedResult(attacker, defender, opposedResult) {
     if (!NavalCombat.isNavalMkrActive()) return;
-    if (!MKR_ATTACK_PHASES.includes(game.combat.system.mkrPhase)) return;
+    if (game.combat.system.mkrPhase !== 'attacks') return;
 
     const defActor = DSA5_Utility.getSpeaker(defender.speaker);
     if (!defActor || defActor.type !== 'vehicle') return;
@@ -85,16 +84,10 @@ export default class NavalCombatDamage {
     const stpFormula = this.#resolveStpFormula(attacker, defActor);
     if (!stpFormula) return;
 
-    const stpRoll = await new Roll(stpFormula).evaluate();
-    const renderedRoll = await stpRoll.render();
-
-    opposedResult.damage = {
-      description: `<b>${_loc('stpDamage')}</b>: <span>${stpRoll.total}</span>${renderedRoll}`,
-      value: stpRoll.total,
-      sp: stpRoll.total,
-      stp: stpRoll.total,
-      isStructureDamage: true,
-    };
+    // Defer StP + crew until Schadensbericht — initiative order does not matter.
+    delete opposedResult.damage;
+    opposedResult.other ??= [];
+    opposedResult.other.push(`<p>${_loc('VEHICLE.mkr.hitQueued')}</p>`);
 
     await this.#queueHit(defActor, attacker, stpFormula);
 
@@ -106,16 +99,61 @@ export default class NavalCombatDamage {
 
   static async preApplyDamage(actor, hookOptions) {
     if (actor.type !== 'vehicle' || !NavalCombat.isNavalMkrActive()) return;
+    if (hookOptions.heal) return;
 
-    hookOptions.damagePool = 'structurePoints';
+    // Structure hits are applied only in Schadensbericht via processDamageReport.
+    hookOptions.amount = 0;
+    hookOptions.updateData = {};
+    hookOptions.afterApply = null;
+  }
 
-    const combat = game.combat;
-    const pending = duplicate(combat?.system?.pendingHits ?? []);
-    const idx = pending.findIndex((hit) => hit.vehicleId === actor.id && !hit.stpApplied);
-    if (idx >= 0) {
-      pending[idx].stpApplied = true;
-      await combat.update({ 'system.pendingHits': pending });
+  /** Apply all queued hits for the current MKR (StP + crew). Order is irrelevant. */
+  static async processDamageReport(combat = game.combat) {
+    if (!game.user.isGM || !NavalCombat.isNavalMkrActive(combat)) return;
+
+    const pending = duplicate(combat.system.pendingHits ?? []);
+    if (!pending.length) {
+      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${_loc('VEHICLE.mkr.damageReportEmpty')}</p>`));
+      return;
     }
+
+    const messages = [];
+    const updateMap = new Map();
+
+    for (const hit of pending) {
+      const vehicle = game.actors.get(hit.vehicleId);
+      if (!vehicle) continue;
+
+      const existing = updateMap.get(vehicle.id) ?? { _id: vehicle.id };
+
+      const stpRoll = await new Roll(hit.stpFormula).evaluate();
+      const stpDamage = stpRoll.total;
+      const status = vehicle.system.status.structurePoints;
+      const currentStp = existing['system.status.structurePoints.value'] ?? status.value;
+      existing['system.status.structurePoints.value'] = Math.max(0, currentStp - stpDamage);
+
+      const crewRoll = await new Roll('1d3 - 1').evaluate();
+      const wounded = Math.max(0, crewRoll.total);
+      const prevWounded = existing['system.combatState.woundedCrew']
+        ?? vehicle.system.combatState?.woundedCrew
+        ?? 0;
+      existing['system.combatState.woundedCrew'] = prevWounded + wounded;
+      updateMap.set(vehicle.id, existing);
+
+      messages.push(_loc('VEHICLE.mkr.damageReportHit', {
+        vehicle: vehicle.name,
+        attacker: hit.attackerName,
+        stp: stpDamage,
+        crew: wounded,
+      }));
+    }
+
+    const actorUpdates = [...updateMap.values()];
+    if (actorUpdates.length) await Actordsa5.updateDocuments(actorUpdates);
+    await combat.update({ 'system.pendingHits': [] });
+
+    const content = `<p><b>${_loc('VEHICLE.mkr.damageReportTitle')}</b></p>${messages.map((m) => `<p>${m}</p>`).join('')}`;
+    ChatMessage.create(DSA5_Utility.chatDataSetup(content));
   }
 
   static prepareRollSituationalModifiers(actor, situationalModifiers, context) {
@@ -140,58 +178,6 @@ export default class NavalCombatDamage {
       value: bonus,
       selected: true,
     });
-  }
-
-  static async processDamageReport(combat = game.combat) {
-    if (!game.user.isGM || !NavalCombat.isNavalMkrActive(combat)) return;
-
-    const pending = duplicate(combat.system.pendingHits ?? []);
-    if (!pending.length) {
-      ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${_loc('VEHICLE.mkr.damageReportEmpty')}</p>`));
-      return;
-    }
-
-    const messages = [];
-    const updateMap = new Map();
-
-    for (const hit of pending) {
-      const vehicle = game.actors.get(hit.vehicleId);
-      if (!vehicle) continue;
-
-      let stpDamage = 0;
-      const existing = updateMap.get(vehicle.id) ?? { _id: vehicle.id };
-
-      if (!hit.stpApplied) {
-        const stpRoll = await new Roll(hit.stpFormula).evaluate();
-        stpDamage = stpRoll.total;
-        const status = vehicle.system.status.structurePoints;
-        const currentStp = existing['system.status.structurePoints.value'] ?? status.value;
-        existing['system.status.structurePoints.value'] = Math.max(0, currentStp - stpDamage);
-      }
-
-      const crewRoll = await new Roll('1d3 - 1').evaluate();
-      const wounded = Math.max(0, crewRoll.total);
-      const prevWounded = existing['system.combatState.woundedCrew']
-        ?? vehicle.system.combatState?.woundedCrew
-        ?? 0;
-      existing['system.combatState.woundedCrew'] = prevWounded + wounded;
-      updateMap.set(vehicle.id, existing);
-
-      messages.push(_loc('VEHICLE.mkr.damageReportHit', {
-        vehicle: vehicle.name,
-        attacker: hit.attackerName,
-        stp: stpDamage,
-        crew: wounded,
-      }));
-    }
-
-    const actorUpdates = [...updateMap.values()];
-
-    if (actorUpdates.length) await Actordsa5.updateDocuments(actorUpdates);
-    await combat.update({ 'system.pendingHits': [] });
-
-    const content = `<p><b>${_loc('VEHICLE.mkr.damageReportTitle')}</b></p>${messages.map((m) => `<p>${m}</p>`).join('')}`;
-    ChatMessage.create(DSA5_Utility.chatDataSetup(content));
   }
 
   static async promptCommandedGuns(combat = game.combat) {
@@ -311,6 +297,23 @@ export default class NavalCombatDamage {
     });
   }
 
+  static async #queueHit(vehicle, attacker, stpFormula) {
+    const combat = game.combat;
+    if (!combat) return;
+
+    const pending = duplicate(combat.system.pendingHits ?? []);
+    const attActor = DSA5_Utility.getSpeaker(attacker.speaker);
+
+    pending.push({
+      id: randomID(),
+      vehicleId: vehicle.id,
+      stpFormula,
+      attackerName: attActor?.name ?? '—',
+    });
+
+    await combat.update({ 'system.pendingHits': pending });
+  }
+
   static #resolveStpFormula(attacker, defenderVehicle) {
     const source = attacker?.testResult?.source;
     if (!source) return null;
@@ -348,24 +351,6 @@ export default class NavalCombatDamage {
     }
 
     return null;
-  }
-
-  static async #queueHit(vehicle, attacker, stpFormula) {
-    const combat = game.combat;
-    if (!combat) return;
-
-    const pending = duplicate(combat.system.pendingHits ?? []);
-    const attActor = DSA5_Utility.getSpeaker(attacker.speaker);
-
-    pending.push({
-      id: randomID(),
-      vehicleId: vehicle.id,
-      stpFormula,
-      attackerName: attActor?.name ?? '—',
-      stpApplied: false,
-    });
-
-    await combat.update({ 'system.pendingHits': pending });
   }
 
   static #resolveAttackerVehicleId(context) {

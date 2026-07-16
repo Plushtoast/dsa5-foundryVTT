@@ -26,8 +26,9 @@ import DSA5Combatant from './combat/combatant.js';
 import NavalHeroActionHandler from './combat/mkr/naval-hero-actions.js';
 import NavalCombat from './combat/mkr/naval-combat.js';
 import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
-import NavalChase from './combat/mkr/naval-chase.js';
 import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
+import Chase from './combat/chase/chase.js';
+import VehicleChase from './combat/chase/vehicle-chase.js';
 import DSA5Hotbar from './system/guiapps/hotbar.js';
 import RollMemory from './system/rolls/roll_memory.js';
 import SpecialabilityRulesDSA5 from './system/rules/specialability-rules-dsa5.js';
@@ -75,7 +76,6 @@ import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
 import { DSAAuraRegionBehavior } from './data/regionbehaviors/aura.js';
 import { DSAZoneRegionBehavior } from './data/regionbehaviors/zone.js';
-import { DSANavalWaterTerrainRegionBehavior } from './data/regionbehaviors/naval-water-terrain.js';
 import { DSACalendarEntry } from './data/journal/dsacalendar.js';
 import ACTORCONCERNS from './actor/concerns/module.js';
 import ITEMCONCERNS from './item/concerns/module.js';
@@ -155,7 +155,8 @@ Hooks.once('init', () => {
       NavalCombat,
       NavalHeroActionHandler,
       NavalCombatDamage,
-      NavalChase,
+      Chase,
+      VehicleChase,
       NavalBoardWeapons,
     },
     animation: {      
@@ -215,7 +216,6 @@ Hooks.once('init', () => {
         DSATrap: DSATrapRegionBehavior,
         DSAAura: DSAAuraRegionBehavior,
         DSAZone: DSAZoneRegionBehavior,
-        DSANavalWaterTerrain: DSANavalWaterTerrainRegionBehavior,
       },
       JournalEntryPage: {
         dsacalendar: DSACalendarEntry,
@@ -258,8 +258,6 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.typeIcons.DSAAura = 'fas fa-circle-radiation';
   CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSAZone = 'fas fa-bullseye';
-  CONFIG.RegionBehavior.dataModels.DSANavalWaterTerrain = DSANavalWaterTerrainRegionBehavior;
-  CONFIG.RegionBehavior.typeIcons.DSANavalWaterTerrain = 'fas fa-water';
   DSAZoneRegionBehavior.registerHooks();
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
@@ -292,7 +290,7 @@ Hooks.once('init', () => {
   RollRequestService.register();
   NavalHeroActionHandler.register();
   NavalCombatDamage.register();
-  NavalChase.register();
+  VehicleChase.register();
   NavalBoardWeapons.register();
   MagicAnalysisQueryService.register();
   DSA5ProseMirrorIntegration.register();

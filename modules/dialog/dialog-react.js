@@ -3,6 +3,7 @@ import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
+import Chase from '../combat/chase/chase.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -187,6 +188,10 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         img: 'systems/dsa5/icons/categories/ability_magical.webp',
       });
     }
+
+    const chaseEntry = Chase.actionEntryFor(this.actor);
+    if (chaseEntry) data.items.unshift(chaseEntry);
+
     data.dieClass = 'die-mu'
     data.title = 'DIALOG.selectAction'
     return data;
@@ -196,7 +201,9 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const actor = dialog.actor;
     const tokenId = dialog.tokenId;
 
-    if ('castSpell' == dataset.special) {
+    if ('chaseAction' == dataset.special) {
+      Chase.rollAction(actor, tokenId);
+    } else if ('castSpell' == dataset.special) {
       ActCastSpellDialog.showDialog(actor, tokenId);
     } else if ('attackWeaponless' == dataset.value) {
       actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {

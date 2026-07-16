@@ -2,7 +2,7 @@
     <div class="row-section">
         <div class="controls right">
             {{#if user.isGM}}
-            <button type="button" class="inline-control combat-control fas icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
+            <button type="button" class="inline-control combat-control icon combat-mode-control fas {{combatModeIcon}}" data-tooltip="{{combatModeTooltip}}" {{#unless combats.length}}disabled{{/unless}} aria-label="{{ localize combatModeTooltip }}"></button>
             {{/if}}
             {{#if (and user.isGM combat.round)}}            
             <button type="button" class="inline-control combat-control icon fa-solid fa-step-backward"
@@ -31,6 +31,14 @@
                     {{#if (and isOwner (gt actionCount 1))}}
                     <div class="actions" data-tooltip="{{actionCounts}}">{{actionCount}}</div>
                     {{/if}}
+                    {{#if (eq chaseRole "chasing")}}
+                    <div class="chase-distance-overlay{{#if chaseDistance includeZero=true}}{{else}} unset{{/if}}" data-tooltip="{{chaseDistanceLabel}}">
+                      {{#if chaseDistance includeZero=true}}{{chaseDistance}}{{else}}—{{/if}}
+                    </div>
+                    {{/if}}
+                    {{#if chaseRolled}}
+                    <i class="fas fa-check chase-rolled-mark" data-tooltip="CHASE.rolledTooltip"></i>
+                    {{/if}}
                 </div>
                 {{#if isOwner}}
                 <div class="item-structure" style="--a: {{maxLP}}; --b: {{currentLP}}">
@@ -52,11 +60,15 @@
                     </div>
                 </div>
                 <div class="token-initiative">
-                    {{#if (and initiative isOwner)}}
-                    <a class="aggroButton specImg" data-action="aggroButton" data-tooltip-text="{{tooltipWithKeybinding 'attacktest' 'attacktest'}}"></a> {{else if isOwner}}
+                    {{#if (and isOwner (or initiative @root.isChase))}}
+                    <a class="aggroButton specImg{{#if @root.isChase}} chaseAction{{/if}}" data-action="aggroButton"
+                       data-tooltip-text="{{#if @root.isChase}}{{localize "CHASE.actionTooltip"}}{{else}}{{tooltipWithKeybinding 'attacktest' 'attacktest'}}{{/if}}"></a>
+                    {{else if isOwner}}
+                    {{#unless @root.isChase}}
                     <button type="button" class="combatant-control roll" data-action="rollInitiative"
                     data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
+                    {{/unless}}
                     {{/if}}
                 </div>
             </li>{{/each}}
@@ -104,8 +116,30 @@
     {{#if (or control user.isGM)}}
     <div class="row-section">
         <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        {{#unless isChase}}
         <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
-    </div>    
+        {{else}}
+        <button type="button" class="col two combat-control chase-roll-current" data-action="aggroButton" data-tooltip="CHASE.actionTooltip">{{localize 'CHASE.action'}}</button>
+        {{/unless}}
+    </div>
+    {{#if isNavalMkr}}
+    <div class="row-section mkr-phase-badge-row">
+        <span class="mkr-phase-badge" data-tooltip-text="{{mkr.phaseTooltip}}">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
+    </div>
+    {{/if}}
+    {{/if}}
+    {{#if isChase}}
+    <div class="row-section chase-badge-row">
+        {{#if chase.caught}}
+        <div class="chase-outcome-banner caught">{{localize "CHASE.caught"}}</div>
+        {{else if chase.escaped}}
+        <div class="chase-outcome-banner escaped">{{localize "CHASE.escaped"}}</div>
+        {{/if}}
+        <span class="chase-status-badge" data-tooltip="CHASE.escapeTooltip">
+          {{localize "CHASE.roundProgress" elapsed=chase.elapsed max=chase.maxRounds}}
+        </span>
+        <span class="chase-terrain-chip" data-tooltip="CHASE.terrainDropdownTooltip">{{chaseTerrainLabel}}</span>
+    </div>
     {{/if}}
     {{/unless}}
 </div>

@@ -6,7 +6,8 @@ import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import NavalCombat from '../combat/mkr/naval-combat.js';
 import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
-import NavalChase from '../combat/mkr/naval-chase.js';
+import NavalCombatDamage from '../combat/mkr/naval-combat-damage.js';
+import VehicleChase from '../combat/chase/vehicle-chase.js';
 import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
 
 const { duplicate } = foundry.utils;
@@ -19,6 +20,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       clearWeaponCrew: ActorSheetdsa5Vehicle._clearWeaponCrew,
       pickWeaponAmmo: ActorSheetdsa5Vehicle._pickWeaponAmmo,
       navalHeroAction: ActorSheetdsa5Vehicle._navalHeroAction,
+      navalBoarding: ActorSheetdsa5Vehicle._navalBoarding,
     },
   };
 
@@ -109,18 +111,18 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   }
 
   #prepareNavalChaseContext(prepare) {
-    if (!NavalCombat.isNavalMkrActive()) {
+    if (!VehicleChase.isVehicleChase()) {
       prepare.navalChaseSummary = null;
       return;
     }
 
-    const token = canvas.tokens?.placeables?.find((t) => t.actor?.id === this.actor.id);
-    prepare.navalChaseSummary = NavalChase.getChaseSummary(this.actor, token?.document);
+    prepare.navalChaseSummary = VehicleChase.getChaseSummary(this.actor, game.combat);
   }
 
   #prepareNavalHeroContext(prepare) {
     if (!NavalCombat.isNavalMkrActive()) {
       prepare.navalHeroActionsEnabled = false;
+      prepare.navalBoardingEnabled = false;
       prepare.showNavalSail = false;
       prepare.showNavalDrive = false;
       return;
@@ -129,6 +131,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const propulsion = this.actor.system.details.propulsion;
     const travelModes = this.actor.system.details.travelModes ?? [];
     prepare.navalHeroActionsEnabled = NavalCombat.canUseHeroActions();
+    prepare.navalBoardingEnabled = game.combat?.system?.mkrPhase === 'attacks';
     prepare.showNavalSail = ['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea');
     prepare.showNavalDrive = propulsion === 'land' || travelModes.includes('land');
   }
@@ -335,5 +338,9 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const action = target.dataset.heroAction;
     if (!action) return;
     await NavalHeroActionHandler.execute(this.actor, action);
+  }
+
+  static async _navalBoarding() {
+    await NavalCombatDamage.initiateBoarding();
   }
 }

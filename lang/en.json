@@ -281,18 +281,18 @@
     "home": "Home",
     "info": "Info",
     "macroHint": "The following macros are part of this module and allow special functions. You can now drag them into the macro bar or find them later in the macro compendium of this module.",
-        "nothing": "None yet",
-        "playerVisibility": "Visibility for players",
-        "recentlyOpened": "Recently opened",
+    "nothing": "None yet",
+    "playerVisibility": "Visibility for players",
+    "recentlyOpened": "Recently opened",
     "preparation": "Preparation",
     "preparationDescription": "To get the most out of this adventure module we recommend to acknowledge the following things: <ul class=\"dsalist\"><li>Read the correspondig journal entries for the current scene in advance.</li><li>Get used to the battle map and place tokens in advance. It is recommended to place the tokens invisible and only showing them once the players encounter those (hold alt while dropping the token to the scene). This helps to avoid spoilers.</li><li>Initialize the contents of the adventure through the available functions. Dragging the content manually into your world does not suffice to setup everything properly. Don't initialize multiple times.</li><li>Check wether you installed all recommended modules. Those are not required but faciliate and improve the mastering of the adventure.</li><li>The provided maps are only a proposal. You can also simply use a map or just put a atmosphearic picture on the canvas. There will be certainly other use cases for the provided battle maps.</li></ul>",
     "sceneReset": "Update scene",
     "sceneResetDescription": "The scene <b>{name}</b> has already been imported. Do you like to perform a reset for this scene?<br/> All changes and tokens will be removed.",
-        "scenes": "Scenes",
-        "search": "Search",
-        "searchEmpty": "No books match your search.",
-        "toggleToc": "Toggle table of contents",
-        "toc": "Chapter",
+    "scenes": "Scenes",
+    "search": "Search",
+    "searchEmpty": "No books match your search.",
+    "toggleToc": "Toggle table of contents",
+    "toc": "Chapter",
     "tryInit": "Initialize with journals",
     "customBooks": "Own content",
     "addCustomBook": "Add compendium",
@@ -570,6 +570,7 @@
     "CMP": "CMP",
     "CR": "CR",
     "FF": "DEX",
+    "FK": "RC",
     "FP": "SP",
     "FW": "SR",
     "FtP": "FtP",
@@ -694,16 +695,27 @@
     "ongoing": "Ongoing actions",
     "newRound": "New combat round",
     "overusePipHint": "Extra action – exceeds your action budget this round!",
-    "waitInit": "Wait"
+    "waitInit": "Wait",
+    "rulesHint": {
+      "standard": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>",
+      "brawling": "<p><b>Brawling</b></p><p>Unarmed / improvised fighting with temporary bruises (temporary LeP). Optionally everyone is unarmed when the mode starts.</p><p>When brawling ends, temporary damage may convert via the brawling injury table.</p>",
+      "navalMkr": "<p><b>Naval combat (MKR)</b></p><p>One Mass Combat Round (MKR) ≈ ~60 combat rounds (CR). Distances use Range Units (RE ≈ 16 yards).</p><p>Each MKR: <b>I Hero actions</b> → <b>II Movement</b> → <b>III Attacks</b> → <b>IV Damage report</b>.</p><p>Hits on ships are queued in Attacks and applied only in the Damage report (initiative order does not matter).</p><p>Heroes: repair, sail/drive, commands, treat wounded. Boarding from the vehicle sheet in the Attacks phase (≤ 1 RE).</p>",
+      "chase": "<p><b>Chase (Verfolgungsjagd)</b></p><p>Assign combatants as fleeing or chasers; set chaser distance to the catch.</p><p>GM picks terrain each round (dropdown persists). Effective GS = GS × terrain factor (×2 / ×1.5 / ×1 / ×0.75 / ×0.5).</p><p>Success on the chase skill adds FP to movement; fail still moves at effective GS; botch skips this and the next CR.</p><p>Catch at distance ≤ 0. Escape after 5 CR without a catch (GM may extend).</p>",
+      "vehicleChase": "<p><b>Vehicle chase</b></p><p>Same chase loop as foot Verfolgungsjagd, with ship/vehicle water terrain factors (row vs sail, Otta, shoals/storm) and distance in RE.</p><p>Körperbeherrschung checks use Boote &amp; Schiffe. GM sets terrain via the chase bar dropdown (no scene regions).</p><p>Catch at distance ≤ 0 RE; escape after chaseMaxRounds (default 5).</p>"
+    }
   },
   "COMBAT.MODE": {
     "standard": "Standard combat",
     "brawling": "Brawling",
     "navalMkr": "Naval combat (MKR)",
-    "tooltip": "Choose combat mode: Standard, Brawling, or Mass Combat Round (MKR).",
+    "tooltip": "Choose combat mode: Standard, Brawling, Chase, Vehicle chase, or Mass Combat Round (MKR).",
     "standardHint": "Standard initiative and normal combat rules.",
     "brawlingHint": "Brawling rules: unarmed fighting, disarming, temporary bruises.",
-    "navalMkrHint": "Ship combat in Mass Combat Rounds (MKR) with hero actions, movement, attacks, and damage report."
+    "navalMkrHint": "Ship combat in Mass Combat Rounds (MKR) with hero actions, movement, and attacks.",
+    "chase": "Chase",
+    "vehicleChase": "Vehicle chase",
+    "chaseHint": "Basis chase rules: terrain, distance, catch or escape.",
+    "vehicleChaseHint": "Ship/vehicle chase with water terrain factors and RE."
   },
   "COMMON_KNOWLEDGE": {
     "applied": "Common Knowledge was used.",
@@ -2851,14 +2863,6 @@
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
   },
-  "REGIONBEHAVIOR_DSANavalWaterTerrain": {
-    "FIELDS": {
-      "waterTerrain": {
-        "label": "Water terrain type",
-        "hint": "Terrain for pursuit chases and effective ship speed. Also affects movement cost in the region (like terrain modifier)."
-      }
-    }
-  },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {
       "messageId": {
@@ -3502,7 +3506,6 @@
   "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
   "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
   "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",
-  "TYPES.RegionBehavior.DSANavalWaterTerrain": "Water terrain (TDE)",
   "Test": "Test",
   "Total": "Total",
   "UNITS": {
@@ -3859,26 +3862,45 @@
     "structurePoints": "Structure Points",
     "structurePointsMax": "Structure Points (max)",
     "crew": "Crew",
-    "crewMax": "Crew (max)",
+    "crewMax": "Crew capacity",
+    "crewCapacity": "Crew capacity",
+    "crewCapacityHint": "How many people the ship can support or deploy at most.",
+    "crewCurrent": "Current crew",
+    "crewCurrentHint": "How many people are currently aboard (including wounded).",
+    "crewAvailable": "Available crew",
+    "crewAvailableHint": "Current crew minus seriously wounded (able to act).",
+    "combat": {
+      "mkrOnly": "Vehicles can only join combat in naval MKR mode."
+    },
     "vehicleType": "Vehicle type",
     "short": {
       "baseSpeed": "GS",
       "ramSpeed": "Ram",
       "waterSpeed": "Water",
       "structurePointsMax": "StP",
-      "crewMax": "Crew",
+      "crewMax": "Capacity",
+      "crewCurrent": "Crew",
+      "woundedCrew": "Wounded",
       "cargoCapacity": "Cargo",
       "gunnery": "FK",
       "distanceRE": "RE",
       "travelModes": "Travel"
     },
     "stats": "Vehicle stats",
+    "section": {
+      "classification": "Classification",
+      "speed": "Speed",
+      "structure": "Structure & Crew",
+      "combat": "Combat values",
+      "logistics": "Cargo & Price"
+    },
     "propulsionLabel": "Propulsion",
     "armamentLabel": "Armament",
     "cargoCapacity": "Cargo capacity",
     "price": "Price",
     "distanceRE": "Distance (RE)",
-    "woundedCrew": "Seriously wounded crew",
+    "woundedCrew": "Wounded crew",
+    "woundedCrewHint": "Seriously wounded crew members who cannot act.",
     "baseSpeed": "Base speed (GS)",
     "ramSpeed": "Ram speed",
     "travelModes": "Travel modes",
@@ -3982,9 +4004,11 @@
         "damageReport": "Damage report",
         "heroActionsTooltip": "Heroes repair, sail/drive, command guns, and treat wounded.",
         "movementTooltip": "Ships move (1 RE/MKR). Flee from 5 RE. Chase GS from terrain type.",
-        "attacksTooltip": "Board weapons, commanded guns, and boarding.",
-        "damageReportTooltip": "Structure damage and crew casualties (1d3−1 per hit)."
+        "attacksTooltip": "Board weapons, commanded guns, and boarding. Hits are queued and applied only in the damage report.",
+        "damageReportTooltip": "All queued hits are applied: SP and 1d3−1 crew per hit. Initiative order does not matter."
       },
+      "crewCasualty": "<b>{vehicle}</b>: {crew} crew members seriously wounded.",
+      "crewCasualtyNone": "<b>{vehicle}</b>: No serious crew casualties.",
       "action": {
         "repair": "Repair",
         "sail": "Sail",
@@ -4049,7 +4073,8 @@
           "severeStorm": "Severe (storm)",
           "severeShoals": "Severe (shoals)"
         }
-      }
+      },
+      "hitQueued": "Hit queued — SP and crew damage apply in the damage report (order does not matter)."
     }
   },
   "locationTypes": {
@@ -4224,11 +4249,11 @@
   "structure": "Structure Points",
   "siegeRules": "Siege weapon",
   "siege": {
-        "ProMKR": "Shots/MKR",
-        "RE": "RU",
-        "ProMKRTooltip": "Shots per Mass Combat Round",
-        "RETooltip": "Range in Room Units"
-    },
+    "ProMKR": "Shots/MKR",
+    "RE": "RU",
+    "ProMKRTooltip": "Shots per Mass Combat Round",
+    "RETooltip": "Range in Room Units"
+  },
   "stunnedByCounterAttack": "Counterattack causes 1 level of stunned",
   "summoningPackage": "Modification Package",
   "swarm": {
@@ -4459,5 +4484,69 @@
     "defaultBotch": "The hero forms false ideas and errs, leading to a grave misjudgment.",
     "sheetHint": "Placeholders show rulebook defaults or values from the linked item. Custom entries supplement the preset during analysis.",
     "sheetSkillNote": "Check is always Magical Lore (artifacts)."
+  },
+  "CHASE": {
+    "barTooltip": "Chase: distance to catch and terrain type. The GM sets terrain and tells the players.",
+    "terrainLabel": "Terrain",
+    "terrainDropdownTooltip": "Terrain for this round. Persists until changed. The GM announces terrain to players.",
+    "escapeTooltip": "After this many CR without a catch, the escape succeeds (default: 5 CR).",
+    "caught": "Caught",
+    "escaped": "Escaped",
+    "started": "<p><b>Chase</b> started (round {round}).</p>",
+    "startedVehicle": "<p><b>Vehicle chase</b> started (round {round}).</p>",
+    "skillSubstitute": "Chase",
+    "multiplierBlocked": "blocked",
+    "effectiveSpeed": "Effective GS (chase)",
+    "effectiveSpeedTooltip": "Base speed × terrain factor. Applies during vehicle chase.",
+    "setDistance": "Set distance",
+    "distance": "Distance",
+    "distanceUnit": {
+      "step": "yards",
+      "re": "RE"
+    },
+    "role": {
+      "fleeing": "Fleeing",
+      "chasing": "Chaser",
+      "clear": "Clear role"
+    },
+    "section": {
+      "fleeing": "Fleeing",
+      "chasing": "Chasers",
+      "unassigned": "Unassigned",
+      "dropHint": "Drop combatants here"
+    },
+    "terrain": {
+      "open": "Open terrain",
+      "passable": "Passable terrain",
+      "normal": "Normal terrain",
+      "difficult": "Difficult terrain",
+      "severe": "Severe terrain"
+    },
+    "vehicle": {
+      "terrain": {
+        "open": "Open water",
+        "passable": "Passable water",
+        "normal": "Normal seas",
+        "difficultSeas": "Difficult (heavy seas)",
+        "difficultShoals": "Difficult (shoals)",
+        "severeStorm": "Severe (storm)",
+        "severeShoals": "Severe (shoals)"
+      }
+    },
+    "distanceTooltip": "Distance to the fleeing target (set by the GM at the start; not initiative).",
+    "fleeingDistanceHint": "Fleeing — chasers track distance to this target.",
+    "action": "Chase action",
+    "actionTooltip": "Roll the chase skill for the current combatant (Body Control / riding / boats…).",
+    "maxRounds": "Max CR",
+    "maxRoundsTooltip": "How many combat rounds until escape succeeds without a catch (default 5). GM may extend.",
+    "rolledTooltip": "Already rolled the chase action this round.",
+    "noSkill": "No suitable chase skill found on this actor.",
+    "roundProgress": "CR {elapsed}/{max}",
+    "movedChasing": "{name} closes by {delta} {unit} -> {distance} {unit}",
+    "movedFleeing": "{name} extends the lead by {delta} {unit}",
+    "botchNoMove": "{name} makes no progress this round (botch).",
+    "distanceUnset": "Set this chaser starting distance before rolling the chase action.",
+    "noChaserDistance": "No chaser has a starting distance set - fleer movement was not applied.",
+    "terrainDialogTooltip": "Temporary terrain for this chase action only. Prefills from the combat tracker; does not change the shared chase terrain."
   }
 }

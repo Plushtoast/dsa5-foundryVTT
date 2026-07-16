@@ -1,11 +1,21 @@
-<ol class="combat-tracker plain">
+﻿<ol class="combat-tracker plain">
     {{#each turns}}
-    <li class="combatant {{ css }}" data-combatant-id="{{ id }}" data-action="activateCombatant"{{#if dispositionStyle}} style="{{dispositionStyle}}"{{/if}}>
-        <div class="aggroButton specImg" data-action="aggroButton" data-tooltip-text="{{tooltipWithKeybinding 'attacktest' 'attacktest'}}"></div>
-        {{!-- TODO: Targets --}}
-
-        {{!-- Image --}}
-       
+    {{#if isChaseSection}}
+    <li class="chase-section-header{{#if isEmpty}} empty{{/if}}"
+      {{#if (eq chaseSection "fleeing")}}data-chase-role="fleeing"
+      {{else}}data-chase-role="chasing"{{/if}}>
+      <span class="chase-section-title">
+        {{#if (eq chaseSection "fleeing")}}{{localize "CHASE.section.fleeing"}}
+        {{else}}{{localize "CHASE.section.chasing"}}{{/if}}
+      </span>
+      {{#if isEmpty}}
+      <span class="chase-section-drop-hint">{{localize "CHASE.section.dropHint"}}</span>
+      {{/if}}
+    </li>
+    {{else}}
+    <li class="combatant {{ css }}" data-combatant-id="{{ id }}" data-chase-role="{{chaseRole}}" data-action="activateCombatant"{{#if dispositionStyle}} style="{{dispositionStyle}}"{{/if}}>
+        <div class="aggroButton specImg{{#if @root.isChase}} chaseAction{{/if}}" data-action="aggroButton"
+             data-tooltip-text="{{#if @root.isChase}}{{localize "CHASE.actionTooltip"}}{{else}}{{tooltipWithKeybinding 'attacktest' 'attacktest'}}{{/if}}"></div>
         <div class="combatant-advanced">
             <img class="token-image" src="{{ img }}" alt="{{ name }}" loading="lazy" data-tooltip="{{name}}">
             {{#if this.defenseCount}}            
@@ -19,10 +29,19 @@
             <div class="actions" data-tooltip="{{actionCounts}}">{{actionCount}}</div>
             {{/if}}
         </div>
-
-        {{!-- Name & Controls --}}
         <div class="token-name">
             <strong class="name">{{ name }}</strong>
+            {{#if chaseRole}}
+            <span class="chase-role-badge {{chaseRole}}{{#if chaseRolled}} rolled{{/if}}" data-tooltip="{{chaseDistanceLabel}}">
+              {{#if (eq chaseRole "fleeing")}}<i class="fas fa-person-running"></i>
+              {{else}}<i class="fas fa-bullseye"></i>{{/if}}
+              {{#if chaseRolled}}
+              <i class="fas fa-check chase-rolled-icon" data-tooltip="CHASE.rolledTooltip"></i>
+              {{/if}}
+            </span>
+            {{else if chaseRolled}}
+            <span class="chase-rolled-badge" data-tooltip="CHASE.rolledTooltip"><i class="fas fa-check"></i></span>
+            {{/if}}
             {{#if vehicleSinking}}
             <span class="vehicle-status-badge sinking" data-tooltip="VEHICLE.sinking"><i class="fas fa-water"></i></span>
             {{else if vehicleImmobile}}
@@ -47,7 +66,6 @@
                         data-action="panToCombatant" data-tooltip="COMBATANT.PanTo"
                         aria-label="{{ localize "COMBATANT.PanTo" }}"></button>
                 {{/unless}}
-                {{!-- TODO: Target Control --}}
                 <div class="token-effects" data-tooltip="{{ effects.tooltip }}">
                     {{#each effects.icons}}
                     <img class="token-effect" src="{{ img }}" alt="{{ name }}">
@@ -55,34 +73,34 @@
                 </div>
             </div>
         </div>
-
-        {{!-- Resource --}}
         {{#if resource includeZero=true}}
         <div class="token-resource">
             <span class="resource">{{ resource }}</span>
         </div>
         {{/if}}
-
-        {{!-- Initiative --}}
         <div class="token-initiative">
-            {{#if initiative includeZero=true}}
-
-            {{!-- Decimal Initiative --}}
+            {{#if @root.isChase}}
+              {{#if (eq chaseRole "fleeing")}}
+              <span class="chase-distance-fleeing" data-tooltip="{{localize "CHASE.fleeingDistanceHint"}}">—</span>
+              {{else}}
+              <input type="number" class="chase-distance-input" name="chaseDistance" min="0" step="1"
+                     value="{{chaseDistance}}"
+                     placeholder="—"
+                     aria-label="{{ localize "CHASE.distance" }}"
+                     data-tooltip="{{localize "CHASE.distanceTooltip"}}"
+                     {{#unless @root.user.isGM}}readonly{{/unless}}>
+              <span class="chase-distance-unit" data-tooltip="{{localize "CHASE.distanceTooltip"}}">{{chaseDistanceUnit}}</span>
+              {{/if}}
+            {{else if initiative includeZero=true}}
             {{#if @root.hasDecimals}}
             <span>{{ initiative }}</span>
-
             {{#if (gt roundInitiative 0)}}
             <span class="temporaryInitiative" data-tooltip="temporaryInitiative">{{ numberFormat roundInitiative decimals=2 }}</span>
             {{/if}}
-
-            {{!-- Simple Initiative --}}
             {{else}}
             <input type="text" inputmode="numeric" pattern="^[+=\-]?\d*" value="{{ initiative }}"
                    aria-label="{{ localize "COMBATANT.FIELDS.initiative.label" }}" {{#unless @root.user.isGM}}readonly{{/unless}}>
-
             {{/if}}
-
-            {{!-- Roll Initiative --}}
             {{else if isOwner}}
             <button type="button" class="combatant-control roll" data-action="rollInitiative"
                     data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
@@ -90,5 +108,6 @@
             {{/if}}
         </div>
     </li>
+    {{/if}}
     {{/each}}
 </ol>

@@ -132,6 +132,10 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       if (res.value === undefined || res.value === null) res.value = res.max;
     }
 
+    const crewValue = Math.max(0, Number(data.status.crew.value ?? 0));
+    const wounded = Math.max(0, Number(data.combatState?.woundedCrew ?? 0));
+    data.availableCrew = Math.max(0, crewValue - wounded);
+
     data.isImmobile = data.status.structurePoints.value <= 10;
     data.isSinking = data.status.structurePoints.value <= 0;
   }

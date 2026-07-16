@@ -2,7 +2,8 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import NavalCombat from './mkr/naval-combat.js';
 import NavalCombatDamage from './mkr/naval-combat-damage.js';
-import NavalChase from './mkr/naval-chase.js';
+import Chase from './chase/chase.js';
+import VehicleChase from './chase/vehicle-chase.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Combat extends Combat {
@@ -26,6 +27,14 @@ export default class DSA5Combat extends Combat {
 
   get isNavalMkr() {
     return NavalCombat.isNavalMkrActive(this);
+  }
+
+  get isChase() {
+    return Chase.isChaseActive(this);
+  }
+
+  get isVehicleChase() {
+    return Chase.isVehicleChase(this);
   }
 
   getMkrProgress() {
@@ -114,6 +123,7 @@ export default class DSA5Combat extends Combat {
       'system.isBrawling': goBrawling,
       'system.combatMode': goBrawling ? 'brawling' : 'standard',
       ...this.#navalResetFields(),
+      ...this.#chaseResetFields(),
     });
 
     if (chatMessages.length) {
@@ -149,7 +159,16 @@ export default class DSA5Combat extends Combat {
   async clearRoundState() {
     if (game.user.isGM) {
       for (const k of this.turns) {
-        await k.update({ 'system.defenseCount': 0, 'system.roundInitiative': -1, 'system.actionsUsed': 0, 'system.freeActionUsed': false, 'system.movementActionConsumed': false });
+        await k.update({
+          'system.defenseCount': 0,
+          'system.roundInitiative': -1,
+          'system.actionsUsed': 0,
+          'system.freeActionUsed': false,
+          'system.movementActionConsumed': false,
+          'system.chaseRolled': false,
+          'system.chaseLastMove': 0,
+          'system.chaseDistanceBefore': null,
+        });
       }
     } else {
       await game.socket.emit('system.dsa5', {
@@ -160,11 +179,23 @@ export default class DSA5Combat extends Combat {
   }
 
   _sortCombatants(a, b) {
+    if (Chase.isChaseActive(this)) {
+      const roleA = Chase.getRole(a);
+      const roleB = Chase.getRole(b);
+      if (roleA !== roleB) {
+        if (roleA === 'fleeing') return -1;
+        if (roleB === 'fleeing') return 1;
+      }
+      const da = Chase.getDistance(a) ?? Number.POSITIVE_INFINITY;
+      const db = Chase.getDistance(b) ?? Number.POSITIVE_INFINITY;
+      return (da - db) || (a.id > b.id ? 1 : -1);
+    }
+
     let ia = Number.isNumeric(a.initiative) ? a.initiative : -Infinity;
     let ib = Number.isNumeric(b.initiative) ? b.initiative : -Infinity;
 
     if (a.system.roundInitiative >= 0) ia = a.system.roundInitiative;
-    if (b.system.roundInitiative >= 0) ib = b.system.roundInitiative
+    if (b.system.roundInitiative >= 0) ib = b.system.roundInitiative;
 
     return (ib - ia) || (a.id > b.id ? 1 : -1);
   }
@@ -287,7 +318,30 @@ export default class DSA5Combat extends Combat {
       'system.maneuverModifiers': {},
       'system.commandedGuns': [],
       'system.pendingHits': [],
-      'system.waterTerrain': 'normal',
+    };
+  }
+
+  #chaseResetFields() {
+    return {
+      'system.chaseStartRound': 0,
+      'system.chaseMaxRounds': Chase.DEFAULT_MAX_ROUNDS,
+    };
+  }
+
+  #chaseInitFields(mode) {
+    const Handler = mode === 'vehicleChase' ? VehicleChase : Chase;
+    const round = Math.max(1, this.round || 1);
+    const terrain = Handler.TERRAIN_IDS.includes(this.system.chaseTerrain)
+      ? this.system.chaseTerrain
+      : 'normal';
+
+    return {
+      'system.combatMode': mode,
+      'system.isBrawling': false,
+      'system.chaseStartRound': round,
+      'system.chaseMaxRounds': this.system.chaseMaxRounds || Chase.DEFAULT_MAX_ROUNDS,
+      'system.chaseTerrain': terrain,
+      ...this.#navalResetFields(),
     };
   }
 
@@ -298,14 +352,21 @@ export default class DSA5Combat extends Combat {
     if (current === mode) return;
 
     if (mode === 'brawling') {
+      await this.#removeVehicleCombatants();
       await this.convertToBrawl(true);
       return;
     }
 
     if (mode === 'standard') {
       if (this.isBrawling) await this.convertToBrawl(false);
-      else if (current === 'navalMkr') await this.update({ 'system.combatMode': 'standard', ...this.#navalResetFields() });
-      else await this.update({ 'system.combatMode': 'standard' });
+      else {
+        await this.update({
+          'system.combatMode': 'standard',
+          ...(current === 'navalMkr' ? this.#navalResetFields() : {}),
+          ...(Chase.isChaseMode(current) ? this.#chaseResetFields() : {}),
+        });
+      }
+      await this.#removeVehicleCombatants();
       return;
     }
 
@@ -323,10 +384,43 @@ export default class DSA5Combat extends Combat {
         'system.maneuverModifiers': {},
         'system.commandedGuns': [],
         'system.pendingHits': [],
-        'system.waterTerrain': 'normal',
+        ...this.#chaseResetFields(),
       });
       await this.#announceMkrChat('VEHICLE.mkr.started', { mkr: 1, round });
+      return;
     }
+
+    if (mode === 'chase' || mode === 'vehicleChase') {
+      if (this.isBrawling) await this.convertToBrawl(false);
+      if (mode === 'chase') await this.#removeVehicleCombatants();
+      const enteringChase = !Chase.isChaseMode(current);
+      await this.update(this.#chaseInitFields(mode));
+      await this.#assignDefaultChaseRoles({ enteringChase });
+      await this.#announceMkrChat(mode === 'vehicleChase' ? 'CHASE.startedVehicle' : 'CHASE.started', {
+        round: Math.max(1, this.round || 1),
+      });
+    }
+  }
+
+  /** Default every combatant to Verfolger unless already marked Flüchtend. */
+  async #assignDefaultChaseRoles({ enteringChase = false } = {}) {
+    const updates = [];
+    for (const combatant of this.combatants) {
+      if (combatant.system?.chaseRole === 'fleeing') continue;
+      const update = { _id: combatant.id };
+      let changed = false;
+      if (combatant.system?.chaseRole !== 'chasing') {
+        update['system.chaseRole'] = 'chasing';
+        changed = true;
+      }
+      // Legacy initial 0 must not count as "Caught" before the GM sets a start distance.
+      if (enteringChase && combatant.system?.chaseDistance === 0) {
+        update['system.chaseDistance'] = null;
+        changed = true;
+      }
+      if (changed) updates.push(update);
+    }
+    if (updates.length) await this.updateEmbeddedDocuments('Combatant', updates);
   }
 
   async nextMkr() {
@@ -349,10 +443,62 @@ export default class DSA5Combat extends Combat {
     await this.#announceMkrChat('VEHICLE.mkr.advanced', { mkr: mkrRound, round: nextRound });
   }
 
-  async setWaterTerrain(terrain) {
-    if (!game.user.isGM || !this.isNavalMkr) return;
-    if (!NavalChase.WATER_TERRAIN_IDS.includes(terrain)) return;
-    await this.update({ 'system.waterTerrain': terrain });
+  async setChaseTerrain(terrain) {
+    if (!game.user.isGM || !this.isChase) return;
+    const Handler = Chase.handlerFor(this);
+    if (!Handler.TERRAIN_IDS.includes(terrain)) return;
+    await this.update({ 'system.chaseTerrain': terrain });
+  }
+
+  async setChaseMaxRounds(value) {
+    if (!game.user.isGM || !this.isChase) return;
+    const max = Math.max(1, Math.floor(Number(value) || Chase.DEFAULT_MAX_ROUNDS));
+    await this.update({ 'system.chaseMaxRounds': max });
+  }
+
+  async markChaseRolled(combatantId) {
+    if (!this.isChase) return;
+    const combatant = this.combatants.get(combatantId);
+    if (!combatant) return;
+
+    if (game.user.isGM || combatant.isOwner) {
+      await combatant.update({ 'system.chaseRolled': true });
+      return;
+    }
+
+    await game.socket.emit('system.dsa5', {
+      type: 'markChaseRolled',
+      payload: { combatantId },
+    });
+  }
+
+  async applyChaseDistanceUpdates(updates) {
+    if (!this.isChase || !updates?.length) return;
+
+    if (game.user.isGM) {
+      await this.updateEmbeddedDocuments('Combatant', updates);
+      return;
+    }
+
+    await game.socket.emit('system.dsa5', {
+      type: 'applyChaseDistanceUpdates',
+      payload: { updates },
+    });
+  }
+
+  async setCombatantChaseRole(combatantId, role) {
+    if (!game.user.isGM || !this.isChase) return;
+    if (!['fleeing', 'chasing'].includes(role)) return;
+    const combatant = this.combatants.get(combatantId);
+    if (!combatant) return;
+    await combatant.update({ 'system.chaseRole': role });
+  }
+
+  async setCombatantChaseDistance(combatantId, distance) {
+    if (!game.user.isGM || !this.isChase) return;
+    const combatant = this.combatants.get(combatantId);
+    if (!combatant) return;
+    await combatant.update({ 'system.chaseDistance': Math.max(0, Number(distance) || 0) });
   }
 
   async advanceMkrPhase() {
@@ -363,6 +509,11 @@ export default class DSA5Combat extends Combat {
 
     if (next === 'attacks') await NavalCombatDamage.promptCommandedGuns(this);
     if (next === 'damageReport') await NavalCombatDamage.processDamageReport(this);
+  }
+
+  async #removeVehicleCombatants() {
+    const ids = this.combatants.filter((c) => c.actor?.type === 'vehicle').map((c) => c.id);
+    if (ids.length) await this.deleteEmbeddedDocuments('Combatant', ids);
   }
 
   async #tickVehicleRamCooldown() {

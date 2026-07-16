@@ -10,12 +10,12 @@
     </div>
   </div>
   <div class="col flexrow regenContainer fourty">
-    <div class="healthbar vehicle-crew-bar barRight soloBar" data-tooltip="VEHICLE.crew">
+    <div class="healthbar vehicle-crew-bar barRight soloBar" data-tooltip="VEHICLE.crewAvailableHint">
       <i class="fas fa-users vehicle-bar-icon" aria-hidden="true"></i>
-      <div class="bar decolorizeFilter vehicleCrew" style="--a: {{document.system.status.crew.value}}; --b: {{document.system.status.crew.max}};"></div>
+      <div class="bar decolorizeFilter vehicleCrew" style="--a: {{document.system.availableCrew}}; --b: {{document.system.status.crew.max}};"></div>
       <div class="barLabel">
-        {{formInput systemFields.status.fields.crew.fields.value value=document.system.status.crew.value tooltip="Current"}} /
-        <span data-tooltip="max">{{document.system.status.crew.max}}</span>
+        <span data-tooltip="VEHICLE.crewAvailable">{{document.system.availableCrew}}</span> /
+        <span data-tooltip="VEHICLE.crewCapacity">{{document.system.status.crew.max}}</span>
       </div>
     </div>
   </div>

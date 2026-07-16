@@ -1,78 +1,11 @@
-<div class='tab scrollable {{tabs.main.cssClass}}' data-tab='main' data-group='{{tabs.main.group}}'>
+<div class='tab scrollable gap0px {{tabs.main.cssClass}} width100' data-tab='main' data-group='{{tabs.main.group}}'>
   <div class="groupbox">
-    <legend class="table-title lineheight">{{localize "VEHICLE.stats"}}</legend>
-    <div class="row-section wrap gap10px">
-      <div class="col morph33">
-        {{formGroup systemFields.details.fields.vehicleType value=document.system.details.vehicleType localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.details.fields.propulsion value=document.system.details.propulsion localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.details.fields.armament value=document.system.details.armament localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.speed.fields.initial value=document.system.status.speed.initial localize=true label=(localize "VEHICLE.baseSpeed")}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.speed.fields.ram value=document.system.status.speed.ram localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.speed.fields.water value=document.system.status.speed.water localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.structurePoints.fields.initial value=document.system.status.structurePoints.initial localize=true label=(localize "VEHICLE.structurePointsMax")}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.crew.fields.initial value=document.system.status.crew.initial localize=true label=(localize "VEHICLE.crewMax")}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.hullArmor.fields.value value=document.system.status.hullArmor.value localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.gunnery.fields.value value=document.system.status.gunnery.value localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.details.fields.cargoCapacity value=document.system.details.cargoCapacity localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.details.fields.price value=document.system.details.price localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true label='sizeCategory'}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.status.fields.initiative.fields.value value=document.system.status.initiative.value localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.actionCount.fields.value value=document.system.actionCount.value localize=true}}
-      </div>
-      <div class="col morph33">
-        {{formGroup systemFields.combatState.fields.distanceRE value=document.system.combatState.distanceRE localize=true}}
+    <legend class="table-title lineheight">{{localize "Description"}} <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
+          data-tooltip="SHEET.collapse"></i></a></legend>
+    <div class="row-section">
+      <div class="col notes-box">
+        {{formInput systemFields.description.fields.value value=document.system.description.value toggled=true enriched=enrichedDescription disabled=(not owner)}}
       </div>
     </div>
-    <div class="row-section wrap gap10px" style="margin-top:10px;">
-      <div class="col">
-        <label>{{localize "VEHICLE.travelModes"}}</label>
-        <div class="flexrow gap5px wrap">
-          {{#each prepare.vehicleTravelModeOptions as |opt|}}
-          <label class="checkbox">
-            <input type="checkbox" name="system.details.travelModes" value="{{opt.value}}" {{checked opt.checked}} />
-            {{localize opt.label}}
-          </label>
-          {{/each}}
-        </div>
-      </div>
-    </div>
-    {{#if document.system.isImmobile}}
-    <p class="hint warning">{{localize "VEHICLE.immobile"}}</p>
-    {{/if}}
-    {{#if document.system.isSinking}}
-    <p class="hint warning">{{localize "VEHICLE.sinking"}}</p>
-    {{/if}}
-  </div>
-  <div class="groupbox" style="margin-top:10px;">
-    <legend class="table-title lineheight">{{localize "description"}}</legend>
-    {{formInput systemFields.description.fields.value enriched=prepare.enrichedDescription toggled=true}}
   </div>
 </div>

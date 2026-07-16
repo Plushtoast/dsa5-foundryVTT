@@ -59,6 +59,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         }
         const magicalAction = createMagicalAction(spell.system.magicalActionKind?.value);
         if (magicalAction) magicalAction.applyDialogRestrictions(data);
+        this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {
                 title,
@@ -91,6 +92,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         if (options.situationalModifiers) {
             data.situationalModifiers.push(...options.situationalModifiers);
         }
+        this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {
                 title,
@@ -130,6 +132,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         if (options.situationalModifiers) {
             data.situationalModifiers.push(...options.situationalModifiers);
         }
+        this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {
                 title,
@@ -138,6 +141,30 @@ export class ItemDialogBuilder extends RollDialogBuilder {
             },
             ...config,
         };
+    }
+    /**
+     * Merge caller-supplied dialog template fields into dialog data.
+     * @param {Object} data - Dialog data
+     * @param {Object} options - Setup options; may include `additionalOptions: { data, callback }`
+     */
+    static #applyAdditionalOptions(data, options) {
+        const extra = options.additionalOptions;
+        if (extra?.data) mergeObject(data, extra.data);
+    }
+
+    /**
+     * Run `additionalOptions.callback` after the dialog form is resolved.
+     * Removes the callback afterward so it is not kept on roll/chat data.
+     * @param {jQuery} html
+     * @param {Object} testData
+     * @param {Object} cardOptions
+     */
+    static applyAdditionalOptionsCallback(html, testData, cardOptions) {
+        const extra = testData.extra?.options?.additionalOptions;
+        const callback = extra?.callback;
+        if (typeof callback !== 'function') return;
+        callback(html, testData, cardOptions);
+        delete extra.callback;
     }
     /**
      * Prepare spell extensions

@@ -994,6 +994,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       await this.getCallbackData(testData, html, actor);
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       testData.hideSpellDetails = game.settings.get('dsa5', 'hideSpellDetails');
       return { testData, cardOptions };
     }
@@ -1069,6 +1070,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       return { testData, cardOptions };
     }
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
@@ -1225,6 +1227,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     dialogOptions.callback = (html, options = {}) => {
       DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, dialogOptions.data.mode);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       testData.isRangeDefense = dialogOptions.data.isRangeDefense;
       return { testData, cardOptions };
@@ -1351,6 +1354,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
     dialogOptions.callback = (html, options = {}) => {
       DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       return { testData, cardOptions };
     }
@@ -1455,6 +1459,8 @@ class SkillItemDSA5 extends Itemdsa5 {
       };
       Itemdsa5.updateCharacteristics(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()));
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
+
       return { testData, cardOptions };
     }
 
@@ -1499,6 +1505,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       } else {
         DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
       }
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       testData.isRangeDefense = dialogOptions.data.isRangeDefense;
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       return { testData, cardOptions };

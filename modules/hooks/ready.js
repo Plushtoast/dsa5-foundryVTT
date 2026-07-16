@@ -6,6 +6,7 @@ import { connectHook } from './itemDrop.js';
 import DidYouKnow from '../system/helpers/didyouknow.js';
 import TokenHotbar2 from '../system/guiapps/tokenHotbar2.js';
 import DSAIniTracker from '../combat/dsa-ini-tracker.js';
+import VehicleChase from '../combat/chase/vehicle-chase.js';
 import DSATour from '../tours/dsa_tour.js';
 import { initImagePopoutTochat } from './imagepopouttochat.js';
 import { connectSocket } from './socket.js';
@@ -38,6 +39,7 @@ export default function () {
 
     connectHook();
     DSAIniTracker.connectHooks();
+    VehicleChase.register();
     const hook = (dat) => {
       if (dat.tabName == 'settings') {
         DSATour.ensureRegistered();
