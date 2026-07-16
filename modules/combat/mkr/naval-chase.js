@@ -24,6 +24,8 @@ const TERRAIN_ROW_SAIL = {
 };
 
 export default class NavalChase {
+  static WATER_TERRAIN_IDS = WATER_TERRAIN_IDS;
+
   static register() {
     this.#patchSetupSkill();
   }

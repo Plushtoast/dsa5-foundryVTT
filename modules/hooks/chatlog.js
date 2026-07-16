@@ -33,6 +33,7 @@ export default function () {
 
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
     Hooks.call('startDSA5ChatAutoCompletion', game.dsa5.autoComplete);
+    ChatCommandService.applyToAutoCompletion(game.dsa5.autoComplete);
     game.dsa5.autoComplete.chatListeners(jhtml);
 
     DSA5ChatListeners.chatListeners(jhtml);
@@ -137,6 +138,8 @@ export default function () {
 
   Hooks.on('chatMessage', (html, content, msg) => {
     const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
+    if (ChatCommandService.tryExecuteChatCommand(normalizedContent, msg)) return false;
+
     let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages)(?:\s|$)/i);
     cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {

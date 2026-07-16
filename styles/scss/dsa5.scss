@@ -1476,6 +1476,34 @@ a.img-entity-link {
     color: var(--color-text-secondary);
   }
 
+  button.mkr-phase-badge.mkr-phase-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    max-width: 9rem;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
+    line-height: 1.2;
+    cursor: pointer;
+
+    .mkr-phase-control-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    i {
+      font-size: 0.7em;
+      opacity: 0.85;
+      flex: 0 0 auto;
+    }
+
+    &:hover {
+      border-color: var(--color-border-highlight, var(--color-border-light-primary));
+      color: var(--color-text-primary);
+    }
+  }
+
   .mkr-progress-track {
     height: 6px;
     border-radius: 3px;
@@ -1512,6 +1540,15 @@ a.img-entity-link {
     flex: 1;
     min-width: 0;
   }
+}
+
+.combat-controls-mkr {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 4px;
+  margin-right: 2px;
+  border-right: 1px solid var(--color-border-light-tertiary);
 }
 
 .naval-chase-speed-value small {

@@ -28,7 +28,7 @@ export default class VehicleRamWeapon {
         damage: { value: '0', stp: '2d6+4' },
         worn: { value: true },
         reach: { value: 'short' },
-        guidevalue: { value: 'kk' },
+        guidevalue: { value: '-' },
         atmod: { value: 0 },
         pamod: { value: 0 },
       },

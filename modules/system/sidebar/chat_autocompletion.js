@@ -66,7 +66,8 @@ export default class DSA5ChatAutoCompletion {
   }
 
   get regex() {
-    return new RegExp(`^/(${DSA5ChatAutoCompletion.cmds.join(' |')})`);
+    const pattern = DSA5ChatAutoCompletion.cmds.map((c) => `${c}(?:\\s|$)`).join('|');
+    return new RegExp(`^/(${pattern})`, 'i');
   }
 
   async chatListeners(html) {
@@ -419,24 +420,24 @@ export default class DSA5ChatAutoCompletion {
 
   _quickSelect(target) {
     const cmd = target.dataset.category;
+    const actorCmds = new Set(['SK', 'AT', 'PA', 'SP', 'LI']);
+    const quickMethod = `_quick${cmd}`;
 
-    switch (cmd) {
-      case 'NM':
-      case 'GC':
-      case 'RQ':
-      case 'CH':
-        this[`_quick${cmd}`](target);
-        break;
-      case 'W':
-        this._completeCurrentEntry(target);
-        this._closeQuickfind({ currentTarget: target, target });
-        break;
-      default:
-        const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
-        if (actor) {
-          this._resetChatAutoCompletion(target);
-          this[`_quick${cmd}`](target, actor, tokenId);
-        }
+    if (cmd === 'W') {
+      this._completeCurrentEntry(target);
+      this._closeQuickfind({ currentTarget: target, target });
+      return;
+    }
+
+    if (!actorCmds.has(cmd) && typeof this[quickMethod] === 'function') {
+      this[quickMethod](target);
+      return;
+    }
+
+    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
+    if (actor && typeof this[quickMethod] === 'function') {
+      this._resetChatAutoCompletion(target);
+      this[quickMethod](target, actor, tokenId);
     }
   }
 

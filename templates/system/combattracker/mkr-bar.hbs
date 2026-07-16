@@ -3,7 +3,15 @@
 <div class="mkr-loop-bar" data-tooltip="VEHICLE.mkr.barTooltip">
   <div class="mkr-loop-bar-header">
     <strong class="mkr-loop-label">MKR {{mkr.mkrRound}}</strong>
+    {{#if (and user.isGM combat.round)}}
+    <button type="button" class="mkr-phase-badge mkr-phase-control" data-action="advanceMkrPhase"
+            data-tooltip="VEHICLE.mkr.cyclePhaseTooltip" aria-label="{{ localize 'VEHICLE.mkr.cyclePhase' }}">
+      <span class="mkr-phase-control-label">{{mkr.phaseLabel}}</span>
+      <i class="fa-solid fa-chevron-right" inert></i>
+    </button>
+    {{else}}
     <span class="mkr-phase-badge" data-tooltip="{{mkr.phaseTooltip}}">{{mkr.phaseLabel}}</span>
+    {{/if}}
   </div>
 
   <div class="mkr-progress-track" aria-hidden="true">

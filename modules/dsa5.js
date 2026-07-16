@@ -12,6 +12,7 @@ import DSA5_Utility from './system/helpers/utility-dsa5.js';
 import DSA5Initializer from './system/maintenance/initializer.js';
 import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';
 import DSA5ChatListeners from './system/sidebar/chat_listeners.js';
+import ChatCommandService from './system/sidebar/chat_command_service.js';
 import DSA5Payment from './system/payment/payment.js';
 import QueryOrchestrator from './system/queries/query-orchestrator.js';
 import PaymentRequestService from './system/queries/payment-requests.js';
@@ -104,6 +105,7 @@ Hooks.once('init', () => {
       DSA5_Utility,
       DSA5Initializer,
       DSA5ChatListeners,
+      ChatCommandService,
       DSA5Payment,
       SpecialabilityRulesDSA5,
       AdvantageRulesDSA5,

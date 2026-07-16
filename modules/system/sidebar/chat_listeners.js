@@ -168,6 +168,7 @@ export default class DSA5ChatListeners {
         icon: 'fas fa-users',
         onClick: () => GroupCheck.openDialog(),
       },
+      ...ChatCommandService.getRegisteredHelpMenuItems(),
     ].filter(Boolean);
   }
 }

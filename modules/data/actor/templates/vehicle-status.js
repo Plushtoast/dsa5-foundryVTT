@@ -1,7 +1,9 @@
 import { DSADataModel } from '../../abstract.js';
 import DSANumberField from '../../fields/dsa_number_field.js';
+import DSA5 from '../../../config/config-dsa5.js';
 
-const { SchemaField, NumberField } = foundry.data.fields;
+const { SchemaField, NumberField, StringField } = foundry.data.fields;
+const { setProperty } = foundry.utils;
 
 export default class VehicleStatusTemplate extends DSADataModel {
   static defineSchema() {
@@ -23,6 +25,9 @@ export default class VehicleStatusTemplate extends DSADataModel {
         }),
         gunnery: new SchemaField({
           value: new NumberField({ initial: 12, min: 0, label: 'VEHICLE.gunnery' }),
+        }),
+        size: new SchemaField({
+          value: new StringField({ initial: 'average', choices: DSA5.sizeCategories, required: true, label: 'sizeCategory' }),
         }),
         speed: new SchemaField({
           air: new NumberField({ initial: 0, label: 'SPEEDSELECTOR.air' }),
