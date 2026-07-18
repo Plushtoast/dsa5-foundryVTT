@@ -1,5 +1,7 @@
 import { pushInitiatingApp, popInitiatingApp } from '../../mixins/detached-window-mixin.js';
 
+const { TextEditor } = foundry.applications.ux;
+
 export const AppV2Mixin = (superclass) =>
   class extends superclass {
     static dragHighlightCleanupBound = false;
@@ -176,7 +178,8 @@ export const AppV2Mixin = (superclass) =>
 
     async _onDrop(event) {
       this.constructor.clearDragHighlights();
-      super._onDrop(event);
+      event.dsaDropData ??= TextEditor.getDragEventData(event);
+      return await super._onDrop(event);
     }
 
     _onDragOver(event) {

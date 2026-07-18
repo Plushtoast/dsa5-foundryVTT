@@ -366,9 +366,8 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   async _onDrop(event) {
-    super._onDrop(event);
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-    this._handleDrop(dragData);
+    await super._onDrop(event);
+    this._handleDrop(event.dsaDropData ?? {});
   }
 }
 

@@ -2148,7 +2148,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
 
     const itemData = item.toObject();
-    const data = TextEditor.getDragEventData(event);
+    const data = event.dsaDropData ?? {};
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 
     let container_id;
