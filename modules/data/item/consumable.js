@@ -12,6 +12,9 @@ import { ItemFactory } from '../../item/item-factory.js';
 const { StringField, SchemaField, NumberField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;
 
+const SKILL_MOD_TYPES = new Set(['FW', 'FP', 'QL', 'step', 'TPM', 'CMP']);
+const SKILL_MOD_SCOPES = new Set(['liturgy', 'ceremony', 'spell', 'ritual', 'skill', 'feature']);
+
 export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, AoeTemplate, ObfuscableTemplate, DescriptionTemplate, EquipmentTemplate) {
   get detail_name() {
     if (this.detailsObfuscated && !game.user.isGM) return super.detail_name;
@@ -68,94 +71,182 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
     return item;
   }
 
-  // --- LOGIK FÜR CONSUMABLE MODIFIKATOREN ---
+  /** Remaining uses across quantity stacks and per-item charges. */
+  static remainingUses(item) {
+    const quantity = Number(item.system.quantity?.value) || 0;
+    const maxCharges = Number(item.system.maxCharges) || 0;
+    const charges = Number(item.system.charges) || 0;
+    if (maxCharges > 0) return Math.max(0, (quantity - 1) * maxCharges + charges);
+    return Math.max(0, quantity);
+  }
 
-  // Sammeln aller relevanten Consumables des Actors 
+  /**
+   * True when the item has non-transferred skillModifiers effects meant for roll dialogs.
+   * Those should be consumed via the roll modifier, not inventory Use.
+   */
+  static offersRollModifiers(item) {
+    return item.effects.some((effect) => this.#isRollModifierEffect(effect));
+  }
+
+  static #isRollModifierEffect(effect) {
+    if (effect.disabled || effect.transfer) return false;
+    return effect.changes.some((change) => this.#parseSkillModifierKey(change.key));
+  }
+
+  /**
+   * @param {string} key
+   * @returns {{ scope: string|null, modKey: string }|null}
+   */
+  static #parseSkillModifierKey(key) {
+    if (typeof key !== 'string' || !key.startsWith('system.skillModifiers.')) return null;
+
+    const parts = key.split('.');
+    // system.skillModifiers.FW | system.skillModifiers.spell.FW | system.skillModifiers.postRoll.FP
+    if (parts.length === 3) {
+      const modKey = parts[2];
+      if (!SKILL_MOD_TYPES.has(modKey)) return null;
+      return { scope: null, modKey };
+    }
+
+    if (parts.length === 4) {
+      const scope = parts[2];
+      const modKey = parts[3];
+      if (scope === 'postRoll' || scope === 'combat' || scope === 'conditional') return null;
+      if (!SKILL_MOD_SCOPES.has(scope) || !SKILL_MOD_TYPES.has(modKey)) return null;
+      return { scope, modKey };
+    }
+
+    return null;
+  }
+
+  static #formatModifierValue(rawValue, mode) {
+    const match = String(rawValue).match(/-?\d+(?:\.\d+)?/);
+    if (!match) return null;
+
+    const numericPart = match[0];
+    switch (Number(mode)) {
+      case CONST.ACTIVE_EFFECT_MODES.MULTIPLY:
+        return `*${numericPart}`;
+      case CONST.ACTIVE_EFFECT_MODES.OVERRIDE:
+        return `=${numericPart}`;
+      default:
+        return Number(numericPart);
+    }
+  }
+
+  /**
+   * Parse a skillModifiers change against the current roll source.
+   * Value format matches transferred AEs: `"SkillName 2"` / `"SkillName +2"` (semicolon-separated).
+   * Scoped keys (`system.skillModifiers.spell.FW`) match by item type; optional name still filters.
+   * @returns {{ type: string, value: number|string }|null}
+   */
+  static #matchChangeToRoll(change, source) {
+    const parsed = this.#parseSkillModifierKey(change.key);
+    if (!parsed || !source) return null;
+
+    const modType = parsed.modKey === 'step' ? '' : parsed.modKey;
+    const entries = String(change.value ?? '').split(/[;,]+/);
+
+    for (const entry of entries) {
+      const trimmed = entry.trim();
+      if (!trimmed) continue;
+
+      const tokens = trimmed.split(/\s+/);
+      const rawValue = tokens.pop();
+      const target = tokens.join(' ').trim();
+      const value = this.#formatModifierValue(rawValue, change.mode);
+      if (value === null || (typeof value === 'number' && Number.isNaN(value))) continue;
+
+      if (parsed.scope) {
+        if (source.type !== parsed.scope) continue;
+        if (target && target !== source.name) continue;
+      } else if (target !== source.name) {
+        continue;
+      }
+
+      return { type: modType, value };
+    }
+
+    return null;
+  }
+
   static addConsumableModifiers(situationalModifiers, actor, testData) {
-      if (!actor) return;
-      
-      const consumables = actor.items.filter(x => x.type === "consumable" && x.system.quantity.value > 0);
-      const targetName = testData.source?.name || ""; 
-      const targetType = testData.source?.type || "";
-      const typeLabel = game.i18n.localize("TYPES.Item.consumable");
+    if (!actor) return;
 
-      // Modifikator-Typen
-      const typeConditions = [
-          { type: "FP", keywords: [".FP", "SkillPoints"] },
-          { type: "QL", keywords: [".QL", "qualityStep"] },
-          { type: "FW", keywords: [".FW", "talentValue"] }
-      ];
+    const source = testData.source;
+    const typeLabel = game.i18n.localize('TYPES.Item.consumable');
 
-      for (let item of consumables) {
-          const relevantEffect = item.effects.find(e => {
-              if (e.disabled || e.transfer) return false;
-              return e.changes.some(change => {
-                  return change.key.includes(targetName) || String(change.value).includes(targetName) || 
-                         (targetType === "spell" && change.key.includes("spell"));
-              });
+    for (const item of actor.items) {
+      if (item.type !== 'consumable') continue;
+      if (this.remainingUses(item) <= 0) continue;
+
+      for (const effect of item.effects) {
+        if (!this.#isRollModifierEffect(effect)) continue;
+
+        for (const change of effect.changes) {
+          const matched = this.#matchChangeToRoll(change, source);
+          if (!matched) continue;
+
+          situationalModifiers.push({
+            name: `${typeLabel}: ${item.name}`,
+            value: matched.value,
+            type: matched.type,
+            selected: false,
+            consumableId: item.id,
+            ref: { uuid: item.uuid, id: item.id },
+            source: item.name,
           });
-
-          if (relevantEffect) {
-              // Den exakten Change finden
-              let change = relevantEffect.changes.find(c => 
-                  c.key.includes(targetName) || String(c.value).includes(targetName)
-              ) || relevantEffect.changes[0];
-
-              // Typ bestimmen
-              const foundMatch = typeConditions.find(cond => cond.keywords.some(kw => change.key.includes(kw)));
-              let modType = foundMatch ? foundMatch.type : "";
-
-              // Zahlenwert per Regex 
-              const match = String(change.value).match(/-?\d+/);
-              let numericPart = match ? match[0] : change.value;
-
-              if (!numericPart && numericPart != 0) continue;
-
-              // Verrechnungsmodus
-              let finalValue = numericPart;
-              switch (parseInt(change.mode)) {
-                  case 1: finalValue = `*${numericPart}`; break; 
-                  case 5: finalValue = `=${numericPart}`; break; 
-                  default: finalValue = Number(numericPart);
-              }
-
-              let displayName = `${typeLabel}: ${item.name}`;
-              if (item.system.QL) displayName += ` (QS ${item.system.QL})`;
-
-              situationalModifiers.push({
-                  name: displayName,
-                  value: finalValue, 
-                  type: modType,       
-                  selected: false,
-                  consumableId: item.id 
-              });
-          }
+        }
       }
+    }
   }
 
-  // Verbrauch ausführen (Menge -1 oder Item löschen)
+  /** Consume one charge / unit (same accounting as inventory Use). */
   async consumeItem() {
-      const item = this.parent;
-      const newQty = item.system.quantity.value - 1;
-      
-      if (newQty <= 0) {
-          await item.delete();
+    const item = this.parent;
+    const quantity = Number(item.system.quantity.value) || 0;
+    const maxCharges = Number(item.system.maxCharges) || 0;
+    const charges = Number(item.system.charges) || 0;
+
+    if (this.constructor.remainingUses(item) <= 0) return false;
+
+    if (maxCharges > 0) {
+      const newCharges = charges <= 1 ? maxCharges : charges - 1;
+      const newQuantity = charges <= 1 ? quantity - 1 : quantity;
+      if (newQuantity <= 0) {
+        await item.delete();
       } else {
-          await item.update({"system.quantity.value": newQty});
+        await item.update({
+          'system.quantity.value': newQuantity,
+          'system.charges': newCharges,
+        });
       }
+    } else if (quantity <= 1) {
+      await item.delete();
+    } else {
+      await item.update({ 'system.quantity.value': quantity - 1 });
+    }
+
+    return true;
   }
 
-  // Prüft ausgewählte Modifikatoren und löst Verbrauch aus 
   static async triggerConsumptions(testData, actor) {
-      if (!actor || !testData.situationalModifiers) return;
+    if (!actor || !testData.situationalModifiers) return;
+    if (testData.extra?.consumablesConsumed) return;
+    if (testData.extra) testData.extra.consumablesConsumed = true;
 
-      for (let mod of testData.situationalModifiers) {
-          if (mod.consumableId && mod.selected) {
-              let item = actor.items.get(mod.consumableId);
-              if (item && item.system?.consumeItem) {
-                  await item.system.consumeItem();
-              }
-          }
-      }
+    const consumedIds = new Set();
+    for (const mod of testData.situationalModifiers) {
+      if (mod.selected === false) continue;
+
+      const id = mod.consumableId || mod.ref?.id;
+      if (!id || consumedIds.has(id)) continue;
+
+      const item = actor.items.get(id);
+      if (!item || item.type !== 'consumable' || !item.system?.consumeItem) continue;
+
+      consumedIds.add(id);
+      await item.system.consumeItem();
+    }
   }
 }

@@ -2367,6 +2367,7 @@ export default class Actordsa5 extends Actor {
     await Promise.all(uuids.map(async (uuid) => {
       try {
         const effect = await fromUuid(uuid);
+        if (!effect || effect.documentName !== 'ActiveEffect') return;
         const charges = effect?.system?.charges;
         if (effect.disabled) return;
         if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;

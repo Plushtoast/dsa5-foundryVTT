@@ -18,6 +18,7 @@
  * @property {Object} [flatValues] - Flat modifier values from ModifierCalculator
  * @property {boolean} [extension] - True when modifier is a spell extension
  * @property {string} [source] - Human-readable origin description
+ * @property {string} [consumableId] - Actor-local item id when modifier consumes a consumable
  */
 
 export class SituationalModifier {

@@ -236,6 +236,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       meleeweapon: item.system.effect?.value,
       rangeweapon: item.system.effect?.value,
       armor: item.system.effect?.value,
+      consumable: item.system.description?.value,
     }[item.type];
 
     if (!rawText) return null;

@@ -45,8 +45,8 @@ export default class DiceDSA5 {
   static async rollTest(testData) {
     const { source } = testData;
     const { type } = source;
-	const actor = this.#actorFromTestData(testData);
-	await ConsumableData.triggerConsumptions(testData, actor);
+    const actor = this.#actorFromTestData(testData);
+    await ConsumableData.triggerConsumptions(testData, actor);
 
     // Use a lookup table for better performance and maintainability
     const rollHandlers = {
