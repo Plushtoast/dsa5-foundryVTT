@@ -17,6 +17,16 @@ export default class DSA5ProseMirrorIntegration {
       title: 'PROSEMIRROR.DSAStyles.Citefield',
       className: 'citefield',
     },
+    {
+      action: 'einfach',
+      title: 'PROSEMIRROR.DSAStyles.Einfach',
+      className: 'einfach',
+    },
+    {
+      action: 'schwierig',
+      title: 'PROSEMIRROR.DSAStyles.Schwierig',
+      className: 'schwierig',
+    },
   ];
 
   static register() {

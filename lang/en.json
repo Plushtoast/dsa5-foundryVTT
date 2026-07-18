@@ -2733,7 +2733,9 @@
       "Chatpaperfield": "Paper Note",
       "Citefield": "Quote Block",
       "DSAList": "DSA List",
+      "Einfach": "Easy",
       "Maskfield": "Master Box",
+      "Schwierig": "Difficult",
       "Title": "DSA Styles"
     }
   },
@@ -4476,8 +4478,8 @@
     "title": "Magical Analysis",
     "subtitle": "Magical Analysis",
     "start": "Start Magical Analysis",
-    "progressIntro": "Apply divination spells or liturgies to raise the maximum QS, then roll Magical Lore.",
-    "notPossible": "Without Analyst or divination spells/liturgies, no Magical Analysis is possible.",
+    "progressIntro": "Apply divination spells, liturgies, or item enchantments to raise the maximum QS, then roll Magical Lore.",
+    "notPossible": "Without Analyst, divination spells/liturgies, or matching item enchantments, no Magical Analysis is possible.",
     "maxQs": "Maximum QS for the Magical Lore check: {max}",
     "dropHint": "Drop an information item onto the item sheet to link it.",
     "unlink": "Remove link",

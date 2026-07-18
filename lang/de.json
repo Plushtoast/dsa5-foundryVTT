@@ -2735,7 +2735,9 @@
       "Chatpaperfield": "Papiernotiz",
       "Citefield": "Zitatblock",
       "DSAList": "DSA-Liste",
+      "Einfach": "einfach",
       "Maskfield": "Meisterbox",
+      "Schwierig": "schwierig",
       "Title": "DSA-Stile"
     }
   },
@@ -4478,8 +4480,8 @@
     "title": "Magische Analyse",
     "subtitle": "Magische Analyse",
     "start": "Magische Analyse beginnen",
-    "progressIntro": "Wende Hellsichtzauber oder -liturgien an, um die maximale QS zu erhöhen, und würfle dann auf Magiekunde.",
-    "notPossible": "Ohne Analytiker oder Hellsichtzauber/-liturgien ist keine Magische Analyse möglich.",
+    "progressIntro": "Wende Hellsichtzauber, -liturgien oder Artefakt-Verzauberungen an, um die maximale QS zu erhöhen, und würfle dann auf Magiekunde.",
+    "notPossible": "Ohne Analytiker, Hellsichtzauber/-liturgien oder passende Artefakt-Verzauberungen ist keine Magische Analyse möglich.",
     "maxQs": "Maximale QS für die Magiekunde-Probe: {max}",
     "dropHint": "Ziehe ein Info-Item auf das Item-Sheet, um es zu verknüpfen.",
     "unlink": "Verknüpfung entfernen",
