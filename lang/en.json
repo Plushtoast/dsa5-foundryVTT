@@ -3873,6 +3873,19 @@
     "crewCurrentHint": "How many people are currently aboard (including wounded).",
     "crewAvailable": "Available crew",
     "crewAvailableHint": "Current crew minus seriously wounded (able to act).",
+    "crewMembers": "Crew members",
+    "dropCrewHint": "Drop a character, NPC or creature here to add it to the crew.",
+    "alreadyCrew": "This actor is already crew of this vehicle.",
+    "crewInvalidActor": "Vehicles and groups cannot be assigned as crew.",
+    "removeCrewMember": "Remove from crew",
+    "crewCombat": {
+      "title": "Add crew to combat",
+      "hint": "Add crew members of these ships to the combat as well? Without a token on the map they appear only in the tracker.",
+      "addSelected": "Add selected",
+      "skip": "Skip crew",
+      "hasToken": "Token on the map — added with token",
+      "noToken": "No token — tracker only"
+    },
     "combat": {
       "mkrOnly": "Vehicles can only join combat in naval MKR mode."
     },
@@ -3881,6 +3894,7 @@
       "baseSpeed": "GS",
       "ramSpeed": "Ram",
       "waterSpeed": "Water",
+      "airSpeed": "Air",
       "structurePointsMax": "StP",
       "crewMax": "Capacity",
       "crewCurrent": "Crew",
@@ -3894,7 +3908,8 @@
     "section": {
       "classification": "Classification",
       "speed": "Speed",
-      "structure": "Structure & Crew",
+      "structure": "Structure",
+      "crew": "Crew",
       "combat": "Combat values",
       "logistics": "Cargo & Price"
     },
@@ -3942,6 +3957,7 @@
     "ramCrewFireMode": "Crew rams (ship FK).",
     "ramHeroFireMode": "{name} steers the ram.",
     "tabCombat": "Board weapons",
+    "tabCrew": "Crew",
     "boardRangedWeapons": "Ranged board weapons",
     "boardMeleeWeapons": "Melee board weapons",
     "boardRangedShort": "Ranged",
@@ -3985,6 +4001,14 @@
       "started": "<p><b>Naval combat (MKR)</b> started — MKR {mkr}, round {round}.</p>",
       "advanced": "<p><b>MKR {mkr}</b> begins (round {round}). Hero actions!</p>",
       "heroActionsOnlyTooltip": "Hero actions are only available during the hero actions MKR phase.",
+      "heroAction": "Hero action",
+      "heroActionTooltip": "Choose a hero action (repair, sail/drive, commands, treat wounded).",
+      "pickHeroAction": "Choose hero action",
+      "pickVehicle": "Choose ship",
+      "pickVehicleText": "Which vehicle should this hero action apply to?",
+      "noVehicleInCombat": "No vehicle in combat — add a ship to the encounter.",
+      "noVehicleForHero": "No vehicle found — assign the hero on the crew tab or add a ship to combat.",
+      "maneuverUnavailable": "No sail/drive maneuver available for this vehicle.",
       "noCharacter": "No assigned character — only the player or GM can trigger hero actions.",
       "missingSkill": "The character does not have the skill “{skill}”.",
       "missingRepairSkill": "Woodworking or Clothworking required.",
@@ -4017,6 +4041,7 @@
         "repair": "Repair",
         "sail": "Sail",
         "drive": "Drive",
+        "maneuver": "Sail / Drive",
         "commands": "Commands",
         "heal": "Treat wounded"
       },

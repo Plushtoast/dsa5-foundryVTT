@@ -27,6 +27,7 @@ import NavalHeroActionHandler from './combat/mkr/naval-hero-actions.js';
 import NavalCombat from './combat/mkr/naval-combat.js';
 import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
 import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
+import VehicleCrewCombatPrompt from './combat/mkr/vehicle-crew-combat.js';
 import Chase from './combat/chase/chase.js';
 import VehicleChase from './combat/chase/vehicle-chase.js';
 import DSA5Hotbar from './system/guiapps/hotbar.js';
@@ -158,6 +159,7 @@ Hooks.once('init', () => {
       Chase,
       VehicleChase,
       NavalBoardWeapons,
+      VehicleCrewCombatPrompt,
     },
     animation: {      
       TokenScatter,
@@ -292,6 +294,7 @@ Hooks.once('init', () => {
   NavalCombatDamage.register();
   VehicleChase.register();
   NavalBoardWeapons.register();
+  VehicleCrewCombatPrompt.register();
   MagicAnalysisQueryService.register();
   DSA5ProseMirrorIntegration.register();
   DialogShared.registerTargetTokenHook();

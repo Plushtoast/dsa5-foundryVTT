@@ -1,4 +1,5 @@
 import Chase from './chase.js';
+import NavalCombat from '../mkr/naval-combat.js';
 
 export const VEHICLE_CHASE_TERRAIN_IDS = [
   'open',
@@ -46,15 +47,36 @@ export default class VehicleChase extends Chase {
     return _loc(`CHASE.vehicle.terrain.${terrainId || 'normal'}`);
   }
 
-  static getTerrainMultiplier(vehicle, terrainId = 'normal') {
-    if (vehicle?.type !== 'vehicle') {
-      return super.getTerrainMultiplier(vehicle, terrainId);
+  /**
+   * Ship SGS from prepared vehicle Actor (speed.max via speedByMovementType).
+   * Heroes fall back to basis locomotion speeds.
+   */
+  static getBaseSpeed(actorLike, skillKey = null) {
+    const actor = this.resolveActor(actorLike);
+    if (!actor) return 0;
+
+    if (actor.type === 'vehicle') {
+      return Number(actor.speedByMovementType?.('land')) || 0;
     }
 
-    const propulsion = vehicle.system.details.propulsion || 'sail';
-    const stp = vehicle.system.status.structurePoints.initial
-      || vehicle.system.status.structurePoints.max
-      || 0;
+    return super.getBaseSpeed(actor, skillKey);
+  }
+
+  /**
+   * Water Geländetypen always — never fall back to land chase multipliers.
+   * Uses ship propulsion/StP when the actor is a vehicle; otherwise sail defaults.
+   */
+  static getTerrainMultiplier(actorLike, terrainId = 'normal') {
+    const actor = this.resolveActor(actorLike);
+    const isVehicle = actor?.type === 'vehicle';
+    const propulsion = isVehicle
+      ? (actor.system.details.propulsion || 'sail')
+      : 'sail';
+    const stp = isVehicle
+      ? (actor.system.status.structurePoints.initial
+        || actor.system.status.structurePoints.max
+        || 0)
+      : 0;
     const isOtta = propulsion === 'row' && stp <= OTTA_STP_THRESHOLD;
 
     switch (terrainId) {
@@ -79,6 +101,28 @@ export default class VehicleChase extends Chase {
     return 'CHASE.distanceUnit.re';
   }
 
+  /** Effective GS summary for the vehicle sheet (SGS × water terrain). */
+  static getChaseSummary(actorLike, combat = game.combat) {
+    const actor = this.resolveActor(actorLike);
+    const terrainId = combat?.system?.chaseTerrain ?? 'normal';
+    const multiplier = this.getTerrainMultiplier(actor, terrainId);
+    const base = this.getBaseSpeed(actor, 'boatsAndShips');
+    const effective = Math.round(base * multiplier * 10) / 10;
+
+    return {
+      terrainId,
+      multiplier,
+      terrainLabel: this.getTerrainLabel(terrainId),
+      baseSpeed: base,
+      effectiveSpeed: effective,
+      multiplierLabel: multiplier === 0
+        ? _loc('CHASE.multiplierBlocked')
+        : `× ${multiplier}`,
+      distanceUnit: this.distanceUnitKey(),
+      distanceUnitLabel: this.distanceUnitLabel(),
+    };
+  }
+
   static getProgress(combat = game.combat) {
     const progress = super.getProgress(combat);
     if (!progress) return null;
@@ -91,6 +135,19 @@ export default class VehicleChase extends Chase {
       })),
       terrainLabel: this.getTerrainLabel(combat.system.chaseTerrain ?? 'normal'),
     };
+  }
+
+  /** Boote & Schiffe at TaW 0 when missing (heroes); vehicles use embedded skill only. */
+  static skillFor(actor, key) {
+    if (!actor || !key) return null;
+    if (key === 'boatsAndShips') {
+      if (actor.type === 'vehicle') {
+        const name = _loc('LocalizedIDs.boatsAndShips');
+        return actor.items.find((i) => i.type === 'skill' && i.name === name) ?? null;
+      }
+      return NavalCombat.boatsSkillFor(actor);
+    }
+    return super.skillFor(actor, key);
   }
 
   static #propulsionMultiplier(propulsion, factors) {

@@ -3,6 +3,7 @@ import NavalCombatDamage from './naval-combat-damage.js';
 import RollRequestService from '../../system/queries/roll-request.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import VehicleData from '../../data/actor/vehicle.js';
 
 const { duplicate } = foundry.utils;
 
@@ -11,13 +12,159 @@ export default class NavalHeroActionHandler {
     Hooks.on('updateChatMessage', this.#onRollRequestFinalized.bind(this));
   }
 
-  static async execute(vehicle, action) {
+  /** ActAttackDialog entries during MKR hero-actions phase. */
+  static dialogEntries() {
+    if (!NavalCombat.isNavalMkrActive()) return null;
+    if (game.combat?.system?.mkrPhase !== 'heroActions') return null;
+
+    return [
+      {
+        name: _loc('VEHICLE.mkr.action.repair'),
+        id: 'naval-repair',
+        special: 'navalHeroAction',
+        heroAction: 'repair',
+        img: 'icons/tools/smithing/hammer-sledge.webp',
+        icon: 'fas fa-hammer',
+        tooltip: 'VEHICLE.mkr.repairTooltip',
+      },
+      {
+        name: _loc('VEHICLE.mkr.action.maneuver'),
+        id: 'naval-maneuver',
+        special: 'navalHeroAction',
+        heroAction: 'maneuver',
+        img: 'icons/tools/nautical/anchor.webp',
+        icon: 'fas fa-wind',
+        tooltip: 'VEHICLE.mkr.sailTooltip',
+      },
+      {
+        name: _loc('VEHICLE.mkr.action.commands'),
+        id: 'naval-commands',
+        special: 'navalHeroAction',
+        heroAction: 'commands',
+        img: 'icons/sundries/flags/banner-flag-red.webp',
+        icon: 'fas fa-flag',
+        tooltip: 'VEHICLE.mkr.commandsTooltip',
+      },
+      {
+        name: _loc('VEHICLE.mkr.action.heal'),
+        id: 'naval-heal',
+        special: 'navalHeroAction',
+        heroAction: 'heal',
+        img: 'icons/commodities/biological/organ-heart-red.webp',
+        icon: 'fas fa-kit-medical',
+        tooltip: 'VEHICLE.mkr.healTooltip',
+      },
+    ];
+  }
+
+  /**
+   * From init tracker / ActAttackDialog: pick ship, resolve maneuver type, roll as actor.
+   * @param {Actor} actor
+   * @param {string} action  repair|maneuver|sail|drive|commands|heal
+   */
+  static async executeFromActor(actor, action) {
+    if (!actor || !action) return;
+
     if (!NavalCombat.canUseHeroActions()) {
       ui.notifications.warn('VEHICLE.mkr.heroActionsOnlyTooltip', { localize: true });
       return;
     }
 
-    const character = game.user.character;
+    const vehicle = await this.pickVehicle(game.combat, { actor });
+    if (!vehicle) return;
+
+    let resolved = action;
+    if (action === 'maneuver') {
+      resolved = this.resolveManeuverAction(vehicle);
+      if (!resolved) {
+        ui.notifications.warn('VEHICLE.mkr.maneuverUnavailable', { localize: true });
+        return;
+      }
+    }
+
+    await this.execute(vehicle, resolved, { actor });
+  }
+
+  static vehiclesInCombat(combat = game.combat) {
+    if (!combat) return [];
+    const seen = new Set();
+    const vehicles = [];
+    for (const c of combat.combatants) {
+      const actor = c.actor;
+      if (!actor || actor.type !== 'vehicle' || seen.has(actor.id)) continue;
+      seen.add(actor.id);
+      vehicles.push(actor);
+    }
+    return vehicles;
+  }
+
+  /**
+   * Prefer the vehicle this actor crews; otherwise pick from combat vehicles.
+   * @param {Combat} [combat]
+   * @param {{ actor?: Actor }} [options]
+   */
+  static async pickVehicle(combat = game.combat, { actor } = {}) {
+    if (actor) {
+      const crewed = VehicleData.findVehicleForActor(actor);
+      if (crewed) return crewed;
+    }
+
+    const vehicles = this.vehiclesInCombat(combat);
+    if (!vehicles.length) {
+      // Still allow crewed vehicle even if not in combat tracker yet
+      if (actor) {
+        ui.notifications.warn('VEHICLE.mkr.noVehicleForHero', { localize: true });
+      } else {
+        ui.notifications.warn('VEHICLE.mkr.noVehicleInCombat', { localize: true });
+      }
+      return null;
+    }
+    if (vehicles.length === 1) return vehicles[0];
+
+    const choice = await foundry.applications.api.DialogV2.wait({
+      window: { title: _loc('VEHICLE.mkr.pickVehicle') },
+      content: `<p>${_loc('VEHICLE.mkr.pickVehicleText')}</p>`,
+      buttons: vehicles
+        .map((v) => ({
+          action: v.id,
+          label: v.name,
+          icon: 'fas fa-ship',
+        }))
+        .concat([{ action: 'cancel', label: _loc('cancel'), icon: 'fas fa-times' }]),
+    });
+
+    if (!choice || choice === 'cancel') return null;
+    return vehicles.find((v) => v.id === choice) ?? null;
+  }
+
+  static resolveManeuverAction(vehicle) {
+    if (!vehicle) return null;
+    const propulsion = vehicle.system.details?.propulsion;
+    const travelModes = vehicle.system.details?.travelModes ?? [];
+    const showDrive = propulsion === 'land' || travelModes.includes('land') || travelModes.includes('vehicle');
+    const showSail = (
+      (['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea'))
+      || travelModes.includes('air')
+    );
+    if (showDrive && !showSail) return 'drive';
+    if (showSail) return 'sail';
+    if (travelModes.includes('sea') || travelModes.includes('air') || ['row', 'sail', 'mixed'].includes(propulsion)) return 'sail';
+    if (showDrive) return 'drive';
+    return 'sail';
+  }
+
+  /**
+   * @param {Actor} vehicle
+   * @param {string} action
+   * @param {{ actor?: Actor }} [options]
+   */
+  static async execute(vehicle, action, { actor } = {}) {
+    if (!NavalCombat.canUseHeroActions()) {
+      ui.notifications.warn('VEHICLE.mkr.heroActionsOnlyTooltip', { localize: true });
+      return;
+    }
+
+    const character = actor ?? game.user.character;
     if (character) {
       await this.#rollAsPlayer(vehicle, action, character);
       return;
@@ -191,10 +338,12 @@ export default class NavalHeroActionHandler {
     const msg = _loc(`VEHICLE.mkr.result.${action}`, {
       vehicle: vehicle.name,
       qs: success ? qs : '—',
-      guns: action === 'commands' && success ? guns : undefined,
-      healed: action === 'repair' && success ? healed : undefined,
-      maneuver: maneuverType ? _loc(`VEHICLE.mkr.maneuver${maneuverType === 'evade' ? 'Evade' : 'Attack'}`) : (action === 'sail' || action === 'drive') && success ? '—' : undefined,
-      saved: action === 'heal' && success ? saved : undefined,
+      guns: success ? guns : '—',
+      healed: success ? healed : '—',
+      maneuver: maneuverType
+        ? _loc(`VEHICLE.mkr.maneuver${maneuverType === 'evade' ? 'Evade' : 'Attack'}`)
+        : (success ? '—' : _loc('Failure')),
+      saved: success ? saved : '—',
     });
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
   }

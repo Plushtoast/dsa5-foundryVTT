@@ -107,6 +107,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
     const isChase = Chase.isChaseActive(data.combat);
+    const isNavalMkr = NavalCombat.isNavalMkrActive(data.combat);
     const unRolled = !isChase && data.turns.some((x) => {
       if (x.isChaseSection || !x.isOwner || x.initiative) return false;
       if (!game.user.isGM) return true;
@@ -149,6 +150,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
             turn.maxLP = pool?.max ?? 0;
             turn.currentLP = pool?.value ?? 0;
           }
+          turn.isVehicle = combatant.actor?.type === 'vehicle';
+          turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
           if (currentRound && currentRound != turn.round) turn.newRound = 'newRound';
 
           currentRound = turn.round;

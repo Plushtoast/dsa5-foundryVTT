@@ -688,6 +688,7 @@ DSA5.vehicleTravelModes = {
   vehicle: 'locationTypes.vehicle',
   river: 'locationTypes.river',
   sea: 'locationTypes.sea',
+  air: 'SPEEDSELECTOR.air',
 };
 
 DSA5.vehiclePropulsion = {

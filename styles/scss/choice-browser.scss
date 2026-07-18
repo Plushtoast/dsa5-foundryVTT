@@ -314,6 +314,79 @@
       overflow-y: auto;
       min-height: 0;
       align-self: stretch;
+
+      &[hidden] {
+        display: none !important;
+      }
+    }
+
+    &--stacked {
+      flex-direction: column;
+
+      .itemlibrary-sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+        max-height: 40%;
+        align-self: stretch;
+        overflow-y: auto;
+      }
+
+      .itemlibrary-main {
+        flex: 1 1 auto;
+      }
+    }
+  }
+
+  .itemlibrary-advanced-panel {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--dsa-muted-bg);
+    padding: 0;
+
+    &__summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 6px 10px;
+      font-weight: 600;
+      user-select: none;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+
+      &::before {
+        content: '▸';
+        display: inline-block;
+        margin-right: 6px;
+        transition: transform 0.15s ease;
+      }
+    }
+
+    &[open] > .itemlibrary-advanced-panel__summary::before {
+      transform: rotate(90deg);
+    }
+
+    &__content {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 8px;
+      padding: 0 10px 10px;
+      min-width: 0;
+
+      > .detailFilters {
+        display: contents;
+      }
+
+      .detailFilters > .flexcol,
+      .detailFilters > .cbParent {
+        min-width: 0;
+      }
+
+      select,
+      input[type='text'] {
+        width: 100%;
+        min-width: 0;
+      }
     }
   }
 }

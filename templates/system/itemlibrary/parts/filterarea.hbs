@@ -1,6 +1,14 @@
-<div class="row-section itemlibrary-body">
+<div class="row-section itemlibrary-body{{#if embedded}} itemlibrary-body--stacked{{/if}}">
     {{#if categories.length}}
-    <div class="col third advancedSearch itemlibrary-sidebar" {{#unless advancedFilter}}style="display:none"{{/unless}}>
+    {{#if embedded}}
+    <details class="advancedSearch itemlibrary-sidebar itemlibrary-advanced-panel" {{#if advancedFilter}}open{{/if}} {{#unless advancedFilter}}hidden{{/unless}}>
+        <summary class="itemlibrary-advanced-panel__summary">{{localize 'Library.advanced'}}</summary>
+        <div class="advancedSearchContent itemlibrary-advanced-panel__content">
+            {{{advancedFilter}}}
+        </div>
+    </details>
+    {{else}}
+    <div class="col third advancedSearch itemlibrary-sidebar" {{#unless advancedFilter}}hidden{{/unless}}>
         <fieldset>
             <legend>{{localize 'Library.advanced'}}</legend>
             <div class="advancedSearchContent">
@@ -9,7 +17,8 @@
         </fieldset>
     </div>
     {{/if}}
-    <div class="col {{#if categories.length}}seventy{{else}}hundred{{/if}} itemlibrary-main">
+    {{/if}}
+    <div class="col {{#if embedded}}hundred{{else if categories.length}}seventy{{else}}hundred{{/if}} itemlibrary-main">
         <div class="dsa-choice-browser itemlibrary-browser">
             <div class="dsa-choice-browser__toolbar">
                 {{#if categories.length}}

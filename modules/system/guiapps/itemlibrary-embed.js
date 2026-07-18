@@ -43,6 +43,7 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
     this._mountElement = mountElement;
     this.hostApp = hostApp;
     this.viewMode = 'compact';
+    this._parkFragment = null;
   }
 
   get embedded() {
@@ -72,17 +73,36 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
     if (this.rendered) this._attachToMountTarget();
   }
 
+  /** Keep the app alive off-DOM so filters survive host re-renders / utility tab switches. */
+  park() {
+    if (!this.element) return;
+    this._parkFragment ??= document.createDocumentFragment();
+    if (this.element.parentNode !== this._parkFragment) {
+      this._parkFragment.append(this.element);
+    }
+    this._mountElement = null;
+  }
+
   unmount() {
     this._hoverToken++;
     game.tooltip.deactivate();
+    this._parkFragment = null;
+    this._embedSettingsMenu = null;
     this.close({ animate: false });
   }
 
   async setContextFromHost({ step, tab } = {}) {
     if (!this.rendered) await this.mount();
-    if (tab) await this.changeTab(tab, 'sheet');
-    const category = tab || $(this.element).find('.tab.active')[0]?.dataset.tab;
-    if (category) await this.filterItems(category);
+    else this._attachToMountTarget();
+
+    const currentTab = this.tabGroups?.sheet;
+    if (tab && tab !== currentTab) {
+      await this.changeTab(tab, 'sheet');
+      return;
+    }
+
+    if (tab) this.syncCategoryChipStates(tab);
+    if (this.advancedFiltering) this._setAdvancedSidebarVisible(true);
   }
 
   async _onRender(context, options) {
@@ -91,7 +111,7 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
   }
 
   #bindEmbedSettingsMenu() {
-    if (this._embedSettingsMenu) return;
+    // Re-bind after each render: host remounts move the element and can drop listeners.
     this._embedSettingsMenu = new foundry.applications.ux.ContextMenu(this.element, '[data-action="embedLibrarySettings"]', [], {
       onOpen: this.#onEmbedSettingsContext.bind(this),
       jQuery: false,
@@ -116,12 +136,15 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
   }
 
   #onEmbedSettingsContext() {
+    // Foundry ContextMenu skips entries whose icon HTML is not a single element.
+    // Use one <i> only; mark toggles via classes instead of appending a check icon.
     ui.context.menuItems = EMBED_SETTING_KEYS.map(({ key, icon, dialog }) => {
       const active = !dialog && this.#getEmbedSettingValue(key);
       return {
         name: key,
         label: _loc(`Library.${key}`),
-        icon: `<i class="fas ${icon}" aria-hidden="true"></i>${active ? "<i class='fas fa-check' aria-hidden='true'></i>" : ''}`,
+        icon: `<i class="fas ${active ? 'fa-check' : icon}" aria-hidden="true"></i>`,
+        classes: active ? 'active' : '',
         onClick: () => this.applyLibrarySetting(key),
       };
     });

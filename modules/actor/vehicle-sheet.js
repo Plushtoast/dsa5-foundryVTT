@@ -21,6 +21,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       pickWeaponAmmo: ActorSheetdsa5Vehicle._pickWeaponAmmo,
       navalHeroAction: ActorSheetdsa5Vehicle._navalHeroAction,
       navalBoarding: ActorSheetdsa5Vehicle._navalBoarding,
+      memberCardLink: ActorSheetdsa5Vehicle._crewMemberLink,
+      memberContextMenu: ActorSheetdsa5Vehicle._crewMemberContextMenu,
     },
   };
 
@@ -35,6 +37,11 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       template: 'systems/dsa5/templates/actors/vehicle/vehicle-combat.hbs',
       scrollable: [''],
       templates: [...vehicleCombatPartTemplates],
+    },
+    crew: {
+      template: 'systems/dsa5/templates/actors/vehicle/vehicle-crew.hbs',
+      scrollable: [''],
+      templates: ['systems/dsa5/templates/actors/parts/member-card-header.hbs'],
     },
     inventory: {
       template: 'systems/dsa5/templates/actors/creature/creature-loot.hbs',
@@ -74,6 +81,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     sheet: {
       tabs: [
         { id: 'combat', label: 'VEHICLE.tabCombat', img: 'systems/dsa5/icons/categories/ability_combat.webp' },
+        { id: 'crew', label: 'VEHICLE.tabCrew', img: 'systems/dsa5/icons/categories/ability_command.webp' },
         { id: 'inventory', label: 'TYPES.Item.equipment', img: 'systems/dsa5/icons/categories/Equipment.webp' },
         { id: 'status', label: 'status', img: 'systems/dsa5/icons/categories/ability_ceremonial.webp' },
         { id: 'notes', label: 'Description', img: 'systems/dsa5/icons/categories/Ability_Language.webp' },
@@ -106,8 +114,53 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     this.#prepareVehicleCombatContext(context.prepare);
     this.#prepareNavalHeroContext(context.prepare);
     this.#prepareNavalChaseContext(context.prepare);
+    this.#prepareCrewMembers(context.prepare);
     this.#filterRamFromInventory(context.prepare);
     return context;
+  }
+
+  #prepareCrewMembers(prepare) {
+    const members = [];
+    const sorted = Object.entries(this.actor.system.crewMembers ?? {})
+      .sort(([, a], [, b]) => a.sort - b.sort);
+
+    for (const [key, member] of sorted) {
+      const actor = fromUuidSync(member.uuid);
+      if (!actor) continue;
+
+      const s = actor.system;
+      const canViewPrivateDetails = game.user.isGM || actor.isOwner;
+      const owner = game.users.find((u) => u.character?.id === actor.id);
+
+      members.push({
+        key,
+        id: actor.id,
+        uuid: actor.uuid,
+        name: actor.name,
+        img: actor.img,
+        type: actor.type,
+        ownerName: owner?.name ?? null,
+        ownerColor: owner?.color ?? null,
+        canViewPrivateDetails,
+        system: {
+          status: {
+            wounds: { value: s.status?.wounds?.value ?? 0, max: s.status?.wounds?.max ?? 0 },
+            astralenergy: { value: s.status?.astralenergy?.value ?? 0, max: s.status?.astralenergy?.max ?? 0 },
+            karmaenergy: { value: s.status?.karmaenergy?.value ?? 0, max: s.status?.karmaenergy?.max ?? 0 },
+          },
+          isMage: !!s.isMage,
+          isPriest: !!s.isPriest,
+          details: {
+            species: s.details?.species?.value ?? '',
+            culture: s.details?.culture?.value ?? '',
+            career: s.details?.career?.value ?? '',
+          },
+          creatureClass: s.creatureClass?.value ?? '',
+        },
+      });
+    }
+
+    prepare.crewMembers = members;
   }
 
   #prepareNavalChaseContext(prepare) {
@@ -132,8 +185,11 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const travelModes = this.actor.system.details.travelModes ?? [];
     prepare.navalHeroActionsEnabled = NavalCombat.canUseHeroActions();
     prepare.navalBoardingEnabled = game.combat?.system?.mkrPhase === 'attacks';
-    prepare.showNavalSail = ['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea');
-    prepare.showNavalDrive = propulsion === 'land' || travelModes.includes('land');
+    prepare.showNavalSail = (
+      (['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea'))
+      || travelModes.includes('air')
+    );
+    prepare.showNavalDrive = propulsion === 'land' || travelModes.includes('land') || travelModes.includes('vehicle');
   }
 
   #prepareVehicleCombatContext(prepare) {
@@ -239,6 +295,41 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       return;
     }
     return super._onChangeForm(formConfig, event);
+  }
+
+  async _onDropActor(event, data) {
+    const actor = data?.document
+      ?? (data instanceof Actor ? data : null)
+      ?? (data?.uuid ? await fromUuid(data.uuid) : null);
+    if (!actor) return;
+    if (actor.uuid === this.actor.uuid) return false;
+
+    await this.actor.system.addCrewMember(actor);
+  }
+
+  static _crewMemberLink(_event, target) {
+    const uuid = target.closest('[data-uuid]')?.dataset.uuid;
+    if (uuid) fromUuidSync(uuid)?.sheet?.render(true);
+  }
+
+  static async _crewMemberContextMenu(event, target) {
+    const memberEl = target.closest('[data-member-key]');
+    if (!memberEl) return;
+
+    const app = this;
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', [
+      {
+        label: _loc('VEHICLE.removeCrewMember'),
+        icon: '<i class="fas fa-trash"></i>',
+        onClick: () => {
+          const key = memberEl.dataset.memberKey;
+          if (key) app.actor.system.removeCrewMember(key);
+        },
+      },
+    ], { jQuery: false, fixed: true, eventName: 'none' });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
   }
 
   static async _assignWeaponCrew(_ev, target) {

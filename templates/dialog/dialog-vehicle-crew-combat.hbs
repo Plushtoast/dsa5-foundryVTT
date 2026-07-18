@@ -1,0 +1,37 @@
+<div class="vehicle-crew-combat-prompt">
+  <p class="hint">{{hint}}</p>
+
+  {{#each ships as |ship|}}
+  <div class="vehicle-crew-ship" data-vehicle-id="{{ship.id}}">
+    <div class="vehicle-crew-ship-row flexrow" data-vehicle-id="{{ship.id}}">
+      <input type="checkbox" class="ship-toggle" data-vehicle-id="{{ship.id}}" checked
+             aria-label="{{ship.name}}" />
+      <img class="vehicle-crew-avatar" src="{{ship.img}}" alt="" />
+      <span class="vehicle-crew-ship-name flex1"><strong>{{ship.name}}</strong></span>
+      <span class="vehicle-crew-count muted">{{ship.crew.length}}</span>
+    </div>
+
+    <div class="vehicle-crew-list">
+      {{#each ship.crew as |member|}}
+      <label class="vehicle-crew-member-row flexrow" data-vehicle-id="{{ship.id}}">
+        <input type="checkbox" class="crew-toggle" name="crew" value="{{member.id}}"
+               data-vehicle-id="{{ship.id}}" checked />
+        <img class="vehicle-crew-avatar" src="{{member.img}}" alt="" />
+        <span class="flex1">{{member.name}}</span>
+        <i class="fas {{#if member.hasToken}}fa-map-location-dot{{else}}fa-user{{/if}}"
+           data-tooltip="{{member.tokenHint}}"></i>
+      </label>
+      {{/each}}
+    </div>
+  </div>
+  {{/each}}
+
+  <div class="vehicle-crew-combat-actions flexrow gap8px">
+    <button type="button" data-action="confirm">
+      <i class="fas fa-check"></i> {{localize "VEHICLE.crewCombat.addSelected"}}
+    </button>
+    <button type="button" data-action="skip">
+      <i class="fas fa-times"></i> {{localize "VEHICLE.crewCombat.skip"}}
+    </button>
+  </div>
+</div>

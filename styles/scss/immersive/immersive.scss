@@ -50,11 +50,20 @@
 
     button.mkr-phase-badge.mkr-phase-control {
       color: #191813;
-      background: rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.55);
+      background-image: none;
+      border: 1px solid rgba(25, 24, 19, 0.45);
 
       &:hover {
         color: #000;
+        background: rgba(255, 255, 255, 0.75);
+        background-image: none;
         border-color: rgba(25, 24, 19, 0.7);
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: inset 0 0 4px rgba(25, 24, 19, 0.25);
       }
     }
   }
@@ -607,10 +616,10 @@
   }
 
   #sidebar .button:not(.icon),
-  #sidebar button:not(.fshopButton):not(.icon):not(.inline-control):not(.roll),
-  .initTracker button:not(.icon):not(.inline-control),
+  #sidebar button:not(.fshopButton):not(.icon):not(.inline-control):not(.roll):not(.mkr-phase-control),
+  .initTracker button:not(.icon):not(.inline-control):not(.mkr-phase-control):not(.chase-default-skill-badge):not(.chase-default-skill-menu),
   .sheetButton,
-  .sidebar-popout button:not(.icon):not(.inline-control),
+  .sidebar-popout button:not(.icon):not(.inline-control):not(.mkr-phase-control),
   .sidebar-popout .dice-tray button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;

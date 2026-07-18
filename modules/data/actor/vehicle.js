@@ -38,6 +38,10 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
         value: new HTMLField({ initial: '', label: 'Description' }),
       }),
       weaponOperators: new TypedObjectField(new StringField(), { initial: {} }),
+      crewMembers: new TypedObjectField(new SchemaField({
+        uuid: new StringField({ required: true }),
+        sort: new NumberField({ initial: 0, integer: true }),
+      }), { initial: {} }),
     });
   }
 
@@ -109,11 +113,14 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       totalWeight: 0,
       isImmobile: false,
       isSinking: false,
+      crewActors: new Set(),
+      crewMemberCount: 0,
     });
   }
 
   prepareDerivedData() {
     try {
+      this._resolveCrewMembers();
       this._calculateResourcePools(this);
       this._calculateWeight(this);
       this._calculateSpeed(this);
@@ -123,6 +130,64 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       console.error(`Error preparing vehicle data for ${this.parent.name}:`, error);
       ui.notifications.error(_loc('DSAError.PreparationError', { name: this.parent.name }) + error.message);
     }
+  }
+
+  _resolveCrewMembers() {
+    this.crewActors = new Set();
+    this.crewMemberCount = 0;
+    const sorted = Object.entries(this.crewMembers ?? {})
+      .sort(([, a], [, b]) => a.sort - b.sort);
+
+    for (const [, member] of sorted) {
+      const actor = fromUuidSync(member.uuid);
+      if (actor) {
+        this.crewActors.add(actor);
+        this.crewMemberCount++;
+      }
+    }
+  }
+
+  hasCrewMember(actor) {
+    if (!actor) return false;
+    for (const member of Object.values(this.crewMembers ?? {})) {
+      if (member.uuid === actor.uuid) return true;
+      const resolved = fromUuidSync(member.uuid);
+      if (resolved?.id === actor.id) return true;
+    }
+    return false;
+  }
+
+  async addCrewMember(actor) {
+    if (!actor || actor.type === 'vehicle' || actor.type === 'group') {
+      ui.notifications.warn('VEHICLE.crewInvalidActor', { localize: true });
+      return;
+    }
+    if (actor.uuid === this.parent.uuid) return;
+
+    for (const member of Object.values(this.crewMembers ?? {})) {
+      if (member.uuid === actor.uuid) {
+        ui.notifications.info('VEHICLE.alreadyCrew', { localize: true });
+        return;
+      }
+    }
+
+    const id = foundry.utils.randomID();
+    const maxSort = Math.max(0, ...Object.values(this.crewMembers ?? {}).map((m) => m.sort));
+    await this.parent.update({
+      [`system.crewMembers.${id}`]: { uuid: actor.uuid, sort: maxSort + 1 },
+    });
+  }
+
+  async removeCrewMember(key) {
+    await this.parent.update({ [`system.crewMembers.${key}`]: _del });
+  }
+
+  /** Find a vehicle actor that lists this actor as crew. */
+  static findVehicleForActor(actor) {
+    if (!actor) return null;
+    return game.actors.find((candidate) => (
+      candidate.type === 'vehicle' && candidate.system.hasCrewMember?.(actor)
+    )) ?? null;
   }
 
   _calculateResourcePools(data) {
@@ -175,6 +240,8 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     const speed = data.status.speed;
     speed.max = Math.max(0, (speed.initial || 0) + (speed.modifier || 0));
     speed.value = speed.max;
+    speed.waterMax = Math.max(0, Number(speed.water || 0) + (speed.modifier || 0));
+    speed.airMax = Math.max(0, Number(speed.air || 0) + (speed.modifier || 0));
   }
 
   _calculateArmor(data) {

@@ -1,0 +1,64 @@
+<div class='tab scrollable gap0px vehicle-crew-tab {{tabs.crew.cssClass}}' data-tab='crew' data-group='{{tabs.crew.group}}'>
+
+  <div class="groupbox vehicle-crew-settings">
+    <div class="table-title lineheight">{{localize "VEHICLE.section.crew"}}</div>
+    <div class="vehicle-crew-settings-grid">
+      <div class="vehicle-stat-field">
+        {{formGroup systemFields.status.fields.crew.fields.initial value=document.system.status.crew.initial localize=true label='VEHICLE.crewCapacity' tooltip='VEHICLE.crewCapacityHint'}}
+      </div>
+      <div class="vehicle-stat-field">
+        {{formGroup systemFields.status.fields.crew.fields.value value=document.system.status.crew.value localize=true label='VEHICLE.crewCurrent' tooltip='VEHICLE.crewCurrentHint'}}
+      </div>
+      <div class="vehicle-stat-field">
+        {{formGroup systemFields.combatState.fields.woundedCrew value=document.system.combatState.woundedCrew localize=true label='VEHICLE.woundedCrew' tooltip='VEHICLE.woundedCrewHint'}}
+      </div>
+      <div class="vehicle-stat-field">
+        <div class="form-group" data-tooltip="{{localize 'VEHICLE.crewAvailableHint'}}">
+          <label>{{localize "VEHICLE.crewAvailable"}}</label>
+          <div class="form-fields">
+            <span>{{document.system.availableCrew}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="groupbox vehicle-crew-members">
+    <div class="table-title lineheight">{{localize "VEHICLE.crewMembers"}}</div>
+
+    {{#each prepare.crewMembers as |hero|}}
+    <div class='row-section skills hero tableOdd wrap' data-member-key='{{hero.key}}' data-uuid='{{hero.uuid}}'
+      data-id='{{hero.id}}'>
+      {{#> "systems/dsa5/templates/actors/parts/member-card-header.hbs" img=hero.img name=hero.name uuid=hero.uuid status=hero.system.status isMage=hero.system.isMage isPriest=hero.system.isPriest showContextMenu=@root.editable showStatusBars=hero.canViewPrivateDetails}}
+          {{#if hero.ownerName}}
+            <span class="badgePip" style="background-color: {{hero.ownerColor}}; color: #fff; font-size: 0.7em;">{{hero.ownerName}}</span>
+          {{/if}}
+      {{/"systems/dsa5/templates/actors/parts/member-card-header.hbs"}}
+      <div class='row-section col'>
+        <div class='col headerbadgeflex flexAlignCenter wrap gap5px'>
+          {{#if (eq hero.type 'creature')}}
+          {{#if hero.system.creatureClass}}
+          <span class='group-attr-icon flex0'>{{hero.system.creatureClass}}</span>
+          {{/if}}
+          {{else}}
+          {{#if hero.system.details.species}}
+          <span class='group-attr-icon flex0'>{{hero.system.details.species}}</span>
+          {{/if}}
+          {{#if hero.system.details.culture}}
+          <span class='group-attr-icon flex0'>{{hero.system.details.culture}}</span>
+          {{/if}}
+          {{#if hero.system.details.career}}
+          <span class='group-attr-icon flex0'>{{hero.system.details.career}}</span>
+          {{/if}}
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    {{/each}}
+
+    <div class="droparea">
+      {{localize 'VEHICLE.dropCrewHint'}}
+    </div>
+  </div>
+
+</div>

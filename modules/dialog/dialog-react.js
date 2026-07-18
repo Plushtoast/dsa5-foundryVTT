@@ -4,6 +4,7 @@ import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
 import Chase from '../combat/chase/chase.js';
+import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -189,6 +190,14 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
       });
     }
 
+    const navalEntries = this.actor?.type !== 'vehicle' ? NavalHeroActionHandler.dialogEntries() : null;
+    if (navalEntries?.length) {
+      data.items = navalEntries;
+      data.dieClass = 'die-mu';
+      data.title = 'VEHICLE.mkr.pickHeroAction';
+      return data;
+    }
+
     const chaseEntry = Chase.actionEntryFor(this.actor);
     if (chaseEntry) data.items.unshift(chaseEntry);
 
@@ -201,7 +210,9 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const actor = dialog.actor;
     const tokenId = dialog.tokenId;
 
-    if ('chaseAction' == dataset.special) {
+    if ('navalHeroAction' == dataset.special) {
+      NavalHeroActionHandler.executeFromActor(actor, dataset.heroAction);
+    } else if ('chaseAction' == dataset.special) {
       Chase.rollAction(actor, tokenId);
     } else if ('castSpell' == dataset.special) {
       ActCastSpellDialog.showDialog(actor, tokenId);

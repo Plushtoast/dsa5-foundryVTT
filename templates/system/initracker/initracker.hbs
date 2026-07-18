@@ -33,7 +33,7 @@
                     {{/if}}
                     {{#if (eq chaseRole "chasing")}}
                     <div class="chase-distance-overlay{{#if chaseDistance includeZero=true}}{{else}} unset{{/if}}" data-tooltip="{{chaseDistanceLabel}}">
-                      {{#if chaseDistance includeZero=true}}{{chaseDistance}}{{else}}—{{/if}}
+                      {{#if chaseDistance includeZero=true}}{{chaseDistance}}{{#if chaseDistanceUnit}}&nbsp;{{chaseDistanceUnit}}{{/if}}{{else}}—{{/if}}
                     </div>
                     {{/if}}
                     {{#if chaseRolled}}
@@ -60,11 +60,11 @@
                     </div>
                 </div>
                 <div class="token-initiative">
-                    {{#if (and isOwner (or initiative @root.isChase))}}
-                    <a class="aggroButton specImg{{#if @root.isChase}} chaseAction{{/if}}" data-action="aggroButton"
-                       data-tooltip-text="{{#if @root.isChase}}{{localize "CHASE.actionTooltip"}}{{else}}{{tooltipWithKeybinding 'attacktest' 'attacktest'}}{{/if}}"></a>
+                    {{#if (and isOwner (or initiative @root.isChase showNavalAggro))}}
+                    <a class="aggroButton specImg{{#if @root.isChase}} chaseAction{{else if @root.isNavalMkr}} navalAction{{/if}}" data-action="aggroButton"
+                       data-tooltip-text="{{#if @root.isChase}}{{localize "CHASE.actionTooltip"}}{{else if (and @root.isNavalMkr (eq @root.mkr.phase "heroActions"))}}{{localize "VEHICLE.mkr.heroActionTooltip"}}{{else}}{{tooltipWithKeybinding 'attacktest' 'attacktest'}}{{/if}}"></a>
                     {{else if isOwner}}
-                    {{#unless @root.isChase}}
+                    {{#unless (or @root.isChase @root.isNavalMkr)}}
                     <button type="button" class="combatant-control roll" data-action="rollInitiative"
                     data-tooltip="COMBAT.InitiativeRoll" aria-label="{{ localize "COMBAT.InitiativeRoll" }}"
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
@@ -116,11 +116,13 @@
     {{#if (or control user.isGM)}}
     <div class="row-section">
         <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
-        {{#unless isChase}}
-        <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
-        {{else}}
+        {{#if isChase}}
         <button type="button" class="col two combat-control chase-roll-current" data-action="aggroButton" data-tooltip="CHASE.actionTooltip">{{localize 'CHASE.action'}}</button>
-        {{/unless}}
+        {{else if (and isNavalMkr (eq mkr.phase "heroActions"))}}
+        <button type="button" class="col two combat-control naval-hero-action" data-action="aggroButton" data-tooltip="VEHICLE.mkr.heroActionTooltip">{{localize 'VEHICLE.mkr.heroAction'}}</button>
+        {{else}}
+        <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+        {{/if}}
     </div>
     {{#if isNavalMkr}}
     <div class="row-section mkr-phase-badge-row">

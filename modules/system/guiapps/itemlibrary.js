@@ -130,6 +130,8 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     this.detailFilter = source.detailFilter;
     this.detailStoreBySubcategory = source.detailStoreBySubcategory;
     this.candidateUuidsBySubcategory = source.candidateUuidsBySubcategory;
+    // Keep enrichment locks shared; prepareIndexes() is skipped when linking.
+    this.detailEnrichmentInFlight = source.detailEnrichmentInFlight ??= {};
   }
 
   _initLibrary() {
@@ -319,6 +321,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
     data.listFontSizeLabel = getFontSizeLabel(game.settings.get('dsa5', 'itemLibraryListFontSizeIndex'));
 
+    data.embedded = this.embedded;
     if (this.advancedFiltering) {
       data.advancedFilter = await this.buildDetailFilter('none', 'none');
     }
@@ -370,6 +373,15 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     }
   }
 
+  _setAdvancedSidebarVisible(visible) {
+    const sidebars = this.element?.querySelectorAll('.itemlibrary-sidebar') ?? [];
+    for (const sidebar of sidebars) {
+      sidebar.hidden = !visible;
+      sidebar.style.removeProperty('display');
+      if (sidebar.tagName === 'DETAILS') sidebar.open = visible;
+    }
+  }
+
   async applyLibrarySetting(key) {
     let val
     const html = $(this.element)
@@ -377,14 +389,17 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       case "advanced":
         val = !this.advancedFiltering
         this.advancedFiltering = val
-        if (this.advancedFiltering) {
-          html.find('.itemlibrary-sidebar').fadeIn();
-          await this.setAdvancedFilters();
-        } else {
-          html.find('.itemlibrary-sidebar').fadeOut();
-        }
+        this._setAdvancedSidebarVisible(val)
         {
           const category = html.find('.tab.active')[0]?.dataset.tab;
+          if (val) {
+            const selected = category ? this.models[category]?.filter(x => x.selected) || [] : [];
+            // Keep an already-selected category so fields appear on first enable.
+            if (selected.length === 1) await this._syncAdvancedSidebarForTab(category);
+            else await this.setAdvancedFilters();
+          } else if (category) {
+            await this.filterItems(category);
+          }
           if (category) this.syncCategoryChipStates(category);
         }
         break
@@ -829,7 +844,14 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
   async changeTab(tab, group, options) {
     await this.whenReady();
-    super.changeTab(tab, group, options)
+    const previous = this.tabGroups?.[group];
+    super.changeTab(tab, group, options);
+    // ApplicationV2.changeTab no-ops when the tab is unchanged; keep that contract so
+    // host remounts / setContextFromHost do not wipe search, chips, or advanced fields.
+    if (previous === tab && !options?.force) {
+      this._syncViewModeAttribute();
+      return;
+    }
 
     const input = this.element?.querySelector('.filterBy-search');
     if (input) input.value = this.findIndex(tab).search ?? '';
@@ -1233,7 +1255,9 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   async createDetailIndex(category, subcategory) {
-    if (this.detailEnrichmentInFlight?.[subcategory]) return this.detailEnrichmentInFlight[subcategory];
+    this.detailEnrichmentInFlight ??= {};
+    this.detailFilter ??= {};
+    if (this.detailEnrichmentInFlight[subcategory]) return this.detailEnrichmentInFlight[subcategory];
     if (this.detailFilter[subcategory]) return;
 
     const promise = this._createDetailIndexInternal(category, subcategory);

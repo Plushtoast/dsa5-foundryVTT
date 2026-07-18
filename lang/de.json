@@ -3882,6 +3882,19 @@
     "crewCurrentHint": "Wie viele Personen aktuell an Bord sind (inkl. Verwundeter).",
     "crewAvailable": "Verfügbare Besatzung",
     "crewAvailableHint": "Aktuelle Besatzung abzüglich Schwerverwundeter (handlungsfähig).",
+    "crewMembers": "Besatzungsmitglieder",
+    "dropCrewHint": "Einen Charakter, NSC oder Kreatur hierher ziehen, um ihn der Besatzung hinzuzufügen.",
+    "alreadyCrew": "Dieser Akteur ist bereits Besatzung dieses Fahrzeugs.",
+    "crewInvalidActor": "Fahrzeuge und Gruppen können nicht als Besatzung zugewiesen werden.",
+    "removeCrewMember": "Aus Besatzung entfernen",
+    "crewCombat": {
+      "title": "Besatzung zum Kampf hinzufügen",
+      "hint": "Sollen Besatzungsmitglieder der Schiffe ebenfalls in den Kampf aufgenommen werden? Ohne Token auf der Karte werden sie nur im Tracker geführt.",
+      "addSelected": "Auswahl hinzufügen",
+      "skip": "Ohne Besatzung",
+      "hasToken": "Token auf der Karte — wird mit Token hinzugefügt",
+      "noToken": "Kein Token — nur im Kampftracker"
+    },
     "combat": {
       "mkrOnly": "Fahrzeuge können nur im Seegefecht (MKR) am Kampf teilnehmen."
     },
@@ -3890,6 +3903,7 @@
       "baseSpeed": "GS",
       "ramSpeed": "Ramm",
       "waterSpeed": "Wasser",
+      "airSpeed": "Luft",
       "structurePointsMax": "StP",
       "crewMax": "Kapazität",
       "crewCurrent": "Besatzung",
@@ -3903,7 +3917,8 @@
     "section": {
       "classification": "Klassifikation",
       "speed": "Geschwindigkeit",
-      "structure": "Struktur & Besatzung",
+      "structure": "Struktur",
+      "crew": "Besatzung",
       "combat": "Kampfwerte",
       "logistics": "Fracht & Preis"
     },
@@ -3951,6 +3966,7 @@
     "ramCrewFireMode": "Besatzung rammt (Schiff-FK).",
     "ramHeroFireMode": "{name} steuert den Ramm.",
     "tabCombat": "Bordwaffen",
+    "tabCrew": "Besatzung",
     "boardRangedWeapons": "Fernkampf-Bordwaffen",
     "boardMeleeWeapons": "Nahkampf-Bordwaffen",
     "boardRangedShort": "Fernkampf",
@@ -3994,6 +4010,14 @@
       "started": "<p><b>Seegefecht (MKR)</b> gestartet — MKR {mkr}, Runde {round}.</p>",
       "advanced": "<p><b>MKR {mkr}</b> beginnt (Runde {round}). Heldenaktionen!</p>",
       "heroActionsOnlyTooltip": "Heldenaktionen sind nur in der MKR-Phase „Heldenaktionen“ verfügbar.",
+      "heroAction": "Heldenaktion",
+      "heroActionTooltip": "Heldenaktion wählen (Reparieren, Segeln/Fahren, Befehle, Verwundete versorgen).",
+      "pickHeroAction": "Heldenaktion wählen",
+      "pickVehicle": "Schiff wählen",
+      "pickVehicleText": "Für welches Fahrzeug soll die Heldenaktion gelten?",
+      "noVehicleInCombat": "Kein Fahrzeug im Kampf — füge ein Schiff zum Kampf hinzu.",
+      "noVehicleForHero": "Kein Fahrzeug gefunden — weise den Helden auf dem Besatzung-Tab zu oder füge ein Schiff zum Kampf hinzu.",
+      "maneuverUnavailable": "Für dieses Fahrzeug ist kein Segel-/Fahrmanöver verfügbar.",
       "noCharacter": "Kein zugewiesener Charakter — nur der Spieler oder der SL kann Heldenaktionen auslösen.",
       "missingSkill": "Der Charakter hat die Fertigkeit „{skill}“ nicht.",
       "missingRepairSkill": "Holzbearbeitung oder Stoffbearbeitung erforderlich.",
@@ -4026,6 +4050,7 @@
         "repair": "Reparieren",
         "sail": "Segeln",
         "drive": "Fahren",
+        "maneuver": "Segeln / Fahren",
         "commands": "Befehle",
         "heal": "Verwundete versorgen"
       },

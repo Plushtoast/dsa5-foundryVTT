@@ -455,6 +455,15 @@ export default class DSA5Combat extends Combat {
     const Handler = Chase.handlerFor(this);
     if (!Handler.TERRAIN_IDS.includes(terrain)) return;
     await this.update({ 'system.chaseTerrain': terrain });
+    if (this.isVehicleChase) this.#refreshVehicleChaseSheets();
+  }
+
+  /** Keep open vehicle sheets' effective GS in sync with chase terrain. */
+  #refreshVehicleChaseSheets() {
+    for (const combatant of this.combatants) {
+      const actor = combatant.actor;
+      if (actor?.type === 'vehicle') actor.sheet?.render(false);
+    }
   }
 
   async setChaseMaxRounds(value) {
