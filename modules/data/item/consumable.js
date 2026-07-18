@@ -67,4 +67,95 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
     }
     return item;
   }
+
+  // --- LOGIK FÜR CONSUMABLE MODIFIKATOREN ---
+
+  // Sammeln aller relevanten Consumables des Actors 
+  static addConsumableModifiers(situationalModifiers, actor, testData) {
+      if (!actor) return;
+      
+      const consumables = actor.items.filter(x => x.type === "consumable" && x.system.quantity.value > 0);
+      const targetName = testData.source?.name || ""; 
+      const targetType = testData.source?.type || "";
+      const typeLabel = game.i18n.localize("TYPES.Item.consumable");
+
+      // Modifikator-Typen
+      const typeConditions = [
+          { type: "FP", keywords: [".FP", "SkillPoints"] },
+          { type: "QL", keywords: [".QL", "qualityStep"] },
+          { type: "FW", keywords: [".FW", "talentValue"] }
+      ];
+
+      for (let item of consumables) {
+          const relevantEffect = item.effects.find(e => {
+              if (e.disabled || e.transfer) return false;
+              return e.changes.some(change => {
+                  return change.key.includes(targetName) || String(change.value).includes(targetName) || 
+                         (targetType === "spell" && change.key.includes("spell"));
+              });
+          });
+
+          if (relevantEffect) {
+              // Den exakten Change finden
+              let change = relevantEffect.changes.find(c => 
+                  c.key.includes(targetName) || String(c.value).includes(targetName)
+              ) || relevantEffect.changes[0];
+
+              // Typ bestimmen
+              const foundMatch = typeConditions.find(cond => cond.keywords.some(kw => change.key.includes(kw)));
+              let modType = foundMatch ? foundMatch.type : "";
+
+              // Zahlenwert per Regex 
+              const match = String(change.value).match(/-?\d+/);
+              let numericPart = match ? match[0] : change.value;
+
+              if (!numericPart && numericPart != 0) continue;
+
+              // Verrechnungsmodus
+              let finalValue = numericPart;
+              switch (parseInt(change.mode)) {
+                  case 1: finalValue = `*${numericPart}`; break; 
+                  case 5: finalValue = `=${numericPart}`; break; 
+                  default: finalValue = Number(numericPart);
+              }
+
+              let displayName = `${typeLabel}: ${item.name}`;
+              if (item.system.QL) displayName += ` (QS ${item.system.QL})`;
+
+              situationalModifiers.push({
+                  name: displayName,
+                  value: finalValue, 
+                  type: modType,       
+                  selected: false,
+                  consumableId: item.id 
+              });
+          }
+      }
+  }
+
+  // Verbrauch ausführen (Menge -1 oder Item löschen)
+  async consumeItem() {
+      const item = this.parent;
+      const newQty = item.system.quantity.value - 1;
+      
+      if (newQty <= 0) {
+          await item.delete();
+      } else {
+          await item.update({"system.quantity.value": newQty});
+      }
+  }
+
+  // Prüft ausgewählte Modifikatoren und löst Verbrauch aus 
+  static async triggerConsumptions(testData, actor) {
+      if (!actor || !testData.situationalModifiers) return;
+
+      for (let mod of testData.situationalModifiers) {
+          if (mod.consumableId && mod.selected) {
+              let item = actor.items.get(mod.consumableId);
+              if (item && item.system?.consumeItem) {
+                  await item.system.consumeItem();
+              }
+          }
+      }
+  }
 }
