@@ -1,0 +1,30 @@
+<div class="selection">
+    <p>{{localize title}}</p>
+    {{#if defaultSkill}}
+    <div class="row-section chase-default-skill-row">
+        <div class="col flexrow chase-default-skill-col">
+            <button type="button" data-action="pickSkill" class="reactClick row-section chase-default-skill-btn"
+                    data-key="{{defaultSkill.key}}" data-tooltip="CHASE.defaultSkillTooltip">
+                <div class="col ten">
+                    <span class="d20">{{defaultSkill.value}}</span>
+                </div>
+                <img class="col ten" src="{{defaultSkill.img}}" alt="" />
+                <div class="col eighty">{{defaultSkill.name}}</div>
+            </button>
+        </div>
+    </div>
+    {{/if}}
+    <div class="row-section wrap">
+        {{#each items as |itm|}}
+        <div class="col two flexrow">
+            <button type="button" data-action="pickSkill" class="reactClick row-section" data-key="{{itm.key}}">
+                <div class="col ten">
+                    <span class="d20">{{itm.value}}</span>
+                </div>
+                <img class="col ten" src="{{itm.img}}" alt="" />
+                <div class="col eighty">{{itm.name}}</div>
+            </button>
+        </div>
+        {{/each}}
+    </div>
+</div>

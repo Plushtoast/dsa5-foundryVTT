@@ -30,7 +30,6 @@
   --dsa-tooltip-border-radius: 6px;
   --dsa-tooltip-box-shadow: 0 0 0 3px #2d2215 inset;
   --dsa-tooltip-table-title-bg: rgba(188, 136, 111, 0.28);
-  --dsa-tooltip-image-filter: invert(1);
 }
 
 @font-face {
@@ -1579,18 +1578,19 @@ a.img-entity-link {
     }
   }
 
-  .chase-terrain-picker,
-  .chase-terrain-readonly {
+  .form-group {
+    margin: 0;
     font-size: var(--font-size-12);
-    color: var(--color-text-primary);
-    display: flex;
-    align-items: center;
-    gap: 6px;
+
+    > label {
+      flex: 0 0 5rem;
+    }
   }
 
-  .chase-terrain-picker select {
-    flex: 1;
-    min-width: 0;
+  .chase-terrain-readonly,
+  .chase-skill-readonly {
+    color: var(--color-text-primary);
+    line-height: var(--form-field-height, 1.5rem);
   }
 }
 
@@ -1635,6 +1635,21 @@ a.img-entity-link {
   border: 1px solid var(--color-border-light-tertiary);
   border-radius: 3px;
   padding: 0 2px;
+}
+
+.chase-default-skill-row {
+  justify-content: center;
+  margin-bottom: 6px;
+
+  .chase-default-skill-col {
+    flex: 0 1 50%;
+    max-width: 50%;
+    justify-content: center;
+  }
+
+  .chase-default-skill-btn {
+    outline: 1px solid var(--color-border-highlight, var(--color-border-light-primary));
+  }
 }
 
 .chase-distance-input {
@@ -1705,6 +1720,39 @@ a.img-entity-link {
   padding-left: 4px;
   margin-left: 2px;
   border-left: 1px solid var(--color-border-light-tertiary);
+}
+
+.combat-mode-start-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.5rem 1rem;
+  width: 100%;
+
+  .combat-mode-start-title {
+    display: block;
+    text-align: center;
+    font-size: var(--font-size-14);
+  }
+
+  .combat-mode-start {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .combat-mode-start-btn {
+    width: 100%;
+  }
+
+  .combat-mode-start-hint {
+    margin: 0;
+    padding: 0 0.25rem;
+    font-size: var(--font-size-11);
+    line-height: 1.3;
+    color: var(--color-text-secondary);
+    text-align: center;
+  }
 }
 
 .naval-chase-speed-value small {
@@ -5971,7 +6019,8 @@ input[type='checkbox'].autoCheckbox {
   }
 
   .effects-tooltip img {
-    filter: var(--dsa-tooltip-image-filter);
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
   }
 }
 

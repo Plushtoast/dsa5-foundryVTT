@@ -136,9 +136,27 @@
         <div class="chase-outcome-banner escaped">{{localize "CHASE.escaped"}}</div>
         {{/if}}
         <span class="chase-status-badge" data-tooltip="CHASE.escapeTooltip">
-          {{localize "CHASE.roundProgress" elapsed=chase.elapsed max=chase.maxRounds}}
+          {{localize "CHASE.roundPrefix"}} {{chase.elapsed}}/
+          {{#if user.isGM}}
+          <input type="number" class="chase-max-rounds-input" name="chaseMaxRounds" min="1" step="1"
+                 value="{{chase.maxRounds}}"
+                 data-tooltip="CHASE.maxRoundsTooltip" aria-label="{{localize "CHASE.maxRounds"}}">
+          {{else}}
+          {{chase.maxRounds}}
+          {{/if}}
         </span>
-        <span class="chase-terrain-chip" data-tooltip="CHASE.terrainDropdownTooltip">{{chaseTerrainLabel}}</span>
+        <span class="chase-terrain-chip{{#if user.isGM}} context{{/if}}"
+              data-tooltip="CHASE.terrainDropdownTooltip"
+              {{#if user.isGM}}data-action="chaseTerrainMenu"{{/if}}>{{chaseTerrainLabel}}</span>
+        <span class="chase-default-skill-group">
+          <button type="button" class="chase-default-skill-badge" data-action="rollChaseDefaultSkill"
+                  data-tooltip="CHASE.rollDefaultSkillTooltip">{{chaseDefaultSkillLabel}}</button>
+          {{#if user.isGM}}
+          <button type="button" class="chase-default-skill-menu icon fas fa-ellipsis-v noBorder dsadesignbutton"
+                  data-action="chaseDefaultSkillMenu" data-tooltip="CHASE.defaultSkillMenuTooltip"
+                  aria-label="{{localize "CHASE.defaultSkillMenuTooltip"}}"></button>
+          {{/if}}
+        </span>
     </div>
     {{/if}}
     {{/unless}}

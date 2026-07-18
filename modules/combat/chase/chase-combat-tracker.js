@@ -17,8 +17,11 @@ export default class ChaseCombatTracker {
 
     if (!isChase) {
       context.chase = null;
+      Chase.clearAssignFleerHint();
       return;
     }
+
+    Chase.showAssignFleerHint(combat);
 
     context.chase = Handler.getProgress(combat);
     context.chaseTerrain = combat.system.chaseTerrain ?? 'normal';
@@ -27,6 +30,9 @@ export default class ChaseCombatTracker {
       ...o,
       selected: o.id === context.chaseTerrain,
     }));
+    context.chaseDefaultSkill = context.chase.defaultSkillKey;
+    context.chaseDefaultSkillLabel = context.chase.defaultSkillLabel;
+    context.chaseDefaultSkillOptions = context.chase.defaultSkillOptions;
     context.chaseDistanceUnit = Handler.distanceUnitLabel();
   }
 

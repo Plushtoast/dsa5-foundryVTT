@@ -33,12 +33,33 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       advanceMkrPhase: this._advanceMkrPhase,
       setChaseTerrain: this._setChaseTerrain,
       setChaseMaxRounds: this._setChaseMaxRounds,
+      setChaseDefaultSkill: this._setChaseDefaultSkill,
       setChaseRole: this._setChaseRole,
       setChaseDistance: this._setChaseDistance,
       aggroButton: this._onAggroButtonClicked,
       combatRules: this._onCombatRulesButtonClicked,
+      createCombatMode: this._createCombatMode,
     },
   };
+
+  static COMBAT_MODE_STARTS = [
+    { id: 'standard', icon: 'fa-shield', label: 'COMBAT.MODE.standard', hint: 'COMBAT.MODE.standardHint' },
+    { id: 'brawling', icon: 'fa-hand-fist fa-rotate-90', label: 'COMBAT.MODE.brawling', hint: 'COMBAT.MODE.brawlingHint' },
+    { id: 'chase', icon: 'fa-person-running', label: 'COMBAT.MODE.chase', hint: 'COMBAT.MODE.chaseHint' },
+    { id: 'vehicleChase', icon: 'fa-sailboat', label: 'COMBAT.MODE.vehicleChase', hint: 'COMBAT.MODE.vehicleChaseHint' },
+    { id: 'navalMkr', icon: 'fa-ship', label: 'COMBAT.MODE.navalMkr', hint: 'COMBAT.MODE.navalMkrHint' },
+  ];
+
+  static async _createCombatMode(_event, target) {
+    if (!game.user.isGM) return;
+    const mode = target.dataset.mode || 'standard';
+    let combat = game.combat;
+    if (!combat) {
+      combat = await game.combats.documentClass.create();
+      await combat.activate({ render: false });
+    }
+    await combat.setCombatMode(mode);
+  }
 
   static _nextMkr() {
     game.combat?.nextMkr();
@@ -54,6 +75,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   static _setChaseMaxRounds(_ev, target) {
     game.combat?.setChaseMaxRounds(target.value);
+  }
+
+  static _setChaseDefaultSkill(_ev, target) {
+    game.combat?.setChaseDefaultSkill(target.value);
   }
 
   static _setChaseRole(_ev, target) {
@@ -208,6 +233,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       chase: 'COMBATTRACKER.rulesHint.chase',
       vehicleChase: 'COMBATTRACKER.rulesHint.vehicleChase',
     }[context.combatMode] ?? 'COMBATTRACKER.rulesHint.standard';
+    context.combatModeStarts = this.constructor.COMBAT_MODE_STARTS;
 
     if (context.isNavalMkr) {
       this.#prepareNavalMkrContext(context, combat);
@@ -384,6 +410,13 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       });
       input.addEventListener('click', (ev) => ev.stopPropagation());
     }
+
+    for (const select of this.element.querySelectorAll('select[data-action="setChaseDefaultSkill"]')) {
+      select.addEventListener('change', (ev) => {
+        game.combat?.setChaseDefaultSkill(ev.currentTarget.value);
+      });
+      select.addEventListener('click', (ev) => ev.stopPropagation());
+    }
   }
 
   async #onChaseDistanceChange(event) {
@@ -485,8 +518,14 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
 
   const combat = data.combat ?? game.combat;
   if (Chase.isChaseActive(combat) && data.system?.chaseRole !== 'fleeing') {
-    data.updateSource?.({ 'system.chaseRole': 'chasing' })
-      ?? foundry.utils.setProperty(data, 'system.chaseRole', 'chasing');
+    const patch = { 'system.chaseRole': 'chasing' };
+    const maxDistance = Chase.maxChaseDistance(combat);
+    if (maxDistance !== null) patch['system.chaseDistance'] = maxDistance;
+    if (data.updateSource) data.updateSource(patch);
+    else {
+      foundry.utils.setProperty(data, 'system.chaseRole', 'chasing');
+      if (maxDistance !== null) foundry.utils.setProperty(data, 'system.chaseDistance', maxDistance);
+    }
   }
 
   if (actor.type === 'vehicle') {

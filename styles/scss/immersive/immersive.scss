@@ -18,9 +18,9 @@
     .chase-bar-label,
     .mkr-loop-label,
     .chase-round-badge,
-    .chase-terrain-picker,
+    .form-group > label,
     .chase-terrain-readonly,
-    .chase-terrain-label,
+    .chase-skill-readonly,
     .mkr-phase-badge,
     .mkr-phase-control-label,
     .mkr-kr-label {
@@ -518,7 +518,6 @@
     --dsa-tooltip-border-color: transparent;
     --dsa-tooltip-box-shadow: none;
     --dsa-tooltip-table-title-bg: rgba(188, 136, 111, 0.28);
-    --dsa-tooltip-image-filter: none;
     padding: 0;
 
     .itemTooltip {

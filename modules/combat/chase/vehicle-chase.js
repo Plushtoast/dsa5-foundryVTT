@@ -79,20 +79,6 @@ export default class VehicleChase extends Chase {
     return 'CHASE.distanceUnit.re';
   }
 
-  static defaultSkillFor(actor) {
-    return this.skillFor(actor, 'boatsAndShips');
-  }
-
-  static maybeSubstituteChaseSkill(actor, skill) {
-    if (!Chase.isChaseActive()) return skill;
-    if (skill?.type !== 'skill') return skill;
-
-    const bodyControl = _loc('LocalizedIDs.bodyControl');
-    if (skill.name !== bodyControl) return skill;
-
-    return this.defaultSkillFor(actor) ?? skill;
-  }
-
   static getProgress(combat = game.combat) {
     const progress = super.getProgress(combat);
     if (!progress) return null;

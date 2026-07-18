@@ -1,6 +1,7 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import { ActorDialogBuilder } from '../../actor/actor-dialog-builder.js';
+import ChaseSkillDialog from './chase-skill-dialog.js';
 
 export const CHASE_TERRAIN_IDS = ['open', 'passable', 'normal', 'difficult', 'severe'];
 
@@ -35,9 +36,12 @@ export default class Chase {
 
   static MODE = 'chase';
 
+  static #assignFleerNotification = null;
+
   static register() {
     this.#patchSetupSkill();
     if (game.dsa5) game.dsa5.chase = this;
+    Hooks.on('deleteCombat', () => this.clearAssignFleerHint());
   }
 
   static isChaseMode(mode) {
@@ -54,6 +58,29 @@ export default class Chase {
 
   static isBasisChase(combat = game.combat) {
     return combat?.system?.combatMode === 'chase';
+  }
+
+  static hasFleer(combat = game.combat) {
+    return [...(combat?.combatants ?? [])].some((c) => this.getRole(c) === 'fleeing');
+  }
+
+  /** Permanent GM hint until a Flüchtende is assigned or the chase ends. */
+  static showAssignFleerHint(combat = game.combat) {
+    if (!game.user.isGM) return;
+    if (!this.isChaseActive(combat) || this.hasFleer(combat)) {
+      this.clearAssignFleerHint();
+      return;
+    }
+    if (this.#assignFleerNotification) return;
+    this.#assignFleerNotification = ui.notifications.warn('CHASE.assignFleerHint', {
+      localize: true,
+      permanent: true,
+    });
+  }
+
+  static clearAssignFleerHint() {
+    this.#assignFleerNotification?.remove?.();
+    this.#assignFleerNotification = null;
   }
 
   /** Active chase implementation for the current combat mode. */
@@ -78,23 +105,45 @@ export default class Chase {
     return CHASE_TERRAIN_MULTIPLIERS[terrainId] ?? 1;
   }
 
-  static getBaseSpeed(actor) {
-    if (!actor) return 0;
-    if (actor.type === 'vehicle') {
-      return Number(actor.system.status?.speed?.initial) || 0;
-    }
-    return Number(actor.system.status?.speed?.value ?? actor.system.status?.speed?.initial) || 0;
+  /**
+   * Prefer a live Actor document (prepared derived GS). Plain actor data objects lack max/airMax/waterMax.
+   * @param {Actordsa5|Combatant|{actor?: Actordsa5}|null} actorLike
+   * @returns {Actordsa5|null}
+   */
+  static resolveActor(actorLike) {
+    if (!actorLike) return null;
+    if (actorLike instanceof Actordsa5) return actorLike;
+    if (actorLike.actor instanceof Actordsa5) return actorLike.actor;
+    return null;
   }
 
-  static getEffectiveSpeed(actor, combat = game.combat, terrainId = null) {
+  /**
+   * Actor GS for chase movement (Geschwindigkeit).
+   * Uses derived speed from Actor.speedByMovementType (set in ActorDataModel.calcSpeed).
+   */
+  static getBaseSpeed(actorLike, skillKey = null) {
+    const actor = this.resolveActor(actorLike);
+    if (!actor?.speedByMovementType) return 0;
+
+    const movementType = skillKey === 'swimming' ? 'swim'
+      : skillKey === 'flying' ? 'fly'
+        : 'land';
+
+    return Number(actor.speedByMovementType(movementType)) || 0;
+  }
+
+  /** Effective GS = actor GS × current chase terrain factor. */
+  static getEffectiveSpeed(actorLike, combat = game.combat, terrainId = null, skillKey = null) {
+    const actor = this.resolveActor(actorLike);
     const id = terrainId || combat?.system?.chaseTerrain || 'normal';
     const multiplier = this.getTerrainMultiplier(actor, id);
-    const base = this.getBaseSpeed(actor);
+    const base = this.getBaseSpeed(actor, skillKey);
     return Math.round(base * multiplier * 10) / 10;
   }
 
   /** Options for the temporary Gelände dropdown on Verfolgungsaktion (labels include [×factor]). */
-  static dialogTerrainOptions(actor, combat = game.combat) {
+  static dialogTerrainOptions(actorLike, combat = game.combat) {
+    const actor = this.resolveActor(actorLike);
     const current = combat?.system?.chaseTerrain || 'normal';
     return this.TERRAIN_IDS.map((id) => {
       const mult = this.getTerrainMultiplier(actor, id);
@@ -110,7 +159,8 @@ export default class Chase {
     });
   }
 
-  static getChaseSummary(actor, combat = game.combat) {
+  static getChaseSummary(actorLike, combat = game.combat) {
+    const actor = this.resolveActor(actorLike);
     const terrainId = combat?.system?.chaseTerrain ?? 'normal';
     const multiplier = this.getTerrainMultiplier(actor, terrainId);
     const base = this.getBaseSpeed(actor);
@@ -173,6 +223,29 @@ export default class Chase {
     });
   }
 
+  /** Mode-preferred default LocalizedIDs skill key. */
+  static modeDefaultSkillKey(combat = game.combat) {
+    return this.isVehicleChase(combat) ? 'boatsAndShips' : 'bodyControl';
+  }
+
+  /** Combat (or mode) default LocalizedIDs skill key. */
+  static defaultSkillKey(combat = game.combat) {
+    const keys = this.locomotionSkillKeys(null, combat);
+    const stored = combat?.system?.chaseDefaultSkill;
+    if (stored && keys.includes(stored)) return stored;
+    return this.modeDefaultSkillKey(combat);
+  }
+
+  /** Dropdown options for the GM default skill picker. */
+  static defaultSkillOptions(combat = game.combat) {
+    const current = this.defaultSkillKey(combat);
+    return this.locomotionSkillKeys(null, combat).map((key) => ({
+      key,
+      label: `LocalizedIDs.${key}`,
+      selected: key === current,
+    }));
+  }
+
   /** Ask which Fortbewegungsart skill to roll. */
   static async pickChaseSkill(actor, combat = game.combat) {
     const skills = this.chaseSkillsFor(actor, combat);
@@ -182,31 +255,18 @@ export default class Chase {
     }
     if (skills.length === 1) return skills[0].item;
 
-    const key = await foundry.applications.api.DialogV2.wait({
-      window: { title: _loc('CHASE.pickSkillTitle') },
-      content: `<p>${_loc('CHASE.pickSkill')}</p>`,
-      buttons: [
-        ...skills.map((s) => ({
-          action: s.key,
-          label: `${s.name} (${s.value})`,
-        })),
-        { action: 'cancel', label: 'cancel', icon: 'fas fa-times' },
-      ],
-    });
-
-    if (!key || key === 'cancel') return null;
-    return skills.find((s) => s.key === key)?.item ?? null;
+    return ChaseSkillDialog.prompt(actor, skills, this.defaultSkillKey(combat));
   }
 
-  /** Default chase skill item for an actor (Körperbeherrschung / Boote & Schiffe). */
-  static defaultSkillFor(actor) {
-    const keys = this.locomotionSkillKeys(actor);
-    return this.skillFor(actor, keys[0]);
+  /** Default chase skill item for an actor (combat default / mode default). */
+  static defaultSkillFor(actor, combat = game.combat) {
+    return this.skillFor(actor, this.defaultSkillKey(combat))
+      ?? this.skillFor(actor, this.modeDefaultSkillKey(combat));
   }
 
   /**
-   * While chase is active, Körperbeherrschung rolls can be substituted by the mode default.
-   * Basis: same skill. VehicleChase overrides to Boote & Schiffe.
+   * While chase is active, Körperbeherrschung rolls can be substituted by the chase default.
+   * Basis: same skill. VehicleChase overrides to Boote & Schiffe when that is the default.
    */
   static maybeSubstituteChaseSkill(actor, skill) {
     if (!this.isChaseActive()) return skill;
@@ -224,8 +284,50 @@ export default class Chase {
     return Math.max(0, Number(raw) || 0);
   }
 
+  /** Highest set chaser distance in the combat, or null if none are set. */
+  static maxChaseDistance(combat = game.combat) {
+    let max = null;
+    for (const c of combat?.combatants ?? []) {
+      if (this.getRole(c) === 'fleeing') continue;
+      const d = this.getDistance(c);
+      if (d === null) continue;
+      if (max === null || d > max) max = d;
+    }
+    return max;
+  }
+
   static getRole(combatant) {
     return combatant?.system?.chaseRole === 'fleeing' ? 'fleeing' : 'chasing';
+  }
+
+  /**
+   * After the first fleer is assigned, ask the GM for a shared starting distance
+   * and apply it to every chaser (distance to the fleer).
+   */
+  static async promptAndApplyInitialDistances(combat, fleer) {
+    if (!game.user.isGM || !combat || !fleer) return;
+
+    const Handler = this.handlerFor(combat);
+    const unit = Handler.distanceUnitLabel();
+    const value = await foundry.applications.api.DialogV2.prompt({
+      window: { title: 'CHASE.initialDistanceTitle' },
+      content: `<p>${_loc('CHASE.initialDistanceHint', { name: fleer.name, unit })}</p>
+        <p><label>${_loc('CHASE.distance')} (${unit})</label></p>
+        <input type="number" name="distance" min="0" step="1" value="25" autofocus>`,
+      ok: {
+        label: 'Confirm',
+        callback: (_event, button) => Number(button.form.elements.distance.value),
+      },
+    });
+
+    if (value === null || value === undefined || Number.isNaN(value)) return;
+
+    const distance = Math.max(0, Math.floor(Number(value) || 0));
+    const updates = [...combat.combatants]
+      .filter((c) => c.id !== fleer.id && this.getRole(c) === 'chasing')
+      .map((c) => ({ _id: c.id, 'system.chaseDistance': distance }));
+
+    if (updates.length) await combat.applyChaseDistanceUpdates(updates);
   }
 
   static prepareTrackerGroups(combat = game.combat) {
@@ -267,13 +369,24 @@ export default class Chase {
    * Roll the chase skill (Körperbeherrschung / Boote & Schiffe / …),
    * apply movement to distances, and mark the combatant as rolled this KR.
    * Fate points / roll edits re-run distance via postFunction (like falling damage).
+   * @param {Actor} actor
+   * @param {string} [tokenId]
+   * @param {{ skill?: Item, skipPicker?: boolean }} [options]
+   *   skipPicker — roll the combat default skill without opening the picker
    */
-  static async rollAction(actor, tokenId) {
+  static async rollAction(actor, tokenId, { skill = null, skipPicker = false } = {}) {
     if (!actor || !this.isChaseActive()) return;
 
     const Handler = this.handlerFor();
-    const skill = await Handler.pickChaseSkill(actor);
-    if (!skill) return;
+    if (!skill) {
+      skill = skipPicker
+        ? Handler.defaultSkillFor(actor)
+        : await Handler.pickChaseSkill(actor);
+    }
+    if (!skill) {
+      if (skipPicker) ui.notifications.warn('CHASE.noSkill', { localize: true });
+      return;
+    }
 
     const postFunction = {
       functionName: 'game.dsa5.chase.updateDistanceFromRoll',
@@ -325,13 +438,17 @@ export default class Chase {
     const rollResult = this.#normalizeRollPayload(payload);
     if (!rollResult) return;
 
-    const actor = DSA5_Utility.getSpeaker(postFunction.speaker)
+    const speakerActor = DSA5_Utility.getSpeaker(postFunction.speaker)
       ?? ChatMessage.getSpeakerActor({ actor: postFunction.speaker?.actor, token: postFunction.tokenId });
     const combatant = combat.combatants.get(postFunction.combatantId)
       ?? combat.combatants.find((c) => (
-        (postFunction.tokenId && c.tokenId === postFunction.tokenId) || c.actorId === actor?.id
+        (postFunction.tokenId && c.tokenId === postFunction.tokenId) || c.actorId === speakerActor?.id
       ));
     if (!combatant) return;
+
+    // Derived GS (speed.max / airMax / waterMax) exists only on prepared Actor instances.
+    const actor = this.resolveActor(combatant) ?? this.resolveActor(speakerActor);
+    if (!actor) return;
 
     if (!combatant.system.chaseRolled) await combat.markChaseRolled(combatant.id);
 
@@ -342,8 +459,22 @@ export default class Chase {
       || rollResult?.preData?.extra?.options?.postFunction?.chaseTerrainOverride
       || combat.system.chaseTerrain
       || 'normal';
-    const delta = Handler.movementFromRoll(actor ?? combatant.actor, outcome, combat, terrainId);
-    await Handler.reapplyMovementDelta(combat, combatant, delta, outcome);
+    const skillKey = this.#skillKeyFromRoll(actor, rollResult)
+      || Handler.defaultSkillKey(combat);
+    // Rules: movement = effective GS (+ FP on success). Fleer adds to all chasers; chaser subtracts from self.
+    const gs = Handler.getEffectiveSpeed(actor, combat, terrainId, skillKey);
+    const fp = outcome.success && !outcome.botch ? outcome.fp : 0;
+    const delta = outcome.botch ? 0 : gs + fp;
+    await Handler.reapplyMovementDelta(combat, combatant, delta, { ...outcome, gs, fp });
+  }
+
+  static #skillKeyFromRoll(actor, rollResult) {
+    const name = rollResult?.preData?.source?.name || rollResult?.source?.name;
+    if (!actor || !name) return null;
+    for (const key of this.locomotionSkillKeys(actor)) {
+      if (_loc(`LocalizedIDs.${key}`) === name) return key;
+    }
+    return null;
   }
 
   static #normalizeRollPayload(payload) {
@@ -376,7 +507,7 @@ export default class Chase {
       name: _loc('CHASE.action'),
       id: 'chaseAction',
       special: 'chaseAction',
-      img: 'systems/dsa5/icons/categories/Skill.webp',
+      img: skill.img || 'systems/dsa5/icons/categories/Skill.webp',
       value: Number(skill.system?.talentValue?.value) || 0,
       skillName: skill.name,
     };
@@ -412,10 +543,17 @@ export default class Chase {
     return Math.max(0, (combat.round || 0) - start);
   }
 
+  /** 1-based chase KR for display (KR 1…max while the chase is ongoing). */
+  static chaseRoundNumber(combat = game.combat) {
+    const max = combat?.system?.chaseMaxRounds || this.DEFAULT_MAX_ROUNDS;
+    return Math.min(this.chaseRoundsElapsed(combat) + 1, max);
+  }
+
   static hasEscaped(combat = game.combat) {
     if (!this.isChaseActive(combat)) return false;
     if (this.anyCaught(combat)) return false;
     const max = combat.system.chaseMaxRounds || this.DEFAULT_MAX_ROUNDS;
+    // Escape after max full chase rounds have been completed (not during the last one).
     return this.chaseRoundsElapsed(combat) >= max;
   }
 
@@ -423,10 +561,11 @@ export default class Chase {
     if (!this.isChaseActive(combat)) return null;
 
     const max = combat.system.chaseMaxRounds || this.DEFAULT_MAX_ROUNDS;
-    const elapsed = this.chaseRoundsElapsed(combat);
+    const elapsed = this.chaseRoundNumber(combat);
     const terrainId = combat.system.chaseTerrain ?? 'normal';
     const Handler = this.handlerFor(combat);
 
+    const defaultSkillKey = Handler.defaultSkillKey(combat);
     return {
       mode: combat.system.combatMode,
       terrainId,
@@ -435,6 +574,9 @@ export default class Chase {
         id,
         label: Handler.terrainChoices()[id],
       })),
+      defaultSkillKey,
+      defaultSkillLabel: _loc(`LocalizedIDs.${defaultSkillKey}`),
+      defaultSkillOptions: Handler.defaultSkillOptions(combat),
       elapsed,
       maxRounds: max,
       escaped: Handler.hasEscaped(combat),
@@ -447,9 +589,9 @@ export default class Chase {
    * Movement this round from a chase skill result.
    * Success: effective GS + FP; fail: effective GS; botch: 0 (caller tracks skip next).
    */
-  static movementFromRoll(actor, { success = true, botch = false, fp = 0 } = {}, combat = game.combat, terrainId = null) {
+  static movementFromRoll(actorLike, { success = true, botch = false, fp = 0 } = {}, combat = game.combat, terrainId = null, skillKey = null) {
     if (botch) return 0;
-    const gs = this.getEffectiveSpeed(actor, combat, terrainId);
+    const gs = this.getEffectiveSpeed(actorLike, combat, terrainId, skillKey);
     if (!success) return gs;
     return gs + Math.max(0, Number(fp) || 0);
   }
@@ -490,6 +632,8 @@ export default class Chase {
         ui.notifications.info(_loc('CHASE.movedFleeing', {
           name: combatant.name,
           delta: amount,
+          gs: outcome.gs ?? '—',
+          fp: outcome.fp ?? 0,
           unit,
         }));
       } else if (amount > 0 && updates.length <= 1) {
@@ -520,6 +664,8 @@ export default class Chase {
         ui.notifications.info(_loc('CHASE.movedChasing', {
           name: combatant.name,
           delta: amount,
+          gs: outcome.gs ?? '—',
+          fp: outcome.fp ?? 0,
           distance: next,
           unit,
         }));

@@ -36,6 +36,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
       toggleHidden: this.#onCombatantControl,
       activateCombatant: this.#onCombatantMouseDown,
       rolledInit: this.#editCombatant,
+      rollChaseDefaultSkill: this.#rollChaseDefaultSkill,
+      chaseTerrainMenu: this.#chaseTerrainMenu,
+      chaseDefaultSkillMenu: this.#chaseDefaultSkillMenu,
     },
     classes: ['dsa5', 'initTracker'],
   };
@@ -248,6 +251,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
     turns.on('pointerover', this._onCombatantHoverIn.bind(this))
     turns.on('pointerout', this._onCombatantHoverOut.bind(this));
     turns.on('dblclick', this._onCombatantMouseDown.bind(this));
+
+    for (const input of this.element.querySelectorAll('.chase-max-rounds-input')) {
+      input.addEventListener('change', (ev) => {
+        ev.stopPropagation();
+        game.combat?.setChaseMaxRounds(ev.currentTarget.value);
+      });
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
   }
 
   async #betterTooltip(ev) {
@@ -282,6 +293,57 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   _getDsaIniTrackerEntryContextOptions() {
     return ui.combat._getEntryContextOptions();
+  }
+
+  static async #openChaseContextMenu(app, target, menuItems) {
+    const menu = new foundry.applications.ux.ContextMenu(app.element, '', menuItems, {
+      jQuery: false,
+      fixed: true,
+      eventName: 'none',
+    });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
+  }
+
+  static async #chaseTerrainMenu(event, target) {
+    if (!game.user.isGM) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const combat = game.combat;
+    if (!Chase.isChaseActive(combat)) return;
+    const Handler = Chase.handlerFor(combat);
+    const current = combat.system.chaseTerrain ?? 'normal';
+    const menuItems = Handler.TERRAIN_IDS.map((id) => ({
+      label: Handler.getTerrainLabel(id),
+      icon: id === current ? '<i class="fas fa-check"></i>' : '<i class="fas fa-mountain"></i>',
+      onClick: () => combat.setChaseTerrain(id),
+    }));
+    await DSAIniTracker.#openChaseContextMenu(this, target, menuItems);
+  }
+
+  static async #chaseDefaultSkillMenu(event, target) {
+    if (!game.user.isGM) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const combat = game.combat;
+    if (!Chase.isChaseActive(combat)) return;
+    const Handler = Chase.handlerFor(combat);
+    const current = Handler.defaultSkillKey(combat);
+    const menuItems = Handler.defaultSkillOptions(combat).map((o) => ({
+      label: _loc(o.label),
+      icon: o.key === current ? '<i class="fas fa-check"></i>' : '<i class="fas fa-person-running"></i>',
+      onClick: () => combat.setChaseDefaultSkill(o.key),
+    }));
+    await DSAIniTracker.#openChaseContextMenu(this, target, menuItems);
+  }
+
+  static #rollChaseDefaultSkill() {
+    if (!Chase.isChaseActive()) return;
+    const combatant = game.combat?.combatant;
+    if (!combatant) return;
+    if (!(game.user.isGM || combatant.isOwner)) return;
+    Chase.rollAction(combatant.actor, combatant.tokenId, { skipPicker: true });
   }
 
   static #onCombatantControl(event, target) {

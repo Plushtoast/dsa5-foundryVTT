@@ -325,6 +325,7 @@ export default class DSA5Combat extends Combat {
     return {
       'system.chaseStartRound': 0,
       'system.chaseMaxRounds': Chase.DEFAULT_MAX_ROUNDS,
+      'system.chaseDefaultSkill': 'bodyControl',
     };
   }
 
@@ -334,6 +335,7 @@ export default class DSA5Combat extends Combat {
     const terrain = Handler.TERRAIN_IDS.includes(this.system.chaseTerrain)
       ? this.system.chaseTerrain
       : 'normal';
+    const preferred = mode === 'vehicleChase' ? 'boatsAndShips' : 'bodyControl';
 
     return {
       'system.combatMode': mode,
@@ -341,6 +343,7 @@ export default class DSA5Combat extends Combat {
       'system.chaseStartRound': round,
       'system.chaseMaxRounds': this.system.chaseMaxRounds || Chase.DEFAULT_MAX_ROUNDS,
       'system.chaseTerrain': terrain,
+      'system.chaseDefaultSkill': preferred,
       ...this.#navalResetFields(),
     };
   }
@@ -367,6 +370,7 @@ export default class DSA5Combat extends Combat {
         });
       }
       await this.#removeVehicleCombatants();
+      if (Chase.isChaseMode(current)) Chase.clearAssignFleerHint();
       return;
     }
 
@@ -387,6 +391,7 @@ export default class DSA5Combat extends Combat {
         ...this.#chaseResetFields(),
       });
       await this.#announceMkrChat('VEHICLE.mkr.started', { mkr: 1, round });
+      if (Chase.isChaseMode(current)) Chase.clearAssignFleerHint();
       return;
     }
 
@@ -399,6 +404,8 @@ export default class DSA5Combat extends Combat {
       await this.#announceMkrChat(mode === 'vehicleChase' ? 'CHASE.startedVehicle' : 'CHASE.started', {
         round: Math.max(1, this.round || 1),
       });
+      Chase.showAssignFleerHint(this);
+      return;
     }
   }
 
@@ -456,6 +463,14 @@ export default class DSA5Combat extends Combat {
     await this.update({ 'system.chaseMaxRounds': max });
   }
 
+  async setChaseDefaultSkill(skillKey) {
+    if (!game.user.isGM || !this.isChase) return;
+    const Handler = Chase.handlerFor(this);
+    const keys = Handler.locomotionSkillKeys(null, this);
+    if (!keys.includes(skillKey)) return;
+    await this.update({ 'system.chaseDefaultSkill': skillKey });
+  }
+
   async markChaseRolled(combatantId) {
     if (!this.isChase) return;
     const combatant = this.combatants.get(combatantId);
@@ -491,7 +506,21 @@ export default class DSA5Combat extends Combat {
     if (!['fleeing', 'chasing'].includes(role)) return;
     const combatant = this.combatants.get(combatantId);
     if (!combatant) return;
+
+    const becomingFirstFleer = role === 'fleeing'
+      && Chase.getRole(combatant) !== 'fleeing'
+      && ![...this.combatants].some((c) => c.id !== combatantId && Chase.getRole(c) === 'fleeing');
+
     await combatant.update({ 'system.chaseRole': role });
+
+    if (becomingFirstFleer) {
+      Chase.clearAssignFleerHint();
+      await Chase.promptAndApplyInitialDistances(this, combatant);
+    } else if (role === 'fleeing') {
+      Chase.clearAssignFleerHint();
+    } else if (!Chase.hasFleer(this)) {
+      Chase.showAssignFleerHint(this);
+    }
   }
 
   async setCombatantChaseDistance(combatantId, distance) {
