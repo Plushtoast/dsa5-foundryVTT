@@ -23,6 +23,7 @@ import { applyDamage } from '../../hooks/chat_context.js';
 import DSATriggers from '../automation/triggers.js';
 import SpellPreferenceRule from '../rules/spell-preference-rule.js';
 import CombatskillData from '../../data/item/combatskill.js';
+import ConsumableData from '../../data/item/consumable.js';
 import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
@@ -44,6 +45,8 @@ export default class DiceDSA5 {
   static async rollTest(testData) {
     const { source } = testData;
     const { type } = source;
+	const actor = this.#actorFromTestData(testData);
+	await ConsumableData.triggerConsumptions(testData, actor);
 
     // Use a lookup table for better performance and maintainability
     const rollHandlers = {
@@ -350,6 +353,8 @@ export default class DiceDSA5 {
   static #gatherSituationalModifiers(existingModifiers, actor, testData) {
     const situationalModifiers = existingModifiers ||
       (actor ? DSA5StatusEffects.getRollModifiers(actor, testData.source) : []);
+
+    ConsumableData.addConsumableModifiers(situationalModifiers, actor, testData);
 
     const { moreModifiers } = testData.extra.options;
     if (moreModifiers) {

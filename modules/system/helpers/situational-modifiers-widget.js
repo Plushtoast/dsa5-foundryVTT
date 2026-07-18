@@ -522,6 +522,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       if (modifier.ref?.id) option.dataset.refId = modifier.ref.id;
       if (modifier.armorPen) option.dataset.armorPen = modifier.armorPen;
       if (modifier.extension) option.dataset.extension = '1';
+	  if (modifier.consumableId) option.dataset.consumableId = modifier.consumableId;
       option.textContent = `${modifier.displayName(this.actor)} [${SituationalModifiersWidget.getOptionChangeText(modifier)}]`;
       this.select.appendChild(option);
     });
@@ -551,6 +552,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       modifier.type || '',
       modifier.value ?? '',
       modifier.source || '',
+	  modifier.consumableId || '',
     ].join('|');
   }
 

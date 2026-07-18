@@ -22,7 +22,7 @@
 
 export class SituationalModifier {
   /** @type {string[]} Optional data keys copied from input when present. */
-  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source'];
+  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source', 'consumableId'];
 
   /** @param {SituationalModifierData} data */
   constructor(data = {}) {
