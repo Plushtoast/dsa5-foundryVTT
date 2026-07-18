@@ -5,6 +5,7 @@ import MagicAnalysisService from '../magic-analysis/magic-analysis.js';
 import InformationQueryService from './information-query.js';
 import RollRequestService from './roll-request.js';
 import { bindClickListener } from '../helpers/view_helper.js';
+import ItemEnchantment from '../../item/item-enchantment.js';
 const { renderTemplate } = foundry.applications.handlebars;
 const { duplicate } = foundry.utils;
 
@@ -74,17 +75,32 @@ export default class MagicAnalysisQueryService {
     for (const helper of MagicAnalysisService._listAvailableHelpers(actor)) {
       const progressKey = `${helper.key}QS`;
       const rolled = progress[progressKey] != null;
-      const canRoll = !rolled && (helper.config.type === 'spell' ? actor.system.isMage : actor.system.isPriest);
-      steps.push({
-        stepId: `helper-${helper.key}`,
+      const isEnchantment = helper.source === 'enchantment';
+      const canRoll = !rolled && (isEnchantment
+        ? helper.charged
+        : (helper.config.type === 'spell' ? actor.system.isMage : actor.system.isPriest));
+
+      const step = {
+        stepId: isEnchantment
+          ? `helper-${helper.key}-ench-${helper.sourceItemId}-${helper.enchantmentId}`
+          : `helper-${helper.key}`,
         type: 'helper',
         helperKey: helper.key,
-        spellId: helper.item.id,
-        name: helper.item.name,
+        source: helper.source || 'spell',
+        name: helper.name,
         status: rolled ? 'success' : (canRoll ? 'pending' : 'skipped'),
         resultDetails: rolled ? { qualityStep: progress[progressKey] } : null,
-        canRoll: !finalized && canRoll && !rolled,
-      });
+        canRoll: !finalized && canRoll,
+      };
+
+      if (isEnchantment) {
+        step.sourceItemId = helper.sourceItemId;
+        step.enchantmentId = helper.enchantmentId;
+      } else {
+        step.spellId = helper.item.id;
+      }
+
+      steps.push(step);
     }
 
     progress.totalMaxQS = MagicAnalysisService._computeTotalMaxQS(progress);
@@ -106,8 +122,22 @@ export default class MagicAnalysisQueryService {
     const actor = game.actors.get(state.actorId);
     if (!actor) return state;
 
+    const completedHelpers = (state.steps || []).filter(
+      (step) => step.type === 'helper' && step.resultDetails != null,
+    );
+
     state.progress.totalMaxQS = MagicAnalysisService._computeTotalMaxQS(state.progress);
     state.steps = this.buildSteps(actor, state.progress, { finalized: state.finalized });
+
+    for (const completed of completedHelpers) {
+      if (state.steps.some((step) => step.stepId === completed.stepId)) continue;
+      const magiekundeIdx = state.steps.findIndex((step) => step.type === 'magiekunde');
+      state.steps.splice(magiekundeIdx >= 0 ? magiekundeIdx : state.steps.length, 0, {
+        ...completed,
+        canRoll: false,
+      });
+    }
+
     state.notPossible = state.progress.totalMaxQS === 0 && !state.steps.some((step) => step.canRoll);
     return state;
   }
@@ -277,6 +307,28 @@ export default class MagicAnalysisQueryService {
     return cap;
   }
 
+  static async #rollEnchantmentHelper(actor, step) {
+    const sourceItem = actor.items.get(step.sourceItemId);
+    if (!sourceItem) return { userId: game.user.id, status: 'error' };
+
+    const result = await ItemEnchantment.roll(sourceItem, step.enchantmentId, {
+      options: { subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})` },
+    });
+    if (!result) return { userId: game.user.id, status: 'cancelled' };
+
+    const config = MagicAnalysisService.HELPER_SPELLS[step.helperKey];
+    const cap = MagicAnalysisService._computeSpellCap(config.rule, result.result.qualityStep);
+    return {
+      userId: game.user.id,
+      status: 'success',
+      resultDetails: {
+        qualityStep: cap,
+        rawQualityStep: result.result.qualityStep,
+        successLevel: result.result.successLevel,
+      },
+    };
+  }
+
   static async handleQuery(payload) {
     const actor = game.actors.get(payload.actorId);
     const message = game.messages.get(payload.messageId);
@@ -288,6 +340,10 @@ export default class MagicAnalysisQueryService {
 
     try {
       if (step.type === 'helper') {
+        if (step.source === 'enchantment') {
+          return await this.#rollEnchantmentHelper(actor, step);
+        }
+
         const spell = actor.items.get(step.spellId);
         if (!spell) return { userId: game.user.id, status: 'error' };
 

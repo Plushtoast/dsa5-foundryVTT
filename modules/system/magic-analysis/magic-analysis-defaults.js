@@ -1,10 +1,12 @@
+import ItemEnchantment from '../../item/item-enchantment.js';
+
 export default class MagicAnalysisDefaults {
   static magiekundeSkill() {
     return _loc('LocalizedIDs.magicalLore');
   }
 
   static async generate(item) {
-    const enchantments = item?.getFlag?.('dsa5', 'enchantments') || [];
+    const enchantments = ItemEnchantment.list(item);
     const primary = enchantments[0];
     const fw = primary?.fw ?? 0;
 
@@ -85,14 +87,6 @@ export default class MagicAnalysisDefaults {
   }
 
   static async getEnchantmentDocument(enchantment) {
-    const pack = game.packs.get(enchantment.pack);
-    if (!pack) return null;
-
-    let doc = await pack.getDocument(enchantment.itemId);
-    if (!doc) {
-      const idx = pack.index.getName(enchantment.name);
-      if (idx) doc = await pack.getDocument(idx._id);
-    }
-    return doc;
+    return ItemEnchantment.resolveDocument(enchantment);
   }
 }

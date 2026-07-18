@@ -18,6 +18,7 @@ import MeleeweaponData from '../data/item/meleeweapon.js';
 import TraitData from '../data/item/trait.js';
 import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
+import ItemEnchantment from './item-enchantment.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1060,108 +1061,24 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
     }
   }
 
-  toggleChargedState(id, enchantments) {
-    for (const ench of enchantments) {
-      if (ench.id == id) {
-        ench.charged = ench.talisman && ench.permanent ? true : !ench.charged;
-        break;
-      }
-    }
-    this.item.update({ flags: { dsa5: { enchantments } } });
+  toggleChargedState(id, _enchantments) {
+    return ItemEnchantment.toggleCharge(this.item, id);
   }
 
-  async rollEnchantment(id, enchantments) {
-    const enchantment = enchantments.find((x) => x.id == id);
-    if (!enchantment.charged) return ui.notifications.error('DSAError.NotEnoughCharges', { localize: true });
-
-    let item = await this.getSpell(enchantment);
-
-    if (item) {
-      item = item.toObject();
-      item.system.talentValue.value = enchantment.fw;
-      const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
-      const options = {};
-      if (enchantment.extensions?.length) {
-        options.enchantmentExtensions = await this._resolveEnchantmentExtensions(enchantment.extensions);
-      }
-      actor.setupSpell(item, options, 'emptyActor').then(async (setupData) => {
-        const infoMsg = _loc('CHATNOTIFICATION.enchantmentUsed', {
-          item: this.item.name,
-          spell: item.name,
-        });
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-        await actor.basicTest(setupData);
-        if (enchantment.permanent) {
-          this.toggleChargedState(id, enchantments);
-        } else {
-          this.deleteEnchantment(id, enchantments);
-        }
-      });
-    }
-  }
-
-  async _resolveEnchantmentExtensions(extensions) {
-    const resolved = [];
-    for (const ext of extensions) {
-      const pack = game.packs.get(ext.pack);
-      if (!pack) continue;
-      let item = await pack.getDocument(ext.itemId);
-      if (!item) {
-        const idx = pack.index.getName(ext.name);
-        if (idx) item = await pack.getDocument(idx._id);
-      }
-      if (item) {
-        const mapped = item;
-        mapped.shortName = item.name.split(' - ').length > 1 ? item.name.split(' - ')[1] : item.name;
-        mapped.descr = $(item.system.description.value).text() || '';
-        resolved.push(mapped);
-      }
-    }
-    return resolved;
+  async rollEnchantment(id, _enchantments) {
+    return ItemEnchantment.roll(this.item, id);
   }
 
   static _deletePoison(ev, target) {
     this.item.update({ 'flags.dsa5.poison': _del });
   }
 
-  deleteEnchantment(id, enchantments) {
-    const enchantment = enchantments.findIndex((x) => x.id == id);
-    enchantments.splice(enchantment, 1);
-    this.item.update({ flags: { dsa5: { enchantments } } });
+  deleteEnchantment(id, _enchantments) {
+    return ItemEnchantment.delete(this.item, id);
   }
 
   async getSpell(enchantment) {
-    const pack = await game.packs.get(enchantment.pack);
-    let item;
-    if (pack) {
-      item = await pack.getDocument(enchantment.itemId);
-      if (!item) {
-        const itemId = await pack.index.getName(enchantment.name);
-        if (itemId) item = await pack.getDocument(itemId._id);
-      }
-    }
-
-    if (!item) {
-      const itemLibrary = game.dsa5.itemLibrary;
-      await itemLibrary.buildEquipmentIndex();
-
-      itemLibrary.findCompendiumItem;
-      const cats = enchantment.talisman ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
-
-      for (const cat of cats) {
-        item = await game.dsa5.itemLibrary.findCompendiumItem(enchantment.name, cat);
-        item = item.find((x) => x.name == enchantment.name && x.type == cat && x.system);
-
-        if (item) break;
-      }
-    }
-
-    if (!item)
-      ui.notifications.error('DSAError.enchantmentNotFound', {
-        localize: true,
-      });
-
-    return item;
+    return ItemEnchantment.resolveDocument(enchantment, { notify: true });
   }
 
   enchantMentId(target) {

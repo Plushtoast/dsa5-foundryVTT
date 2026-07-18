@@ -1,6 +1,7 @@
 import MagicAnalysisQueryService from '../queries/magic-analysis-query.js';
 import InformableTemplate from '../../data/item/templates/informable.js';
 import MagicAnalysisContentResolver from './magic-analysis-content-resolver.js';
+import ItemEnchantment from '../../item/item-enchantment.js';
 
 const { duplicate } = foundry.utils;
 
@@ -42,15 +43,42 @@ export default class MagicAnalysisService {
     }
   }
 
+  static _helperNameByKey() {
+    const names = {};
+    for (const [key, config] of Object.entries(this.HELPER_SPELLS)) {
+      names[_loc(`LocalizedIDs.${config.localizedId}`)] = { key, config };
+    }
+    return names;
+  }
+
   static _listAvailableHelpers(actor) {
     const helpers = [];
+    const nameMap = this._helperNameByKey();
+
     for (const [key, config] of Object.entries(this.HELPER_SPELLS)) {
       const name = _loc(`LocalizedIDs.${config.localizedId}`);
       const item = actor.items.find(
         (i) => i.name === name && ['spell', 'liturgy', 'ceremony', 'ritual'].includes(i.type),
       );
-      if (item) helpers.push({ key, config, item });
+      if (item) helpers.push({ key, config, item, source: 'spell', name: item.name });
     }
+
+    for (const sourceItem of actor.items) {
+      for (const enchantment of ItemEnchantment.list(sourceItem)) {
+        const match = nameMap[enchantment.name];
+        if (!match) continue;
+        helpers.push({
+          key: match.key,
+          config: match.config,
+          source: 'enchantment',
+          sourceItemId: sourceItem.id,
+          enchantmentId: enchantment.id,
+          charged: !!enchantment.charged,
+          name: `${enchantment.name} (${sourceItem.name})`,
+        });
+      }
+    }
+
     return helpers;
   }
 
