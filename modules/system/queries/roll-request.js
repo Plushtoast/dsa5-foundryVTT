@@ -191,11 +191,9 @@ export default class RollRequestService {
         ? RegenerationHelper.formatResultRows(entry.resultDetails)
         : [];
       const regenApplied = isRegeneration && entry.status === 'success' && RegenerationHelper.isRollRequestEntryApplied(entry);
-      const resultRowClass = isRegeneration ? '' : this.getResultRowClass(entry.status);
-      const resultTooltip = isSkipped
-        || (!isRegeneration && ['success', 'critical', 'failure', 'botch'].includes(entry.status))
-        ? statusStyle.label
-        : '';
+      const outcome = isRegeneration
+        ? { resultRowClass: '', resultTooltip: '', resultSubLabel: '' }
+        : QueryOrchestrator.outcomeDisplay({ status: entry.status });
       const actor = game.actors.get(entry.actorId);
       const canAct = !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status);
       return {
@@ -208,8 +206,9 @@ export default class RollRequestService {
         resultIconClass,
         regenResults,
         regenApplied,
-        resultRowClass,
-        resultTooltip,
+        resultRowClass: outcome.resultRowClass,
+        resultTooltip: outcome.resultTooltip,
+        resultSubLabel: outcome.resultSubLabel,
         canRoll: !finalized && entry.status === 'pending',
         canSkip: canAct,
         canGMRoll: canAct && !entry.designatedUserId,
@@ -271,12 +270,6 @@ export default class RollRequestService {
   static getRequestedIcon(category, name) {
     if (category !== 'skill') return undefined;
     return DSA5ChatAutoCompletion.skills.find((entry) => entry.type === 'skill' && entry.name === name)?.img;
-  }
-
-  static getResultRowClass(status) {
-    if (['success', 'critical'].includes(status)) return 'roll-request-row-success';
-    if (['failure', 'botch'].includes(status)) return 'roll-request-row-failure';
-    return '';
   }
 
   static buildResultLabel(entry, category) {
@@ -598,38 +591,36 @@ export default class RollRequestService {
   }
 
   static applyStandardResultRowState(row, entry, category) {
-    row.removeClass('roll-request-row-success roll-request-row-failure');
-    const rowClass = this.getResultRowClass(entry.status);
-    if (rowClass) row.addClass(rowClass);
+    row.removeClass(QueryOrchestrator.allResultRowClasses());
+    const outcome = QueryOrchestrator.outcomeDisplay({ status: entry.status });
+    if (outcome.resultRowClass) row.addClass(outcome.resultRowClass);
 
     const statusStyle = QueryOrchestrator.statusStyle(entry.status);
     const resultLabel = this.buildResultLabel(entry, category);
-    let label = row.find('.roll-request-result-label');
+    row.find('.roll-request-result-stack, .roll-request-result-label').remove();
 
     if (entry.status === 'skipped') {
-      if (!label.length) {
-        label = $('<span class="roll-request-result-label flexrow flex0 flexAlignRight"></span>');
-        row.find('.roll-request-row-side').before(label);
-      }
+      const label = $(`<span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight ${statusStyle.colorClass}"></span>`);
       label
-        .attr('class', `roll-request-result-label icon noBorder flexrow flex0 flexAlignRight ${statusStyle.colorClass}`)
-        .attr('data-tooltip', statusStyle.label)
-        .attr('aria-label', statusStyle.label)
+        .attr('data-tooltip', outcome.resultTooltip)
+        .attr('aria-label', outcome.resultTooltip)
         .html(`<i class="fas ${statusStyle.icon}"></i>`);
-      row.attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
+      row.find('.roll-request-row-side').before(label);
+      row.attr('data-tooltip', outcome.resultTooltip).attr('aria-label', outcome.resultTooltip);
       return;
     }
 
     if (resultLabel) {
-      if (!label.length) {
-        label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>');
-        row.find('.roll-request-row-side').before(label);
+      const stack = $('<div class="roll-request-result-stack flex0"></div>');
+      stack.append($('<b class="roll-request-result-label"></b>').text(resultLabel));
+      if (outcome.resultSubLabel) {
+        stack.append($('<span class="roll-request-result-sublabel"></span>').text(outcome.resultSubLabel));
       }
-      label.text(resultLabel);
+      row.find('.roll-request-row-side').before(stack);
     }
 
-    if (['success', 'critical', 'failure', 'botch'].includes(entry.status)) {
-      row.attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
+    if (outcome.resultTooltip) {
+      row.attr('data-tooltip', outcome.resultTooltip).attr('aria-label', outcome.resultTooltip);
     }
   }
 

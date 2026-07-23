@@ -1,7 +1,12 @@
 <div class="information-query-approval">
   <p><b>{{actorName}}</b> ({{playerName}})</p>
   <p>{{localize "DSAQUERIES.INFORMATIONREQUEST.playerRolledFor"}} {{{itemLink}}}</p>
-  <p>{{skillName}} — {{localize "CHARAbbrev.QS"}} {{rolledQS}}</p>
+  <div class="information-query-result-roll{{#if resultRowClass}} {{resultRowClass}}{{/if}}"{{#if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
+    <span>{{skillName}} — {{localize "CHARAbbrev.QS"}} {{rolledQS}}</span>
+    {{#if resultSubLabel}}
+      <span class="roll-request-result-sublabel">{{resultSubLabel}}</span>
+    {{/if}}
+  </div>
   <hr>
   <div class="information-query-entries col morph">
     {{#each qsEntries}}

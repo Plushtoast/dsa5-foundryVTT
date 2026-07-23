@@ -42,7 +42,12 @@
         <li class='flexrow flexAlignCenter group-check-result-row gap5px {{item.resultRowClass}}' data-tooltip='{{item.resultTooltip}}' aria-label='{{item.resultTooltip}}'>
           <div class='group-check-result-name flex1'><b>{{item.actor}}</b></div>
           <div class='group-check-result-skill flex1'>{{item.target}}</div>
-          <div class='group-check-result-qs flex0'>{{item.qs}}</div>
+          <div class='group-check-result-qs flex0'>
+            <span>{{item.qs}}</span>
+            {{#if item.resultSubLabel}}
+              <span class='roll-request-result-sublabel'>{{item.resultSubLabel}}</span>
+            {{/if}}
+          </div>
         </li>
       {{/each}}
     </ul>

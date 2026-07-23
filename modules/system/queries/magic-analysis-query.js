@@ -231,12 +231,15 @@ export default class MagicAnalysisQueryService {
     const steps = (state.steps || []).map((step) => {
       const statusStyle = QueryOrchestrator.statusStyle(step.status);
       const isSkipped = step.status === 'skipped';
+      const outcome = QueryOrchestrator.outcomeDisplay({ status: step.status });
       return {
         ...step,
         resultLabel: isSkipped ? '' : this.buildStepResultLabel(step),
         resultIcon: isSkipped ? statusStyle.icon : '',
         resultIconClass: isSkipped ? statusStyle.colorClass : '',
-        resultTooltip: isSkipped ? statusStyle.label : '',
+        resultTooltip: outcome.resultTooltip,
+        resultSubLabel: outcome.resultSubLabel,
+        resultRowClass: outcome.resultRowClass,
         canGMRoll: !state.finalized && step.canRoll && !designatedUserId,
       };
     });

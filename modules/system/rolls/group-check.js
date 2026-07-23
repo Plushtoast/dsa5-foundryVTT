@@ -2,6 +2,7 @@ import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import GroupCheckConfigDialog from '../../dialog/group-check-dialog.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
+import QueryOrchestrator from '../queries/query-orchestrator.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -16,17 +17,20 @@ export default class GroupCheck {
     return messageId ? `dsa-group-check-config-${messageId}` : 'dsa-group-check-config';
   }
 
-  static #getResultRowClass(success) {
-    if (success > 0) return 'roll-request-row-success';
-    if (success < 0) return 'roll-request-row-failure';
-    return '';
-  }
-
   static #enrichResultsForDisplay(results = []) {
-    return results.map((item) => ({
-      ...item,
-      resultRowClass: this.#getResultRowClass(item.success),
-    }));
+    return results.map((item) => {
+      const detail = `${item.qs} ${_loc('CHARAbbrev.QS')} ${item.target}`;
+      const outcome = QueryOrchestrator.outcomeDisplay({ successLevel: item.success });
+      const resultTooltip = ['critical', 'botch'].includes(outcome.status)
+        ? `${outcome.resultTooltip} — ${detail}`
+        : detail;
+      return {
+        ...item,
+        resultRowClass: outcome.resultRowClass,
+        resultTooltip,
+        resultSubLabel: outcome.resultSubLabel,
+      };
+    });
   }
 
   static async requestGC(category, name, messageId, modifier = 0) {

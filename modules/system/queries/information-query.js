@@ -24,7 +24,22 @@ export default class InformationQueryService {
   }
 
   static async renderMessage(state) {
-    return await renderTemplate(this.TEMPLATE, state);
+    return await renderTemplate(this.TEMPLATE, {
+      ...state,
+      ...this.#outcomeDisplay(state.successLevel),
+    });
+  }
+
+  static #outcomeDisplay(successLevel = 0) {
+    const outcome = QueryOrchestrator.outcomeDisplay({ successLevel });
+    if (!['critical', 'botch'].includes(outcome.status)) {
+      return { resultRowClass: '', resultTooltip: '', resultSubLabel: '' };
+    }
+    return {
+      resultRowClass: outcome.resultRowClass,
+      resultTooltip: outcome.resultTooltip,
+      resultSubLabel: outcome.resultSubLabel,
+    };
   }
 
   static _getInfoSystem(item, payload) {
@@ -197,6 +212,7 @@ export default class InformationQueryService {
       itemLink,
       skillName: payload.skillName,
       ...approvalData,
+      ...this.#outcomeDisplay(payload.successLevel),
     };
 
     const result = await this.promptApprovalDialog({ dialogData, infoName, approvalData });

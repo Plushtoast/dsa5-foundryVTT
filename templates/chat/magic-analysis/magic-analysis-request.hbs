@@ -18,11 +18,16 @@
         </div>
 
         {{#each steps}}
-          <div class='flexrow flexAlignCenter roll-request-row magic-analysis-step-row gap5px' data-step-id='{{stepId}}' data-status='{{status}}'{{#if resultTooltip}} data-tooltip='{{resultTooltip}}' aria-label='{{resultTooltip}}'{{/if}}>
+          <div class='flexrow flexAlignCenter roll-request-row magic-analysis-step-row gap5px {{resultRowClass}}' data-step-id='{{stepId}}' data-status='{{status}}'{{#if resultTooltip}} data-tooltip='{{resultTooltip}}' aria-label='{{resultTooltip}}'{{/if}}>
             {{#if resultIcon}}
               <span class='roll-request-result-label icon noBorder flex0 flexAlignRight {{resultIconClass}}' data-tooltip='{{resultTooltip}}' aria-label='{{resultTooltip}}'><i class='fas {{resultIcon}}'></i></span>
             {{else if resultLabel}}
-              <b class='roll-request-result-label flex0 flexAlignRight'>{{resultLabel}}</b>
+              <div class='roll-request-result-stack flex0'>
+                <b class='roll-request-result-label'>{{resultLabel}}</b>
+                {{#if resultSubLabel}}
+                  <span class='roll-request-result-sublabel'>{{resultSubLabel}}</span>
+                {{/if}}
+              </div>
             {{/if}}
             <div class='roll-request-row-side flexrow flex0 flexAlignEnd gap2px'>
               <span class='roll-request-row-title magic-analysis-step-name ellipsis'>{{name}}</span>

@@ -17,7 +17,12 @@
           {{#if resultIcon}}
             <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"><i class="fas {{resultIcon}}"></i></span>
           {{else if resultLabel}}
-            <b class="roll-request-result-label flexrow flex0 flexAlignRight">{{resultLabel}}</b>
+            <div class="roll-request-result-stack flex0">
+              <b class="roll-request-result-label">{{resultLabel}}</b>
+              {{#if resultSubLabel}}
+                <span class="roll-request-result-sublabel">{{resultSubLabel}}</span>
+              {{/if}}
+            </div>
           {{/if}}
           <div class="roll-request-row-side flexrow flex0 flexAlignEnd gap2px">
             {{#if canRoll}}
