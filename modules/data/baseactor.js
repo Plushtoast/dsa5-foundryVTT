@@ -494,7 +494,7 @@ export class ActorDataModel extends DSADataModel {
   }
 
   _setHorseSpeed(data, horse) {
-    if (!horse.system.status.speed.max) {
+    if (horse.system.status.speed.max == null) {
       horse.system.calcSpeed(horse.system, horse.hasCondition('fixated'));
     }
     data.status.speed.max = horse.system.status.speed.max;

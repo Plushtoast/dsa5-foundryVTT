@@ -244,6 +244,11 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     speed.airMax = Math.max(0, Number(speed.air || 0) + (speed.modifier || 0));
   }
 
+  /** Used when a rider lazily needs mount speed during prepare. */
+  calcSpeed(data) {
+    this._calculateSpeed(data);
+  }
+
   _calculateArmor(data) {
     let armor = Number(data.status.hullArmor.value || 0) + Number(data.status.hullArmor.modifier || 0);
 

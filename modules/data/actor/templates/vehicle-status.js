@@ -36,7 +36,6 @@ export default class VehicleStatusTemplate extends DSADataModel {
           ram: new NumberField({ initial: 0, label: 'VEHICLE.ramSpeed' }),
           modifier: new NumberField({ initial: 0 }),
           value: new NumberField({ initial: 0 }),
-          max: new NumberField({ initial: 0 }),
         }),
         initiative: new SchemaField({
           value: new NumberField({ initial: 0, label: 'initiative' }),

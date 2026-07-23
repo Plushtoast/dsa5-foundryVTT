@@ -95,7 +95,7 @@ export default class Riding {
     });
   }
 
-  static async updateRiderSpeed(horse, newSpeed) {
+  static updateRiderSpeed(horse, newSpeed) {
     //Might need to speed this up somehow
     if (!canvas?.tokens?.documentCollection) return;
 
