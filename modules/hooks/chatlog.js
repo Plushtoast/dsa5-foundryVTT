@@ -71,7 +71,8 @@ export default function () {
       RegenerationHelper.refreshLinkedRequestCards(message.id);
     }
 
-    if (!getProperty(message, 'flags.dsa5.queryRequest')) return;
+    const isBumpableCard = getProperty(message, 'flags.dsa5.queryRequest') || getProperty(message, 'flags.gc');
+    if (!isBumpableCard) return;
     if (!('timestamp' in changed)) return;
 
     const log = ui.chat?.element?.querySelector('.chat-log');

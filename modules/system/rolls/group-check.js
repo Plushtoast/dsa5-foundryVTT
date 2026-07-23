@@ -127,7 +127,7 @@ export default class GroupCheck {
       data.doneRolls = data.results.length;
       data.results = this.#enrichResultsForDisplay(data.results);
       const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
-      await message.update({ content, flags: { gc: data } });
+      await message.update({ content, flags: { gc: data }, timestamp: Date.now() });
     } else {
       game.socket.emit('system.dsa5', {
         type: 'updateGroupCheck',
@@ -137,7 +137,6 @@ export default class GroupCheck {
         },
       });
     }
-    $('#chat-log').find(`[data-message-id="${message.id}"]`).appendTo('#chat-log');
   }
 
   static showRQMessage(target, modifier = 0, customLabel = undefined, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
