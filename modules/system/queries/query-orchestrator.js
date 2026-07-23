@@ -158,6 +158,7 @@ export default class QueryOrchestrator {
         && recipient.resultDetails?.messageId === linkedRollId;
 
       if (state.finalized && !isLinkedRollRefresh) return state;
+      if (this.TERMINAL_STATES.has(recipient.status) && !isLinkedRollRefresh) return state;
 
       recipient.status = result.status;
       recipient.resultDetails = result.resultDetails ?? null;

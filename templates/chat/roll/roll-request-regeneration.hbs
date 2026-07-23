@@ -9,8 +9,11 @@
   {{#if recipients.length}}
     <div class="roll-request-rows">
       {{#each recipients}}
-        <div class="flexrow flexAlignCenter roll-request-row gap5px{{#if regenApplied}} regen-applied{{/if}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if regenApplied}} data-tooltip="{{localize "ROLLREQUEST.regenApplied"}}" aria-label="{{localize "ROLLREQUEST.regenApplied"}}"{{/if}}>
+        <div class="flexrow flexAlignCenter roll-request-row gap5px{{#if regenApplied}} regen-applied{{/if}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if regenApplied}} data-tooltip="{{localize "ROLLREQUEST.regenApplied"}}" aria-label="{{localize "ROLLREQUEST.regenApplied"}}"{{else if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
           {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
+          {{#if resultIcon}}
+            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"><i class="fas {{resultIcon}}"></i></span>
+          {{/if}}
           <div class="roll-request-row-side flexrow flexAlignEnd gap2px">
             {{#if regenResults.length}}
               <div class="roll-request-regen-stats">
@@ -21,6 +24,9 @@
             {{/if}}
             {{#if canRoll}}
               <button type="button" class="roll-request-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize "ROLLREQUEST.rollAction"}}" aria-label="{{localize "ROLLREQUEST.rollAction"}}"></button>
+            {{/if}}
+            {{#if canSkip}}
+              <button type="button" class="roll-request-action icon fas fa-forward" data-action="skip" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.skip"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.skip"}}"></button>
             {{/if}}
             {{#if canGMRoll}}
               <button type="button" class="roll-request-action icon fas fa-dice roll-request-gm" data-action="rollOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}"></button>

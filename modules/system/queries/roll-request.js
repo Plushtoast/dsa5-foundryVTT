@@ -182,30 +182,38 @@ export default class RollRequestService {
     const isRegeneration = state.category === 'regeneration';
 
     const recipients = state.recipients.map((entry) => {
-      const resultLabel = isRegeneration ? '' : this.buildResultLabel(entry, state.category);
+      const statusStyle = QueryOrchestrator.statusStyle(entry.status);
+      const isSkipped = entry.status === 'skipped';
+      const resultLabel = isRegeneration || isSkipped ? '' : this.buildResultLabel(entry, state.category);
+      const resultIcon = isSkipped ? statusStyle.icon : '';
+      const resultIconClass = isSkipped ? statusStyle.colorClass : '';
       const regenResults = isRegeneration && ['success', 'critical'].includes(entry.status)
         ? RegenerationHelper.formatResultRows(entry.resultDetails)
         : [];
-      const statusStyle = QueryOrchestrator.statusStyle(entry.status);
       const regenApplied = isRegeneration && entry.status === 'success' && RegenerationHelper.isRollRequestEntryApplied(entry);
       const resultRowClass = isRegeneration ? '' : this.getResultRowClass(entry.status);
-      const resultTooltip = !isRegeneration && ['success', 'critical', 'failure', 'botch'].includes(entry.status)
+      const resultTooltip = isSkipped
+        || (!isRegeneration && ['success', 'critical', 'failure', 'botch'].includes(entry.status))
         ? statusStyle.label
         : '';
       const actor = game.actors.get(entry.actorId);
+      const canAct = !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status);
       return {
         ...entry,
         actorName: actor?.name || entry.actorId,
         actorImg: this.getActorPortrait(actor),
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
         resultLabel,
+        resultIcon,
+        resultIconClass,
         regenResults,
         regenApplied,
         resultRowClass,
         resultTooltip,
         canRoll: !finalized && entry.status === 'pending',
-        canGMRoll: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
-        canGMAction: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status),
+        canSkip: canAct,
+        canGMRoll: canAct && !entry.designatedUserId,
+        canGMAction: canAct,
       };
     });
 
@@ -283,6 +291,8 @@ export default class RollRequestService {
         return _loc('DSAQUERIES.STATUS.failure');
       case 'botch':
         return _loc('DSAQUERIES.STATUS.botch');
+      case 'skipped':
+        return '';
       default:
         return '';
     }
@@ -375,6 +385,10 @@ export default class RollRequestService {
         return { userId: game.user.id, status: 'cancelled' };
       }
 
+      if (setupData.skipped) {
+        return { userId: game.user.id, status: 'skipped' };
+      }
+
       if (payload.opposable === false) {
         setupData.testData.opposable = false;
       }
@@ -463,14 +477,18 @@ export default class RollRequestService {
   }
 
   static async skipActor(messageId, actorId) {
-    await QueryOrchestrator.enqueueMessageUpdate(messageId, async (state) => {
-      const recipient = state.recipients.find((entry) => entry.actorId === actorId);
-      if (!recipient || state.finalized) return state;
+    if (!game.user.isGM) {
+      const actor = game.actors.get(actorId);
+      if (!actor?.isOwner) return;
+    }
 
-      recipient.status = 'skipped';
-
-      if (QueryOrchestrator.canAutoFinalize(state)) state.finalized = true;
-      return state;
+    await QueryOrchestrator.handleResult({
+      messageId,
+      actorId,
+      result: {
+        userId: game.user.id,
+        status: 'skipped',
+      },
     });
   }
 
@@ -488,6 +506,17 @@ export default class RollRequestService {
     await this.#submitResult(messageId, actorId, result);
   }
 
+  static #injectSkipButton(row, actorId) {
+    const side = row.find('.roll-request-row-side');
+    if (!side.length || side.find('.roll-request-action[data-action="skip"]').length) return;
+
+    const label = _loc('DSAQUERIES.COMMANDS.skip');
+    const button = $(`<button type="button" class="roll-request-action icon fas fa-forward" data-action="skip" data-actor-id="${actorId}" data-tooltip="${label}" aria-label="${label}"></button>`);
+    const rollButton = side.find('.roll-request-action[data-action="roll"]');
+    if (rollButton.length) rollButton.after(button);
+    else side.prepend(button);
+  }
+
   static handleRenderMessage(msg, html) {
     const rollRequest = foundry.utils.getProperty(msg.message, 'flags.dsa5.rollRequest');
     if (!rollRequest) return;
@@ -496,9 +525,24 @@ export default class RollRequestService {
       html.find('.roll-request-gm').remove();
     }
 
+    // Re-apply per-client: baked skip buttons are unreliable (GM-rendered content / old cards).
+    html.find('.roll-request-action[data-action="skip"]').remove();
+
     html.find('.roll-request-row').each((_, element) => {
       const row = $(element);
-      const entry = rollRequest.recipients?.find((recipient) => recipient.actorId === row.attr('data-actor-id'));
+      const actorId = row.attr('data-actor-id');
+      const entry = rollRequest.recipients?.find((recipient) => recipient.actorId === actorId);
+      const actor = game.actors.get(actorId);
+      const status = entry?.status || row.attr('data-status');
+      const canAct = !rollRequest.finalized && !QueryOrchestrator.TERMINAL_STATES.has(status);
+      const isOwner = !!actor?.isOwner;
+
+      if (!game.user.isGM && !isOwner) {
+        row.find('.roll-request-action[data-action="roll"]').remove();
+      } else if (canAct && isOwner && !game.user.isGM) {
+        this.#injectSkipButton(row, actorId);
+      }
+
       if (!entry?.resultDetails) return;
 
       if (this.canUserSeeResult(entry, rollRequest)) {
@@ -509,16 +553,6 @@ export default class RollRequestService {
 
       this.hidePrivateResult(row, rollRequest.category);
     });
-
-    if (!game.user.isGM) {
-      html.find('.roll-request-row').each(function () {
-        const row = $(this);
-        const actorId = row.attr('data-actor-id');
-        if (!game.actors.get(actorId)?.isOwner) {
-          row.find('.roll-request-action[data-action="roll"]').remove();
-        }
-      });
-    }
   }
 
   static hidePrivateResult(row, category) {
@@ -570,9 +604,23 @@ export default class RollRequestService {
 
     const statusStyle = QueryOrchestrator.statusStyle(entry.status);
     const resultLabel = this.buildResultLabel(entry, category);
+    let label = row.find('.roll-request-result-label');
+
+    if (entry.status === 'skipped') {
+      if (!label.length) {
+        label = $('<span class="roll-request-result-label flexrow flex0 flexAlignRight"></span>');
+        row.find('.roll-request-row-side').before(label);
+      }
+      label
+        .attr('class', `roll-request-result-label icon noBorder flexrow flex0 flexAlignRight ${statusStyle.colorClass}`)
+        .attr('data-tooltip', statusStyle.label)
+        .attr('aria-label', statusStyle.label)
+        .html(`<i class="fas ${statusStyle.icon}"></i>`);
+      row.attr('data-tooltip', statusStyle.label).attr('aria-label', statusStyle.label);
+      return;
+    }
 
     if (resultLabel) {
-      let label = row.find('.roll-request-result-label');
       if (!label.length) {
         label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>');
         row.find('.roll-request-row-side').before(label);
@@ -605,6 +653,9 @@ export default class RollRequestService {
       switch (action) {
         case 'roll':
           await this.triggerRollFromCard(messageId, actorId);
+          break;
+        case 'skip':
+          await this.skipActor(messageId, actorId);
           break;
         case 'rollOnBehalf':
           if (!game.user.isGM) return;

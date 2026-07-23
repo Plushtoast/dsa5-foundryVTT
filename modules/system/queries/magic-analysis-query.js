@@ -228,11 +228,18 @@ export default class MagicAnalysisQueryService {
       : null;
 
     const designatedUserId = state.recipients?.[0]?.designatedUserId;
-    const steps = (state.steps || []).map((step) => ({
-      ...step,
-      resultLabel: this.buildStepResultLabel(step),
-      canGMRoll: !state.finalized && step.canRoll && !designatedUserId,
-    }));
+    const steps = (state.steps || []).map((step) => {
+      const statusStyle = QueryOrchestrator.statusStyle(step.status);
+      const isSkipped = step.status === 'skipped';
+      return {
+        ...step,
+        resultLabel: isSkipped ? '' : this.buildStepResultLabel(step),
+        resultIcon: isSkipped ? statusStyle.icon : '',
+        resultIconClass: isSkipped ? statusStyle.colorClass : '',
+        resultTooltip: isSkipped ? statusStyle.label : '',
+        canGMRoll: !state.finalized && step.canRoll && !designatedUserId,
+      };
+    });
 
     let itemLink = '';
     const linkUuid = this.#resolveLinkUuid(state);
@@ -283,7 +290,7 @@ export default class MagicAnalysisQueryService {
   }
 
   static buildStepResultLabel(step) {
-    if (step.status === 'skipped') return _loc('DSAQUERIES.STATUS.skipped');
+    if (step.status === 'skipped') return '';
     if (['success', 'critical'].includes(step.status)) {
       const qs = step.resultDetails?.qualityStep;
       return `${_loc('CHARAbbrev.QS')} ${qs ?? 0}`;
