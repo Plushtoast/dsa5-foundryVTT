@@ -2439,7 +2439,16 @@ export default class Actordsa5 extends Actor {
   }
 
   canUserRoll(user = game.user) {
-    return user.isGM || this.isOwner;
+    if (user.isGM || this.isOwner) return true;
+
+    // Ephemeral proxy (enchantments, enricher rolls) — not a world actor
+    if (!this.emptyActor) return false;
+
+    const parentUuid = this.emptyActor.parent_source_uuid;
+    if (!parentUuid) return true;
+
+    const parent = fromUuidSync(parentUuid);
+    return parent?.isOwner ?? false;
   }
 
   async basicTest({ testData, cardOptions }, options = {}) {
