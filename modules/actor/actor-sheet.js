@@ -448,6 +448,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
     PowersourceBar.prepareSheetContext(this.actor, sheetData.prepare);
     sheetData.isGM = game.user.isGM;
+    sheetData.isBrawling = !!game.combat?.isBrawling;
     sheetData.horseSpeeds = Object.keys(Riding.speedKeys).reduce((acc, key) => {
       acc[key] = `RIDING.speeds.${key}`;
       return acc;

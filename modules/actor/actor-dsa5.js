@@ -84,6 +84,20 @@ export default class Actordsa5 extends Actor {
     }
   }
 
+  /**
+   * Rename auto stun from Prügelpunkte so it is distinguishable from other stupor.
+   * @param {Actor} actor
+   * @param {boolean} fromBrawling
+   */
+  static async syncBrawlingStunLabel(actor, fromBrawling) {
+    const effect = actor.effects.find((x) => x.statuses.has('stunned'));
+    if (!effect) return;
+
+    const desired = _loc(fromBrawling ? 'CONDITION.stunnedBrawling' : 'CONDITION.stunned');
+    if (effect.name === desired) return;
+    await effect.update({ name: desired });
+  }
+
   static async postUpdateConditions(actor) {
     if (!DSA5_Utility.isActiveGM(true)) return;
     if (postUpdateConditionsLocks.get(actor)) return;
@@ -115,6 +129,7 @@ export default class Actordsa5 extends Actor {
 
       const brawlingPoints = actor.woundPain(data, 'temporaryLeP');
       await this.deferredEffectAddition('stunned', actor, brawlingPoints);
+      await this.syncBrawlingStunLabel(actor, Number(data.status.temporaryLeP?.max) > 0);
 
       if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.blind')) await actor.addCondition('blind');
       if (AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.mute')) await actor.addCondition('mute');
@@ -1451,6 +1466,8 @@ export default class Actordsa5 extends Actor {
         'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + LePRolled.total),
         'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + KaPRolled.total),
         'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + AsPRolled.total),
+        'system.status.temporaryLeP.value': 0,
+        'system.status.temporaryLeP.max': 0,
       },
     };
     await DSA5_Utility.callAsyncHooks('preApplyDamage', [this, hookOptions]);

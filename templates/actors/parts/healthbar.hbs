@@ -90,7 +90,7 @@
     {{/if}}
 
 </div>
-{{#if document.system.status.temporaryLeP.max}}
+{{#if (and document.system.status.temporaryLeP.max @root.isBrawling)}}
 <div class="row-section">
     <div class="col fourty">
         <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}} soloBar" style="--swarm: {{document.system.swarm.count}};" data-tooltip="BRAWLING.temporary">

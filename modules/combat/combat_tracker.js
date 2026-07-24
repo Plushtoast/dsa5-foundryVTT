@@ -39,6 +39,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       aggroButton: this._onAggroButtonClicked,
       combatRules: this._onCombatRulesButtonClicked,
       createCombatMode: this._createCombatMode,
+      resetBrawlingPoints: this._resetBrawlingPoints,
     },
   };
 
@@ -109,6 +110,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   static _convertToBrawl() {
     game.combat.convertToBrawl();
+  }
+
+  static _resetBrawlingPoints() {
+    game.combats.documentClass.resetSceneBrawlingPoints();
   }
 
   static async _onCombatRulesButtonClicked() {
@@ -539,10 +544,17 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
   }
 
   if (data.combat.isBrawling) {
-    const conf = data.brawlingChange();
-    delete conf.actorChange._id;
-    actor.update(conf.actorChange).then(() => {
-      game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
+    data.brawlingChange({
+      ppSource: 'current',
+      resetPP: false,
+      applyPostDamage: false,
+      unarm: data.combat.system.unarmEveryone,
+    }).then((conf) => {
+      if (!conf?.actorChange) return;
+      delete conf.actorChange._id;
+      actor.update(conf.actorChange).then(() => {
+        game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
+      });
     });
   }
 });
@@ -557,26 +569,32 @@ Hooks.on('deleteCombatant', (data, options, user) => {
   if (actor.system.merchant?.merchantType === 'loot' && actor.type !== 'vehicle') return false;
 
   if (data.combat.isBrawling) {
-    data.undoBrawlingChange().then(async (conf) => {
-      if (!data.token) return;
-
-      delete conf.actorChange._id;
-      await actor.update(conf.actorChange);
-      await game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
-      if (conf.damage.brawlDamage > 0) {
-        data.combat.showBrawlingDamage([{ name: data.token.name, id: data.token.id, data: conf.damage }]);
-      }
-    });
+    const conf = data.leaveBrawling();
+    if (!data.token) return;
+    game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
   }
 });
 
 Hooks.on('preDeleteCombat', (combat, options, user) => {
   if (options.noHook) return;
+  if (!game.user.isGM) return;
 
-  if (combat.isBrawling) {
-    combat.convertToBrawl(false).then(() => {
-      combat.delete({ noHook: true });
-    });
+  const finishDelete = async () => {
+    if (combat.isBrawling) {
+      const left = await combat.convertToBrawl(false);
+      if (!left) return;
+    } else {
+      const settled = await combat.settleLingeringBrawlPoints();
+      if (!settled) return;
+    }
+    await combat.delete({ noHook: true });
+  };
+
+  const hasLingeringPP = [...combat.combatants].some(
+    (c) => Number(c.actor?.system?.status?.temporaryLeP?.max) > 0,
+  );
+  if (combat.isBrawling || hasLingeringPP) {
+    finishDelete();
     return false;
   }
 });

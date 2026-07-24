@@ -39,5 +39,12 @@
     <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
     {{/if}}
+
+    {{else if user.isGM}}
+    <button type="button" class="combat-control combat-control-lg combat-control-fullwidth" data-action="resetBrawlingPoints"
+            aria-label="{{ localize 'BRAWLING.resetPP' }}">
+        <i class="fa-solid fa-hand-fist" inert></i>
+        <span>{{ localize 'BRAWLING.resetPP' }}</span>
+    </button>
     {{/if}}
 </nav>

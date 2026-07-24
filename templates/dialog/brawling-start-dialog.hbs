@@ -1,0 +1,38 @@
+<form class="brawling-start-dialog scrollable standard-form" style="max-height: 60vh;">
+  <p class="hint">{{localize 'BRAWLING.dialog.intro'}}</p>
+
+  <fieldset>
+    <legend>{{localize 'BRAWLING.dialog.ppSource'}}</legend>
+    <div class="form-group">
+      <label>{{localize 'BRAWLING.dialog.ppSourceCurrent'}}</label>
+      <input type="radio" name="ppSource" value="current" {{checked (eq ppSource 'current')}}>
+      <p class="hint">{{localize 'BRAWLING.dialog.ppSourceCurrentHint'}}</p>
+    </div>
+    <div class="form-group">
+      <label>{{localize 'BRAWLING.dialog.ppSourceMax'}}</label>
+      <input type="radio" name="ppSource" value="max" {{checked (eq ppSource 'max')}}>
+      <p class="hint">{{localize 'BRAWLING.dialog.ppSourceMaxHint'}}</p>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>{{localize 'BRAWLING.dialog.options'}}</legend>
+    <div class="form-group">
+      <label>{{localize 'BRAWLING.dialog.resetPP'}}</label>
+      <input type="checkbox" name="resetPP" {{checked resetPP}}>
+      <p class="hint">{{localize 'BRAWLING.dialog.resetPPHint'}}</p>
+    </div>
+    <div class="form-group">
+      <label>{{localize 'BRAWLING.dialog.applyPostDamage'}}</label>
+      <input type="checkbox" name="applyPostDamage" {{checked applyPostDamage}}>
+      <p class="hint">{{localize 'BRAWLING.dialog.applyPostDamageHint'}}</p>
+    </div>
+    <div class="form-group">
+      <label>{{localize 'BRAWLING.unarmEveryone'}}</label>
+      <input type="checkbox" name="unarmEveryone" {{checked unarmEveryone}}>
+      <p class="hint">{{localize 'BRAWLING.unarmEveryoneText'}}</p>
+    </div>
+  </fieldset>
+
+  <p class="hint"><strong>{{localize 'BRAWLING.dialog.noteTitle'}}</strong> {{localize 'BRAWLING.dialog.noteText'}}</p>
+</form>
