@@ -4,6 +4,7 @@ import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import CreatureType from '../system/automation/creature-type.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
 
@@ -140,6 +141,40 @@ export default class PlayerMenu extends DefaultAppv2 {
     this.subApps.push(app);
   }
 
+  /**
+   * Summoning-scoped AE mods matched via CreatureType ids (Elemental, Demon, …).
+   * @param {'services'|'difficulty'|'AsPCost'} key
+   * @returns {Array<{name: string, value: number, source?: string, type?: string, selected?: boolean}>}
+   */
+  getConjurationModifiers(key) {
+    if (!this.actor || !this.conjuration) return [];
+    const mods = getProperty(this.actor.system, `skillModifiers.conjuration.${key}`) || [];
+    return CreatureType.matchConjurationModifiers(this.conjuration, mods).map((m) => ({
+      name: m.source || m.item || key,
+      value: Number(m.value) || 0,
+      source: m.source,
+      type: key === 'AsPCost' ? 'AsPCost' : undefined,
+      selected: true,
+    }));
+  }
+
+  /** Base QS+1 services plus Affinity/Meister/etc. and optional Mehr Dienste extension. */
+  calculateConjurationServices(qs = this.conjurationData.qs, consumedQS = this.conjurationData.consumedQS) {
+    let services = Number(qs) - Number(consumedQS) + 1;
+    for (const mod of this.getConjurationModifiers('services')) {
+      services += mod.value;
+    }
+    if (this.actor && this.hasMoreServicesExtension()) services += 1;
+    return services;
+  }
+
+  hasMoreServicesExtension() {
+    if (!this.actor) return false;
+    const label = _loc('CONJURATION.moreServices');
+    const requiredSkills = this.conjurationData.skills[this.conjurationData.conjurationType] || [];
+    return requiredSkills.some((skillName) => this.actor.items.find((x) => x.name === `${skillName} - ${label}`));
+  }
+
   static async rollConjuration(ev, target) {
     if (!this.conjuration)
       return ui.notifications.warn('CONJURATION.dragConjuration', {
@@ -155,6 +190,9 @@ export default class PlayerMenu extends DefaultAppv2 {
         selected: true,
       },
     ];
+    // Difficulty/AsP from conjuration AEs are shown in the helper UI.
+    // Roll ease/cost still come from skillModifiers.step / conditional|feature.AsPCost on the ritual.
+
     if (this.conjurationData.packageModifier)
       moreModifiers.push({
         name: _loc('summoningPackage'),
@@ -296,6 +334,7 @@ export default class PlayerMenu extends DefaultAppv2 {
         typeName: this.conjurationData.conjurationTypes[this.conjurationData.conjurationType],
         qs: this.conjurationData.qs,
         consumedQS: this.conjurationData.consumedQS,
+        services: this.calculateConjurationServices(),
         modifiers,
         entityIds: this.conjurationData.selectedEntityIds,
         packageIds: this.conjurationData.selectedPackageIds,
@@ -522,7 +561,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     }
 
     if (this.actor) {
-      const services = this.conjurationData.qs - this.conjurationData.consumedQS + 1;
+      const services = this.calculateConjurationServices();
       const equipmentIndexLoaded = game.dsa5.itemLibrary.indexes.Item.build;
       const { entityAbilities, entityPackages } = await this.prepareEntityAbilities();
       const requiredSkills = this.conjurationData.skills[this.conjurationData.conjurationType]
@@ -555,6 +594,15 @@ export default class PlayerMenu extends DefaultAppv2 {
         }
       }
 
+      const difficultyMods = this.getConjurationModifiers('difficulty');
+      const aspMods = this.getConjurationModifiers('AsPCost');
+      const serviceMods = this.getConjurationModifiers('services');
+      if (this.hasMoreServicesExtension()) {
+        serviceMods.push({ name: _loc('CONJURATION.moreServices'), value: 1 });
+      }
+      const rawDifficulty = getProperty(this.conjuration, 'system.conjuringDifficulty.value') || 0;
+      const effectiveDifficulty = rawDifficulty + difficultyMods.reduce((sum, m) => sum + m.value, 0);
+
       const conjurationSheet = await renderTemplate('systems/dsa5/templates/system/conjuration/summoning.hbs', {
         actor: this.actor,
         conjuration: this.conjuration || {
@@ -563,6 +611,10 @@ export default class PlayerMenu extends DefaultAppv2 {
         },
         conjurationData: this.conjurationData,
         services,
+        serviceMods,
+        difficultyMods,
+        aspMods,
+        effectiveDifficulty,
         conjurationModifiers,
         equipmentIndexLoaded,
         entityAbilities,
@@ -631,7 +683,7 @@ class ConjurationRequest extends DefaultAppv2 {
       conjuration: this.conjuration,
       summoner: this.summoner,
       confirmed: this.confirmed,
-      services: this.creationData.qs - this.creationData.consumedQS + 1,
+      services: this.creationData.services ?? this.creationData.qs - this.creationData.consumedQS + 1,
       creationData: this.creationData,
       conjurationModifiers: this.creationData.modifiers,
       entityModifiers: await Promise.all(
@@ -682,7 +734,7 @@ class ConjurationRequest extends DefaultAppv2 {
     this.confirmed = true;
     const head = await DSA5_Utility.getFolderForType('Actor', null, _loc('PLAYER.conjuration'));
     const folder = await DSA5_Utility.getFolderForType('Actor', head.id, this.creationData.typeName);
-    const services = this.creationData.qs - this.creationData.consumedQS + 1;
+    const services = this.creationData.services ?? this.creationData.qs - this.creationData.consumedQS + 1;
     this.conjuration.folder = folder.id;
     if (!this.conjuration.effects) this.conjuration.effects = [];
 

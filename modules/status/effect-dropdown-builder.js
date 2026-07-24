@@ -408,6 +408,14 @@ export default class EffectDropdownBuilder {
                     { name: spellPreferences, val: 'system.spellpreferences.value', type: 'override', ph: `${spell} 1, ${spell} 2` },
                 ],
             },
+            {
+                sub: _loc('PLAYER.conjuration'),
+                options: [
+                    { name: `${_loc('PLAYER.conjuration')} - ${_loc('PLAYER.services')}`, val: 'system.skillModifiers.conjuration.services', type: 'custom', ph: 'Elemental 1' },
+                    { name: `${_loc('PLAYER.conjuration')} - ${_loc('conjuringDifficulty')}`, val: 'system.skillModifiers.conjuration.difficulty', type: 'custom', ph: 'Elemental 1' },
+                    { name: `${_loc('PLAYER.conjuration')} - ${AsPCost}`, val: 'system.skillModifiers.conjuration.AsPCost', type: 'custom', ph: 'Elemental -2' },
+                ],
+            },
         ];
 
         for (const model of ['spell', 'liturgy', 'ceremony', 'ritual']) {

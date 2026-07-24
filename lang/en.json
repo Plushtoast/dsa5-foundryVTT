@@ -937,6 +937,7 @@
     "offensiveImprovementDescr": "+2 AT, +4 DP",
     "physicalImprovement": "Physical Improvement",
     "physicalImprovementDescr": "Raise Physical attributes by 2.",
+    "moreServices": "More Services",
     "powerfulCreature": "Powerful Creature",
     "request": "Summoning request",
     "requestDescr": "Confirm the summoning request to create the actor. Afterwards you can drag & drop the actor onto the map or delete it via right-<i class=\"fas fa-computer-mouse\"></i>. (Don't forget to clean up the summoning actor directory from time to time.)",

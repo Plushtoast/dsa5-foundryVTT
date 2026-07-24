@@ -14,6 +14,7 @@ export class RegenerationModifiers {
         value: f.value,
         source: f.source,
         type: attr,
+        ...(f.ref ? { ref: { ...f.ref } } : {}),
       })));
     }
 

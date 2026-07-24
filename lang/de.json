@@ -937,6 +937,7 @@
     "offensiveImprovementDescr": "+2 AT, +4 TP",
     "physicalImprovement": "Körperliche Verbesserung",
     "physicalImprovementDescr": "Die körperlichen Eigenschaften steigen um 2.",
+    "moreServices": "Mehr Dienste",
     "powerfulCreature": "Mächtiges Wesen",
     "request": "Beschwörungsanfrage",
     "requestDescr": "Bestätige die Anfrage um die Beschwörung als Akteur anzulegen. Danach kann die Beschwörung per Drag and Drop auf die Karte gezogen oder mit einem Rechts-<i class=\"fas fa-computer-mouse\"></i> gelöscht werden (ab und an auch mal den Beschwörungsordner bei den Akteuren aufräumen!).",

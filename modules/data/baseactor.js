@@ -133,7 +133,12 @@ export class ActorDataModel extends DSADataModel {
         FW: [],
         KaPCost: [],
         AsPCost: [],
-      }
+      },
+      conjuration: {
+        services: [],
+        difficulty: [],
+        AsPCost: [],
+      },
     };
 
     // Add specific skill type modifiers

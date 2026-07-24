@@ -26,6 +26,16 @@
                     {{services}}
                 </div>
             </div>
+            {{#each serviceMods as |mod|}}
+            <div class="row-section lineheight">
+                <div class="col sixty table-title">
+                    <label class="small">{{mod.name}}:</label>
+                </div>
+                <div class="col fourty center small">
+                    +{{mod.value}}
+                </div>
+            </div>
+            {{/each}}
             <div class="flexrow">
                 <button class="finalizeConjuration" data-tooltip="CONJURATION.finalizeTooltip">{{localize 'PLAYER.finalize'}}</button>
             </div>
@@ -59,9 +69,33 @@
                     <label class="">{{localize "conjuringDifficulty"}}:</label>
                 </div>
                 <div class="col sixty">
+                    {{#if difficultyMods.length}}
+                    {{effectiveDifficulty}}
+                    {{else}}
                     {{conjuration.system.conjuringDifficulty.value}}
+                    {{/if}}
                 </div>
             </div>
+            {{#each difficultyMods as |mod|}}
+            <div class="row-section">
+                <div class="col fourty table-title">
+                    <label class="small">{{mod.name}}:</label>
+                </div>
+                <div class="col sixty small">
+                    {{mod.value}}
+                </div>
+            </div>
+            {{/each}}
+            {{#each aspMods as |mod|}}
+            <div class="row-section">
+                <div class="col fourty table-title">
+                    <label class="small">{{mod.name}} ({{localize "AsPCost"}}):</label>
+                </div>
+                <div class="col sixty small">
+                    {{mod.value}}
+                </div>
+            </div>
+            {{/each}}
             {{#if conjurationData.packageModifier}}
             <div class="row-section">
                 <div class="col fourty table-title">
