@@ -51,13 +51,14 @@ export default class MagicAnalysisQueryService {
 
     ActorPickerDialog.open({
       actors,
-      selectionMode: 'single',
       showSourceToggle: true,
       title: 'MAGICANALYSIS.dialogTitle',
       entryFilter: (entry) => entry.isPlayerOwned || entry.isActiveCharacter,
       callback: ({ actorIds }) => {
-        const actor = game.actors.get(actorIds[0]);
-        if (actor) this.createRequest({ actor, analysisContext });
+        for (const actorId of actorIds) {
+          const actor = game.actors.get(actorId);
+          if (actor) this.createRequest({ actor, analysisContext });
+        }
       },
     });
   }
