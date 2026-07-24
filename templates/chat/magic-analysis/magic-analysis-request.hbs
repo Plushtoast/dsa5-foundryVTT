@@ -57,10 +57,13 @@
       {{#if (eq approval.phase 'pending')}}
         <p class='very-small margin-top'><i class='fas fa-spinner fa-spin'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.pending'}}</p>
       {{else if (eq approval.phase 'approved')}}
+        <hr class='magic-analysis-result-divider'>
+        <p class='very-small margin-top'><i class='fas fa-check icon-green'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.approved'}}</p>
         {{#if approval.resultHtml}}
-          <hr class='magic-analysis-result-divider'>
-          <p class='table-title magic-analysis-result-heading'><b>{{localize 'result'}}</b></p>
-          <div class='magic-analysis-result'>{{{approval.resultHtml}}}</div>
+          <div class='magic-analysis-result-block'>
+            <p class='table-title magic-analysis-result-heading'><b>{{localize 'result'}}</b></p>
+            <div class='magic-analysis-result'>{{{approval.resultHtml}}}</div>
+          </div>
         {{/if}}
       {{else if (eq approval.phase 'rejected')}}
         <hr class='magic-analysis-result-divider'>

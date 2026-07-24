@@ -276,6 +276,11 @@ export default class MagicAnalysisQueryService {
       html.find('.roll-request-gm').remove();
     }
 
+    const resultPlayerId = state.approval?.playerId || designatedUserId;
+    if (!InformationQueryService.canViewInformationResult(resultPlayerId)) {
+      html.find('.magic-analysis-result-block').remove();
+    }
+
     html.find('.magic-analysis-step-row').each((_idx, element) => {
       const row = $(element);
       const rollBtn = row.find('.magic-analysis-action[data-action="roll"]');

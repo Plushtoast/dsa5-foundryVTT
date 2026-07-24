@@ -225,19 +225,45 @@ export default class InformationQueryService {
     return { status: 'rejected' };
   }
 
+  /**
+   * Recipients for information result messages based on `informationDistribution`.
+   * Empty array = public (everyone). Otherwise whisper to those user ids.
+   * @param {string} [playerId] Rolling / designated player user id
+   * @returns {string[]}
+   */
+  static getInformationResultRecipients(playerId) {
+    const mode = String(game.settings.get('dsa5', 'informationDistribution'));
+    if (mode === '1') {
+      const recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
+      if (playerId && !recipients.includes(playerId)) recipients.push(playerId);
+      return recipients;
+    }
+    if (mode === '2') {
+      return game.users.filter((user) => user.isGM).map((x) => x.id);
+    }
+    return [];
+  }
+
+  /**
+   * Whether the given user may see an information / magical-analysis result.
+   * @param {string} [playerId] Rolling / designated player user id
+   * @param {User} [user]
+   */
+  static canViewInformationResult(playerId, user = game.user) {
+    const recipients = this.getInformationResultRecipients(playerId);
+    if (!recipients.length) return true;
+    return recipients.includes(user.id);
+  }
+
   static async postApprovedResult(item, payload, selected) {
     const infoSystem = await this._resolveInfoSystem(item, payload);
     const infoName = this._getInfoName(item, payload);
     const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
-    if (!whisperTargets.includes(payload.playerId)) {
-      whisperTargets.push(payload.playerId);
-    }
-
     const chatData = DSA5_Utility.chatDataSetup(resultHtml);
-    chatData.whisper = whisperTargets;
+    const whisperTargets = this.getInformationResultRecipients(payload.playerId);
+    if (whisperTargets.length) chatData.whisper = whisperTargets;
     await ChatMessage.create(chatData);
   }
 
@@ -350,20 +376,12 @@ export default class InformationQueryService {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
 
-    const recipientsTarget = game.settings.get('dsa5', 'informationDistribution');
-    let recipients = [];
-    if (recipientsTarget == 1) {
-      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-      recipients.push(game.user.id);
-    } else if (recipientsTarget == 2) {
-      recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-    }
     const optns = {
       modifier,
       postFunction: {
         functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
         uuid,
-        recipients,
+        recipients: this.getInformationResultRecipients(game.user.id),
       },
     };
     const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
