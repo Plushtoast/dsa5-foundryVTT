@@ -4,10 +4,14 @@ import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
 import CompanionHandler from './companions/companion-handler-class.js';
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
     classes: ['creature-sheet'],
+    ownerActions: {
+      traitCompanionContextMenu: ActorSheetdsa5Creature._traitCompanionContextMenu,
+    },
   };
 
   static PARTS = {
@@ -95,6 +99,42 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
       const createdItem = (await this.actor.createEmbeddedDocuments('Item', [item]))[0];
       await APTracker.track(this.actor, { type: 'item', item: createdItem, state: 1 }, item.system.APValue.value);
     }
+  }
+
+  static async _traitCompanionContextMenu(_ev, target) {
+    const familiarName = _loc('LocalizedIDs.familiar');
+    const companionName = _loc('LocalizedIDs.companion');
+    const hasFamiliar = this.actor.items.some((i) => i.type === 'trait' && i.name === familiarName);
+    const hasCompanion = this.actor.items.some((i) => i.type === 'trait' && i.name === companionName);
+    const sheet = this;
+
+    const menu = new foundry.applications.ux.ContextMenu(this.element, '', [
+      {
+        label: 'COMPANIONS.TraitMenu.MakeFamiliar',
+        icon: '<i class="fas fa-broom"></i>',
+        visible: !hasFamiliar,
+        onClick: () => sheet._addLibraryTrait(familiarName),
+      },
+      {
+        label: 'COMPANIONS.TraitMenu.MakeCompanion',
+        icon: '<i class="fas fa-paw"></i>',
+        visible: !hasCompanion,
+        onClick: () => sheet._addLibraryTrait(companionName),
+      },
+    ], { jQuery: false, fixed: true, eventName: 'none' });
+
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
+  }
+
+  async _addLibraryTrait(name) {
+    const [item] = await DSA5_Utility.findAnyItem([{ name, type: 'trait' }]);
+    if (!item) {
+      ui.notifications.error(_loc('COMPANIONS.Notification.TraitNotFound', { name }));
+      return;
+    }
+    await this._addTrait(item);
   }
 
   async _onDropItemCreate(itemData) {

@@ -760,6 +760,7 @@
       "CompanionAdded": "{name} wurde die Eigenschaft 'Begleiter' hinzugefügt.",
       "FamiliarOwnerWarning": "Ein Vertrautentier kann nur seiner Herrin zugewiesen werden.",
       "ItemAdded": "{item} wurde zu {actor} hinzugefügt.",
+      "TraitNotFound": "Die Eigenschaft '{name}' wurde in der Bibliothek nicht gefunden.",
       "MacroError": "Fehler im Makro von {name}: {error}",
       "MaxTricksReached": "{name} hat damit die maximal mögliche Anzahl an Tricks erlernt.",
       "MissingTalent": "Dein Charakter besitzt das Talent '{talent}' nicht.",
@@ -790,6 +791,11 @@
       "TrainingMod": "Dressurmodifikator",
       "TrainingModules": "Mögliche Ausbildungsaufsätze",
       "TrickMod": "Trickmodifikator"
+    },
+    "TraitMenu": {
+      "MakeCompanion": "Als Begleiter markieren",
+      "MakeFamiliar": "Als Vertrauten markieren",
+      "tooltip": "Vertrauter / Begleiter"
     },
     "TradeWithCompanion": "Handeln mit Begleiter",
     "Training": {

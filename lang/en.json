@@ -760,6 +760,7 @@
       "CompanionAdded": "{name} gained the 'Companion' trait.",
       "FamiliarOwnerWarning": "A familiar can only be assigned to its master.",
       "ItemAdded": "{item} was added to {actor}.",
+      "TraitNotFound": "The trait '{name}' was not found in the library.",
       "MacroError": "Macro error from {name}: {error}",
       "MaxTricksReached": "{name} has now learned the maximum number of tricks possible.",
       "MissingTalent": "Your character does not have the '{talent}' talent.",
@@ -790,6 +791,11 @@
       "TrainingMod": "Training modifier",
       "TrainingModules": "Possible training modules",
       "TrickMod": "Trick modifier"
+    },
+    "TraitMenu": {
+      "MakeCompanion": "Mark as Companion",
+      "MakeFamiliar": "Mark as Familiar",
+      "tooltip": "Familiar / Companion"
     },
     "TradeWithCompanion": "Trade with Companion",
     "Training": {

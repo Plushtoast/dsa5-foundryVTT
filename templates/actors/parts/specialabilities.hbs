@@ -40,7 +40,12 @@
     <legend class="table-title lineheight flexrow">
         <b>{{localize "traits"}}</b>
         <button type="button" data-action="itemCreate" class="icon dsadesignbutton noBorder fas fa-plus very-small"
-            data-tooltip="SHEET.addItem" item-section="trait" data-type="trait"></button>
+            data-tooltip="SHEET.addItem" item-section="trait" data-type="trait"></button>        
+        {{#if (eq document.type "creature")}}
+        <button type="button" data-action="traitCompanionContextMenu"
+            class="icon dsadesignbutton noBorder fas fa-ellipsis-vertical very-small"
+            data-tooltip="COMPANIONS.TraitMenu.tooltip"></button>
+        {{/if}}
     </legend>
     <div class="row-section wrap cards">
         {{#each prepare.traits as |trait i|}}
