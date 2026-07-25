@@ -779,6 +779,13 @@
       "label": "Loyalty",
       "missingHint": "This creature does not have the Loyalty talent. Add it to enable companion details."
     },
+    "Request": {
+      "Spent": "A request was spent ({name}). Remaining: {remaining}.",
+      "Exhausted": "{name} has no requests left and vanishes."
+    },
+    "Service": {
+      "Exhausted": "{name} has no services left and vanishes."
+    },
     "Notification": {
       "ActorSummoned": "{name} has been summoned to your side",
       "AnimalTrainingWarning": "To train animals, you need the Animal Trainer special ability.",
@@ -2748,6 +2755,7 @@
     "finalize": "Finalize",
     "material": "Material",
     "noActorHint": "Drag an actor here or select one below.",
+    "requests": "Requests",
     "selectActor": "Select Actor",
     "services": "Services",
     "title": "Player Menu"

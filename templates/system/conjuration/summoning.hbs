@@ -20,12 +20,13 @@
             </div>
             <div class="row-section lineheight">
                 <div class="col sixty table-title">
-                    <label class="">{{localize "PLAYER.services"}}:</label>
+                    <label class="">{{localize serviceLabel}}:</label>
                 </div>
                 <div class="col fourty center">
-                    {{services}}
+                    {{#if showServiceCounter}}{{services}}{{else}}—{{/if}}
                 </div>
             </div>
+            {{#if showServiceCounter}}
             {{#each serviceMods as |mod|}}
             <div class="row-section lineheight">
                 <div class="col sixty table-title">
@@ -36,6 +37,7 @@
                 </div>
             </div>
             {{/each}}
+            {{/if}}
             <div class="flexrow">
                 <button class="finalizeConjuration" data-tooltip="CONJURATION.finalizeTooltip">{{localize 'PLAYER.finalize'}}</button>
             </div>

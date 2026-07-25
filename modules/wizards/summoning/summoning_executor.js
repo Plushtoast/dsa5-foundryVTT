@@ -2,6 +2,7 @@ import { SUMMONING_PRESETS } from './summoning_presets.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TokenScatter from '../../animation/token-scatter.js';
 import { DSATokenDocument } from '../../hooks/token.js';
+import CompanionHandler from '../../actor/companions/companion-handler-class.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -84,6 +85,11 @@ export class SummoningExecutor {
       await this._updateSummonerEffects(summoner, createdTokens, scene, summonerEffectUpdates);
       await this._deleteSummonerItems(summoner, summonerItemDeletes);
       await this._applyLight(summoner.token ? [summoner.token] : summoner.getActiveTokens(), summonerLight);
+
+      if (creature) {
+        const controlMode = creature.getFlag('dsa5', 'conjurationControlMode') || 'services';
+        await CompanionHandler.linkSummonedCompanion(summoner, creature, { controlMode });
+      }
     }
 
     return createdTokens;
@@ -99,8 +105,21 @@ export class SummoningExecutor {
     if (!scene) return;
 
     const existing = tokenIds.filter(id => scene.tokens.has(id));
+    const summonedActors = [];
+    for (const id of existing) {
+      const token = scene.tokens.get(id);
+      const actor = token?.actor;
+      if (actor?.getFlag('dsa5', 'summonedCompanion')) summonedActors.push(actor);
+    }
+
     if (existing.length) {
       await scene.deleteEmbeddedDocuments("Token", existing);
+    }
+
+    for (const actor of summonedActors) {
+      if (game.actors.get(actor.id)) {
+        await CompanionHandler.unlinkSummonedCompanion(actor);
+      }
     }
   }
 

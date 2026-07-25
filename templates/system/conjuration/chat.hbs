@@ -19,7 +19,9 @@
   {{/each}}
   </ul>
   {{/if}}
+  {{#if showServiceCounter}}
   <div>
-    <b>{{localize 'PLAYER.services'}}</b>: {{services}}
+    <b>{{localize serviceLabel}}</b>: {{services}}
   </div>
+  {{/if}}
 </div>

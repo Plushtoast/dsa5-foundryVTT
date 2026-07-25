@@ -52,6 +52,7 @@ import MerchantSheetDSA5 from './actor/merchant-sheet.js';
 import { DSARegionTemplate } from './system/automation/measuretemplate.js';
 import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
+import CompanionHandler from './actor/companions/companion-handler-class.js';
 import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
 import { clickableAbility, resizeListener, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
@@ -129,6 +130,7 @@ Hooks.once('init', () => {
       ActorPickerDialog,
       DSARegionTemplate,
       Riding,
+      CompanionHandler,
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,

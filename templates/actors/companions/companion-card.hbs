@@ -49,18 +49,29 @@
         </div>
     </div>
 
-    {{!-- Loyalität und Ausbildung --}}
+    {{!-- Loyalität / Bitten / Dienste und Ausbildung --}}
     <div class="companion-details companion-details-bottom">
-        {{#if prepareCompanion.loyalty}}
-        <div class="row-section item companion-loyalty-row" data-item-id="{{prepareCompanion.loyalty.id}}"
+        {{#if (or prepareCompanion.loyalty prepareCompanion.showServiceCounter prepareCompanion.isSummoned)}}
+        <div class="row-section item companion-loyalty-row" {{#if prepareCompanion.loyalty}}data-item-id="{{prepareCompanion.loyalty.id}}"{{/if}}
             draggable="true">
 
-            {{!-- LINKE SEITE: WÜRFELSTYLING --}}
+            {{!-- LINKE SEITE: WÜRFELSTYLING / SERVICE COUNTER --}}
             <div class="skills companion-loyalty-skills">
 
-                {{!-- Obere Reihe (Kompaktes Eingabefeld) --}}
+                {{#if prepareCompanion.showServiceCounter}}
                 <div class="companion-loyalty-top-row">
-                    {{#if prepareCompanion.isHomunculus}}
+                    <span class="talentName">{{localize prepareCompanion.serviceCounter.label}}</span>
+                    <input class="companion-service-advances" type="number"
+                        value="{{prepareCompanion.serviceCounter.value}}"
+                        data-effect-id="{{prepareCompanion.serviceCounter.effectId}}"
+                        data-actor-uuid="{{uuid}}" />
+                </div>
+                {{/if}}
+
+                {{#if (or prepareCompanion.showLoyalty prepareCompanion.showRequests prepareCompanion.isHomunculus)}}
+                {{#if prepareCompanion.loyalty}}
+                <div class="companion-loyalty-top-row">
+                    {{#if (or prepareCompanion.isHomunculus prepareCompanion.showRequests)}}
                     <button type="button" class="talentName" data-action="companionItemEdit"
                         data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">{{localize
                         "LocalizedIDs.Fast-Talk"}}</button>
@@ -75,12 +86,11 @@
                         data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}" />
                 </div>
 
-                {{!-- Untere Reihe (Großer Würfel-Button 45px) --}}
                 <div class="companion-loyalty-bottom-row">
                     <button type="button" data-action="companionSkillSelect"
                         class="noBorder dsadesignbutton skill-props companion-dice-btn"
                         data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">
-                        {{#if prepareCompanion.isHomunculus}}
+                        {{#if (or prepareCompanion.isHomunculus prepareCompanion.showRequests)}}
                         <span class="d20 diet-mu">{{localize 'CHARAbbrev.MU'}}</span>
                         <span class="d20 diet-in">{{localize 'CHARAbbrev.IN'}}</span>
                         <span class="d20 diet-ch">{{localize 'CHARAbbrev.CH'}}</span>
@@ -94,6 +104,8 @@
                         {{/if}}
                     </button>
                 </div>
+                {{/if}}
+                {{/if}}
             </div>
 
             {{!-- MITTE: DIE NEUE HOTBAR (14 Slots in 2 Reihen) --}}

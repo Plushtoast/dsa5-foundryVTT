@@ -23,10 +23,10 @@
         </div>
         <div class='row-section'>
           <div class='col sixty table-title'>
-            <label class=''>{{localize 'PLAYER.services'}}:</label>
+            <label class=''>{{localize serviceLabel}}:</label>
           </div>
           <div class='col fourty center'>
-            {{services}}
+            {{#if showServiceCounter}}{{services}}{{else}}—{{/if}}
           </div>
         </div>
       </fieldset>

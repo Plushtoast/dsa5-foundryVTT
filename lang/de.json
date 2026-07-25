@@ -779,6 +779,13 @@
       "label": "Loyalität",
       "missingHint": "Diese Kreatur besitzt nicht das Talent Loyalität. Füge es hinzu, um die Begleiterdetails zu aktivieren."
     },
+    "Request": {
+      "Spent": "Eine Bitte wurde verbraucht ({name}). Verbleibend: {remaining}.",
+      "Exhausted": "{name} hat keine Bitten mehr und verschwindet."
+    },
+    "Service": {
+      "Exhausted": "{name} hat keine Dienste mehr und verschwindet."
+    },
     "Notification": {
       "ActorSummoned": "{name} wurde an deine Seite gerufen!",
       "AnimalTrainingWarning": "Für das Ausbilden von Tieren benötigt man die Sonderfertigkeit Abrichter.",
@@ -2750,6 +2757,7 @@
     "finalize": "Fertigstellen",
     "material": "Material",
     "noActorHint": "Ziehe einen Akteur hierhin oder wähle einen unten aus.",
+    "requests": "Bitten",
     "selectActor": "Akteur auswählen",
     "services": "Dienste",
     "title": "Spieler Menü"

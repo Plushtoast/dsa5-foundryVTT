@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import CompanionHandler from '../actor/companions/companion-handler-class.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
@@ -139,6 +140,30 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   registerSubApp(app) {
     this.subApps.push(app);
+  }
+
+  /** @param {number|string} typeId */
+  static controlModeForType(typeId) {
+    const id = Number(typeId);
+    if ([3, 4].includes(id)) return 'requests';
+    if ([5, 6, 7, 8, 14].includes(id)) return 'loyalty';
+    return 'services';
+  }
+
+  /** @param {number|string} typeId */
+  static serviceCounterLabelKey(typeId) {
+    return PlayerMenu.controlModeForType(typeId) === 'requests' ? 'PLAYER.requests' : 'PLAYER.services';
+  }
+
+  /**
+   * Überreden difficulty for Bitten (niedere −2, mittlere −4) from Mächtigkeit moreModifier if present.
+   * @param {Array<{name: string, selected?: number|string}>} [moreModifiers]
+   */
+  static requestModifierFromMoreModifiers(moreModifiers = []) {
+    const mightName = _loc('CONJURATION.mightyness');
+    const might = moreModifiers.find((m) => m.name === mightName);
+    if (!might) return -2;
+    return Number(might.selected ?? 0) <= -2 ? -4 : -2;
   }
 
   /**
@@ -327,6 +352,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     for (const sel of this.conjurationData.selectedIds) {
       modifiers.push(this.conjurationData.modifiers[this.conjurationData.conjurationType].find((x) => x.id == sel));
     }
+    const moreModifiers = this.conjurationData.moreModifiers[this.conjurationData.conjurationType] || [];
     const payload = {
       source: this.conjuration.toObject(),
       creationData: {
@@ -335,11 +361,13 @@ export default class PlayerMenu extends DefaultAppv2 {
         qs: this.conjurationData.qs,
         consumedQS: this.conjurationData.consumedQS,
         services: this.calculateConjurationServices(),
+        controlMode: PlayerMenu.controlModeForType(this.conjurationData.conjurationType),
+        requestModifier: PlayerMenu.requestModifierFromMoreModifiers(moreModifiers),
         modifiers,
         entityIds: this.conjurationData.selectedEntityIds,
         packageIds: this.conjurationData.selectedPackageIds,
       },
-      summoner: { name: this.actor.name, img: this.actor.img },
+      summoner: { name: this.actor.name, img: this.actor.img, uuid: this.actor.uuid },
     };
 
     if (game.user.isGM) {
@@ -602,6 +630,9 @@ export default class PlayerMenu extends DefaultAppv2 {
       }
       const rawDifficulty = getProperty(this.conjuration, 'system.conjuringDifficulty.value') || 0;
       const effectiveDifficulty = rawDifficulty + difficultyMods.reduce((sum, m) => sum + m.value, 0);
+      const serviceLabel = PlayerMenu.serviceCounterLabelKey(this.conjurationData.conjurationType);
+      const controlMode = PlayerMenu.controlModeForType(this.conjurationData.conjurationType);
+      const showServiceCounter = controlMode !== 'loyalty';
 
       const conjurationSheet = await renderTemplate('systems/dsa5/templates/system/conjuration/summoning.hbs', {
         actor: this.actor,
@@ -611,6 +642,8 @@ export default class PlayerMenu extends DefaultAppv2 {
         },
         conjurationData: this.conjurationData,
         services,
+        serviceLabel,
+        showServiceCounter,
         serviceMods,
         difficultyMods,
         aspMods,
@@ -679,11 +712,14 @@ class ConjurationRequest extends DefaultAppv2 {
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const uniqueIds = this.uniqueCountIds(this.creationData.entityIds);
+    const controlMode = this.creationData.controlMode || PlayerMenu.controlModeForType(this.creationData.type);
     mergeObject(data, {
       conjuration: this.conjuration,
       summoner: this.summoner,
       confirmed: this.confirmed,
       services: this.creationData.services ?? this.creationData.qs - this.creationData.consumedQS + 1,
+      serviceLabel: PlayerMenu.serviceCounterLabelKey(this.creationData.type),
+      showServiceCounter: controlMode !== 'loyalty',
       creationData: this.creationData,
       conjurationModifiers: this.creationData.modifiers,
       entityModifiers: await Promise.all(
@@ -735,8 +771,18 @@ class ConjurationRequest extends DefaultAppv2 {
     const head = await DSA5_Utility.getFolderForType('Actor', null, _loc('PLAYER.conjuration'));
     const folder = await DSA5_Utility.getFolderForType('Actor', head.id, this.creationData.typeName);
     const services = this.creationData.services ?? this.creationData.qs - this.creationData.consumedQS + 1;
+    const controlMode = this.creationData.controlMode || PlayerMenu.controlModeForType(this.creationData.type);
+    const serviceLabelKey = PlayerMenu.serviceCounterLabelKey(this.creationData.type);
     this.conjuration.folder = folder.id;
     if (!this.conjuration.effects) this.conjuration.effects = [];
+    this.conjuration.flags ??= {};
+    this.conjuration.flags.dsa5 ??= {};
+    this.conjuration.flags.dsa5.summonedCompanion = true;
+    this.conjuration.flags.dsa5.conjurationControlMode = controlMode;
+    this.conjuration.flags.dsa5.conjurationType = Number(this.creationData.type);
+    if (controlMode === 'requests') {
+      this.conjuration.flags.dsa5.requestModifier = Number(this.creationData.requestModifier ?? -2);
+    }
 
     for (const modifier of this.creationData.modifiers) {
       this.conjuration.effects.push({
@@ -766,27 +812,28 @@ class ConjurationRequest extends DefaultAppv2 {
     });
 
     const entityPackages = (await Promise.all(this.creationData.packageIds.map((x) => fromUuid(x)))).map((x) => x.toObject(false));
-    //this.conjuration.items.push(...entityAbilities, ...entityPackages)
-    this.conjuration.effects.push({
-      system: {
-        description: `${_loc('PLAYER.conjuration')} ${_loc('PLAYER.services')}`,
-        condition: {
-          value: services,
-          max: 500,
-          manual: services,
-          auto: 0,
+    if (controlMode !== 'loyalty') {
+      this.conjuration.effects.push({
+        system: {
+          description: `${_loc('PLAYER.conjuration')} ${_loc(serviceLabelKey)}`,
+          condition: {
+            value: services,
+            max: 500,
+            manual: services,
+            auto: 0,
+          },
+          visibility: {
+            hideOnToken: true,
+            hidePlayers: false,
+          },
+          changes: [],
         },
-        visibility: {
-          hideOnToken: true,
-          hidePlayers: false,
-        },
-        changes: [],
-      },
-      duration: {},
-      img: 'icons/svg/aura.svg',
-      id: 'services',
-      name: _loc('PLAYER.services'),
-    });
+        duration: {},
+        img: 'icons/svg/aura.svg',
+        statuses: ['services'],
+        name: _loc(serviceLabelKey),
+      });
+    }
 
     if (game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type]) {
       await game.dsa5.apps.playerMenu.conjurationData.postFunction[this.creationData.type](
@@ -811,6 +858,15 @@ class ConjurationRequest extends DefaultAppv2 {
 
     await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max, });
 
+    const summonerActor = this.summoner?.uuid ? await fromUuid(this.summoner.uuid) : null;
+    if (summonerActor) {
+      await CompanionHandler.linkSummonedCompanion(summonerActor, this.actor, {
+        controlMode,
+        conjurationType: this.creationData.type,
+        requestModifier: this.creationData.requestModifier,
+      });
+    }
+
     const chatmsg = await renderTemplate('systems/dsa5/templates/system/conjuration/chat.hbs', {
       actor: this.actor,
       modifiers: this.creationData.modifiers,
@@ -818,6 +874,8 @@ class ConjurationRequest extends DefaultAppv2 {
       summonerImg: OpposedDsa5.videoOrImgTag(this.summoner.img),
       conjureImg: OpposedDsa5.videoOrImgTag(this.actor.img),
       services,
+      serviceLabel: serviceLabelKey,
+      showServiceCounter: controlMode !== 'loyalty',
     });
     await ChatMessage.create(DSA5_Utility.chatDataSetup(chatmsg));
     this.render();

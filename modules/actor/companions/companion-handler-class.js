@@ -11,6 +11,123 @@ import { Trade } from '../trade.js';
 export default class CompanionHandler {
     static COMPANION_TAB_ID = 'companion';
 
+    /**
+     * Link a summoned creature to its summoner on the companion tab.
+     * Skips animal loyalty / Begleiter trait handling from setCompanion.
+     * @param {Actor} summoner
+     * @param {Actor} summoned
+     * @param {{ controlMode?: string, conjurationType?: number|string, requestModifier?: number }} [options]
+     */
+    static async linkSummonedCompanion(summoner, summoned, options = {}) {
+        if (!summoner || !summoned) return;
+
+        const controlMode = options.controlMode || summoned.getFlag('dsa5', 'conjurationControlMode') || 'services';
+        const conjurationType = options.conjurationType ?? summoned.getFlag('dsa5', 'conjurationType');
+        const requestModifier = options.requestModifier ?? summoned.getFlag('dsa5', 'requestModifier');
+
+        if (!summoned.prototypeToken.actorLink) {
+            await summoned.update({ 'prototypeToken.actorLink': true }, { render: false });
+        }
+
+        const flagUpdate = {
+            'flags.dsa5.summonedCompanion': true,
+            'flags.dsa5.conjurationControlMode': controlMode,
+        };
+        if (conjurationType !== undefined && conjurationType !== null) {
+            flagUpdate['flags.dsa5.conjurationType'] = Number(conjurationType);
+        }
+        if (controlMode === 'requests') {
+            flagUpdate['flags.dsa5.requestModifier'] = Number(requestModifier ?? -2);
+        }
+
+        const owners = [...(summoned.system.companionData?.owners || [])];
+        if (!owners.includes(summoner.uuid)) owners.push(summoner.uuid);
+
+        await summoned.update({
+            ...flagUpdate,
+            'system.companionData.owners': owners,
+        }, { render: false });
+
+        if (!summoner.system.companions?.[summoned.id]) {
+            await summoner.update({ [`system.companions.${summoned.id}`]: { uuid: summoned.uuid } }, { render: false });
+        }
+    }
+
+    /**
+     * Remove summoner ↔ summoned companion links and clear summoned flags when fully unlinked.
+     * @param {Actor} summoned
+     * @param {Actor|string} [owner] Optional owner actor or uuid; if omitted, unlink from all owners.
+     */
+    static async unlinkSummonedCompanion(summoned, owner) {
+        if (!summoned) return;
+
+        const ownerUuid = typeof owner === 'string' ? owner : owner?.uuid;
+        const owners = [...(summoned.system.companionData?.owners || [])];
+        const ownerUuids = ownerUuid ? [ownerUuid] : owners;
+
+        for (const uuid of ownerUuids) {
+            const ownerActor = await fromUuid(uuid);
+            if (ownerActor?.system?.companions?.[summoned.id]) {
+                await ownerActor.update({ [`system.companions.${summoned.id}`]: _del }, { render: false });
+            }
+        }
+
+        if (!game.actors.get(summoned.id)) return;
+
+        const remainingOwners = ownerUuid ? owners.filter(o => o !== ownerUuid) : [];
+        const updates = { 'system.companionData.owners': remainingOwners };
+        if (remainingOwners.length === 0) {
+            updates['flags.dsa5.summonedCompanion'] = _del;
+            updates['flags.dsa5.conjurationControlMode'] = _del;
+            updates['flags.dsa5.conjurationType'] = _del;
+            updates['flags.dsa5.requestModifier'] = _del;
+        }
+        await summoned.update(updates, { render: false });
+    }
+
+    /**
+     * Services/requests counter exhausted: unlink from owners and notify.
+     * @param {Actor} summoned
+     */
+    static async onSummonCounterExhausted(summoned) {
+        if (!summoned?.getFlag('dsa5', 'summonedCompanion')) return;
+        const controlMode = summoned.getFlag('dsa5', 'conjurationControlMode') || 'services';
+        if (!['services', 'requests'].includes(controlMode)) return;
+
+        const msgKey = controlMode === 'requests' ? 'COMPANIONS.Request.Exhausted' : 'COMPANIONS.Service.Exhausted';
+        ui.notifications.info(_loc(msgKey, { name: summoned.name }));
+        await CompanionHandler.unlinkSummonedCompanion(summoned);
+    }
+
+    /**
+     * Decrement the services/requests AE on a summoned companion. Deletes + exhausts at 0.
+     * @param {Actor} summoned
+     * @returns {Promise<number|null>} Remaining counter value, or null if no effect.
+     */
+    static async spendServiceCounter(summoned) {
+        if (!summoned) return null;
+
+        const effect = summoned.effects.find(e => e.statuses.has('services'));
+        if (!effect) return null;
+
+        const condition = effect.system.condition || {};
+        const current = Number(condition.manual ?? condition.value ?? 0);
+        const next = current - 1;
+
+        if (next <= 0) {
+            await effect.delete({ fromServiceSpend: true });
+            await CompanionHandler.onSummonCounterExhausted(summoned);
+            return 0;
+        }
+
+        const auto = Number(condition.auto || 0);
+        await effect.update({
+            'system.condition.manual': next,
+            'system.condition.value': Math.max(0, next + auto),
+        });
+        return next;
+    }
+
     static prepareTabVisibility(actor, tabs) {
         if (actor.type === 'creature' && !actor.system.companionData?.owners?.length) {
             delete tabs[this.COMPANION_TAB_ID];
@@ -40,6 +157,29 @@ export default class CompanionHandler {
                         'system.talentValue.value': Number(input.value)
                     }]);
                 }
+            });
+        });
+
+        element.querySelectorAll('.companion-service-advances').forEach(el => {
+            el.addEventListener('change', async ev => {
+                ev.preventDefault();
+                const input = ev.currentTarget;
+                const compActor = await fromUuid(input.dataset.actorUuid);
+                const effect = compActor?.effects.get(input.dataset.effectId);
+                if (!effect) return;
+
+                const manual = Number(input.value);
+                if (manual <= 0) {
+                    await effect.delete();
+                    return;
+                }
+
+                const auto = Number(effect.system.condition?.auto || 0);
+                const max = Number(effect.system.condition?.max ?? 500);
+                await effect.update({
+                    'system.condition.manual': manual,
+                    'system.condition.value': Math.max(0, Math.min(max, manual + auto)),
+                });
             });
         });
     }
@@ -432,19 +572,46 @@ export default class CompanionHandler {
     }
 
     static async _companionSkillSelectAction(_ev, target) {
-        const compActor = await CompanionHandler._resolveActor(target, 'actorUuid');
+        const card = target.closest('.companion-header-ui');
+        const summonedActor = card ? await CompanionHandler._resolveActor(card) : null;
+        const rollerActor = await CompanionHandler._resolveActor(target, 'actorUuid');
         const itemId = target.closest('.item')?.dataset.itemId;
-        if (!compActor || !itemId || CompanionHandler._warnIfNotPetOwner(compActor)) return;
+        if (!rollerActor || !itemId || CompanionHandler._warnIfNotPetOwner(rollerActor)) return;
 
-        const skillItem = compActor.items.get(itemId);
+        const skillItem = rollerActor.items.get(itemId);
         if (!skillItem) return;
 
-        const rollerTokenId = compActor.getActiveTokens()[0]?.id || null;
-        const setupData = await compActor.setupSkill(skillItem, {}, rollerTokenId);
-        const isLoyaltyRoll = skillItem.name === _loc("LocalizedIDs.Fast-Talk") || skillItem.name === _loc("LocalizedIDs.loyalty");
+        const isSummonedRequests = summonedActor?.getFlag('dsa5', 'summonedCompanion')
+            && summonedActor.getFlag('dsa5', 'conjurationControlMode') === 'requests';
+        const isFastTalk = skillItem.name === _loc('LocalizedIDs.Fast-Talk');
+        const rollOptions = {};
+        if (isSummonedRequests && isFastTalk) {
+            const requestModifier = Number(summonedActor.getFlag('dsa5', 'requestModifier') ?? -2);
+            rollOptions.moreModifiers = [{
+                name: _loc('PLAYER.requests'),
+                value: requestModifier,
+                selected: true,
+            }];
+        }
 
-        const { result } = await compActor.basicTest(setupData);
+        const rollerTokenId = rollerActor.getActiveTokens()[0]?.id || null;
+        const setupData = await rollerActor.setupSkill(skillItem, rollOptions, rollerTokenId);
+        const isLoyaltyRoll = isFastTalk || skillItem.name === _loc('LocalizedIDs.loyalty');
+
+        const { result } = await rollerActor.basicTest(setupData);
+
+        if (isSummonedRequests && isFastTalk) {
+            const remaining = await CompanionHandler.spendServiceCounter(summonedActor);
+            if (remaining !== null && remaining > 0) {
+                ui.notifications.info(_loc('COMPANIONS.Request.Spent', {
+                    name: summonedActor.name,
+                    remaining,
+                }));
+            }
+        }
+
         if (!isLoyaltyRoll || !result) return;
+        if (isSummonedRequests) return;
 
         const chatMessages = [];
 
@@ -453,30 +620,30 @@ export default class CompanionHandler {
 
             if (result.successLevel >= 2) {
                 await skillItem.update({ 'system.talentValue.value': skillItem.system.talentValue.value + change });
-                chatMessages.push(_loc("COMPANIONS.Loyalty.CritGain", { name: compActor.name, change }));
+                chatMessages.push(_loc("COMPANIONS.Loyalty.CritGain", { name: rollerActor.name, change }));
             } else {
                 await skillItem.update({ 'system.talentValue.value': Math.max(0, skillItem.system.talentValue.value - change) });
-                chatMessages.push(_loc("COMPANIONS.Loyalty.BotchLoss", { name: compActor.name, change }));
+                chatMessages.push(_loc("COMPANIONS.Loyalty.BotchLoss", { name: rollerActor.name, change }));
             }
         }
 
-        const isFamiliar = compActor.items.some(i => i.type === 'trait' && i.name === _loc("LocalizedIDs.familiar"));
-        const isWild = !isFamiliar && compActor.items.some(i => i.type === 'information' && i.name === _loc("LocalizedIDs.zoologyWild"));
+        const isFamiliar = rollerActor.items.some(i => i.type === 'trait' && i.name === _loc("LocalizedIDs.familiar"));
+        const isWild = !isFamiliar && rollerActor.items.some(i => i.type === 'information' && i.name === _loc("LocalizedIDs.zoologyWild"));
 
         if (isWild && result.successLevel < 0) {
             const d6 = (await new Roll('1d6').evaluate()).total;
 
             if (d6 <= 2) {
-                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6}`, { name: compActor.name }));
+                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6}`, { name: rollerActor.name }));
             } else {
                 const kr = (await new Roll('1d6').evaluate()).total;
-                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6 === 6 ? '6' : '35'}`, { name: compActor.name, kr }));
+                chatMessages.push(_loc(`COMPANIONS.WildFail.${d6 === 6 ? '6' : '35'}`, { name: rollerActor.name, kr }));
             }
         }
 
         if (chatMessages.length > 0) {
             ChatMessage.create({
-                speaker: ChatMessage.getSpeaker({ actor: compActor }),
+                speaker: ChatMessage.getSpeaker({ actor: rollerActor }),
                 content: chatMessages.join('<br><br>'),
             });
         }
@@ -577,23 +744,68 @@ export default class CompanionHandler {
 
         if (isFamiliar || isHomunculus) hasSpells = true;
 
-        const loyaltyData = isHomunculus
-            ? (ctx.persuasionSkill ? {
-                id: ctx.persuasionSkill.id,
-                actorUuid: actor.uuid,
-                value: ctx.persuasionSkill.system.talentValue.value,
-                char1: 'mu',
-                char2: 'in',
-                char3: 'ch',
-            } : null)
-            : (loyaltyItem ? {
-                id: loyaltyItem.id,
-                actorUuid: comp.uuid,
-                value: loyaltyItem.system.talentValue.value,
-                char1: loyaltyItem.system.characteristic1.value,
-                char2: loyaltyItem.system.characteristic2.value,
-                char3: loyaltyItem.system.characteristic3.value,
-            } : null);
+        const isSummoned = !!comp.getFlag('dsa5', 'summonedCompanion');
+        const controlMode = isSummoned
+            ? (comp.getFlag('dsa5', 'conjurationControlMode') || 'services')
+            : null;
+        const requestModifier = isSummoned && controlMode === 'requests'
+            ? Number(comp.getFlag('dsa5', 'requestModifier') ?? -2)
+            : null;
+
+        const petLoyaltyData = loyaltyItem ? {
+            id: loyaltyItem.id,
+            actorUuid: comp.uuid,
+            value: loyaltyItem.system.talentValue.value,
+            char1: loyaltyItem.system.characteristic1.value,
+            char2: loyaltyItem.system.characteristic2.value,
+            char3: loyaltyItem.system.characteristic3.value,
+        } : null;
+
+        const ownerPersuasionData = ctx.persuasionSkill ? {
+            id: ctx.persuasionSkill.id,
+            actorUuid: actor.uuid,
+            value: ctx.persuasionSkill.system.talentValue.value,
+            char1: 'mu',
+            char2: 'in',
+            char3: 'ch',
+        } : null;
+
+        let loyaltyData = isHomunculus ? ownerPersuasionData : petLoyaltyData;
+        let serviceCounter = null;
+        let showLoyalty = !isSummoned && !!loyaltyData;
+        let showRequests = false;
+        let showServiceCounter = false;
+
+        if (isSummoned) {
+            const servicesEffect = Array.from(comp.effects).find(e => e.statuses.has('services'));
+            if (controlMode === 'services') {
+                loyaltyData = null;
+                showLoyalty = false;
+                if (servicesEffect) {
+                    serviceCounter = {
+                        value: Number(servicesEffect.system.condition?.value ?? servicesEffect.system.condition?.manual ?? 0),
+                        effectId: servicesEffect.id,
+                        label: 'PLAYER.services',
+                    };
+                    showServiceCounter = true;
+                }
+            } else if (controlMode === 'requests') {
+                loyaltyData = ownerPersuasionData;
+                showRequests = !!loyaltyData;
+                showLoyalty = false;
+                if (servicesEffect) {
+                    serviceCounter = {
+                        value: Number(servicesEffect.system.condition?.value ?? servicesEffect.system.condition?.manual ?? 0),
+                        effectId: servicesEffect.id,
+                        label: 'PLAYER.requests',
+                    };
+                    showServiceCounter = true;
+                }
+            } else {
+                loyaltyData = petLoyaltyData;
+                showLoyalty = !!loyaltyData;
+            }
+        }
 
         const activeEffects = Array.from(comp.effects).filter(e => !e.disabled).map(e => ({
             id: e.id,
@@ -628,7 +840,6 @@ export default class CompanionHandler {
             );
 
         const owners = comp.system.companionData.owners;
-        const isSummoned = !isFamiliar && !isHomunculus && owners.length <= 1 && loyaltyItem && /\(.*\)/.test(loyaltyItem.name);
 
         comp.prepareCompanion = {
             hasSpells,
@@ -649,6 +860,12 @@ export default class CompanionHandler {
             isFamiliar,
             isHomunculus,
             isSummoned,
+            controlMode,
+            requestModifier,
+            serviceCounter,
+            showServiceCounter,
+            showRequests,
+            showLoyalty,
             showNatureIcon: !isFamiliar && !isHomunculus && !isSummoned,
             isTrainable: !isHomunculus && !isSummoned,
             hasEffects: activeEffects.length > 0,
@@ -659,8 +876,8 @@ export default class CompanionHandler {
         };
 
         if (isFamiliar || isHomunculus) return 'familiar';
-        if (owners.length > 1) return 'group';
         if (isSummoned) return 'summoned';
+        if (owners.length > 1) return 'group';
         return 'regular';
     }
 
