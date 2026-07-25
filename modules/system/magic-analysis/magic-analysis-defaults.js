@@ -44,14 +44,18 @@ export default class MagicAnalysisDefaults {
   static _qs1(fw) {
     if (!fw) return '';
     const key = fw >= 10 ? 'moreThan10' : 'lessThan10';
-    return `<p>${_loc(`MAGICANALYSIS.defaultQs1.${key}`, { fw })}</p>`;
+    return `<p>${_loc(`MAGICANALYSIS.defaultQs1.${key}`)}</p>`;
   }
 
   static _qs2(fw) {
     if (!fw) return '';
-    const min = Math.max(0, fw - 3);
-    const max = fw + 3;
-    return `<p>${_loc('MAGICANALYSIS.defaultQs2', { min, max, fw })}</p>`;
+    // Window of 6 FP; true FW is always inside, not always centered.
+    const span = 6;
+    const minLow = Math.max(0, fw - span);
+    const minHigh = fw;
+    const min = minLow + Math.floor(Math.random() * (minHigh - minLow + 1));
+    const max = min + span;
+    return `<p>${_loc('MAGICANALYSIS.defaultQs2', { min, max })}</p>`;
   }
 
   static _qs3(primary, enchantments) {

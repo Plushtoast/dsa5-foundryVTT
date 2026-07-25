@@ -4515,9 +4515,12 @@
     "title": "Magische Analyse",
     "subtitle": "Magische Analyse",
     "start": "Magische Analyse beginnen",
-    "progressIntro": "Wende Hellsichtzauber, -liturgien oder Artefakt-Verzauberungen an, um die maximale QS zu erhöhen, und würfle dann auf Magiekunde.",
+    "progressIntro": "Optional: Wende Hellsichtzauber, -liturgien oder Artefakt-Verzauberungen an, um die maximale QS zu erhöhen. Die Magiekunde-Probe kannst du würfeln, sobald regeltechnisch QS möglich sind.",
     "notPossible": "Ohne Analytiker, Hellsichtzauber/-liturgien oder passende Artefakt-Verzauberungen ist keine Magische Analyse möglich.",
     "maxQs": "Maximale QS für die Magiekunde-Probe: {max}",
+    "optional": "optional",
+    "rollOptional": "Würfeln (optional)",
+    "rollRequired": "Magiekunde würfeln",
     "dropHint": "Ziehe ein Info-Item auf das Item-Sheet, um es zu verknüpfen.",
     "unlink": "Verknüpfung entfernen",
     "noLinkedInfo": "Kein gültiges Magische-Analyse-Info-Item gefunden.",
@@ -4526,10 +4529,10 @@
     "effectStackQs": "Magische Analyse (+QS stapelbar)",
     "defaultFail": "Der Held hat keine Ahnung von der Materie.",
     "defaultQs1": {
-      "moreThan10": "Die Verzauberung kostet mehr als 10 FP (ca. {fw} FP).",
-      "lessThan10": "Die Verzauberung kostet weniger als 10 FP (ca. {fw} FP)."
+      "moreThan10": "Die Verzauberung kostet mehr als 10 FP.",
+      "lessThan10": "Die Verzauberung kostet weniger als 10 FP."
     },
-    "defaultQs2": "Die Verzauberung kostet zwischen {min} und {max} FP (ca. {fw} FP).",
+    "defaultQs2": "Die Verzauberung kostet zwischen {min} und {max} FP.",
     "defaultQs3": {
       "talisman": "Art des Artefakts: Talisman (dauerhafte Liturgie).",
       "permanent": "Art des Artefakts: Dauerhaft wirkendes Artefakt.",
@@ -4550,7 +4553,8 @@
     },
     "defaultCrit": "Der Held kennt Herkunft, wirkenden Zauber und Auslöser eines alten Artefaktes.",
     "defaultBotch": "Der Held hat falsche Vorstellungen und irrt sich, sodass es zu einem gravierenden Fehlurteil kommt.",
-    "sheetHint": "Platzhalter zeigen Regelwerk-Standardtexte bzw. Werte vom verknüpften Item. Eigene Einträge ergänzen die Vorgabe bei der Analyse.",
+    "rulesSummary": "Regelwerk-Zusammenfassung",
+    "sheetHint": "Platzhalter zeigen Regelwerk-Standardtexte bzw. Werte vom verknüpften Item. Eigene Einträge erscheinen im Ergebnis getrennt von der Regelwerk-Zusammenfassung.",
     "sheetSkillNote": "Probe immer auf Magiekunde (Artefakte)."
   },
   "CHASE": {

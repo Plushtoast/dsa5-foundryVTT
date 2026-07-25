@@ -67,18 +67,36 @@ export default class InformationQueryService {
     return item?.name || '';
   }
 
+  static #fieldSources(infoSystem, key) {
+    const custom = infoSystem[key]?.trim() || '';
+    const rules = infoSystem.rulesSummary?.[key]?.trim() || '';
+    return { custom, rules };
+  }
+
+  static async #enrichCombined(custom, rules) {
+    const parts = [];
+    if (custom) parts.push(await TextEditor.enrichHTML(custom, {}));
+    if (rules) parts.push(await TextEditor.enrichHTML(rules, {}));
+    return parts.join('') || null;
+  }
+
+  static #listItemHtml(html) {
+    const trimmed = (html || '').trim();
+    const match = trimmed.match(/^<p>([\s\S]*)<\/p>$/i);
+    if (match && !/<p[\s>]/i.test(match[1])) return match[1];
+    return trimmed;
+  }
+
   static async buildApprovalData(infoSystem, { rolledQS, successLevel }) {
     const qsEntries = [];
     for (let i = 1; i <= 6; i++) {
-      const text = infoSystem[`qs${i}`];
-      if (text) {
-        const enriched = await TextEditor.enrichHTML(text, {});
-        qsEntries.push({
-          qs: i,
-          text: enriched,
-          included: i <= rolledQS,
-        });
-      }
+      const { custom, rules } = this.#fieldSources(infoSystem, `qs${i}`);
+      if (!custom && !rules) continue;
+      qsEntries.push({
+        qs: i,
+        text: await this.#enrichCombined(custom, rules),
+        included: i <= rolledQS,
+      });
     }
 
     let critText = null;
@@ -88,16 +106,19 @@ export default class InformationQueryService {
     let botchIncluded = false;
     let failIncluded = false;
 
-    if (infoSystem.crit) {
-      critText = await TextEditor.enrichHTML(infoSystem.crit, {});
+    const crit = this.#fieldSources(infoSystem, 'crit');
+    if (crit.custom || crit.rules) {
+      critText = await this.#enrichCombined(crit.custom, crit.rules);
       critIncluded = successLevel > 1;
     }
-    if (infoSystem.botch) {
-      botchText = await TextEditor.enrichHTML(infoSystem.botch, {});
+    const botch = this.#fieldSources(infoSystem, 'botch');
+    if (botch.custom || botch.rules) {
+      botchText = await this.#enrichCombined(botch.custom, botch.rules);
       botchIncluded = successLevel < -1;
     }
-    if (infoSystem.fail && !rolledQS) {
-      failText = await TextEditor.enrichHTML(infoSystem.fail, {});
+    const fail = this.#fieldSources(infoSystem, 'fail');
+    if ((fail.custom || fail.rules) && !rolledQS) {
+      failText = await this.#enrichCombined(fail.custom, fail.rules);
       failIncluded = true;
     }
 
@@ -115,26 +136,31 @@ export default class InformationQueryService {
   }
 
   static async buildApprovedResultHtml(infoSystem, selected, infoName) {
-    const parts = [];
+    const customParts = [];
+    const rulesParts = [];
+    const keys = [];
 
     for (let i = 1; i <= 6; i++) {
-      if (selected[`qs${i}`] && infoSystem[`qs${i}`]) {
-        parts.push(await TextEditor.enrichHTML(infoSystem[`qs${i}`], {}));
-      }
+      if (selected[`qs${i}`]) keys.push(`qs${i}`);
+    }
+    if (selected.crit) keys.push('crit');
+    if (selected.botch) keys.push('botch');
+    if (selected.fail) keys.push('fail');
+
+    for (const key of keys) {
+      const { custom, rules } = this.#fieldSources(infoSystem, key);
+      if (custom) customParts.push(await TextEditor.enrichHTML(custom, {}));
+      if (rules) rulesParts.push(await TextEditor.enrichHTML(rules, {}));
     }
 
-    if (selected.crit && infoSystem.crit) {
-      parts.push(await TextEditor.enrichHTML(infoSystem.crit, {}));
-    }
-    if (selected.botch && infoSystem.botch) {
-      parts.push(await TextEditor.enrichHTML(infoSystem.botch, {}));
-    }
-    if (selected.fail && infoSystem.fail) {
-      parts.push(await TextEditor.enrichHTML(infoSystem.fail, {}));
-    }
+    if (!customParts.length && !rulesParts.length) return '';
 
-    if (!parts.length) return '';
-    return `<p><b>${infoName}</b></p>${parts.join('')}`;
+    let html = `<p><b>${infoName}</b></p>${customParts.join('')}`;
+    if (rulesParts.length) {
+      html += `<p><b>${_loc('MAGICANALYSIS.rulesSummary')}</b></p>`;
+      html += `<ul class="dsalist">${rulesParts.map((part) => `<li>${this.#listItemHtml(part)}</li>`).join('')}</ul>`;
+    }
+    return html;
   }
 
   static async promptApprovalDialog({ dialogData, infoName, approvalData }) {
@@ -393,41 +419,28 @@ export default class InformationQueryService {
   }
 
   static async postInformationRoll(postFunction, result, source) {
-    const msg = [];
     const item = await fromUuid(postFunction.uuid);
     if (!item) return;
 
-    const infoSystem = item.system.subType === 'magicalAnalysis'
-      ? await MagicAnalysisContentResolver.resolveRollContent(
-        { ...item.system.toObject(), name: item.name },
-        { parentItem: postFunction.parentUuid ? await fromUuid(postFunction.parentUuid) : null },
-      )
-      : item.system;
+    const infoSystem = await this._resolveInfoSystem(item, {
+      parentUuid: postFunction.parentUuid,
+    });
+    const infoName = this._getInfoName(item, { virtualInfo: infoSystem });
 
     const availableQs = result.result.qualityStep || 0;
+    const successLevel = result.result.successLevel || 0;
+    const selected = {};
+    for (let i = 1; i <= availableQs; i++) selected[`qs${i}`] = true;
+    if (successLevel > 1) selected.crit = true;
+    else if (successLevel < -1) selected.botch = true;
+    else if (!availableQs) selected.fail = true;
 
-    for (let i = 1; i <= availableQs; i++) {
-      const qs = `qs${i}`;
-      if (infoSystem[qs]) msg.push(infoSystem[qs]);
-    }
+    const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
+    if (!resultHtml) return;
 
-    if (result.result.successLevel > 1 && infoSystem.crit) {
-      msg.push(infoSystem.crit);
-    } else if (result.result.successLevel < -1 && infoSystem.botch) {
-      msg.push(infoSystem.botch);
-    } else if (infoSystem.fail && !availableQs) {
-      msg.push(infoSystem.fail);
-    }
-
-    if (msg.length > 0) {
-      const enriched = await Promise.all(msg.map((x) => TextEditor.enrichHTML(x, {})));
-      enriched.unshift(`<p><b>${item.name}</b></p>`);
-
-      const chatData = DSA5_Utility.chatDataSetup(enriched.join(''));
-      if (postFunction.recipients.length) chatData['whisper'] = postFunction.recipients;
-
-      ChatMessage.create(chatData);
-    }
+    const chatData = DSA5_Utility.chatDataSetup(resultHtml);
+    if (postFunction.recipients?.length) chatData.whisper = postFunction.recipients;
+    await ChatMessage.create(chatData);
   }
 
   static chatListeners(html) {

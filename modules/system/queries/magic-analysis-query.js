@@ -70,16 +70,19 @@ export default class MagicAnalysisQueryService {
     return progress;
   }
 
-  static buildSteps(actor, progress, { finalized = false } = {}) {
+  static buildSteps(actor, progress, { finalized = false, magiekundeDone = false } = {}) {
     const steps = [];
+    // Helpers are optional and only usable before the Magiekunde check is completed.
+    const helpersLocked = finalized || magiekundeDone;
 
     for (const helper of MagicAnalysisService._listAvailableHelpers(actor)) {
       const progressKey = `${helper.key}QS`;
       const rolled = progress[progressKey] != null;
       const isEnchantment = helper.source === 'enchantment';
-      const canRoll = !rolled && (isEnchantment
+      const eligible = !rolled && (isEnchantment
         ? helper.charged
         : (helper.config.type === 'spell' ? actor.system.isMage : actor.system.isPriest));
+      const canRoll = !helpersLocked && eligible;
 
       const step = {
         stepId: isEnchantment
@@ -89,9 +92,10 @@ export default class MagicAnalysisQueryService {
         helperKey: helper.key,
         source: helper.source || 'spell',
         name: helper.name,
+        optional: true,
         status: rolled ? 'success' : (canRoll ? 'pending' : 'skipped'),
         resultDetails: rolled ? { qualityStep: progress[progressKey] } : null,
-        canRoll: !finalized && canRoll,
+        canRoll,
       };
 
       if (isEnchantment) {
@@ -105,15 +109,16 @@ export default class MagicAnalysisQueryService {
     }
 
     progress.totalMaxQS = MagicAnalysisService._computeTotalMaxQS(progress);
-    const pendingHelpers = steps.some((step) => step.type === 'helper' && step.canRoll);
-
+    // Magiekunde is available as soon as rules allow any QS (e.g. Analytiker alone,
+    // or after at least one helper raised the cap) — helpers are not required first.
     steps.push({
       stepId: 'magiekunde',
       type: 'magiekunde',
       name: MagicAnalysisService._magiekundeSkill(),
+      optional: false,
       status: 'pending',
       resultDetails: null,
-      canRoll: !finalized && progress.totalMaxQS > 0 && !pendingHelpers,
+      canRoll: !finalized && !magiekundeDone && progress.totalMaxQS > 0,
     });
 
     return steps;
@@ -126,17 +131,33 @@ export default class MagicAnalysisQueryService {
     const completedHelpers = (state.steps || []).filter(
       (step) => step.type === 'helper' && step.resultDetails != null,
     );
+    const completedMagiekunde = (state.steps || []).find(
+      (step) => step.type === 'magiekunde' && step.resultDetails != null,
+    );
 
     state.progress.totalMaxQS = MagicAnalysisService._computeTotalMaxQS(state.progress);
-    state.steps = this.buildSteps(actor, state.progress, { finalized: state.finalized });
+    state.steps = this.buildSteps(actor, state.progress, {
+      finalized: state.finalized,
+      magiekundeDone: !!completedMagiekunde,
+    });
 
     for (const completed of completedHelpers) {
       if (state.steps.some((step) => step.stepId === completed.stepId)) continue;
       const magiekundeIdx = state.steps.findIndex((step) => step.type === 'magiekunde');
       state.steps.splice(magiekundeIdx >= 0 ? magiekundeIdx : state.steps.length, 0, {
         ...completed,
+        optional: true,
         canRoll: false,
       });
+    }
+
+    if (completedMagiekunde) {
+      const magiekunde = state.steps.find((step) => step.type === 'magiekunde');
+      if (magiekunde) {
+        magiekunde.status = completedMagiekunde.status;
+        magiekunde.resultDetails = completedMagiekunde.resultDetails;
+        magiekunde.canRoll = false;
+      }
     }
 
     state.notPossible = state.progress.totalMaxQS === 0 && !state.steps.some((step) => step.canRoll);
@@ -169,39 +190,10 @@ export default class MagicAnalysisQueryService {
 
     this.refreshAnalysisState(state);
 
-    const message = await QueryOrchestrator.createRequest({
+    return QueryOrchestrator.createRequest({
       queryType: this.QUERY_TYPE,
       state,
     });
-
-    await this.dispatch(message.id);
-    return message;
-  }
-
-  static async dispatch(messageId) {
-    const message = game.messages.get(messageId);
-    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
-    const recipient = state.recipients?.[0];
-    if (!recipient?.designatedUserId || recipient.status !== 'pending') return;
-
-    const pendingStep = state.steps?.find((step) => step.canRoll);
-    if (!pendingStep) return;
-
-    await this.dispatchStepQuery(messageId, pendingStep.stepId, recipient.designatedUserId, state);
-  }
-
-  static async dispatchStepQuery(messageId, stepId, userId, state) {
-    try {
-      const result = await QueryOrchestrator.dispatchToRecipient(
-        userId,
-        this.QUERY_TYPE,
-        this.#buildQueryPayload(state, { messageId, stepId }),
-      );
-      if (!result || result.status === 'cancelled') return;
-      await this.#submitStepResult(messageId, stepId, result);
-    } catch (error) {
-      console.error(`Failed to dispatch magic analysis step ${stepId}`, error);
-    }
   }
 
   static #resolveLinkUuid(state) {
@@ -228,11 +220,16 @@ export default class MagicAnalysisQueryService {
       }
       : null;
 
-    const designatedUserId = state.recipients?.[0]?.designatedUserId;
     const steps = (state.steps || []).map((step) => {
       const statusStyle = QueryOrchestrator.statusStyle(step.status);
       const isSkipped = step.status === 'skipped';
       const outcome = QueryOrchestrator.outcomeDisplay({ status: step.status });
+      const rollTooltip = step.optional
+        ? _loc('MAGICANALYSIS.rollOptional')
+        : _loc('MAGICANALYSIS.rollRequired');
+      const gmRollTooltip = step.optional
+        ? `${_loc('DSAQUERIES.COMMANDS.rollOnBehalf')} (${_loc('MAGICANALYSIS.optional')})`
+        : _loc('DSAQUERIES.COMMANDS.rollOnBehalf');
       return {
         ...step,
         resultLabel: isSkipped ? '' : this.buildStepResultLabel(step),
@@ -241,7 +238,9 @@ export default class MagicAnalysisQueryService {
         resultTooltip: outcome.resultTooltip,
         resultSubLabel: outcome.resultSubLabel,
         resultRowClass: outcome.resultRowClass,
-        canGMRoll: !state.finalized && step.canRoll && !designatedUserId,
+        rollTooltip,
+        gmRollTooltip,
+        canGMRoll: !state.finalized && step.canRoll,
       };
     });
 
@@ -270,8 +269,9 @@ export default class MagicAnalysisQueryService {
     const actor = game.actors.get(state.actorId);
     const recipient = state.recipients?.[0];
     const designatedUserId = recipient?.designatedUserId;
-    const canSelfRoll = designatedUserId === game.user.id
-      || (actor?.isOwner && !designatedUserId);
+    const isOwner = !!actor?.isOwner;
+    const isDesignated = designatedUserId === game.user.id;
+    const canSelfRoll = isDesignated || (isOwner && !game.user.isGM);
 
     if (!game.user.isGM) {
       html.find('.roll-request-gm').remove();
@@ -287,13 +287,14 @@ export default class MagicAnalysisQueryService {
       const rollBtn = row.find('.magic-analysis-action[data-action="roll"]');
       const gmBtn = row.find('.magic-analysis-action[data-action="rollOnBehalf"]');
 
-      if (canSelfRoll) {
-        gmBtn.remove();
-      } else if (game.user.isGM) {
+      if (game.user.isGM) {
+        // Avoid duplicate dice: GM uses roll-on-behalf; players use the owner roll button.
         rollBtn.remove();
-      } else {
+      } else if (canSelfRoll) {
         gmBtn.remove();
-        if (!canSelfRoll) rollBtn.remove();
+      } else {
+        rollBtn.remove();
+        gmBtn.remove();
       }
     });
   }
@@ -351,6 +352,20 @@ export default class MagicAnalysisQueryService {
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
     const step = state.steps?.find((entry) => entry.stepId === payload.stepId);
     if (!actor || !step) {
+      return { userId: game.user.id, status: 'error' };
+    }
+
+    if (state.finalized || !step.canRoll) {
+      return { userId: game.user.id, status: 'error' };
+    }
+
+    const magiekundeDone = state.steps.some(
+      (entry) => entry.type === 'magiekunde' && entry.resultDetails != null,
+    );
+    if (step.type === 'helper' && magiekundeDone) {
+      return { userId: game.user.id, status: 'error' };
+    }
+    if (step.type === 'magiekunde' && MagicAnalysisService._computeTotalMaxQS(state.progress) <= 0) {
       return { userId: game.user.id, status: 'error' };
     }
 
@@ -590,10 +605,6 @@ export default class MagicAnalysisQueryService {
       this.refreshAnalysisState(currentState);
       return currentState;
     });
-
-    if (!game.messages.get(messageId)?.getFlag('dsa5', this.FLAG_KEY)?.finalized) {
-      await this.dispatch(messageId);
-    }
   }
 
   static async handleRemoteStepResult({ messageId, stepId, result }) {
