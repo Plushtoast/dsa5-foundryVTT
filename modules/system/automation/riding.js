@@ -63,7 +63,7 @@ export default class Riding {
     if (!horseId) return;
 
     const scene = token.parent;
-    if (!scene || (!data.x && !data.y)) return;
+    if (!scene || (!data.x && !data.y && data.elevation === undefined)) return;
 
     const horseToken = scene.tokens.get(horseId);
     if (!horseToken) return;
@@ -72,10 +72,12 @@ export default class Riding {
       x: data.x ?? token.x,
       y: data.y ?? token.y,
       rotation: data.rotation ?? token.rotation,
-      elevation: data.elevation !== undefined ? data.elevation - 1 : (token.elevation ?? 0) - 1,
     };
+    // Rider sits one step above the horse; keep horse under the rider when following.
+    if (data.elevation !== undefined) waypoint.elevation = data.elevation - 1;
+    else if (data.x || data.y) waypoint.elevation = Math.max(0, (token.elevation ?? 0) - 1);
 
-    horseToken.update(waypoint, { noHooks: true });
+    horseToken.update(waypoint);
   }
 
   static rollLoyalty(actor, options = {}) {
@@ -142,28 +144,28 @@ export default class Riding {
 
     const tokenUpdates = [];
     if (value == 0) {
-      for (const token of actor.getActiveTokens()) {
+      for (const token of actor.getActiveTokens(false, true)) {
         tokenUpdates.push({
-          _id: token.document.id,
+          _id: token.id,
           'flags.dsa5.horseTokenId': _del,
-          elevation: Math.max(0, (token.document.elevation ?? 0) - 1),
+          elevation: Math.max(0, (token.elevation ?? 0) - 1),
         });
       }
       await this.removeRidingCondition(actor);
     } else {
       const horse = this.getHorse(actor);
       let horseTokenId;
-      for (const horseToken of horse.getActiveTokens()) {
+      for (const horseToken of horse.getActiveTokens(false, true)) {
         tokenUpdates.push({
-          _id: horseToken.document.id,
+          _id: horseToken.id,
           'flags.dsa5.horseTokenId': _del,
         });
-        horseTokenId = horseToken.document.id;
+        horseTokenId = horseToken.id;
       }
-      for (const token of actor.getActiveTokens()) {
+      for (const token of actor.getActiveTokens(false, true)) {
         tokenUpdates.push({
-          _id: token.document.id,
-          elevation: Math.max(0, (token.document.elevation ?? 0) + 1),
+          _id: token.id,
+          elevation: Math.max(0, (token.elevation ?? 0) + 1),
           'flags.dsa5.horseTokenId': horseTokenId,
         });
       }
@@ -171,9 +173,9 @@ export default class Riding {
       //TODO might need to create or search token?
       await this.addRidingCondition(actor, horse);
     }
-    await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates, {
-      noHooks: true,
-    });
+    if (tokenUpdates.length) {
+      await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
+    }
   }
 
   static getRidingCondition(actor) {
@@ -210,32 +212,53 @@ export default class Riding {
   }
 
   static async unmountHorse(actor, token) {
-    const tokenUpdate = {
-      'flags.dsa5.horseTokenId': _del,
-      elevation: Math.max(0, (token.elevation ?? 0) - 1),
-    };
-    const tokenResized = token.getFlag('dsa5', 'horseResized');
-    if (tokenResized) {
-      mergeObject(tokenUpdate, {
-        'flags.dsa5.horseResized': _del,
-        width: tokenResized.width,
-        height: tokenResized.height,
-      });
-    }
     await this.clearMount(actor);
-    await token.update(tokenUpdate);
+    if (!token) return;
+
+    // HUD may pass a token document that is not currently an active placeable.
+    if (token.getFlag?.('dsa5', 'horseTokenId') || token.getFlag?.('dsa5', 'horseResized')) {
+      const tokenUpdate = {
+        'flags.dsa5.horseTokenId': _del,
+        elevation: Math.max(0, (token.elevation ?? 0) - 1),
+      };
+      const tokenResized = token.getFlag('dsa5', 'horseResized');
+      if (tokenResized) {
+        // Do not mergeObject _del — mergeObject ignores ForcedDeletion unless applyOperators is set.
+        tokenUpdate.width = tokenResized.width;
+        tokenUpdate.height = tokenResized.height;
+        tokenUpdate['flags.dsa5.horseResized'] = _del;
+      }
+      await token.update(tokenUpdate);
+    }
   }
 
   static async clearMount(actor) {
+    const tokenUpdates = [];
+    for (const doc of actor.getActiveTokens(false, true)) {
+      const update = {
+        _id: doc.id,
+        'flags.dsa5.horseTokenId': _del,
+        elevation: Math.max(0, (doc.elevation ?? 0) - 1),
+      };
+      const tokenResized = doc.getFlag('dsa5', 'horseResized');
+      if (tokenResized) {
+        // Do not mergeObject _del — mergeObject ignores ForcedDeletion unless applyOperators is set.
+        update.width = tokenResized.width;
+        update.height = tokenResized.height;
+        update['flags.dsa5.horseResized'] = _del;
+      }
+      tokenUpdates.push(update);
+    }
+    if (tokenUpdates.length && canvas.scene) {
+      await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
+    }
+
+    // ObjectField merges: token: {} does not clear scene/token keys — must delete them.
     await actor.update({
-      system: {
-        horse: {
-          isRiding: 0,
-          actorLink: false,
-          actorId: '',
-          token: {},
-        },
-      },
+      'system.horse.isRiding': 0,
+      'system.horse.actorLink': false,
+      'system.horse.actorId': '',
+      'system.horse.token': { scene: _del, token: _del },
     });
     await this.removeRidingCondition(actor);
   }
@@ -308,30 +331,31 @@ export default class Riding {
       });
     }
     await rider.update(actorUpdate);
-    if (horse.isToken) {
-      const sizeUpdate = this.adaptTokenSize(riderToken, horse.token);
+    if (horse.isToken && horse.token) {
+      const horseElevation = horse.token.elevation ?? 0;
       const tokenUpdates = rider
-        .getActiveTokens()
-        .map((x) => {
+        .getActiveTokens(false, true)
+        .map((doc) => {
+          const sizeSource = riderToken ?? doc;
           return mergeObject(
             {
-              _id: x.id,
+              _id: doc.id,
               'flags.dsa5.horseTokenId': horse.token.id,
               x: horse.token.x,
               y: horse.token.y,
+              elevation: horseElevation + 1,
             },
-            sizeUpdate,
+            this.adaptTokenSize(sizeSource, horse.token),
           );
         })
         .concat({ _id: horse.token.id, 'flags.dsa5.horseTokenId': _del });
-      await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates, {
-        noHooks: true,
-      });
+      await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
     }
     await this.addRidingCondition(rider, horse);
   }
 
   static adaptTokenSize(riderTokenDocument, horseTokenDocument) {
+    if (!riderTokenDocument || !horseTokenDocument) return {};
     if (riderTokenDocument.width >= horseTokenDocument.width) {
       return {
         width: 0.7 * horseTokenDocument.width,
@@ -377,7 +401,7 @@ export default class Riding {
     };
     mergeObject(riderTokenUpdate, this.adaptTokenSize(rider.document, horse.document));
     await rider.actor.update(actorUpdate);
-    await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, 'flags.dsa5.horseTokenId': _del }], { noHooks: true });
+    await canvas.scene.updateEmbeddedDocuments('Token', [riderTokenUpdate, { _id: horse.id, 'flags.dsa5.horseTokenId': _del }]);
     await this.addRidingCondition(rider.actor, horse.actor);
   }
 
