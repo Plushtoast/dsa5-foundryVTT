@@ -40,6 +40,7 @@ import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-di
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
 import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
 import { combatPartTemplates } from './template-configs.js';
+import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -804,6 +805,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         ui.notifications.warn('DSAError.RollPermission', { localize: true });
         return;
       }
+      if (await SummoningFlow.interceptRoll(this.actor, skill)) return;
+
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
       this.actor.basicTest(setupData);
     } else if (ev.button == 2) skill.sheet.render(true);
@@ -1500,6 +1503,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         onClick: () => new OnUseEffect(item).executeOnUseEffect(),
       },
       {
+        label: 'CONJURATION.startSummoning',
+        icon: "<i class='fas fa-hat-wizard fa-fw'></i>",
+        visible: () => SummoningFlow.isConjurationSkill(item),
+        onClick: () => SummoningFlow.open(this.actor, item),
+      },
+      {
         label: 'SHEET.DeleteItem',
         icon: "<i class='fas fa-trash fa-fw'></i>",
         onClick: () => this._itemDeleteDialog(item),
@@ -2130,6 +2139,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _onDropActor(event, item) {
     if (item.uuid === this.actor.uuid) return false;
+
+    if (event.target?.closest?.('.conjuration-favorites-drop')) {
+      return CompanionHandler.addConjurationFavorite(this.actor, item);
+    }
 
     return await this._manageDragItems(item, item.type);
   }

@@ -6,6 +6,7 @@ import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
 import CompanionHandler from '../actor/companions/companion-handler-class.js';
+import { CONJURATION_CONTROL_MODES } from '../config/conjuration-constants.js';
 
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 
@@ -54,8 +55,8 @@ export default function () {
       } else if ((effect.statuses.has('dead') || effect.statuses.has('defeated')) && game.combat) {
         actor.markDead(false);
       } else if (effect.statuses.has('services') && actor.getFlag('dsa5', 'summonedCompanion') && !options.fromServiceSpend) {
-        const controlMode = actor.getFlag('dsa5', 'conjurationControlMode') || 'services';
-        if (['services', 'requests'].includes(controlMode)) {
+        const controlMode = actor.getFlag('dsa5', 'conjurationControlMode') || CONJURATION_CONTROL_MODES.SERVICES;
+        if ([CONJURATION_CONTROL_MODES.SERVICES, CONJURATION_CONTROL_MODES.REQUESTS].includes(controlMode)) {
           void CompanionHandler.onSummonCounterExhausted(actor);
         }
       }

@@ -1,0 +1,28 @@
+<div class="groupbox paddingBox">
+    <div class="row-section">
+        <div class="col table-title lineheight">{{localize title}}</div>
+    </div>
+    {{#if entries.length}}
+    {{#each entries as |entry|}}
+    <div class="dsa-stat-row dsapx-1">
+        <span class="dsa-stat-row__label">
+            {{#if entry.uuid}}
+            <a data-action="showEntity" data-uuid="{{entry.uuid}}">{{entry.label}}</a>
+            {{else}}
+            {{entry.label}}
+            {{/if}}
+        </span>
+        {{#if entry.badge}}<span class="dsa-pip pip-neutral">{{entry.badge}}</span>{{/if}}
+    </div>
+    {{#if entry.descr}}
+    <div class="dsa-stat-row is-sub dsapx-1">
+        <span class="dsa-stat-row__label">{{entry.descr}}</span>
+    </div>
+    {{/if}}
+    {{/each}}
+    {{else}}
+    <div class="dsa-stat-row is-sub dsapx-1">
+        <span class="dsa-stat-row__label">{{localize "CONJURATION.none"}}</span>
+    </div>
+    {{/if}}
+</div>

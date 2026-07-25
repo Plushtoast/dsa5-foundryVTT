@@ -18,6 +18,13 @@
         margin: 8px;
         opacity: 0.6;
         font-style: italic;
+
+        &--compact {
+            padding: 6px 8px;
+            margin: 4px 0 0;
+            font-size: 0.85em;
+            border-width: 2px;
+        }
     }
 
     .dsa-grid {
@@ -80,6 +87,21 @@
             color: #616161;
             background: rgba(97, 97, 97, 0.1);
         }
+    }
+
+    // High-contrast badge for overlays on portraits/images.
+    .dsa-overlay-badge {
+        display: inline-block;
+        padding: 2px 5px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 3px;
+        background: rgba(18, 16, 14, 0.82);
+        color: #f2e8d5;
+        font-size: 0.7em;
+        line-height: 1.3;
+        font-family: var(--boldFont);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+        white-space: nowrap;
     }
 
     .member-card {
@@ -217,6 +239,182 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        &.is-selected {
+            border-color: var(--dsadesign1);
+            box-shadow: inset 0 0 10px 3px rgba(188, 136, 111, 0.55);
+        }
+
+        &.is-disabled {
+            opacity: 0.5;
+            cursor: default;
+            pointer-events: none;
+        }
+    }
+
+    .dsa-stat-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        line-height: 1.5;
+
+        &__label {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-family: var(--boldFont);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__value {
+            flex: 0 0 auto;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        &.is-sub {
+            font-size: 0.88em;
+            opacity: 0.8;
+
+            .dsa-stat-row__label {
+                font-family: inherit;
+                font-weight: normal;
+            }
+        }
+    }
+
+    .dsa-budget-bar-row {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        &__label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.85em;
+            line-height: 1.2;
+        }
+
+        &__qs,
+        &__qs-value {
+            flex: 0 0 auto;
+            width: 48px;
+            text-align: center;
+            font-family: var(--boldFont);
+        }
+
+        &__qs {
+            height: 22px;
+            margin: 0;
+            padding: 0 2px;
+        }
+    }
+
+    .dsa-budget-bar {
+        display: flex;
+        align-items: stretch;
+        height: 20px;
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0.12);
+
+        &__seg {
+            flex: 1 1 0;
+            flex-grow: var(--seg-span, 1);
+            min-width: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            line-height: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 1px solid rgba(0, 0, 0, 0.25);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+            &:last-child {
+                border-right: none;
+            }
+
+            &--spent {
+                background: var(--dsadesign1);
+            }
+
+            &--free {
+                background: rgba(27, 94, 32, 0.45);
+            }
+
+            &--over {
+                background: var(--dsa-danger);
+            }
+
+            &--empty {
+                background: transparent;
+                color: var(--color-text-dark-primary);
+                text-shadow: none;
+            }
+        }
+
+        &--extensions {
+            .dsa-budget-bar__seg--spent {
+                background: #3d6b8a;
+            }
+
+            .dsa-budget-bar__seg--free {
+                background: rgba(61, 107, 138, 0.28);
+            }
+        }
+    }
+
+    .dsa-stepper {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+
+        input {
+            width: 44px;
+            text-align: center;
+        }
+
+        button {
+            flex: 0 0 auto;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            padding: 0;
+        }
+    }
+
+    .dsa-sticky-top {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: var(--sheet-bg);
+    }
+
+    .sheetButton {
+        background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
+        color: #fff;
+        border: 1px solid #000;
+
+        &:hover:not(:disabled) {
+            box-shadow: inset 0 0 3px #970027;
+            border-color: #fff;
+            background-image: linear-gradient(to right top, #e82626, #d41a29, #bf0f28, #aa0628, #970027);
+        }
+
+        &:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
     }
 

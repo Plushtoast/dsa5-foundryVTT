@@ -3,6 +3,7 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TokenScatter from '../../animation/token-scatter.js';
 import { DSATokenDocument } from '../../hooks/token.js';
 import CompanionHandler from '../../actor/companions/companion-handler-class.js';
+import { CONJURATION_CONTROL_MODES } from '../../config/conjuration-constants.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -87,7 +88,7 @@ export class SummoningExecutor {
       await this._applyLight(summoner.token ? [summoner.token] : summoner.getActiveTokens(), summonerLight);
 
       if (creature) {
-        const controlMode = creature.getFlag('dsa5', 'conjurationControlMode') || 'services';
+        const controlMode = creature.getFlag('dsa5', 'conjurationControlMode') || CONJURATION_CONTROL_MODES.SERVICES;
         await CompanionHandler.linkSummonedCompanion(summoner, creature, { controlMode });
       }
     }

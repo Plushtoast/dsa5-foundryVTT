@@ -184,7 +184,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
         break;
       case CONST.REGION_EVENTS.TOKEN_ROUND_START:
       case CONST.REGION_EVENTS.TOKEN_ROUND_END:
-        if (this.mode === DSAZoneRegionBehavior.MODE_RECURRING && DSA5_Utility.isActiveGM()) {
+        if (this.mode === DSAZoneRegionBehavior.MODE_RECURRING && DSA5_Utility.isActiveGM(true)) {
           await this.#applyZoneEffect(token, regionEvent);
         }
         break;

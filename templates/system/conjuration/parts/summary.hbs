@@ -1,0 +1,86 @@
+<div
+    class="dsa-card-panel dsap-3 summoning-summary {{#if summary.hideCreature}}summoning-summary--no-creature{{/if}}">
+    {{#unless summary.hideCreature}}
+    <div class="summoning-summary__creature">
+        {{> systems/dsa5/templates/system/conjuration/parts/creature-card.hbs}}
+        {{#if summary.nextStep}}
+        <p class="summoning-summary__hint dsa-info-text small">
+            <i class="fas fa-lightbulb" aria-hidden="true"></i>
+            {{localize summary.nextStep}}
+        </p>
+        {{/if}}
+    </div>
+    {{/unless}}
+
+    <div class="summoning-summary__budget">
+        <div class="dsa-budget-bar-row">
+            <div class="dsa-budget-bar-row__label">
+                <span>{{localize "CONJURATION.budget.title"}}</span>
+                {{#if summary.editableQs}}
+                <input class="conjurationData center dsa-budget-bar-row__qs" data-refresh="true" type="number"
+                    name="qs" value="{{summary.budget.total}}"
+                    aria-label="{{localize 'CHARAbbrev.QS'}}" />
+                {{else}}
+                <span class="dsa-budget-bar-row__qs-value">{{summary.budget.total}}</span>
+                {{/if}}
+            </div>
+            <div class="dsa-budget-bar"
+                data-tooltip="{{localize 'CONJURATION.budget.remaining'}}: {{summary.budget.remaining}}">
+                {{#each summary.budget.segments as |seg|}}
+                <div class="dsa-budget-bar__seg dsa-budget-bar__seg--{{seg.kind}}" style="--seg-span:{{seg.span}}"
+                    data-tooltip="{{seg.tooltip}}">{{seg.short}}</div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="dsa-budget-bar-row">
+            <div class="dsa-budget-bar-row__label">
+                <span>{{localize "extensions"}}</span>
+                <span class="dsa-budget-bar-row__qs-value">{{summary.budget.used}}</span>
+            </div>
+            <div class="dsa-budget-bar dsa-budget-bar--extensions"
+                data-tooltip="{{localize 'extensions'}}: {{summary.budget.used}} / {{summary.budget.total}}">
+                {{#each summary.budget.extensionSegments as |seg|}}
+                <div class="dsa-budget-bar__seg dsa-budget-bar__seg--{{seg.kind}}" style="--seg-span:{{seg.span}}"
+                    data-tooltip="{{seg.tooltip}}">{{seg.short}}</div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="summoning-summary__actions">
+            <div class="dsa-stat-row">
+                <span class="dsa-stat-row__label">
+                    <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                        data-tooltip="{{summary.controlModeHintKey}}"
+                        aria-label="{{localize summary.controlModeLabel}}"></button>
+                    {{localize summary.serviceLabel}}
+                </span>
+                <span class="dsa-stat-row__value">
+                    {{#if summary.showServiceCounter}}{{summary.services}}{{else}}&mdash;{{/if}}
+                </span>
+            </div>
+
+            {{#if summary.showServiceCounter}}
+            {{#each summary.serviceMods as |mod|}}
+            <div class="dsa-stat-row is-sub">
+                <span class="dsa-stat-row__label">{{mod.name}}</span>
+                <span class="dsa-stat-row__value">{{numberFormat mod.value sign=true}}</span>
+            </div>
+            {{/each}}
+            {{/if}}
+
+            {{#if summary.blockers.length}}
+            <div class="summoning-blockers">
+                {{#each summary.blockers as |blocker|}}
+                <span class="dsa-pip pip-negative">{{localize blocker}}</span>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#unless summary.readonly}}
+            <button type="button" class="finalizeConjuration sheetButton" {{#unless summary.canFinalize}}disabled{{/unless}}
+                data-tooltip="CONJURATION.finalizeTooltip">{{localize 'PLAYER.finalize'}}</button>
+            {{/unless}}
+        </div>
+    </div>
+</div>

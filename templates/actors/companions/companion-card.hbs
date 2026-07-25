@@ -59,27 +59,50 @@
             <div class="skills companion-loyalty-skills">
 
                 {{#if prepareCompanion.showServiceCounter}}
-                <div class="companion-loyalty-top-row">
-                    <span class="talentName">{{localize prepareCompanion.serviceCounter.label}}</span>
-                    <input class="companion-service-advances" type="number"
-                        value="{{prepareCompanion.serviceCounter.value}}"
-                        data-effect-id="{{prepareCompanion.serviceCounter.effectId}}"
-                        data-actor-uuid="{{uuid}}" />
+                <div class="companion-service-block">
+                    <div class="companion-loyalty-top-row">
+                        <span class="talentName companion-service-label">
+                            <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                                data-tooltip="{{prepareCompanion.serviceCounter.hint}}"
+                                aria-label="{{localize prepareCompanion.serviceCounter.label}}"></button>
+                            {{localize prepareCompanion.serviceCounter.label}}
+                        </span>
+                    </div>
+                    <div class="companion-loyalty-bottom-row">
+                        <span class="dsa-stepper">
+                            <button type="button" class="companion-service-step noBorder dsadesignbutton"
+                                data-step="-1" data-actor-uuid="{{uuid}}"
+                                data-tooltip="COMPANIONS.Service.spend"><i class="fas fa-minus"></i></button>
+                            <input class="companion-service-advances" type="number"
+                                value="{{prepareCompanion.serviceCounter.value}}"
+                                data-effect-id="{{prepareCompanion.serviceCounter.effectId}}"
+                                data-actor-uuid="{{uuid}}" />
+                            <button type="button" class="companion-service-step noBorder dsadesignbutton"
+                                data-step="1" data-actor-uuid="{{uuid}}"
+                                data-tooltip="COMPANIONS.Service.grant"><i class="fas fa-plus"></i></button>
+                        </span>
+                    </div>
                 </div>
                 {{/if}}
 
                 {{#if (or prepareCompanion.showLoyalty prepareCompanion.showRequests prepareCompanion.isHomunculus)}}
                 {{#if prepareCompanion.loyalty}}
                 <div class="companion-loyalty-top-row">
-                    {{#if (or prepareCompanion.isHomunculus prepareCompanion.showRequests)}}
-                    <button type="button" class="talentName" data-action="companionItemEdit"
-                        data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">{{localize
-                        "LocalizedIDs.Fast-Talk"}}</button>
-                    {{else}}
-                    <button type="button" class="talentName companion-talent-name" data-action="companionItemEdit"
-                        data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">{{localize
-                        "COMPANIONS.Loyalty.label"}}</button>
-                    {{/if}}
+                    <span class="companion-service-label">
+                        {{#if prepareCompanion.controlModeHint}}
+                        <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                            data-tooltip="{{prepareCompanion.controlModeHint}}"></button>
+                        {{/if}}
+                        {{#if (or prepareCompanion.isHomunculus prepareCompanion.showRequests)}}
+                        <button type="button" class="talentName" data-action="companionItemEdit"
+                            data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">{{localize
+                            "LocalizedIDs.Fast-Talk"}}</button>
+                        {{else}}
+                        <button type="button" class="talentName companion-talent-name" data-action="companionItemEdit"
+                            data-actor-uuid="{{prepareCompanion.loyalty.actorUuid}}">{{localize
+                            "COMPANIONS.Loyalty.label"}}</button>
+                        {{/if}}
+                    </span>
                     <input class="companion-skill-advances" type="number"
                         value="{{prepareCompanion.loyalty.value}}"
                         data-item-id="{{prepareCompanion.loyalty.id}}"

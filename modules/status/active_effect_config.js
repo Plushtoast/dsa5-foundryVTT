@@ -524,6 +524,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                         {
                           regionEvent: options.regionEvent,
                           messageMode: options.messageMode,
+                          sourceActor,
                         },
                         args || {},
                         { inplace: false },
@@ -664,6 +665,10 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
 
   static async applyEffect(id, mode, targets, options = {}) {
     const message = game.messages.get(id);
+    if (!message) {
+      console.error('DSA applyEffect: chat message missing', id);
+      return;
+    }
     const source = message.flags.data.preData.source;
     const testData = message.flags.data.postData;
     const speaker = message.speaker;

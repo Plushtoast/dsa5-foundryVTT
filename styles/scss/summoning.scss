@@ -1,0 +1,305 @@
+// Layout only. Visual design lives in theme.scss.
+.dsa5 {
+    // Only apply flex when active — unconditional display:flex keeps the tab visible after changeTab.
+    // Scope to `.tab` so non-tab wrappers (e.g. GM confirm dialog) are not hidden via :not(.active).
+    .tab.summoning-tab {
+        flex-direction: column;
+        gap: 8px;
+
+        &.active {
+            display: flex;
+        }
+
+        &:not(.active) {
+            display: none;
+        }
+    }
+
+    .summoning-request {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .summoning-type-picker {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 28px;
+        padding: 2px 8px;
+        margin: 0;
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        background: var(--sheet-bg);
+        text-align: left;
+        cursor: pointer;
+
+        img {
+            flex: 0 0 18px;
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            border: none;
+        }
+
+        > i:first-child {
+            flex: 0 0 auto;
+            width: 1.1em;
+            text-align: center;
+        }
+
+        &__name {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: var(--boldFont);
+        }
+
+        &__mode {
+            flex: 0 0 auto;
+            font-size: 0.75em;
+            opacity: 0.75;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--dsadesign1);
+        }
+
+        &__chevron {
+            flex: 0 0 auto;
+            opacity: 0.6;
+            font-size: 0.75em;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--dsadesign1);
+        }
+    }
+
+    .summoning-summary {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
+        grid-template-areas: 'creature budget';
+        gap: 12px;
+        align-items: start;
+
+        &--no-creature {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-areas: 'budget';
+        }
+    }
+
+    .summoning-summary__creature {
+        grid-area: creature;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .summoning-summary__hint {
+        text-align: left;
+        opacity: 0.9;
+
+        > i {
+            margin-right: 4px;
+            color: var(--dsadesign1);
+        }
+    }
+
+    .summoning-summary__budget {
+        grid-area: budget;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .summoning-creature-card {
+        display: grid;
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+
+        &.is-empty {
+            opacity: 0.78;
+        }
+
+        &__portrait {
+            position: relative;
+            width: 88px;
+            height: 88px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.12);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border: none;
+            }
+
+            &.droparea {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                background: transparent;
+                box-shadow: none;
+                overflow: hidden;
+                border: 3px dashed var(--border-color);
+                opacity: 0.6;
+            }
+        }
+
+        &__badge {
+            position: absolute;
+            left: 4px;
+            bottom: 4px;
+            max-width: calc(100% - 8px);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__clear {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            z-index: 1;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            padding: 0;
+            background: rgba(18, 16, 14, 0.75);
+            color: #f2e8d5;
+            border-radius: 3px;
+        }
+
+        &__body {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        &__title {
+            font-family: var(--boldFont);
+            font-size: 1.05em;
+            line-height: 1.25;
+            margin-bottom: 2px;
+            word-break: break-word;
+        }
+    }
+
+    .summoning-summary__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+    .summoning-phases {
+        display: flex;
+        gap: 4px;
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px solid var(--border-color);
+
+        &__btn {
+            flex: 1 1 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 0;
+            padding: 4px 8px;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 3px 3px 0 0;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            opacity: 0.7;
+
+            &.active {
+                opacity: 1;
+                font-family: var(--boldFont);
+                border-color: var(--border-color);
+                background: var(--sheet-bg);
+                box-shadow: inset 0 -2px 0 var(--dsadesign1);
+            }
+
+            &:hover:not(.active),
+            &:focus-visible:not(.active) {
+                opacity: 1;
+                border-color: var(--border-color);
+            }
+        }
+    }
+
+    .summoning-phase {
+        min-height: 0;
+        padding-top: 8px;
+    }
+
+    .summoning-columns {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+    }
+
+    .summoning-selectgrid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 4px;
+    }
+
+    .summoning-selectcard {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-areas:
+            'name cost info'
+            'descr descr descr';
+        gap: 2px 6px;
+        align-items: center;
+        padding: 4px 6px;
+    }
+
+    .summoning-selectcard__name {
+        grid-area: name;
+        min-width: 0;
+    }
+
+    .summoning-selectcard__cost {
+        grid-area: cost;
+    }
+
+    .summoning-selectcard__info {
+        grid-area: info;
+    }
+
+    .summoning-selectcard__descr {
+        grid-area: descr;
+    }
+
+    .summoning-blockers {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+}
+
+.playerMenu {
+    .player-menu-unselect {
+        position: absolute;
+        top: 0;
+        right: 6px;
+    }
+}

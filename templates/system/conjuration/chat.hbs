@@ -6,22 +6,33 @@
     <div class="col two attacker">{{{summonerImg}}}</div>
 
     <div class="col two defender">
-      <a class="content-link img-entity-link" draggable="true" data-link="" data-uuid="{{actor.uuid}}" data-type="Actor"></i>{{{conjureImg}}}</a>
+      <a class="content-link img-entity-link cursor-drag" draggable="true" data-link="" data-uuid="{{actor.uuid}}"
+        data-type="Actor" data-tooltip="{{localize 'CONJURATION.dragToMapHint'}}">{{{conjureImg}}}</a>
     </div>
   </div>
+
+  <div class="center small">
+    <i class="fas fa-hand-pointer"></i> {{localize "CONJURATION.dragToMap"}}
+  </div>
+
   {{#if modifiers}}
-  <div>
+  <div class="dsamt-1">
     <b>{{localize 'extensions'}}</b>
   </div>
-  <ul class="dsalist">
-  {{#each modifiers as |item|}}
-    <li>{{localize item.name}}</li>
-  {{/each}}
-  </ul>
-  {{/if}}
-  {{#if showServiceCounter}}
   <div>
-    <b>{{localize serviceLabel}}</b>: {{services}}
+    {{#each modifiers as |item|}}
+    <span class="dsa-pip pip-neutral">{{localize item.name}}</span>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if showServiceCounter}}
+  <div class="dsa-stat-row dsamt-1">
+    <span class="dsa-stat-row__label">
+      {{localize serviceLabel}}
+      <i class="fas fa-info" data-tooltip="{{controlModeHintKey}}"></i>
+    </span>
+    <span class="dsa-stat-row__value">{{services}}</span>
   </div>
   {{/if}}
 </div>

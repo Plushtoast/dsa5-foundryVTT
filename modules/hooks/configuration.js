@@ -26,6 +26,14 @@ export function setupConfiguration() {
       type: Boolean,
       requiresReload: true,
     },
+    summoningRollChooser: {
+      name: 'DSASETTINGS.summoningRollChooser',
+      hint: 'DSASETTINGS.summoningRollChooserHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
+    },
     meleeBotchTableEnabled: {
       name: 'DSASETTINGS.meleeBotchTableEnabled',
       hint: 'DSASETTINGS.meleeBotchTableEnabledHint',

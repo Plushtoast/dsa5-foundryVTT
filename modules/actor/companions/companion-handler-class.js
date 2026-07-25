@@ -7,6 +7,10 @@ import { CompanionSkillSelectionApp } from './companion-skill-selection-app.js';
 import CompanionHotbar from './companion-hotbar.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { Trade } from '../trade.js';
+import { CONJURATION_CONTROL_MODES } from '../../config/conjuration-constants.js';
+import { SummoningFlow } from '../../wizards/summoning/summoning_flow.js';
+
+const { SERVICES, REQUESTS } = CONJURATION_CONTROL_MODES;
 
 export default class CompanionHandler {
     static COMPANION_TAB_ID = 'companion';
@@ -21,7 +25,7 @@ export default class CompanionHandler {
     static async linkSummonedCompanion(summoner, summoned, options = {}) {
         if (!summoner || !summoned) return;
 
-        const controlMode = options.controlMode || summoned.getFlag('dsa5', 'conjurationControlMode') || 'services';
+        const controlMode = options.controlMode || summoned.getFlag('dsa5', 'conjurationControlMode') || SERVICES;
         const conjurationType = options.conjurationType ?? summoned.getFlag('dsa5', 'conjurationType');
         const requestModifier = options.requestModifier ?? summoned.getFlag('dsa5', 'requestModifier');
 
@@ -36,7 +40,7 @@ export default class CompanionHandler {
         if (conjurationType !== undefined && conjurationType !== null) {
             flagUpdate['flags.dsa5.conjurationType'] = Number(conjurationType);
         }
-        if (controlMode === 'requests') {
+        if (controlMode === REQUESTS) {
             flagUpdate['flags.dsa5.requestModifier'] = Number(requestModifier ?? -2);
         }
 
@@ -91,41 +95,64 @@ export default class CompanionHandler {
      */
     static async onSummonCounterExhausted(summoned) {
         if (!summoned?.getFlag('dsa5', 'summonedCompanion')) return;
-        const controlMode = summoned.getFlag('dsa5', 'conjurationControlMode') || 'services';
-        if (!['services', 'requests'].includes(controlMode)) return;
+        const controlMode = summoned.getFlag('dsa5', 'conjurationControlMode') || SERVICES;
+        if (![SERVICES, REQUESTS].includes(controlMode)) return;
 
-        const msgKey = controlMode === 'requests' ? 'COMPANIONS.Request.Exhausted' : 'COMPANIONS.Service.Exhausted';
+        const msgKey = controlMode === REQUESTS ? 'COMPANIONS.Request.Exhausted' : 'COMPANIONS.Service.Exhausted';
         ui.notifications.info(_loc(msgKey, { name: summoned.name }));
         await CompanionHandler.unlinkSummonedCompanion(summoned);
     }
 
     /**
-     * Decrement the services/requests AE on a summoned companion. Deletes + exhausts at 0.
+     * The active effect carrying the Dienste/Bitten counter of a summoned companion.
      * @param {Actor} summoned
-     * @returns {Promise<number|null>} Remaining counter value, or null if no effect.
+     * @returns {ActiveEffect|null}
      */
-    static async spendServiceCounter(summoned) {
-        if (!summoned) return null;
+    static serviceCounterEffect(summoned) {
+        return summoned?.effects.find(e => e.statuses.has('services')) ?? null;
+    }
 
-        const effect = summoned.effects.find(e => e.statuses.has('services'));
+    /**
+     * Write an absolute services/requests value. Reaching 0 deletes the counter and unlinks the summon.
+     * @param {Actor} summoned
+     * @param {number} value
+     * @returns {Promise<number|null>} New counter value, or null if the actor has no counter.
+     */
+    static async setServiceCounter(summoned, value) {
+        const effect = CompanionHandler.serviceCounterEffect(summoned);
         if (!effect) return null;
 
-        const condition = effect.system.condition || {};
-        const current = Number(condition.manual ?? condition.value ?? 0);
-        const next = current - 1;
-
-        if (next <= 0) {
+        const next = Number(value);
+        if (!Number.isFinite(next) || next <= 0) {
+            // The hook on deleteActiveEffect would exhaust a second time without this flag.
             await effect.delete({ fromServiceSpend: true });
             await CompanionHandler.onSummonCounterExhausted(summoned);
             return 0;
         }
 
+        const condition = effect.system.condition || {};
         const auto = Number(condition.auto || 0);
+        const max = Number(condition.max ?? 500);
         await effect.update({
             'system.condition.manual': next,
-            'system.condition.value': Math.max(0, next + auto),
+            'system.condition.value': Math.max(0, Math.min(max, next + auto)),
         });
         return next;
+    }
+
+    /**
+     * Decrement the services/requests AE on a summoned companion. Deletes + exhausts at 0.
+     * @param {Actor} summoned
+     * @param {number} [amount]
+     * @returns {Promise<number|null>} Remaining counter value, or null if no effect.
+     */
+    static async spendServiceCounter(summoned, amount = 1) {
+        const effect = CompanionHandler.serviceCounterEffect(summoned);
+        if (!effect) return null;
+
+        const condition = effect.system.condition || {};
+        const current = Number(condition.manual ?? condition.value ?? 0);
+        return CompanionHandler.setServiceCounter(summoned, current - amount);
     }
 
     static prepareTabVisibility(actor, tabs) {
@@ -165,21 +192,46 @@ export default class CompanionHandler {
                 ev.preventDefault();
                 const input = ev.currentTarget;
                 const compActor = await fromUuid(input.dataset.actorUuid);
-                const effect = compActor?.effects.get(input.dataset.effectId);
-                if (!effect) return;
+                await CompanionHandler.setServiceCounter(compActor, Number(input.value));
+            });
+        });
 
-                const manual = Number(input.value);
-                if (manual <= 0) {
-                    await effect.delete();
-                    return;
-                }
+        element.querySelectorAll('.companion-service-step').forEach(el => {
+            el.addEventListener('click', async ev => {
+                ev.preventDefault();
+                const button = ev.currentTarget;
+                const input = button.parentElement.querySelector('.companion-service-advances');
+                const compActor = await fromUuid(button.dataset.actorUuid);
+                await CompanionHandler.setServiceCounter(compActor, Number(input.value) + Number(button.dataset.step));
+            });
+        });
 
-                const auto = Number(effect.system.condition?.auto || 0);
-                const max = Number(effect.system.condition?.max ?? 500);
-                await effect.update({
-                    'system.condition.manual': manual,
-                    'system.condition.value': Math.max(0, Math.min(max, manual + auto)),
-                });
+        CompanionHandler.#attachConjurationFavoriteHoverMenus(sheet, element);
+    }
+
+    /** Dynamically inject hovermenu X on favorite slots (same pattern as special abilities). */
+    static #attachConjurationFavoriteHoverMenus(sheet, element) {
+        const onDelete = (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const favoriteId = ev.currentTarget.closest('.conjuration-favorite-slot')?.dataset.favoriteId;
+            CompanionHandler.removeConjurationFavorite(sheet.actor, favoriteId);
+        };
+
+        element.querySelectorAll('.conjuration-favorite-slot').forEach((slot) => {
+            slot.addEventListener('mouseenter', (ev) => {
+                if (ev.currentTarget.getElementsByClassName('hovermenu').length) return;
+                const div = document.createElement('div');
+                div.classList.add('hovermenu');
+                const del = document.createElement('i');
+                del.classList.add('fas', 'fa-times');
+                del.dataset.tooltip = 'COMPANIONS.Favorites.remove';
+                del.addEventListener('click', onDelete, false);
+                div.appendChild(del);
+                ev.currentTarget.appendChild(div);
+            });
+            slot.addEventListener('mouseleave', (ev) => {
+                ev.currentTarget.querySelectorAll('.hovermenu').forEach((menu) => menu.remove());
             });
         });
     }
@@ -321,7 +373,84 @@ export default class CompanionHandler {
             editAggregatedTest: this._editAggregatedTestAction,
             companionSkillSelect: this._companionSkillSelectAction,
             companionItemEdit: this._companionItemEditAction,
+            startSummoning: this._startSummoningAction,
+            conjurationFavorite: { handler: this._conjurationFavoriteAction, buttons: [0, 2] },
         };
+    }
+
+    static async _startSummoningAction() {
+        await SummoningFlow.open(this.actor);
+    }
+
+    /**
+     * Cache a creature as summoning favorite (uuid/name/img) without loading it on sheet prep.
+     * @param {Actor} owner
+     * @param {Actor} creature
+     */
+    static async addConjurationFavorite(owner, creature) {
+        if (!owner || !creature) return false;
+        if (creature.type !== 'creature') {
+            ui.notifications.warn(_loc('COMPANIONS.Favorites.notCreature'));
+            return false;
+        }
+
+        const favorites = owner.system.conjurationFavorites || {};
+        if (Object.values(favorites).some((fav) => fav.uuid === creature.uuid)) {
+            ui.notifications.info(_loc('COMPANIONS.Favorites.already', { name: creature.name }));
+            return false;
+        }
+
+        const id = foundry.utils.randomID();
+        await owner.update({
+            [`system.conjurationFavorites.${id}`]: {
+                uuid: creature.uuid,
+                name: creature.name,
+                img: creature.img,
+            },
+        });
+        ui.notifications.info(_loc('COMPANIONS.Favorites.added', { name: creature.name }));
+        return true;
+    }
+
+    /**
+     * @param {Actor} owner
+     * @param {string} favoriteId
+     */
+    static async removeConjurationFavorite(owner, favoriteId) {
+        if (!owner || !favoriteId) return false;
+        if (!(favoriteId in (owner.system.conjurationFavorites || {}))) return false;
+        await owner.update({ [`system.conjurationFavorites.${favoriteId}`]: _del });
+        return true;
+    }
+
+    /** @param {Actor} owner @returns {Array<{id: string, uuid: string, name: string, img: string}>} */
+    static listConjurationFavorites(owner) {
+        const favorites = owner?.system?.conjurationFavorites || {};
+        return Object.entries(favorites)
+            .filter(([, fav]) => fav?.uuid)
+            .map(([id, fav]) => ({ id, uuid: fav.uuid, name: fav.name, img: fav.img }));
+    }
+
+    /**
+     * Left-click opens the favorite creature sheet; right-click starts summoning with it prefilled.
+     * @param {PointerEvent} ev
+     * @param {HTMLElement} target
+     */
+    static async _conjurationFavoriteAction(ev, target) {
+        const uuid = target.dataset.uuid;
+        if (!uuid) return;
+        const creature = await fromUuid(uuid);
+        if (!creature) {
+            ui.notifications.warn('DSAError.notFound', { format: { category: 'Actor', name: uuid }, localize: true });
+            return;
+        }
+
+        if (ev.button === 2) {
+            await SummoningFlow.open(this.actor, null, { creature });
+            return;
+        }
+
+        creature.sheet?.render(true);
     }
 
     static _toggleNatureOptionsAction(_ev, target) {
@@ -582,7 +711,7 @@ export default class CompanionHandler {
         if (!skillItem) return;
 
         const isSummonedRequests = summonedActor?.getFlag('dsa5', 'summonedCompanion')
-            && summonedActor.getFlag('dsa5', 'conjurationControlMode') === 'requests';
+            && summonedActor.getFlag('dsa5', 'conjurationControlMode') === REQUESTS;
         const isFastTalk = skillItem.name === _loc('LocalizedIDs.Fast-Talk');
         const rollOptions = {};
         if (isSummonedRequests && isFastTalk) {
@@ -717,11 +846,18 @@ export default class CompanionHandler {
             }
         }
 
+        sheetData.canSummon = SummoningFlow.hasConjurationSkills(actor);
+        sheetData.conjurationFavorites = CompanionHandler.listConjurationFavorites(actor);
         sheetData.companionSections = [
-            { label: 'familiar', contents: sections.familiar },
-            { label: 'SHEET.AnimalCompanion', contents: sections.regular },
-            { label: 'COMPANIONS.Group.Companion', contents: sections.group },
-            { label: 'COMPANIONS.Group.SummonedCreatures', contents: sections.summoned },
+            { label: 'familiar', contents: sections.familiar, visible: sections.familiar.length > 0 },
+            { label: 'SHEET.AnimalCompanion', contents: sections.regular, visible: sections.regular.length > 0 },
+            { label: 'COMPANIONS.Group.Companion', contents: sections.group, visible: sections.group.length > 0 },
+            {
+                label: 'COMPANIONS.Group.SummonedCreatures',
+                contents: sections.summoned,
+                showSummoningTools: sheetData.canSummon,
+                visible: sheetData.canSummon || sections.summoned.length > 0,
+            },
         ];
     }
 
@@ -746,9 +882,9 @@ export default class CompanionHandler {
 
         const isSummoned = !!comp.getFlag('dsa5', 'summonedCompanion');
         const controlMode = isSummoned
-            ? (comp.getFlag('dsa5', 'conjurationControlMode') || 'services')
+            ? (comp.getFlag('dsa5', 'conjurationControlMode') || SERVICES)
             : null;
-        const requestModifier = isSummoned && controlMode === 'requests'
+        const requestModifier = isSummoned && controlMode === REQUESTS
             ? Number(comp.getFlag('dsa5', 'requestModifier') ?? -2)
             : null;
 
@@ -776,31 +912,29 @@ export default class CompanionHandler {
         let showRequests = false;
         let showServiceCounter = false;
 
+        // Rules explanation for the Dienste / Bitten / Loyalität row, shown as an info tooltip.
+        const controlModeHint = isSummoned ? _loc(`CONJURATION.controlMode.${controlMode}Hint`) : null;
+
         if (isSummoned) {
-            const servicesEffect = Array.from(comp.effects).find(e => e.statuses.has('services'));
-            if (controlMode === 'services') {
+            const servicesEffect = CompanionHandler.serviceCounterEffect(comp);
+            const counterFor = (labelKey) => servicesEffect ? {
+                value: Number(servicesEffect.system.condition?.value ?? servicesEffect.system.condition?.manual ?? 0),
+                effectId: servicesEffect.id,
+                label: labelKey,
+                hint: controlModeHint,
+            } : null;
+
+            if (controlMode === SERVICES) {
                 loyaltyData = null;
                 showLoyalty = false;
-                if (servicesEffect) {
-                    serviceCounter = {
-                        value: Number(servicesEffect.system.condition?.value ?? servicesEffect.system.condition?.manual ?? 0),
-                        effectId: servicesEffect.id,
-                        label: 'PLAYER.services',
-                    };
-                    showServiceCounter = true;
-                }
-            } else if (controlMode === 'requests') {
+                serviceCounter = counterFor('PLAYER.services');
+                showServiceCounter = !!serviceCounter;
+            } else if (controlMode === REQUESTS) {
                 loyaltyData = ownerPersuasionData;
                 showRequests = !!loyaltyData;
                 showLoyalty = false;
-                if (servicesEffect) {
-                    serviceCounter = {
-                        value: Number(servicesEffect.system.condition?.value ?? servicesEffect.system.condition?.manual ?? 0),
-                        effectId: servicesEffect.id,
-                        label: 'PLAYER.requests',
-                    };
-                    showServiceCounter = true;
-                }
+                serviceCounter = counterFor('PLAYER.requests');
+                showServiceCounter = !!serviceCounter;
             } else {
                 loyaltyData = petLoyaltyData;
                 showLoyalty = !!loyaltyData;
@@ -861,6 +995,7 @@ export default class CompanionHandler {
             isHomunculus,
             isSummoned,
             controlMode,
+            controlModeHint,
             requestModifier,
             serviceCounter,
             showServiceCounter,

@@ -784,7 +784,9 @@
       "Exhausted": "{name} hat keine Bitten mehr und verschwindet."
     },
     "Service": {
-      "Exhausted": "{name} hat keine Dienste mehr und verschwindet."
+      "Exhausted": "{name} hat keine Dienste mehr und verschwindet.",
+      "grant": "Um 1 erhöhen",
+      "spend": "Um 1 verringern"
     },
     "Notification": {
       "ActorSummoned": "{name} wurde an deine Seite gerufen!",
@@ -887,6 +889,13 @@
     "controlViaHotbar": "Begleiter über Hotbar steuern",
     "domesticatedAnimal": "Domestiziertes Tier",
     "dropHint": "Eine Kreatur hierher ziehen, um sie als Begleiter hinzuzufügen.",
+    "Favorites": {
+      "added": "{name} wurde als Beschwörungsfavorit gespeichert.",
+      "already": "{name} ist bereits als Favorit gespeichert.",
+      "dropHint": "Favoriten zum Schnellauswählen hierher ziehen",
+      "notCreature": "Nur Kreaturen können als Beschwörungsfavoriten gespeichert werden.",
+      "remove": "Favorit entfernen"
+    },
     "removeMount": "Als Reittier abwählen",
     "train": "Ausbilden",
     "useAsMount": "Als Reittier verwenden",
@@ -951,13 +960,67 @@
     "unconscious": "Wenn eine Person etwa schläft oder einen sehr harten Schlag auf den Kopf bekommen hat, zählt sie als Bewusstlos. Zwar ist ihr Körper nicht eingeschränkt, aber ihr Geist ist entweder anderweitig beschäftigt oder inaktiv. Zusätzlich erleidet der Held auch noch den Status Handlungsunfähig."
   },
   "CONJURATION": {
+    "blocker": {
+      "failed": "Probe misslungen",
+      "noCreature": "Kein Wesen gewählt",
+      "noQs": "Noch keine Probe gewürfelt",
+      "noRitual": "Kein passendes Ritual",
+      "overspent": "Mehr QS verplant als erwürfelt"
+    },
+    "budget": {
+      "costTooltip": "Kostet 1 QS",
+      "empty": "Noch keine QS verfügbar",
+      "remaining": "Verbleibend",
+      "title": "QS-Verwendung"
+    },
+    "phase": {
+      "extensions": "Erweiterungen",
+      "ritual": "Ritual"
+    },
     "conjurs": "beschwört",
+    "controlMode": {
+      "loyalty": "Loyalität",
+      "loyaltyHint": "<p><b>Loyalität</b></p><p>Dieses Wesen leistet keine gezählten Dienste oder Bitten. Es folgt dem Erschaffer über seinen Loyalitätswert, der wie eine Fertigkeit gewürfelt wird.</p><ul class=\"dsalist\"><li>Kein Zähler, das Wesen verschwindet nicht von selbst</li><li>Bei Zweifelsfällen entscheidet eine Loyalitätsprobe über den Gehorsam</li><li>Gelungene Proben können die Loyalität steigern, misslungene sie senken</li></ul>",
+      "requests": "Bitten",
+      "requestsHint": "<p><b>Bitten</b></p><p>Geister und Feen dienen nicht, sie erfüllen Bitten. Das Wesen muss mindestens eine Bitte erfüllen, für jede QS der Herbeirufung kommt eine weitere hinzu.</p><ul class=\"dsalist\"><li>Jede Bitte erfordert eine Probe auf Überreden, um 2 (niedere) bzw. 4 (mittlere) erschwert</li><li>Misslingt die Probe, geht die Bitte trotzdem verloren</li><li>Dieselbe Bitte kann dem Wesen nicht zweimal gestellt werden</li><li>Bei jedem Sonnenaufgang geht eine verbliebene Bitte verloren</li><li>Sind alle Bitten verbraucht, kehrt das Wesen dorthin zurück, woher es kam</li></ul>",
+      "services": "Dienste",
+      "servicesHint": "<p><b>Dienste</b></p><p>Ein beschworener Dämon oder Elementar muss mindestens einen Dienst leisten, für jede QS der Beschwörung kommt ein weiterer hinzu. QS, die in Verbesserungen fließen, fehlen bei den Diensten.</p><ul class=\"dsalist\"><li>Ein Dienst ist ein Auftrag wie Arbeit, Wache, Kampf oder Botschaft</li><li>Der Beschwörer kann einen laufenden Dienst mit 1 freien Aktion abbrechen lassen</li><li>Bei jedem Sonnenaufgang geht ein verbliebener Dienst verloren</li><li>Sind alle Dienste verbraucht, kehrt das Wesen dorthin zurück, woher es kam</li><li>Auch ohne laufenden Dienst folgt das Wesen dem Beschwörer in Rufreichweite</li></ul>"
+    },
+    "decline": "Ablehnen",
+    "declined": "Die Beschwörung von {name} wurde abgelehnt.",
+    "dragToMap": "Auf die Karte ziehen",
+    "dragToMapHint": "Ziehe das Wesen auf die Karte, um seinen Token zu platzieren.",
+    "entityAbilityHint": "Wesenszüge kosten QS und geben dem gerufenen Wesen zusätzliche Fähigkeiten.",
+    "extensionsHint": "Jede Verbesserung kostet 1 QS und fehlt dann bei den Diensten bzw. Bitten. Ohne die Zaubererweiterung 'Mächtiges Wesen' kann jede Verbesserung nur einmal gewählt werden.",
+    "hint": {
+      "demon": "Dämonen werden mit den Invocatio-Ritualen gerufen und leisten Dienste.",
+      "elemental": "Elementargeister werden herbeigerufen und leisten Dienste."
+    },
+    "nextStep": {
+      "pickCreature": "Ziehe als Nächstes ein Wesen hierher, das beschworen werden soll.",
+      "needRitual": "Dein Akteur braucht ein passendes Beschwörungsritual für diese Kategorie.",
+      "rollSpell": "Würfle die Beschwörungsprobe, um QS zu erhalten.",
+      "reroll": "Die Probe ist misslungen — würfle erneut oder passe die Modifikatoren an.",
+      "reduceMods": "Du hast zu viel QS verplant — entferne Erweiterungen oder Wesenszüge.",
+      "pickMods": "Wähle Erweiterungen und Wesenszüge für das Wesen.",
+      "pickModsOrFinalize": "Du kannst noch Erweiterungen wählen oder die Beschwörung fertigstellen.",
+      "finalize": "Alles bereit — Beschwörung fertigstellen."
+    },
+    "none": "Keine",
+    "noRitualHint": "Dieser Akteur beherrscht kein Ritual für diese Kategorie.",
+    "openRules": "Regeln zu dieser Kategorie öffnen",
+    "plainRoll": "Nur Probe würfeln",
+    "ritualModifiers": "Ritualmodifikatoren",
+    "rollOrSummon": "{name} ist ein Beschwörungsritual. Möchtest du den geführten Beschwörungsvorgang starten oder nur die Probe würfeln?",
+    "startSummoning": "Beschwörung starten",
+    "summoningPackageHint": "Beschwörungspakete verändern die Probenerschwernis und die Ausstattung des Wesens.",
     "creatureNotFound": "Kreatur nicht gefunden: {creature}",
     "defensiveImprovement": "Defensive Verbesserung",
     "defensiveImprovementDescr": "+2 PA, +2 RS, +10 LeP",
     "demon": "Dämon",
     "dragActor": "Kein Akteur aktiv (drag and drop)",
     "dragConjuration": "Keine Beschwörung aktiv (drag and drop, mindestens Observerrechte)",
+    "clearCreature": "Beschwörungsziel zurücksetzen",
     "elemental": "Elementar",
     "finalizeTooltip": "Die Kreation an den Spielleiter schicken, dass er den Token platzieren kann.",
     "groupSummoning": "Rudelbeschwörung",
@@ -1806,6 +1869,8 @@
     "soundConfigHint": "Töne für Talente und Angriffe (siehe Modul dsa5-communitysoundconfig)",
     "statusEffectCounterColor": "Farbe des Statuseffektzählers",
     "statusEffectCounterColorHint": "Hex Code für die Token Farbe von zählbaren Status Effekten. Format: #000000",
+    "summoningRollChooser": "Beschwörungsrituale nachfragen",
+    "summoningRollChooserHint": "Beim Klick auf ein Beschwörungsritual erst fragen, ob nur die Probe gewürfelt oder der geführte Beschwörungsvorgang gestartet werden soll.",
     "tabsOutsideSheet": "Externe Tabs",
     "tabsOutsideSheetHint": "Zeige die Tabs außerhalb des Charakterbogens vertikal an.",
     "talentModifierEnabled": "Talentmodifikatoren aktiviert",
@@ -2216,6 +2281,7 @@
     "all": "alle",
     "ambidextrous": "Beidhändig",
     "aptitude": "Begabung",
+    "arcanovi": "Arcanovi",
     "artisticAbility": "Malen & Zeichnen",
     "aspectKnowledge": "Aspektkenntnis",
     "assumeTradition": "Tradition (",
@@ -2752,6 +2818,12 @@
     "woods": "Wälder"
   },
   "PLAYER": {
+    "badge": {
+      "alchemist": "Alchimist",
+      "artifactMage": "Artefaktzauberer",
+      "conjurer": "Beschwörer",
+      "smith": "Schmied"
+    },
     "conjuration": "Beschwörung",
     "creation": "Herstellung",
     "finalize": "Fertigstellen",

@@ -20,6 +20,31 @@
     }
 }
 
+/* Shared by actor companions tab and player-menu summoning */
+.conjuration-favorites-list {
+    margin: 6px 0 4px;
+
+    .slot {
+        flex: 0 0 50px;
+        width: 50px;
+        max-width: 50px;
+        height: 50px;
+    }
+}
+
+.conjuration-favorites-drop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-style: dashed;
+    opacity: 0.65;
+
+    i {
+        font-size: 1.1em;
+        color: var(--dsadesign1);
+    }
+}
+
 .dsa5-companion {
 
     /* COMPANION SHEET TAB STYLES                 */
@@ -125,6 +150,28 @@
         justify-content: center;
         gap: 8px;
         height: 45px;
+    }
+
+    .companion-service-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+
+        .companion-loyalty-top-row,
+        .companion-loyalty-bottom-row {
+            height: auto;
+            min-height: 0;
+        }
+    }
+
+    .companion-service-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+        font-weight: bold;
     }
 
     .companion-talent-name {

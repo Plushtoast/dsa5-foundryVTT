@@ -47,6 +47,14 @@ export function connectSocket() {
       case "invalidateCache":
         game.dsa5.apps.CalendarPicker.constructor.clearCache();
         return;
+      case 'summonCreatureDeclined':
+        {
+          const summoner = data.payload.summonerUuid ? await fromUuid(data.payload.summonerUuid) : null;
+          if (summoner?.isOwner && !game.user.isGM) {
+            ui.notifications.warn('CONJURATION.declined', { format: { name: data.payload.creatureName }, localize: true });
+          }
+        }
+        return;
       default:
         if (Trade.socketListeners(data)) return;
     }

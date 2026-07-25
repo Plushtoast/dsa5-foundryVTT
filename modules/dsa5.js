@@ -92,6 +92,7 @@ import { DSACityDetailsEntry } from './data/journal/dsacitydetails.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
 import { ITEM_CONSTANTS } from './config/item-constants.js';
+import { CONJURATION } from './config/conjuration-constants.js';
 import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
@@ -232,6 +233,7 @@ Hooks.once('init', () => {
     },
     config: DSA5,
     ITEM_CONSTANTS,
+    CONJURATION,
     TestSuite,
     memory: new RollMemory(),
     dsa5HookRegistry: new Set(),

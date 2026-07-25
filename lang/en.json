@@ -784,7 +784,9 @@
       "Exhausted": "{name} has no requests left and vanishes."
     },
     "Service": {
-      "Exhausted": "{name} has no services left and vanishes."
+      "Exhausted": "{name} has no services left and vanishes.",
+      "grant": "Increase by 1",
+      "spend": "Decrease by 1"
     },
     "Notification": {
       "ActorSummoned": "{name} has been summoned to your side",
@@ -887,6 +889,13 @@
     "controlViaHotbar": "Control companion via hotbar",
     "domesticatedAnimal": "Domesticated Animal",
     "dropHint": "Drag & drop an actor here to add it as a companion.",
+    "Favorites": {
+      "added": "{name} was saved as a summoning favorite.",
+      "already": "{name} is already saved as a favorite.",
+      "dropHint": "Drag favorites here for quick select",
+      "notCreature": "Only creatures can be saved as summoning favorites.",
+      "remove": "Remove favorite"
+    },
     "removeMount": "Remove mount entry",
     "train": "Train",
     "useAsMount": "Use as mount",
@@ -951,13 +960,67 @@
     "unconscious": "A sleeping character is considered unconscious, and a hero who suffers a massive blow to the head might be rendered unconscious as well. Even though the body remains functional, the character’s mind is either distracted, seemingly inactive, or otherwise unresponsive. In short, all the lights are out. Furthermore, an unconscious hero is incapacitated."
   },
   "CONJURATION": {
+    "blocker": {
+      "failed": "Test failed",
+      "noCreature": "No creature selected",
+      "noQs": "No test rolled yet",
+      "noRitual": "No matching ritual",
+      "overspent": "More QL spent than rolled"
+    },
+    "budget": {
+      "costTooltip": "Costs 1 QL",
+      "empty": "No QL available yet",
+      "remaining": "Remaining",
+      "title": "QL usage"
+    },
+    "phase": {
+      "extensions": "Extensions",
+      "ritual": "Ritual"
+    },
     "conjurs": "summons",
+    "controlMode": {
+      "loyalty": "Loyalty",
+      "loyaltyHint": "<p><b>Loyalty</b></p><p>This being owes no counted services or requests. It follows its creator through its loyalty value, which is rolled like a skill.</p><ul class=\"dsalist\"><li>No counter, the being does not vanish on its own</li><li>In case of doubt a loyalty test decides whether it obeys</li><li>Successful tests can raise loyalty, failed ones lower it</li></ul>",
+      "requests": "Requests",
+      "requestsHint": "<p><b>Requests</b></p><p>Ghosts and fairies do not serve, they grant requests. The being must fulfil at least one request, and one more for every QL of the summoning.</p><ul class=\"dsalist\"><li>Every request needs a Fast-Talk test at -2 (lesser) or -4 (medium) beings</li><li>A failed test still consumes the request</li><li>The same request cannot be made twice</li><li>One remaining request is lost at every sunrise</li><li>Once all requests are used up the being returns where it came from</li></ul>",
+      "services": "Services",
+      "servicesHint": "<p><b>Services</b></p><p>A summoned demon or elemental owes at least one service, and one more for every QL of the summoning. QL spent on improvements are missing from the services.</p><ul class=\"dsalist\"><li>A service is a task such as work, guarding, combat or carrying a message</li><li>The summoner can cancel a running service with 1 free action</li><li>One remaining service is lost at every sunrise</li><li>Once all services are used up the being returns where it came from</li><li>Even without a running service the being follows the summoner within calling range</li></ul>"
+    },
+    "decline": "Decline",
+    "declined": "The summoning of {name} was declined.",
+    "dragToMap": "Drag onto the map",
+    "dragToMapHint": "Drag the being onto the map to place its token.",
+    "entityAbilityHint": "Entity abilities cost QL and grant the summoned being additional capabilities.",
+    "extensionsHint": "Every improvement costs 1 QL and is then missing from the services or requests. Without the 'Powerful Creature' spell extension each improvement can only be chosen once.",
+    "hint": {
+      "demon": "Demons are summoned with the Invocatio rituals and owe services.",
+      "elemental": "Elemental spirits are called forth and owe services."
+    },
+    "nextStep": {
+      "pickCreature": "Next, drag in a creature to summon.",
+      "needRitual": "Your actor needs a matching summoning ritual for this category.",
+      "rollSpell": "Roll the summoning test to gain QL.",
+      "reroll": "The test failed — roll again or adjust the modifiers.",
+      "reduceMods": "You spent more QL than rolled — remove extensions or traits.",
+      "pickMods": "Choose extensions and traits for the creature.",
+      "pickModsOrFinalize": "You can still pick extensions, or finish the summoning.",
+      "finalize": "Ready — finish the summoning."
+    },
+    "none": "None",
+    "noRitualHint": "This actor knows no ritual for this category.",
+    "openRules": "Open the rules for this category",
+    "plainRoll": "Just roll the test",
+    "ritualModifiers": "Ritual modifiers",
+    "rollOrSummon": "{name} is a summoning ritual. Do you want to start the guided summoning process or just roll the test?",
+    "startSummoning": "Start summoning",
+    "summoningPackageHint": "Summoning packages change the test difficulty and the equipment of the being.",
     "creatureNotFound": "Creature not found: {creature}",
     "defensiveImprovement": "Defensive Improvement",
     "defensiveImprovementDescr": "+2 PA, +2 PRO, +10 LP",
     "demon": "Demon",
     "dragActor": "No actor active (drag and drop)",
     "dragConjuration": "No summoning target active (drag and drop, at least observer permissions)",
+    "clearCreature": "Clear summoning target",
     "elemental": "Elemental",
     "finalizeTooltip": "Send the creation to the GM so he can place the token.",
     "groupSummoning": "Pack Summoning",
@@ -1804,6 +1867,8 @@
     "soundConfigHint": "Sounds for skills and attacks (see module dsa5-communitysoundconfig)",
     "statusEffectCounterColor": "Color of the status effect counter",
     "statusEffectCounterColorHint": "Hex code for the color of countable status effects on the tokens. Format: #000000",
+    "summoningRollChooser": "Ask on summoning rituals",
+    "summoningRollChooserHint": "When clicking a summoning ritual, first ask whether to only roll the test or to start the guided summoning process.",
     "tabsOutsideSheet": "External Tabs",
     "tabsOutsideSheetHint": "Display the tabs vertically outside the character sheet.",
     "talentModifierEnabled": "Skill modifiers activated",
@@ -2214,6 +2279,7 @@
     "all": "all",
     "ambidextrous": "Ambidextrous",
     "aptitude": "Aptitude",
+    "arcanovi": "Arcanovi",
     "artisticAbility": "Artistic Ability",
     "aspectKnowledge": "Aspect Knowledge",
     "assumeTradition": "Tradition (",
@@ -2750,6 +2816,12 @@
     "woods": "Woods"
   },
   "PLAYER": {
+    "badge": {
+      "alchemist": "Alchemist",
+      "artifactMage": "Artifact Mage",
+      "conjurer": "Summoner",
+      "smith": "Smith"
+    },
     "conjuration": "Summoning",
     "creation": "Production",
     "finalize": "Finalize",
