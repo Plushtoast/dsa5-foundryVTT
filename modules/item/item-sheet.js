@@ -2,17 +2,23 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5 from '../config/config-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
-import { itemFromDrop, svgAutoFit, tabSlider } from '../system/helpers/view_helper.js';
+import { bindItemHeaderTitle, itemFromDrop, tabSlider } from '../system/helpers/view_helper.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import EquipmentDamage from '../system/automation/equipment-damage.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import { ItemSheetObfuscation } from './mixins/obfuscatemixin.js';
+import { InformableSheet } from './mixins/informablesheet.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import GroupCheck from '../system/rolls/group-check.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { AppV2Mixin } from '../actor/mixins/appv2_mixin.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
+import TraitData from '../data/item/trait.js';
+import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
+import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
+import ItemEnchantment from './item-enchantment.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -260,27 +266,9 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     this.#lockOverrides(html);
 
-    const toObserve = html.find('header.item-header h1');
-    if (toObserve.length) {
-      const svg = toObserve.find('svg');
-      if (svg) {
-        const observer = new ResizeObserver(function (entries) {
-          svgAutoFit(svg, entries[0].contentRect.width);
-        });
-        observer.observe(toObserve.get(0));
-        const input = toObserve.find('input');
-        if (!input.get(0).disabled) {
-          svg.on('click', () => {
-            svg.hide();
-            input.show();
-            input.trigger('focus');
-          });
-          input.on('blur', () => {
-            svg.show();
-            input.hide();
-          });
-        }
-      }
+    const renderedParts = options.parts;
+    if (!renderedParts || renderedParts.includes('header')) {
+      bindItemHeaderTitle(html);
     }
 
   }
@@ -379,9 +367,8 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
   }
 
   async _onDrop(event) {
-    super._onDrop(event);
-    const dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
-    this._handleDrop(dragData);
+    await super._onDrop(event);
+    this._handleDrop(event.dsaDropData ?? {});
   }
 }
 
@@ -782,15 +769,15 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
 
     if (!rollOptions.length) return;
 
-    const data = {
-      modifier: this.item.system.baseModifier,
-      maxRolls: this.item.system.allowedTestCount.value,
-      enrichedsuccess: await TextEditor.enrichHTML(this.item.system.success, { secrets: this.item.isOwner }),
-      enrichedpartsuccess: await TextEditor.enrichHTML(this.item.system.partsuccess, { secrets: this.item.isOwner }),
-      rollOptions,
-    };
-
-    GroupCheck.showGCMessage(rollOptions[0].target, 0, data);
+    GroupCheck.openDialog({
+      configuration: {
+        rollOptions,
+        maxRolls: this.item.system.allowedTestCount.value,
+        targetQs: 10,
+        partsuccess: this.item.system.partsuccess,
+        success: this.item.system.success,
+      },
+    });
   }
 
   static async _postFinishedItemWrapper(event, target) {
@@ -829,7 +816,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
   }
 }
 
-class Enchantable extends ItemSheetdsa5 {
+class Enchantable extends InformableSheet(ItemSheetdsa5) {
   static TABS = {
     sheet: {
       tabs: [
@@ -971,6 +958,7 @@ class Enchantable extends ItemSheetdsa5 {
   }
 
   async _handleDrop(dragData) {
+    if (await this._linkInformationRef(dragData)) return;
     if (this.isEnchantable) {
       await this._enchant([dragData]);
       await this._enchantExtension(dragData);
@@ -1073,108 +1061,24 @@ class Enchantable extends ItemSheetdsa5 {
     }
   }
 
-  toggleChargedState(id, enchantments) {
-    for (const ench of enchantments) {
-      if (ench.id == id) {
-        ench.charged = ench.talisman && ench.permanent ? true : !ench.charged;
-        break;
-      }
-    }
-    this.item.update({ flags: { dsa5: { enchantments } } });
+  toggleChargedState(id, _enchantments) {
+    return ItemEnchantment.toggleCharge(this.item, id);
   }
 
-  async rollEnchantment(id, enchantments) {
-    const enchantment = enchantments.find((x) => x.id == id);
-    if (!enchantment.charged) return ui.notifications.error('DSAError.NotEnoughCharges', { localize: true });
-
-    let item = await this.getSpell(enchantment);
-
-    if (item) {
-      item = item.toObject();
-      item.system.talentValue.value = enchantment.fw;
-      const actor = DSA5_Utility.emptyActor(14, this.item.name, { parent_source_uuid: this.item.actor?.uuid });
-      const options = {};
-      if (enchantment.extensions?.length) {
-        options.enchantmentExtensions = await this._resolveEnchantmentExtensions(enchantment.extensions);
-      }
-      actor.setupSpell(item, options, 'emptyActor').then(async (setupData) => {
-        const infoMsg = _loc('CHATNOTIFICATION.enchantmentUsed', {
-          item: this.item.name,
-          spell: item.name,
-        });
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-        await actor.basicTest(setupData);
-        if (enchantment.permanent) {
-          this.toggleChargedState(id, enchantments);
-        } else {
-          this.deleteEnchantment(id, enchantments);
-        }
-      });
-    }
-  }
-
-  async _resolveEnchantmentExtensions(extensions) {
-    const resolved = [];
-    for (const ext of extensions) {
-      const pack = game.packs.get(ext.pack);
-      if (!pack) continue;
-      let item = await pack.getDocument(ext.itemId);
-      if (!item) {
-        const idx = pack.index.getName(ext.name);
-        if (idx) item = await pack.getDocument(idx._id);
-      }
-      if (item) {
-        const mapped = item;
-        mapped.shortName = item.name.split(' - ').length > 1 ? item.name.split(' - ')[1] : item.name;
-        mapped.descr = $(item.system.description.value).text() || '';
-        resolved.push(mapped);
-      }
-    }
-    return resolved;
+  async rollEnchantment(id, _enchantments) {
+    return ItemEnchantment.roll(this.item, id);
   }
 
   static _deletePoison(ev, target) {
     this.item.update({ 'flags.dsa5.poison': _del });
   }
 
-  deleteEnchantment(id, enchantments) {
-    const enchantment = enchantments.findIndex((x) => x.id == id);
-    enchantments.splice(enchantment, 1);
-    this.item.update({ flags: { dsa5: { enchantments } } });
+  deleteEnchantment(id, _enchantments) {
+    return ItemEnchantment.delete(this.item, id);
   }
 
   async getSpell(enchantment) {
-    const pack = await game.packs.get(enchantment.pack);
-    let item;
-    if (pack) {
-      item = await pack.getDocument(enchantment.itemId);
-      if (!item) {
-        const itemId = await pack.index.getName(enchantment.name);
-        if (itemId) item = await pack.getDocument(itemId._id);
-      }
-    }
-
-    if (!item) {
-      const itemLibrary = game.dsa5.itemLibrary;
-      await itemLibrary.buildEquipmentIndex();
-
-      itemLibrary.findCompendiumItem;
-      const cats = enchantment.talisman ? ['liturgy', 'ceremony'] : ['spell', 'ritual'];
-
-      for (const cat of cats) {
-        item = await game.dsa5.itemLibrary.findCompendiumItem(enchantment.name, cat);
-        item = item.find((x) => x.name == enchantment.name && x.type == cat && x.system);
-
-        if (item) break;
-      }
-    }
-
-    if (!item)
-      ui.notifications.error('DSAError.enchantmentNotFound', {
-        localize: true,
-      });
-
-    return item;
+    return ItemEnchantment.resolveDocument(enchantment, { notify: true });
   }
 
   enchantMentId(target) {
@@ -1212,6 +1116,8 @@ class Enchantable extends ItemSheetdsa5 {
     data.enchantments = this.item.getFlag('dsa5', 'enchantments');
     data.poison = this.item.getFlag('dsa5', 'poison');
     data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0);
+    data.isEnchantableItem = this.isEnchantable;
+
     return data;
   }
 }
@@ -1245,9 +1151,37 @@ class TraitSheet extends Enchantable {
   get isPoisonable() {
     return ['meleeAttack', 'rangeAttack'].includes(this.item.system.traitType.value);
   }
+
+  get hasRollEffect() {
+    if (!this.actor || this.item.system.traitType?.value !== 'familiar') return false;
+    if (OnUseEffect.hasOnUseEffect(this.item)) return false;
+    return TraitData.getFamiliarActivationAspCost(this.item) > 0;
+  }
+
+  async setupEffect() {
+    const paid = await TraitData.payFamiliarActivationAsp(this.actor, this.item);
+    if (!paid) return;
+
+    const cantrip = this.item.system.chatDataToString();
+    const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
+      item: this.item,
+      cantrip,
+    });
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(chatMessage));
+  }
 }
 
 class InformationSheet extends ItemSheetdsa5 {
+  static DEFAULT_OPTIONS = {
+    majorButtons: [
+      {
+        label: 'SHEET.PostItem',
+        icon: 'fas fa-dice-d20',
+        action: 'showItemHead',
+      },
+    ],
+  };
+
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/items/item-header.hbs',
@@ -1266,6 +1200,42 @@ class InformationSheet extends ItemSheetdsa5 {
       initial: 'details',
     },
   };
+
+  async _prepareContext(options) {
+    const data = await super._prepareContext(options);
+    data.isMagicalAnalysis = this.item.system.subType === 'magicalAnalysis';
+    if (data.isMagicalAnalysis) {
+      const parentItem = options.magicAnalysisParentUuid
+        ? await fromUuid(options.magicAnalysisParentUuid)
+        : null;
+      foundry.utils.mergeObject(
+        data,
+        await MagicAnalysisContentResolver.placeholders(parentItem),
+      );
+    }
+    if (data.isMagicalAnalysis && !data.document.system.skill) {
+      data.document.system.skill = MagicAnalysisService.MAGIEKUNDE_SKILL;
+    }
+    return data;
+  }
+
+  _processFormData(event, form, formData) {
+    const data = super._processFormData(event, form, formData);
+    if (data.system?.subType === 'magicalAnalysis') {
+      const subTypeChanged = data.system.subType !== this.item.system.subType;
+      if (subTypeChanged || !data.system.skill) {
+        data.system.skill = MagicAnalysisService.MAGIEKUNDE_SKILL;
+      }
+    }
+    return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    if (this.isEditable && this.item.system.subType === 'magicalAnalysis' && !this.item.system.skill) {
+      await this.item.update({ 'system.skill': MagicAnalysisService.MAGIEKUNDE_SKILL });
+    }
+  }
 }
 
 class AmmunitionSheet extends ItemSheetObfuscation(Enchantable) {
@@ -1424,7 +1394,7 @@ export class ArmorSheet extends ItemSheetObfuscation(Enchantable) {
   };
 }
 
-class PlantSheet extends ItemSheetObfuscation(EffectsEquipmentSheet) {
+class PlantSheet extends InformableSheet(ItemSheetObfuscation(EffectsEquipmentSheet)) {
   static PARTS = {
     header: super.PARTS.header,
     stat: {
@@ -1568,7 +1538,7 @@ class BlessingSheetDSA5 extends MacroOnlyEffectsSheet {
     if (this.actor.system.status.karmaenergy.value < 1)
       return ui.notifications.error('DSAError.NotEnoughKaP', { localize: true, });
 
-    await this.actor.update({ 'system.status.karmaenergy.value': (this.actor.system.status.karmaenergy.value -= 1), });
+    await this.actor.update({ 'system.status.karmaenergy.value': this.actor.system.status.karmaenergy.value - 1, });
     const cantrip = this.item.system.chatDataToString();
     const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
       item: this.item,
@@ -1627,6 +1597,7 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
       consumeItem: function () {
         this.setupEffect();
       },
+      toggleQL: this.#toggleQLEdit,
     },
     majorButtons: [
       {
@@ -1642,6 +1613,10 @@ class ConsumableSheetDSA5 extends ItemSheetObfuscation(ItemSheetdsa5) {
 
   setupEffect() {
     this.item.setupEffect();
+  }
+
+  static #toggleQLEdit(ev, target) {
+    this.element.querySelectorAll('.ql-edit').forEach(el => el.classList.toggle('dsahidden'));
   }
 }
 
@@ -1674,10 +1649,8 @@ class MagictrickSheetDSA5 extends MacroOnlyEffectsSheet {
   }
 
   async setupEffect() {
-    if (this.actor.system.status.astralenergy.value < 1)
-      return ui.notifications.error('DSAError.NotEnoughAsP', { localize: true });
-
-    await this.actor.update({ 'system.status.astralenergy.value': (this.actor.system.status.astralenergy.value -= 1), });
+    const paid = await this.actor.applyMana(1, 'AsP');
+    if (!paid) return;
     const cantrip = this.item.system.chatDataToString();
     const chatMessage = await renderTemplate('systems/dsa5/templates/chat/roll/simpleability.hbs', {
       item: this.item,
@@ -1693,6 +1666,18 @@ class MeleeweaponSheetDSA5 extends WeaponSheetDSA5 {
   async _prepareContext(_options) {
     const context = await super._prepareContext(_options);
     context.isBrawling = _loc(`LocalizedCTs.${this.item.system.combatskill.value}`) === 'Brawling';
+    context.showImprovisedToggle = MeleeweaponData.hasImprovisedName(this.item.name);
+    if (context.alternateAttacks) {
+      context.alternateAttacks = Object.fromEntries(
+        Object.entries(context.alternateAttacks).map(([key, attack]) => [
+          key,
+          {
+            ...attack,
+            showImprovisedToggle: MeleeweaponData.hasImprovisedName(attack.name || this.item.name),
+          },
+        ]),
+      );
+    }
     return context;
   }
 }
@@ -1749,7 +1734,89 @@ class ItemSpeciesDSA5 extends NoEffectsSheet {
       width: 530,
       height: 570,
     },
+    actions: {
+      rollGeneratorEntry: this.rollGeneratorEntry,
+    },
+    ownerActions: {
+      addGeneratorEntry: this.addGeneratorEntry,
+      deleteGeneratorEntry: this.deleteGeneratorEntry,
+    },
   };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    const systemClass = this.item.system.constructor;
+    const generatorFieldConfigs = [
+      {
+        field: 'furSkinColor',
+        label: systemClass.getGeneratorLabel('furSkinColor'),
+        isTextarea: true,
+        placeholder: '1d6\n1-2=dunkelbraun\n3-4=hellbraun\n5=weiss\n6=schwarz',
+      },
+      {
+        field: 'eyeColor',
+        label: systemClass.getGeneratorLabel('eyeColor'),
+        isTextarea: true,
+        placeholder: '1d20\n1-2=schwarzbraun\n3-4=graublau\n5-8=saphirblau',
+      },
+      {
+        field: 'bodyHeight',
+        label: systemClass.getGeneratorLabel('bodyHeight'),
+        unit: systemClass.getGeneratorUnit('bodyHeight'),
+        isTextarea: false,
+        placeholder: '168 + 2d20',
+      },
+      {
+        field: 'weight',
+        label: systemClass.getGeneratorLabel('weight'),
+        unit: systemClass.getGeneratorUnit('weight'),
+        isTextarea: false,
+        placeholder: '@bodyheight - 110 - 2d6',
+      },
+    ];
+
+    data.generatorFields = generatorFieldConfigs.map((config) => ({
+      ...config,
+      entries: this.item.system.getGeneratorEntries(config.field),
+    }));
+    return data;
+  }
+
+  static async addGeneratorEntry(_event, target) {
+    const field = target.dataset.field;
+    if (!field) return;
+
+    await this.item.system.addGeneratorEntry(field);
+  }
+
+  static async deleteGeneratorEntry(_event, target) {
+    const { field, key } = target.dataset;
+    if (!field || !key) return;
+
+    await this.item.system.removeGeneratorEntry(field, key);
+  }
+
+  static async rollGeneratorEntry(_event, target) {
+    const { field, key } = target.dataset;
+    if (!field || !key) return;
+
+    try {
+      const result = field === 'weight'
+        ? await this.rollWeightEntry(key)
+        : await this.item.system.rollNamedGeneratorEntry(field, key);
+
+      const label = this.item.system.constructor.getGeneratorLabel(field);
+      const suffix = result.total != null && result.formula ? ` (${result.formula} = ${result.total})` : '';
+      ui.notifications.info(`${label} - ${result.display}${suffix}`);
+    } catch (error) {
+      ui.notifications.warn(error.message);
+    }
+  }
+
+  static async rollWeightEntry(entryId) {
+    const { result } = await this.item.system.rollWeightEntryWithDependencies(entryId);
+    return result;
+  }
 }
 
 class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
@@ -1832,7 +1899,7 @@ class SpellSheetDSA5 extends AdvancableSkill(ItemSheetdsa5) {
     if (data.isOwned) {
       data.extensions = this.actor.items.filter((x) => {
         return x.type == 'spellextension' && x.system.source == this.item.name && this.item.type == x.system.category;
-      });
+      }).sort((a, b) => (Number(a.system.talentValue) || 0) - (Number(b.system.talentValue) || 0) || a.name.localeCompare(b.name, game.i18n.lang));
     }
     return data;
   }

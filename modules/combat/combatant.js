@@ -1,5 +1,5 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import RuleChaos from '../system/rules/rule_chaos.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
 
 export default class DSA5Combatant extends Combatant {
   constructor(data, context) {
@@ -7,40 +7,120 @@ export default class DSA5Combatant extends Combatant {
     super(data, context);
   }
 
-  brawlingChange() {
-    const actor = DSA5_Utility.getSpeaker({
+  #speakerActor() {
+    return DSA5_Utility.getSpeaker({
       actor: this.actor.id,
       scene: this.sceneId,
       token: this.token.id,
     });
-    const unarm = this.combat.system.unarmEveryone;
-    const tokenChange = actor.system.config.autoBar
-      ? actor.getActiveTokens().map((x) => {
-        return { _id: x.id, bar1: { attribute: 'status.temporaryLeP' } };
-      })
-      : [];
+  }
+
+  #tokenBarChange(actor, attribute) {
+    if (!actor.system.config.autoBar) return [];
+    return actor.getActiveTokens().map((x) => ({ _id: x.id, bar1: { attribute } }));
+  }
+
+  /**
+   * @param {object} [options]
+   * @param {'current'|'max'} [options.ppSource]
+   * @param {boolean} [options.resetPP]
+   * @param {boolean} [options.applyPostDamage]
+   * @param {boolean} [options.unarm]
+   */
+  async brawlingChange(options = {}) {
+    const actor = this.#speakerActor();
+    const {
+      ppSource = 'current',
+      resetPP = true,
+      applyPostDamage = false,
+      unarm = this.combat.system.unarmEveryone,
+    } = options;
+
+    const tokenChange = this.#tokenBarChange(actor, 'status.temporaryLeP');
+    const actorChange = {
+      _id: actor.id,
+      system: { status: {} },
+    };
+
+    let damage = { brawlDamage: 0, result: null };
+    let woundsValue = actor.system.status.wounds.value;
+    let ppValue = Number(actor.system.status.temporaryLeP.value) || 0;
+    let ppMax = Number(actor.system.status.temporaryLeP.max) || 0;
+
+    if (applyPostDamage && ppMax > 0) {
+      damage = await this.rollPostBrawlDamage(actor);
+      if (damage.brawlDamage > 0) {
+        woundsValue = actor.system.status.wounds.value - damage.brawlDamage;
+        actorChange.system.status.wounds = { value: woundsValue };
+      }
+      ppValue = 0;
+      ppMax = 0;
+    }
+
+    const shouldInit = resetPP || ppMax <= 0;
+    if (shouldInit) {
+      const sourceLep = ppSource === 'max' ? actor.system.status.wounds.max : woundsValue;
+      ppValue = sourceLep;
+      ppMax = sourceLep;
+    }
+
+    actorChange.system.status.temporaryLeP = { value: ppValue, max: ppMax };
+
+    if (unarm) {
+      const items = this.actor.items.filter(
+        (x) => x.type == 'meleeweapon' && x.system.worn.value && !MeleeweaponData.isImprovisedWeapon(x),
+      );
+      if (items.length) {
+        actorChange.items = items.map((x) => ({ _id: x.id, 'system.worn.value': false }));
+      }
+    }
+
+    return { tokenChange, actorChange, damage };
+  }
+
+  /**
+   * Leave brawling mode without clearing PP or converting injuries.
+   */
+  leaveBrawling() {
+    const actor = this.#speakerActor();
+    return {
+      tokenChange: this.#tokenBarChange(actor, 'status.wounds'),
+      actorChange: null,
+      damage: { brawlDamage: 0, result: null },
+    };
+  }
+
+  /**
+   * Convert lost PP into LeP injuries and clear PP.
+   * @param {object} [options]
+   * @param {boolean} [options.switchTokenBar=true]
+   */
+  async settlePostBrawlDamage(options = {}) {
+    const { switchTokenBar = true } = options;
+    const actor = this.#speakerActor();
+    const ppMax = Number(actor.system.status.temporaryLeP.max) || 0;
+    const tokenChange = switchTokenBar ? this.#tokenBarChange(actor, 'status.wounds') : [];
+
+    if (ppMax <= 0) {
+      return { tokenChange, actorChange: null, damage: { brawlDamage: 0, result: null } };
+    }
+
+    const damage = await this.rollPostBrawlDamage(actor);
     const actorChange = {
       _id: actor.id,
       system: {
         status: {
-          temporaryLeP: {
-            value: actor.system.status.wounds.value,
-            max: actor.system.status.wounds.value,
-          },
+          temporaryLeP: { value: 0, max: 0 },
         },
       },
     };
-
-    if (unarm) {
-      const items = this.actor.items.filter((x) => x.type == 'meleeweapon' && x.system.worn.value && !RuleChaos.improvisedWeapon.test(x.name));
-      if (items.length) {
-        actorChange.items = items.map((x) => {
-          return { _id: x.id, 'system.worn.value': false };
-        });
-      }
+    if (damage.brawlDamage > 0) {
+      actorChange.system.status.wounds = {
+        value: actor.system.status.wounds.value - damage.brawlDamage,
+      };
     }
 
-    return { tokenChange, actorChange };
+    return { tokenChange, actorChange, damage };
   }
 
   async getBrawlingTable() {
@@ -57,25 +137,15 @@ export default class DSA5Combatant extends Combatant {
     return this.brawlingTable;
   }
 
-  get properInitiative() {
-    return this.system.roundInitiative >= 0 ? this.system.roundInitiative : this.initiative;
-  }
-
-  async undoBrawlingChange() {
-    const actor = DSA5_Utility.getSpeaker({
-      actor: this.actor.id,
-      scene: this.sceneId,
-      token: this.token.id,
-    });
-    const tokenChange = actor.system.config.autoBar
-      ? actor.getActiveTokens().map((x) => {
-        return { _id: x.id, bar1: { attribute: 'status.wounds' } };
-      })
-      : [];
-    const lostLP = Math.max(0, actor.system.status.temporaryLeP.max - actor.system.status.temporaryLeP.value);
+  /**
+   * Convert lost PP into LeP damage via the brawling injuries table (does not mutate actor).
+   * @param {Actor} actor
+   */
+  async rollPostBrawlDamage(actor) {
+    const lostLP = Math.max(0, (Number(actor.system.status.temporaryLeP.max) || 0) - (Number(actor.system.status.temporaryLeP.value) || 0));
     let brawlDamage = 0;
+    let result = null;
 
-    let result;
     if (lostLP > 0) {
       result = await (await this.getBrawlingTable()).draw({ displayChat: false });
       result = result.results[0];
@@ -83,22 +153,16 @@ export default class DSA5Combatant extends Combatant {
       brawlDamage = Math.round(lostLP * multiplier);
     }
 
-    const actorChange = {
-      _id: actor.id,
-      system: {
-        status: {
-          temporaryLeP: {
-            value: 0,
-            max: 0,
-          },
-          wounds: {
-            value: actor.system.status.wounds.value - brawlDamage,
-          },
-        },
-      },
-    };
+    return { brawlDamage, result };
+  }
 
-    return { tokenChange, actorChange, damage: { brawlDamage, result } };
+  /** @deprecated Use leaveBrawling() — kept for callers that still expect damage settlement. */
+  async undoBrawlingChange() {
+    return this.leaveBrawling();
+  }
+
+  get properInitiative() {
+    return this.system.roundInitiative >= 0 ? this.system.roundInitiative : this.initiative;
   }
 
   async recalcInitiative() {

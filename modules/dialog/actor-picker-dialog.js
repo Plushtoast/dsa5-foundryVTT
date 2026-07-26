@@ -33,12 +33,21 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     self: 'self',
   });
 
-  static #getGroupActors() {
+  static #getPrimaryPartyActors() {
     const partyUuid = game.settings.get('dsa5', 'primaryParty');
     if (!partyUuid) return [];
 
     const party = fromUuidSync(partyUuid);
     return party?.system?.actors?.size ? Array.from(party.system.actors) : [];
+  }
+
+  /** Group sheet members when {@link groupActor} is set; otherwise primary party. */
+  static #getGroupMemberActors(groupActor = null) {
+    if (groupActor?.system?.actors?.size) {
+      return [...groupActor.system.actors];
+    }
+    if (groupActor) return [];
+    return this.#getPrimaryPartyActors();
   }
 
   static #getMasterMenuActors() {
@@ -55,10 +64,15 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     return game.users.map((u) => u.character).filter(Boolean);
   }
 
-  static #getActorsBySource(source) {
+  static #resolveGroupActor(element) {
+    const id = element?.querySelector('.query-actor-picker')?.dataset.groupActorId;
+    return id ? game.actors.get(id) : null;
+  }
+
+  static #getActorsBySource(source, groupActor = null) {
     switch (source) {
       case this.ACTOR_SOURCES.group:
-        return this.#getGroupActors();
+        return this.#getGroupMemberActors(groupActor);
       case this.ACTOR_SOURCES.tracked:
         return this.#getMasterMenuActors();
       case this.ACTOR_SOURCES.self:
@@ -84,9 +98,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     return game.actors.filter((a) => a.hasPlayerOwner);
   }
 
-  static #availableSources() {
+  static #availableSources(groupActor = null) {
     const sources = [];
-    if (this.#getGroupActors().length) {
+    if (this.#getGroupMemberActors(groupActor).length) {
       sources.push({ key: this.ACTOR_SOURCES.group, icon: 'fa-solid fa-people-group', tooltip: 'DSAQUERIES.ACTORSOURCE.group' });
     }
     sources.push({ key: this.ACTOR_SOURCES.tracked, icon: 'fa-solid fa-clipboard-list', tooltip: 'DSAQUERIES.ACTORSOURCE.tracked' });
@@ -94,6 +108,18 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       sources.push({ key: this.ACTOR_SOURCES.self, icon: 'fa-solid fa-user', tooltip: 'DSAQUERIES.ACTORSOURCE.self' });
     }
     return sources;
+  }
+
+  static #buildInitialEntries({ groupActor, defaultSource, entryFilter }) {
+    const actorSources = this.#availableSources(groupActor);
+    const groupMembers = this.#getGroupMemberActors(groupActor);
+    const initialSource = defaultSource ?? (
+      groupActor && groupMembers.length ? this.ACTOR_SOURCES.group : actorSources[0]?.key
+    );
+
+    let entries = this.buildActorPickerData({ actors: this.#getActorsBySource(initialSource, groupActor) });
+    if (entryFilter) entries = entries.filter(entryFilter);
+    return { entries, initialSource, actorSources };
   }
 
   static buildActorPickerData({ existingIds = new Set(), actors } = {}) {
@@ -152,6 +178,10 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     ActorPickerDialog.#bindSearchFilter(this.element);
     ActorPickerDialog.#bindActorRowEvents(this.element);
     this.#bindDropEvents();
+
+    const form = this.element.querySelector('form');
+    form.style.overflowY = 'hidden';
+    form.querySelector('.dialog-content').classList.add('scrollable');
   }
 
   static #onActorSearchFilter(_event, query, rgx, html) {
@@ -206,8 +236,10 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
 
   async #switchActorSource(source) {
     const selectionMode = ActorPickerDialog.#getSelectionMode(this.element);
-    const actors = ActorPickerDialog.buildActorPickerData({ actors: ActorPickerDialog.#getActorsBySource(source) })
-      .map((a) => ({ ...a, preselected: true }));
+    const groupActor = ActorPickerDialog.#resolveGroupActor(this.element);
+    let actors = ActorPickerDialog.buildActorPickerData({ actors: ActorPickerDialog.#getActorsBySource(source, groupActor) });
+    if (this._entryFilter) actors = actors.filter(this._entryFilter);
+    actors = actors.map((a) => ({ ...a, preselected: true }));
 
     const list = this.element.querySelector('.query-actor-list');
     if (!list) return;
@@ -253,23 +285,58 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     });
   }
 
-  static async open({ actors = [], title = 'DSAQUERIES.COMMANDS.addActor', header = '', callback, selectionMode = 'multiple', showSourceToggle = false } = {}) {
+  /**
+   * @param {object} options
+   * @param {Actor|null} [options.groupActor] Group sheet actor — uses its members for the group source; omit to use primary party.
+   * @param {boolean} [options.requireGroupMembers] Warn and abort when groupActor has no members.
+   * @param {(entry: object) => boolean} [options.entryFilter] Filter built picker rows (e.g. player-owned only).
+   */
+  static async open({
+    actors = [],
+    groupActor = null,
+    defaultSource = null,
+    entryFilter = null,
+    requireGroupMembers = false,
+    title = 'DSAQUERIES.COMMANDS.addActor',
+    header = '',
+    callback,
+    selectionMode = 'multiple',
+    showSourceToggle = false,
+  } = {}) {
+    if (requireGroupMembers && groupActor && !groupActor.system?.actors?.size) {
+      ui.notifications.warn('GROUP.noMembers', { localize: true });
+      return;
+    }
+
     let actorSources = [];
     if (showSourceToggle) {
-      actorSources = this.#availableSources();
+      const built = this.#buildInitialEntries({ groupActor, defaultSource, entryFilter });
+      actorSources = built.actorSources;
       if (actorSources.length <= 1) actorSources = [];
-      else {
-        const defaultSource = actorSources[0].key;
-        actors = this.buildActorPickerData({ actors: this.#getActorsBySource(defaultSource) })
-          .map((a) => ({ ...a, preselected: true }));
+      else if (!actors.length) {
+        if (groupActor && built.initialSource === this.ACTOR_SOURCES.group && !built.entries.length) {
+          ui.notifications.error('DSAError.noProperActor', { localize: true });
+          return;
+        }
+        actors = built.entries.map((a) => ({ ...a, preselected: true }));
       }
     }
-    const content = await renderTemplate(this.TEMPLATE, { actors, header, selectionMode, actorSources });
+
+    const content = await renderTemplate(this.TEMPLATE, {
+      actors,
+      header,
+      selectionMode,
+      actorSources,
+      groupActorId: groupActor?.id ?? '',
+    });
 
     const dialogConfig = {
       window: { title, resizable: true },
       content,
       classes: ['dsa5'],
+      position: {
+        width: 400,
+      },
       buttons: [
         {
           action: 'confirm',
@@ -293,7 +360,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     };
 
     if (callback) {
-      new this(dialogConfig).render(true);
+      const dialog = new this(dialogConfig);
+      dialog._entryFilter = entryFilter;
+      dialog.render(true);
       return;
     }
 

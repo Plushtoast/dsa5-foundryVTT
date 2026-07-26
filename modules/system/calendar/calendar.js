@@ -106,6 +106,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
       translationPrefix: new fields.StringField({ required: true, initial: '' }),
       moon: new fields.SchemaField({
         cycle: new fields.NumberField({ required: true, initial: 28 }),
+        phaseOffset: new fields.NumberField({ required: true, initial: 16 }),
         anchor: new fields.SchemaField({
           year: new fields.NumberField({ required: true, initial: 1040 }),
           month: new fields.NumberField({ required: true, initial: 3 }),
@@ -138,6 +139,18 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const hourSuffix = _loc('CALENDAR.DSA.hourSuffix');
 
     return `${hourPart} ${hourName}${hourSuffix}, ${dd}. ${mm} ${yyyy}`;
+  }
+
+  static format24Hour(calendar, components, _options) {
+    const yyyy = `${components.year} ${calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix)}`;
+    const month = calendar.months.values[components.month];
+    const mm = calendar.translate(month.name);
+    const dd = components.dayOfMonth + 1;
+    const h = components.hour.toString().padStart(2, '0');
+    const m = components.minute.toString().padStart(2, '0');
+    const s = components.second.toString().padStart(2, '0');
+
+    return `${h}:${m}:${s}, ${dd}. ${mm} ${yyyy}`;
   }
 
   static async seasonParts(calendar, components, _options) {
@@ -192,28 +205,12 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     components.moon = null;
 
     if (this.moon) {
-      const { anchor, cycle, values } = this.moon;
+      const { cycle, values } = this.moon;
 
-      // Calculate total days since anchor date
-      const yearDiff = year - anchor.year;
-      let totalDays = yearDiff * this.days.daysPerYear;
-
-      // Add days from current year's elapsed months
-      for (let m = 0; m < month; m++) {
-        totalDays += this.months.values[m].days;
-      }
-
-      // Add days in current month
-      totalDays += dayOfMonth - (anchor.dayOfMonth - 1);
-
-      // Adjust if within same year
-      if (yearDiff === 0 && month >= anchor.month) {
-        for (let m = 0; m < anchor.month; m++) {
-          totalDays -= this.months.values[m].days;
-        }
-      }
-
-      const dayInCycle = Math.abs(Math.floor(totalDays % cycle));
+      const absoluteDays = components.year * this.days.daysPerYear + components.day;
+      const offset = this.moon.phaseOffset ?? 16;
+      let dayInCycle = (absoluteDays + offset) % cycle;
+      if (dayInCycle < 0) dayInCycle += cycle;
 
       // Find current moon phase
       let phaseIndex = 0;

@@ -73,7 +73,9 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const secondsInDay = this.constructor.calculateSecondsInDay(components);
 
         data.components = components;
-        data.dateString = await game.time.calendar.format(game.time.worldTime, 'formatPraiosGefaellig');
+        const use24HourFormat = game.settings.get('dsa5', 'calendarSettings').use24HourFormat;
+        const dateFormat = use24HourFormat ? 'format24Hour' : 'formatPraiosGefaellig';
+        data.dateString = await game.time.calendar.format(game.time.worldTime, dateFormat);
         data.dateTooltip = await game.time.calendar.format(game.time.worldTime, 'formatSeason');
         data.autoLightEnabled = game.settings.get('dsa5', 'calendarSettings').lightByDayTime;
         data.isGM = game.user.isGM;
@@ -231,8 +233,18 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const minute = Math.floor((secondsInDay % this.constructor.SECONDS_PER_HOUR) / 60) || 0;
         const second = Math.floor(secondsInDay % 60) || 0;
 
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
         const dayTimeBackground = this.constructor.dayTimeBackground({ hour, minute, second });
+        const use24HourFormat = game.settings.get('dsa5', 'calendarSettings').use24HourFormat;
+        let timeString;
+        if (use24HourFormat) {
+            timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;
+        } else {
+            const fullComponents = game.time.calendar.timeToComponents(game.time.worldTime);
+            fullComponents.hour = hour;
+            fullComponents.minute = minute;
+            fullComponents.second = second;
+            timeString = game.time.calendar.constructor.formatPraiosGefaellig(game.time.calendar, fullComponents).split(', ')[0];
+        }
 
         container.style.width = containerRect.width + 'px';
         container.style.background = dayTimeBackground.gradient;

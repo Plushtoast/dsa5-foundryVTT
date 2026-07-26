@@ -1,3 +1,9 @@
-<a class="roll-button informationEnricherRoll" data-uuid="{{uuid}}" data-skill="{{skill}}" data-mod="{{modifier}}">
-  <em class="fas fa-dice"></em> {{skill}} ({{modifier}})
+{{#if (eq document.system.subType 'magicalAnalysis')}}
+<a class="roll-button magicAnalysisEnricherRoll" data-tooltip="{{localize 'TT.enricherInfoRoll'}}" data-uuid="{{uuid}}" data-subtype="magicalAnalysis"{{#if parentUuid}} data-parent-uuid="{{parentUuid}}"{{/if}}>
+  <em class="fas fa-comment"></em> {{document.name}} ({{localize 'MAGICANALYSIS.title'}})
 </a>
+{{else}}
+<a class="roll-button informationEnricherRoll" data-tooltip="{{localize 'TT.enricherInfoRoll'}}" data-uuid="{{uuid}}" data-skill="{{document.system.skill}}" data-mod="{{document.system.modifier}}">
+  <em class="fas fa-comment"></em> {{document.name}} ({{document.system.modifier}})
+</a>
+{{/if}}

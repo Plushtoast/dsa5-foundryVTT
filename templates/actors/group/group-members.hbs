@@ -17,26 +17,29 @@
 
 
   <div class="col ten flexAlignEnd flexrow table-title lineheight">
+    {{#if isGM}}
     <button type="button" class="icon fas fa-dice noBorder dsadesignbutton" data-action="rollAllBlind"
       data-tooltip="CHAT.MODES.blind"></button>
     <button type="button" class="icon fas fa-bed noBorder dsadesignbutton" data-action="rollRegeneration"
       data-tooltip="regenerate"></button>
     <button type="button" class="icon fas fa-shuffle noBorder dsadesignbutton" data-action="randomMember"
-      data-tooltip="MASTER.randomPlayer"></button>
+      data-tooltip="MASTER.randomPlayer"></button>    
     <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
     <button type="button" class="icon fas fa-trophy noBorder dsadesignbutton" data-action="awardAP"
       data-tooltip="MASTER.awardXP"></button>
     <span style="border-left: 1px solid var(--dsadesign1); height: 1em; margin: 0 2px;"></span>
+    
     <button type="button" class="icon fas fa-piggy-bank noBorder dsadesignbutton" data-action="groupGetPaid"
       data-tooltip="PAYMENT.wage"></button>
     <button type="button" class="icon fas fa-coins noBorder dsadesignbutton" data-action="groupPayment"
       data-tooltip="MASTER.payTT"></button>
+    {{/if}}
   </div>
 
   {{#each members as |hero|}}
   <div class='row-section skills hero tableOdd wrap' data-member-key='{{hero.key}}' data-uuid='{{hero.uuid}}'
     data-id='{{hero.id}}'>
-    {{#> "systems/dsa5/templates/actors/parts/member-card-header.hbs" img=hero.img name=hero.name uuid=hero.uuid status=hero.system.status isMage=hero.system.isMage isPriest=hero.system.isPriest showContextMenu=@root.isGM}}
+    {{#> "systems/dsa5/templates/actors/parts/member-card-header.hbs" img=hero.img name=hero.name uuid=hero.uuid status=hero.system.status isMage=hero.system.isMage isPriest=hero.system.isPriest showContextMenu=@root.isGM showStatusBars=hero.canViewPrivateDetails}}
         {{#if hero.ownerName}}
           <span class="badgePip" style="background-color: {{hero.ownerColor}}; color: #fff; font-size: 0.7em;">{{hero.ownerName}}</span>
         {{/if}}
@@ -51,37 +54,38 @@
       </div>
     </div>
     <div class='row-section col'>
-      <div class='col flexrow wrap gap2px'>
+      <div class='col headerbadgeflex flexAlignCenter wrap gap5px'>
         {{#if (eq hero.type 'creature')}}
         {{#if hero.system.creatureClass}}
-        <span class='badgePip'>{{hero.system.creatureClass}}</span>
+        <span class='group-attr-icon flex0'>{{hero.system.creatureClass}}</span>
         {{/if}}
         {{else}}
         {{#if hero.system.details.species}}
-        <span class='badgePip'>{{hero.system.details.species}}</span>
+        <span class='group-attr-icon flex0'>{{hero.system.details.species}}</span>
         {{/if}}
         {{#if hero.system.details.culture}}
-        <span class='badgePip'>{{hero.system.details.culture}}</span>
+        <span class='group-attr-icon flex0'>{{hero.system.details.culture}}</span>
         {{/if}}
         {{#if hero.system.details.career}}
-        <span class='badgePip'>{{hero.system.details.career}}</span>
+        <span class='group-attr-icon flex0'>{{hero.system.details.career}}</span>
         {{/if}}
         {{/if}}
       </div>
+      {{#if hero.canViewPrivateDetails}}
       <div class="flexrow col">
-        <div class='col flex0 flexrow gap10px flexAlignEnd'>
-          {{#each hero.coins as |coin|}}
-          <div data-tooltip="{{coin.name}}" class="flex0 flexrow gap5px flexAlignEnd"
-            style="min-width: 30px;flex-wrap: nowrap;"><img src="{{coin.img}}" width="14" height="14" class="flex0" />
-            {{coin.quantity}}
-          </div>
-          {{/each}}
-          <div class="flexAlignEnd">{{localize 'Experience'}}:
+        <div class='col flex0 flexrow gap10px flexAlignEnd flexAlignCenter wrap'>
+          {{#with hero}}
+          {{> systems/dsa5/templates/actors/parts/purse.hbs purseReadOnly=true}}
+          {{/with}}
+          <div class="group-attr-icon flex0 flexrow" data-tooltip="Experience">
+            <i class="fas fa-trophy"></i>
             {{hero.system.details.experience.spent}}/{{hero.system.details.experience.total}}
           </div>
         </div>
       </div>
+      {{/if}}
     </div>
+    {{#if hero.canViewPrivateDetails}}
     <div class='row-section wrap col'>
       {{#if hero.vantages.length}}
       <div class='col row-section wrap cards'>
@@ -93,6 +97,7 @@
       </div>
       {{/if}}
     </div>
+    {{/if}}
   </div>
   {{/each}}
   <div class="droparea">

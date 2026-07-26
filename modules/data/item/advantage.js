@@ -9,8 +9,25 @@ import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
 export default class AdvantageData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate, MaxTemplate, RequirementsTemplate) {
+  static vantageSubcategories = {
+    general: 'VantageSubcategory.general',
+    tiergefährten: 'VantageSubcategory.tiergefährten',
+    ahnenblut: 'VantageSubcategory.ahnenblut',
+  };
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
+      subcategory: new SchemaField({
+        value: new StringField({
+          initial: 'general',
+          required: true,
+          label: 'COMBATSKILLCATEGORY.subcategory',
+          choices: AdvantageData.vantageSubcategories,
+        }),
+      }),
+      rule: new SchemaField({
+        value: new StringField({ initial: '', label: 'rule' }),
+      }),
       step: new SchemaField({
         value: new NumberField({ initial: 1 }),
       }),
@@ -21,7 +38,10 @@ export default class AdvantageData extends ItemDataModel.mixin(OnUseTemplate, De
   }
 
   static chatData(data, name) {
-    return [{ key: 'effect', val: data.effect.value }];
+    return [
+      { key: 'rule', val: data.rule.value },
+      { key: 'effect', val: data.effect.value },
+    ];
   }
 
   prepareEmbeddedItemSheet() {

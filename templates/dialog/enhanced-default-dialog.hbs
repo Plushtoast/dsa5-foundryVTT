@@ -38,6 +38,18 @@
     </div>
 </div>
 {{/if}}
+{{#if chaseTerrainOptions}}
+<div class="form-group">
+    <label>{{localize "CHASE.terrainLabel"}}</label>
+    <div class="form-fields">
+        <select name="chaseTerrain" data-tooltip="CHASE.terrainDialogTooltip">
+            {{#each chaseTerrainOptions}}
+            <option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+        </select>
+    </div>
+</div>
+{{/if}}
 <div class="talent-test-modifier-row form-group">
     <label>{{localize "DIALOG.MessageMode"}}</label>
     {{> systems/dsa5/templates/dialog/parts/message-mode.hbs messageMode=messageMode}}

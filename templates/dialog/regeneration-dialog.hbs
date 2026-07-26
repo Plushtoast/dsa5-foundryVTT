@@ -91,10 +91,24 @@
         </div>
         {{/if}}
 
+        {{#if specialAbilityOptions.AsP}}
+        <div class="form-group">
+            <label data-tooltip="{{specialAbilityOptions.AsP.tooltipKey}}">{{localize specialAbilityOptions.AsP.labelKey}}</label>
+            <input type="checkbox" name="{{specialAbilityOptions.AsP.name}}" value="1" data-tooltip="{{specialAbilityOptions.AsP.tooltipKey}}">
+        </div>
+        {{/if}}
+
         {{#if showKapModifier}}
         <div class="form-group">
             <label>{{localize 'CHAR.KAP'}}</label>
             <input type="checkbox" name="regenerateKaP" value="1" checked="checked">
+        </div>
+        {{/if}}
+
+        {{#if specialAbilityOptions.KaP}}
+        <div class="form-group">
+            <label data-tooltip="{{specialAbilityOptions.KaP.tooltipKey}}">{{localize specialAbilityOptions.KaP.labelKey}}</label>
+            <input type="checkbox" name="{{specialAbilityOptions.KaP.name}}" value="1" data-tooltip="{{specialAbilityOptions.KaP.tooltipKey}}">
         </div>
         {{/if}}
 

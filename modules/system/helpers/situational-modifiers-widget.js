@@ -200,7 +200,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
   applyTooltip(target, modifier) {
     delete target.dataset.tooltip;
     target.dataset.tooltipHtml = this.buildTooltip(modifier);
-    target.dataset.tooltipClass = 'dsatooltip';
+    target.dataset.tooltipClass = 'dsatooltip dsatooltip-item';
   }
 
   refreshActiveTooltip(target) {
@@ -230,12 +230,13 @@ export class SituationalModifiersWidget extends HTMLDivElement {
 
     const rawText = {
       specialability: item.system.rule?.value,
-      advantage: item.system.description?.value,
-      disadvantage: item.system.description?.value,
+      advantage: item.system.rule?.value,
+      disadvantage: item.system.rule?.value,
       equipment: item.system.effect?.value,
       meleeweapon: item.system.effect?.value,
       rangeweapon: item.system.effect?.value,
       armor: item.system.effect?.value,
+      consumable: item.system.description?.value,
     }[item.type];
 
     if (!rawText) return null;
@@ -522,6 +523,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       if (modifier.ref?.id) option.dataset.refId = modifier.ref.id;
       if (modifier.armorPen) option.dataset.armorPen = modifier.armorPen;
       if (modifier.extension) option.dataset.extension = '1';
+	  if (modifier.consumableId) option.dataset.consumableId = modifier.consumableId;
       option.textContent = `${modifier.displayName(this.actor)} [${SituationalModifiersWidget.getOptionChangeText(modifier)}]`;
       this.select.appendChild(option);
     });
@@ -551,6 +553,7 @@ export class SituationalModifiersWidget extends HTMLDivElement {
       modifier.type || '',
       modifier.value ?? '',
       modifier.source || '',
+	  modifier.consumableId || '',
     ].join('|');
   }
 

@@ -12,15 +12,24 @@ import DSA5_Utility from './system/helpers/utility-dsa5.js';
 import DSA5Initializer from './system/maintenance/initializer.js';
 import ChatMessageDSA5Roll from './chat/ChatMessageDSA5.js';
 import DSA5ChatListeners from './system/sidebar/chat_listeners.js';
+import ChatCommandService from './system/sidebar/chat_command_service.js';
 import DSA5Payment from './system/payment/payment.js';
 import QueryOrchestrator from './system/queries/query-orchestrator.js';
 import PaymentRequestService from './system/queries/payment-requests.js';
 import TransactionSummaryService from './system/payment/transaction-summary.js';
 import InformationQueryService from './system/queries/information-query.js';
 import RollRequestService from './system/queries/roll-request.js';
+import ActorPickerDialog from './dialog/actor-picker-dialog.js';
 import { DSA5CombatTracker } from './combat/combat_tracker.js';
 import DSA5Combat from './combat/combat.js';
 import DSA5Combatant from './combat/combatant.js';
+import NavalHeroActionHandler from './combat/mkr/naval-hero-actions.js';
+import NavalCombat from './combat/mkr/naval-combat.js';
+import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
+import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
+import VehicleCrewCombatPrompt from './combat/mkr/vehicle-crew-combat.js';
+import Chase from './combat/chase/chase.js';
+import VehicleChase from './combat/chase/vehicle-chase.js';
 import DSA5Hotbar from './system/guiapps/hotbar.js';
 import RollMemory from './system/rolls/roll_memory.js';
 import SpecialabilityRulesDSA5 from './system/rules/specialability-rules-dsa5.js';
@@ -30,6 +39,7 @@ import DSA5Dialog from './dialog/dialog-dsa5.js';
 import DialogShared from './dialog/dialog-shared.js';
 import DPS from './system/automation/derepositioningsystem.js';
 import DSATables from './tables/dsatables.js';
+import TestModuleLoader from './tests/testModuleLoader.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
 import DSA5StatusEffects from './status/status_effects.js';
 import { MerchantSheetMixin, RandomGoodsAddition } from './actor/mixins/merchantmixin.js';
@@ -42,9 +52,10 @@ import MerchantSheetDSA5 from './actor/merchant-sheet.js';
 import { DSARegionTemplate } from './system/automation/measuretemplate.js';
 import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
+import CompanionHandler from './actor/companions/companion-handler-class.js';
 import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
-import { clickableAbility, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
+import { clickableAbility, resizeListener, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
 import CareerWizard from './wizards/career_wizard.js';
 import SpeciesWizard from './wizards/species_wizard.js';
 import CultureWizard from './wizards/culture_wizard.js';
@@ -55,6 +66,7 @@ import DSAEnhancementEffectConfig from './status/enhancement_effect_config.js';
 import APTracker from './system/orwell/ap-tracker.js';
 import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
+import ZoneAttack from './system/automation/zone-attack.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels, ActiveEffectDataModels } from './data/models.js';
@@ -76,11 +88,18 @@ import TokenScatter from './animation/token-scatter.js';
 import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
+import { DSACityDetailsEntry } from './data/journal/dsacitydetails.js';
 import { DSAWorldCalendar } from './system/calendar/calendar.js';
 import DSA5ProseMirrorIntegration from './system/prosemirror/prosemirror_integration.js';
 import { ITEM_CONSTANTS } from './config/item-constants.js';
+import { CONJURATION } from './config/conjuration-constants.js';
 import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
+import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
+import AspPaymentDialog from './dialog/asp-payment-dialog.js';
+import EnhancementHelper from './system/enhancement/enhancement-helper.js';
+import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
+import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
 
 Hooks.once('init', () => {
   CONFIG.statusEffects = DSA5.statusEffects;
@@ -89,6 +108,7 @@ Hooks.once('init', () => {
       DSA5_Utility,
       DSA5Initializer,
       DSA5ChatListeners,
+      ChatCommandService,
       DSA5Payment,
       SpecialabilityRulesDSA5,
       AdvantageRulesDSA5,
@@ -97,6 +117,7 @@ Hooks.once('init', () => {
       DSA5StatusEffects,
       DPS,
       DSATables,
+      TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,
       DiceDSA5,
@@ -107,18 +128,23 @@ Hooks.once('init', () => {
       MoneyTracker,
       DidYouKnow,
       GroupAPI,
+      ActorPickerDialog,
       DSARegionTemplate,
       Riding,
+      CompanionHandler,
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,
       DSAEnhancementEffectConfig,
       OnUseEffect,
+      ZoneAttack,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,
       SummoningAPI,
       ShapeshiftingAPI,
+      MagicAnalysisService,
+      MagicAnalysisQueryService,
       //DAGTalentTree,
     },
     queries: {
@@ -127,6 +153,16 @@ Hooks.once('init', () => {
       TransactionSummaryService,
       InformationQueryService,
       RollRequestService,
+      MagicAnalysisQueryService,
+    },
+    combat: {
+      NavalCombat,
+      NavalHeroActionHandler,
+      NavalCombatDamage,
+      Chase,
+      VehicleChase,
+      NavalBoardWeapons,
+      VehicleCrewCombatPrompt,
     },
     animation: {      
       TokenScatter,
@@ -157,6 +193,7 @@ Hooks.once('init', () => {
     view: {
       tinyNotification,
       tabSlider,
+      resizeListener,
       clickableAbility,
     },
     dialogs: {
@@ -165,6 +202,14 @@ Hooks.once('init', () => {
       ActAttackDialog,
       ReactToAttackDialog,
       RandomGoodsAddition,
+    },
+    api: {
+      RollDialogBurgerMenuRule,
+      AspPaymentDialog,
+      PowerSourceHelper: {
+        getAnchoredSpellReduction: (item) => EnhancementHelper.getAnchoredSpellReduction(item),
+        getAnchoredSpellChargeCost: (cost, item) => EnhancementHelper.getAnchoredSpellChargeCost(cost, item),
+      },
     },
     macro: MacroDSA5,
     dataModels: {
@@ -182,13 +227,16 @@ Hooks.once('init', () => {
         dsapersonaedramatis: DSAPersonaEntry,
         dsaquestlog: DSAQuestLogEntry,
         dsaaptracker: DSAAPTrackerEntry,
-        dsamoneytracker: DSAMoneyTrackerEntry
+        dsamoneytracker: DSAMoneyTrackerEntry,
+        citydetails: DSACityDetailsEntry
       }
     },
     config: DSA5,
     ITEM_CONSTANTS,
+    CONJURATION,
     TestSuite,
-    memory: new RollMemory()
+    memory: new RollMemory(),
+    dsa5HookRegistry: new Set(),
   };
 
   CONFIG.Actor.documentClass = Actordsa5;
@@ -216,13 +264,16 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.typeIcons.DSAAura = 'fas fa-circle-radiation';
   CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSAZone = 'fas fa-bullseye';
+  DSAZoneRegionBehavior.registerHooks();
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
   CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;
   CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
+  CONFIG.JournalEntryPage.dataModels.citydetails = DSACityDetailsEntry;
   //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true
+  ZoneAttack.registerHooks();
 
   CONFIG.fontDefinitions["Gentium Basic"] = {
     editor: true,
@@ -243,6 +294,12 @@ Hooks.once('init', () => {
   TransactionSummaryService.register();
   InformationQueryService.register();
   RollRequestService.register();
+  NavalHeroActionHandler.register();
+  NavalCombatDamage.register();
+  VehicleChase.register();
+  NavalBoardWeapons.register();
+  VehicleCrewCombatPrompt.register();
+  MagicAnalysisQueryService.register();
   DSA5ProseMirrorIntegration.register();
   DialogShared.registerTargetTokenHook();
 

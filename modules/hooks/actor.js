@@ -5,6 +5,8 @@ import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
+import CompanionHandler from '../actor/companions/companion-handler-class.js';
+import { CONJURATION_CONTROL_MODES } from '../config/conjuration-constants.js';
 
 const { getProperty, hasProperty, mergeObject } = foundry.utils;
 
@@ -52,8 +54,33 @@ export default function () {
         actor.addCondition('stunned', 2, false, false);
       } else if ((effect.statuses.has('dead') || effect.statuses.has('defeated')) && game.combat) {
         actor.markDead(false);
+      } else if (effect.statuses.has('services') && actor.getFlag('dsa5', 'summonedCompanion') && !options.fromServiceSpend) {
+        const controlMode = actor.getFlag('dsa5', 'conjurationControlMode') || CONJURATION_CONTROL_MODES.SERVICES;
+        if ([CONJURATION_CONTROL_MODES.SERVICES, CONJURATION_CONTROL_MODES.REQUESTS].includes(controlMode)) {
+          void CompanionHandler.onSummonCounterExhausted(actor);
+        }
       }
       DSAActiveEffectConfig.onEffectRemove(actor, effect);
+    }
+  });
+
+  Hooks.on('deleteActor', (actor) => {
+    if (!DSA5_Utility.isActiveGM()) return;
+
+    if (actor.getFlag?.('dsa5', 'summonedCompanion') || actor.system?.companionData?.owners?.length) {
+      CompanionHandler.unlinkSummonedCompanion(actor).catch(() => {});
+    }
+
+    const companions = actor.system?.companions;
+    if (companions && typeof companions === 'object') {
+      for (const entry of Object.values(companions)) {
+        if (!entry?.uuid) continue;
+        fromUuid(entry.uuid).then((comp) => {
+          if (!comp) return;
+          const owners = (comp.system.companionData?.owners || []).filter((o) => o !== actor.uuid);
+          return comp.update({ 'system.companionData.owners': owners }, { render: false });
+        }).catch(() => {});
+      }
     }
   });
 
@@ -219,7 +246,7 @@ export default function () {
   const randomWeaponSelection = async (token) => {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    if (game.settings.get('dsa5', 'randomWeaponSelection') && token.actor.type != 'character') {
+    if (game.settings.get('dsa5', 'randomWeaponSelection') && !['character', 'vehicle', 'group'].includes(token.actor.type)) {
       const meleeweapons = [];
       const shields = [];
       const rangeweapons = [];

@@ -1,6 +1,8 @@
 <div class='tab scrollable gap0px {{tabs.religion.cssClass}}' data-tab='religion' data-group='{{tabs.religion.group}}'>
     {{> systems/dsa5/templates/actors/parts/liturgies.hbs}}
 
+    {{> systems/dsa5/templates/actors/parts/tradition-items.hbs kind="ceremonial" items=prepare.ceremonialItems showVolume=false titleKey="SpecCategory.ceremonial" typeField="ceremonialItem" i18nPrefix="ceremonialItems" pickerTitle="SHEET.selectCeremonialItem"}}
+
     {{> systems/dsa5/templates/actors/parts/specblock.hbs currentCat="clerical"}}
 
     <div class="row-section wrap reverseFlex">

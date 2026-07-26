@@ -26,9 +26,9 @@
                     {{#if item.extensions}}<i class="fas overlayicon fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
                 <div class="actor-spell-name col four withContext">
-                    <a data-action="itemEdit">{{item.name}}</a>
+                    <a data-action="itemEdit" class="gTooltip" data-category="spellDetails" data-id="{{item._id}}">{{item.name}}</a>
                 </div>
-                <div class="actor-spell-test col fifteen center">
+                <div class="actor-spell-test col fifteen flexrow flexAlignCenter">
                     {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                 </div>
                 <div class="actor-spell-fw col ten center flexrow advanceOntop">
@@ -61,18 +61,8 @@
                 <div class="actor-spell-range col ten center onlyMultiColumn">
                     {{item.system.range.value}}
                 </div>
-                <div class="actor-spell-action col ten very-small center flexrow">
-                    <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                <div class="actor-spell-action col ten very-small flexAlignCenter flexrow">
                     <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
-                </div>
-            </div>
-            <div class="row-section lineheight expandDetails {{item.detailed}}">
-                <div class="col">
-                    <ul>
-                        <li><b>{{localize "duration"}}</b>: {{item.system.duration.value}}</li>
-                        <li><b>{{localize "cost"}}</b>: {{item.system.AsPCostDetail.value}}</li>
-                        {{#if item.extensions}}<li><b>{{localize 'TYPES.Item.spellextension'}}</b>: {{item.extensions}}</li>{{/if}}
-                    </ul>
                 </div>
             </div>
         </div>
@@ -110,9 +100,9 @@
                     {{#if item.extensions}}<i class="fas overlayicon fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
                 </div>
                 <div class="actor-spell-name col four withContext">
-                    <a data-action="itemEdit">{{item.name}}</a>
+                    <a data-action="itemEdit" class="gTooltip" data-category="spellDetails" data-id="{{item._id}}">{{item.name}}</a>
                 </div>
-                <div class="actor-spell-test fifteen five center">
+                <div class="actor-spell-test col fifteen flexrow flexAlignCenter">
                     {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
                 </div>
                 <div class="actor-spell-fw col ten center flexrow advanceOntop">
@@ -134,18 +124,8 @@
                     {{item.system.range.value}}
                 </div>
 
-                <div class="actor-spell-action col ten very-small center flexrow">
-                    <button type="button" data-action="itemDropdown" class="icon fas fa-chevron-down very-small noBorder dsadesignbutton" data-tooltip="SHEET.Dropdown"></button>
+                <div class="actor-spell-action col ten very-small flexAlignCenter flexrow">
                     <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
-                </div>
-            </div>
-            <div class="row-section lineheight expandDetails {{item.detailed}}">
-                <div class="col">
-                    <ul>
-                        <li><b>{{localize "duration"}}</b>: {{item.system.duration.value}}</li>
-                        <li><b>{{localize "cost"}}</b>: {{item.system.AsPCostDetail.value}}</li>
-                        {{#if item.extensions}}<li><b>{{localize 'TYPES.Item.spellextension'}}</b>: {{item.extensions}}</li>{{/if}}
-                    </ul>
                 </div>
             </div>
         </div>

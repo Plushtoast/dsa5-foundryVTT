@@ -14,11 +14,17 @@ import * as initScene from './scene.js';
 import * as initKeybindings from './keybindings.js';
 import * as rollExtensions from '../system/rolls/dsarolls.js';
 import '../system/helpers/situational-modifiers-widget.js';
+import { BurgerMenuRegistry } from '../item/burgermenus/burger-menu-registry.js';
 import { registerMagicalActionHooks } from '../item/magical-actions/magical-action-registry.js';
+import { MagicalAlchemistDSA5 } from '../item/concerns/alchimist-dsa5.js';
+import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
 import ActorSheetdsa5NPC from './../actor/npc-sheet.js';
+import ActorSheetdsa5Vehicle from './../actor/vehicle-sheet.js';
+import VehicleMerchantSheetDSA5 from '../actor/vehicle-merchant-sheet.js';
 import ItemSheetdsa5 from './../item/item-sheet.js';
 import MerchantSheetDSA5 from '../actor/merchant-sheet.js';
 import BookWizard from '../wizards/adventure_wizard.js';
@@ -35,6 +41,7 @@ import { SelectUserDialog } from '../dialog/addTargetDialog.js';
 import DSAJournalSheet from '../journal/dsa_journal_sheet.js';
 import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { setActorDelta } from './actordelta.js';
 import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
@@ -44,6 +51,7 @@ import { DSAPersonaeEntrySheet } from '../journal/dsadramatispersonaeentry_sheet
 import { DSAQuestLogEntrySheet } from '../journal/dsaquestlogentry_sheet.js';
 import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
 import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
+import { DSACityDetailsEntrySheet } from '../journal/dsacitydetailsentry_sheet.js';
 const { mergeObject } = foundry.utils;
 const { DocumentSheetConfig } = foundry.applications.apps;
 
@@ -62,7 +70,11 @@ export default function () {
   initScene.default();
   rollExtensions.default();
   setActorDelta();
+  BurgerMenuRegistry.registerHooks();
   registerMagicalActionHooks();
+  MagicalAlchemistDSA5.registerHooks();
+  SavantDSA5.registerHooks();
+  ActiveEffectLifecycle.registerHooks();
 }
 
 Hooks.once('init', () => {
@@ -72,6 +84,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/enhanced-default-dialog.hbs',
     'systems/dsa5/templates/dialog/default-combat-dialog.hbs',
     'systems/dsa5/templates/chat/roll/test-card.hbs',
+    'systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs',
     'systems/dsa5/templates/dialog/parts/spellmodifiers.hbs',
     'systems/dsa5/templates/dialog/parts/canChangeCastingTime.hbs',
     'systems/dsa5/templates/actors/parts/schipspart.hbs',
@@ -88,12 +101,12 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
     'systems/dsa5/templates/actors/parts/healthbar.hbs',
     'systems/dsa5/templates/items/traditionArtifact.hbs',
+    'systems/dsa5/templates/actors/parts/tradition-items.hbs',
     'systems/dsa5/templates/status/advanced_functions.hbs',
     'systems/dsa5/templates/actors/parts/information.hbs',
     'systems/dsa5/templates/actors/parts/personaltrait.hbs',
     'systems/dsa5/templates/actors/parts/attributes.hbs',
     'systems/dsa5/templates/actors/parts/swarm.hbs',
-    'systems/dsa5/templates/actors/parts/carryandpurse.hbs',
     'systems/dsa5/templates/actors/parts/specialabilities.hbs',
     'systems/dsa5/templates/actors/parts/experienceBox.hbs',
     'systems/dsa5/templates/actors/parts/temperature.hbs',
@@ -108,11 +121,17 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/items/meleeweapon-attack-part.hbs',
     'systems/dsa5/templates/items/rangeweapon-attack-part.hbs',
     'systems/dsa5/templates/dialog/parts/message-mode.hbs',
+    'systems/dsa5/templates/dialog/parts/disposition-mode.hbs',
+    'systems/dsa5/templates/dialog/parts/group-check-skill-row.hbs',
     'systems/dsa5/templates/chat/payment/batch-request.hbs',
     'systems/dsa5/templates/chat/payment/transaction-summary.hbs',
     'systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs',
     'systems/dsa5/templates/system/hud/companion-hotbar.hbs',
     'systems/dsa5/templates/actors/parts/member-card-header.hbs',
+    'systems/dsa5/templates/tables/tableCard.hbs',
+    'systems/dsa5/templates/tables/opportunity-attack-card.hbs',
+    'systems/dsa5/templates/tables/accidental-attack-defense-card.hbs',
+    'systems/dsa5/templates/tables/gear-dropped.hbs',
   ]);
 
   foundry.documents.collections.Actors.unregisterSheet('core', foundry.appv1.sheets.ActorSheet);
@@ -121,6 +140,8 @@ Hooks.once('init', () => {
     { sheetClass: ActorSheetdsa5Character, types: ['character'], makeDefault: true },
     { sheetClass: ActorSheetdsa5Creature, types: ['creature'], makeDefault: true },
     { sheetClass: ActorSheetdsa5NPC, types: ['npc'], makeDefault: true },
+    { sheetClass: ActorSheetdsa5Vehicle, types: ['vehicle'], makeDefault: true },
+    { sheetClass: VehicleMerchantSheetDSA5, types: ['vehicle'] },
     { sheetClass: MerchantSheetDSA5, types: ['npc'] },
     { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
     { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
@@ -136,7 +157,8 @@ Hooks.once('init', () => {
     { sheetClass: DSACalendarEntrySheet, types: ['dsacalendar'], makeDefault: true },
     { sheetClass: DSAQuestLogEntrySheet, types: ['dsaquestlog'], makeDefault: true },
     { sheetClass: DSAAPTrackerEntrySheet, types: ['dsaaptracker'], makeDefault: true },
-    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true }
+    { sheetClass: DSAMoneyTrackerEntrySheet, types: ['dsamoneytracker'], makeDefault: true },
+    { sheetClass: DSACityDetailsEntrySheet, types: ['citydetails'], makeDefault: true }
   ];
 
   journalSheets.forEach(({ sheetClass, types, makeDefault }) => {
@@ -161,13 +183,11 @@ Hooks.once('init', () => {
   mergeObject(CONFIG.JournalEntry.noteIcons, DSA5.noteIcons);
 
   DSA5SoundEffect.prepareSoundEffects();
-
-  let style = game.settings.get('dsa5', 'globalStyle');
-  if (!DSA5.styles[style]) style = Object.keys(DSA5.styles)[0];
-  $('body').addClass(style);
 });
 
 Hooks.once('setup', () => {
+  DSA5Skin.registerHooks();
+
   if (!['de', 'en'].includes(game.i18n.lang)) {
     console.warn(`DSA5 - ${game.i18n.lang} is not a supported language. Falling back to default language.`);
     showForbiddenLanguageDialog();
@@ -190,10 +210,12 @@ Hooks.once('setup', () => {
   SpecialabilityRulesDSA5.setupFunctions();
 });
 
-Hooks.once('i18nInit', () => {
+Hooks.once('i18nInit', async () => {
   setupKnownEquipmentModifiers();
 
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
+  const { default: ItemLibraryEmbed } = await import('../system/guiapps/itemlibrary-embed.js');
+  game.dsa5.apps.ItemLibraryEmbed = ItemLibraryEmbed;
 
   foundry.helpers.Localization.localizeDataModel(CONFIG.RegionBehavior.dataModels.DSATrap);
   //foundry.helpers.Localization.localizeDataModel(CONFIG.JournalEntryPage.dataModels.dsacalendar);

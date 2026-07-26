@@ -1,0 +1,15 @@
+<div class="dsa5 chat-card">
+  <p><b>{{localize 'attackOfOpportunity'}}</b>: {{actorName}} &rarr; {{targetName}}</p>
+  <p>{{localize 'CHAR.ATTACK'}}: {{modifiers}}</p>
+  <div class="flexrow">
+    {{#if weapons.length}}
+      {{#each weapons as |weapon|}}
+      <button class="tableOpportunityAttack small-button chat-button" data-weapon="{{weapon.id}}">
+        <i class="fas fa-swords"></i> {{weapon.name}}
+      </button>
+      {{/each}}
+    {{else}}
+      <p>{{notFoundMessage}}</p>
+    {{/if}}
+  </div>
+</div>

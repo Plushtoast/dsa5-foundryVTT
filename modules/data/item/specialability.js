@@ -5,11 +5,12 @@ import RequirementsTemplate from './templates/requirements.js';
 import APValueTemplate from './templates/apvalue.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import SpecialabilityRulesDSA5 from '../../system/rules/specialability-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
-export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, APValueTemplate, RequirementsTemplate) {
+export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, CeremonialItemTemplate, APValueTemplate, RequirementsTemplate) {
   static COMBAT_SKILL_TYPES = {
     BASEMANEUVER: 0,
     SPECIALMANEUVER: 1,
@@ -51,6 +52,8 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
     general: 'SpecCategory.general',
     generalStyle: 'SpecCategory.generalStyle',
     extGeneral: 'SpecCategory.extGeneral',
+    
+    pact: 'SpecCategory.pact',
 
     animal: 'SpecCategory.animal',
 
@@ -72,7 +75,6 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
     magicalStyle: 'SpecCategory.magicalStyle',
     extMagical: 'SpecCategory.extMagical',
     staff: 'SpecCategory.staff',
-    pact: 'SpecCategory.pact',
     homunculus: 'SpecCategory.homunculus',
     magicalsign: 'SpecCategory.magicalsign',
     sikaryan: 'SpecCategory.sikaryan',
@@ -80,9 +82,9 @@ export default class SpecialabilityData extends ItemDataModel.mixin(OnUseTemplat
 
   static sortedSpecs = (() => {
     const combat = new Set(['Combat', 'command']);
-    const magical = new Set(['magical', 'magicalStyle', 'extMagical', 'pact', 'homunculus', 'magicalsign', 'sikaryan']);
-    const clerical = new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'ceremonial', 'vision', 'prayer']);
-    const unUsed = new Set(['staff']);
+    const magical = new Set(['magical', 'magicalStyle', 'extMagical', 'homunculus', 'magicalsign', 'sikaryan']);
+    const clerical = new Set(['clerical', 'clericalStyle', 'extClericalStyle', 'vision', 'prayer']);
+    const unUsed = new Set(['staff', 'ceremonial']);
     const allCategories = Object.keys(SpecialabilityData.specialAbilityCategories);
     const used = new Set([...combat, ...magical, ...clerical, ...unUsed]);
     const general = new Set(allCategories.filter(cat => !used.has(cat)));

@@ -4,11 +4,13 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 
@@ -16,8 +18,8 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2, attachment: 2 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -35,7 +37,9 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
+        stp: new ScopableStringField({ initial: '', label: 'stpDamage' }),
       }),
+      siegeRules: new BooleanField({ initial: false, label: 'siegeRules' }),
       reloadTime: new SchemaField({
         value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
@@ -51,11 +55,13 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
         offHand: new ScopableBooleanField({ label: 'offHand', initial: false }),
         requiresBothHands: new BooleanField({ initial: true }),
       }),
-      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
     });
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
@@ -146,5 +152,13 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     const requiresBothHands = getProperty(changed, 'system.worn.requiresBothHands');
     if (requiresBothHands === true) setProperty(changed, 'system.worn.offHand', false);
     await super._preUpdate(changed, options, user);
+  }
+
+  get schussProMKR() {
+    return Math.floor(60 / this.reloadTime.value);
+  }
+
+  get rwRE() {
+    return this.reach.value.split('/').map(x => Math.floor(Number(x) / 16)).join('/');
   }
 }

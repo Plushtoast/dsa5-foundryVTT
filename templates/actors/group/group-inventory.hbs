@@ -9,7 +9,7 @@
       <div class="col eighty lineheight searchbox-input">
         <input type="search" class="inventorySearch" placeholder="{{localize 'gearSearch'}}" />
       </div>
-      {{#if isOwner}}
+      {{#if isGM}}
         <div class="col ten center flexAlignCenter flexrow">
           <button type="button" class="icon fas fa-plus noBorder dsadesignbutton" data-action="addLocation" data-tooltip="GROUP.addLocation"></button>
         </div>
@@ -23,7 +23,11 @@
         <legend class="table-title lineheight flexrow">
           <div class="flexrow gap10px">
             <img src="{{loc.img}}" class="flex0" width="24" height="24" />
-            <span class="flexgrow">{{loc.name}}</span>
+            <a class="flexgrow" data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>
+            <div data-tooltip="{{loc.encumbranceTooltip}}" class="hint">
+              <span><i class="fas fa-weight-hanging"></i></span>
+              <span>({{loc.totalWeight}} / {{loc.carrycapacity}})</span>
+            </div>
           </div>
           
           <div class="flexrow flexAlignEnd">
@@ -33,14 +37,17 @@
                 data-tooltip="{{localize 'GROUP.tradeWithDepot'}}"></button>
             {{/unless}}
             {{#if @root.isGM}}
+              <button class="icon fas {{#if loc.permissionWarning}}fa-triangle-exclamation{{else}}fa-user-check{{/if}} noBorder dsadesignbutton" type="button"
+                {{#if loc.permissionWarning}}style="color: var(--color-warn, #d7a636);"{{/if}}
+                data-action="depotPermissions" data-location-key="{{loc.key}}"
+                data-tooltip="{{#if loc.permissionWarning}}{{localize 'GROUP.depotPermissionsWarning'}}{{else}}{{localize 'GROUP.depotPermissions'}}{{/if}}"></button>
               <button class="icon fas {{#if loc.locked}}fa-lock{{else}}fa-lock-open{{/if}} noBorder dsadesignbutton" type="button"
                 data-action="toggleLocationLock" data-location-key="{{loc.key}}"
                 data-tooltip="{{#if loc.locked}}{{localize 'GROUP.locked'}}{{else}}{{localize 'GROUP.unlocked'}}{{/if}}"></button>
             {{else if loc.locked}}
               <i class="fas fa-lock" style="opacity:0.5" data-tooltip="{{localize 'GROUP.locked'}}"></i>
             {{/if}}
-            <button class="icon fas fa-external-link-alt noBorder dsadesignbutton" type="button" data-action="openLocationSheet" data-tooltip="{{localize 'GROUP.openFullSheet'}}"></button>
-            {{#if @root.isOwner}}
+            {{#if @root.isGM}}
               <button class="icon fas fa-times noBorder dsadesignbutton" type="button" data-action="removeLocation" data-tooltip="{{localize 'GROUP.removeLocation'}}"></button>
             {{/if}}
           </div>          
@@ -67,14 +74,14 @@
         </div>
         <div class="row-section wrap rowtable inventory">
           {{#each loc.items as |item|}}
-              <div class="col item location-item-row" data-item-id="{{item._id}}" data-location-key="{{../loc.key}}"
+              <div class="col item location-item-row" data-item-id="{{item._id}}" data-uuid="{{item.uuid}}" data-location-key="{{item.locationKey}}"
                    draggable="true">
                 <div class="row-section">
                   <div class="col eight image {{item.enchantClass}}">
                     <div class="image" style="background-image: url('{{item.img}}')"></div>
                   </div>
                   <div class="col">
-                    <a class="ellipsis" data-action="openLocationItem" data-uuid="{{item.uuid}}" data-location-key="{{../loc.key}}">{{item.name}}</a>
+                    <a class="ellipsis" data-action="openLocationItem" data-uuid="{{item.uuid}}" data-location-key="{{item.locationKey}}">{{item.name}}</a>
                   </div>
                   <div class="col four flexrow flexAlignCenter">
                     {{item.calculatedPrice}}
@@ -85,8 +92,8 @@
                     {{/if}}
                   </div>
                   <div class="col ten flexrow">
-                    <button type="button" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton locationItemContext"
-                      data-action="locationItemContextMenu" data-location-key="{{../loc.key}}" data-item-id="{{item._id}}"></button>
+                    <button type="button" data-action="locationItemContextMenu"
+                      class="icon fas fa-ellipsis-vertical very-small autoFlex noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
                   </div>
                 </div>
               </div>

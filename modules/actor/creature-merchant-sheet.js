@@ -1,8 +1,28 @@
 import { MerchantSheetMixin } from './mixins/merchantmixin.js';
 import ActorSheetdsa5Creature from './creature-sheet.js';
+import { gearSearchPartTemplates } from './template-configs.js';
 
 export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Creature) {
+  static MERCHANTPARTS = {
+    merchant: {
+      ...super.MERCHANTPARTS.merchant,
+      notes: {
+        template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
+        scrollable: [''],
+      },
+    },
+    loot: super.MERCHANTPARTS.loot,
+    epic: {
+      ...super.MERCHANTPARTS.epic,
+      notes: {
+        template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',
+        scrollable: [''],
+      },
+    },
+  };
+
   static PARTS = {
+    sheet: super.PARTS.sheet,
     header: {
       template: 'systems/dsa5/templates/actors/actorv2/creature-header.hbs',
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/parts/attributes.hbs', 'systems/dsa5/templates/actors/creature/creature-header.hbs'],
@@ -19,8 +39,9 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs']
+      templates: [...gearSearchPartTemplates],
     },
+    companion: super.PARTS.companion,
     status: super.PARTS.status,
     notes: {
       template: 'systems/dsa5/templates/actors/creature/creature-notes.hbs',

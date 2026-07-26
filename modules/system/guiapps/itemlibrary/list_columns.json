@@ -1,0 +1,180 @@
+{
+  "_default": {
+    "leading": ["name"],
+    "multi": ["type"],
+    "apColumn": { "attr": "APValue.value", "label": "APValue" },
+    "apTypes": [
+      "species",
+      "culture",
+      "career",
+      "advantage",
+      "disadvantage",
+      "specialability",
+      "essence",
+      "magicalsign"
+    ],
+    "priceTypes": [
+      "meleeweapon",
+      "rangeweapon",
+      "equipment",
+      "ammunition",
+      "armor",
+      "poison",
+      "consumable",
+      "plant",
+      "book",
+      "itempackage"
+    ]
+  },
+  "ammunition": {
+    "columns": [
+      { "attr": "ammunitiongroup.value", "label": "ammunitiongroup", "optionsKey": "ammunitiongroups" }
+    ]
+  },
+  "equipment": {
+    "columns": [
+      { "attr": "equipmentType.value", "label": "equipmentType", "optionsKey": "equipmentTypes" }
+    ]
+  },
+  "book": {
+    "columns": [
+      { "attr": "format", "label": "BOOKITEM.format", "optionsKey": "bookFormats" },
+      { "attr": "quality", "label": "BOOKITEM.quality", "optionsKey": "bookQualities" }
+    ]
+  },
+  "rangeweapon": {
+    "columns": [
+      { "attr": "damage.value", "label": "damage" },
+      { "attr": "reach.value", "label": "reach" },
+      { "attr": "combatskill.value", "label": "TYPES.Item.combatskill", "raw": true },
+      { "attr": "ammunitiongroup.value", "label": "ammunitiongroup", "optionsKey": "ammunitiongroups" },
+      { "attr": "reloadTime.value", "label": "reloadTime" }
+    ]
+  },
+  "meleeweapon": {
+    "columns": [
+      { "attr": "damage.value", "label": "damage" },
+      { "attr": "atmod.value", "label": "CHARAbbrev.AT" },
+      { "attr": "pamod.value", "label": "CHARAbbrev.PA" },
+      { "attr": "combatskill.value", "label": "TYPES.Item.combatskill", "raw": true },
+      { "attr": "guidevalue.value", "label": "guidevalue", "optionsKey": "combatskillsGuidevalues" },
+      { "attr": "reach.value", "label": "reach", "optionsKey": "meleeRanges" }
+    ]
+  },
+  "poison": {
+    "columns": [
+      { "attr": "step.value", "label": "stepValue" },
+      { "attr": "poisonType.value", "label": "poisonType" }
+    ]
+  },
+  "disease": {
+    "columns": [
+      { "attr": "step.value", "label": "stepValue" },
+      { "attr": "resistance.value", "label": "resistanceModifier", "optionsKey": "magicResistanceModifiers" }
+    ]
+  },
+  "consumable": {
+    "columns": [
+      { "attr": "equipmentType.value", "label": "equipmentType", "optionsKey": "equipmentTypes" }
+    ]
+  },
+  "application": {
+    "columns": [
+      { "attr": "skill", "label": "TYPES.Item.skill" }
+    ]
+  },
+  "trait": {
+    "columns": [
+      { "attr": "step.value", "label": "stepValue" }
+    ]
+  },
+  "career": {
+    "columns": [
+      { "attr": "mageLevel.value", "label": "mageLevel", "optionsKey": "mageLevels" }
+    ]
+  },
+  "specialability": {
+    "columns": [
+      { "attr": "category.value", "label": "Category", "optionsKey": "specialAbilityCategories" }
+    ]
+  },
+  "liturgy": {
+    "columns": [
+      { "attr": "range.value", "label": "reach" },
+      { "attr": "AsPCostDetail.value", "label": "AsPCostDetail" },
+      { "attr": "duration.value", "label": "duration" }
+    ]
+  },
+  "spell": {
+    "columns": [
+      { "attr": "range.value", "label": "reach" },
+      { "attr": "AsPCostDetail.value", "label": "AsPCostDetail" },
+      { "attr": "duration.value", "label": "duration" }
+    ]
+  },
+  "ritual": {
+    "columns": [
+      { "attr": "range.value", "label": "reach" },
+      { "attr": "AsPCostDetail.value", "label": "AsPCostDetail" },
+      { "attr": "duration.value", "label": "duration" }
+    ]
+  },
+  "ceremony": {
+    "columns": [
+      { "attr": "range.value", "label": "reach" },
+      { "attr": "AsPCostDetail.value", "label": "AsPCostDetail" },
+      { "attr": "duration.value", "label": "duration" }
+    ]
+  },
+  "armor": {
+    "columns": [
+      { "attr": "protection.value", "label": "protection" },
+      { "attr": "encumbrance.value", "label": "encumbrance" },
+      { "attr": "effect.value", "label": "effect" }
+    ]
+  },
+  "plant": {
+    "columns": [
+      { "attr": "planttype", "label": "Category", "columnType": "plantTypes" }
+    ]
+  },
+  "itempackage": {
+    "columns": []
+  },
+  "patron": {
+    "columns": [
+      { "attr": "category", "label": "Category", "optionsKey": "patronCategories" },
+      { "attr": "culture", "label": "TYPES.Item.culture" }
+    ]
+  },
+  "imprint": {
+    "columns": [
+      { "attr": "category", "label": "Category" }
+    ]
+  },
+  "spellextension": {
+    "columns": [
+      { "attr": "category", "label": "Category", "optionsKey": "spellextensionCategories" }
+    ]
+  },
+  "npc": {
+    "columns": [
+      { "attr": "details.species.value", "label": "TYPES.Item.species" },
+      { "attr": "details.culture.value", "label": "TYPES.Item.culture" },
+      { "attr": "details.career.value", "label": "TYPES.Item.career" }
+    ]
+  },
+  "character": {
+    "columns": [
+      { "attr": "details.species.value", "label": "TYPES.Item.species" },
+      { "attr": "details.culture.value", "label": "TYPES.Item.culture" },
+      { "attr": "details.career.value", "label": "TYPES.Item.career" }
+    ]
+  },
+  "creature": {
+    "columns": [
+      { "attr": "creatureClass.value", "label": "creatureClass" },
+      { "attr": "status.size.value", "label": "sizeCategory", "optionsKey": "sizeCategories" }
+    ]
+  }
+}

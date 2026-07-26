@@ -14,7 +14,8 @@ export class DSARegionBehaviorBase extends foundry.data.regionBehaviors.RegionBe
   buildMacroRegionEvent(event) {
     const token = event.data?.token;
     const rawName = event.name ?? null;
-    const hasMovement = !!event.data?.movement;
+    const movement = event.data?.movement;
+    const hasMovement = !!movement;
 
     let trigger = rawName;
     if (hasMovement && rawName === CONST.REGION_EVENTS.TOKEN_ENTER) trigger = CONST.REGION_EVENTS.TOKEN_MOVE_IN;
@@ -26,10 +27,15 @@ export class DSARegionBehaviorBase extends foundry.data.regionBehaviors.RegionBe
       trigger,
       hasMovement,
       userId: event.user?.id ?? null,
+      regionDeleted: event.data?.regionDeleted ?? false,
       regionUuid: event.region?.uuid ?? this.parent?.parent?.uuid ?? null,
       behaviorUuid: this.parent?.uuid ?? null,
       tokenUuid: token?.uuid ?? null,
       actorUuid: token?.actor?.uuid ?? null,
+      combatId: event.data?.combat?.id ?? game.combat?.id ?? null,
+      round: event.data?.round ?? game.combat?.round ?? null,
+      turn: event.data?.turn ?? game.combat?.turn ?? null,
+      movementId: movement?.id ?? movement?._id ?? null,
     };
   }
 

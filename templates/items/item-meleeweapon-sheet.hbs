@@ -13,7 +13,7 @@
             </div>
             {{#each alternateAttacks as |item key|}}
             <div class="tab {{ifThen (eq ../alternateAttackTab key) 'active' ''}}" data-tab="{{key}}" data-group="alternateAttacks">
-                {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs document=item systemFields=../systemFields combatskills=../combatskills scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+                {{> systems/dsa5/templates/items/meleeweapon-attack-part.hbs document=item systemFields=../systemFields combatskills=../combatskills showImprovisedToggle=item.showImprovisedToggle scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
             </div>
             {{/each}}
         </section>

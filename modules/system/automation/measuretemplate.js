@@ -74,17 +74,32 @@ export class DSARegionTemplate {
       const duration = await DSAActiveEffectConfig.parseDurationValue(
         source.system?.duration?.value, testData.qualityStep
       );
-      const [trackingAE] = await actor.createEmbeddedDocuments('ActiveEffect', [{
+      await this.createTrackingEffect(region, actor, {
         name: `${source.name} (Zone)`,
         img: source.img,
         duration,
         flags: { dsa5: { regionId: region.id, sceneId: canvas.scene.id } },
-      }]);
-      await region.update({
-        'flags.dsa5.trackingActorId': actor.id,
-        'flags.dsa5.trackingAEId': trackingAE.id,
       });
     }
+  }
+
+  static async createTrackedRegion(scene, actor, regionData, trackingEffectData) {
+    const [region] = await scene.createEmbeddedDocuments('Region', [regionData]);
+    await this.createTrackingEffect(region, actor, trackingEffectData);
+    return region;
+  }
+
+  static async createTrackingEffect(region, actor, trackingEffectData) {
+    const scene = region.parent ?? canvas.scene;
+    const effectData = foundry.utils.mergeObject(trackingEffectData, {
+      flags: { dsa5: { regionId: region.id, sceneId: scene.id } },
+    }, { inplace: false });
+    const [trackingAE] = await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
+    await region.update({
+      'flags.dsa5.trackingActorId': actor.id,
+      'flags.dsa5.trackingAEId': trackingAE.id,
+    });
+    return trackingAE;
   }
 
   static buildRegionData(item, qs, messageId) {
@@ -139,6 +154,8 @@ export class DSARegionTemplate {
     return {
       name: item.name,
       color: game.user.color,
+      levels: [canvas.level.id],
+      visibility: target.showZone !== false ? CONST.REGION_VISIBILITY.ALWAYS : CONST.REGION_VISIBILITY.NONE,
       restriction: { enabled: true },
       shapes: [shape],
       behaviors: [{

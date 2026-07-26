@@ -1,0 +1,69 @@
+<div class="groupbox paddingBox">
+    <div class="row-section skills table-title lineheight">
+        <div class="col two flexrow">
+            {{localize 'spell'}}
+            {{#if missingConjurationSkills.length}}
+            <button type="button" class="icon fas fa-question noBorder dsadesignbutton" data-tooltip="TT.conjuringSpells"
+                data-action="unhidePossibleSpells"></button>
+            {{/if}}
+        </div>
+        <div class="col third center">{{localize "probe"}}</div>
+        <div class="col ten center" data-tooltip="CONJURATION.powerfulCreature"><i class="fas fa-hand-fist"></i></div>
+        <div class="col ten center">{{localize "CHARAbbrev.FW"}}</div>
+    </div>
+
+    {{#each conjurationskills as |item|}}
+    <div class="row-section wrap skills item lineheight tableOdd" data-item-id="{{item._id}}">
+        <div class="col two">
+            <a class="item-edit talentName">{{item.name}}</a>
+        </div>
+        <div class="col third flexrow flexAlignCenter">
+            {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
+        </div>
+        <div class="col ten center">
+            {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}
+        </div>
+        <div class="col ten center">
+            {{item.system.talentValue.value}}
+        </div>
+    </div>
+    {{/each}}
+
+    {{#each missingConjurationSkills as |item|}}
+    <div class="row-section wrap skills item lineheight tableOdd disabledSection dsahidden possibleSpell">
+        <div class="col ninety">{{localize item}}</div>
+        <div class="col ten center"></div>
+    </div>
+    {{/each}}
+
+    {{#unless conjurationskills.length}}
+    <div class="dsa-info-box dsamt-2">
+        <p class="dsa-info-text small">{{localize "CONJURATION.noRitualHint"}}</p>
+    </div>
+    {{/unless}}
+</div>
+
+{{#if moreModifiers}}
+<div class="groupbox paddingBox">
+    <div class="row-section">
+        <div class="col table-title lineheight">{{localize "CONJURATION.ritualModifiers"}}</div>
+    </div>
+    {{#each moreModifiers as |item|}}
+    <div class="dsa-stat-row dsapx-1">
+        <span class="dsa-stat-row__label">{{item.name}}</span>
+        <span class="dsa-stat-row__value">
+            <select name="{{item.name}}" class="moreModifiers" data-name="{{item.name}}">
+                {{selectOptions item.options selected=item.selected valueAttr="val" nameAttr="label"}}
+            </select>
+        </span>
+    </div>
+    {{/each}}
+</div>
+{{/if}}
+
+{{#if conjurationData.packageModifier}}
+<div class="dsa-stat-row dsapx-1">
+    <span class="dsa-stat-row__label">{{localize "summoningPackage"}}</span>
+    <span class="dsa-stat-row__value">{{numberFormat conjurationData.packageModifier sign=true}}</span>
+</div>
+{{/if}}

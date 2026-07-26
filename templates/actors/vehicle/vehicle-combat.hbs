@@ -1,0 +1,187 @@
+<div class='tab scrollable gap0px {{tabs.combat.cssClass}}' data-tab='combat' data-group='{{tabs.combat.group}}'>
+
+  <div class="vehicle-combat-layout flexcol gap10px">
+
+    <div class="combat-actions vehicle-hero-actions {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}">
+      <button type="button" data-action="navalHeroAction" data-hero-action="repair" class="combat-action item" data-tooltip="VEHICLE.mkr.repairTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-hammer"></i> {{localize "VEHICLE.mkr.action.repair"}}
+      </button>
+      {{#if prepare.showNavalSail}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="sail" class="combat-action item" data-tooltip="VEHICLE.mkr.sailTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-wind"></i> {{localize "VEHICLE.mkr.action.sail"}}
+      </button>
+      {{/if}}
+      {{#if prepare.showNavalDrive}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="drive" class="combat-action item" data-tooltip="VEHICLE.mkr.driveTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-horse"></i> {{localize "VEHICLE.mkr.action.drive"}}
+      </button>
+      {{/if}}
+      <button type="button" data-action="navalHeroAction" data-hero-action="commands" class="combat-action item" data-tooltip="VEHICLE.mkr.commandsTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-flag"></i> {{localize "VEHICLE.mkr.action.commands"}}
+      </button>
+      <button type="button" data-action="navalHeroAction" data-hero-action="heal" class="combat-action item" data-tooltip="VEHICLE.mkr.healTooltip" {{#unless prepare.navalHeroActionsEnabled}}disabled{{/unless}}>
+        <i class="fas fa-kit-medical"></i> {{localize "VEHICLE.mkr.action.heal"}}
+      </button>
+      <button type="button" data-action="navalBoarding" class="combat-action item" data-tooltip="VEHICLE.mkr.boardingActionTooltip" {{#unless prepare.navalBoardingEnabled}}disabled{{/unless}}>
+        <i class="fas fa-people-arrows"></i> {{localize "VEHICLE.mkr.boardingAction"}}
+      </button>
+      {{#unless prepare.navalHeroActionsEnabled}}
+      <span class="hint" data-tooltip="VEHICLE.mkr.heroActionsOnlyTooltip"><i class="fas fa-circle-info"></i></span>
+      {{/unless}}
+    </div>
+
+    <div class="vehicle-combat-main flexcol">
+
+      <div class="groupbox vehicle-board-weapons">
+
+        <div class="row-section table-title lineheight">
+          <div class="col zerofive"></div>
+          <div class="title-type col four">
+            <b data-tooltip="{{localize 'VEHICLE.boardRangedWeapons'}}">{{localize "VEHICLE.boardRangedShort"}}</b>
+          </div>
+          <div class="col fifteen center small">{{localize "TYPES.Item.combatskill"}}</div>
+          <div class="col ten center small" data-tooltip="CHAR.ATTACK">{{localize "CHARAbbrev.AT"}}</div>
+          <div class="col ten center small" data-tooltip="damage">{{localize "CHARAbbrev.damage"}}</div>
+          <div class="col ten center small" data-tooltip="{{localize 'TYPES.Item.ammunition'}}">{{localize "VEHICLE.ammoShort"}}</div>
+          <div class="col five center small" data-tooltip="{{localize 'VEHICLE.crewOperator'}}">{{localize "VEHICLE.crewOperatorShort"}}</div>
+          <div class="col zerofive center small">
+            <button type="button" data-action="unequippedWeaponMenu" data-weapon-type="rangeweapon" class="unequipped-weapon-menu icon fas fa-plus very-small noBorder dsadesignbutton" data-tooltip="SHEET.EquipItem"></button>
+          </div>
+        </div>
+
+        <div class="row-section wrap rowtable inventory">
+
+          {{#each prepare.wornRangedWeapons as |item|}}
+            {{> systems/dsa5/templates/actors/vehicle/vehicle-combat-boardweapon.hbs item=item showAmmoColumn=true}}
+          {{/each}}
+
+          {{#unless prepare.wornRangedWeapons.length}}
+          <p class="hint col">{{localize "VEHICLE.noBoardWeapons"}}</p>
+          {{/unless}}
+
+        </div>
+
+      </div>
+
+
+
+      <div class="groupbox vehicle-board-weapons">
+
+        <div class="row-section table-title lineheight">
+          <div class="col zerofive"></div>
+          <div class="title-type col four">
+            <b data-tooltip="{{localize 'VEHICLE.boardMeleeWeapons'}}">{{localize "VEHICLE.boardMeleeShort"}}</b>
+          </div>
+          <div class="col fifteen center small">{{localize "TYPES.Item.combatskill"}}</div>
+          <div class="col ten center small" data-tooltip="CHAR.ATTACK">{{localize "CHARAbbrev.AT"}}</div>
+          <div class="col ten center small" data-tooltip="damage">{{localize "CHARAbbrev.damage"}}</div>
+          <div class="col five center small" data-tooltip="{{localize 'VEHICLE.crewOperator'}}">{{localize "VEHICLE.crewOperatorShort"}}</div>
+          <div class="col zerofive center small">
+
+            <button type="button" data-action="unequippedWeaponMenu" data-weapon-type="meleeweapon" class="unequipped-weapon-menu icon fas fa-plus very-small noBorder dsadesignbutton" data-tooltip="SHEET.EquipItem"></button>
+
+          </div>
+
+        </div>
+
+        <div class="row-section wrap rowtable inventory">
+
+          {{#each prepare.wornMeleeWeapons as |item|}}
+            {{> systems/dsa5/templates/actors/vehicle/vehicle-combat-boardweapon.hbs item=item}}
+          {{/each}}
+
+          {{#unless prepare.wornMeleeWeapons.length}}
+          <p class="hint col">{{localize "VEHICLE.noBoardWeapons"}}</p>
+          {{/unless}}
+
+        </div>
+
+      </div>
+
+
+
+      <div class="groupbox vehicle-gunnery">
+
+        <div class="row-section table-title lineheight">
+
+          <div class="col fourty">
+
+            <b>{{localize "VEHICLE.gunnerySkill"}}</b>
+
+          </div>
+
+          <div class="col ten center small" data-tooltip="VEHICLE.gunnery">{{localize "CHARAbbrev.ATFK"}}</div>
+
+          <div class="col ten center small">
+
+            <i class="fas fa-circle-info" data-tooltip="VEHICLE.gunneryHint"></i>
+
+          </div>
+
+        </div>
+
+        <div class="row-section wrap">
+
+          {{#each prepare.vehicleGunnerySkills as |skill|}}
+
+          <div class="row-section col morph skills lineheight" data-item-id="{{skill._id}}">
+            <div class="col fourty">
+              <a data-action="itemEdit">{{skill.displayName}}</a>
+            </div>
+
+            <div class="col ten center">
+              <span class="d20 die-attack">{{skill.system.attack.value}}</span>
+            </div>
+
+            <div class="col ten center small">
+              <i class="fas fa-users" data-tooltip="VEHICLE.gunneryCrewDefault"></i>
+            </div>
+
+          </div>
+
+          {{/each}}
+
+          {{#unless prepare.vehicleGunnerySkills.length}}
+          <p class="hint col">{{localize "VEHICLE.noGunnerySkill"}}</p>
+          {{/unless}}
+
+        </div>
+
+      </div>
+
+
+
+      <div class="groupbox vehicle-hull-armor">
+        <div class="row-section table-title lineheight">
+          <div class="title-type col fourty">
+            <b>{{localize "VEHICLE.hullProtection"}}</b>
+          </div>
+          <div class="col twenty center small">{{localize "protection"}} ({{prepare.armorSum}})</div>
+          <div class="col twenty center small">{{localize "VEHICLE.hullArmor"}}: {{document.system.status.hullArmor.value}}</div>
+        </div>
+
+        <div class="row-section wrap rowtable inventory">
+          {{#each prepare.wornArmor as |item|}}
+          <div class="col item" data-item-id="{{item._id}}">
+            <div class="combat-armor row-section">
+              <div class="combat-item-image col zerofive image" style="background-image: url('{{item.img}}')"></div>
+              <div class="combat-item-name col fourty">
+                <a data-action="itemEdit">{{item.name}}</a>
+              </div>
+
+              <div class="combat-item-protection col twenty center">
+                {{item.system.protection.value}}
+              </div>
+
+            </div>
+          </div>
+          {{/each}}
+
+        </div>
+      </div>
+    </div>
+
+    {{> systems/dsa5/templates/actors/vehicle/vehicle-combat-stats.hbs}}
+  </div>
+</div>
+

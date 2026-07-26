@@ -1,8 +1,10 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}}' data-tab='details' data-group='{{tabs.details.group}}'>
 
   {{formGroup systemFields.APValue.fields.value value=document.system.APValue.value localize=true}}
+  {{formGroup systemFields.subcategory.fields.value value=document.system.subcategory.value localize=true}}
   {{formGroup systemFields.max.fields.value value=document.system.max.value localize=true}}
   {{formGroup systemFields.requirements.fields.value value=document.system.requirements.value localize=true elementType='textarea' classes='full-height'}}
+  {{formGroup systemFields.rule.fields.value value=document.system.rule.value localize=true classes='full-height' elementType='textarea'}}
   {{formGroup systemFields.effect.fields.value value=document.system.effect.value localize=true}}
 
   {{#if isOwned}}

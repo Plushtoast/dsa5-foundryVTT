@@ -1,0 +1,10 @@
+<div class='sheet-header'>
+  <div class='charname headerInput flexrow'>
+    <h3 class='headerName ellipsis'>{{formInput fields.name value=document.name placeholder=(localize 'Name')}}</h3>
+    <a class='button icon fas fa-minimize flexAlignEnd dsadesignbutton noBorder' data-action='collapseHeader' data-tooltip='TT.collapseHeader'></a>
+    <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>
+  </div>
+  <div class='headerbadgeflex headerInput autosizing'>
+    {{formInput systemFields.details.fields.vehicleType value=document.system.details.vehicleType placeholder=(localize 'VEHICLE.vehicleType')}}
+  </div>
+</div>

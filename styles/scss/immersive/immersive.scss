@@ -10,6 +10,64 @@
     }
   }
 
+  /* Chase / MKR bars on parchment sidebar — dark text for readable contrast. */
+  .chase-bar,
+  .mkr-loop-bar {
+    color: #191813;
+
+    .chase-bar-label,
+    .mkr-loop-label,
+    .chase-round-badge,
+    .form-group > label,
+    .chase-terrain-readonly,
+    .chase-skill-readonly,
+    .mkr-phase-badge,
+    .mkr-phase-control-label,
+    .mkr-kr-label {
+      color: #191813;
+    }
+
+    .chase-round-badge,
+    .mkr-phase-badge {
+      border-color: rgba(25, 24, 19, 0.45);
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .chase-outcome-banner.caught {
+      color: #fff;
+      background: rgba(180, 80, 40, 0.92);
+    }
+
+    .chase-outcome-banner.escaped {
+      color: #fff;
+      background: rgba(40, 120, 70, 0.92);
+    }
+
+    .chase-max-rounds-input {
+      color: #191813;
+      border-color: rgba(25, 24, 19, 0.45);
+    }
+
+    button.mkr-phase-badge.mkr-phase-control {
+      color: #191813;
+      background: rgba(255, 255, 255, 0.55);
+      background-image: none;
+      border: 1px solid rgba(25, 24, 19, 0.45);
+
+      &:hover {
+        color: #000;
+        background: rgba(255, 255, 255, 0.75);
+        background-image: none;
+        border-color: rgba(25, 24, 19, 0.7);
+        box-shadow: none;
+      }
+
+      &:active {
+        box-shadow: inset 0 0 4px rgba(25, 24, 19, 0.25);
+      }
+    }
+  }
+
   /*.sidebar-tab .directory-list .directory-item {
         &.collapsed {
             color: white;
@@ -33,11 +91,6 @@
     }*/
 
   .vertical-tabs {
-    &.creature-sheet {
-      .tabs.right {
-        left: calc(100% - 10px);
-      }
-    }
     .tabs.right {
       //left: calc(100% - 23px);
 
@@ -85,13 +138,6 @@
   }
 
   form.dsa5.item-sheet {
-    padding-left: 10px;
-    padding-right: 10px;
-
-    [data-tab='details'] {
-      gap: 3px;
-    }
-
     .form-group {
       & > label {
         background: rgb(188, 136, 111);
@@ -157,41 +203,14 @@
       a.content-link,
       a.inline-roll {
         border: none;
-        color: #b93d00;
+        color: var(--dsa-link);
         font-weight: bold;
         background: none;
 
         i {
-          color: #b93d00;
+          color: var(--dsa-link);
         }
       }
-    }
-
-    &.dsajournal .window-content {
-      padding: 0 40px;
-    }
-
-    &.bookWizardsheet,
-    &.dsajournal .window-content {
-      .video-container {
-        position: relative;
-        width: 100%;
-        padding-bottom: 56.25%;
-
-        iframe {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }
-      }
-    }
-
-    &.dialog .window-content {
-      padding-top: 14px;
-      padding-bottom: 14px;
     }
 
     &.npc-sheet .window-header,
@@ -219,10 +238,6 @@
       height: 40px;
       width: 100%;
       background-size: 100% 40px;
-    }
-
-    &.creature-sheet .window-content {
-      box-shadow: none;
     }
 
     &.monarch {
@@ -256,10 +271,6 @@
 
     &.creature-sheet:after {
       background-image: url('../../icons/backgrounds/blackcreaturebot.webp');
-    }
-
-    &.masterMenu:after {
-      background-image: url('../../icons/backgrounds/masterborder.webp');
     }
 
     &.creature-sheet .window-resize-handle {
@@ -332,42 +343,11 @@
       margin-right: 25px;
     }
 
-    &.actor .window-content,
-    &.item .window-content {
-      margin-left: 15px;
-      margin-right: 15px;
-    }
-
     &.dsa5Decent:after {
       background: none;
       margin: 0;
       padding: 0;
       overflow: visible;
-    }
-
-    &.initTracker {
-      &::after,
-      .window-content {
-        background: none;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-      }
-    }
-
-    &.tokenQuickHot {
-      &::after,
-      .window-content {
-        background: none;
-        margin: 0;
-        padding: 0;
-        overflow: visible;
-      }
-    }
-
-    &.initTracker::after,
-    &.tokenQuickHot::after {
-      content: none;
     }
 
     &.dsa5Decent {
@@ -403,7 +383,7 @@
     background-size: 101% 1400px;
   }
 
-  .character-sheet .standard-form {
+  .character-sheet .standard-form:not(.itemlibrary-tab) {
     border-color: black;
     border-style: double;
     border-width: 10px;
@@ -529,13 +509,32 @@
     .chat-condition,
     a.inline-roll {
       border: none;
-      color: #b93d00;
+      color: var(--dsa-link);
       font-weight: bold;
       background: none;
 
       i {
-        color: #b93d00;
+        color: var(--dsa-link);
       }
+    }
+  }
+
+  // Immersive HTML tooltips: override dsatooltip tokens; parchment frame on inner .itemTooltip.
+  #tooltip.dsatooltip.dsatooltip-item {
+    --dsa-tooltip-bg: transparent;
+    --dsa-tooltip-color: #191813;
+    --dsa-tooltip-heading-color: #191813;
+    --dsa-tooltip-border-color: transparent;
+    --dsa-tooltip-box-shadow: none;
+    --dsa-tooltip-table-title-bg: rgba(188, 136, 111, 0.28);
+    padding: 0;
+
+    .itemTooltip {
+      background-image: url('../../icons/backgrounds/macrobg.webp');
+      background-size: cover;
+      padding: 8px;
+      border: 2px solid #5e442a;
+      border-radius: 5px;
     }
   }
 
@@ -617,11 +616,10 @@
   }
 
   #sidebar .button:not(.icon),
-  #sidebar button:not(.fshopButton):not(.icon):not(.inline-control):not(.roll),
-  .initTracker button:not(.icon):not(.inline-control),
-  .masterMenu button:not(.icon):not(.inline-control),
+  #sidebar button:not(.fshopButton):not(.icon):not(.inline-control):not(.roll):not(.mkr-phase-control),
+  .initTracker button:not(.icon):not(.inline-control):not(.mkr-phase-control):not(.chase-default-skill-badge):not(.chase-default-skill-menu),
   .sheetButton,
-  .sidebar-popout button:not(.icon):not(.inline-control),
+  .sidebar-popout button:not(.icon):not(.inline-control):not(.mkr-phase-control),
   .sidebar-popout .dice-tray button {
     background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
     color: white;
@@ -648,6 +646,9 @@
   }
 
   .dsajournal {
+    .journal-sidebar {
+      margin-left: 20px;
+    }
     .window-content {
       --color-light-1: var(--color-dark-1);
     }
@@ -709,13 +710,5 @@
 
   textarea:read-only {
     color: var(--input-text-color);
-  }
-}
-
-body.theme-dark.dsa5-immersive {
-  .application,
-  .window-app {
-    --input-text-color: #2b2a25;
-    --input-background-color: rgba(0, 0, 0, 0.05);
   }
 }

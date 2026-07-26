@@ -1,0 +1,110 @@
+.dsa5-citydetails {
+  --color-bg: var(--sheet-bg);
+  --color-border-light-primary: var(--border-color);
+
+  &.citygen-cards,
+  .citygen-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .citygen-card {
+    border: 1px solid var(--color-border-light-primary);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 0;
+    background: var(--color-bg);
+    box-shadow: 0 1px 2px var(--color-shadow-dark);
+  }
+
+  .citygen-card__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: var(--color-bg-option);
+    border-bottom: 1px solid var(--color-border-light-primary);
+  }
+
+  .citygen-card__imgwrap {
+    width: 90px;
+    height: 90px;
+    flex: 0 0 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border-light-primary);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .citygen-card__img {
+    max-width: 90px;
+    max-height: 90px;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .citygen-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .citygen-card__name {
+    font-weight: 900;
+    margin: 0 0 0.25rem;
+  }
+
+  .citygen-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .citygen-card__meta-line {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .citygen-card__meta-label {
+    font-size: 0.85em;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .citygen-card__meta-value {
+    min-width: 0;
+  }
+
+  .citygen-card__desc {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.6rem 0.75rem 0.75rem;
+  }
+
+  .citygen-card__desc-label {
+    font-size: 0.85em;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .citygen-card p {
+    margin: 0;
+  }
+
+  .citygen-card__desc-body {
+    opacity: 0.9;
+  }
+}

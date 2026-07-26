@@ -1,0 +1,111 @@
+<div class="vehicle-stats-panels">
+
+  <div class="vehicle-stats-column">
+    <div class="groupbox vehicle-stats-panel">
+      <div class="table-title lineheight">{{localize "VEHICLE.section.classification"}}</div>
+      <div class="vehicle-stats-grid">
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.details.fields.propulsion value=document.system.details.propulsion localize=true}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.details.fields.armament value=document.system.details.armament localize=true}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true label='sizeCategory'}}
+        </div>
+        <div class="vehicle-stat-field">
+          <label data-tooltip="{{localize 'VEHICLE.travelModes'}}">{{localize "VEHICLE.travelModes"}}</label>
+          <div class="flexrow gap5px wrap">
+            {{#each prepare.vehicleTravelModeOptions as |opt|}}
+            <label class="checkbox">
+              <input type="checkbox" name="system.details.travelModes" value="{{opt.value}}" {{checked opt.checked}} />
+              {{localize opt.label}}
+            </label>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="groupbox vehicle-stats-panel">
+      <div class="table-title lineheight">{{localize "VEHICLE.section.structure"}}</div>
+      <div class="vehicle-stats-grid">
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.structurePoints.fields.initial value=document.system.status.structurePoints.initial localize=true label='VEHICLE.short.structurePointsMax' tooltip='VEHICLE.structurePointsMax'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.hullArmor.fields.value value=document.system.status.hullArmor.value localize=true}}
+        </div>
+      </div>
+    </div>
+
+    <div class="groupbox vehicle-stats-panel">
+      <div class="table-title lineheight">{{localize "VEHICLE.section.logistics"}}</div>
+      <div class="vehicle-stats-grid">
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.details.fields.cargoCapacity value=document.system.details.cargoCapacity localize=true label='VEHICLE.short.cargoCapacity' tooltip='VEHICLE.cargoCapacity'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.details.fields.price value=document.system.details.price localize=true}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vehicle-stats-column">
+    <div class="groupbox vehicle-stats-panel">
+      <div class="table-title lineheight">{{localize "VEHICLE.section.speed"}}</div>
+      <div class="vehicle-stats-grid">
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.speed.fields.initial value=document.system.status.speed.initial localize=true label='VEHICLE.short.baseSpeed' tooltip='VEHICLE.baseSpeed'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.speed.fields.ram value=document.system.status.speed.ram localize=true label='VEHICLE.short.ramSpeed' tooltip='VEHICLE.ramSpeed'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.speed.fields.water value=document.system.status.speed.water localize=true label='VEHICLE.short.waterSpeed' tooltip='SPEEDSELECTOR.water'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.speed.fields.air value=document.system.status.speed.air localize=true label='VEHICLE.short.airSpeed' tooltip='SPEEDSELECTOR.air'}}
+        </div>
+        {{#if prepare.navalChaseSummary}}
+        <div class="vehicle-stat-field naval-chase-speed" data-tooltip="CHASE.effectiveSpeedTooltip">
+          <div class="form-group">
+            <label>{{localize "CHASE.effectiveSpeed"}}</label>
+            <div class="form-fields">
+              <span class="naval-chase-speed-value">
+                {{prepare.navalChaseSummary.effectiveSpeed}}
+                <small>
+                  ({{prepare.navalChaseSummary.baseSpeed}}
+                  {{prepare.navalChaseSummary.multiplierLabel}},
+                  {{prepare.navalChaseSummary.terrainLabel}},
+                  {{prepare.navalChaseSummary.distanceUnitLabel}})
+                </small>
+              </span>
+            </div>
+          </div>
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="groupbox vehicle-stats-panel">
+      <div class="table-title lineheight">{{localize "VEHICLE.section.combat"}}</div>
+      <div class="vehicle-stats-grid">
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.gunnery.fields.value value=document.system.status.gunnery.value localize=true label='VEHICLE.short.gunnery' tooltip='VEHICLE.gunnery'}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.status.fields.initiative.fields.value value=document.system.status.initiative.value localize=true}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.actionCount.fields.value value=document.system.actionCount.value localize=true}}
+        </div>
+        <div class="vehicle-stat-field">
+          {{formGroup systemFields.combatState.fields.distanceRE value=document.system.combatState.distanceRE localize=true label='VEHICLE.short.distanceRE' tooltip='VEHICLE.distanceRE'}}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

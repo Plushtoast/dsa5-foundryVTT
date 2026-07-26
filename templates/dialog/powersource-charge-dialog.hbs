@@ -1,0 +1,27 @@
+<div class="flexcol gap5px scrollable">
+    {{#if sources.length}}
+    <p class="hint">{{localize "POWERSOURCE.chargeDialogHint"}}</p>
+    <hr>
+    {{#each sources as |source|}}
+    <div class="flexrow flexAlignCenter gap5px powersource-charge-row">
+        <label class="col two ellipsis" data-tooltip="{{source.label}}">{{source.label}}</label>
+        <div class="col flexrow flexAlignCenter gap2px">
+            <input type="number" name="charge-{{source.effectId}}" value="{{source.value}}" min="0" max="{{source.max}}" {{#unless ../editable}}disabled{{/unless}}>
+            <span class="nobr">/ {{source.max}}</span>
+        </div>
+    </div>
+    {{/each}}
+    <hr>
+    <footer class="form-footer">
+        {{#if editable}}
+        <button type="button" data-action="save"><i class="fas fa-check"></i> {{localize "save"}}</button>
+        {{/if}}
+        <button type="button" data-action="cancel"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </footer>
+    {{else}}
+    <p class="hint">{{localize "POWERSOURCE.chargeDialogEmpty"}}</p>
+    <footer class="form-footer">
+        <button type="button" data-action="cancel"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </footer>
+    {{/if}}
+</div>

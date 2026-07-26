@@ -1,3 +1,6 @@
+import { getShapeshiftingPreset, SHAPESHIFTING_PRESET_KEYS } from './shapeshifting/shapeshifting_presets.js'
+import { DSATokenDocument } from '../hooks/token.js'
+
 const { mergeObject, getProperty, setProperty, deepClone } = foundry.utils
 
 export default class ShapeshiftWizard extends foundry.applications.api.HandlebarsApplicationMixin(
@@ -24,6 +27,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         actions: {
             cancel: function () { this.close() },
             ok: this._shapeshift,
+            applyPreset: this._applyPreset,
         }
     };
 
@@ -31,6 +35,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         return {
             main: {
                 template: 'systems/dsa5/templates/wizard/shapeshiftwizard.hbs',
+                scrollable: [''],
             }
         }
     }
@@ -101,6 +106,10 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             takeSpecAbs: !!formState.checkboxes.takeSpecAbs,
             takeSpells: !!formState.checkboxes.takeSpells,
             takeLiturgies: !!formState.checkboxes.takeLiturgies,
+            presets: SHAPESHIFTING_PRESET_KEYS.map(key => ({
+                key,
+                label: `Shapeshift.Presets.${key}`,
+            })),
             characteristics_mental: ["mu", "kl", "in", "ch"],
             characteristics_physical: ["ff", "ge", "ko", "kk"],
             status: [{
@@ -137,6 +146,11 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             selected: formState.radios[`system.characteristics.${label}`] !== 'target'
         }))
         return data
+    }
+
+    static async _applyPreset(ev, target) {
+        this.formPreset = getShapeshiftingPreset(target.dataset.preset)
+        await this.render({ force: true })
     }
 
     static shapeshiftEffect(proportional, source) {
@@ -260,6 +274,27 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         }
     }
 
+    static _sceneTokenDocument(token) {
+        return token?.document ?? token;
+    }
+
+    static _activeTokenDocuments(actor) {
+        const documents = actor.getActiveTokens(true).map(token => this._sceneTokenDocument(token)).filter(token => token?.id);
+        if (documents.length || !canvas.scene) return documents;
+
+        return canvas.scene.tokens.filter(token => token.actorId === actor.id || token.actor?.id === actor.id);
+    }
+
+    static async _deleteShapeshiftEffect(shapeshift, ...actors) {
+        const parent = shapeshift.parent?.documentName === 'Actor' ? shapeshift.parent : null;
+        const owners = [parent, ...actors].filter((actor, index, candidates) => {
+            return actor?.effects?.has(shapeshift.id) && candidates.findIndex(candidate => candidate?.uuid === actor.uuid) === index;
+        });
+        for (const owner of owners) {
+            await owner.deleteEmbeddedDocuments("ActiveEffect", [shapeshift.id], { noHook: true })
+        }
+    }
+
     static async finish_shapeshift(source, target, data, sourceProperties, remote = false) {
         const proportionalLeP = !!data.calculateLeP
         const proportionSettings = {
@@ -367,11 +402,11 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             const tokenData = {
                 x: source.token.x,
                 y: source.token.y,
-                elevation: source.token.elevation,
                 actorLink: false,
                 name: targetData.name,
                 delta: targetData,
             }
+            DSATokenDocument.applySourceTokenPlacement(source.token, tokenData);
             if (keepToken) {
                 mergeObject(tokenData, {
                     width: sourceData.prototypeToken.width,
@@ -400,7 +435,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
         const actor = await game.dsa5.entities.Actordsa5.create(targetData, { renderSheet: !remote })
 
-        const tokens = source.getActiveTokens(true)
+        const tokens = ShapeshiftWizard._activeTokenDocuments(source)
 
         if (canvas.scene) {
             for (const token of tokens) {
@@ -462,7 +497,7 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
 
         if (!actor || !shapeshift) return;
 
-        ShapeshiftWizard.finalizeRestoreShape(actor, shapeshift, true)
+        await ShapeshiftWizard.finalizeRestoreShape(actor, shapeshift, true)
     }
 
 
@@ -478,17 +513,18 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
         if (proportionSettings.wounds) currentHp = Math.max(1, Math.round(original.system.status.wounds.max * actor.system.status.wounds.value / actor.system.status.wounds.max))
 
         if (actor.isToken) {
-            const delta = mergeObject(actor.flags.dsa5.originalDelta, {
+            const delta = mergeObject(deepClone(actor.flags?.dsa5?.originalDelta ?? {}), {
                 "system.status.wounds.value": currentHp,
             });
+            delta.effects = (delta.effects ?? []).filter(effect => effect._id !== shapeshift.id && !effect.statuses?.includes?.('shapeshift'));
 
             const tokenData = {
                 x: actor.token.x,
                 y: actor.token.y,
-                elevation: actor.token.elevation,
                 actorLink: false,
                 delta,
             }
+            DSATokenDocument.applySourceTokenPlacement(actor.token, tokenData);
 
             const tempToken = await original.getTokenDocument(tokenData, { parent: canvas.scene })
             const createdToken = await TokenDocument.implementation.create(tempToken, { parent: canvas.scene });
@@ -496,21 +532,20 @@ export default class ShapeshiftWizard extends foundry.applications.api.Handlebar
             await actor.token.delete()
             await actor.sheet.close()
             if (!remote) createdToken.actor.sheet.render(true)
-            await createdToken.actor.deleteEmbeddedDocuments("ActiveEffect", [shapeshift._id], { noHook: true })
             return
         }
 
-        await original.deleteEmbeddedDocuments("ActiveEffect", [shapeshift._id], { noHook: true })
+        await ShapeshiftWizard._deleteShapeshiftEffect(shapeshift, original, actor)
 
         if (shapeshift.flags.dsa5.originalActor == actor.id) return;
 
         await original.update({ "system.status.wounds.value": currentHp })
 
         if (canvas.ready) {
-            const tokens = actor.getActiveTokens(true);
+            const tokens = ShapeshiftWizard._activeTokenDocuments(actor);
 
             for (const token of tokens) {
-                const tokenData = deepClone(original.prototypeToken);
+                const tokenData = original.prototypeToken.toObject();
                 tokenData._id = token.id;
                 tokenData.actorId = original.id;
                 await canvas.scene.updateEmbeddedDocuments("Token", [tokenData]);

@@ -1,0 +1,33 @@
+<div class="dsa-icon-card-grid group-helpers-grid">
+  {{#each helpers as |helper|}}
+    {{#if helper.isHtml}}
+      <div class="group-helper-panel" data-group-helper-panel="{{helper.id}}">
+        {{{helper.html}}}
+      </div>
+    {{else}}
+      <article
+        class="dsa-icon-card group-helper-card"
+        tabindex="0"
+        role="button"
+        data-action="groupHelperAction"
+        data-group-helper="{{helper.id}}"
+        aria-label="{{localize helper.label}}"
+        data-tooltip="{{localize helper.label}}"
+      >
+        <div class="dsa-icon-card__media">
+          {{#if helper.iconIsImg}}
+            <img src="{{helper.icon}}" alt="" loading="lazy" />
+          {{else if helper.icon}}
+            <i class="{{helper.icon}}" aria-hidden="true"></i>
+          {{/if}}
+        </div>
+        <div class="dsa-icon-card__body">
+          <h3 class="dsa-icon-card__title">{{localize helper.label}}</h3>
+          {{#if helper.hint}}
+            <span class="dsa-icon-card__hint">{{localize helper.hint}}</span>
+          {{/if}}
+        </div>
+      </article>
+    {{/if}}
+  {{/each}}
+</div>

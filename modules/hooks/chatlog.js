@@ -3,8 +3,12 @@ import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import DSA5Payment from '../system/payment/payment.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
 import RollRequestService from '../system/queries/roll-request.js';
+import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
+import InformationQueryService from '../system/queries/information-query.js';
+import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
+import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import DSA5ChatListeners from '../system/sidebar/chat_listeners.js';
 import DSA5StatusEffects from '../status/status_effects.js';
 import DialogReactDSA5 from '../dialog/dialog-react.js';
@@ -16,21 +20,24 @@ const { getProperty } = foundry.utils;
 export default function () {
 
   Hooks.on('renderChatLog', (log, html, data) => {
-    html = $(html);
+    const jhtml = $(html);
 
-    OpposedDsa5.chatListeners(html);
-    DiceDSA5.chatListeners(html);
-    DSA5Payment.chatListeners(html);
-    PaymentRequestService.chatListeners(html);
-    RollRequestService.chatListeners(html);
-    TrapState.chatListeners(html);
+    OpposedDsa5.chatListeners(jhtml);
+    DiceDSA5.chatListeners(jhtml);
+    DSA5Payment.chatListeners(jhtml);
+    PaymentRequestService.chatListeners(jhtml);
+    RollRequestService.chatListeners(jhtml);
+    InformationQueryService.chatListeners(jhtml);
+    MagicAnalysisQueryService.chatListeners(html);
+    TrapState.chatListeners(jhtml);
 
     game.dsa5.autoComplete = new DSA5ChatAutoCompletion();
     Hooks.call('startDSA5ChatAutoCompletion', game.dsa5.autoComplete);
-    game.dsa5.autoComplete.chatListeners(html);
+    ChatCommandService.applyToAutoCompletion(game.dsa5.autoComplete);
+    game.dsa5.autoComplete.chatListeners(jhtml);
 
-    DSA5ChatListeners.chatListeners(html);
-    ItempackageData.chatListeners(html);
+    DSA5ChatListeners.chatListeners(jhtml);
+    ItempackageData.chatListeners(jhtml);
   });
 
   Hooks.on('renderChatInput', applyNotificationListeners);
@@ -38,13 +45,16 @@ export default function () {
   function applyNotificationListeners(app, html, context) {
     if (context.previousParent.id != 'chat-notifications') return;
 
-    const chatNotifications = $(context.previousParent);
+    const domElement = context.previousParent;
+    const chatNotifications = $(domElement);
 
     OpposedDsa5.chatListeners(chatNotifications);
     DiceDSA5.chatListeners(chatNotifications);
     DSA5Payment.chatListeners(chatNotifications);
     PaymentRequestService.chatListeners(chatNotifications);
     RollRequestService.chatListeners(chatNotifications);
+    InformationQueryService.chatListeners(chatNotifications);
+    MagicAnalysisQueryService.chatListeners(domElement);
     DSA5ChatListeners.chatListeners(chatNotifications);
     ItempackageData.chatListeners(chatNotifications);
 
@@ -57,7 +67,12 @@ export default function () {
   })
 
   Hooks.on('updateChatMessage', (message, changed) => {
-    if (!getProperty(message, 'flags.dsa5.queryRequest')) return;
+    if (getProperty(changed, 'flags.data.healApplied')) {
+      RegenerationHelper.refreshLinkedRequestCards(message.id);
+    }
+
+    const isBumpableCard = getProperty(message, 'flags.dsa5.queryRequest') || getProperty(message, 'flags.gc');
+    if (!isBumpableCard) return;
     if (!('timestamp' in changed)) return;
 
     const log = ui.chat?.element?.querySelector('.chat-log');
@@ -108,6 +123,7 @@ export default function () {
     }
 
     RollRequestService.handleRenderMessage(msg, html);
+    MagicAnalysisQueryService.handleRenderMessage(msg, html);
     if (game.settings.get('dsa5', 'expandChatModifierlist')) {
       html.find('.expand-mods i').toggleClass('fa-minus fa-plus');
       html.find('.expand-mods + ul').css({ display: 'block' });
@@ -123,18 +139,20 @@ export default function () {
 
   Hooks.on('chatMessage', (html, content, msg) => {
     const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
+    if (ChatCommandService.tryExecuteChatCommand(normalizedContent, msg)) return false;
+
     let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages)(?:\s|$)/i);
     cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {
       case '/pay': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'pay', amount: moneyString, description });
+        if (game.user.isGM) ChatCommandService.openPaymentDialog('pay', { amount: moneyString, description });
         else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }
-      case '/getPaid': {
+      case '/getpaid': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
-        if (game.user.isGM) PaymentRequestService.createRequest({ mode: 'getPaid', amount: moneyString, description });
+        if (game.user.isGM) ChatCommandService.openPaymentDialog('getPaid', { amount: moneyString, description });
         else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
         return false;
       }

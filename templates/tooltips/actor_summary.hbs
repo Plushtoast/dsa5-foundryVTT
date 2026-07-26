@@ -10,7 +10,7 @@
 <p>
     <ul class="effects-tooltip plain">
         {{#each effects}}
-            <li><img src="{{img}}" alt="{{name}}"><span>{{name}}{{#if flags.dsa5.value}} ({{flags.dsa5.value}}){{/if}}</span></li>
+            <li><img src="{{img}}" alt="{{name}}"><span>{{name}}{{#if system.condition.value}} ({{system.condition.value}}){{/if}}</span></li>
         {{/each}}
     </ul>
 </p>

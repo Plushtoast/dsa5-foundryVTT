@@ -3,16 +3,40 @@
 
     {{> "systems/dsa5/templates/actors/parts/horse.hbs"}}
 
-    {{#if hasCompanions}}
     {{#each companionSections}}
-    {{#if contents.length}}
+    {{#if visible}}
     <div class="groupbox">
-        <legend class="table-title lineheight">{{localize label}}</legend>
+        <div class="row-section flexAlignCenter">
+            <div class="col table-title lineheight">{{localize label}}</div>
+            {{#if showSummoningTools}}
+            <div class="col ten center">
+                <button type="button" class="icon fas fa-hat-wizard noBorder dsadesignbutton"
+                    data-action="startSummoning" data-tooltip="CONJURATION.startSummoning"
+                    aria-label="{{localize 'CONJURATION.startSummoning'}}"></button>
+            </div>
+            {{/if}}
+        </div>
+
+        {{#if showSummoningTools}}
+        <div class="bags flexrow flexAlignCenter gap2px wrap conjuration-favorites-list">
+            {{#each @root.conjurationFavorites as |fav|}}
+            <div class="slot conjuration-favorite-slot" style="background-image:url('{{fav.img}}')"
+                data-action="conjurationFavorite" data-uuid="{{fav.uuid}}" data-favorite-id="{{fav.id}}"
+                data-tooltip="{{fav.name}}"></div>
+            {{/each}}
+            <div class="slot conjuration-favorites-drop" data-tooltip="COMPANIONS.Favorites.dropHint"
+                aria-label="{{localize 'COMPANIONS.Favorites.dropHint'}}">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+            </div>
+        </div>
+        {{/if}}
+
         {{#each contents}}{{> "systems/dsa5/templates/actors/companions/companion-card.hbs"}}{{/each}}
     </div>
     {{/if}}
     {{/each}}
-    {{else}}
+
+    {{#unless hasCompanions}}
     <div class="droparea">{{localize "COMPANIONS.dropHint"}}</div>
-    {{/if}}
+    {{/unless}}
 </div>

@@ -4,12 +4,14 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
-export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1 };
+export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, InformableTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1, powersource: 1 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -26,11 +28,13 @@ export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, De
         value: new BooleanField({ initial: false }),
         wearable: new BooleanField({ initial: false, label: 'wearable' }),
       }),
-      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' })
+      isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
     });
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.domains = this.prepareDomains();
   }
 

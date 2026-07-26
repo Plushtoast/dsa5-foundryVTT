@@ -4,10 +4,12 @@ import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import DSA5 from '../../config/config-dsa5.js';
 import RangeweaponData from './rangeweapon.js';
+import InformableTemplate from './templates/informable.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
-export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate) {
+export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, APValueTemplate, InformableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       traitType: new SchemaField({
@@ -55,7 +57,41 @@ export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, Descri
     return Number(this.step?.value) || 1;
   }
 
+  static getFamiliarActivationAspCost(itemOrData) {
+    const traitType = foundry.utils.getProperty(itemOrData, 'system.traitType.value')
+      ?? foundry.utils.getProperty(itemOrData, 'traitType.value');
+    if (traitType !== 'familiar') return 0;
+
+    const raw = foundry.utils.getProperty(itemOrData, 'system.AsPCost.value')
+      ?? foundry.utils.getProperty(itemOrData, 'AsPCost.value');
+    if (raw === '' || raw == null) return 0;
+
+    const trimmed = String(raw).trim();
+    const match = trimmed.match(/^\s*(\d+)\s*(?:AsP|AE|Asp)?\s*$/i);
+    if (!match) return 0;
+
+    const cost = Number(match[1]);
+    return cost > 0 ? cost : 0;
+  }
+
+  static async payFamiliarActivationAsp(actor, item, options = {}) {
+    const cost = TraitData.getFamiliarActivationAspCost(item);
+    if (!cost || !actor) return true;
+
+    const paid = await actor.applyMana(cost, 'AsP', options);
+    if (!paid) return false;
+
+    const msg = _loc('CHATNOTIFICATION.paysTraditionAbility', {
+      name: actor.name,
+      ability: item.name,
+      cost,
+    });
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, options.messageMode));
+    return true;
+  }
+
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.ranges = DSA5.meleeRanges;
   }
 

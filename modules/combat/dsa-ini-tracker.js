@@ -1,9 +1,15 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DSA5CombatTracker } from './combat_tracker.js';
+import Chase from './chase/chase.js';
+import ChaseCombatTracker from './chase/chase-combat-tracker.js';
+import NavalCombat from './mkr/naval-combat.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
+  /** Must match `.iniRoundSeparator` in inittracker.scss (bar width + horizontal margins). */
+  static ROUND_SEPARATOR_WIDTH = 12;
+
   static DEFAULT_OPTIONS = {
     position: {
       width: 440,
@@ -16,7 +22,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       frame: false,
     },
     actions: {
-      convertToBrawl: this._onConvertToBrawl,
+      nextMkr: this._onNextMkr,
       aggroButton: function () {
         DSA5CombatTracker.runActAttackDialog();
       },
@@ -30,6 +36,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
       toggleHidden: this.#onCombatantControl,
       activateCombatant: this.#onCombatantMouseDown,
       rolledInit: this.#editCombatant,
+      rollChaseDefaultSkill: this.#rollChaseDefaultSkill,
+      chaseTerrainMenu: this.#chaseTerrainMenu,
+      chaseDefaultSkillMenu: this.#chaseDefaultSkillMenu,
     },
     classes: ['dsa5', 'initTracker'],
   };
@@ -40,8 +49,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     },
   };
 
-  static _onConvertToBrawl() {
-    game.combat?.convertToBrawl();
+  static _onNextMkr() {
+    if (!game.user.isGM) return;
+    game.combat?.nextMkr();
   }
 
   setPosition(position) {
@@ -86,6 +96,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
 
     const combatStarted = data.combat.round;
+    if (data.turns && data.combat) {
+      data.turns = ChaseCombatTracker.prepareIniTurns(data.turns, data.combat);
+    }
     const turnsToUse = data.turns;
 
     const waitingTurns = [];
@@ -93,7 +106,13 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    const unRolled = data.turns.some((x) => x.isOwner && !x.initiative && (!game.user.isGM || data.combat.combatants.get(x.id).isNPC));
+    const isChase = Chase.isChaseActive(data.combat);
+    const isNavalMkr = NavalCombat.isNavalMkrActive(data.combat);
+    const unRolled = !isChase && data.turns.some((x) => {
+      if (x.isChaseSection || !x.isOwner || x.initiative) return false;
+      if (!game.user.isGM) return true;
+      return data.combat.combatants.get(x.id)?.isNPC;
+    });
     if (turnsToUse.length) {
       const filteredTurns = [];
 
@@ -106,6 +125,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
       while (!(toAdd == 0 || loops == actorCount)) {
         const turn = duplicate(turnsToUse[index]);
         const combatant = data.combat.combatants.get(turn.id);
+        if (!combatant) {
+          index++;
+          if (index >= turnsToUse.length) {
+            index = 0;
+            loops++;
+          }
+          continue;
+        }
         if (started && index == startIndex) turn.css = turn.css.replace('active', '');
 
         if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
@@ -118,9 +145,13 @@ export default class DSAIniTracker extends DefaultAppv2 {
         if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
           turn.round = data.combat.round + loops;
           if (turn.isOwner && combatant.actor) {
-            turn.maxLP = combatant.actor.system.status.wounds.max;
-            turn.currentLP = combatant.actor.system.status.wounds.value;
+            const status = combatant.actor.system.status;
+            const pool = status.structurePoints ?? status.wounds;
+            turn.maxLP = pool?.max ?? 0;
+            turn.currentLP = pool?.value ?? 0;
           }
+          turn.isVehicle = combatant.actor?.type === 'vehicle';
+          turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
           if (currentRound && currentRound != turn.round) turn.newRound = 'newRound';
 
           currentRound = turn.round;
@@ -138,7 +169,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     data.isLastRound = data.turns[1]?.newRound;
 
-    options.position.width = itemWidth * actorCount + actorCount * 3 + 70;
+    const roundSeparators = data.turns?.filter((turn) => turn.newRound).length ?? 0;
+    options.position.width = itemWidth * actorCount + actorCount * 3 + 70
+      + roundSeparators * this.constructor.ROUND_SEPARATOR_WIDTH;
     options.position.height = itemWidth + 10;
 
     Object.assign(data, {
@@ -146,6 +179,17 @@ export default class DSAIniTracker extends DefaultAppv2 {
       unRolled,
       waitingTurns,
     });
+
+    const combatMode = NavalCombat.resolveCombatMode(data.combat);
+    data.combatMode = combatMode;
+    data.combatModeIcon = {
+      standard: 'fa-shield',
+      brawling: 'fa-hand-fist fa-rotate-90',
+      navalMkr: 'fa-ship',
+      chase: 'fa-person-running',
+      vehicleChase: 'fa-sailboat',
+    }[combatMode] ?? 'fa-shield';
+    data.combatModeTooltip = 'COMBAT.MODE.tooltip';
 
     this.conditionalPanToCurrentCombatant(data);
 
@@ -210,6 +254,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
     turns.on('pointerover', this._onCombatantHoverIn.bind(this))
     turns.on('pointerout', this._onCombatantHoverOut.bind(this));
     turns.on('dblclick', this._onCombatantMouseDown.bind(this));
+
+    for (const input of this.element.querySelectorAll('.chase-max-rounds-input')) {
+      input.addEventListener('change', (ev) => {
+        ev.stopPropagation();
+        game.combat?.setChaseMaxRounds(ev.currentTarget.value);
+      });
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
   }
 
   async #betterTooltip(ev) {
@@ -233,10 +285,68 @@ export default class DSAIniTracker extends DefaultAppv2 {
     await super._onFirstRender(context, options);
 
     this._createContextMenu(this._getDsaIniTrackerEntryContextOptions, ".iniTrackerList:not(.waitingTackerList) .combatant", { fixed: true });
+    if (game.user.isGM) {
+      this._createContextMenu(() => ui.combat._getCombatModeContextOptions(), '.combat-mode-control', {
+        eventName: 'click',
+        fixed: true,
+        parentClassHooks: false,
+      });
+    }
   }
 
   _getDsaIniTrackerEntryContextOptions() {
     return ui.combat._getEntryContextOptions();
+  }
+
+  static async #openChaseContextMenu(app, target, menuItems) {
+    const menu = new foundry.applications.ux.ContextMenu(app.element, '', menuItems, {
+      jQuery: false,
+      fixed: true,
+      eventName: 'none',
+    });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
+  }
+
+  static async #chaseTerrainMenu(event, target) {
+    if (!game.user.isGM) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const combat = game.combat;
+    if (!Chase.isChaseActive(combat)) return;
+    const Handler = Chase.handlerFor(combat);
+    const current = combat.system.chaseTerrain ?? 'normal';
+    const menuItems = Handler.TERRAIN_IDS.map((id) => ({
+      label: Handler.getTerrainLabel(id),
+      icon: id === current ? '<i class="fas fa-check"></i>' : '<i class="fas fa-mountain"></i>',
+      onClick: () => combat.setChaseTerrain(id),
+    }));
+    await DSAIniTracker.#openChaseContextMenu(this, target, menuItems);
+  }
+
+  static async #chaseDefaultSkillMenu(event, target) {
+    if (!game.user.isGM) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const combat = game.combat;
+    if (!Chase.isChaseActive(combat)) return;
+    const Handler = Chase.handlerFor(combat);
+    const current = Handler.defaultSkillKey(combat);
+    const menuItems = Handler.defaultSkillOptions(combat).map((o) => ({
+      label: _loc(o.label),
+      icon: o.key === current ? '<i class="fas fa-check"></i>' : '<i class="fas fa-person-running"></i>',
+      onClick: () => combat.setChaseDefaultSkill(o.key),
+    }));
+    await DSAIniTracker.#openChaseContextMenu(this, target, menuItems);
+  }
+
+  static #rollChaseDefaultSkill() {
+    if (!Chase.isChaseActive()) return;
+    const combatant = game.combat?.combatant;
+    if (!combatant) return;
+    if (!(game.user.isGM || combatant.isOwner)) return;
+    Chase.rollAction(combatant.actor, combatant.tokenId, { skipPicker: true });
   }
 
   static #onCombatantControl(event, target) {

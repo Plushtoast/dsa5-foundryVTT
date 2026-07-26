@@ -1,0 +1,38 @@
+<header class="row-section">
+    <div class="col fourty">{{localize "EFFECT.FIELDS.changes.element.key.label"}}</div>
+    <div class="col five center">{{localize "EFFECT.FIELDS.changes.element.type.label"}}</div>
+    <div class="col third center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
+    <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.phase.label"}}</div>
+    <div class="col ten center">{{localize "EFFECT.FIELDS.changes.element.priority.label"}}</div>
+    <div class="col ten center">
+        {{#if showWizardToggle}}
+        <a data-action="toggleWizardMode" data-tooltip="ActiveEffects.wizardSimpleMode">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </a>
+        {{/if}}
+        <a data-action="{{#if addAction}}{{addAction}}{{else}}addChange{{/if}}"><i class="fa-regular fa-square-plus"></i></a>
+    </div>
+</header>
+
+<ul class="ol" data-changes>
+    {{#each changes as |change i|}}
+    <li class="row-section" data-index="{{i}}">
+        <div class="col fourty key">
+            {{formInput ../changeFields.key name=(concat ../changePath "." i ".key") value=change.key}}
+        </div>
+        <div class="col five center type">
+            {{formInput ../changeFields.type name=(concat ../changePath "." i ".type") value=change.type choices=../changeTypes}}
+        </div>
+        <div class="col third center value">
+            {{formInput ../changeFields.value name=(concat ../changePath "." i ".value") value=change.value classes="inlineCodeMirror"}}
+        </div>
+        <div class="col ten center phase">
+            {{formInput ../changeFields.phase name=(concat ../changePath "." i ".phase") value=change.phase choices=../changePhases}}
+        </div>
+        <div class="col ten center priority">
+            {{formInput ../changeFields.priority name=(concat ../changePath "." i ".priority") value=change.priority placeholder=(lookup ../changePriorities change.type)}}
+        </div>
+        <div class="col ten flexrow center controls"><a data-action="{{#if deleteAction}}{{deleteAction}}{{else}}deleteChange{{/if}}"><i class="fa-solid fa-trash"></i></a></div>
+    </li>
+    {{/each}}
+</ul>

@@ -1,0 +1,23 @@
+<div class="row-section lineheight flexAlignCenter summoning-type-row">
+    <div class="col fourty table-title">
+        <label>{{localize "Category"}}</label>
+    </div>
+    <div class="col two flexrow flexAlignCenter gap5px">
+        {{#with selectedConjurationType as |card|}}
+        <button type="button" class="summoning-type-picker" data-action="openConjurationTypeMenu"
+            data-tooltip="{{card.hint}}" aria-haspopup="menu"
+            aria-label="{{localize 'Category'}}: {{card.name}}">
+            {{#if card.img}}
+            <img src="{{card.img}}" alt="" loading="lazy" />
+            {{else}}
+            <i class="{{card.icon}}"></i>
+            {{/if}}
+            <span class="summoning-type-picker__name">{{card.name}}</span>
+            <span class="summoning-type-picker__mode">{{localize card.controlModeLabel}}</span>
+            <i class="fas fa-chevron-down summoning-type-picker__chevron"></i>
+        </button>
+        {{/with}}
+        <button data-action="ruleLink" type="button" class="icon fas fa-book-open noBorder dsadesignbutton"
+            data-tooltip="CONJURATION.openRules"></button>
+    </div>
+</div>

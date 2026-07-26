@@ -3,6 +3,8 @@ import CombatskillData from '../data/item/combatskill.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
+import Chase from '../combat/chase/chase.js';
+import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -51,6 +53,15 @@ export default class DialogReactDSA5 extends Select2Dialog {
   }
 
   static callbackResult(selection, message, ev) {}
+
+  static opposeOptions(message) {
+    return {
+      oppose: {
+        startMessageId: message.id,
+        attackMessageId: message.flags.unopposeData.attackMessageId,
+      },
+    };
+  }
 }
 
 export class ReactToSkillDialog extends DialogReactDSA5 {
@@ -79,7 +90,7 @@ export class ReactToSkillDialog extends DialogReactDSA5 {
     } else {
       const skill = actor.items.find((i) => i.name == text && i.type == 'skill');
       if (skill) {
-        actor.setupSkill(skill, {}, tokenId).then((setupData) => {
+        actor.setupSkill(skill, DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
           actor.basicTest(setupData);
         });
       }
@@ -178,6 +189,18 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
         img: 'systems/dsa5/icons/categories/ability_magical.webp',
       });
     }
+
+    const navalEntries = this.actor?.type !== 'vehicle' ? NavalHeroActionHandler.dialogEntries() : null;
+    if (navalEntries?.length) {
+      data.items = navalEntries;
+      data.dieClass = 'die-mu';
+      data.title = 'VEHICLE.mkr.pickHeroAction';
+      return data;
+    }
+
+    const chaseEntry = Chase.actionEntryFor(this.actor);
+    if (chaseEntry) data.items.unshift(chaseEntry);
+
     data.dieClass = 'die-mu'
     data.title = 'DIALOG.selectAction'
     return data;
@@ -187,7 +210,11 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const actor = dialog.actor;
     const tokenId = dialog.tokenId;
 
-    if ('castSpell' == dataset.special) {
+    if ('navalHeroAction' == dataset.special) {
+      NavalHeroActionHandler.executeFromActor(actor, dataset.heroAction);
+    } else if ('chaseAction' == dataset.special) {
+      Chase.rollAction(actor, tokenId);
+    } else if ('castSpell' == dataset.special) {
       ActCastSpellDialog.showDialog(actor, tokenId);
     } else if ('attackWeaponless' == dataset.value) {
       actor.setupWeaponless('attack', {}, tokenId).then((setupData) => {
@@ -412,11 +439,11 @@ export class ReactToAttackDialog extends ActAttackDialog {
     if ('doNothing' == text) {
       OpposedDsa5.resolveUndefended(message);
     } else if ('dodge' == text) {
-      actor.setupDodge({}, tokenId).then((setupData) => {
+      actor.setupDodge(DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
     } else if ('parryWeaponless' == text) {
-      actor.setupWeaponless('parry', {}, tokenId).then((setupData) => {
+      actor.setupWeaponless('parry', DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
         actor.basicTest(setupData);
       });
     } else {
@@ -425,7 +452,7 @@ export class ReactToAttackDialog extends ActAttackDialog {
         return types.includes(x.type) && x.name == text;
       });
       if (result) {
-        actor.setupWeapon(result, 'parry', {}, tokenId).then((setupData) => {
+        actor.setupWeapon(result, 'parry', DialogReactDSA5.opposeOptions(message), tokenId).then((setupData) => {
           actor.basicTest(setupData);
         });
       }

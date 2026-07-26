@@ -3,11 +3,22 @@ import OnUseTemplate from './templates/onuse.js';
 import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 
 const { NumberField, BooleanField, StringField, SchemaField, HTMLField } = foundry.data.fields;
 const { TextEditor } = foundry.applications.ux;
+const { randomID } = foundry.utils;
 
-export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate) {
+const PLANT_INFO_REF_PATTERN = /@Info\[([^\]]+)\]/g;
+
+function toItemUuid(uuid) {
+  const parts = uuid.split('.');
+  return parts[0] === 'Compendium' && parts.length === 4
+    ? `${parts[0]}.${parts[1]}.${parts[2]}.Item.${parts[3]}`
+    : uuid;
+}
+
+export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, EquipmentTemplate, ObfuscableTemplate, InformableTemplate) {
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       price: new SchemaField({
@@ -24,7 +35,6 @@ export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, Descri
       }),
       usages: new StringField({ initial: '0/0/0/0/0/0', label: 'PLANT.usages' }),
       effect: new HTMLField({ initial: '', label: 'effect' }),
-      infos: new HTMLField({ initial: '' }),
       recipes: new HTMLField({ initial: '' }),
       planttype: new SchemaField({
         healing: new BooleanField({}),
@@ -48,13 +58,37 @@ export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, Descri
     });
   }
 
+  static _migrateData(source) {
+    super._migrateData(source);
+
+    if (typeof source.infos !== 'string' || !source.infos) {
+      if ('infos' in source) delete source.infos;
+      return;
+    }
+
+    const uuids = [...source.infos.matchAll(PLANT_INFO_REF_PATTERN)]
+      .map((match) => toItemUuid(match[1].trim()))
+      .filter(Boolean);
+
+    if (uuids.length) {
+      source.refs ??= {};
+      const existing = new Set(Object.values(source.refs).map((ref) => ref?.uuid).filter(Boolean));
+      for (const uuid of uuids) {
+        if (existing.has(uuid)) continue;
+        source.refs[randomID()] = { uuid };
+        existing.add(uuid);
+      }
+    }
+    delete source.infos;
+  }
+
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.attributes = Object.keys(data.document.system.planttype).map((x) => {
       return { name: x, checked: data.document.system.planttype[x] };
     });
     data.enrichedEffect = await TextEditor.enrichHTML(data.document.system.effect, { secrets: data.document.isOwner });
     data.enrichedRecipes = await TextEditor.enrichHTML(data.document.system.recipes, { secrets: data.document.isOwner });
-    data.enrichedInformation = await TextEditor.enrichHTML(data.document.system.infos, { secrets: data.document.isOwner });
   }
 
   static chatData(data, name) {

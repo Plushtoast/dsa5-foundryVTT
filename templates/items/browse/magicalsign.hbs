@@ -27,13 +27,16 @@
             <div class="row-section col sixty browseElement">
                 <div class="col groupbox">
                         <div class="row-section wrap">
-                            <div class="col table-title noBorder row-section">
-                                <div class="col ninety">
+                            <div class="col table-title noBorder flexrow">
+                                <div>
                                     {{localize "APValue"}}
                                 </div>
-                                <div class="col ten center">
-                                    {{#if document.uuid}}<a class="show-item" data-type="Item" data-uuid="{{document.uuid}}"><i class="fas fa-info"></i></a>{{/if}}
-                                </div>                            
+                                <div class="flex0">
+                                    {{#if document.uuid}}
+                                    <button type="button" class="dsadesignbutton noBorder icon fas fa-info show-item" data-type="Item"
+                                    data-uuid="{{document.uuid}}"></i></button>
+                                    {{/if}}
+                                </div>
                             </div>
                             <div class="col">
                                 {{document.system.APValue.value}}

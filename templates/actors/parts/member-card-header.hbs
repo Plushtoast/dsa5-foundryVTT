@@ -8,6 +8,7 @@
             <a data-action="memberCardLink" class="noBorder">{{name}}</a>
             {{> @partial-block}}
         </h3>
+        {{#unless (eq showStatusBars false)}}
         <div class="member-card-bars flexrow regenContainer">
             <div class="healthbar bar-wounds barLeft {{#unless isMage}}{{#unless isPriest}}{{#unless regenAction}}solo{{/unless}}{{/unless}}{{/unless}}" data-tooltip="wounds">
                 <div class="bar decolorizeFilter LeP"
@@ -36,6 +37,7 @@
             </div>
             {{/if}}
         </div>
+        {{/unless}}
     </div>
     <div class="flex0">
         {{#if showContextMenu}}

@@ -1,7 +1,7 @@
 import DSABaseEffectConfig from './base_effect_config.js';
 import DSAEnhancementEffectDataModel from '../data/activeeffect/enhancement-effect.js';
 import EffectDropdownBuilder from './effect-dropdown-builder.js';
-import { tabSlider, svgAutoFit } from '../system/helpers/view_helper.js';
+import { bindItemHeaderTitle, tabSlider } from '../system/helpers/view_helper.js';
 
 const { mergeObject } = foundry.utils;
 const { TextEditor } = foundry.applications.ux;
@@ -23,7 +23,14 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     stat: { template: 'systems/dsa5/templates/status/enhancement-effect-stat.hbs' },
     tabs: { template: 'systems/dsa5/templates/system/dsatabs.hbs' },
     description: { template: 'systems/dsa5/templates/status/enhancement-effect-description.hbs', scrollable: [''] },
-    details: { template: 'systems/dsa5/templates/status/enhancement-effect-details.hbs', scrollable: [''] },
+    details: {
+      template: 'systems/dsa5/templates/status/enhancement-effect-details.hbs',
+      scrollable: [''],
+      templates: [
+        'systems/dsa5/templates/status/parts/enhancement-effect-powersource-fields.hbs',
+        'systems/dsa5/templates/status/parts/enhancement-effect-crafting-fields.hbs',
+      ],
+    },
     changes: super.PARTS.changes,
     actions: super.PARTS.actions,
   };
@@ -49,27 +56,9 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     const html = $(this.element);
     tabSlider(html);
 
-    const toObserve = html.find('header.item-header h1');
-    if (toObserve.length) {
-      const svg = toObserve.find('svg');
-      if (svg.length) {
-        const observer = new ResizeObserver((entries) => {
-          svgAutoFit(svg, entries[0].contentRect.width);
-        });
-        observer.observe(toObserve.get(0));
-        const input = toObserve.find('input');
-        if (!input.get(0).disabled) {
-          svg.on('click', () => {
-            svg.hide();
-            input.show();
-            input.trigger('focus');
-          });
-          input.on('blur', () => {
-            svg.show();
-            input.hide();
-          });
-        }
-      }
+    const renderedParts = options.parts;
+    if (!renderedParts || renderedParts.includes('header')) {
+      bindItemHeaderTitle(html);
     }
   }
 
@@ -100,7 +89,11 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
           return obj;
         }, {});
         const slotLimits = DSAEnhancementEffectDataModel.getSlotLimits(this._targetType);
-        mergeObject(partContext, { targetTypes, enhancementTypes, slotLimits });
+        mergeObject(partContext, {
+          targetTypes,
+          enhancementTypes,
+          slotLimits,
+        });
         break;
       }
       case 'changes': {
@@ -116,7 +109,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     const dropDown = EffectDropdownBuilder.buildEnhancementDropdownMenu(this._targetType);
     html.find('.changes .ol .key').append(dropDown);
     html
-      .find('.selMenu')
+      .find('.changes .selMenu')
       .select2({ width: 'element' })
       .on('change', (ev) => {
         const elem = $(ev.currentTarget);
@@ -129,7 +122,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
         parent.find('.value input').val(exampleValue).attr('placeholder', '');
         elem.trigger('blur');
       });
-    html.find('.select2').each((i, el) => {
+    html.find('.changes .select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
   }

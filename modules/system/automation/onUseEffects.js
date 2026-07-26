@@ -1,6 +1,4 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
-import RuleChaos from '../rules/rule_chaos.js';
-import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -81,6 +79,8 @@ export default class OnUseEffect {
     const result = {};
     if (documents?.length) {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      const previousArgs = this.currentOnUseArgs;
+      this.currentOnUseArgs = args;
       try {
         args.result = result;
         const fn = new AsyncFunction('args', 'actor', 'item', 'effect', documents[0].command);
@@ -98,6 +98,8 @@ export default class OnUseEffect {
           console.error(err);
           result.error = true;
         }
+      } finally {
+        this.currentOnUseArgs = previousArgs;
       }
     } else {
       ui.notifications.error('DSAError.macroNotFound', { format: { name }, localize: true });
@@ -244,15 +246,13 @@ export default class OnUseEffect {
     return {
       name,
       icon: 'icons/svg/aura.svg',
+      description: name,
       system: {
         changes,
       },
       duration,
       flags: {
-        dsa5: {
-          value: null,
-          description: name,
-        },
+        dsa5: {},
       },
     };
   }
@@ -261,7 +261,9 @@ export default class OnUseEffect {
     return OnUseEffect.effectBaseDummy(name, changes, duration);
   }
 
-  async socketedConditionAddActor(actors, data) {
+  async socketedConditionAddActor(actors, data, amount = 1) {
+    data = this.withRegionOrigin(data);
+
     if (game.user.isGM) {
       const systemCon = typeof data === 'string';
       if (systemCon) {
@@ -271,8 +273,8 @@ export default class OnUseEffect {
 
       const names = [];
       for (const actor of actors) {
-        if (systemCon) await actor.addCondition(data, 1, false, false);
-        else await actor.addCondition(data);
+        if (systemCon) await actor.addCondition(data, amount, false, false);
+        else await actor.addCondition(data, amount);
 
         names.push(actor.name);
       }
@@ -282,7 +284,9 @@ export default class OnUseEffect {
         id: this.item.uuid,
         data,
         actors: actors.map((x) => x.id),
+        amount,
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedConditionAddActor',
         payload,
@@ -290,8 +294,33 @@ export default class OnUseEffect {
     }
   }
 
+  withRegionOrigin(data) {
+    const regionOrigin = this.currentOnUseArgs?.regionEvent?.behaviorUuid;
+    if (!regionOrigin) return data;
+
+    if (typeof data === 'string') {
+      const condition = CONFIG.statusEffects.find((effect) => effect.id === data);
+      if (!condition) return data;
+
+      const result = duplicate(condition);
+      result.name = _loc(result.name);
+      result.origin = regionOrigin;
+      return result;
+    }
+
+    if (typeof data !== 'object' || !data || data.origin) return data;
+
+    const result = duplicate(data);
+    result.origin = regionOrigin;
+    return result;
+  }
+
+  get suppressInfoMessage() {
+    return !!(this.currentOnUseArgs?.suppressInfoMessage || this.currentOnUseArgs?.regionEvent);
+  }
+
   async createInfoMessage(data, names, added = true) {
-    if (names.length) {
+    if (names.length && !this.suppressInfoMessage) {
       const format = added ? 'ActiveEffects.appliedEffect' : 'ActiveEffects.removedEffect';
       const infoMsg = _loc(format, {
         source: data.name,
@@ -319,7 +348,9 @@ export default class OnUseEffect {
         id: this.item.uuid,
         coreId,
         targets,
+        amount,
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedRemoveCondition',
         payload,
@@ -373,6 +404,7 @@ export default class OnUseEffect {
         data,
         targets,
       };
+      if (this.suppressInfoMessage) payload.suppressInfoMessage = true;
       game.socket.emit('system.dsa5', {
         type: 'socketedConditionAdd',
         payload,

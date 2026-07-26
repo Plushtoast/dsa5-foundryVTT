@@ -1,0 +1,96 @@
+import ItemEnchantment from '../../item/item-enchantment.js';
+
+export default class MagicAnalysisDefaults {
+  static magiekundeSkill() {
+    return _loc('LocalizedIDs.magicalLore');
+  }
+
+  static async generate(item) {
+    const enchantments = ItemEnchantment.list(item);
+    const primary = enchantments[0];
+    const fw = primary?.fw ?? 0;
+
+    return {
+      qs1: this._qs1(fw) || this._genericQs(1),
+      qs2: this._qs2(fw) || this._genericQs(2),
+      qs3: this._qs3(primary, enchantments) || this._genericQs(3),
+      qs4: (await this._qs4(primary)) || this._genericQs(4),
+      qs5: (await this._qs5(enchantments)) || this._genericQs(5),
+      qs6: this._genericQs(6),
+      crit: this._genericCrit(),
+      botch: this._genericBotch(),
+      fail: this._genericFail(),
+      skill: this.magiekundeSkill(),
+      modifier: 0,
+    };
+  }
+
+  static _genericQs(level) {
+    return `<p>${_loc(`MAGICANALYSIS.defaultQsGeneric.${level}`)}</p>`;
+  }
+
+  static _genericCrit() {
+    return `<p>${_loc('MAGICANALYSIS.defaultCrit')}</p>`;
+  }
+
+  static _genericBotch() {
+    return `<p>${_loc('MAGICANALYSIS.defaultBotch')}</p>`;
+  }
+
+  static _genericFail() {
+    return `<p>${_loc('MAGICANALYSIS.defaultFail')}</p>`;
+  }
+
+  static _qs1(fw) {
+    if (!fw) return '';
+    const key = fw >= 10 ? 'moreThan10' : 'lessThan10';
+    return `<p>${_loc(`MAGICANALYSIS.defaultQs1.${key}`)}</p>`;
+  }
+
+  static _qs2(fw) {
+    if (!fw) return '';
+    // Window of 6 FP; true FW is always inside, not always centered.
+    const span = 6;
+    const minLow = Math.max(0, fw - span);
+    const minHigh = fw;
+    const min = minLow + Math.floor(Math.random() * (minHigh - minLow + 1));
+    const max = min + span;
+    return `<p>${_loc('MAGICANALYSIS.defaultQs2', { min, max })}</p>`;
+  }
+
+  static _qs3(primary, enchantments) {
+    if (!primary) return '';
+    if (primary.talisman) return `<p>${_loc('MAGICANALYSIS.defaultQs3.talisman')}</p>`;
+    if (primary.permanent) return `<p>${_loc('MAGICANALYSIS.defaultQs3.permanent')}</p>`;
+    if (enchantments.length > 1 || !primary.charged) {
+      return `<p>${_loc('MAGICANALYSIS.defaultQs3.storage')}</p>`;
+    }
+    return `<p>${_loc('MAGICANALYSIS.defaultQs3.selfCharging')}</p>`;
+  }
+
+  static async _qs4(primary) {
+    if (!primary?.actorId) return '';
+    const actor = game.actors.get(primary.actorId);
+    if (!actor) return '';
+    const tradition = actor.system?.details?.tradition?.value || actor.system?.tradition?.value;
+    if (!tradition) return `<p>${_loc('MAGICANALYSIS.defaultQs4.unknown')}</p>`;
+    return `<p>${_loc('MAGICANALYSIS.defaultQs4.tradition', { tradition })}</p>`;
+  }
+
+  static async _qs5(enchantments) {
+    const parts = [];
+    for (const ench of enchantments) {
+      const spell = await this.getEnchantmentDocument(ench);
+      if (spell) {
+        parts.push(`<p><b>${spell.name}</b></p>${spell.system?.description?.value || ''}`);
+      } else if (ench.name) {
+        parts.push(`<p><b>${ench.name}</b></p>`);
+      }
+    }
+    return parts.join('');
+  }
+
+  static async getEnchantmentDocument(enchantment) {
+    return ItemEnchantment.resolveDocument(enchantment);
+  }
+}

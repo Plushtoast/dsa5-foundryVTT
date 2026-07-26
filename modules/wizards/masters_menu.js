@@ -8,6 +8,7 @@ import DialogShared from '../dialog/dialog-shared.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
+import GroupCheck from '../system/rolls/group-check.js';
 import GroupActorSheet from '../actor/group-sheet.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
@@ -217,7 +218,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     game.actors.get(this.getID(target)).sheet.render(true);
   }
 
-  static _heroActions(ev, target) {
+  static async _heroActions(ev, target) {
     ev.stopPropagation();
     ev.preventDefault();
     const actorId = this.getID(target);
@@ -253,10 +254,12 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     ];
 
     const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
-    menu.render(target, { animate: true });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
   }
 
-  static _headerActions(ev, target) {
+  static async _headerActions(ev, target) {
     ev.stopPropagation();
     ev.preventDefault();
 
@@ -289,7 +292,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     ];
 
     const menu = new foundry.applications.ux.ContextMenu(this.element, '', menuItems, { jQuery: false, fixed: true, eventName: 'none' });
-    menu.render(target, { animate: true });
+    ui.context?.close();
+    await menu.render(target, { animate: true });
+    ui.context = menu;
   }
 
   static async _openPartySheet() {
@@ -797,18 +802,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     const [skill, type] = this.lastSkill.split('|');
     if (type != 'skill') return;
 
-    const template = await renderTemplate('systems/dsa5/templates/dialog/master-dialog-award.hbs', {
-      amount,
-      text: _loc('MASTER.doGroupCheck', { skill }),
-    });
-    const callback = (dlg) => {
-      const number = Number(dlg.find('.input-text').val());
-      const [skill, type] = this.lastSkill.split('|');
-      if (type != 'skill') return;
-
-      ChatCommandService.groupCheck(skill, number);
-    };
-    this.buildDialog(_loc('HELP.groupcheck'), template, callback);
+    GroupCheck.openDialog({ name: skill, modifier: amount });
   }
 
   async rollRequest(amount = 0) {
@@ -914,12 +908,14 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     },
   };
 
-  async getTrackedHeros() {
+  async getTrackedHeros(skipGroupActors = true) {
     const trackedActors = game.settings.get('dsa5', 'trackedActors');
     let heros;
     if (trackedActors.actors && trackedActors.actors.length > 0) {
       heros = game.actors
-        .filter((x) => trackedActors.actors.includes(x.id))
+        .filter((x) => {
+          return trackedActors.actors.includes(x.id) && (!skipGroupActors || x.type != "group") && x.type !== 'vehicle';
+        })
         .sort((a, b) => {
           return trackedActors.actors.indexOf(a.id) - trackedActors.actors.indexOf(b.id);
         });
@@ -995,6 +991,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         uuid: hero.uuid,
         selected: selected[hero.id],
         schips: hero.schipshtml(),
+        type: hero.type,
         purse: purse
           .sort((a, b) => b.system.price.value - a.system.price.value)
           .map((x) => `<span data-tooltip="${x.name}">${x.system.quantity.value}</span>`)
@@ -1003,9 +1000,9 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         disadvantages,
         system: {
           status: {
-            wounds: { max: hero.system.status.wounds.max },
-            astralenergy: { max: hero.system.status.astralenergy.max },
-            karmaenergy: { max: hero.system.status.karmaenergy.max },
+            wounds: { max: hero.system.status?.wounds?.max },
+            astralenergy: { max: hero.system.status?.astralenergy?.max },
+            karmaenergy: { max: hero.system.status?.karmaenergy?.max },
           },
           isMage: hero.system.isMage,
           isPriest: hero.system.isPriest,

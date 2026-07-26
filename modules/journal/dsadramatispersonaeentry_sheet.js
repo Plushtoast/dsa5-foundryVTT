@@ -43,10 +43,14 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     };
 
     async _prepareEntries(context, options) {
-        if (this.isView) {
-            const heros = await DSAPersonaEntry.getHeros();
-            for (const key of Object.keys(context.sortedEntries)) {
-                const entry = context.sortedEntries[key];
+        const heros = this.isView ? await DSAPersonaEntry.getHeros() : null;
+        for (const key of Object.keys(context.sortedEntries)) {
+            const entry = context.sortedEntries[key];
+            const actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
+            entry.garadan = this.isView ? DSAPersonaEntry.resolveGaradan(entry, actor) : DSAPersonaEntry.resolveGaradan(entry);
+            entry.garadanClass = DSAPersonaEntry.shouldShowGaradan(entry, { isGM: context.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
+
+            if (this.isView) {
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);
             }
         }
@@ -86,6 +90,10 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
 
         const actor = await fromUuid(entry.uuid);
         if (!actor) return;
+        if (!DSAPersonaEntry.isValidActor(actor)) {
+            ui.notifications.warn('PERSONAE.actorTypeNotAllowed', { localize: true });
+            return;
+        }
 
         const options = { actor };
         await this.newEntry(options);
@@ -117,6 +125,11 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     }
 
     async newEntry(options = {}) {
+        if (options.actor && !DSAPersonaEntry.isValidActor(options.actor)) {
+            ui.notifications.warn('PERSONAE.actorTypeNotAllowed', { localize: true });
+            return;
+        }
+
         const id = foundry.utils.randomID();
         this.currentKey = id;
         await this.document.update({
@@ -160,6 +173,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         const entry = foundry.utils.duplicate(this.document.system.personae[key] || {});
         await this._prepareContacts(entry);
         const actor = await fromUuid(entry.actor_uuid);
+        entry.garadan = DSAPersonaEntry.resolveGaradan(entry);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
             elem: entry,
             document: this.document,

@@ -13,10 +13,12 @@
     <div class="row-section wrap">
         {{#each items as |itm i|}}
         <div class="col two flexrow">
-            <button data-action='reactClick' class="reactClick row-section" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}" data-special="{{itm.special}}">
+            <button data-action='reactClick' class="reactClick row-section" {{#if itm.item.system.worn.offHand}}data-tooltip="offHand"{{/if}} {{#if itm.tooltip}}data-tooltip="{{itm.tooltip}}"{{/if}} data-value="{{itm.id}}" data-subweapon="{{itm.subweapon}}" data-special="{{itm.special}}" data-hero-action="{{itm.heroAction}}">
                 <div class="col ten">
                     {{#if itm.value}}
                     <span class="{{../dieClass}} d20">{{itm.value}}</span>
+                    {{else if itm.icon}}
+                    <i class="{{itm.icon}}"></i>
                     {{else}}
                     <i class="fas fa-sparkles"></i>
                     {{/if}}

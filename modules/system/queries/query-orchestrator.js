@@ -23,6 +23,13 @@ export default class QueryOrchestrator {
     skipped:   { icon: 'fa-forward',                colorClass: 'icon-yellow' },
   };
 
+  static RESULT_ROW_CLASSES = {
+    critical: 'roll-request-row-critical',
+    success: 'roll-request-row-success',
+    botch: 'roll-request-row-botch',
+    failure: 'roll-request-row-failure',
+  };
+
   static #DEFAULT_STYLE = { icon: 'fa-circle-question', colorClass: 'icon-gray' };
 
   static registerQuery(type, config) {
@@ -42,6 +49,51 @@ export default class QueryOrchestrator {
   static statusStyle(status) {
     const { icon, colorClass } = this.STATUS_STYLES[status] || this.#DEFAULT_STYLE;
     return { icon, colorClass, label: _loc(`DSAQUERIES.STATUS.${status}`) };
+  }
+
+  static statusFromSuccessLevel(successLevel = 0) {
+    if (successLevel > 1) return 'critical';
+    if (successLevel > 0) return 'success';
+    if (successLevel < -1) return 'botch';
+    if (successLevel < 0) return 'failure';
+    return '';
+  }
+
+  static resultRowClass(status) {
+    return this.RESULT_ROW_CLASSES[status] || '';
+  }
+
+  static allResultRowClasses() {
+    return Object.values(this.RESULT_ROW_CLASSES).join(' ');
+  }
+
+  /**
+   * Shared chat-row outcome presentation for roll request, group check, information, etc.
+   * @param {{ status?: string, successLevel?: number, detail?: string }} [options]
+   * @returns {{ status: string, resultRowClass: string, resultTooltip: string, resultSubLabel: string }}
+   */
+  static outcomeDisplay({ status, successLevel, detail } = {}) {
+    const resolvedStatus = status || this.statusFromSuccessLevel(successLevel) || '';
+    const resultRowClass = this.resultRowClass(resolvedStatus);
+    const resultSubLabel = resolvedStatus === 'critical' ? _loc('CHARAbbrev.Crit') : '';
+
+    let resultTooltip = '';
+    if (resolvedStatus === 'critical') resultTooltip = _loc('CriticalSuccess');
+    else if (resolvedStatus === 'botch') resultTooltip = _loc('CriticalFailure');
+    else if (['success', 'failure', 'skipped'].includes(resolvedStatus)) {
+      resultTooltip = this.statusStyle(resolvedStatus).label;
+    }
+
+    if (detail) {
+      resultTooltip = resultTooltip ? `${resultTooltip} — ${detail}` : detail;
+    }
+
+    return {
+      status: resolvedStatus,
+      resultRowClass,
+      resultTooltip,
+      resultSubLabel,
+    };
   }
 
   static activeCharacterActors() {
@@ -140,15 +192,31 @@ export default class QueryOrchestrator {
   }
 
   static async handleResult({ messageId, actorId, result }) {
+    if (!game.user.isGM) {
+      game.socket.emit('system.dsa5', {
+        type: 'queryResult',
+        payload: { messageId, actorId, result },
+      });
+      return;
+    }
+
     await this.enqueueMessageUpdate(messageId, async (state) => {
       const recipient = state.recipients.find((entry) => entry.actorId === actorId);
-      if (!recipient || state.finalized) return state;
+      if (!recipient) return state;
+
+      const linkedRollId = result.resultDetails?.messageId;
+      const isLinkedRollRefresh = state.finalized
+        && linkedRollId
+        && recipient.resultDetails?.messageId === linkedRollId;
+
+      if (state.finalized && !isLinkedRollRefresh) return state;
+      if (this.TERMINAL_STATES.has(recipient.status) && !isLinkedRollRefresh) return state;
 
       recipient.status = result.status;
       recipient.resultDetails = result.resultDetails ?? null;
       recipient.designatedUserId = recipient.designatedUserId || result.userId || null;
 
-      if (this.canAutoFinalize(state)) state.finalized = true;
+      if (!state.finalized && this.canAutoFinalize(state)) state.finalized = true;
       return state;
     });
   }

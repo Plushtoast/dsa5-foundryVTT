@@ -1,10 +1,14 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
 import { JournalEntryTargetHelper } from "./journalentrytargethelper.js";
+import ListKeyboardNavigation from "./list_keyboard_navigation.js";
 export class PersonaeDramatis {
     static #parent;
     static #lastActiveListType = '0';
     static #lastSelectedActor = null;
+    static #collapsedGroups = new Set();
+    static #listFilters = { important: false, visible: false };
     #search;
+    #keyboardNavigation;
 
     constructor(parent) {
         PersonaeDramatis.#parent = parent;
@@ -37,6 +41,8 @@ export class PersonaeDramatis {
         toggleVisibility: PersonaeDramatis.toggleVisibility,
         switchList: PersonaeDramatis.switchList,
         newPersona: PersonaeDramatis.newPersona,
+        personaeListMenu: PersonaeDramatis.personaeListMenu,
+        togglePersonaGroup: PersonaeDramatis.togglePersonaGroup,
     }
 
     static #findExistingPersona(actorUuid) {
@@ -53,6 +59,10 @@ export class PersonaeDramatis {
 
     static async addActorToPersonae(actor) {
         if (!game.user.isGM || !actor) return;
+        if (!DSAPersonaEntry.isValidActor(actor)) {
+            ui.notifications.warn('PERSONAE.actorTypeNotAllowed', { localize: true });
+            return;
+        }
 
         const existing = this.#findExistingPersona(actor.uuid);
         if (existing) {
@@ -110,6 +120,13 @@ export class PersonaeDramatis {
                         juuid: parentUuid,
                         dramatisKey: key
                     };
+                    const actor = entry.actor_uuid ? fromUuidSync(entry.actor_uuid) : null;
+                    personaEntry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
+                    const shouldShowGaradan = DSAPersonaEntry.shouldShowGaradan(personaEntry, { isGM });
+                    if (shouldShowGaradan) {
+                        personaEntry.garadanClass = DSAPersonaEntry.GARADAN_CLASSES[personaEntry.garadan] || '';
+                    }
+                    personaEntry.garadanVisible = shouldShowGaradan;
                     personaeData[entry.type].push(personaEntry);
                     if (PersonaeDramatis.#lastSelectedActor &&
                         pageUuid === PersonaeDramatis.#lastSelectedActor.pageUuid &&
@@ -143,17 +160,19 @@ export class PersonaeDramatis {
 
     _groupByFaction(personaeArray) {
         if (!Array.isArray(personaeArray) || personaeArray.length === 0) return [];
-        const collator = new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+        const collator = new Intl.Collator(game.i18n?.lang, { sensitivity: 'base', numeric: true });
         const unknownFaction = _loc("PERSONAE.UnknownFaction");
         const groups = new Map();
         for (const persona of personaeArray) {
-            const faction = persona.faction || unknownFaction;
-            let bucket = groups.get(faction);
-            if (!bucket) {
-                bucket = [];
-                groups.set(faction, bucket);
+            const factions = DSAPersonaEntry.parseFactions(persona.faction, unknownFaction);
+            for (const faction of factions) {
+                let bucket = groups.get(faction);
+                if (!bucket) {
+                    bucket = [];
+                    groups.set(faction, bucket);
+                }
+                bucket.push(persona);
             }
-            bucket.push(persona);
         }
         for (const bucket of groups.values()) {
             bucket.sort((a, b) => collator.compare(a?.name || '', b?.name || ''));
@@ -163,29 +182,46 @@ export class PersonaeDramatis {
             if (fb === unknownFaction) return -1;
             return collator.compare(fa, fb);
         });
-        return sortedEntries.map(([faction, members]) => ({ faction, members }));
+        return sortedEntries.map(([faction, members]) => ({
+            faction,
+            members,
+            collapseKey: `${members[0]?.type ?? ''}:${faction}`,
+            isCollapsed: PersonaeDramatis.#collapsedGroups.has(`${members[0]?.type ?? ''}:${faction}`),
+        }));
+    }
+
+    static togglePersonaGroup(event, target) {
+        const group = target.closest('.faction-group');
+        const key = group?.dataset.groupKey;
+        if (!group || !key) return;
+
+        const collapsed = !group.classList.contains('collapsed');
+        group.classList.toggle('collapsed', collapsed);
+        target.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) PersonaeDramatis.#collapsedGroups.add(key);
+        else PersonaeDramatis.#collapsedGroups.delete(key);
     }
 
     static async #entryFromTarget(target) {
-        const { personaUuid, personaDramatisKey } = target.closest('[data-persona-uuid]')?.dataset;
-        if (!personaUuid) return;
+        const { personaUuid, key } = target.closest('[data-persona-uuid]')?.dataset ?? {};
+        if (!personaUuid) return {};
 
         const page = await fromUuid(personaUuid);
-        if (!page) return;
+        if (!page) return {};
 
-        return { entry: page?.system.personae?.[personaDramatisKey], page, personaDramatisKey };
+        return { entry: page?.system.personae?.[key], page, key };
     }
 
     static async selectActor(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
         PersonaeDramatis.#lastSelectedActor = {
             pageUuid: page.uuid,
-            dramatisKey: personaDramatisKey
+            dramatisKey: key
         };
         PersonaeDramatis.updateSelectionUI(target);
-        PersonaeDramatis.displayActorDetails(entry, page, personaDramatisKey, target);
+        PersonaeDramatis.displayActorDetails(entry, page, key, target);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -220,6 +256,7 @@ export class PersonaeDramatis {
     static async #prepareActorDetailData(entry, page, key, isGM) {
         const heros = await DSAPersonaEntry.getHeros();
         await DSAPersonaEntry.preparePersonaEntry(entry, page, key, heros);
+        entry.garadanVisible = DSAPersonaEntry.shouldShowGaradan(entry, { isGM });
         const tabs = PersonaeDramatis.prepareTabs(entry);
         return {
             ...entry,
@@ -239,6 +276,15 @@ export class PersonaeDramatis {
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', detailData);
         detailsContainer.innerHTML = detailHTML;
         PersonaeDramatis.#setupDetailListeners(container);
+    }
+
+    static #visibleListItems() {
+        const list = PersonaeDramatis.#parent.element.querySelector('.tab[data-tab="personae"].active .personae-list');
+        const activeList = list?.dataset.activeList || '0';
+        const activeContent = list?.querySelector(`.list-content[data-list-type="${activeList}"]:not(.hidden)`);
+        if (!activeContent) return [];
+
+        return Array.from(activeContent.querySelectorAll('.faction-group:not(.collapsed):not([hidden]) .persona-list-item:not([hidden])'));
     }
 
     static #notesChanged(event) {
@@ -273,18 +319,18 @@ export class PersonaeDramatis {
         section.querySelector('.relationship-label').textContent = _loc(`PERSONAE.FIELDS.personae.socialContact.level.choices.${newValue}`);
         target.className = target.className.replace(/level-\d+/g, '');
         target.classList.add(`level-${newValue}`);
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!page) return;
 
         const contactId = target.dataset.contactUuid.replaceAll('.', '_');
-        await page.update({ [`system.personae.${personaDramatisKey}.socialContact.${contactId}.level`]: newValue });
+        await page.update({ [`system.personae.${key}.socialContact.${contactId}.level`]: newValue });
     }
 
     static async editActor(event, target, options = {}) {
-        const { page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
-        if (!personaDramatisKey || !page) return;
+        const { page, key } = await PersonaeDramatis.#entryFromTarget(target);
+        if (!key || !page) return;
 
-        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: personaDramatisKey, close: !options.stay });
+        await PersonaeDramatis.#parent.openDocumentSheet(page, { currentKey: key, close: !options.stay });
     }
 
     static async showSheet(event, target, options = {}) {
@@ -294,15 +340,99 @@ export class PersonaeDramatis {
         await PersonaeDramatis.#parent.openDocumentSheet(uuid, { close: !options.stay });
     }
 
-    static async newPersona(event, target) {
-        await DSAPersonaEntry.startCreation(this, {});
+    static async newPersona(_event, _target) {
+        await DSAPersonaEntry.startCreation(PersonaeDramatis.#parent, {});
+    }
+
+    static async personaeListMenu(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const menuItems = [];
+        if (game.user.isGM) {
+            menuItems.push({
+                label: _loc('PERSONAE.Add'),
+                icon: '<i class="fas fa-plus"></i>',
+                onClick: () => PersonaeDramatis.newPersona(),
+            });
+        }
+        menuItems.push({
+            label: _loc('PERSONAE.filterImportant'),
+            icon: PersonaeDramatis.#listFilters.important
+                ? '<i class="fas fa-check"></i>'
+                : '<i class="fas fa-star"></i>',
+            onClick: () => PersonaeDramatis.#toggleListFilter('important'),
+        });
+        if (game.user.isGM) {
+            menuItems.push({
+                label: _loc('PERSONAE.filterVisible'),
+                icon: PersonaeDramatis.#listFilters.visible
+                    ? '<i class="fas fa-check"></i>'
+                    : '<i class="fas fa-eye"></i>',
+                onClick: () => PersonaeDramatis.#toggleListFilter('visible'),
+            });
+        }
+
+        const menu = new foundry.applications.ux.ContextMenu(
+            PersonaeDramatis.#parent.element,
+            '',
+            menuItems,
+            { jQuery: false, fixed: true, eventName: 'none' },
+        );
+        ui.context?.close();
+        await menu.render(target, { animate: true });
+        ui.context = menu;
+    }
+
+    static #toggleListFilter(filterKey) {
+        PersonaeDramatis.#listFilters[filterKey] = !PersonaeDramatis.#listFilters[filterKey];
+        PersonaeDramatis.#applyListFilters();
+    }
+
+    static #applyListFilters() {
+        const html = PersonaeDramatis.#parent.element.querySelector('.tab[data-tab="personae"].active .personae-list');
+        if (!html) return;
+
+        const searchInput = html.closest('.personae-list-column')?.querySelector('input.actorsearch[type=search]');
+        const query = foundry.applications.ux.SearchFilter.cleanQuery(searchInput?.value || '');
+        const rgx = query ? new RegExp(query, 'i') : null;
+        PersonaeDramatis.#filterListContent(html, query, rgx);
+    }
+
+    static #filterListContent(html, query, rgx) {
+        const activeList = html.dataset.activeList || '0';
+        const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
+        if (!activeListContent) return;
+
+        const { important: filterImportant, visible: filterVisible } = PersonaeDramatis.#listFilters;
+        const factionGroups = activeListContent.querySelectorAll('.faction-group');
+        factionGroups.forEach(factionGroup => {
+            let visibleItemsInFaction = 0;
+            const personaItems = factionGroup.querySelectorAll('.persona-list-item');
+            personaItems.forEach(entry => {
+                const matchesImportant = !filterImportant || entry.dataset.personaImportant === 'true';
+                const matchesVisible = !filterVisible || entry.dataset.personaVisible === 'true';
+                let matchesSearch = true;
+                if (query) {
+                    const name = entry.querySelector('.persona-list-name')?.textContent || '';
+                    const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
+                    const factions = entry.dataset.personaFactions || '';
+                    const tags = entry.dataset.personaTags || '';
+                    matchesSearch = [name, faction, factions, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+                }
+                const isMatch = matchesImportant && matchesVisible && matchesSearch;
+                entry.hidden = !isMatch;
+                if (isMatch) visibleItemsInFaction++;
+            });
+            factionGroup.hidden = visibleItemsInFaction === 0;
+        });
     }
 
     static async toggleVisibility(event, target) {
-        const { entry, page, personaDramatisKey } = await PersonaeDramatis.#entryFromTarget(target);
+        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
         if (!entry) return;
 
-        await page.update({ [`system.personae.${personaDramatisKey}.visible`]: !entry.visible });
+        await page.update({ [`system.personae.${key}.visible`]: !entry.visible });
         const i = target.querySelector('i');
         i.classList.toggle('fa-eye', !entry.visible);
         i.classList.toggle('fa-eye-slash', entry.visible);
@@ -328,6 +458,7 @@ export class PersonaeDramatis {
         if (mainList) {
             mainList.dataset.activeList = listType;
         }
+        PersonaeDramatis.#applyListFilters();
         if (clearSelection) {
             PersonaeDramatis.clearSelection();
             PersonaeDramatis.clearDetails(personaeList);
@@ -399,6 +530,7 @@ export class PersonaeDramatis {
             callback: this.#onSearchFilter.bind(this)
         });
         this.#search.bind(this.element);
+        PersonaeDramatis.#applyListFilters();
         this.element.addEventListener('click', (event) => {
             const switchBtn = event.target.closest('.list-switch-btn');
             if (switchBtn) {
@@ -406,35 +538,22 @@ export class PersonaeDramatis {
             }
         });
         PersonaeDramatis.#setupDetailListeners(this.element);
+        this.#keyboardNavigation ??= new ListKeyboardNavigation({
+            parent: PersonaeDramatis.#parent,
+            tabId: 'personae',
+            getItems: () => PersonaeDramatis.#visibleListItems(),
+            selectItem: (event, item) => PersonaeDramatis.selectActor(event, item),
+            detailTabsSelector: '.tab[data-tab="personae"].active .persona-details-container nav.tabs [data-group][data-tab]',
+        });
+        this.#keyboardNavigation.bind(this.element);
     }
 
     #onSearchFilter(_event, query, rgx, html) {
-        const activeList = html.dataset.activeList || '0';
-        const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
-        if (!activeListContent) return;
-
-        const factionGroups = activeListContent.querySelectorAll('.faction-group');
-        factionGroups.forEach(factionGroup => {
-            let visibleItemsInFaction = 0;
-            const personaItems = factionGroup.querySelectorAll('.persona-list-item');
-            personaItems.forEach(entry => {
-                if (!query) {
-                    entry.hidden = false;
-                    visibleItemsInFaction++;
-                    return;
-                }
-                const name = entry.querySelector('.persona-list-name')?.textContent || '';
-                const faction = factionGroup.querySelector('.faction-name')?.textContent || '';
-                const tags = entry.dataset.personaTags || '';
-                const isMatch = [name, faction, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-                entry.hidden = !isMatch;
-                if (isMatch) visibleItemsInFaction++;
-            });
-            factionGroup.hidden = visibleItemsInFaction === 0;
-        });
+        PersonaeDramatis.#filterListContent(html, query, rgx);
     }
 
     _tearDown(options) {
         this.#search?.unbind();
+        this.#keyboardNavigation?.unbind();
     }
 }

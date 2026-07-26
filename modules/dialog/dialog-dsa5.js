@@ -53,6 +53,15 @@ export default class DSA5Dialog extends DialogShared {
         },        
       });
     }
+    const postFunction = testData.extra?.options?.postFunction;
+    if (postFunction?.functionName === 'game.dsa5.queries.RollRequestService.postRollRequestResult') {
+      buttons.push({
+        action: 'skip',
+        label: 'DSAQUERIES.COMMANDS.skip',
+        icon: 'fas fa-forward',
+        callback: () => resolve({ skipped: true }),
+      });
+    }
     return buttons;
   }
 

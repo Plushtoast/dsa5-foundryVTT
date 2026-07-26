@@ -3,11 +3,20 @@
 
     .iniItem.newRound,
     .newRound {
-        border-color: #496fd7;
-        background-color: #496fd72d;
-        box-shadow: inset 0px 0px 10px #496fd7;
-        border-top-left-radius: 0px;
-        border-bottom-left-radius: 0px;
+        background-color: rgba(73, 111, 215, 0.65);
+    }
+
+    .iniRoundSeparator {
+        display: inline-block;
+        width: 4px;
+        height: var(--iniTrackerSize);
+        margin: 0 4px;
+        vertical-align: top;
+        background-color: #496fd7;
+        box-shadow: 0 0 6px rgba(73, 111, 215, 0.85);
+        border-radius: 2px;
+        cursor: default;
+        list-style: none;
     }
 
     .dragHandler {
@@ -73,6 +82,7 @@
     }
 
     li {
+        position: relative;
         width: var(--iniTrackerSize);
         height: var(--iniTrackerSize);
         box-shadow: none;
@@ -130,6 +140,13 @@
             left: unset;
         }
 
+        .chase-distance-overlay {
+            left: 0;
+            right: unset;
+            top: 0;
+            z-index: 2;
+        }
+
         .ongoing {
             bottom: 4px;
             top: unset;
@@ -139,6 +156,13 @@
             left: 4px;
             bottom: 4px;
             right: unset;
+        }
+
+        .chase-rolled-mark {
+            left: unset;
+            right: 4px;
+            bottom: 4px;
+            color: #7dcea0;
         }
     }
 
@@ -160,6 +184,170 @@
 
         li:last-child {
             margin-bottom: 0.25rem;
+        }
+    }
+
+    .mkr-phase-badge-row {
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+
+        --chase-badge-height: 1.5rem;
+        --chase-badge-pad-x: 8px;
+        --chase-badge-radius: 4px;
+        --chase-badge-font: var(--font-size-11);
+
+        .mkr-phase-badge {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--chase-badge-height);
+            min-height: var(--chase-badge-height);
+            flex: 0 0 auto;
+            font-size: var(--chase-badge-font);
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 var(--chase-badge-pad-x);
+            border-radius: var(--chase-badge-radius);
+            border: 1px solid rgba(26, 92, 138, 0.7);
+            color: #fff;
+            background: rgba(26, 74, 138, 0.85);
+            white-space: nowrap;
+        }
+    }
+
+    .chase-badge-row {
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+        flex-wrap: nowrap;
+
+        --chase-badge-height: 1.5rem;
+        --chase-badge-pad-x: 8px;
+        --chase-badge-radius: 4px;
+        --chase-badge-font: var(--font-size-11);
+
+        .chase-outcome-banner {
+            flex: 1 1 auto;
+            min-width: 0;
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--chase-badge-height);
+            text-align: center;
+            font-size: var(--chase-badge-font);
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 var(--chase-badge-pad-x);
+            border-radius: var(--chase-badge-radius);
+            color: #fff;
+            white-space: nowrap;
+
+            &.caught {
+                background: rgba(180, 80, 40, 0.92);
+            }
+
+            &.escaped {
+                background: rgba(40, 120, 70, 0.92);
+            }
+        }
+
+        .chase-status-badge,
+        .chase-terrain-chip,
+        .chase-default-skill-badge {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--chase-badge-height);
+            min-height: var(--chase-badge-height);
+            flex: 0 0 auto;
+            font-size: var(--chase-badge-font);
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 var(--chase-badge-pad-x);
+            border-radius: var(--chase-badge-radius);
+            border: 1px solid transparent;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .chase-status-badge {
+            gap: 2px;
+            border-color: rgba(73, 111, 215, 0.7);
+            background: rgba(26, 74, 138, 0.85);
+
+            .chase-max-rounds-input {
+                box-sizing: border-box;
+                width: 1.75rem;
+                height: 1.15rem;
+                min-height: 0;
+                margin: 0;
+                padding: 0 2px;
+                border: 1px solid rgba(255, 255, 255, 0.45);
+                border-radius: 3px;
+                background: rgba(0, 0, 0, 0.25);
+                color: inherit;
+                font: inherit;
+                font-size: inherit;
+                font-weight: inherit;
+                line-height: 1;
+                text-align: center;
+                appearance: textfield;
+                -moz-appearance: textfield;
+
+                &::-webkit-outer-spin-button,
+                &::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+            }
+        }
+
+        .chase-terrain-chip {
+            border-color: rgba(50, 120, 100, 0.8);
+            background: rgba(30, 95, 80, 0.9);
+
+            &.context {
+                cursor: pointer;
+
+                &:hover {
+                    filter: brightness(1.1);
+                }
+            }
+        }
+
+        .chase-default-skill-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            flex: 0 0 auto;
+            height: var(--chase-badge-height);
+        }
+
+        .chase-default-skill-badge {
+            border-color: rgba(120, 90, 40, 0.75);
+            background: rgba(110, 80, 30, 0.88);
+            cursor: pointer;
+
+            &:hover {
+                filter: brightness(1.1);
+            }
+        }
+
+        .chase-default-skill-menu {
+            box-sizing: border-box;
+            width: var(--chase-badge-height);
+            height: var(--chase-badge-height);
+            min-width: var(--chase-badge-height);
+            padding: 0;
+            font-size: var(--chase-badge-font);
+            color: var(--color-text-secondary);
+            cursor: pointer;
         }
     }
 }

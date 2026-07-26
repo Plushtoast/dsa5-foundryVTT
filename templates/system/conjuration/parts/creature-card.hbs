@@ -1,0 +1,53 @@
+<div class="summoning-creature-card {{#if summary.creature.empty}}is-empty{{/if}}">
+    <div class="summoning-creature-card__portrait {{#if summary.creature.empty}}droparea{{/if}}">
+        <img src="{{summary.creature.img}}" alt="" loading="lazy" />
+        {{#unless summary.creature.empty}}
+        <span class="summoning-creature-card__badge dsa-overlay-badge">{{summary.typeName}}</span>
+        {{/unless}}
+        {{#if summary.creature.uuid}}
+        {{#unless summary.readonly}}
+        <button type="button" class="summoning-creature-card__clear icon fas fa-times noBorder dsadesignbutton"
+            data-action="clearConjuration" data-tooltip="CONJURATION.clearCreature"
+            aria-label="{{localize 'CONJURATION.clearCreature'}}"></button>
+        {{/unless}}
+        {{/if}}
+    </div>
+
+    <div class="summoning-creature-card__body">
+        <div class="summoning-creature-card__title">
+            {{#if summary.creature.uuid}}
+            <a data-action="showEntity" data-uuid="{{summary.creature.uuid}}">{{summary.creature.name}}</a>
+            {{else}}
+            <span>{{summary.creature.name}}</span>
+            {{/if}}
+        </div>
+
+        {{#if summary.creature.creatureClass}}
+        <div class="dsa-stat-row is-sub">
+            <span class="dsa-stat-row__label">{{localize "creatureClass"}}</span>
+            <span class="dsa-stat-row__value">{{summary.creature.creatureClass}}</span>
+        </div>
+        {{/if}}
+
+        {{#unless summary.creature.empty}}
+        <div class="dsa-stat-row">
+            <span class="dsa-stat-row__label">{{localize "conjuringDifficulty"}}</span>
+            <span class="dsa-stat-row__value">{{summary.difficulty.effective}}</span>
+        </div>
+
+        {{#each summary.difficulty.mods as |mod|}}
+        <div class="dsa-stat-row is-sub">
+            <span class="dsa-stat-row__label">{{mod.name}}</span>
+            <span class="dsa-stat-row__value">{{numberFormat mod.value sign=true}}</span>
+        </div>
+        {{/each}}
+
+        {{#each summary.aspMods as |mod|}}
+        <div class="dsa-stat-row is-sub">
+            <span class="dsa-stat-row__label">{{mod.name}} ({{localize "AsPCost"}})</span>
+            <span class="dsa-stat-row__value">{{numberFormat mod.value sign=true}}</span>
+        </div>
+        {{/each}}
+        {{/unless}}
+    </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="dsa5 roll-request-card roll-request-card-regeneration" data-category="{{category}}">
+  {{#if headerHtml}}
+    <div class="trap-roll-request-header">{{{headerHtml}}}</div>
+  {{/if}}
+  <p class="flexrow flexAlignCenter gap5px roll-request-header">
+    <b>{{skillName}}</b>{{#if modifierLabel}} ({{modifierLabel}}){{/if}}
+  </p>
+
+  {{#if recipients.length}}
+    <div class="roll-request-rows">
+      {{#each recipients}}
+        <div class="flexrow flexAlignCenter roll-request-row gap5px{{#if regenApplied}} regen-applied{{/if}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if regenApplied}} data-tooltip="{{localize "ROLLREQUEST.regenApplied"}}" aria-label="{{localize "ROLLREQUEST.regenApplied"}}"{{else if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
+          {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
+          {{#if resultIcon}}
+            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"><i class="fas {{resultIcon}}"></i></span>
+          {{/if}}
+          <div class="roll-request-row-side flexrow flexAlignEnd gap2px">
+            {{#if regenResults.length}}
+              <div class="roll-request-regen-stats">
+                {{#each regenResults}}
+                  <div class="roll-request-regen-stat very-small"><span>{{label}}</span>: {{value}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
+            {{#if canRoll}}
+              <button type="button" class="roll-request-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize "ROLLREQUEST.rollAction"}}" aria-label="{{localize "ROLLREQUEST.rollAction"}}"></button>
+            {{/if}}
+            {{#if canSkip}}
+              <button type="button" class="roll-request-action icon fas fa-forward" data-action="skip" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.skip"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.skip"}}"></button>
+            {{/if}}
+            {{#if canGMRoll}}
+              <button type="button" class="roll-request-action icon fas fa-dice roll-request-gm" data-action="rollOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.rollOnBehalf"}}"></button>
+            {{/if}}
+            {{#if canGMAction}}
+              <button type="button" class="roll-request-menu icon fas fa-ellipsis-vertical roll-request-gm" data-actor-id="{{actorId}}" data-tooltip="{{localize "DSAQUERIES.COMMANDS.more"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.more"}}"></button>
+            {{/if}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="very-small">{{localize "DSAQUERIES.NOTIFICATIONS.noActors"}}</p>
+  {{/if}}
+
+  {{#unless finalized}}
+    <div class="roll-request-gm flexrow gap5px margin-top">
+      <button type="button" class="roll-request-action" data-action="finalize" data-tooltip="{{localize "DSAQUERIES.COMMANDS.finalize"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.finalize"}}"><i class="fas fa-check"></i></button>
+    </div>
+  {{/unless}}
+</div>

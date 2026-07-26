@@ -2,6 +2,7 @@
 
     {{!-- Encounter Controls --}}
     {{#if user.isGM}}
+    {{#if (or displayCycle combats.length)}}
     <nav class="encounters {{ css }}" aria-label="{{ localize "COMBAT.NavLabel" }}">
 
         {{!-- Cycle Display --}}
@@ -26,9 +27,9 @@
         
         <button type="button" class="inline-control icon fa-solid fa-gear" data-action="trackerSettings"
                 data-tooltip="COMBAT.Settings" aria-label="{{ localize "COMBAT.Settings" }}"></button>
-        <button type="button" class="inline-control combat-control icon {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
+        <button type="button" class="inline-control combat-control icon combat-mode-control fas {{combatModeIcon}}" data-tooltip="{{combatModeTooltip}}" {{#unless combats.length}}disabled{{/unless}} aria-label="{{ localize combatModeTooltip }}"></button>
         {{!-- Tabbed Display --}}
-        {{else if combats.length}}
+        {{else}}
         <button type="button" class="inline-control icon fa-solid fa-plus" data-action="createCombat"
                 data-tooltip="COMBAT.Create" aria-label="{{ localize "COMBAT.Create" }}"></button>
         {{#each combats}}
@@ -40,32 +41,42 @@
         
         <button type="button" class="inline-control icon fa-solid fa-gear" data-action="trackerSettings"
                 data-tooltip="COMBAT.Settings" aria-label="{{ localize "COMBAT.Settings" }}"></button>
-        <button type="button" class="inline-control combat-control icon fas {{ifThen isBrawling 'fa-hand-fist fa-rotate-90' 'fa-shield'}}" data-tooltip="{{ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name'}}" {{#unless combats.length}}disabled{{/unless}} data-action="convertToBrawl" aria-label="{{ localize (ifThen isBrawling 'BRAWLING.default' 'BRAWLING.name') }}"></button>
+        <button type="button" class="inline-control combat-control icon combat-mode-control fas {{combatModeIcon}}" data-tooltip="{{combatModeTooltip}}" {{#unless combats.length}}disabled{{/unless}} aria-label="{{ localize combatModeTooltip }}"></button>
         <button type="button" class="inline-control icon fa-solid fa-info" data-action="combatRules"
-                data-tooltip="COMBATTRACKER.actionHint" aria-label="{{ localize "COMBATTRACKER.actionHint" }}"></button>
-        {{!-- No Combats --}}
-        {{else}}
-        <button type="button" class="combat-control-lg" data-action="createCombat">
-            <i class="fa-solid fa-plus" inert></i>
-            <span>{{ localize "COMBAT.Create" }}</span>
-        </button>
-
+                data-tooltip="{{combatRulesTooltip}}" aria-label="{{ localize combatRulesTooltip }}"></button>
         {{/if}}
     </nav>
+    {{else}}
+    <div class="combat-mode-start-panel">
+        <strong class="combat-mode-start-title">{{ localize "COMBAT.MODE.startTitle" }}</strong>
+        {{#each combatModeStarts}}
+        <div class="combat-mode-start">
+            <button type="button" class="combat-control-lg combat-mode-start-btn" data-action="createCombatMode" data-mode="{{id}}">
+                <i class="fas {{icon}}" inert></i>
+                <span>{{ localize label }}</span>
+            </button>
+            <p class="hint combat-mode-start-hint">{{ localize hint }}</p>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
     {{/if}}
 
+    {{#if combats.length}}
     <div class="encounter-controls {{#if hasCombat}}combat{{/if}}">
 
         {{!-- Combat Status --}}
         <strong class="encounter-title">
-            {{#if combats.length}}
             {{#if combat.round}}
-            {{ localize "COMBAT.Round" round=combat.round }}
+            {{#if isNavalMkr}}
+            {{ localize "COMBAT.Round" round=combat.round }} · MKR {{mkr.mkrRound}}
+            {{else if isChase}}
+            {{ localize "COMBAT.Round" round=combat.round }} · {{localize (ifThen isVehicleChase "COMBAT.MODE.vehicleChase" "COMBAT.MODE.chase")}}
             {{else}}
-            {{ localize "COMBAT.NotStarted" }}
+            {{ localize "COMBAT.Round" round=combat.round }}
             {{/if}}
             {{else}}
-            {{ localize "COMBAT.None" }}
+            {{ localize "COMBAT.NotStarted" }}
             {{/if}}
         </strong>
 
@@ -74,5 +85,15 @@
                 {{#unless (and user.isGM hasCombat)}}disabled{{/unless}}></button>
 
     </div>
+    {{else}}
+    {{#unless user.isGM}}
+    <div class="encounter-controls">
+        <strong class="encounter-title">{{ localize "COMBAT.None" }}</strong>
+    </div>
+    {{/unless}}
+    {{/if}}
+
+    {{> systems/dsa5/templates/system/combattracker/mkr-bar.hbs}}
+    {{> systems/dsa5/templates/system/combattracker/chase-bar.hbs}}
 
 </header>

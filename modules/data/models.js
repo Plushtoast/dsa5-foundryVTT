@@ -40,6 +40,7 @@ import CharacterData from './actor/character.js';
 import CreatureData from './actor/creature.js';
 import NPCData from './actor/npc.js';
 import GroupData from './actor/group.js';
+import VehicleData from './actor/vehicle.js';
 import DSAStringField from './fields/dsa_string_field.js';
 import { ItemDataModel } from './baseitem.js';
 import { ActorDataModel } from './baseactor.js';
@@ -95,6 +96,7 @@ export const ActorDataModels = {
     creature: CreatureData,
     npc: NPCData,
     group: GroupData,
+    vehicle: VehicleData,
     ActorDataModel
 }
 

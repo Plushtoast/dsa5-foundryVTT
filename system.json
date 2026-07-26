@@ -2,8 +2,8 @@
     "id": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
-    "version": "8.0.0",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/8.0.0/dsa5-foundryVTT-8.0.0.zip",
+    "version": "8.0.22",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/8.0.22/dsa5-foundryVTT-8.0.22.zip",
     "authors": [
         {
             "name": "Plushtoast"
@@ -115,8 +115,8 @@
     "primaryTokenAttribute": "status.wounds",
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
-        "minimum": "14",
-        "verified": "14",
+        "minimum": "14.364",
+        "verified": "14.365",
         "maximum": "14"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",
@@ -151,6 +151,12 @@
                 "htmlFields": [ "personae.*.description", "personae.*.notes" ],
                 "filePathFields": {
                     "personae.*.img": ["IMAGE"]
+                }
+            },
+            "citydetails": {
+                "htmlFields": [ "details.*.description", "details.*.gmNotes" ],
+                "filePathFields": {
+                    "details.*.img": ["IMAGE"]
                 }
             }
         },
@@ -188,6 +194,7 @@
                     "behavior.value",
                     "flight.value",
                     "specialRules.value",
+                    "details.notes.value",
                     "details.notes.ownerdescription"
                 ]
             },
@@ -203,6 +210,13 @@
                 "htmlFields": [
                     "details.biography",
                     "details.notes"
+                ]
+            },
+            "vehicle": {
+                "htmlFields": [
+                    "description.value",
+                    "details.notes.value",
+                    "details.notes.ownerdescription"
                 ]
             }
         },
@@ -421,8 +435,7 @@
                     "description.value",
                     "gmdescription.value",
                     "effect",
-                    "recipes",
-                    "infos"
+                    "recipes"
                 ]
             },
             "magicalsign": {

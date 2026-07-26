@@ -14,8 +14,37 @@
 {{/if}}
 
 {{formGroup systemFields.damage.fields.value value=document.system.damage.value scope=scope localize=true}}
-{{formGroup systemFields.reloadTime.fields.value value=document.system.reloadTime.value scope=scope localize=true}}
-{{formGroup systemFields.reach.fields.value value=document.system.reach.value scope=scope localize=true}}
+
+{{#if parent.system.siegeRules}}
+  {{formGroup systemFields.damage.fields.stp value=parent.system.damage.stp localize=true}}
+{{/if}}
+
+
+{{#if parent.system.siegeRules}}
+  <div class="form-group">
+    <label>{{localize 'reloadTime'}}</label>
+    <div class="form-fields">
+      {{formInput systemFields.reloadTime.fields.value value=document.system.reloadTime.value scope=scope}}
+      <div class="flex0 flexrow" data-tooltip='{{localize 'siege.ProMKRTooltip'}}'>
+        <label>{{localize 'siege.ProMKR'}}</label>
+        {{document.system.schussProMKR}}
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>{{localize 'reach'}}</label>
+    <div class="form-fields">
+      {{formInput systemFields.reach.fields.value value=document.system.reach.value scope=scope}}
+      <div class="flex0 flexrow" data-tooltip='{{localize 'siege.RETooltip'}}'>
+        <label class="tabletitle">{{localize 'siege.RE'}}</label>
+        {{document.system.rwRE}}
+      </div>
+    </div>
+  </div>
+{{else}}
+  {{formGroup systemFields.reloadTime.fields.value value=document.system.reloadTime.value scope=scope localize=true}}
+  {{formGroup systemFields.reach.fields.value value=document.system.reach.value scope=scope localize=true}}
+{{/if}}
 {{formGroup systemFields.ammunitiongroup.fields.value value=document.system.ammunitiongroup.value scope=scope localize=true}}
 {{formGroup systemFields.combatskill.fields.value value=document.system.combatskill.value scope=scope choices=(selfObj combatskills) localize=true}}
 

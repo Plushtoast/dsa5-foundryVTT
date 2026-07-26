@@ -3,6 +3,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { showPatchViewer } from '../maintenance/migrator.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { showPopout } from '../../hooks/imagepopouttochat.js';
+import GroupCheck from '../rolls/group-check.js';
 import ChatCommandService from './chat_command_service.js';
 import RollRequestService from '../queries/roll-request.js';
 import ItempackageData from '../../data/item/itempackage.js';
@@ -111,10 +112,15 @@ export default class DSA5ChatListeners {
     const actor = DSA5_Utility.emptyActor(attrs);
 
     if (json.attrs) {
-      const attrs = json.attrs.split(',');
+      const attrValues = json.attrs.split(',');
 
-      for (let i = 1; i <= attrs.length; i++) {
-        actor.system.characteristics[skill.system[`characteristic${i}`].value].initial = Number(attrs[i - 1]) || 12;
+      for (let i = 1; i <= attrValues.length; i++) {
+        const charKey = skill.system[`characteristic${i}`].value;
+        const val = Number(attrValues[i - 1]) || 12;
+        actor.system.characteristics[charKey].initial = val;
+        if (actor.emptyActor?.system?.characteristics?.[charKey]) {
+          actor.emptyActor.system.characteristics[charKey].initial = val;
+        }
       }
       actor.prepareData();
     }
@@ -160,12 +166,9 @@ export default class DSA5ChatListeners {
       {
         label: _loc('HELP.groupcheck'),
         icon: 'fas fa-users',
-        onClick: () =>
-          ChatCommandService.openSkillActorDialog('HELP.groupcheck', {
-            filterFn: (x) => x.type === 'skill',
-            onSubmit: (name, type, modifier) => ChatCommandService.groupCheck(name, modifier),
-          }),
+        onClick: () => GroupCheck.openDialog(),
       },
+      ...ChatCommandService.getRegisteredHelpMenuItems(),
     ].filter(Boolean);
   }
 }

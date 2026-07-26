@@ -1,0 +1,7 @@
+<article class="module-card book-entry book-card" data-book-id="{{item.id}}" data-book-type="{{section.type}}">
+    {{#if isGM}}<button type="button" class="book-card__toggle icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="{{section.type}}" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
+    {{#if (and section.allowRemove isGM)}}<button type="button" class="book-card__remove icon noBorder dsadesignbutton fa-solid fa-trash" data-tooltip="{{localize 'Book.removeCustomBook'}}" data-action="removeCustomBook" data-itemid="{{item.id}}" aria-label="{{localize 'Book.removeCustomBook'}}"></button>{{/if}}
+    <button type="button" class="module-card__cover noBorder dsadesignbutton" data-action="loadBook" data-type="{{section.type}}" data-tooltip="{{item.displayName}}">
+        {{#if item.splash}}<img src="{{item.splash}}" alt="{{item.displayName}}" loading="lazy">{{/if}}
+    </button>
+</article>

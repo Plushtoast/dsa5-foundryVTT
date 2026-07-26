@@ -16,27 +16,35 @@ import DSA5ChatAutoCompletion from '../system/sidebar/chat_autocompletion.js';
 import Riding from '../system/automation/riding.js';
 import ForeignFieldEditor from '../system/helpers/foreignFieldEditor.js';
 import { AddEffectDialog } from '../system/guiapps/tokenHotbar2.js';
-import { RangeSelectDialog, transferBagWithContents } from '../hooks/itemDrop.js';
+import { RangeSelectDialog, fetchBagItems, transferBagWithContents } from '../hooks/itemDrop.js';
 import DSA5Payment from '../system/payment/payment.js';
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import { Trade } from './trade.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import { DefaultAppv2 } from './baseapp.js';
+import { TRADITION_ITEM_KINDS, buildTraditionItemUpdate } from './tradition-items.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
 import MoneyTracker from '../system/orwell/money-tracker.js';
 import { SpeedSelector } from './speedselector.js';
 import { DSA5CombatTracker } from '../combat/combat_tracker.js';
 import { ItemFactory } from '../item/item-factory.js';
+import GroupData from '../data/actor/group.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
 import ItempackageData from '../data/item/itempackage.js';
+import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
+import PowersourceBar from '../system/enhancement/powersource-bar.js';
+import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
+import { combatPartTemplates } from './template-configs.js';
+import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
+
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
-const { TextEditor } = foundry.applications.ux;
+const { TextEditor, ContextMenu, SearchFilter, DragDrop } = foundry.applications.ux;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static propertiesToEnrich = [
@@ -64,6 +72,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       this.openDetails = Array.from(this.element.querySelectorAll('.expandDetails.shown'), el => el.closest('.item')?.dataset.itemId).filter(Boolean);
     }
     return await super.render(options, _options);
+  }
+
+  _replaceHTML(result, content, options) {
+    // Foundry restores root-part scroll before <template> placeholders receive their child parts, which clamps .sheet-body to 0.
+    const sheetBodyScrollTop = content.querySelector('.sheet-body')?.scrollTop;
+    super._replaceHTML(result, content, options);
+    if (sheetBodyScrollTop) content.querySelector('.sheet-body')?.scrollTo({ top: sheetBodyScrollTop });
   }
 
   _preSyncPartState(partId, newElement, priorElement, state) {
@@ -142,7 +157,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     combat: {
       template: 'systems/dsa5/templates/actors/actor-combat.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/actors/parts/combatskills.hbs'],
+      templates: [...combatPartTemplates],
     },
     skills: {
       template: 'systems/dsa5/templates/actors/actor-talents.hbs',
@@ -192,29 +207,32 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       library: this._openLibrary,
       locksheet: this._changeAdvanceLock,
       skillSelect: { handler: this._skillSelect, buttons: [0, 2] },
-      rollDisease: this._rollDisease,
       conditionEdit: this._conditionEdit,
       chCollapse: this._chCollapse,
       statusCreate: this._statusCreate,
       itemDropdown: this._itemDropdown,
       itemEdit: this._itemEdit,
-      chValue: this._chValue,
       itemContextMenu: this._itemContextMenu,
       weaponContextMenu: this._weaponContextMenu,
       statusContextMenu: this.#statusContextMenu,
       bulkInventoryContextMenu: this._bulkInventoryContextMenu,
-      chStatus: this._chStatus,
       filterTalents: this._filterTalents,
+      combatRules: this._combatRules,
+      collapseHeader: this._collapseHeader,
+      conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
+      editKeepField: this._editKeepField,
+      ...CompanionHandler.getSheetActions(),
+    },
+    ownerRollActions: {
+      rollDisease: this._rollDisease,
+      chValue: this._chValue,
+      chStatus: this._chStatus,
       chRegenerate: this._chRegenerate,
       chWeaponless: this._chWeaponless,
       chFallingDamage: this._chFallingDamage,
-      combatRules: this._combatRules,
       chRollCombat: this._chRollCombat,
-      collapseHeader: this._collapseHeader,
       rollAggregatedProbe: { handler: this._handleAggregatedProbe, buttons: [0, 2] },
-      conditionShow: { handler: this._conditionShow, buttons: [0, 2] },
       rollAnySkill: this._rollAnySkill,
-      ...CompanionHandler.getSheetActions(),
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
@@ -227,11 +245,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       itemToggle: this._itemToggle,
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
       traditionDelete: this._deleteTraditionArtifact,
+      traditionItemDelete: this._deleteTraditionItem,
       swapWeaponHand: this._swapWeaponHand,
       swapWeaponHandSlot: this._swapWeaponHandSlot,
       toggleWeaponOffHand: this._toggleWeaponOffHand,
       toggleIgnoreWeaponHandLimits: this._toggleIgnoreWeaponHandLimits,
       selectTraditionartifact: this._selectTraditionArtifact,
+      selectTraditionItem: this._selectTraditionItem,
       statusAdd: { handler: this._statusAdd, buttons: [0, 2] },
       disableRegeneration: this._disableRegeneration,
       conditionValue: { handler: this._conditionValue, buttons: [0, 2] },
@@ -241,6 +261,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       onUseEffect: { handler: this._onMacroUseEffect, buttons: [0, 2] },
       quantityClick: { handler: this._quantityClick, buttons: [0, 2] },
       unequippedWeaponMenu: { handler: this._unequippedWeaponMenu, buttons: [0] },
+      configureActorEffect: this._configureActorEffect,
+      powersourceEdit: this._powersourceEdit,
       ...CompanionHandler.getOwnerSheetActions(),
     },
     form: {
@@ -277,7 +299,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           label: 'PERSONAE.addActor',
           icon: 'fas fa-address-book',
           visible: function () {
-            return game.user.isGM;
+            return game.user.isGM && this.actor.type !== 'group';
           },
         },
         {
@@ -422,13 +444,23 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     sheetData.systemFields = this.document.system.schema?.fields;
     sheetData.limited = this.actor.limited;
     sheetData.owner = this.actor.isOwner;
+    sheetData.notesReadOnly = this.showLimited() && !this.isEditable;
+    sheetData.notesInlineEditable = sheetData.owner && !sheetData.notesReadOnly;
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
+    PowersourceBar.prepareSheetContext(this.actor, sheetData.prepare);
     sheetData.isGM = game.user.isGM;
+    sheetData.isBrawling = !!game.combat?.isBrawling;
     sheetData.horseSpeeds = Object.keys(Riding.speedKeys).reduce((acc, key) => {
       acc[key] = `RIDING.speeds.${key}`;
       return acc;
     }, {});
+    sheetData.ridingModes = sheetData.systemFields?.horse?.fields?.isRiding?.choices ?? {};
     await DSA5StatusEffects.prepareActiveEffects(this.actor, sheetData);
+    sheetData.conditions ??= [];
+    sheetData.cumulativeConditions ??= [];
+    sheetData.transferedConditions ??= [];
+    sheetData.manualConditions ??= [];
+    sheetData.prepare.itemModifiers ??= this.actor.system.itemModifiers ?? {};
     await this.prepareEnrichedFields(sheetData, this.constructor.propertiesToEnrich);
     return sheetData;
   }
@@ -618,6 +650,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     new DialogActorConfig(this.actor, {}).render(true);
   }
 
+  static _configureActorEffect(_ev, target) {
+    if (!this.isEditable) return;
+    const config = ActorActiveEffectValueDialog.parseTriggerConfig(target);
+    if (!config.key) return;
+    ActorActiveEffectValueDialog.show(this.actor, config);
+  }
+
   static async _changeAdvanceLock(ev, target) {
     const element = this.element.querySelector('[data-action="locksheet"]');
     element.classList.toggle('fa-lock');
@@ -731,11 +770,43 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await item.system.swapNumberWeaponHands();
   }
 
+  _toggleDisabled(disabled) {
+    super._toggleDisabled(disabled);
+    if (!disabled) return;
+    this.element?.querySelectorAll('.keep-field-edit[data-action="editKeepField"]').forEach((button) => {
+      button.disabled = false;
+    });
+  }
+
+  static _editKeepField(_ev, target) {
+    const groupbox = target.closest('.keepFieldsEnabled');
+    if (!groupbox) return;
+
+    const attr = groupbox.dataset.attr;
+    const name = groupbox.dataset.name;
+    if (!attr) return;
+
+    const dialogId = `foreign-field-editor-${this.actor.id}-${attr.replace(/^system\./, '').replace(/\./g, '-')}`;
+    const existing = foundry.applications.instances.get(dialogId);
+    if (existing) {
+      existing.bringToTop();
+      return;
+    }
+
+    new ForeignFieldEditor(this.actor.id, attr, name, { id: dialogId }).render(true);
+  }
+
   static async _skillSelect(ev, target) {
     const itemId = this._getItemId(target);
     const skill = this.actor.items.get(itemId);
 
     if (ev.button == 0) {
+      if (!this.isEditable) {
+        ui.notifications.warn('DSAError.RollPermission', { localize: true });
+        return;
+      }
+      if (await SummoningFlow.interceptRoll(this.actor, skill)) return;
+
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
       this.actor.basicTest(setupData);
     } else if (ev.button == 2) skill.sheet.render(true);
@@ -939,28 +1010,28 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const html = $(this.element);
     resizeListener(html.find('.window-content'))
 
-    new foundry.applications.ux.ContextMenu(this.element, '.item .withContext', [], {
+    new ContextMenu(this.element, '.item .withContext', [], {
       onOpen: this._onItemContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.combat-weapon', [], {
+    new ContextMenu(this.element, '.combat-weapon', [], {
       onOpen: this._onWeaponItemContext.bind(this),
       jQuery: false,
       fixed: true
     });
 
-    new foundry.applications.ux.ContextMenu(this.element, '.unequipped-weapon-menu', [], {
+    new ContextMenu(this.element, '.unequipped-weapon-menu', [], {
       onOpen: this._onUnequippedWeaponContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.effectConfig', [], {
+    new ContextMenu(this.element, '.effectConfig', [], {
       onOpen: this._onStatusEffectContext.bind(this),
       jQuery: false,
       fixed: true
     });
-    new foundry.applications.ux.ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
+    new ContextMenu(this.element, '.inventory-bulk-actions-menu', [], {
       onOpen: this._onBulkInventoryContext.bind(this),
       jQuery: false,
       fixed: true,
@@ -1096,19 +1167,19 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     DSA5ChatAutoCompletion.bindRollCommands(html);
 
-    this.#talentSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#talentSearch ??= new SearchFilter({
       inputSelector: ".talentSearch",
       contentSelector: ".allTalents",
       callback: this._filterTalents.bind(this)
     });
     this.#talentSearch.bind(this.element);
-    this.#gearSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#gearSearch ??= new SearchFilter({
       inputSelector: ".gearSearch",
       contentSelector: "[data-application-part=inventory]",
       callback: this._filterGear.bind(this)
     });
     this.#gearSearch.bind(this.element);
-    this.#conditionSearch ??= new foundry.applications.ux.SearchFilter({
+    this.#conditionSearch ??= new SearchFilter({
       inputSelector: ".conditionSearch",
       contentSelector: ".statusEffectMenu",
       callback: this._filterConditions.bind(this)
@@ -1118,8 +1189,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     bindImgToCanvasDragStart(html, 'img.charimg');
 
     Riding.onRender(html, this.actor);
-
-    this._bindKeepFieldsEnabled(html);
 
     if (!this.isEditable) return;
 
@@ -1136,7 +1205,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     });
 
     //todo we could remove this if every .item is replaced with .draggable (parent class has draggable attachment listener)
-    new foundry.applications.ux.DragDrop.implementation({
+    new DragDrop.implementation({
       dragSelector: ".item",
       dropSelector: null,
       permissions: {
@@ -1434,6 +1503,12 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         onClick: () => new OnUseEffect(item).executeOnUseEffect(),
       },
       {
+        label: 'CONJURATION.startSummoning',
+        icon: "<i class='fas fa-hat-wizard fa-fw'></i>",
+        visible: () => SummoningFlow.isConjurationSkill(item),
+        onClick: () => SummoningFlow.open(this.actor, item),
+      },
+      {
         label: 'SHEET.DeleteItem',
         icon: "<i class='fas fa-trash fa-fw'></i>",
         onClick: () => this._itemDeleteDialog(item),
@@ -1484,7 +1559,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
           if (!partyUuid) return false;
           const party = fromUuidSync(partyUuid);
           if (!party?.system?.actors) return false;
-          return party.system.actors.has(actor);
+          if (!party.system.actors.has(actor)) return false;
+          return GroupData.getUnlockedLootDepots(party).length > 0;
         },
         onClick: () => {
           import('./group-sheet.js').then((m) => m.default.passItemToGroup(actor, item));
@@ -1541,27 +1617,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     );
   }
 
-  _bindKeepFieldsEnabled(html) {
-    if (!this.isEditable) {
-      const keepFields = html.find('.keepFieldsEnabled');
-      for (const k of keepFields) {
-        const attr = k.dataset.attr;
-        const name = k.dataset.name;
-        $(k).find('.editor').append(`<a data-attr="${attr}" data-name="${name}" class="editor-edit"><i class="fas fa-edit"></i></a>`);
-        $(k)
-          .find('.editor-edit')
-          .on('click', (ev) => this._openKeepFieldEditpage(ev));
-      }
-    }
-  }
-
-  _openKeepFieldEditpage(ev) {
-    const attr = ev.currentTarget.dataset.attr;
-    const name = ev.currentTarget.dataset.name;
-    const editor = new ForeignFieldEditor(this.actor.id, attr, name);
-    editor.render(true);
-  }
-
   static async _onMacroUseItem(ev, target) {
     const item = this.actor.items.get(this._getItemId(target));
     const onUse = new OnUseEffect(item);
@@ -1580,7 +1635,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const item = this.actor.items.get(this._getItemId(target));
 
     const cost = Number(getProperty(item, 'system.AsPCost'));
-    const paid = this.actor.applyMana(cost, 'AsP');
+    const paid = await this.actor.applyMana(cost, 'AsP');
 
     if (!paid) return;
 
@@ -1596,10 +1651,23 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
   }
 
+  static _powersourceEdit(ev, target) {
+    PowersourceChargeDialog.show(this.actor);
+  }
+
   static _selectTraditionArtifact(ev, target) {
     if (!this.isEditable) return;
 
-    new TraditionArtifactpicker(this.actor).render(true);
+    new TraditionItemPicker(this.actor, 'magical').render(true);
+  }
+
+  static _selectTraditionItem(ev, target) {
+    if (!this.isEditable) return;
+
+    const kind = target.dataset.traditionKind;
+    if (!TRADITION_ITEM_KINDS[kind]) return;
+
+    new TraditionItemPicker(this.actor, kind).render(true);
   }
 
   static _deleteTraditionArtifact(ev, target) {
@@ -1607,6 +1675,17 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     const item = this.actor.items.get(this._getItemId(target));
     item.update({ 'system.isArtifact': false });
+  }
+
+  static _deleteTraditionItem(ev, target) {
+    if (!this.isEditable) return;
+
+    const kind = target.dataset.traditionKind;
+    const config = TRADITION_ITEM_KINDS[kind];
+    if (!config) return;
+
+    const item = this.actor.items.get(this._getItemId(target));
+    item.update({ [`system.${config.flagField}`]: false });
   }
 
   _tearDown(options) {
@@ -1628,7 +1707,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         entry.hidden = false;
         continue;
       }
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -1651,7 +1730,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         entry.hidden = false;
         continue;
       }
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -1664,7 +1743,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
 
       const title = _loc(entry.querySelector('button').dataset.tooltip) || '';
-      const isMatch = [title].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
+      const isMatch = [title].some(q => rgx.test(SearchFilter.cleanQuery(q)));
       entry.hidden = !isMatch;
     }
   }
@@ -1796,6 +1875,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (!dragData) return;
 
+    this.constructor.dragHighlightData = dragData;
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
   }
 
@@ -2040,7 +2120,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
   async _handleApplication(item) {
     item = duplicate(item);
-    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name);
+    const res = this.actor.items.find((i) => i.type == item.type && i.name == item.name && i.system.skill == item.system.skill);
     if (!res) await this.actor.createEmbeddedDocuments('Item', [item]);
   }
 
@@ -2060,6 +2140,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   async _onDropActor(event, item) {
     if (item.uuid === this.actor.uuid) return false;
 
+    if (event.target?.closest?.('.conjuration-favorites-drop')) {
+      return CompanionHandler.addConjurationFavorite(this.actor, item);
+    }
+
     return await this._manageDragItems(item, item.type);
   }
 
@@ -2078,7 +2162,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     }
 
     const itemData = item.toObject();
-    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    const data = event.dsaDropData ?? {};
     RuleChaos.obfuscateDropData(itemData, data.tabsinvisible);
 
     let container_id;
@@ -2137,9 +2221,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       }
 
       const sourceActor = item.parent;
-      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      const isBagWithContents = sourceActor && this.constructor.isSourceBagWithContents(item, sourceActor);
       if (isBagWithContents) {
         await transferBagWithContents(sourceActor, this.actor, itemData);
+      } else if (item.type === 'species') {
+        await this._manageDragItems(item, item.type);
       } else {
         await this._onDropItemCreate(itemData);
       }
@@ -2147,9 +2233,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
 
     if (event.altKey && !selfTarget && DSA5.equipmentCategories.has(item.type)) {
       const sourceActor = item.parent;
-      const isBagWithContents = sourceActor && item.system.isBagWithContents;
+      const isBagWithContents = sourceActor && this.constructor.isSourceBagWithContents(item, sourceActor);
       if (!isBagWithContents) await this._handleRemoveSourceOnDrop(item);
     }
+  }
+
+  static isSourceBagWithContents(item, sourceActor) {
+    return item.type === 'equipment' && getProperty(item, 'system.equipmentType.value') === 'bags' && fetchBagItems(item, sourceActor).length > 0;
   }
 
   _itemHasPrice(data) {
@@ -2157,10 +2247,13 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 }
 
-class TraditionArtifactpicker extends DefaultAppv2 {
-  constructor(actor, optns = {}) {
-    super(optns);
+class TraditionItemPicker extends DefaultAppv2 {
+  constructor(actor, kind = 'magical', optns = {}) {
+    const config = TRADITION_ITEM_KINDS[kind];
+    super(foundry.utils.mergeObject({ window: { title: config.pickerTitle } }, optns, { inplace: false }));
     this.actor = actor;
+    this.kind = kind;
+    this.config = config;
   }
 
   static DEFAULT_OPTIONS = {
@@ -2172,7 +2265,7 @@ class TraditionArtifactpicker extends DefaultAppv2 {
       resizable: true,
     },
     actions: {
-      selectAsArtifact: this._selectAsArtifact
+      selectAsTraditionItem: this._selectAsTraditionItem
     }
   };
 
@@ -2184,12 +2277,19 @@ class TraditionArtifactpicker extends DefaultAppv2 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.items = this.actor.items.filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type));
+    data.items = this.actor.items
+      .filter((x) => ['equipment', 'armor', 'rangeweapon', 'meleeweapon'].includes(x.type))
+      .map((x) => {
+        const copy = x;
+        copy.enchantClass = x.system[this.config.flagField] ? 'rar' : (copy.enchantClass || 'common');
+        return copy;
+      });
     return data;
   }
 
-  static async _selectAsArtifact(ev, target) {
+  static async _selectAsTraditionItem(ev, target) {
     const item = this.actor.items.get(target.dataset.itemId);
-    await item.update({ 'system.isArtifact': !item.system.isArtifact });
+    const enabled = !item.system[this.config.flagField];
+    await item.update(buildTraditionItemUpdate(item, this.kind, enabled));
   }
 }

@@ -1,0 +1,27 @@
+<div class="flexcol gap5px">
+
+    <p class="hint">{{localize "POWERSOURCE.paymentDescription"}}</p>
+    <hr>
+
+    <div class="flexrow lineheight">
+        <div class="center"><b>{{localize "LeP"}}</b>: {{currentLeP}}</div>
+        <div class="center"><b>{{localize "AsP"}}</b>: {{currentAsP}}</div>
+        <div class="center"><b>{{localize "POWERSOURCE.totalCost"}}</b>: {{totalCost}}</div>
+    </div>
+
+    {{#each sources as |source|}}
+    <div class="flexrow flexAlignCenter gap2px asp-payment-row">
+        <div class="col two center ellipsis" data-tooltip="{{source.label}}">{{source.label}} ({{source.available}})</div>
+        <button type="button" data-action="shiftCost" data-dir="left" data-id="{{source.id}}" class="icon fas fa-chevron-left dsadesignbutton"></button>
+        <input type="number" class="asp-payment-input" data-id="{{source.id}}" value="{{source.allocated}}" min="{{source.min}}" max="{{source.maxAlloc}}">
+        <button type="button" data-action="shiftCost" data-dir="right" data-id="{{source.id}}" class="icon fas fa-chevron-right dsadesignbutton"></button>
+    </div>
+    {{/each}}
+
+    <hr>
+
+    <footer class="form-footer">
+        <button type="button" data-action="confirm"><i class="fas fa-check"></i> {{localize "POWERSOURCE.confirm"}}</button>
+        <button type="button" data-action="close"><i class="fas fa-times"></i> {{localize "cancel"}}</button>
+    </footer>
+</div>

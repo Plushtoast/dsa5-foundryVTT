@@ -1,7 +1,34 @@
 import DSA5 from '../config/config-dsa5.js';
+import InformationData from '../data/item/information.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
+
+const modRegex = /(-|\+)?\d+/;
+const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
+const innerRegex = /(?:\[)(.*?)(?=\])/;
+
+function formatEnricherMod(modifier) {
+  if (modifier < 0) return ` ${modifier}`;
+  if (modifier > 0) return ` +${modifier}`;
+  return '';
+}
+
+function parseSkillModSegment(segment) {
+  const modMatch = segment.match(modRegex);
+  const mod = modMatch ? Number(modMatch[0]) : 0;
+  const skill = segment.replace(modRegex, '').trim();
+  return { skill, mod };
+}
+
+function parseGcRollOptions(inner) {
+  if (optionRegex.test(inner) || !inner.includes(',')) return null;
+
+  return inner.split(',').map((segment) => {
+    const { skill, mod } = parseSkillModSegment(segment.trim());
+    return { target: skill, modifier: mod, type: 'skill' };
+  });
+}
 
 export function setEnrichers() {
   const rolls = { Rq: 'roll', Gc: 'GC', Ch: 'CH' };
@@ -21,16 +48,19 @@ export function setEnrichers() {
     Pay: '',
     GetPaid: '',
   };
-  const modRegex = /(-|\+)?\d+/;
   const payRegex = /(-|\+)?\d+(\.\d+)?/;
-  const replaceRegex = /\[[a-zA-ZöüäÖÜÄ&; -]+/;
-  const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
-  const replaceRegex2 = /[[]]/g;
-  const innerRegex = /(?:\[)(.*?)(?=\])/;
   const payStrings = {
     Pay: _loc('PAYMENT.payButton'),
     GetPaid: _loc('PAYMENT.getPaidButton'),
     AP: _loc('MASTER.awardXP'),
+  };
+  const tooltips = {
+    Rq: _loc('TT.enricherRq'),
+    Gc: _loc('TT.enricherGc'),
+    Ch: _loc('TT.enricherCh'),
+    AP: _loc('TT.enricherAP'),
+    Pay: _loc('TT.enricherPay'),
+    GetPaid: _loc('TT.enricherGetPaid'),
   };
 
   if (!DSA5.statusRegex) {
@@ -44,14 +74,46 @@ export function setEnrichers() {
 
   CONFIG.TextEditor.enrichers.push(
     {
-      pattern: /@(Rq|Gc|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
+      pattern: /@Gc\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
+      enricher: (match) => {
+        const str = match[0];
+        const inner = match[1];
+        const customTextOverride = match[2] ? match[2].replace(/[{}]/g, '') : null;
+        const rollOptions = parseGcRollOptions(inner);
+
+        if (rollOptions?.length) {
+          const label =
+            customTextOverride || rollOptions.map((optn) => `${optn.target}${formatEnricherMod(optn.modifier)}`).join(', ');
+          const rollOptionsData = encodeURIComponent(JSON.stringify(rollOptions));
+          return $(
+            `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-roll-options='${rollOptionsData}' data-label="${label}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${label}</a>`,
+          )[0];
+        }
+
+        const mod = Number(str.match(modRegex)[0]);
+        const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
+        const data = encodeURIComponent(JSON.stringify(json));
+        const skill = inner.replace(modRegex, '').replace(optionRegex, '').trim();
+        let customText = customTextOverride || skill;
+
+        if (json.attrs) {
+          customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
+        }
+
+        return $(
+          `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${customText}${formatEnricherMod(mod)}</a>`,
+        )[0];
+      },
+    },
+    {
+      pattern: /@(Rq|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match, options) => {
         const str = match[0];
         const type = match[1];
         const mod = Number(str.match(modRegex)[0]);
         const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
-        const skill = str.replace(mod, '').replace(optionRegex, '').match(replaceRegex)[0].replace(replaceRegex2, '').trim();
+        const skill = str.match(innerRegex)[1].replace(mod, '').replace(optionRegex, '').trim();
         let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]{}]/g, '') : skill;
 
         if (json.attrs) {
@@ -59,7 +121,7 @@ export function setEnrichers() {
         }
 
         return $(
-          `<a class="roll-button request-${rolls[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} ${mod}</a>`,
+          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText}${formatEnricherMod(mod)}</a>`,
         )[0];
       },
     },
@@ -71,7 +133,7 @@ export function setEnrichers() {
         const mod = Number(str.match(payRegex)[0]);
         const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : payStrings[type];
         return $(
-          `<a class="roll-button request-${type}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
+          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
         )[0];
       },
     },
@@ -88,17 +150,8 @@ export function setEnrichers() {
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];
-        if (!game.user.isGM) {
-          const templ = await renderTemplate('systems/dsa5/templates/items/infopreview-player.hbs', {
-            uuid,
-            skill: document.system.skill,
-            modifier: document.system.modifier,
-          });
-          return $(templ)[0];
-        }
 
-        const enriched = await document.system.enrichedProperties({ document });
-        const templ = await renderTemplate('systems/dsa5/templates/items/infopreview.hbs', { document, enriched });
+        const templ = await InformationData.renderInfoPreview(document, { isGM: game.user.isGM });
         return $(templ)[0];
       },
     },
@@ -179,9 +232,7 @@ export function setEnrichers() {
         packs.get(collection).push(documentId);
       }
     }
-    for (const [pack, ids] of packs.entries()) {
-      await pack.getDocuments({ _id__in: ids });
-    }
+    await Promise.all(Array.from(packs, ([pack, ids]) => pack.getDocuments({ _id__in: ids })));
     basePrimer.call(this, text);
   };
 }

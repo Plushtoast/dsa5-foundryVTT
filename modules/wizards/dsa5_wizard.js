@@ -221,22 +221,47 @@ export default class WizardDSA5 extends DefaultAppv2 {
 
   async updateSkill(skills, itemType, factor = 1, bonus = true) {
     const itemsToUpdate = [];
+    const itemsToCreate = [];
+    const selectionString = _loc('combatskillcountdivider') + ':';
+
     for (const skill of skills) {
-      const parsed = DSA5_Utility.parseAbilityString(skill.trim());
+      const trimmed = skill.trim();
+      if (!trimmed || trimmed.includes(selectionString)) continue;
+
+      const parsed = DSA5_Utility.parseAbilityString(trimmed);
       const res = this.actor.items.find((i) => {
-        return i.type == itemType && i.name == parsed.name;
+        return i.type == itemType && (i.name == parsed.original || i.name == parsed.name);
       });
       if (res) {
         itemsToUpdate.push({
           _id: res.id,
           'system.talentValue.value': Math.max(0, factor * parsed.step + (bonus ? Number(res.system.talentValue.value) : 0)),
         });
+        continue;
+      }
+
+      let item = await this.findCompendiumItem(parsed.original, [itemType]);
+      if (!item) item = await this.findCompendiumItem(parsed.name, [itemType]);
+      if (item) {
+        item = duplicate(item);
+        item.name = parsed.original;
+        if (item.system.talentValue) {
+          item.system.talentValue.value = Math.max(0, factor * parsed.step);
+        } else if (item.system.step) {
+          item.system.step.value = Math.max(0, factor * parsed.step);
+        }
+        itemsToCreate.push(item);
       } else {
         console.warn(`Could not find ${itemType} ${skill}`);
         this.errors.push(`${DSA5_Utility.categoryLocalization(itemType)}: ${skill}`);
       }
     }
-    await this.actor.updateEmbeddedDocuments('Item', itemsToUpdate, { render: false, });
+    if (itemsToUpdate.length) {
+      await this.actor.updateEmbeddedDocuments('Item', itemsToUpdate, { render: false });
+    }
+    if (itemsToCreate.length) {
+      await this.actor.createEmbeddedDocuments('Item', itemsToCreate, { render: false });
+    }
   }
 
   async _prepareContext(_options) {
@@ -271,6 +296,21 @@ export default class WizardDSA5 extends DefaultAppv2 {
     app.changeTab(tabElem.tab, tabElem.group);
     WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem.tab}']`));
     WizardDSA5.flashElem(choice.closest('div'));
+  }
+
+  _getAPCostContainer(target) {
+    return $(target).closest('.dsa-card-panel[data-cost]');
+  }
+
+  _apCostFrom(element, fallback = 0) {
+    const cost = Number($(element).attr('data-cost'));
+    return Number.isFinite(cost) ? cost : fallback;
+  }
+
+  _updateAPCost(parent, apCost) {
+    const elem = parent.find('.apCost');
+    elem.text(apCost);
+    WizardDSA5.flashElem(elem, 'emphasize2');
   }
 
   async _onRender(context, options) {

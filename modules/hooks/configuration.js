@@ -1,5 +1,6 @@
 import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
+import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
@@ -15,10 +16,6 @@ export function setupConfiguration() {
     }
     return moneyChoices;
   };
-  const styles = duplicate(DSA5.styles);
-  for (const key of Object.keys(styles)) {
-    styles[key] = _loc(styles[key]);
-  }
   const settings = {
     tabsOutsideSheet: {
       name: 'DSASETTINGS.tabsOutsideSheet',
@@ -28,6 +25,14 @@ export function setupConfiguration() {
       default: true,
       type: Boolean,
       requiresReload: true,
+    },
+    summoningRollChooser: {
+      name: 'DSASETTINGS.summoningRollChooser',
+      hint: 'DSASETTINGS.summoningRollChooserHint',
+      scope: 'world',
+      config: true,
+      default: true,
+      type: Boolean,
     },
     meleeBotchTableEnabled: {
       name: 'DSASETTINGS.meleeBotchTableEnabled',
@@ -140,6 +145,13 @@ export function setupConfiguration() {
       scope: 'client',
       config: false,
       default: 5,
+      type: Number,
+    },
+    itemLibraryListFontSizeIndex: {
+      name: 'itemLibraryListFontSizeIndex',
+      scope: 'client',
+      config: false,
+      default: 0,
       type: Number,
     },
     firstTimeStart: {
@@ -286,6 +298,14 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    enableWitchSpellPreferences: {
+      name: 'DSASETTINGS.enableWitchSpellPreferences',
+      hint: 'DSASETTINGS.enableWitchSpellPreferencesHint',
+      scope: 'world',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
     playerCanEditSpellMacro: {
       name: 'DSASETTINGS.playerCanEditSpellMacro',
       hint: 'DSASETTINGS.playerCanEditSpellMacroHint',
@@ -400,6 +420,7 @@ export function setupConfiguration() {
         "lightByDayTime": false,
         "moonAddsLight": false,
         'autoDayTimes': false,
+        "use24HourFormat": false,
         "moon": {
           "darknessAdjust": 0.15,
         },
@@ -494,10 +515,13 @@ export function setupConfiguration() {
       scope: 'client',
       config: true,
       default: 'dsa5-immersive',
-      type: String,
-      choices: styles,
+      type: new foundry.data.fields.StringField({
+        choices: () => DSA5Skin.getSettingChoices(),
+        required: true,
+      }),
       onChange: async (val) => {
-        $('body').removeClass(Object.keys(styles).join(' ')).addClass(val);
+        DSA5Skin.applyBodyClasses(val);
+        if (!DSA5Skin.isValidCombination(val)) await DSA5Skin.promptFixCombination();
       },
     },
     selfControlOnPain: {
@@ -595,6 +619,18 @@ export function setupConfiguration() {
       default: '',
       type: String,
     },
+    [`recentBooks_${game.world.id}`]: {
+      scope: 'client',
+      config: false,
+      default: '[]',
+      type: String,
+    },
+    journalBrowserViewMode: {
+      scope: 'client',
+      config: false,
+      default: 'list',
+      type: String,
+    },
     groupschips: {
       name: 'DSASETTINGS.groupschips',
       hint: 'DSASETTINGS.groupschips',
@@ -638,6 +674,33 @@ export function setupConfiguration() {
       config: false,
       default: false,
       type: Boolean,
+    },
+    itemLibraryViewMode: {
+      name: 'DSASETTINGS.itemLibraryViewMode',
+      scope: 'client',
+      config: false,
+      default: 'list',
+      type: String,
+    },
+    chargenDisplayMode: {
+      name: 'CHARGEN.displayModeSetting',
+      scope: 'client',
+      config: false,
+      default: 'fullscreen',
+      type: String,
+    },
+    chargenUtilityWidth: {
+      scope: 'client',
+      config: false,
+      default: 380,
+      type: Number,
+    },
+    eventsViewMode: {
+      name: 'DSASETTINGS.eventsViewMode',
+      scope: 'client',
+      config: false,
+      default: 'timeline',
+      type: String,
     },
     enableCombatFlow: {
       name: 'DSASETTINGS.enableCombatFlow',
@@ -880,6 +943,12 @@ export function setupConfiguration() {
       default: {},
       type: Object,
     },
+    journalBrowserCustomBooks: {
+      scope: 'world',
+      config: false,
+      default: [],
+      type: Array,
+    },
     primaryParty: {
       name: 'primaryParty',
       scope: 'world',
@@ -927,7 +996,7 @@ const exportSetting = (form) => {
   if (exportOnlyDSA) toExport = toExport.filter((x) => /^dsa5\./.test(x[0]));
 
   const exportData = {};
-  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.breadcrumbs_)/;
+  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
 
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;

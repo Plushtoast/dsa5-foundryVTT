@@ -55,3 +55,37 @@ hr {
 }
 
 /* Fixes for Foundry 13 */
+
+// Skin selection dialog: fixed contrast regardless of body skin / color scheme.
+body .application.dsa5-skin-selection-dialog {
+  color-scheme: light;
+
+  &::after {
+    content: none;
+  }
+
+  .window-header {
+    background-image: none;
+    background-color: #3d3428;
+    border: none;
+
+    .window-title {
+      color: #f5f0e8;
+      text-shadow: none;
+    }
+  }
+
+  .window-content {
+    background: #f5f0e8;
+    background-image: none;
+    color: #1a1a1a;
+  }
+
+  .dialog-content,
+  .dsa-skin-selection-dialog-content,
+  .dsa-skin-selection-dialog-content p,
+  .dsa-skin-selection-dialog-content b,
+  .dsa-skin-selection-dialog-content strong {
+    color: #1a1a1a;
+  }
+}

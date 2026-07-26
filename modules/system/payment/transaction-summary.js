@@ -8,6 +8,7 @@ export default class TransactionSummaryService {
   static QUERY_TYPE = 'dsa5.transactionSummary';
   static FLAG_KEY = 'transactionSummary';
   static TEMPLATE = 'systems/dsa5/templates/chat/payment/transaction-summary.hbs';
+  static MERCHANT_SUMMARY_DEBOUNCE_MS = 1500;
   static #merchantSessions = new Map();
 
   static register() {
@@ -123,7 +124,7 @@ export default class TransactionSummaryService {
     if (session.timeout) clearTimeout(session.timeout);
     session.timeout = setTimeout(() => {
       this.finalizeMerchantSummary(sessionKey);
-    }, 30000);
+    }, this.MERCHANT_SUMMARY_DEBOUNCE_MS);
   }
 
   static async finalizeMerchantSummary(sessionKey) {

@@ -18,11 +18,12 @@
  * @property {Object} [flatValues] - Flat modifier values from ModifierCalculator
  * @property {boolean} [extension] - True when modifier is a spell extension
  * @property {string} [source] - Human-readable origin description
+ * @property {string} [consumableId] - Actor-local item id when modifier consumes a consumable
  */
 
 export class SituationalModifier {
   /** @type {string[]} Optional data keys copied from input when present. */
-  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source'];
+  static #OPTIONAL_KEYS = ['damageBonus', 'dmmalus', 'armorPen', 'step', 'flatValues', 'extension', 'source', 'consumableId'];
 
   /** @param {SituationalModifierData} data */
   constructor(data = {}) {

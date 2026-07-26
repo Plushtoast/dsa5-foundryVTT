@@ -187,6 +187,21 @@ export default class CreatureType {
     return bonusModifiers;
   }
 
+  /**
+   * Filter conjuration AE modifiers whose target matches CreatureType ids
+   * (e.g. Elemental, Demon — constructor name without the Type suffix).
+   * @param {Actor} actor
+   * @param {Array<{target: string, value: string|number, source?: string}>} modifiers
+   * @returns {Array}
+   */
+  static matchConjurationModifiers(actor, modifiers = []) {
+    if (!actor || !modifiers?.length) return [];
+    const types = this.detectCreatureType(actor);
+    if (!types.length) return [];
+    const ids = new Set(types.map((t) => t.constructor.name.replace(/Type$/, '')));
+    return modifiers.filter((m) => ids.has(m.target));
+  }
+
   spellImmunity(spell) {
     return this.spellImmunities.some((x) => spell.includes(x));
   }

@@ -25,6 +25,7 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
                 spent: new NumberField({ initial: 0 }),
             }),
             notes: new SchemaField({
+                value: new HTMLField({ initial: '' }),
                 ownerdescription: new HTMLField({ initial: '' }),
             }),
         }),

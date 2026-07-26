@@ -8,6 +8,7 @@ import MoneyTracker from '../../system/orwell/money-tracker.js';
 import TransactionSummaryService from '../../system/payment/transaction-summary.js';
 import { InventoryBulkActionHelper } from '../../system/helpers/inventory-bulk-action.js';
 import { DefaultAppv2 } from '../baseapp.js';
+import { gearSearchPartTemplates } from '../template-configs.js';
 import { ItemFactory } from '../../item/item-factory.js';
 import { fetchBagItems, transferBagWithContents } from '../../hooks/itemDrop.js';
 
@@ -56,8 +57,13 @@ export const MerchantSheetMixin = (superclass) =>
       inventory: {
         template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
         scrollable: [''],
-        templates: ['systems/dsa5/templates/actors/parts/gearSearchV2.hbs', 'systems/dsa5/templates/actors/parts/containerContent.hbs', 'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs'],
+        templates: [
+          ...gearSearchPartTemplates,
+          'systems/dsa5/templates/actors/parts/containerContent.hbs',
+          'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
+        ],
       },
+      companion: super.PARTS.companion,
       status: super.PARTS.status,
       notes: super.PARTS.notes,
     };
@@ -137,6 +143,8 @@ export const MerchantSheetMixin = (superclass) =>
             tabs.inventory.active = true;
             tabs.inventory.cssClass = 'active';
           }
+        } else {
+          super.cleanTabs(tabs);
         }
       } else {
         super.cleanTabs(tabs);
@@ -277,12 +285,18 @@ export const MerchantSheetMixin = (superclass) =>
 
     async buyItem(dataset) {
       DSA5SoundEffect.playMoneySound();
-      await this.transferItem(this.actor, this.getTradeFriend(), dataset, true);
+      const tradeFriend = this.getTradeFriend();
+      if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
+
+      await this.transferItem(this.actor, tradeFriend, dataset, true);
     }
 
     async sellItem(dataset) {
       DSA5SoundEffect.playMoneySound();
-      await this.transferItem(this.getTradeFriend(), this.actor, dataset, false);
+      const tradeFriend = this.getTradeFriend();
+      if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
+
+      await this.transferItem(tradeFriend, this.actor, dataset, false);
     }
 
     static _tradeWrapper(ev, target) {
@@ -340,6 +354,7 @@ export const MerchantSheetMixin = (superclass) =>
         price = `${totalPrice}`;
 
         const noNeedToPay = this.noNeedToPay(target, source, price);
+        const shouldTrackMoney = !this.isLootTransfer(target, source);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
         if (hasPaid) {
           if (getProperty(item.system, 'worn.value')) item.system.worn.value = false;
@@ -355,8 +370,10 @@ export const MerchantSheetMixin = (superclass) =>
             await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res);
             await this.selfDestruction(source);
 
-            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
-            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
+            if (shouldTrackMoney) {
+              await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice * -1);
+              await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice);
+            }
           } else {
             let res;
             if (isBagWithContents) {
@@ -367,8 +384,10 @@ export const MerchantSheetMixin = (superclass) =>
             }
             await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res);
 
-            await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
-            await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice * -1);
+            if (shouldTrackMoney) {
+              await MoneyTracker.track(target, { type: 'buy', name: item.name, amount }, totalPrice);
+              await MoneyTracker.track(source, { type: 'sell', name: item.name, amount }, totalPrice * -1);
+            }
           }
         }
       }
@@ -387,6 +406,10 @@ export const MerchantSheetMixin = (superclass) =>
 
     static isTemporaryToken(target) {
       return target.system.merchant.merchantType == 'loot' && target.system.merchant.temporary;
+    }
+
+    static isLootTransfer(target, source) {
+      return target.system.merchant.merchantType == 'loot' || source.system.merchant.merchantType == 'loot';
     }
 
     static async selfDestruction(target) {
@@ -473,7 +496,8 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     getTradeFriend() {
-      return this.otherTradeFriend || game.user.character;
+      const controlledActor = canvas?.tokens?.controlled?.length === 1 ? canvas.tokens.controlled[0].actor : undefined;
+      return this.otherTradeFriend || game.user.character || controlledActor;
     }
 
     async _manageDragItems(item, typeClass) {
@@ -558,6 +582,8 @@ export const MerchantSheetMixin = (superclass) =>
         }
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;
+      data.notesReadOnly = this.merchantSheetActivated() && !this.isEditable;
+      data.notesInlineEditable = data.owner && !data.notesReadOnly;
 
       return data;
     }

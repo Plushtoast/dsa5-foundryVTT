@@ -29,7 +29,7 @@
     }
 
     .sort-btn.highlight {
-      color: darkred;
+      color: var(--dsa-danger);
     }
   }
 
@@ -59,7 +59,7 @@
     box-sizing: border-box;
 
     &:hover {
-      border-color: var(--hover-color, darkred);
+      border-color: var(--hover-color, var(--dsa-danger));
       transform: translateY(-1px);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
@@ -78,11 +78,11 @@
     }
 
     &.drag-over-left {
-      box-shadow: -3px 0 0 0 darkred;
+      box-shadow: -3px 0 0 0 var(--dsa-danger);
     }
 
     &.drag-over-right {
-      box-shadow: 3px 0 0 0 darkred;
+      box-shadow: 3px 0 0 0 var(--dsa-danger);
     }
 
     &.dsahidden {
@@ -189,7 +189,7 @@
     .avatar-source-btn {
       &.active {
         background: rgba(63, 49, 40, 0.15);
-        border-color: var(--hover-color, darkred);
+        border-color: var(--hover-color, var(--dsa-danger));
         font-weight: bold;
       }
     }

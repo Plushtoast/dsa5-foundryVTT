@@ -7,6 +7,7 @@
         <input type="search" class="search-input actorsearch" placeholder='{{localize "Book.search"}}' autofocus />
       </div>
     </div>
+    {{#if (or actorSources.length (ne selectionMode "single"))}}
     <div class="flexrow flexAlignCenter gap5px">
       {{#if actorSources.length}}
       <div class="split-button query-actor-source-toggle">
@@ -15,11 +16,14 @@
         {{/each}}
       </div>
       {{/if}}
+      {{#unless (eq selectionMode "single")}}
       <div class="flexAlignEnd split-button query-actor-select-toggle" style="margin-left:auto;">
         <button type="button" class="ui-control icon fa-solid fa-check-double" data-action="selectAll" data-tooltip="{{localize "DSAQUERIES.ACTORSOURCE.selectAll"}}" aria-label="{{localize "DSAQUERIES.ACTORSOURCE.selectAll"}}"></button>
         <button type="button" class="ui-control icon fa-solid fa-xmark" data-action="selectNone" data-tooltip="{{localize "DSAQUERIES.ACTORSOURCE.selectNone"}}" aria-label="{{localize "DSAQUERIES.ACTORSOURCE.selectNone"}}"></button>
       </div>
+      {{/unless}}
     </div>
+    {{/if}}
   </div>
-  {{> systems/dsa5/templates/dialog/parts/actor-picker-list.hbs selectionMode=selectionMode}}
+  {{> systems/dsa5/templates/dialog/parts/actor-picker-list.hbs selectionMode=selectionMode groupActorId=groupActorId}}
 </div>

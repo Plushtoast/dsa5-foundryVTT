@@ -1,6 +1,7 @@
 import { PatchViewer } from './patchviewer.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import DSA5Skin from '../helpers/skin-dsa5.js';
 
 const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
@@ -15,7 +16,7 @@ async function announceChangelog(json) {
   if (!version?.version) return;
 
   const patchName = json['default'].replace(/VERSION/g, version.version);
-  const msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://github.com/Plushtoast/dsa5-foundryVTT/wiki" target="_blank">Github</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
+  const msg = `<h1>CHANGELOG</h1><p>${patchName}. </br><b>Important updates</b>: ${version.text}</p><p>For details or proposals visit our wiki page at <a href="https://plushtoast.github.io/dsa5-foundryVTT-wiki/" target="_blank">Wiki</a> or show the <a style="text-decoration: underline;color:#ff6400;" class="showPatchViewer">Full Changelog in Foundry</a>. Have fun.</p>`;
   await ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
 }
 
@@ -111,30 +112,7 @@ function betaWarning(version, version_specific = '', indef = false) {
 }
 
 async function setDefaultSkin() {
-  const uiConfig = game.settings.get('core', 'uiConfig');
-  const dsaSkin = game.settings.get('dsa5', 'globalStyle');
-
-  if (!Object.hasOwn(DSA5.baseStyles ?? {}, dsaSkin)) return;
-
-  const setDefaults = dsaSkin !== 'dsa5-immersive' || uiConfig.colorScheme.interface !== 'light' || uiConfig.colorScheme.applications !== 'light';
-  if (!setDefaults) return;
-
-  const proceed = await foundry.applications.api.DialogV2.confirm({
-    content: `<p>${_loc('DSAError.invalidSkinCombination')}</p>`,
-    rejectClose: false,
-    modal: true
-  });
-  if (!proceed) return;
-
-  await game.settings.set('dsa5', 'globalStyle', 'dsa5-immersive');
-  await game.settings.set('core', 'uiConfig', {
-    ...uiConfig,
-    colorScheme: {
-      ...uiConfig.colorScheme,
-      interface: 'light',
-      applications: 'light',
-    },
-  });
+  await DSA5Skin.promptFixCombination();
 }
 
 export default function migrateWorld() {
@@ -148,8 +126,8 @@ export default function migrateWorld() {
     const needsMigration = currentVersion < NEEDS_MIGRATION_VERSION;
 
     if (INBETA) {
-      const version = 13
-      const msg = `<p>The currently advised foundry vtt version for DSA/TDE is v${version - 1}. Please revert back unless you want to test out the newest features and provide feedback.</p><p>This is the <b>Broken Release</b> meaning everything code wise has changes to adopt to the newest technical demands of Foundry VTT. We are already working months to adapt ApplicationV2, Data Models and other things into the new DSA/TDE version. Regardless of ridiculous effort and testing you can expect a large amount of bugs</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord</p><p>Thank you for all your feedback.</p>`;
+      const version = 14;
+      const msg = `<p>Foundry v${version} support for DSA/TDE will soon be ready while we are finalizing the testing phase. Please use this beta to test the newest features and provide feedback.</p><p>The advancement of this system is dependent on you reporting issues and providing ideas and feedback. So feel free to discuss in the DSA/TDE Foundry VTT Discord.</p><p>Thank you for all your feedback.</p>`;
       betaWarning(version, msg);
     }
 

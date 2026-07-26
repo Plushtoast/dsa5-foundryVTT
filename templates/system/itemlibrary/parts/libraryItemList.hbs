@@ -1,0 +1,43 @@
+<table class="library-list-table rowtable">
+    <thead class="library-list-thead">
+        <tr class="library-list-header-row">
+            {{#each columns as |col|}}
+            <th class="library-list-th {{#if col.sortable}}sortable{{/if}}{{#if col.sorted}} sorted-{{col.sortDir}}{{/if}}" {{#if col.sortable}}data-action="sortListColumn"{{/if}} data-sort-col="{{col.id}}" data-sortable="{{col.sortable}}">
+                {{#if col.label}}{{localize col.label}}{{else}}&nbsp;{{/if}}
+                {{#if col.sortable}}{{#if col.sorted}}<span class="sort-indicator fa-solid {{#if (eq col.sortDir 'desc')}}fa-caret-down{{else}}fa-caret-up{{/if}}"></span>{{/if}}{{/if}}
+            </th>
+            {{/each}}
+        </tr>
+    </thead>
+    <tbody>
+        {{#each items as |item|}}
+        <tr class="browser-item library-item {{item.type}}" data-uuid="{{item.uuid}}" draggable="true" data-tooltip-direction="RIGHT" data-tooltip="{{item.name}}">
+            {{#each ../columns as |col|}}
+            <td class="library-list-td library-list-td--{{col.id}}">
+                {{#if (eq col.id 'name')}}
+                <div class="library-list-namecell">
+                    <img class="library-list-img" src="{{item.img}}" alt="" />
+                    <div class="library-list-nameblock">
+                        <span class="library-list-name">{{item.name}}</span>
+                        <small class="library-list-source">{{item.compendiumLabel}}</small>
+                    </div>
+                </div>
+                {{else if (eq col.id 'type')}}
+                {{#if item.typeLabel}}{{item.typeLabel}}{{else}}-{{/if}}
+                {{else if (eq col.id 'price')}}
+                {{#if item.price}}
+                <span class="library-list-price" data-uuid="{{item.uuid}}" data-pay="true" draggable="true" data-tooltip="HELP.payDrag">
+                    <i class="fas fa-coins"></i> {{item.price}}
+                </span>
+                {{else}}-{{/if}}
+                {{else if (eq col.columnType 'plantTypes')}}
+                <div class="library-list-plant-types">{{{lookup item col.id}}}</div>
+                {{else}}
+                {{#if (lookup item col.id)}}{{lookup item col.id}}{{else}}-{{/if}}
+                {{/if}}
+            </td>
+            {{/each}}
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

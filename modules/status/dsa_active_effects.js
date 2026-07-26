@@ -3,6 +3,7 @@ const { setProperty, getType, isPlainObject, hasProperty } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
+  static actorChangeRegex = /^@actor\./;
   static deprecatedDataRegex = /^data\./;
   static migrationConfig = {
     advancedFunction: { path: 'advancedFunction', type: 'number' },
@@ -306,6 +307,11 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   // key: "@meleeweapon.Rondrakamm (2H).system.attack.value"
+  // key: "@actor.system.status.regeneration.AsPConditional" (item enhancement → parent actor)
+  static resolveActorChangeKey(key) {
+    return key.replace(this.actorChangeRegex, '');
+  }
+
   _getModifiedItems(actor, change) {
     const [type, itemName, ...keyParts] = change.key.replace(/^@/, '').split('.');
     const key = keyParts.join('.');
@@ -472,11 +478,6 @@ export default class DSAActiveEffect extends ActiveEffect {
       if (system?.source !== undefined) delete system.source;
     }
 
-    if (source.system?.description) {
-      if (!source.description) source.description = source.system.description;
-      delete source.system.description;
-    }
-
     if (!source.flags?.dsa5) return super.migrateData(source);
 
     const flags = source.flags.dsa5;
@@ -534,7 +535,7 @@ export default class DSAActiveEffect extends ActiveEffect {
 
     const remainingKeys = Object.keys(flags);
     if (remainingKeys.length > 0) {
-      console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
+      //console.warn(`DSA5 | Active Effect ${source.name} ${source.uuid} has un-migrated keys on flags.dsa5: ${remainingKeys.join(', ')}`);
     } else {
       delete source.flags.dsa5;
     }

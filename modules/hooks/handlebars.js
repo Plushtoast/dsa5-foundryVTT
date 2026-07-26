@@ -150,7 +150,9 @@ export default function () {
       return _loc(`PLANT.avLevels.${a || 0}`);
     },
     oddLength: (x) => {
-      return x.length % 2 == 1;
+      if (x == null) return false;
+      const len = Array.isArray(x) ? x.length : Object.keys(x).length;
+      return len % 2 === 1;
     },
     selfObj: (a) => {
       return a.reduce((acc, val) => {
@@ -158,5 +160,6 @@ export default function () {
         return acc;
       }, {});
     },
+    tooltipWithKeybinding: (labelKey, actionId) => DSA5_Utility.tooltipWithKeybinding(labelKey, actionId),
   });
 }

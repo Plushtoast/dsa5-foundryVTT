@@ -1,70 +1,50 @@
-<div class="tab scrollable {{tabs.elementals.cssClass}}" data-tab="elementals" data-group="{{tabs.elementals.group}}">
-    <div class="row-section lineheight">
-        <div class="col fourty table-title">
-            <label>{{localize "Category"}}</label>
-        </div>
-        <div class="col two">
-            <select name="conjurationType" class="conjurationData" data-refresh="true">
-                {{selectOptions conjurationTypes selected=conjurationData.conjurationType}}
-            </select>
-        </div>
-        <div class="col ten center flexrow">
-            <button data-action="ruleLink" type="button" class="icon fas fa-book-open"></button>
-        </div>
-    </div>
+<div class="tab scrollable summoning-tab {{tab.cssClass}}" data-tab="elementals" data-group="sheet">
+
+    {{> systems/dsa5/templates/system/conjuration/parts/type-picker.hbs}}
+
     {{#if actor.system}}
-    <div>
-        <div class="row-section skills table-title lineheight" style="margin-top:10px;">
-            <div class="col two flexrow">
-                {{localize 'spell'}} {{#if missingConjurationSkills.length}}<button type="button" class="icon fas fa-question noBorder dsadesignbutton" data-tooltip="TT.conjuringSpells" data-action="unhidePossibleSpells"></button>{{/if}}
-            </div>
-            <div class="col third center">{{localize "probe"}}</div>
-            <div class="col ten center" data-tooltip="CONJURATION.powerfulCreature"><i class="fas fa-hand-fist"></i></div>
-            <div class="col ten center">{{localize "CHARAbbrev.FW"}}</div>
-        </div>
-        
-        {{#each conjurationskills as |item i|}}
 
-        <div class="row-section wrap skills item lineheight tableOdd" data-item-id="{{item._id}}">
-            <div class="col two">
-                <a class="item-edit talentName">{{item.name}}</a>
-            </div>
-            <div class="col third flexrow flexAlignCenter">
-                {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
-            </div>
-            <div class="col ten center">
-                {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}
-            </div>
-            <div class="col ten center">
-                {{item.system.talentValue.value}}
-            </div>
-        </div>
+    {{> systems/dsa5/templates/system/conjuration/parts/summary.hbs}}
 
-        {{/each}}
-
-   
-        {{#each missingConjurationSkills as |item i|}}
-
-            <div class="row-section wrap skills item lineheight tableOdd disabledSection dsahidden possibleSpell">
-                <div class="col ninety">
-                    {{localize item}}
-                </div>
-                <div class="col ten center">
-                    
-                </div>
-            </div>
-        
+    {{#unless summary.creature.uuid}}
+    {{#if favoriteCreatures.length}}
+    <div class="bags flexrow flexAlignCenter gap2px wrap conjuration-favorites-list">
+        {{#each favoriteCreatures as |fav|}}
+        <div class="slot conjuration-favorite-slot" data-action="selectFavoriteCreature" data-uuid="{{fav.uuid}}"
+            style="background-image:url('{{fav.img}}')" data-tooltip="{{fav.name}}"></div>
         {{/each}}
     </div>
+    {{/if}}
+    {{/unless}}
 
-    {{{conjurationSheet}}}
+    <nav class="summoning-phases" aria-label="{{localize 'PLAYER.conjuration'}}">
+        {{#each summoningPhases as |phase|}}
+        <button type="button" class="summoning-phases__btn {{#if phase.active}}active{{/if}}"
+            data-action="setSummoningPhase" data-phase="{{phase.id}}"
+            aria-pressed="{{phase.active}}">
+            <i class="{{phase.icon}}" aria-hidden="true"></i>
+            <span>{{localize phase.label}}</span>
+        </button>
+        {{/each}}
+    </nav>
+
+    {{#if showRitualPhase}}
+    <div class="summoning-phase">
+        {{> systems/dsa5/templates/system/conjuration/parts/rituals.hbs}}
+    </div>
+    {{/if}}
+
+    {{#if showExtensionsPhase}}
+    <div class="summoning-phase">
+        {{> systems/dsa5/templates/system/conjuration/parts/extensions.hbs}}
+    </div>
+    {{/if}}
 
     {{else}}
-    <div class="no-personae-list">
-        <div class="empty-state-small">
-            <i class="fas fa-hat-wizard"></i>
-            <p>{{localize "CONJURATION.dragActor"}}</p>
-        </div>
+
+    <div class="droparea">
+        <i class="fas fa-hat-wizard"></i> {{localize "CONJURATION.dragActor"}}
     </div>
+
     {{/if}}
 </div>

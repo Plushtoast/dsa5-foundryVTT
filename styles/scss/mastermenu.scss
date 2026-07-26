@@ -1,0 +1,120 @@
+.masterMenu {
+  .heros {
+    min-width: 0;
+  }
+
+  .hero {
+    cursor: pointer;
+
+    &.victim {
+      box-shadow: inset 0 0 10px #8a0202;
+    }
+
+    .actorItem {
+      display: inline-block;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      line-height: 12px;
+      border-radius: 2px;
+      background-color: rgba(0, 0, 0, 0.1);
+
+      i {
+        opacity: 0.7;
+      }
+    }
+
+    .expandDetails ul {
+      margin: 4px 0 0;
+      padding-left: 18px;
+    }
+  }
+
+  .isFolder > .col {
+    min-width: 0;
+  }
+
+  .breedcard:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  }
+
+  .loadingZuchtgrube {
+    pointer-events: none;
+    animation: pulsingBoxShadow 1s infinite alternate;
+  }
+
+  .zuchtgrubeLoader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1;
+
+    span {
+      padding: 8px 12px;
+      border-radius: 4px;
+      color: white;
+      white-space: nowrap;
+      background-color: rgba(0, 0, 0, 0.85);
+      font-size: 0.85em;
+    }
+  }
+
+  .openNamegenerator:not(.breedcard) {
+    display: block;
+    grid-column: 1 / -1;
+    min-height: 0;
+    cursor: default;
+    transform: none;
+    padding: 12px;
+
+    &:hover {
+      transform: none;
+    }
+
+    .form-group {
+      margin-bottom: 8px;
+    }
+
+    .randomName {
+      width: 100%;
+    }
+
+    a.rollName,
+    a.rollName10 {
+      cursor: pointer;
+    }
+  }
+}
+
+.dsa5-immersive {
+  .window-app.masterMenu:after {
+    background-image: url('../../icons/backgrounds/masterborder.webp');
+  }
+
+  .masterMenu button:not(.icon):not(.inline-control) {
+    background-image: linear-gradient(to right top, #be2020, #af1622, #9f0d22, #8f0522, #7f0021);
+    color: white;
+    border: 1px solid black;
+
+    &:active {
+      box-shadow: inset 0 0 5px black;
+    }
+
+    &:hover {
+      box-shadow: inset 0 0 3px #970027;
+      border-color: white;
+      background-image: linear-gradient(to right top, #e82626, #d41a29, #bf0f28, #aa0628, #970027);
+    }
+
+    &.lastRound {
+      background-image: linear-gradient(to right top, #02234d, #022a5b, #023168, #02366e, #023b74);
+
+      &:hover {
+        box-shadow: inset 0 0 3px #023b74;
+        background-image: linear-gradient(to right top, #0a3369, #0a3b7c, #0a4390, #0a4ca3, #0a54b7);
+      }
+    }
+  }
+}

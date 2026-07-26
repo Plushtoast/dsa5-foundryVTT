@@ -1,6 +1,7 @@
 import { DSAAura } from '../system/automation/aura.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import Riding from '../system/automation/riding.js';
+import NavalCombat from '../combat/mkr/naval-combat.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;
 
@@ -141,6 +142,24 @@ export class DSAToken extends Token {
 }
 
 export class DSATokenDocument extends TokenDocument {
+  /**
+   * Copy placement fields from a source token onto token creation data
+   * so spawned tokens stay on the same scene level and elevation.
+   * @param {TokenDocument|object|null} sourceToken
+   * @param {object} tokenData
+   * @returns {object}
+   */
+  static applySourceTokenPlacement(sourceToken, tokenData) {
+    if (!sourceToken || !tokenData) return tokenData;
+
+    const source = sourceToken.document ?? sourceToken;
+    for (const key of ['elevation', 'level', 'depth', 'sort']) {
+      if (source[key] !== undefined) tokenData[key] = source[key];
+    }
+
+    return tokenData;
+  }
+
   _inferMovementAction() {
     if (this.hasStatusEffect("prone")) return "crawl";
 
@@ -218,6 +237,29 @@ export class DSATokenRuler extends foundry.canvas.placeables.tokens.TokenRuler {
 
     const scale = canvas.dimensions.uiScale;
     return { width: 4 * scale, color: this._totalDistanceColor(waypoint), alpha: 1 };
+  }
+
+  _getWaypointLabelContext(waypoint, state) {
+    const context = super._getWaypointLabelContext(waypoint, state);
+    if (!context || !NavalCombat.isNavalMkrActive()) return context;
+
+    const distance = waypoint.measurement?.distance ?? 0;
+    if (!distance) return context;
+
+    const reLabel = NavalCombat.formatREAnnotation(distance);
+    if (context.distance) {
+      const base = context.distance.label ?? `${Math.round(distance)} ${canvas.grid.units}`;
+      context.distance.label = `${base} · ${reLabel}`;
+      context.distance.tooltip = _loc('VEHICLE.mkr.reDistanceTooltip');
+    }
+
+    if (waypoint.next == null) {
+      const re = NavalCombat.stepsToRE(distance);
+      if (re <= 1) context.boardingHint = _loc('VEHICLE.mkr.boardingTooltip');
+      if (re >= 5) context.fleeHint = _loc('VEHICLE.mkr.fleeTooltip');
+    }
+
+    return context;
   }
 }
 

@@ -23,8 +23,10 @@ import { ItemEquality } from './concerns/item-equality.js';
 import { ItemCreateDialog } from './item-create-dialog.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
+import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
+import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -493,6 +495,11 @@ export default class Itemdsa5 extends Item {
    *   - {CardOptions} cardOptions - Final chat card options used
    */
   async itemTest({ testData, cardOptions }, options = {}) {
+    if (this.actor && !this.actor.canUserRoll()) {
+      ui.notifications.warn('DSAError.RollPermission', { localize: true });
+      return;
+    }
+
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 
@@ -534,7 +541,9 @@ export default class Itemdsa5 extends Item {
 
     for (const effect of this.effects) {
       if (effect.type !== 'enhancement' || effect.disabled) continue;
-      changes.push(...effect.system.changes.map((change) => ({ ...change, effect })));
+      changes.push(...EnhancementHelper.getEffectChanges(effect)
+        .filter((change) => EnhancementHelper.isItemChange(change))
+        .map((change) => ({ ...change, effect })));
 
       const attrs = effect.system.specialAttributes;
       if (attrs) {
@@ -569,6 +578,10 @@ export default class Itemdsa5 extends Item {
       if (change.key === 'system.reach.value' && this.type === 'rangeweapon') {
         this._applyEnhancementRangeMultiplier(change);
         continue;
+      }
+
+      if (change.key === 'system.reloadTime.value') {
+        if (this._applyEnhancementReloadTime(change)) continue;
       }
 
       const result = DSAActiveEffect.applyChange(this, change, { replacementData });
@@ -610,6 +623,18 @@ export default class Itemdsa5 extends Item {
     }).join('/');
 
     foundry.utils.setProperty(this, 'system.reach.value', result);
+  }
+
+  _applyEnhancementReloadTime(change) {
+    const value = `${change.value ?? ''}`.trim();
+    const halfMatch = value.match(/^half(?:\+(\d+))?\/(\d+)$/);
+    if (!halfMatch) return false;
+
+    const base = Number(String(this._source?.system?.reloadTime?.value ?? '').split('/')[0]) || 1;
+    const loaded = Math.max(1, Math.ceil(base / 2) + (Number(halfMatch[1]) || 0));
+    const empty = Number(halfMatch[2]) || 6;
+    foundry.utils.setProperty(this, 'system.reloadTime.value', `${loaded}/${empty}`);
+    return true;
   }
 
   _replicateProtectionToZones(change) {
@@ -902,8 +927,9 @@ class SpellItemDSA5 extends Itemdsa5 {
   static foreignSpellModifier(actor, source, situationalModifiers, data) {
     const enabledActorTypes = [ACTOR_TYPES.NPC, ACTOR_TYPES.CHARACTER];
     const applicableSpellTypes = [SPELL, RITUAL];
+    const hasPreferencePenalty = SpellPreferenceRule.isEnabled() && SpellPreferenceRule.hasPreferences(actor);
 
-    if (!game.settings.get('dsa5', 'enableForeignSpellModifer') ||
+    if (!(game.settings.get('dsa5', 'enableForeignSpellModifer') || hasPreferencePenalty) ||
       !enabledActorTypes.includes(actor.type) ||
       !applicableSpellTypes.includes(source.type)) return;
 
@@ -922,9 +948,10 @@ class SpellItemDSA5 extends Itemdsa5 {
     const modOffset = (actor.system.spellStats.foreign || 0) + (actor.system.spellStats[`foreign${source.type}`] || 0);
 
     if (data.isForeign) {
+      const basePenalty = hasPreferencePenalty ? -4 : -2;
       situationalModifiers.push({
-        name: _loc('DSASETTINGS.enableForeignSpellModifer'),
-        value: -2 + modOffset,
+        name: _loc(hasPreferencePenalty ? 'DSASETTINGS.enableWitchSpellPreferences' : 'DSASETTINGS.enableForeignSpellModifer'),
+        value: basePenalty + modOffset,
         selected: true,
       });
     }
@@ -967,6 +994,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       await this.getCallbackData(testData, html, actor);
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       testData.hideSpellDetails = game.settings.get('dsa5', 'hideSpellDetails');
       return { testData, cardOptions };
     }
@@ -1042,6 +1070,7 @@ class CombatskillDSA5 extends Itemdsa5 {
       cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
       testData.situationalModifiers = SituationalModifiersWidget.collectFormModifiers(html);
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       return { testData, cardOptions };
     }
     return DiceDSA5.setupDialog({ dialogOptions, testData, cardOptions });
@@ -1198,6 +1227,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
 
     dialogOptions.callback = (html, options = {}) => {
       DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, actor, options, multipleDefenseValue, dialogOptions.data.mode);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       testData.isRangeDefense = dialogOptions.data.isRangeDefense;
       return { testData, cardOptions };
@@ -1254,7 +1284,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         if (currentAmmo.system.damageMod || currentAmmo.system.armorMod) {
           const dmgMod = {
             name: `${currentAmmo.name} - ${_loc('MODS.damage')}`,
-            value: currentAmmo.system.damageMod.replace(/wWD/g, 'd') || 0,
+            value: currentAmmo.system.damageMod.replace(/[wWD]/g, 'd') || 0,
             type: 'dmg',
             selected: true,
             ref: { id: source.system.currentAmmo.value },
@@ -1324,6 +1354,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
 
     dialogOptions.callback = (html, options = {}) => {
       DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       return { testData, cardOptions };
     }
@@ -1428,6 +1459,8 @@ class SkillItemDSA5 extends Itemdsa5 {
       };
       Itemdsa5.updateCharacteristics(testData.source, ...[0, 1, 2].map((x) => html.find(`[name="characteristics${x}"]`).val()));
       mergeObject(testData.extra.options, options);
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
+
       return { testData, cardOptions };
     }
 
@@ -1472,6 +1505,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       } else {
         DSA5CombatDialog.resolveRangeDialog(testData, cardOptions, html, actor, options);
       }
+      ItemDialogBuilder.applyAdditionalOptionsCallback(html, testData, cardOptions);
       testData.isRangeDefense = dialogOptions.data.isRangeDefense;
       Hooks.call('callbackDialogCombatDSA5', testData, actor, html, item, tokenId);
       return { testData, cardOptions };

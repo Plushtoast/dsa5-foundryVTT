@@ -2,6 +2,10 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import { ActAttackDialog } from '../dialog/dialog-react.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5StatusEffects from '../status/status_effects.js';
+import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/helpers/token_disposition.js';
+import NavalCombat from './mkr/naval-combat.js';
+import Chase from './chase/chase.js';
+import ChaseCombatTracker from './chase/chase-combat-tracker.js';
 
 const { getProperty } = foundry.utils;
 
@@ -9,22 +13,96 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   static PARTS = {
     header: {
       template: 'systems/dsa5/templates/system/combattracker/header.hbs',
+      templates: [
+        'systems/dsa5/templates/system/combattracker/mkr-bar.hbs',
+        'systems/dsa5/templates/system/combattracker/chase-bar.hbs',
+      ],
     },
     tracker: {
       template: 'systems/dsa5/templates/system/combattracker/combattracker.hbs',
     },
     footer: {
-      template: 'templates/sidebar/tabs/combat/footer.hbs',
+      template: 'systems/dsa5/templates/system/combattracker/footer.hbs',
     },
   };
 
   static DEFAULT_OPTIONS = {
     actions: {
       convertToBrawl: this._convertToBrawl,
+      nextMkr: this._nextMkr,
+      advanceMkrPhase: this._advanceMkrPhase,
+      setChaseTerrain: this._setChaseTerrain,
+      setChaseMaxRounds: this._setChaseMaxRounds,
+      setChaseDefaultSkill: this._setChaseDefaultSkill,
+      setChaseRole: this._setChaseRole,
+      setChaseDistance: this._setChaseDistance,
       aggroButton: this._onAggroButtonClicked,
       combatRules: this._onCombatRulesButtonClicked,
+      createCombatMode: this._createCombatMode,
+      resetBrawlingPoints: this._resetBrawlingPoints,
     },
   };
+
+  static COMBAT_MODE_STARTS = [
+    { id: 'standard', icon: 'fa-shield', label: 'COMBAT.MODE.standard', hint: 'COMBAT.MODE.standardHint' },
+    { id: 'brawling', icon: 'fa-hand-fist fa-rotate-90', label: 'COMBAT.MODE.brawling', hint: 'COMBAT.MODE.brawlingHint' },
+    { id: 'chase', icon: 'fa-person-running', label: 'COMBAT.MODE.chase', hint: 'COMBAT.MODE.chaseHint' },
+    { id: 'vehicleChase', icon: 'fa-sailboat', label: 'COMBAT.MODE.vehicleChase', hint: 'COMBAT.MODE.vehicleChaseHint' },
+    { id: 'navalMkr', icon: 'fa-ship', label: 'COMBAT.MODE.navalMkr', hint: 'COMBAT.MODE.navalMkrHint' },
+  ];
+
+  static async _createCombatMode(_event, target) {
+    if (!game.user.isGM) return;
+    const mode = target.dataset.mode || 'standard';
+    let combat = game.combat;
+    if (!combat) {
+      combat = await game.combats.documentClass.create();
+      await combat.activate({ render: false });
+    }
+    await combat.setCombatMode(mode);
+  }
+
+  static _nextMkr() {
+    game.combat?.nextMkr();
+  }
+
+  static _advanceMkrPhase() {
+    game.combat?.advanceMkrPhase();
+  }
+
+  static _setChaseTerrain(_ev, target) {
+    game.combat?.setChaseTerrain(target.value);
+  }
+
+  static _setChaseMaxRounds(_ev, target) {
+    game.combat?.setChaseMaxRounds(target.value);
+  }
+
+  static _setChaseDefaultSkill(_ev, target) {
+    game.combat?.setChaseDefaultSkill(target.value);
+  }
+
+  static _setChaseRole(_ev, target) {
+    const combatantId = target.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    game.combat?.setCombatantChaseRole(combatantId, target.value);
+  }
+
+  static async _setChaseDistance(_ev, target) {
+    const combatantId = target.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    const current = Number(target.dataset.distance) || 0;
+    const value = await foundry.applications.api.DialogV2.prompt({
+      window: { title: 'CHASE.setDistance' },
+      content: `<p><label>${_loc('CHASE.distance')}</label></p><input type="number" name="distance" min="0" step="1" value="${current}">`,
+      ok: {
+        label: 'Confirm',
+        callback: (_event, button) => Number(button.form.elements.distance.value),
+      },
+    });
+    if (value === null || value === undefined || Number.isNaN(value)) return;
+    game.combat?.setCombatantChaseDistance(combatantId, value);
+  }
 
   static _onAggroButtonClicked() {
     DSA5CombatTracker.runActAttackDialog();
@@ -32,6 +110,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   static _convertToBrawl() {
     game.combat.convertToBrawl();
+  }
+
+  static _resetBrawlingPoints() {
+    game.combats.documentClass.resetSceneBrawlingPoints();
   }
 
   static async _onCombatRulesButtonClicked() {
@@ -47,7 +129,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (!game.combat) return;
 
     const combatant = game.combat.combatant;
-    if(!combatant) return;
+    if (!combatant) return;
 
     if (game.user.isGM || combatant.isOwner) ActAttackDialog.showDialog(combatant.actor, combatant.tokenId);
   }
@@ -111,8 +193,9 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       else if (aiming.length > 0) turn.ongoing = aiming[0].progress;
     }
     const effects = [];
+    const defeatedStatus = CONFIG.specialStatusEffects.DEFEATED;
     for (const e of combatant.actor?.temporaryEffects || []) {
-      if (e.statuses.has('defeated')) turn.defeated = true;
+      if (e.statuses.has(defeatedStatus) || e.statuses.has('defeated')) turn.isDefeated = true;
       else if (e.img && isAllowedToSeeEffects && !e.notApplicable && (game.user.isGM || !e.system?.visibility?.hidePlayers) && !e.system?.visibility?.hideOnToken) {
         effects.push({ img: e.img, name: e.name });
       }
@@ -122,12 +205,58 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       tooltip: this._formatEffectsTooltip(effects),
     };
 
-    return turn;
+    const disposition = combatant.token?.disposition ?? CONST.TOKEN_DISPOSITIONS.NEUTRAL;
+    turn.dispositionStyle = dispositionBackgroundStyle(disposition);
+    turn.dispositionBorderStyle = dispositionBorderStyle(disposition);
+
+    if (combatant.actor?.type === 'vehicle') {
+      turn.vehicleImmobile = combatant.actor.system.isImmobile;
+      turn.vehicleSinking = combatant.actor.system.isSinking;
+    }
+
+    return ChaseCombatTracker.enrichTurn(turn, combatant, combat);
   }
 
   async _prepareCombatContext(context, options) {
     await super._prepareCombatContext(context, options);
-    context.isBrawling = game.combat?.isBrawling;
+    const combat = game.combat;
+    context.isBrawling = combat?.isBrawling;
+    context.combatMode = NavalCombat.resolveCombatMode(combat);
+    context.isNavalMkr = NavalCombat.isNavalMkrActive(combat);
+    context.combatModeIcon = {
+      standard: 'fa-shield',
+      brawling: 'fa-hand-fist fa-rotate-90',
+      navalMkr: 'fa-ship',
+      chase: 'fa-person-running',
+      vehicleChase: 'fa-sailboat',
+    }[context.combatMode] ?? 'fa-shield';
+    context.combatModeTooltip = 'COMBAT.MODE.tooltip';
+    context.combatRulesTooltip = {
+      standard: 'COMBATTRACKER.rulesHint.standard',
+      brawling: 'COMBATTRACKER.rulesHint.brawling',
+      navalMkr: 'COMBATTRACKER.rulesHint.navalMkr',
+      chase: 'COMBATTRACKER.rulesHint.chase',
+      vehicleChase: 'COMBATTRACKER.rulesHint.vehicleChase',
+    }[context.combatMode] ?? 'COMBATTRACKER.rulesHint.standard';
+    context.combatModeStarts = this.constructor.COMBAT_MODE_STARTS;
+
+    if (context.isNavalMkr) {
+      this.#prepareNavalMkrContext(context, combat);
+    }
+    ChaseCombatTracker.prepareCombatContext(context, combat);
+  }
+
+  async _prepareTrackerContext(context, options) {
+    await super._prepareTrackerContext(context, options);
+    if (game.combat && Chase.isChaseActive(game.combat)) {
+      // Always inject section headers (even empty) as drop targets for roles.
+      context.turns = ChaseCombatTracker.reorderTurns(context.turns ?? [], game.combat);
+    }
+  }
+
+  #prepareNavalMkrContext(context, combat) {
+    context.mkr = NavalCombat.getMkrProgress(combat);
+    context.mkrPhase = combat?.system?.mkrPhase;
   }
 
   _canSortInitiative(event) {
@@ -146,7 +275,27 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   _dragOverInitiativeSort(event) {
     event.preventDefault();
+    const isChase = Chase.isChaseActive(game.combat);
+    const section = isChase ? event.target.closest('.chase-section-header[data-chase-role]') : null;
     const fieldset = event.target.closest('.combatant');
+
+    if (section) {
+      if (this.lastFieldset) {
+        this.lastFieldset.classList.remove('dragSortMarker');
+        this.lastFieldset = null;
+      }
+      if (this.lastSection !== section) {
+        if (this.lastSection) this.lastSection.classList.remove('dragSortMarker');
+        section.classList.add('dragSortMarker');
+        this.lastSection = section;
+      }
+      return;
+    }
+
+    if (this.lastSection) {
+      this.lastSection.classList.remove('dragSortMarker');
+      this.lastSection = null;
+    }
 
     if (fieldset) {
       if (this.lastFieldset !== fieldset) {
@@ -164,24 +313,50 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   async _dropInitiativeSort(event) {
     event.preventDefault();
+    if (this.lastSection) {
+      this.lastSection.classList.remove('dragSortMarker');
+      this.lastSection = null;
+    }
     if (this.lastFieldset) {
       this.lastFieldset.classList.remove('dragSortMarker');
       this.lastFieldset = null;
     }
-
-    const hoverTarget = event.target.closest('.combatant');
-    if (!hoverTarget) return;
 
     const data = JSON.parse(event.dataTransfer.getData('text/plain'));
 
     if (data.type !== 'CombatantSort') return;
 
     const combatantId = data.data.combatantId;
+    const combatant = game.combat.combatants.get(combatantId);
+    if (!combatant) return;
+
+    if (Chase.isChaseActive(game.combat)) {
+      const sectionTarget = event.target.closest('.chase-section-header[data-chase-role]');
+      let targetRole;
+
+      if (sectionTarget) {
+        targetRole = sectionTarget.dataset.chaseRole || 'chasing';
+      } else {
+        const roleTarget = event.target.closest('.combatant');
+        if (roleTarget) {
+          const targetCombatant = game.combat.combatants.get(roleTarget.dataset.combatantId);
+          targetRole = Chase.getRole(targetCombatant);
+        }
+      }
+
+      if (targetRole && combatant.system?.chaseRole !== targetRole) {
+        await game.combat?.setCombatantChaseRole(combatantId, targetRole);
+        return;
+      }
+    }
+
+    const hoverTarget = event.target.closest('.combatant');
+    if (!hoverTarget) return;
+
     const targetId = hoverTarget.dataset.combatantId;
 
     if (targetId === combatantId) return;
 
-    const combatant = game.combat.combatants.get(combatantId);
     const targetCombatant = game.combat.combatants.get(targetId);
 
     const roundInitiative = targetCombatant.properInitiative;
@@ -200,6 +375,18 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     await combatant.update(update);
   }
 
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+
+    if (game.user.isGM) {
+      this._createContextMenu(this._getCombatModeContextOptions.bind(this), '.combat-mode-control', {
+        eventName: 'click',
+        fixed: true,
+        parentClassHooks: false,
+      });
+    }
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -216,6 +403,113 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
         drop: this._dropInitiativeSort.bind(this)
       }
     }).bind(this.element);
+
+    for (const input of this.element.querySelectorAll('.chase-distance-input')) {
+      input.addEventListener('change', (ev) => this.#onChaseDistanceChange(ev));
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
+
+    for (const input of this.element.querySelectorAll('.chase-max-rounds-input')) {
+      input.addEventListener('change', (ev) => {
+        game.combat?.setChaseMaxRounds(ev.currentTarget.value);
+      });
+      input.addEventListener('click', (ev) => ev.stopPropagation());
+    }
+
+    for (const select of this.element.querySelectorAll('select[data-action="setChaseDefaultSkill"]')) {
+      select.addEventListener('change', (ev) => {
+        game.combat?.setChaseDefaultSkill(ev.currentTarget.value);
+      });
+      select.addEventListener('click', (ev) => ev.stopPropagation());
+    }
+  }
+
+  async #onChaseDistanceChange(event) {
+    if (!game.user.isGM) return;
+    const input = event.currentTarget;
+    const combatantId = input.closest('[data-combatant-id]')?.dataset?.combatantId;
+    if (!combatantId) return;
+    await game.combat?.setCombatantChaseDistance(combatantId, input.value);
+  }
+
+  _getEntryContextOptions() {
+    const options = super._getEntryContextOptions();
+    if (!Chase.isChaseActive(game.combat)) return options;
+
+    options.unshift(
+      {
+        label: 'CHASE.role.fleeing',
+        icon: '<i class="fas fa-person-running"></i>',
+        visible: () => game.user.isGM,
+        callback: (li) => game.combat?.setCombatantChaseRole(li.dataset.combatantId, 'fleeing'),
+      },
+      {
+        label: 'CHASE.role.chasing',
+        icon: '<i class="fas fa-bullseye"></i>',
+        visible: () => game.user.isGM,
+        callback: (li) => game.combat?.setCombatantChaseRole(li.dataset.combatantId, 'chasing'),
+      },
+      {
+        label: 'CHASE.setDistance',
+        icon: '<i class="fas fa-ruler"></i>',
+        visible: (li) => {
+          if (!game.user.isGM) return false;
+          const c = game.combat?.combatants.get(li.dataset.combatantId);
+          return Chase.getRole(c) === 'chasing';
+        },
+        callback: async (li) => {
+          const combatant = game.combat?.combatants.get(li.dataset.combatantId);
+          if (!combatant) return;
+          const current = Number(combatant.system.chaseDistance) || 0;
+          const value = await foundry.applications.api.DialogV2.prompt({
+            window: { title: 'CHASE.setDistance' },
+            content: `<p><label>${_loc('CHASE.distance')}</label></p><input type="number" name="distance" min="0" step="1" value="${current}">`,
+            ok: {
+              label: 'Confirm',
+              callback: (_event, button) => Number(button.form.elements.distance.value),
+            },
+          });
+          if (value === null || value === undefined || Number.isNaN(value)) return;
+          await game.combat.setCombatantChaseDistance(combatant.id, value);
+        },
+      },
+    );
+    return options;
+  }
+
+  _getCombatModeContextOptions() {
+    return [
+      {
+        label: _loc('COMBAT.MODE.standard'),
+        icon: '<i class="fas fa-shield"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('standard'),
+      },
+      {
+        label: _loc('COMBAT.MODE.brawling'),
+        icon: '<i class="fas fa-hand-fist"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('brawling'),
+      },
+      {
+        label: _loc('COMBAT.MODE.chase'),
+        icon: '<i class="fas fa-person-running"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('chase'),
+      },
+      {
+        label: _loc('COMBAT.MODE.vehicleChase'),
+        icon: '<i class="fas fa-sailboat"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('vehicleChase'),
+      },
+      {
+        label: _loc('COMBAT.MODE.navalMkr'),
+        icon: '<i class="fas fa-ship"></i>',
+        visible: () => !!game.combat,
+        onClick: () => game.combat?.setCombatMode('navalMkr'),
+      },
+    ];
   }
 }
 
@@ -225,13 +519,42 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot') return false;
+  if (!actor) return;
+
+  const combat = data.combat ?? game.combat;
+  if (Chase.isChaseActive(combat) && data.system?.chaseRole !== 'fleeing') {
+    const patch = { 'system.chaseRole': 'chasing' };
+    const maxDistance = Chase.maxChaseDistance(combat);
+    if (maxDistance !== null) patch['system.chaseDistance'] = maxDistance;
+    if (data.updateSource) data.updateSource(patch);
+    else {
+      foundry.utils.setProperty(data, 'system.chaseRole', 'chasing');
+      if (maxDistance !== null) foundry.utils.setProperty(data, 'system.chaseDistance', maxDistance);
+    }
+  }
+
+  if (actor.type === 'vehicle') {
+    const allowed = NavalCombat.isNavalMkrActive(combat) || Chase.isVehicleChase(combat);
+    if (!allowed) {
+      ui.notifications.warn('VEHICLE.combat.mkrOnly', { localize: true });
+      return false;
+    }
+  } else if (actor.system.merchant?.merchantType === 'loot') {
+    return false;
+  }
 
   if (data.combat.isBrawling) {
-    const conf = data.brawlingChange();
-    delete conf.actorChange._id;
-    actor.update(conf.actorChange).then(() => {
-      game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
+    data.brawlingChange({
+      ppSource: 'current',
+      resetPP: false,
+      applyPostDamage: false,
+      unarm: data.combat.system.unarmEveryone,
+    }).then((conf) => {
+      if (!conf?.actorChange) return;
+      delete conf.actorChange._id;
+      actor.update(conf.actorChange).then(() => {
+        game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
+      });
     });
   }
 });
@@ -242,29 +565,36 @@ Hooks.on('deleteCombatant', (data, options, user) => {
     scene: data.sceneId,
     token: data.tokenId,
   });
-  if (actor.system.merchant.merchantType == 'loot') return false;
+  if (!actor) return;
+  if (actor.system.merchant?.merchantType === 'loot' && actor.type !== 'vehicle') return false;
 
   if (data.combat.isBrawling) {
-    data.undoBrawlingChange().then(async (conf) => {
-      if (!data.token) return;
-
-      delete conf.actorChange._id;
-      await actor.update(conf.actorChange);
-      await game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
-      if (conf.damage.brawlDamage > 0) {
-        data.combat.showBrawlingDamage([{ name: data.token.name, id: data.token.id, data: conf.damage }]);
-      }
-    });
+    const conf = data.leaveBrawling();
+    if (!data.token) return;
+    game.canvas.scene.updateEmbeddedDocuments('Token', conf.tokenChange);
   }
 });
 
 Hooks.on('preDeleteCombat', (combat, options, user) => {
   if (options.noHook) return;
+  if (!game.user.isGM) return;
 
-  if (combat.isBrawling) {
-    combat.convertToBrawl(false).then(() => {
-      combat.delete({ noHook: true });
-    });
+  const finishDelete = async () => {
+    if (combat.isBrawling) {
+      const left = await combat.convertToBrawl(false);
+      if (!left) return;
+    } else {
+      const settled = await combat.settleLingeringBrawlPoints();
+      if (!settled) return;
+    }
+    await combat.delete({ noHook: true });
+  };
+
+  const hasLingeringPP = [...combat.combatants].some(
+    (c) => Number(c.actor?.system?.status?.temporaryLeP?.max) > 0,
+  );
+  if (combat.isBrawling || hasLingeringPP) {
+    finishDelete();
     return false;
   }
 });
@@ -297,7 +627,7 @@ class RepeatingEffectsHelper {
     if (!DSA5_Utility.isActiveGM()) return;
 
     for (const turn of combat.turns) {
-      if (!turn.defeated) {
+      if (!turn.defeated && turn.actor) {
         if (turn.actor?.statuses.has('bleeding')) await this.applyBleeding(turn, combat);
         if (turn.actor?.system.condition.burning) await this.applyBurning(turn, combat);
 

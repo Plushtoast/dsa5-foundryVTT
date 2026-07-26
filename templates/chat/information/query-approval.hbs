@@ -1,44 +1,42 @@
 <div class="information-query-approval">
   <p><b>{{actorName}}</b> ({{playerName}})</p>
-  <p>{{skillName}} — {{localize "CHARAbbrev.QS"}} {{rolledQS}}</p>
+  <p>{{localize "DSAQUERIES.INFORMATIONREQUEST.playerRolledFor"}} {{{itemLink}}}</p>
+  <div class="information-query-result-roll{{#if resultRowClass}} {{resultRowClass}}{{/if}}"{{#if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
+    <span>{{skillName}} — {{localize "CHARAbbrev.QS"}} {{rolledQS}}</span>
+    {{#if resultSubLabel}}
+      <span class="roll-request-result-sublabel">{{resultSubLabel}}</span>
+    {{/if}}
+  </div>
   <hr>
-  <div class="information-query-entries">
+  <div class="information-query-entries col morph">
     {{#each qsEntries}}
     {{#if this.text}}
-    <div class="flexrow information-query-entry">
-      <label class="flex0">
-        <input type="checkbox" name="qs{{this.qs}}" {{#if this.included}}checked{{/if}}>
-        {{localize "CHARAbbrev.QS"}} {{this.qs}}
-      </label>
-      <span class="flex3">{{{this.text}}}</span>
+    <div class="col form-group information-query-entry tableOdd">
+      <label style="flex0">{{localize "CHARAbbrev.QS"}} {{this.qs}}</label>
+      <span>{{{this.text}}}</span>
+      <input type="checkbox" name="qs{{this.qs}}" {{#if this.included}}checked{{/if}}>
     </div>
     {{/if}}
     {{/each}}
     {{#if critText}}
-    <div class="flexrow information-query-entry">
-      <label class="flex0">
-        <input type="checkbox" name="crit" {{#if critIncluded}}checked{{/if}}>
-        {{localize "CriticalSuccess"}}
-      </label>
-      <span class="flex3">{{{critText}}}</span>
+    <div class="col form-group information-query-entry tableOdd">
+      <label style="flex0">{{localize "CriticalSuccess"}}</label>
+      <span>{{{critText}}}</span>
+      <input type="checkbox" name="crit" {{#if critIncluded}}checked{{/if}}>      
     </div>
     {{/if}}
     {{#if botchText}}
-    <div class="flexrow information-query-entry">
-      <label class="flex0">
-        <input type="checkbox" name="botch" {{#if botchIncluded}}checked{{/if}}>
-        {{localize "CriticalFailure"}}
-      </label>
-      <span class="flex3">{{{botchText}}}</span>
+    <div class="col form-group information-query-entry tableOdd">
+      <label style="flex0">{{localize "CriticalFailure"}}</label>
+      <span>{{{botchText}}}</span>
+      <input type="checkbox" name="botch" {{#if botchIncluded}}checked{{/if}}>        
     </div>
     {{/if}}
     {{#if failText}}
-    <div class="flexrow information-query-entry">
-      <label class="flex0">
-        <input type="checkbox" name="fail" {{#if failIncluded}}checked{{/if}}>
-        {{localize "Failure"}}
-      </label>
+    <div class="col form-group information-query-entry tableOdd">
+      <label style="flex0">{{localize "Failure"}}</label>
       <span class="flex3">{{{failText}}}</span>
+      <input type="checkbox" name="fail" {{#if failIncluded}}checked{{/if}}>      
     </div>
     {{/if}}
   </div>

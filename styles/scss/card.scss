@@ -1,0 +1,148 @@
+.dsa5 {
+  .dsa-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .dsa-card-page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    min-height: 100%;
+  }
+
+  .dsa-card-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--sheet-bg);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  }
+
+  .dsa-card-panel__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      font-size: 20px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+
+    h3 {
+      font-size: 16px;
+    }
+
+    &--split {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+    }
+  }
+
+  .dsa-card-panel__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+
+    .dialog-button {
+      color: var(--bg-contrast-color);
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+      &:hover,
+      &:focus-visible {
+        background: var(--dsadesign1);
+        border-color: var(--dsadesign1);
+        color: white;
+        text-shadow: none;
+      }
+    }
+  }
+
+  .dsa-card-panel__actions--end {
+    justify-content: flex-end;
+  }
+
+  .dsa-card-panel__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .dsa-card-panel__eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bg-contrast-color);
+    opacity: 0.72;
+  }
+
+  .dsa-card-panel__copy {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--bg-contrast-color);
+    opacity: 0.82;
+  }
+
+  .dsa-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+    color: var(--bg-contrast-color);
+    line-height: 1.5;
+
+    > :first-child {
+      margin-top: 0;
+    }
+
+    > :last-child {
+      margin-bottom: 0;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0;
+    }
+  }
+
+  .dsa-card-callout {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    background: var(--sheet-bg);
+
+    p {
+      margin: 0;
+    }
+
+    &--split {
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+  }
+}

@@ -2,7 +2,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export class JournalEntryTargetHelper {
   static #collator() {
-    return new Intl.Collator(game.i18n?.lang || undefined, { sensitivity: 'base', numeric: true });
+    return new Intl.Collator(game.i18n?.lang, { sensitivity: 'base', numeric: true });
   }
 
   static collectTargets(pageType) {

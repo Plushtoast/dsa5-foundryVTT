@@ -5,7 +5,7 @@
       <img style="width:70px;height:70px" class="profile centerMargin" src="{{actor.img}}"
         data-tooltip="{{actor.name}}">
       {{#if showActorSwitcher}}
-      <a data-action="unselectActor" style="position:absolute;top:0;right:0;" data-tooltip="PLAYER.selectActor"><i
+      <a data-action="unselectActor" class="player-menu-unselect" data-tooltip="PLAYER.selectActor"><i
           class="fas fa-times"></i></a>
       {{/if}}
     </div>
@@ -13,6 +13,16 @@
       <div class="row-section">
         <div class="col ninety">
           <h3><a data-action="openChar">{{actor.name}}</a></h3>
+          {{#if actorBadges.length}}
+          <div class="headerbadgeflex">
+            {{#each actorBadges as |badge|}}
+            <button type="button" data-action="openActorBadge" data-tab="{{badge.tab}}"
+              data-tooltip="{{badge.tooltip}}">
+              {{#if badge.icon}}<i class="{{badge.icon}}" aria-hidden="true"></i> {{/if}}{{localize badge.label}}
+            </button>
+            {{/each}}
+          </div>
+          {{/if}}
         </div>
         <div class="col ten center flexrow">
           {{#if canCalculate}}

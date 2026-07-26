@@ -1,3 +1,6 @@
 {{#if document.system.isArtifact}}
-  {{formGroup systemFields.artifact value=document.system.artifact localize=true blank='-'}}
+  {{formGroup systemFields.artifact value=document.system.artifact localize=true blank='-' sort=true}}
+{{/if}}
+{{#if document.system.isCeremonial}}
+  {{formGroup systemFields.ceremonialItem value=document.system.ceremonialItem localize=true blank='-' sort=true}}
 {{/if}}

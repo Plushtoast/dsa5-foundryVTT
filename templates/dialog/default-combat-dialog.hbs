@@ -1,26 +1,21 @@
-<div class='row-section'>
-  <div class='col fourty'></div>
-  <div class='row-section col sixty'>
-    <div class='col five'>
-    </div>
-    {{#if (or showAttack rangeOptions)}}
-    <div class='col five center' data-tooltip='MODS.damage'>
-      {{localize 'CHARAbbrev.damage'}}
-    </div>
-    {{/if}}
-  </div>
-</div>
 <div class='form-group'>
   <label>{{localize 'Modifier'}}</label>
-  <div class='row-section'>
-    <div class='col five'>
-      <input class='quantity-click' data-tooltip='TT.strgx10' data-tooltip-direction='RIGHT' type='number'
+  <div class='form-fields'>
+    {{#if rangeOptions}}
+    <span class="center" data-tooltip='CHAR.ATTACK'>{{localize 'CHARAbbrev.FK'}}</span>
+    {{else if showAttack}}
+    <span class="center" data-tooltip='CHAR.ATTACK'>{{localize 'CHARAbbrev.attack'}}</span>
+    {{else if showDefense}}
+    <span class="center" data-tooltip='CHAR.PARRY'>{{localize 'CHARAbbrev.parry'}}/{{localize 'CHARAbbrev.AW'}}/{{localize 'CHARAbbrev.VW'}}</span>
+    {{else}}
+    <span class="center" data-tooltip='MODS.damage'>{{localize 'CHARAbbrev.damage'}}</span>
+    {{/if}}
+    <input class='quantity-click' data-tooltip='TT.strgx10' data-tooltip-direction='RIGHT' type='number'
         name='testModifier' value='{{testModifier}}' />
-    </div>
+ 
     {{#if (or showAttack rangeOptions)}}
-    <div class='col five'>
-      <input type='text' name='damageModifier' value='0' />
-    </div>
+    <span class='center' data-tooltip='MODS.damage'>{{localize 'CHARAbbrev.damage'}}</span>
+    <input type='text' name='damageModifier' value='{{damageModifier}}' />
     {{/if}}
   </div>
 </div>

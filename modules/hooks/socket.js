@@ -17,9 +17,13 @@ import { FateRolls } from '../actor/concerns/faterolls.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import ShapeshiftWizard from '../wizards/shapeshift_wizard.js';
 import { SummoningExecutor } from '../wizards/summoning/summoning_executor.js';
+import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
+import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
+import QueryOrchestrator from '../system/queries/query-orchestrator.js';
+import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
 
 export function connectSocket() {
-  game.socket.on('system.dsa5', (data) => {
+  game.socket.on('system.dsa5', async (data) => {
     switch (data.type) {
       case 'brawlStart':
         DSA5Combat.brawlStart(2000, false);
@@ -43,6 +47,14 @@ export function connectSocket() {
       case "invalidateCache":
         game.dsa5.apps.CalendarPicker.constructor.clearCache();
         return;
+      case 'summonCreatureDeclined':
+        {
+          const summoner = data.payload.summonerUuid ? await fromUuid(data.payload.summonerUuid) : null;
+          if (summoner?.isOwner && !game.user.isGM) {
+            ui.notifications.warn('CONJURATION.declined', { format: { name: data.payload.creatureName }, localize: true });
+          }
+        }
+        return;
       default:
         if (Trade.socketListeners(data)) return;
     }
@@ -57,10 +69,12 @@ export function connectSocket() {
           Promise.all(effectUuids.map(async (uuid) => {
             try {
               const effect = await fromUuid(uuid);
-              const charges = effect?.getFlag?.('dsa5', 'charges');
-              const value = Number(charges?.value);
-              if (!effect?.consumeCharges || !charges || !Number.isFinite(value) || value <= 0) return;
+              if (!effect || effect.documentName !== 'ActiveEffect') return;
+              const charges = effect?.system?.charges;
               if (effect.disabled) return;
+              if (charges && Number.isFinite(charges.value) && charges.value <= 0) return;
+              await ActiveEffectLifecycle.applyAfterUse(effect);
+              if (!effect?.consumeCharges || !charges || !Number.isFinite(charges.value) || charges.value <= 0) return;
               await effect.consumeCharges(amount);
             } catch (e) {
               console.error('GM socket consumeEffectCharges failed', uuid, e);
@@ -80,7 +94,7 @@ export function connectSocket() {
         {
           const scene = game.scenes.get(data.payload.scene);
           const token = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', data.payload.target));
-          token.actor.update({ 'flags.oppose': data.payload.opposeFlag });
+          token.actor.update(OpposedDsa5.opposeUpdateData(data.payload.opposeFlag));
         }
         break;
       case 'addEffect':
@@ -88,6 +102,12 @@ export function connectSocket() {
         break;
       case 'updateMsg':
         game.messages.get(data.payload.id).update(data.payload.updateData);
+        break;
+      case 'queryResult':
+        await QueryOrchestrator.handleResult(data.payload);
+        break;
+      case 'magicAnalysisStepResult':
+        await MagicAnalysisQueryService.handleRemoteStepResult(data.payload);
         break;
       case 'deleteEffectsByUuid':
         MaintainedEffects.deleteByUuid(data.payload?.uuids || []);
@@ -102,7 +122,8 @@ export function connectSocket() {
         OpposedDsa5.hideReactionButton(data.payload.id);
         break;
       case 'updateGroupCheck':
-        GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
+        if (data.payload.update) await GroupCheck.updateGCResult(data.payload.messageId, data.payload.update);
+        else await GroupCheck.rerenderGC(game.messages.get(data.payload.messageId), data.payload.data);
         break;
       case 'apTrackerId':
         APTracker.receiveSocketEvent(data);
@@ -119,13 +140,19 @@ export function connectSocket() {
         if (game.combat) game.combat.nextRound();
         break;
       case 'clearOpposed':
-        OpposedDsa5.clearOpposed(game.actors.get(data.payload.actorId));
+        OpposedDsa5.clearOpposed(game.actors.get(data.payload.actorId), data.payload.startMessageId ? { startMessageId: data.payload.startMessageId } : null);
         break;
       case 'updateDefenseCount':
         if (game.combat) game.combat.updateDefenseCount(data.payload.speaker);
         break;
       case 'updateActionCount':
         if (game.combat) game.combat.updateActionCount(data.payload.speaker, data.payload.cost);
+        break;
+      case 'markChaseRolled':
+        if (game.combat) game.combat.markChaseRolled(data.payload.combatantId);
+        break;
+      case 'applyChaseDistanceUpdates':
+        if (game.combat) game.combat.applyChaseDistanceUpdates(data.payload.updates);
         break;
       case 'toggleFreeAction':
         if (game.combat) game.combat.toggleFreeAction(data.payload.speaker);
@@ -150,9 +177,11 @@ export function connectSocket() {
       case 'socketedConditionAddActor':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
           onUse.socketedConditionAddActor(
             data.payload.actors.map((x) => game.actors.get(x)),
             data.payload.data,
+            data.payload.amount,
           );
         });
         break;
@@ -162,13 +191,15 @@ export function connectSocket() {
       case 'socketedConditionAdd':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
           onUse.socketedConditionAdd(data.payload.targets, data.payload.data);
         });
         break;
       case 'socketedRemoveCondition':
         fromUuid(data.payload.id).then((item) => {
           const onUse = new OnUseEffect(item);
-          onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId);
+          onUse.currentOnUseArgs = { suppressInfoMessage: data.payload.suppressInfoMessage };
+          onUse.socketedRemoveCondition(data.payload.targets, data.payload.coreId, data.payload.amount);
         });
         break;
       case 'socketedActorTransformation':
@@ -177,11 +208,40 @@ export function connectSocket() {
           onUse.socketedActorTransformation(data.payload.targets, data.payload.update);
         });
         break;
+      case 'createRegionWithTrackingEffect':
+        {
+          const scene = game.scenes.get(data.payload.sceneId);
+          const actor = game.actors.get(data.payload.actorId);
+          if (!scene || !actor) break;
+
+          await DSARegionTemplate.createTrackedRegion(scene, actor, data.payload.regionData, data.payload.trackingEffectData);
+        }
+        break;
+      case 'actorFromData':
+        {
+          const user = game.users.get(data.payload.userId);
+          const actorName = foundry.utils.escapeHTML(data.payload.creatureData?.name ?? 'Actor');
+          const requesterName = foundry.utils.escapeHTML(user?.name ?? 'A player');
+          const reason = data.payload.reason ? `<p>${foundry.utils.escapeHTML(data.payload.reason)}</p>` : '';
+          const proceed = await foundry.applications.api.DialogV2.confirm({
+            window: {
+              title: 'SOCKET.actorFromData',
+            },
+            content: `${reason}<p>${requesterName} requests creating <b>${actorName}</b>.</p>`,
+            rejectClose: false,
+            modal: true,
+          });
+          if (!proceed) break;
+
+          const actor = await Actor.create(data.payload.creatureData);
+          if (actor && user) ui.notifications.info(`${actor.name} created for ${user.name}.`);
+        }
+        break;
       case 'itemDrop':
         {
           const sourceActor = data.payload.sourceActorId ? game.actors.get(data.payload.sourceActorId) : undefined;
           fromUuid(data.payload.itemId).then((item) => {
-            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.dropBag } });
+            dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.isBag } });
           });
         }
         break;
@@ -207,6 +267,9 @@ export function connectSocket() {
         break;
       case 'summonCreatureMacro':
         SummoningExecutor.execute(data.payload);
+        break;
+      case 'despawnSummonedTokens':
+        SummoningExecutor.despawn(data.payload.tokenIds, data.payload.sceneId);
         break;
       default:
         console.warn(`Unhandled socket data type ${data.type}`);

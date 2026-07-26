@@ -110,15 +110,27 @@ class TreatWounds extends foundry.applications.api.HandlebarsApplicationMixin(fo
       bonus += bonusRoll.total;
     }
 
+    const totalBonus = this.macroData.qs + bonus;
     const names = [];
 
     for (const actor of this.targets) {
       if (!actor) continue;
 
-      const currentTemp = actor.system.status.regeneration.LePTemp || 0;
-      const newValue = currentTemp + this.macroData.qs + bonus;
       names.push(actor.name);
-      await actor.update({ 'system.status.regeneration.LePTemp': newValue, });
+      await actor.createEmbeddedDocuments('ActiveEffect', [{
+        name: `${dict.treatWounds} (${totalBonus})`,
+        img: 'icons/svg/regen.svg',
+        system: {
+          description: `${dict.treatWounds} (${totalBonus})`,
+          changes: [{
+            key: 'system.status.regeneration.LePConditional',
+            type: 'custom',
+            value: String(totalBonus),
+          }],
+          charges: { value: 1, max: 1 },
+        },
+        duration: {},
+      }]);
     }
     const bonusString = bonus > 0 ? ` + <span data-tooltip="${dict.tooltip(bonus)}">${bonus}</span>` : "";
     const msg = dict.woundsTreated(names.join(', '), this.macroData.qs, bonusString);

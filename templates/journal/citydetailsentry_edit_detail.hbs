@@ -1,0 +1,45 @@
+<div data-id='{{key}}' class='standard-form citydetails-edit-detail'>
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.details.element.fields.name.label}}</label>
+    <div class='form-fields gap0px'>
+      {{#if isGM}}
+        <button type='button' data-action='toggleVisibility' data-tooltip='{{document.system.schema.fields.details.element.fields.visible.label}}' data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
+      {{/if}}
+      {{formInput document.system.schema.fields.details.element.fields.name value=elem.name name=(concat 'system.details.' key '.name')}}
+      <button type='button' data-action='duplicateEntry' data-key='{{key}}' data-tooltip='{{localize "DSACITYDETAILS.Duplicate"}}' class='fas icon fa-copy'></button>
+      <button type='button' data-action='removeEntry' data-key='{{key}}' data-tooltip='delete' class='fas icon fa-trash'></button>
+    </div>
+  </div>
+
+  {{formGroup document.system.schema.fields.details.element.fields.kind value=elem.kind localize=true name=(concat 'system.details.' key '.kind')}}
+
+  {{formGroup document.system.schema.fields.details.element.fields.typeText value=elem.typeText localize=true name=(concat 'system.details.' key '.typeText')}}
+
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.details.element.fields.img.label}}</label>
+    <div class='form-fields gap0px'>
+      {{formInput document.system.schema.fields.details.element.fields.img value=elem.img name=(concat 'system.details.' key '.img')}}
+    </div>
+  </div>
+
+  <fieldset class='citydetails-quality-price'>
+    <legend>{{localize 'DSACITYDETAILS.qualityAndPrice'}}</legend>
+    <div class='flexrow gap5px'>
+      <div class='flex1'>{{formGroup document.system.schema.fields.details.element.fields.qualityRowIndex value=elem.qualityRowIndex localize=true name=(concat 'system.details.' key '.qualityRowIndex')}}</div>
+      <div class='flex1'>{{formGroup document.system.schema.fields.details.element.fields.priceRowIndex value=elem.priceRowIndex localize=true name=(concat 'system.details.' key '.priceRowIndex')}}</div>
+    </div>
+  </fieldset>
+
+  <div class='form-group stacked full-height'>
+    <div class='flexrow'>
+      <span class='label'><b>{{localize document.system.schema.fields.details.element.fields.description.label}}</b></span>
+    </div>
+    <div class='form-fields'>
+      {{formInput document.system.schema.fields.details.element.fields.description value=elem.description localize=true classes='full-height' name=(concat 'system.details.' key '.description')}}
+    </div>
+  </div>
+
+  {{#if isGM}}
+    {{formGroup document.system.schema.fields.details.element.fields.gmNotes value=elem.gmNotes localize=true classes='full-height' name=(concat 'system.details.' key '.gmNotes')}}
+  {{/if}}
+</div>

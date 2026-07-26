@@ -8,16 +8,17 @@
         </nav>
         <section class="content2">
             <div class="tab {{ifThen (eq alternateAttackTab 'baseAttack') 'active' ''}}" data-group="alternateAttacks" class="tab" data-tab="baseAttack">
-                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
+                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs parent=document}}
             </div>
             {{#each alternateAttacks as |item key|}}
             <div class="tab {{ifThen (eq ../alternateAttackTab key) 'active' ''}}" data-tab="{{key}}" data-group="alternateAttacks">
-                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs document=item systemFields=../systemFields combatskills=../combatskills  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
+                {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs document=item systemFields=../systemFields combatskills=../combatskills parent=../document  scope=(concat 'flags.dsa5.alternateAttacks.' key '.') scopeKey=key}}
             </div>
             {{/each}}
         </section>
     {{else}}
-        {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs}}
+        {{> systems/dsa5/templates/items/rangeweapon-attack-part.hbs parent=document}}
     {{/if}}
     {{formGroup systemFields.worn.fields.requiresBothHands value=document.system.worn.requiresBothHands label=(localize 'SHEET.RequiresBothHands') localize=true}}
+    {{formGroup systemFields.siegeRules value=document.system.siegeRules localize=true}}
 </div>

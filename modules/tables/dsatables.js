@@ -1,9 +1,20 @@
 import DSA5 from '../config/config-dsa5.js';
+import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import EffectDuration from '../status/effectDuration.js';
+import TestModuleLoader from '../tests/testModuleLoader.js';
+import TableEffectHelpers from './tableEffectHelpers.js';
+import TableTemplates from './tableTemplates.js';
+import { damageMacro, normalizeList } from './tableEffectUtils.js';
+
+const TABLE_EFFECT_RUNTIME_TESTS = 'tableEffectRuntime';
+
+TestModuleLoader.register(TABLE_EFFECT_RUNTIME_TESTS, {
+  url: 'systems/dsa5/modules/tests/tableEffectRuntimeTests.js',
+});
 
 const { getProperty, mergeObject } = foundry.utils;
-const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSATables {
   static async showBotchCard(dataset, options = {}) {
@@ -13,43 +24,19 @@ export default class DSATables {
       scene: dataset.scene,
     };
     options.source = dataset.source;
+    options.table = dataset.table;
+    options.tableContext = DSATables.#decodeBotchContext(dataset.context);
 
     const table = DSA5.systemTables.find((x) => x.name == dataset.table);
-    const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
-    for (const tableResult of tableResults) {
-      const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
-      const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
-      const title = `${_loc('TABLENAMES.' + dataset.table)}`;
+    if (!table) return;
 
-      const content = await renderTemplate('systems/dsa5/templates/tables/tableCard.hbs', { result, title, hasEffect });
-
-      const effects = await this.buildEffects(tableResult, hasEffect);
-
-      ChatMessage.create({
-        user: game.user.id,
-        content,
-        whisper: options.whisper,
-        blind: options.blind,
-        flags: {
-          data: {
-            preData: {
-              source: {
-                effects,
-              },
-              extra: {
-                actor: { id: options.speaker.actor },
-                speaker: options.speaker,
-              },
-              situationalModifiers: [],
-            },
-            postData: {},
-          },
-          dsa5: {
-            hasEffect,
-            options,
-          },
-        },
-      });
+    if (await DSATables.tableEnabledFor(dataset.table)) {
+      const tableResults = await DSATables.getRollTable(table.pack[game.i18n.lang], _loc(`TABLENAMES.${dataset.table}`), dataset);
+      for (const tableResult of tableResults) {
+        await DSATables.#createBotchCardFromTableResult(tableResult, options);
+      }
+    } else if (table.defaultResult) {
+      await DSATables.#createBotchCardFromDefault(table.defaultResult, options);
     }
   }
 
@@ -60,64 +47,60 @@ export default class DSATables {
   static async buildEffects(tableResult, hasEffect) {
     const effects = [];
     if (hasEffect && hasEffect.resistEffect) {
-      const failEffects = Array.isArray(hasEffect.resistEffect.fail) ? hasEffect.resistEffect.fail : [hasEffect.resistEffect.fail];
+      const failEffects = normalizeList(hasEffect.resistEffect.fail);
       for (const fail of failEffects) {
-        const ef = OnUseEffect.effectBaseDummy(fail.description, hasEffect.resistEffect.changes || [], hasEffect.resistEffect.duration || {});
+        const ef = OnUseEffect.effectBaseDummy(fail.description || _loc('botchCritEffect'), hasEffect.resistEffect.changes || [], fail.duration || hasEffect.resistEffect.duration || {});
+        ef._id = 'botchEffect';
         if (fail.systemEffect) {
-          //todo add duration
           mergeObject(ef, {
-            _id: 'botchEffect',
-            flags: {
-              dsa5: {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.SYSTEM_EFFECT,
+              macroArgs: {
+                conditionId: fail.systemEffect,
+                conditionValue: `${fail.level || 1}`,
+              },
+              visibility: {
                 hideOnToken: false,
                 hidePlayers: false,
-                advancedFunction: 2,
-                args3: `await actor.addCondition("${fail.systemEffect}", ${fail.level || 1});`,
+              },
+            },
+          });
+        } else if (fail.damage) {
+          mergeObject(ef, {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
+              macroArgs: {
+                macro: damageMacro(fail.damage),
+              },
+              visibility: {
+                hideOnToken: false,
+                hidePlayers: false,
               },
             },
           });
         } else if (fail.command) {
           mergeObject(ef, {
-            _id: 'botchEffect',
-            flags: {
-              dsa5: {
+            system: {
+              advancedFunction: DSAActiveEffectDataModel.ADVANCED_FUNCTION_INDEXES.MACRO,
+              macroArgs: {
+                macro: fail.command,
+              },
+              visibility: {
                 hideOnToken: false,
                 hidePlayers: false,
-                advancedFunction: 2,
-                args3: fail.command,
               },
             },
           });
         }
-        await DSATables.finalizeEffect(ef);
+        await EffectDuration.finalizeEffect(ef);
         effects.push(ef);
       }
     }
     return effects;
   }
 
-  static async finalizeEffect(ef) {
-      if (ef.duration?.value) {
-        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.value}`)).evaluate()).total;
-      } else if (ef.duration?.seconds) {
-        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.seconds}`)).evaluate()).total;
-        ef.duration.units = 'seconds';
-        delete ef.duration.seconds;
-      } else if (ef.duration?.rounds) {
-        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.rounds}`)).evaluate()).total;
-        ef.duration.units = 'rounds';
-        delete ef.duration.rounds;
-      } else if (ef.duration?.turns) {
-        ef.duration.value = (await new Roll(DSATables.#prepareRollString(`${ef.duration.turns}`)).evaluate()).total;
-        ef.duration.units = 'turns';
-        delete ef.duration.turns;
-      }
-
-      if (!ef.img) ef.img = 'icons/svg/aura.svg';
-  }
-
-  static #prepareRollString(rollBase) {
-    return `${rollBase}`.replaceAll(/wW/g, 'd')
+  static finalizeEffect(effect) {
+    return EffectDuration.finalizeEffect(effect);
   }
 
   static async getRollTable(packName, name, options = {}) {
@@ -133,18 +116,79 @@ export default class DSATables {
 
   static async tableEnabledFor(key) {
     const table = DSA5.systemTables.find((x) => x.name == key);
-    return table ? game.settings.get(table.setting.module, table.setting.key) : false;
+    if (!table?.setting?.module) return false;
+    return game.settings.get(table.setting.module, table.setting.key);
   }
 
   static rollCritBotchButton(table, weaponless, testData) {
     const title = _loc(`TABLENAMES.${table}`);
     const speaker = testData.extra.speaker;
     const source = testData.source._id;
-    return `, <a class="roll-button botch-roll" data-table="${table}" data-weaponless="${weaponless}" data-source="${source}" data-token="${speaker.token}" data-actor="${speaker.actor}" data-scene="${speaker.scene}"><i class="fas fa-dice"></i>${title}</a>`;
+    const context = encodeURIComponent(JSON.stringify(TableEffectHelpers.buildBotchContext(testData, table)));
+    return `, <a class="roll-button botch-roll" data-table="${table}" data-weaponless="${weaponless}" data-source="${source}" data-token="${speaker.token}" data-actor="${speaker.actor}" data-scene="${speaker.scene}" data-context="${context}"><i class="fas fa-dice"></i>${title}</a>`;
   }
 
-  static async defaultBotch() {
-    return ', ' + _loc('selfDamage') + (await new Roll('1d6+2').evaluate()).total;
+  static #decodeBotchContext(context) {
+    if (!context) return {};
+    try {
+      return JSON.parse(decodeURIComponent(context));
+    } catch (exception) {
+      console.warn('Could not parse table effect context', context, exception);
+      return {};
+    }
+  }
+
+  static async #createBotchCardFromTableResult(tableResult, options) {
+    const hasEffect = options.speaker ? await DSATables.hasEffect(tableResult) : false;
+    const result = DSA5_Utility.replaceDies(DSA5_Utility.replaceConditions(tableResult.results[0].description));
+    const title = _loc(`TABLENAMES.${options.table}`);
+
+    await DSATables.#postBotchCard({ title, result, hasEffect, options });
+  }
+
+  static async #createBotchCardFromDefault(defaultResult, options) {
+    const hasEffect = defaultResult.effects || false;
+    const damageFormula = hasEffect?.selfDamage?.damage;
+    const previewTotal = damageFormula ? (await new Roll(damageFormula).evaluate()).total : '';
+    const result = `${_loc(defaultResult.description)}${previewTotal}`;
+
+    await DSATables.#postBotchCard({
+      title: _loc(`TABLENAMES.${options.table}`),
+      result,
+      hasEffect,
+      options,
+    });
+  }
+
+  static async #postBotchCard({ title, result, hasEffect, options }) {
+    const content = await TableTemplates.tableCard({ result, title, hasEffect });
+    const effects = await DSATables.buildEffects(undefined, hasEffect);
+
+    return ChatMessage.create({
+      user: game.user.id,
+      content,
+      whisper: options.whisper,
+      blind: options.blind,
+      flags: {
+        data: {
+          preData: {
+            source: {
+              effects,
+            },
+            extra: {
+              actor: { id: options.speaker.actor },
+              speaker: options.speaker,
+            },
+            situationalModifiers: [],
+          },
+          postData: {},
+        },
+        dsa5: {
+          hasEffect,
+          options,
+        },
+      },
+    });
   }
 
   static defaultAttackCrit(confirmed) {
@@ -155,5 +199,14 @@ export default class DSATables {
 
   static defaultParryCrit() {
     return ', ' + _loc('attackOfOpportunity');
+  }
+
+  static async runRuntimeTests(options = {}) {
+    const Runner = await TestModuleLoader.load(TABLE_EFFECT_RUNTIME_TESTS);
+    return Runner.run(options);
+  }
+
+  static getTestLoadStates() {
+    return TestModuleLoader.getLoadStates();
   }
 }

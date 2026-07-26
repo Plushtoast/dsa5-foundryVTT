@@ -1,18 +1,25 @@
 <div class='tab scrollable standard-form {{tabs.events.cssClass}}' data-tab='events' data-group='{{tabs.events.group}}'>
-    <div class="fullScreenMaxWidth dark-theme">
-        <div class="flexrow position-relative gap2px">
-            <div class="flexcol gap5px position-relative">
-                
-                <div class="flexcol position-fake-sticky searchOptions">
+    <div class="fullScreenMaxWidth dark-theme events-tab-container">
+        <div class="events-layout{{#if (eq eventsViewMode 'timeline')}} timeline-mode{{/if}}">
+            <div class="events-main-column flexcol gap5px position-relative">
+                <div class="flexcol position-fake-sticky searchOptions{{#if (eq eventsViewMode 'calendar')}} has-calendar-nav{{/if}}">
                     <div class="flexrow">
                         <button type="button" data-action="openMoreSearch" class="crossedButton toggleOn icon fas fa-caret-down"></button>
                         <input type="search" class="calendarSearch" placeholder="{{localize 'Library.search'}}">
                         {{#if isGM}}
                         <button type="button" data-action="createEvent" data-tooltip="dsacalendar.createEvent" class="icon fas fa-plus"></button>
                         {{/if}}
+                        <button type="button" data-action="switchEventsView" data-view="timeline" data-tooltip="dsacalendar.viewTimeline" class="icon fas fa-list{{#if (eq eventsViewMode 'timeline')}} toggleOn{{/if}}"></button>
+                        <button type="button" data-action="switchEventsView" data-view="calendar" data-tooltip="dsacalendar.viewCalendar" class="icon fas fa-calendar-days{{#if (eq eventsViewMode 'calendar')}} toggleOn{{/if}}"></button>
                         {{#each dayCategories}}
                         <button type="button" data-action="filterCategory" data-filter-type="category" data-filter="{{key}}" data-tooltip="{{name}}" class="crossedButton toggleOn icon {{icon}}" style="color: {{this.color}};"></button>
                         {{/each}}
+                    </div>
+                    <div class="events-calendar-nav flexrow flexAlignCenter gap5px{{#unless (eq eventsViewMode 'calendar')}} dsahidden{{/unless}}">
+                        <button type="button" class="circleBtn icon fas fa-chevron-left" data-action="eventsCalendarPrev" data-tooltip="dsacalendar.previousMonth"></button>
+                        <span class="events-calendar-title flex1 center"></span>
+                        <button type="button" class="circleBtn" data-action="eventsCalendarToday" data-tooltip="dsacalendar.today"><i class="fas fa-calendar-day"></i></button>
+                        <button type="button" class="circleBtn icon fas fa-chevron-right" data-action="eventsCalendarNext" data-tooltip="dsacalendar.nextMonth"></button>
                     </div>
                     <div class="moreSearchOptions dsahidden">
                         <fieldset>
@@ -23,16 +30,33 @@
                                 <button type="button" data-action="filterCategory" data-filter-type="uuid" data-filter="{{uuid}}" class="flex0 crossedButton toggleOn">{{name}}</button>
                                 {{/each}}
                             </div>
-                        </fieldset>                    
+                        </fieldset>
                     </div>
                 </div>
-                <div class="flexcol gap2px eventscontainer">
+
+                <div class="events-view-timeline{{#unless (eq eventsViewMode 'timeline')}} dsahidden{{/unless}}">
+                    <div class="flexrow position-relative gap2px">
+                        <div class="flexcol gap2px eventscontainer flex1"></div>
+                        <div class="events-scroll-controls flex0">
+                            <button type="button" class="circleBtn icon fas fa-chevron-up" data-action="scrollMonthPrev" data-tooltip="dsacalendar.previousMonth"></button>
+                            <button type="button" class="circleBtn" data-action="scrollToToday" data-tooltip="dsacalendar.today"><i class="fas fa-calendar-day"></i></button>
+                            <button type="button" class="circleBtn icon fas fa-chevron-down" data-action="scrollMonthNext" data-tooltip="dsacalendar.nextMonth"></button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="events-scroll-controls flex0">
-                <button type="button" class="circleBtn icon fas fa-chevron-up" data-action="scrollMonthPrev" data-tooltip="dsacalendar.previousMonth"></button>
-                <button type="button" class="circleBtn" data-action="scrollToToday" data-tooltip="dsacalendar.today"><i class="fas fa-calendar-day"></i></button>
-                <button type="button" class="circleBtn icon fas fa-chevron-down" data-action="scrollMonthNext" data-tooltip="dsacalendar.nextMonth"></button>
+
+                <div class="events-view-calendar{{#unless (eq eventsViewMode 'calendar')}} dsahidden{{/unless}}">
+                    <div class="events-month-grid-container"></div>
+                    <div class="event-details-container">
+                        <div class="no-selection">
+                            <div class="no-selection-content">
+                                <i class="fas fa-calendar-day"></i>
+                                <h3>{{localize 'dsacalendar.selectEvent'}}</h3>
+                                <p>{{localize 'dsacalendar.selectEventHint'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

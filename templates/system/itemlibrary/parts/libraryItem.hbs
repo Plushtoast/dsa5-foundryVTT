@@ -1,10 +1,10 @@
 {{#each items as |item i|}}
-<li class="browser-item" data-uuid="{{item.uuid}}" draggable="true" data-tooltip-direction="RIGHT" data-tooltip="{{item.name}}">
+<li class="browser-item library-item {{item.type}}" data-uuid="{{item.uuid}}" draggable="true" data-tooltip-direction="RIGHT" data-tooltip="{{item.name}}">
     <div class="image" style="background-image: url('{{item.img}}')"></div>
     <a class="name-icon">
         <div class="item-name"><span>{{item.name}}</span></div>
     </a>
-    <small class="compendium">{{item.compendium}}</small>
+    <small class="compendium">{{item.compendiumLabel}}</small>
     {{#if item.price}}
     <div class="priceDrag center" data-uuid="{{item.uuid}}" data-pay="true" draggable="true" data-tooltip="HELP.payDrag">
         <i class="fas fa-coins"></i><br/>{{item.price}}

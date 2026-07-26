@@ -2,10 +2,19 @@
   <tr>
     <td colspan='2'>
       <div class="flexrow lineheight">
-        <a class='roll-button postInfo' data-uuid='{{document.uuid}}'><em class='fas fa-comment'></em>
+        {{#if sheetEmbed}}
+        <a class='roll-button' data-action='infoPost' data-tooltip="{{localize 'TT.enricherInfoPost'}}" data-uuid='{{uuid}}'{{#if parentUuid}} data-parent-uuid='{{parentUuid}}'{{/if}}><em class='fas fa-comment'></em>
           {{document.name}}</a>
-        <a class='content-link flex0' draggable='true' data-type='Item' data-uuid='{{document.uuid}}'><i
-            class='fas fa-info'></i></a>
+        {{#if uuid}}
+        <button type='button' class='dsadesignbutton noBorder icon fas fa-info flex0' data-action='infoShow' data-uuid='{{uuid}}'{{#if parentUuid}} data-parent-uuid='{{parentUuid}}'{{/if}}></button>
+        {{/if}}
+        {{else}}
+        <a class='roll-button postInfo' data-tooltip="{{localize 'TT.enricherInfoPost'}}" data-uuid='{{uuid}}'{{#if parentUuid}} data-parent-uuid='{{parentUuid}}'{{/if}}><em class='fas fa-comment'></em>
+          {{document.name}}</a>
+        {{#if uuid}}
+        <button type='button' class='dsadesignbutton noBorder icon fas fa-info show-item flex0' data-type='Item' data-uuid='{{uuid}}'{{#if parentUuid}} data-parent-uuid='{{parentUuid}}'{{/if}}></button>
+        {{/if}}
+        {{/if}}
       </div>
     </td>
   </tr>
@@ -53,13 +62,13 @@
   {{/if}}
   {{#if document.system.botch}}
   <tr>
-    <td>{{localize 'CriticalFailure'}} 6</td>
+    <td>{{localize 'CriticalFailure'}}</td>
     <td>{{{enriched.enrichedbotch}}}</td>
   </tr>
   {{/if}}
   {{#if document.system.crit}}
   <tr>
-    <td>{{localize 'CriticalSuccess'}} 6</td>
+    <td>{{localize 'CriticalSuccess'}}</td>
     <td>{{{enriched.enrichedcrit}}}</td>
   </tr>
   {{/if}}

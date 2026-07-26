@@ -3,23 +3,33 @@
   {{formGroup systemFields.equipmentType.fields.value value=document.system.equipmentType.value localize=true}}
   {{formGroup systemFields.QL value=document.system.QL localize=true choices=availableSteps}}
 
+  <div class="form-group ql-edit">
+    <label>{{localize 'effect'}}</label>
+    <div class="form-fields">
+      <div>{{currentStep}}</div>
+      <button type="button" class="icon fas fa-edit noBorder dsadesignbutton" data-action="toggleQL"></button>
+    </div>
+  </div>
+  <div class="ql-edit dsahidden">
+    {{formGroup systemFields.QLList value=document.system.QLList localize=true elementType='textarea' classes='full-height' tooltip='TT.oneQualityPerLine'}}
+  </div>
+
+  <div class='form-group full-height'>
+    <label>{{localize 'PLANT.ingredients'}}</label>
+    <div class="form-fields">
+      {{formInput systemFields.ingredients value=document.system.ingredients toggled=true enriched=enrichedIngredients}}
+    </div>
+  </div>
+
+  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true}}
+  {{formGroup systemFields.price.fields.value value=document.system.price.value localize=true label='priceEachQL'}}
+  
   <div class='form-group double'>
     <label>{{localize 'max'}} {{localize 'charges'}}</label>
     <div class="form-fields">
       {{formInput systemFields.charges value=document.system.charges}}
       <span> / </span>
       {{formInput systemFields.maxCharges value=document.system.maxCharges}}
-    </div>
-  </div>
-
-  {{formGroup systemFields.price.fields.value value=document.system.price.value localize=true label='priceEachQL'}}
-  {{formGroup systemFields.QLList value=document.system.QLList localize=true elementType='textarea' classes='full-height' tooltip='TT.oneQualityPerLine'}}
-  {{formGroup systemFields.difficulty value=document.system.difficulty localize=true}}
-
-  <div class='form-group full-height'>
-    <label>{{localize 'PLANT.ingredients'}}</label>
-    <div class="form-fields">
-      {{formInput systemFields.ingredients value=document.system.ingredients toggled=true enriched=enrichedIngredients}}
     </div>
   </div>
   

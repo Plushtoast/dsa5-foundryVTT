@@ -1,4 +1,4 @@
-const { mergeObject, getProperty } = foundry.utils;
+const { mergeObject, getProperty, deepClone, diffObject, isEmpty } = foundry.utils;
 
 export default class Migrakel {
   static async showDialog(content, migrateAll = false) {
@@ -51,57 +51,155 @@ export default class Migrakel {
     await actor.deleteEmbeddedDocuments('ActiveEffect', removeEffects);
   }
 
-  static async updateVals(actor, condition, updater) {
+  static itemTypeLabel(type) {
+    const key = `TYPES.Item.${type}`;
+    return game.i18n.has(key) ? _loc(key) : type;
+  }
+
+  static hasChanges(current, updated) {
+    return !isEmpty(diffObject(current, updated));
+  }
+
+  static async buildUpdateCandidate(item, itemLibrary, updater) {
+    let find = await itemLibrary.findCompendiumItem(item.name, item.type);
+    if (find.length === 0) return null;
+
+    find = find.find((x) => x.name == item.name && x.type == item.type);
+    if (!find) return null;
+
+    const currentData = item.toObject();
+    const newData = mergeObject(deepClone(currentData), updater(find));
+    if (!this.hasChanges(currentData, newData)) return null;
+
+    return {
+      id: item.id,
+      item,
+      name: item.name,
+      type: item.type,
+      typeLabel: this.itemTypeLabel(item.type),
+      newData,
+    };
+  }
+
+  static async showDryRunDialog(actor, candidates) {
+    const grouped = candidates.reduce((groups, candidate) => {
+      groups[candidate.typeLabel] ??= [];
+      groups[candidate.typeLabel].push(candidate);
+      return groups;
+    }, {});
+    const groups = Object.entries(grouped)
+      .sort(([a], [b]) => a.localeCompare(b, game.i18n.lang))
+      .map(([label, entries]) => ({
+        label,
+        count: entries.length,
+        entries: entries.sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang)),
+      }));
+    const content = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/dialog/migrakel-dry-run.hbs', {
+      hint: _loc('Migrakel.dryRunHint', { name: actor.name, count: candidates.length }),
+      groups,
+    });
+
+    try {
+      return await foundry.applications.api.DialogV2.wait({
+        window: { title: 'Migrakel.dryRun', resizable: true },
+        content,
+        position: {
+          width: 600,
+        },
+        buttons: [
+          {
+            action: 'yes',
+            icon: 'fa fa-check',
+            label: 'update',
+            default: true,
+            callback: (event, button) => Array.from(button.form.querySelectorAll('input[name="migrakelItems"]:checked')).map((input) => input.value),
+          },
+          {
+            action: 'cancel',
+            icon: 'fas fa-times',
+            label: 'cancel',
+            callback: () => null,
+          },
+        ],
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+
+  static async updateVals(actor, condition, updater, options = {}) {
     const itemLibrary = game.dsa5.itemLibrary;
     const itemsToDelete = [];
     const itemsToCreate = [];
+    const candidates = [];
+    const bagCandidates = [];
+    const itemCandidates = [];
     const containersIDs = new Map();
-    await this.refreshStatusEffects(actor);
     if (condition({ type: 'equipment' })) {
-      const bagsToDelete = [];
-      const bagsToCreate = [];
       for (const item of actor.items.filter((x) => x.type == 'equipment' && x.system.equipmentType.value == 'bags')) {
-        let find = await itemLibrary.findCompendiumItem(item.name, item.type);
-        if (find.length > 0) {
-          find = find.find((x) => x.name == item.name && x.type == item.type);
-          if (!find) continue;
-
-          console.log(`MIGRATION - Updated ${item.name}`);
-          const newData = mergeObject(item.toObject(), updater(find));
-          bagsToCreate.push(newData);
-          bagsToDelete.push(item.id);
-        }
+        const candidate = await this.buildUpdateCandidate(item, itemLibrary, updater);
+        if (!candidate) continue;
+        candidates.push(candidate);
+        bagCandidates.push(candidate);
       }
-
-      const result = await actor.createEmbeddedDocuments('Item', bagsToCreate);
-      for (let k = 0; k < result.length; k++) {
-        containersIDs.set(bagsToDelete[k], result[k].id);
-      }
-
-      await actor.deleteEmbeddedDocuments('Item', bagsToDelete);
     }
 
     for (const item of actor.items.filter((x) => condition(x) && !(x.type == 'equipment' && x.system.equipmentType.value == 'bags'))) {
-      let find = await itemLibrary.findCompendiumItem(item.name, item.type);
-      if (find.length > 0) {
-        find = find.find((x) => x.name == item.name && x.type == item.type);
-        if (!find) continue;
-
-        console.log(`MIGRATION - Updated ${item.name}`);
-        const newData = mergeObject(item.toObject(), updater(find));
-        if (newData.system.parent_id && containersIDs.has(newData.system.parent_id)) newData.system.parent_id = containersIDs.get(newData.system.parent_id);
-
-        itemsToCreate.push(newData);
-        itemsToDelete.push(item.id);
-      }
+      const candidate = await this.buildUpdateCandidate(item, itemLibrary, updater);
+      if (!candidate) continue;
+      candidates.push(candidate);
+      itemCandidates.push(candidate);
     }
-    await actor.createEmbeddedDocuments('Item', itemsToCreate);
-    await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
+
+    if (!candidates.length) {
+      if (!Migrakel.silent) ui.notifications.info('Migrakel.noChanges', { localize: true });
+      return true;
+    }
+
+    const selectedIds = options.skipDryRun ? candidates.map((candidate) => candidate.id) : await this.showDryRunDialog(actor, candidates);
+    if (!selectedIds) return false;
+
+    const selected = new Set(selectedIds);
+    if (!selected.size) return false;
+
+    await this.refreshStatusEffects(actor);
+
+    const selectedBags = bagCandidates.filter((candidate) => selected.has(candidate.id));
+    const bagsToDelete = selectedBags.map((candidate) => candidate.id);
+    if (selectedBags.length) {
+      const result = await actor.createEmbeddedDocuments('Item', selectedBags.map((candidate) => candidate.newData));
+      for (let k = 0; k < result.length; k++) {
+        containersIDs.set(selectedBags[k].id, result[k].id);
+        console.log(`MIGRATION - Updated ${selectedBags[k].name}`);
+      }
+      await actor.deleteEmbeddedDocuments('Item', bagsToDelete);
+    }
+
+    for (const candidate of itemCandidates.filter((entry) => selected.has(entry.id))) {
+      const newData = candidate.newData;
+      if (newData.system.parent_id && containersIDs.has(newData.system.parent_id)) newData.system.parent_id = containersIDs.get(newData.system.parent_id);
+
+      console.log(`MIGRATION - Updated ${candidate.name}`);
+      itemsToCreate.push(newData);
+      itemsToDelete.push(candidate.id);
+    }
+
+    if (containersIDs.size) {
+      const selectedItems = new Set(itemsToDelete);
+      const parentUpdates = actor.items
+        .filter((item) => !selectedItems.has(item.id) && containersIDs.has(item.system?.parent_id))
+        .map((item) => ({ _id: item.id, 'system.parent_id': containersIDs.get(item.system.parent_id) }));
+      if (parentUpdates.length) await actor.updateEmbeddedDocuments('Item', parentUpdates);
+    }
+
+    if (itemsToCreate.length) await actor.createEmbeddedDocuments('Item', itemsToCreate);
+    if (itemsToDelete.length) await actor.deleteEmbeddedDocuments('Item', itemsToDelete);
 
     if (!Migrakel.silent) ui.notifications.info('Migrakel.migrationDone', { localize: true });
+    return true;
   }
 
-  static async updateSpellsAndLiturgies(actor, preChoice = undefined) {
+  static async updateSpellsAndLiturgies(actor, preChoice = undefined, options = {}) {
     const res = preChoice ?? (await this.showDialog(_loc('Migrakel.spells'), true));
     const condition = (x) => {
       return ['spell', 'liturgy', 'ritual', 'ceremony', 'spellextension', 'blessing'].includes(x.type);
@@ -113,7 +211,7 @@ export default class Migrakel {
 
         return upd;
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
     } else if (res) {
       const updator = (find) => {
         const upd = {
@@ -129,12 +227,12 @@ export default class Migrakel {
         }
         return upd;
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
     }
     return res;
   }
 
-  static async updateSpecialAbilities(actor, preChoice = undefined) {
+  static async updateSpecialAbilities(actor, preChoice = undefined, options = {}) {
     const res = preChoice ?? (await this.showDialog(_loc('Migrakel.abilities')));
     if (res) {
       const updator = (find) => {
@@ -171,6 +269,14 @@ export default class Migrakel {
               },
             });
           }
+          if (find.system.category.value == 'ceremonial') {
+            mergeObject(update, {
+              system: {
+                ceremonialItem: getProperty(find, 'system.ceremonialItem') || '',
+                permanentEffects: getProperty(find, 'system.permanentEffects') || false,
+              },
+            });
+          }
         }
         this.updateMacro(update, find);
         return update;
@@ -179,12 +285,12 @@ export default class Migrakel {
       const condition = (x) => {
         return ['specialability', 'advantage', 'disadvantage', 'trait', 'essence', 'imprint'].includes(x.type);
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
     }
     return res;
   }
 
-  static async updateCombatskills(actor, preChoice = undefined) {
+  static async updateCombatskills(actor, preChoice = undefined, options = {}) {
     const res = preChoice ?? (await this.showDialog(_loc('Migrakel.cskills')));
     if (res) {
       const updator = (find) => {
@@ -195,12 +301,12 @@ export default class Migrakel {
       const condition = (x) => {
         return ['combatskill'].includes(x.type);
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
     }
     return res;
   }
 
-  static async updateSkills(actor, preChoice = undefined) {
+  static async updateSkills(actor, preChoice = undefined, options = {}) {
     const res = preChoice ?? (await this.showDialog(_loc('Migrakel.skills')));
     if (res) {
       const condition = (x) => {
@@ -212,7 +318,7 @@ export default class Migrakel {
           effects: find.effects.toObject(),
         };
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
     }
     return res;
   }
@@ -226,7 +332,7 @@ export default class Migrakel {
     }
   }
 
-  static async updateGear(actor, preChoice = undefined) {
+  static async updateGear(actor, preChoice = undefined, options = {}) {
     const choice = preChoice ?? (await this.showDialog(_loc('Migrakel.gear')));
     if (choice) {
       const condition = (x) => {
@@ -262,7 +368,7 @@ export default class Migrakel {
         this.updateMacro(update, find);
         return update;
       };
-      await this.updateVals(actor, condition, updator);
+      await this.updateVals(actor, condition, updator, options);
 
       await actor.updateEmbeddedDocuments(
         'Item',

@@ -26,13 +26,24 @@
             </div>
         </div>
         <div class="col third">
-            <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
+            <div class="healthbar bar-astralenergy barRight{{#if prepare.powersourceBar}} powersource-bar{{/if}}" data-tooltip="astralenergy">
+                <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{#if prepare.powersourceBarLayout}}{{prepare.powersourceBarLayout.totalMax}}{{else}}{{document.system.status.astralenergy.max}}{{/if}};">
+                </div>
+                {{#if prepare.powersourceBarLayout}}
+                <div class="powersource-segments">
+                    {{#each prepare.powersourceBarLayout.segments}}
+                    <div class="powersource-segment color-{{colorIndex}}{{#if @first}} first-segment{{/if}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
+                        <div class="powersource-fill" style="width: calc(100% * {{fillRatio}});"></div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
                 <div class="barLabel">
                     {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
                     <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
-                </div>
-                <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
-
+                    {{#if prepare.powersourceBar}}
+                    <span class="nobr powersource-label" data-action="powersourceEdit" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
+                    {{/if}}
                 </div>
             </div>
         </div>
@@ -51,13 +62,24 @@
         {{/if}} 
     {{else if prepare.magic.hasSpells}}
     <div class="col fourty">
-        <div class="healthbar bar-astralenergy barRight" data-tooltip="astralenergy">
+        <div class="healthbar bar-astralenergy barRight{{#if prepare.powersourceBar}} powersource-bar{{/if}}" data-tooltip="astralenergy">
+            <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{#if prepare.powersourceBarLayout}}{{prepare.powersourceBarLayout.totalMax}}{{else}}{{document.system.status.astralenergy.max}}{{/if}};">
+            </div>
+            {{#if prepare.powersourceBarLayout}}
+            <div class="powersource-segments">
+                {{#each prepare.powersourceBarLayout.segments}}
+                <div class="powersource-segment color-{{colorIndex}}{{#if @first}} first-segment{{/if}}" style="left: calc(100% * {{offset}}); width: calc(100% * {{width}});" data-tooltip="{{label}}">
+                    <div class="powersource-fill" style="width: calc(100% * {{fillRatio}});"></div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
             <div class="barLabel">
                 {{formInput systemFields.status.fields.astralenergy.fields.value value=document.system.status.astralenergy.value tooltip="Current"}} / 
                 <span data-tooltip="max">{{document.system.status.astralenergy.max}}</span>
-            </div>
-            <div class="bar decolorizeFilter AsP" style="--a: {{document.system.status.astralenergy.value}}; --b: {{document.system.status.astralenergy.max}}">
-
+                {{#if prepare.powersourceBar}}
+                <span class="nobr powersource-label" data-action="powersourceEdit" data-tooltip="POWERSOURCE.barTooltip"> + {{prepare.powersource.value}} / {{prepare.powersource.max}}</span>
+                {{/if}}
             </div>
         </div>
     </div>
@@ -68,7 +90,7 @@
     {{/if}}
 
 </div>
-{{#if document.system.status.temporaryLeP.max}}
+{{#if (and document.system.status.temporaryLeP.max @root.isBrawling)}}
 <div class="row-section">
     <div class="col fourty">
         <div class="healthbar bar-wounds barLeft{{#if prepare.isSwarm}} swarmcount{{/if}} soloBar" style="--swarm: {{document.system.swarm.count}};" data-tooltip="BRAWLING.temporary">

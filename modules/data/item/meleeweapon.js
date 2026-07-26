@@ -4,11 +4,13 @@ import { ItemDataModel } from '../baseitem.js';
 import EquipmentTemplate from './templates/equipment.js';
 import StructureTemplate from './templates/structure.js';
 import ArtifactTemplate from './templates/artifact.js';
+import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
+import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
 import DSABooleanField from '../fields/dsa_boolean_field.js';
@@ -20,10 +22,22 @@ const { getProperty, setProperty } = foundry.utils;
 
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
-export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, EquipmentTemplate, StructureTemplate) {
+export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
   static THROWABLE_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons', 'Impact Weapons', 'Swords', 'Polearms']);
   static NOT_TWO_HANDED_WEAPON_TYPES = new Set(['Daggers', 'Fencing Weapons']);
   static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+  static IMPROVISED_WEAPON_PATTERN = /(\(|,)( )?i\)$/;
+
+  static hasImprovisedName(itemOrName) {
+    const name = typeof itemOrName === 'string' ? itemOrName : itemOrName?.name;
+    return this.IMPROVISED_WEAPON_PATTERN.test(name || '');
+  }
+
+  static isImprovisedWeapon(item) {
+    if (!item) return false;
+    if (item.system?.isNotImprovised) return false;
+    return this.hasImprovisedName(item);
+  }
 
   static defineSchema() {
     const guideValues = foundry.utils.duplicate(DSA5.characteristics);
@@ -36,7 +50,9 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
         value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
+        stp: new ScopableStringField({ initial: '', label: 'stpDamage' }),
       }),
+      vehicleRam: new BooleanField({ initial: false, label: 'VEHICLE.vehicleRamWeapon' }),
       atmod: new SchemaField({
         value: new ScopableNumberField({ initial: 0, label: 'atmod' }),
         offhandMod: new ScopableNumberField({ initial: 0 }),
@@ -63,10 +79,20 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
         offHand: new ScopableBooleanField({ label: 'offHand' }),
         wrongGrip: new ScopableBooleanField(),
       }),
+      isNotImprovised: new DSABooleanField({ initial: false, label: 'WEAPON.notImprovised', tooltip: 'WEAPON.notImprovisedHint' }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
+      isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
       preventsBrawlAttackDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlAttackDamage', tooltip: 'BRAWLING.preventsBrawlAttackDamageHint' }),
       preventsBrawlParryDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlParryDamage', tooltip: 'BRAWLING.preventsBrawlParryDamageHint' }),
     });
+  }
+
+  get isImprovisedWeapon() {
+    return this.constructor.isImprovisedWeapon(this.parent);
+  }
+
+  get hasImprovisedName() {
+    return this.constructor.hasImprovisedName(this.parent);
   }
 
   static _migrateData(source) {
@@ -78,8 +104,10 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
   }
 
   async getSheetData(data) {
+    await super.getSheetData(data);
     data.combatskills = await DSA5_Utility.allCombatSkillsList('melee');
     data.isShield = RuleChaos.isShield(data.document);
+    data.showImprovisedToggle = this.hasImprovisedName;
     data.domains = this.prepareDomains();
     data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
     foundry.utils.mergeObject(data, this.getGripInfo());

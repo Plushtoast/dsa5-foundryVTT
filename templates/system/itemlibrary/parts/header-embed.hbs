@@ -1,0 +1,16 @@
+<div class="itemlibrary-header-toolbar dsap-2">
+    <div class="itemlibrary-search-wrap">
+        <input class="input-text filterBy-search" name="librarySearch" type="search" placeholder="{{localize 'Library.searchPlaceholder'}}" />
+    </div>
+    <div class="itemlibrary-toolbar-group itemlibrary-view-toggle" role="group" aria-label="{{localize 'Library.viewMode'}}">
+        <button type="button" class="dsadesignbutton icon fa-solid fa-table-cells {{#if (eq viewMode 'compact')}}active on{{/if}}" data-action="selectLibraryView" data-view="compact" aria-pressed="{{#if (eq viewMode 'compact')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutCompact'}}" aria-label="{{localize 'Library.layoutCompact'}}"></button>
+        <button type="button" class="dsadesignbutton icon fa-solid fa-id-card {{#if (eq viewMode 'browse')}}active on{{/if}}" data-action="selectLibraryView" data-view="browse" aria-pressed="{{#if (eq viewMode 'browse')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutBrowse'}}" aria-label="{{localize 'Library.layoutBrowse'}}"></button>
+        <button type="button" class="dsadesignbutton icon fa-solid fa-list {{#if (eq viewMode 'list')}}active on{{/if}}" data-action="selectLibraryView" data-view="list" aria-pressed="{{#if (eq viewMode 'list')}}true{{else}}false{{/if}}" data-tooltip="{{localize 'Library.layoutList'}}" aria-label="{{localize 'Library.layoutList'}}"></button>
+        <button type="button" class="dsadesignbutton icon fa-solid fa-sliders" data-action="embedLibrarySettings" data-tooltip="Library.settings" aria-label="{{localize 'Library.settings'}}" aria-haspopup="menu"></button>
+    </div>
+    <div class="itemlibrary-toolbar-group itemlibrary-font-size" hidden>
+        <button type="button" class="dsadesignbutton icon itemlibrary-font-size__button" data-action="selectListFontSize" data-tooltip="{{localize 'Library.listFontSize'}} ({{listFontSizeLabel}})" aria-label="{{localize 'Library.listFontSize'}} ({{listFontSizeLabel}})">
+            <i class="fas fa-text-height" aria-hidden="true"></i>
+        </button>
+    </div>
+</div>

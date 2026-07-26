@@ -1,135 +1,62 @@
-<div>
-  <p>{{{localize 'CONJURATION.requestDescr'}}}</p>
+<div class="summoning-request">
 
-  <div class='row-section'>
-    <div class='col two'>
-      <fieldset class="gap0px">
-        <legend>{{localize 'probe'}}</legend>
-        <div class='row-section'>
-          <div class='col sixty table-title flexrow'>
-            <label class=''>{{localize 'CHARAbbrev.QS'}}:</label>
-          </div>
-          <div class='col fourty center'>
-            <input class='conjurationData' data-refresh='true' type='text' name='qs' value='{{creationData.qs}}' />
-          </div>
+    <div class="dsa-card-panel dsap-3">
+        <div class="row-section flexAlignCenter gap5px">
+            <div class="col ten center">
+                <img class="profile" style="width:48px;height:48px" src="{{summonerImg}}" alt=""
+                    data-tooltip="{{summoner.name}}" />
+            </div>
+            <div class="col">
+                <h3 class="dmargin0"><b>{{summoner.name}}</b> {{localize "CONJURATION.conjurs"}}
+                    <b>{{conjuration.name}}</b></h3>
+                <span class="dsa-pip pip-neutral">{{summary.typeName}}</span>
+                <span class="dsa-pip pip-neutral">{{localize summary.controlModeLabel}}</span>
+            </div>
+            <div class="col ten center">
+                <img class="profile" style="width:48px;height:48px" src="{{conjuration.img}}" alt=""
+                    data-tooltip="{{conjuration.name}}" />
+            </div>
         </div>
-        <div class='row-section'>
-          <div class='col sixty table-title'>
-            <label class=''>{{localize 'extensions'}}:</label>
-          </div>
-          <div class='col fourty center'>
-            {{creationData.consumedQS}}
-          </div>
-        </div>
-        <div class='row-section'>
-          <div class='col sixty table-title'>
-            <label class=''>{{localize 'PLAYER.services'}}:</label>
-          </div>
-          <div class='col fourty center'>
-            {{services}}
-          </div>
-        </div>
-      </fieldset>
-      <fieldset class="gap0px">
-        <legend>{{localize 'PLAYER.conjuration'}}</legend>
-        <div class='row-section'>
-          <div class='col'>
-            <img style='width:70px;height:70px;margin:0 auto;' class='profile' src='{{conjuration.img}}' data-tooltip='{{actor.name}}' />
-          </div>
-        </div>
-        <div class='row-section'>
-          <div class='col fourty table-title'>
-            <label class=''>{{localize 'Name'}}:</label>
-          </div>
-          <div class='col sixty'>
-            <a data-action='openChar'>{{conjuration.name}}</a>
-          </div>
-        </div>
-        <div class='row-section'>
-          <div class='col fourty flexrow table-title'>
-            <label>{{localize 'creatureClass'}}:</label>
-          </div>
-          <div class='col sixty'>
-            {{conjuration.system.creatureClass.value}}
-          </div>
-        </div>
-        <div class='row-section'>
-          <div class='col fourty table-title'>
-            <label class=''>{{localize 'conjuringDifficulty'}}:</label>
-          </div>
-          <div class='col sixty'>
-            {{conjuration.system.conjuringDifficulty.value}}
-          </div>
-        </div>
-      </fieldset>
-    </div>
-    <div class='col two'>
-      <fieldset class="gap0px">
-        <legend>{{localize 'extensions'}}</legend>
-
-        {{#each conjurationModifiers as |item i|}}
-          <div class='row-section wrap tableOdd' data-id='{{item.id}}'>
-            <div class='col lineheight'>
-              {{localize item.name}}
-            </div>
-            <div class='col'>
-              <span class='small'>{{localize item.descr}}</span>
-            </div>
-          </div>
-        {{/each}}
-      </fieldset>
-
-      <fieldset class="gap0px">
-        <legend>{{localize 'entityAbility'}}</legend>
-        {{#each entityModifiers as |item i|}}
-          <div class='row-section col wrap tableOdd' data-id='{{item.uuid}}'>
-            <div class='col eighty lineheight'>
-              {{item.name}}{{roman item.count item.system.at.value}}
-            </div>
-            <div class='col ten'>
-              <span class='small' data-tooltip='CHARAbbrev.QL'>{{item.cost}}</span>
-            </div>
-            <div class='col ten'>
-              <a data-action="showEntity" class='small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
-            </div>
-          </div>
-        {{/each}}
-      </fieldset>
-      <fieldset class="gap0px">
-        <legend>{{localize 'summoningPackage'}}</legend>
-        {{#each packageModifiers as |item i|}}
-          <div class='row-section col wrap tableOdd' data-id='{{item.uuid}}'>
-            <div class='col eighty lineheight'>
-              {{item.name}}
-            </div>
-            <div class='col ten'>
-              <span class='small'>{{item.system.at.value}}</span>
-            </div>
-            <div class='col ten'>
-              <a data-action="showEntity" class='small' data-uuid='{{item.uuid}}'><i class='fas fa-info'></i></a>
-            </div>
-          </div>
-        {{/each}}
-      </fieldset>
-    </div>
-  </div>
-  {{#if confirmed}}
-
-    <div class='center bags' style="margin-top:20px;">
-      <div
-        data-action="newNPC"
-        class='slot newNPC'
-        draggable='true'
-        style="margin:0 auto;background-image:url('{{actor.img}}')"
-        data-id='{{actor.id}}'
-        data-uuid='{{actor.uuid}}'
-        data-tooltip='{{actor.name}}'
-      ></div>
+        <p class="dsa-info-text small dsamt-2">{{{localize 'CONJURATION.requestDescr'}}}</p>
     </div>
 
-  {{else}}
-    <div style='height:60px;' class="flexrow">
-      <button type="button" data-action='createActor'>{{localize 'PLAYER.finalize'}}</button>
+    {{> systems/dsa5/templates/system/conjuration/parts/summary.hbs}}
+
+    <div class="summoning-columns">
+        <div>
+            {{> systems/dsa5/templates/system/conjuration/parts/selection-list.hbs title="extensions"
+            entries=extensionEntries}}
+        </div>
+        <div>
+            {{> systems/dsa5/templates/system/conjuration/parts/selection-list.hbs title="entityAbility"
+            entries=entityEntries}}
+            {{> systems/dsa5/templates/system/conjuration/parts/selection-list.hbs title="summoningPackage"
+            entries=packageEntries}}
+        </div>
     </div>
-  {{/if}}
+
+    {{#if confirmed}}
+
+    <div class="dsa-card-panel dsap-3 center">
+        <div class="underlined-header">{{localize "CONJURATION.dragToMap"}}</div>
+        <div class="bags flexrow flexAlignCenter gap5px">
+            <div data-action="newNPC" class="slot newNPC cursor-drag dsamx-auto" draggable="true"
+                style="background-image:url('{{actor.img}}')" data-id="{{actor.id}}" data-uuid="{{actor.uuid}}"
+                data-tooltip="{{actor.name}}"></div>
+        </div>
+        <p class="dsa-info-text small dsamt-2">{{localize "CONJURATION.dragToMapHint"}}</p>
+    </div>
+
+    {{else}}
+
+    <div class="dsa-card-panel__actions dsa-card-panel__actions--end dialog-buttons">
+        <button type="button" data-action="declineConjuration" class="dsadesignbutton">
+            <i class="fas fa-ban"></i> {{localize 'CONJURATION.decline'}}
+        </button>
+        <button type="button" data-action="createActor" class="sheetButton">
+            <i class="fas fa-check"></i> {{localize 'PLAYER.finalize'}}
+        </button>
+    </div>
+
+    {{/if}}
 </div>

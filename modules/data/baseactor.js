@@ -64,7 +64,7 @@ export class ActorDataModel extends DSADataModel {
       carryModifier: 0,
       aspModifier: 0,
       kapModifier: 0,
-      vulnerabilities: [],
+      vulnerabilities: { combatskill: [] },
       resistances: {
         effects: [],
       },
@@ -115,8 +115,14 @@ export class ActorDataModel extends DSADataModel {
         step: [],
         parry: [],
         attack: [],
+        CMP: [],
+        defenseCount: [],
         damage: [],
         damageThreshold: [],
+      },
+      magicAnalysis: {
+        max: 0,
+        stack: 0,
       },
       feature: {
         FP: [],
@@ -127,7 +133,12 @@ export class ActorDataModel extends DSADataModel {
         FW: [],
         KaPCost: [],
         AsPCost: [],
-      }
+      },
+      conjuration: {
+        services: [],
+        difficulty: [],
+        AsPCost: [],
+      },
     };
 
     // Add specific skill type modifiers
@@ -375,6 +386,8 @@ export class ActorDataModel extends DSADataModel {
       data.status.wounds.multiplier + data.status.wounds.gearmodifier
     );
 
+    Hooks.call('dsa5PrepareEnergyZones', this.parent, data);
+
     data.status.fatePoints.max = Number(data.status.fatePoints.current) +
       Number(data.status.fatePoints.modifier) + data.status.fatePoints.gearmodifier;
 
@@ -486,7 +499,7 @@ export class ActorDataModel extends DSADataModel {
   }
 
   _setHorseSpeed(data, horse) {
-    if (!horse.system.status.speed.max) {
+    if (horse.system.status.speed.max == null) {
       horse.system.calcSpeed(horse.system, horse.hasCondition('fixated'));
     }
     data.status.speed.max = horse.system.status.speed.max;

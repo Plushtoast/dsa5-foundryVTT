@@ -1,0 +1,80 @@
+<div class="groupbox paddingBox">
+    <div class="row-section flexAlignCenter">
+        <div class="col table-title lineheight">
+            {{localize 'extensions'}}
+            {{#if hasMighty}}<i data-tooltip="CONJURATION.powerfulCreature" class="fas fa-hand-fist"></i>{{/if}}
+        </div>
+        <div class="col ten center flexrow">
+            <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                data-tooltip="CONJURATION.extensionsHint"></button>
+        </div>
+    </div>
+
+    <div class="summoning-selectgrid">
+        {{#each conjurationModifiers as |item|}}
+        <div class="selectableRow summoning-selectcard {{#if item.count}}selected{{/if}}" data-id="{{item.id}}"
+            data-selected="{{item.count}}" data-max="{{item.max}}">
+            <span class="summoning-selectcard__name">{{localize item.name}} {{roman item.count item.max}}</span>
+            <span class="summoning-selectcard__cost dsa-pip pip-neutral"
+                data-tooltip="CONJURATION.budget.costTooltip">1</span>
+            <span class="summoning-selectcard__descr small">{{localize item.descr}}</span>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<div class="groupbox paddingBox">
+    <div class="row-section flexAlignCenter">
+        <div class="col table-title lineheight">{{localize 'entityAbility'}}</div>
+        <div class="col ten center flexrow">
+            <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                data-tooltip="CONJURATION.entityAbilityHint"></button>
+        </div>
+    </div>
+
+    {{#if equipmentIndexLoaded}}
+    <div class="summoning-selectgrid">
+        {{#each entityAbilities as |item|}}
+        <div data-entityid="true" data-qs="{{item.system.AsPCost.value}}"
+            class="selectableRow summoning-selectcard {{#if item.count}}selected{{/if}}" data-selected="{{item.count}}"
+            data-max="{{item.max}}" data-id="{{item.uuid}}">
+            <span class="summoning-selectcard__name">{{item.name}} {{roman item.count item.max}}</span>
+            <span class="summoning-selectcard__cost dsa-pip pip-neutral"
+                data-tooltip="CHARAbbrev.QL">{{item.system.AsPCost.value}}</span>
+            <a class="showEntity summoning-selectcard__info small" data-uuid="{{item.uuid}}"><i
+                    class="fas fa-info"></i></a>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+    <button type="button" data-action="initLibrary">{{localize "Library.searchPlaceholder"}}</button>
+    {{/if}}
+</div>
+
+<div class="groupbox paddingBox">
+    <div class="row-section flexAlignCenter">
+        <div class="col table-title lineheight">{{localize 'summoningPackage'}}</div>
+        <div class="col ten center flexrow">
+            <button type="button" class="icon fas fa-info noBorder dsadesignbutton"
+                data-tooltip="CONJURATION.summoningPackageHint"></button>
+        </div>
+    </div>
+
+    {{#if equipmentIndexLoaded}}
+    <div class="summoning-selectgrid">
+        {{#each entityPackages as |item|}}
+        <div data-packageid="true" data-mod="{{item.system.at.value}}"
+            class="selectableRow summoning-selectcard {{#if item.count}}selected{{/if}}" data-selected="{{item.count}}"
+            data-max="1" data-id="{{item.uuid}}">
+            <span class="summoning-selectcard__name">{{item.name}}</span>
+            <span class="summoning-selectcard__cost dsa-pip pip-neutral"
+                data-tooltip="conjuringDifficulty">{{numberFormat item.system.at.value sign=true}}</span>
+            <a class="showEntity summoning-selectcard__info small" data-uuid="{{item.uuid}}"><i
+                    class="fas fa-info"></i></a>
+        </div>
+        {{/each}}
+    </div>
+    {{else}}
+    <button type="button" data-action="initLibrary">{{localize "Library.searchPlaceholder"}}</button>
+    {{/if}}
+</div>

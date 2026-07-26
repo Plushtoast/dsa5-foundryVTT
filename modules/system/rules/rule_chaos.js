@@ -5,7 +5,6 @@ const { getProperty, mergeObject, duplicate, setProperty } = foundry.utils;
 
 export default class RuleChaos {
   static regex2h = /\(2H/;
-  static improvisedWeapon = /(\(|,)( )?i\)$/;
 
   static multipleDefenseValue(actor, item) {
     let multipleDefense = -3;

@@ -321,6 +321,7 @@ DSA5.gearModifyableCalculatedAttributes = ['fatePoints', 'initiative', 'speed', 
 DSA5.asyncHooks = {
   postProcessDSARoll: [],
   postProcessOpposedResult: [],
+  preApplyDamage: [],
 };
 
 DSA5.characteristics = {
@@ -354,6 +355,11 @@ DSA5.equipmentTypes = {
 DSA5.equipmentCategories = new Set(['meleeweapon', 'rangeweapon', 'equipment', 'ammunition', 'armor', 'poison', 'consumable', 'plant', 'book']);
 DSA5.magicCategories = new Set(['ritual', 'ceremony', 'spell', 'liturgy', 'blessing', 'magictrick', 'spellextension', 'magicalsign']);
 
+DSA5.defaultCombatBotchResult = {
+  description: 'selfDamage',
+  effects: { selfDamage: { target: 'self', damage: '1d6+2' } },
+};
+
 DSA5.systemTables = [
   {
     name: 'Defense',
@@ -361,6 +367,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'defenseBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Melee',
@@ -368,6 +375,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'meleeBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Range',
@@ -375,6 +383,7 @@ DSA5.systemTables = [
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
     setting: { module: 'dsa5', key: 'rangeBotchTableEnabled' },
+    defaultResult: DSA5.defaultCombatBotchResult,
   },
   {
     name: 'Liturgy',
@@ -505,6 +514,142 @@ DSA5.traditionArtifacts = {
   Schweinetrommel: 12
 };
 
+DSA5.ceremonialItemGroups = {
+  Angrosch: {
+    Angroschanhänger: 'Angroschanhänger',
+    Angroschhammer: 'Angroschhammer',
+  },
+  Aves: {
+    Silberflöte: 'Silberflöte',
+    Avesstab: 'Avesstab',
+  },
+  Boron: {
+    'Dunkles Buch': 'Dunkles Buch',
+    Rabenschnabel: 'Rabenschnabel',
+  },
+  "Chr'Ssir'Ssr": {
+    Sturmschwingen: 'Sturmschwingen',
+    'Coelestin-Metallband': 'Coelestin-Metallband',
+  },
+  Efferd: {
+    Efferdbart: 'Efferdbart',
+    Muschelkette: 'Muschelkette',
+  },
+  Firun: {
+    Firunsmesser: 'Firunsmesser',
+    Firunsbogen: 'Firunsbogen',
+  },
+  Gravesh: {
+    'Kupferroter Schleifstein': 'Kupferroter Schleifstein',
+    Graveshhammer: 'Graveshhammer',
+  },
+  "H'Szint": {
+    Schlangenlederarmband: 'Schlangenlederarmband',
+    Schlangenstab: 'Schlangenstab',
+  },
+  Hesinde: {
+    'Buch der Schlange': 'Buch der Schlange',
+    Erkenntnisstab: 'Erkenntnisstab',
+  },
+  Ifirn: {
+    Ifirnsmantel: 'Ifirnsmantel',
+    Ifirnsbogen: 'Ifirnsbogen',
+  },
+  Ingerimm: {
+    'Laterne des ewigen Feuers': 'Laterne des ewigen Feuers',
+    Ingerimmshammer: 'Ingerimmshammer',
+  },
+  Kor: {
+    Mantikorkette: 'Mantikorkette',
+    Korspieß: 'Korspieß',
+  },
+  Levthan: {
+    Widderkeule: 'Widderkeule',
+    Füllhorn: 'Füllhorn',
+  },
+  Marbo: {
+    Stundenglas: 'Stundenglas',
+    Marbodolch: 'Marbodolch',
+  },
+  'Namenloser Kult': {
+    Gesichtslarve: 'Gesichtslarve',
+    'Opferdolch des Namenlosen': 'Opferdolch des Namenlosen',
+  },
+  Nandus: {
+    Einhornstirnband: 'Einhornstirnband',
+    'Trigon-Amulett': 'Trigon-Amulett',
+  },
+  Numinoru: {
+    Muschelhorn: 'Muschelhorn',
+    Bimssteinkette: 'Bimssteinkette',
+  },
+  Peraine: {
+    'Grüne Handschuhe': 'Grüne Handschuhe',
+    Saatgutbeutel: 'Saatgutbeutel',
+  },
+  Phex: {
+    Mondamulett: 'Mondamulett',
+    'Grauer Umhang': 'Grauer Umhang',
+  },
+  Praios: {
+    Schutzkugel: 'Schutzkugel',
+    Sonnenzepter: 'Sonnenzepter',
+  },
+  Rahja: {
+    'Roter Schleier': 'Roter Schleier',
+    'Schmuck der Schönen Göttin': 'Schmuck der Schönen Göttin',
+  },
+  Rondra: {
+    Rondrakamm: 'Rondrakamm',
+    Schwertfibel: 'Schwertfibel',
+  },
+  Schamane: {
+    Knochenkeule: 'Knochenkeule',
+    Geisterfetisch: 'Geisterfetisch',
+  },
+  Shinxir: {
+    Vitis: 'Vitis',
+    Hornissenstachel: 'Hornissenstachel',
+  },
+  Swafnir: {
+    Flukenamulett: 'Flukenamulett',
+    Walschild: 'Walschild',
+  },
+  Travia: {
+    'Amulett des Heiligen Badilak': 'Amulett des Heiligen Badilak',
+    Gänsebeutel: 'Gänsebeutel',
+  },
+  Tsa: {
+    Prisma: 'Prisma',
+    'Buntes Gewand': 'Buntes Gewand',
+  },
+  Zsahh: {
+    Regenbogenstein: 'Regenbogenstein',
+    Eidechsenkleidung: 'Eidechsenkleidung',
+  },
+};
+
+DSA5.getCeremonialItemChoices = function getCeremonialItemChoices() {
+  const choices = {};
+  const groups = [];
+  const sortedDeities = Object.keys(DSA5.ceremonialItemGroups).sort((a, b) => a.localeCompare(b, 'de'));
+
+  for (const deity of sortedDeities) {
+    const groupKey = `ceremonialItems.groups.${deity}`;
+    groups.push(groupKey);
+
+    for (const [key] of Object.entries(DSA5.ceremonialItemGroups[deity])) {
+      choices[key] = { label: `ceremonialItems.${key}`, group: groupKey };
+    }
+  }
+
+  return { choices, groups };
+};
+
+DSA5.ceremonialItems = Object.fromEntries(
+  Object.values(DSA5.ceremonialItemGroups).flatMap((items) => Object.entries(items)),
+);
+
 DSA5.areaTargetTypes = {
   cube: 'rectangle',
   line: 'line',
@@ -537,6 +682,96 @@ DSA5.locationTypes = {
   vehicle: 'locationTypes.vehicle',
   river: 'locationTypes.river',
   sea: 'locationTypes.sea',
+};
+
+DSA5.vehicleTravelModes = {
+  vehicle: 'locationTypes.vehicle',
+  river: 'locationTypes.river',
+  sea: 'locationTypes.sea',
+  air: 'SPEEDSELECTOR.air',
+};
+
+DSA5.vehiclePropulsion = {
+  row: 'VEHICLE.propulsion.row',
+  sail: 'VEHICLE.propulsion.sail',
+  land: 'VEHICLE.propulsion.land',
+  mixed: 'VEHICLE.propulsion.mixed',
+};
+
+DSA5.vehicleArmament = {
+  none: 'VEHICLE.armament.none',
+  light: 'VEHICLE.armament.light',
+  medium: 'VEHICLE.armament.medium',
+  heavy: 'VEHICLE.armament.heavy',
+  siege: 'VEHICLE.armament.siege',
+};
+
+DSA5.actorCapabilities = {
+  character: {
+    hasTalents: true,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: true,
+    canOperateSiegeWeapon: true,
+    canJoinCombat: true,
+  },
+  npc: {
+    hasTalents: true,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: true,
+    canOperateSiegeWeapon: true,
+    canJoinCombat: true,
+  },
+  creature: {
+    hasTalents: false,
+    hasMagic: true,
+    hasWounds: true,
+    hasFatePoints: true,
+    hasRiding: true,
+    usesCharacterItemPrep: true,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: true,
+  },
+  vehicle: {
+    hasTalents: false,
+    hasMagic: false,
+    hasWounds: false,
+    hasFatePoints: false,
+    hasRiding: false,
+    usesCharacterItemPrep: false,
+    hasStructurePoints: true,
+    hasCrew: true,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: true,
+  },
+  group: {
+    hasTalents: false,
+    hasMagic: false,
+    hasWounds: false,
+    hasFatePoints: false,
+    hasRiding: false,
+    usesCharacterItemPrep: false,
+    hasStructurePoints: false,
+    hasCrew: false,
+    trackInMasterMenu: false,
+    canOperateSiegeWeapon: false,
+    canJoinCombat: false,
+  },
 };
 
 DSA5.targetMovementOptions = {
@@ -951,6 +1186,8 @@ DSA5.enhancementTypes = {
     material: 'Enhancement.types.material',
     creationTechnique: 'Enhancement.types.creationTechnique',
     improvement: 'Enhancement.types.improvement',
+    attachment: 'Enhancement.types.attachment',
+    powersource: 'Enhancement.types.powersource',
 };
 
 DSA5.SKILL = SKILL;
