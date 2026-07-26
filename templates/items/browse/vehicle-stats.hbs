@@ -1,0 +1,156 @@
+<div>
+    <h3>{{document.name}}</h3>
+    {{#if document.system.details.vehicleType}}
+    <small>{{document.system.details.vehicleType}}</small>
+    {{/if}}
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{enrichedDescription}}}
+            {{#if (and isGM enrichedOwnerdescription)}}
+            <div class="maskfield">
+                {{{enrichedOwnerdescription}}}
+            </div>
+            {{/if}}
+        </div>
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col third">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    <small>{{document.pack}}</small>
+                </div>
+            </div>
+            <div class="col browseSpacer ten"></div>
+            <div class="row-section col sixty browseElement">
+                <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title noBorder flexrow">
+                            <div>
+                                {{localize "VEHICLE.propulsionLabel"}}
+                            </div>
+                            <div class="flex0">
+                                {{#if document.uuid}}
+                                <button type="button" class="dsadesignbutton noBorder icon fas fa-info show-item" data-type="Actor"
+                                data-uuid="{{document.uuid}}"></button>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'VEHICLE.propulsion.' document.system.details.propulsion)}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.armamentLabel"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'VEHICLE.armament.' document.system.details.armament)}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "sizeCategory"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat 'SIZE.' document.system.status.size.value)}}
+                        </div>
+                        {{#if document.system.details.travelModes.length}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.travelModes"}}
+                        </div>
+                        <div class="col">
+                            {{#each prepare.vehicleTravelModeOptions as |opt|}}{{#if opt.checked}}{{localize opt.label}} {{/if}}{{/each}}
+                        </div>
+                        {{/if}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.structurePointsMax"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.structurePoints.initial}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.hullArmor"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.hullArmor.value}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.crewCapacity"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.crew.initial}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.baseSpeed"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.speed.initial}}
+                        </div>
+                        {{#if document.system.status.speed.water}}
+                        <div class="col table-title noBorder">
+                            {{localize "SPEEDSELECTOR.water"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.speed.water}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.status.speed.air}}
+                        <div class="col table-title noBorder">
+                            {{localize "SPEEDSELECTOR.air"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.speed.air}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.status.speed.ram}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.ramSpeed"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.speed.ram}}
+                        </div>
+                        {{/if}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.gunnery"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.gunnery.value}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "initiative"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.status.initiative.value}}
+                        </div>
+                        {{#if document.system.actionCount.value}}
+                        <div class="col table-title noBorder">
+                            {{localize "actionCount"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.actionCount.value}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.details.cargoCapacity}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.cargoCapacity"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.details.cargoCapacity}}
+                        </div>
+                        {{/if}}
+                        {{#if document.system.details.price}}
+                        <div class="col table-title noBorder">
+                            {{localize "VEHICLE.price"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.details.price}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
