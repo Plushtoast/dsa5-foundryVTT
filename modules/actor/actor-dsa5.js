@@ -1564,7 +1564,14 @@ export default class Actordsa5 extends Actor {
   async applyMana(rollFormula, type, options = {}) {
     const state = type == 'AsP' ? 'astralenergy' : 'karmaenergy';
     const amount = (await new Roll(`${rollFormula}`).evaluate()).total;
-    if (amount <= 0) return true;
+    if (amount === 0) return true;
+
+    // Negative amount restores mana (same convention as applyDamage).
+    if (amount < 0) {
+      const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
+      await this.update({ [`system.status.${state}.value`]: newVal });
+      return true;
+    }
 
     if (type === 'AsP' && !options.skipPowerSource && (this.powersource?.segments ?? []).some((s) => s.value > 0)) {
       if (this.getTotalAvailableAsP() < amount) {
