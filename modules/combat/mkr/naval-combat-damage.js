@@ -94,6 +94,11 @@ export default class NavalCombatDamage {
     const source = attacker?.testResult?.source;
     if (source && VehicleRamWeapon.isRamWeapon(source)) {
       await NavalBoardWeapons.applyRamCooldown(attacker);
+      const attackingVehicle = NavalBoardWeapons.resolveAttackingVehicle(attacker);
+      if (attackingVehicle) {
+        await this.#queueHit(attackingVehicle, attacker, VehicleRamWeapon.SELF_DAMAGE);
+        opposedResult.other.push(`<p>${_loc('VEHICLE.ramSelfDamageQueued', { formula: VehicleRamWeapon.SELF_DAMAGE })}</p>`);
+      }
     }
   }
 
@@ -244,9 +249,12 @@ export default class NavalCombatDamage {
   }
 
   static async initiateBoarding() {
-    if (!game.user.isGM || !NavalCombat.isNavalMkrActive()) return;
-    if (game.combat.system.mkrPhase !== 'attacks') {
+    if (!NavalCombat.isNavalMkrActive() || game.combat.system.mkrPhase !== 'attacks') {
       ui.notifications.warn('VEHICLE.mkr.boardingPhaseOnly', { localize: true });
+      return;
+    }
+    if (!game.user.isGM) {
+      ui.notifications.warn('DSAError.requiresGM', { localize: true });
       return;
     }
 
@@ -326,7 +334,9 @@ export default class NavalCombatDamage {
 
     if (source.type === 'meleeweapon') {
       if (VehicleRamWeapon.isRamWeapon(source)) {
-        return source.system?.damage?.stp || source.system?.damage?.value || null;
+        const attackingVehicle = NavalBoardWeapons.resolveAttackingVehicle(attacker);
+        if (!attackingVehicle) return null;
+        return VehicleRamWeapon.targetStpFormula(attackingVehicle);
       }
 
       const msg = game.messages.get(attacker.messageId);

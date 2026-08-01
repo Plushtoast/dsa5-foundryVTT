@@ -141,38 +141,10 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  /** StP gates as sheet active effects: fixated→immobile, dead→sinking (names via addTimedCondition). */
+  /** StP / crew house-rule conditions + immobile/sinking gates. */
   static async syncVehicleStructureConditions(actor) {
-    const stp = Number(actor.system.status.structurePoints?.value ?? 0);
-    const wantSinking = stp <= 0;
-    const wantImmobile = stp <= 10 && !wantSinking;
-
-    const findStpEffect = (key) => actor.effects.find((e) => e.getFlag('dsa5', 'vehicleStpCondition') === key);
-    const immobile = findStpEffect('immobile');
-    const sinking = findStpEffect('sinking');
-
-    if (wantImmobile && !immobile) {
-      await actor.addTimedCondition('fixated', 1, false, false, {
-        name: _loc('VEHICLE.immobile'),
-        description: _loc('VEHICLE.immobile'),
-        flags: { dsa5: { vehicleStpCondition: 'immobile' } },
-      });
-    } else if (!wantImmobile && immobile) {
-      await immobile.delete();
-    }
-
-    if (wantSinking && !sinking) {
-      await actor.addTimedCondition('dead', 1, false, false, {
-        name: _loc('VEHICLE.sinking'),
-        description: _loc('VEHICLE.sinking'),
-        flags: {
-          dsa5: { vehicleStpCondition: 'sinking' },
-          core: { overlay: true },
-        },
-      });
-    } else if (!wantSinking && sinking) {
-      await sinking.delete();
-    }
+    const NavalHouseRules = (await import('../combat/mkr/naval-house-rules.js')).default;
+    await NavalHouseRules.syncVehicleConditions(actor);
   }
 
   static async _onCreateOperation(documents, operation, user) {
@@ -1348,7 +1320,25 @@ export default class Actordsa5 extends Actor {
   }
 
   setupSkill(skill, options = {}, tokenId) {
+    if (this.type === 'vehicle') return this.#setupVehicleSkill(skill, options, tokenId);
     return ItemFactory.getSubClass(skill.type).setupDialog(null, options, skill, this, tokenId);
+  }
+
+  /**
+   * Vehicles have no characteristics — roll Besatzungstalente via emptyActor (attrs 12)
+   * with the vehicle's skill FW, linked back for ownership / speaker.
+   */
+  #setupVehicleSkill(skill, options = {}, tokenId) {
+    const proxy = DSA5_Utility.emptyActor(12, this.name, {
+      parent_source_uuid: this.uuid,
+      img: this.img,
+      prototypeToken: { name: this.name, texture: { src: this.img } },
+    });
+    const skillData = foundry.utils.duplicate(skill.toObject?.() ?? skill);
+    delete skillData._id;
+    const ItemClass = getDocumentClass('Item');
+    const proxySkill = new ItemClass(skillData, { parent: proxy, noHook: true });
+    return proxy.setupSkill(proxySkill, options, 'emptyActor');
   }
 
   tokenScrollingText(texts) {

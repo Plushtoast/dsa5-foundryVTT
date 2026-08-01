@@ -1463,31 +1463,47 @@ a.img-entity-link {
   border-top: 1px solid var(--color-border-light-tertiary);
 
   .mkr-loop-bar-header {
-    display: flex;
-    justify-content: space-between;
+    width: 100%;
     align-items: center;
-    gap: 8px;
-  }
-
-  .mkr-loop-label {
-    color: var(--color-text-primary);
-    font-weight: 700;
+    gap: 4px;
   }
 
   .mkr-phase-badge {
+    flex: 1 1 auto;
     font-size: var(--font-size-12);
     padding: 1px 6px;
     border-radius: 4px;
     border: 1px solid var(--color-border-light-secondary);
     color: var(--color-text-primary);
+    text-align: center;
+  }
+
+  .mkr-phase-controls {
+    flex: 1 1 auto;
+    width: 100%;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .mkr-phase-step {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 1px solid var(--color-border-light-secondary);
+    border-radius: 4px;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
+    color: var(--color-text-primary);
+    cursor: pointer;
+    line-height: 1;
   }
 
   button.mkr-phase-badge.mkr-phase-control {
-    display: inline-flex;
+    display: flex;
+    flex: 1 1 auto;
     align-items: center;
     gap: 4px;
     padding: 2px 8px;
-    max-width: 14rem;
     justify-content: center;
     background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
     line-height: 1.2;
@@ -1681,6 +1697,10 @@ a.img-entity-link {
   opacity: 0.72;
 }
 
+.combatant.mkr-phase-irrelevant {
+  opacity: 0.45;
+}
+
 .aggroButton.chaseAction {
   border-color: rgba(73, 111, 215, 0.8);
 }
@@ -1862,7 +1882,11 @@ a.img-entity-link {
 
 .board-weapon-damage {
   font-size: var(--font-size-12);
-  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.board-weapon-damage-stp {
+  color: var(--color-text-secondary);
 }
 
 .vehicle-status-badge {
@@ -3082,13 +3106,21 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: center;
       gap: 2px;
       min-width: 0;
       overflow: hidden;
 
-      .vehicle-crew-link {
-        flex: 1 1 auto;
-        min-width: 0;
+      .vehicle-crew-operator {
+        flex: 0 0 auto;
+        line-height: 0;
+      }
+
+      .vehicle-crew-avatar {
+        width: 22px;
+        height: 22px;
+        display: block;
+        cursor: pointer;
       }
 
       .vehicle-crew-clear {

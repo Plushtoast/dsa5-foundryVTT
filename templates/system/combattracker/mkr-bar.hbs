@@ -1,14 +1,21 @@
 {{#if isNavalMkr}}
 
 <div class="mkr-loop-bar" data-tooltip="VEHICLE.mkr.barTooltip">
-  <div class="mkr-loop-bar-header">
-    <strong class="mkr-loop-label">MKR {{mkr.mkrRound}}</strong>
+  <div class="mkr-loop-bar-header flexrow">
     {{#if (and user.isGM combat.round)}}
-    <button type="button" class="mkr-phase-badge mkr-phase-control" data-action="advanceMkrPhase"
-            data-tooltip-text="{{mkr.phaseTooltip}}" aria-label="{{mkr.phaseLabel}} — {{ localize 'VEHICLE.mkr.cyclePhase' }}">
-      <span class="mkr-phase-control-label">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
-      <i class="fa-solid fa-chevron-right" inert></i>
-    </button>
+    <div class="mkr-phase-controls flexrow">
+      <button type="button" class="mkr-phase-step icon fa-solid fa-chevron-left" data-action="retreatMkrPhase"
+              data-tooltip="VEHICLE.mkr.previousPhase" aria-label="{{ localize 'VEHICLE.mkr.previousPhase' }}"
+              {{#unless mkr.canRetreatPhase}}disabled{{/unless}}></button>
+      <button type="button" class="mkr-phase-badge mkr-phase-control" data-action="cycleMkrPhase"
+              data-tooltip-html='{{{localize "VEHICLE.mkr.phaseControlTooltip" phaseTooltip=mkr.phaseTooltip cyclePhase=(localize "VEHICLE.mkr.cyclePhase") previousPhase=(localize "VEHICLE.mkr.previousPhase")}}}'
+              aria-label="{{mkr.phaseLabel}} — {{ localize 'VEHICLE.mkr.cyclePhase' }}">
+        <span class="mkr-phase-control-label">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
+      </button>
+      <button type="button" class="mkr-phase-step icon fa-solid fa-chevron-right" data-action="advanceMkrPhase"
+              data-tooltip="VEHICLE.mkr.cyclePhase" aria-label="{{ localize 'VEHICLE.mkr.cyclePhase' }}"
+              {{#unless mkr.canAdvancePhase}}disabled{{/unless}}></button>
+    </div>
     {{else}}
     <span class="mkr-phase-badge" data-tooltip-text="{{mkr.phaseTooltip}}">{{mkr.phaseRoman}} · {{mkr.phaseLabel}}</span>
     {{/if}}

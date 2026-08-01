@@ -9,6 +9,13 @@ export default class NavalCombat {
     return combat?.system?.combatMode === 'navalMkr';
   }
 
+  /** Shots per MKR from reload time (KR), rounded to 1 decimal (e.g. LZ 120 → 0.5). */
+  static shotsPerMkr(reloadTimeValue, krPerMkr = DEFAULT_KR_PER_MKR) {
+    const reloadKr = Number(String(reloadTimeValue ?? '1').split('/')[0]) || 1;
+    if (reloadKr <= 0) return Infinity;
+    return Math.round((krPerMkr / reloadKr) * 10) / 10;
+  }
+
   static resolveCombatMode(combat = game.combat) {
     if (!combat) return 'standard';
     if (combat.system?.combatMode) return combat.system.combatMode;
@@ -41,6 +48,8 @@ export default class NavalCombat {
       phaseRoman: ['I', 'II', 'III', 'IV'][phaseIndex] ?? 'I',
       phaseLabel: _loc(`VEHICLE.mkr.phase.${phase}`),
       phaseTooltip: _loc(`VEHICLE.mkr.phase.${phase}Tooltip`),
+      canAdvancePhase: phaseIndex < MKR_PHASES.length - 1,
+      canRetreatPhase: phaseIndex > 0,
     };
   }
 
@@ -53,10 +62,20 @@ export default class NavalCombat {
     return _loc('VEHICLE.mkr.reDistanceLabel', { steps: Math.round(distance), re });
   }
 
+  /** Next phase, or null if already at the last phase. */
   static nextPhase(current) {
     const phase = this.normalizePhase(current);
     const idx = MKR_PHASES.indexOf(phase);
-    return MKR_PHASES[(idx + 1) % MKR_PHASES.length];
+    if (idx >= MKR_PHASES.length - 1) return null;
+    return MKR_PHASES[idx + 1];
+  }
+
+  /** Previous phase, or null if already at the first phase. */
+  static previousPhase(current) {
+    const phase = this.normalizePhase(current);
+    const idx = MKR_PHASES.indexOf(phase);
+    if (idx <= 0) return null;
+    return MKR_PHASES[idx - 1];
   }
 
   static skillNames() {
@@ -105,5 +124,23 @@ export default class NavalCombat {
     if (!this.isNavalMkrActive(combat)) return false;
     if (game.user.isGM) return true;
     return combat.system.mkrPhase === 'heroActions';
+  }
+
+  /**
+   * Whether a combatant is the focus of the current MKR phase.
+   * heroActions → non-vehicles; movement → vehicles; attacks/damageReport → all.
+   */
+  static isCombatantRelevantToPhase(combatant, phase) {
+    const isVehicle = combatant?.actor?.type === 'vehicle';
+    switch (this.normalizePhase(phase)) {
+      case 'heroActions':
+        return !isVehicle;
+      case 'movement':
+        return isVehicle;
+      case 'attacks':
+      case 'damageReport':
+      default:
+        return true;
+    }
   }
 }

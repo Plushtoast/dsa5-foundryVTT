@@ -132,6 +132,17 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
+
+    // Vehicles have no characteristics — skip weapon/AT prep (would crash on ff/mu).
+    if (this.actor?.type === 'vehicle') {
+      data.items = [];
+      const chaseEntry = Chase.actionEntryFor(this.actor);
+      if (chaseEntry) data.items.push(chaseEntry);
+      data.dieClass = 'die-mu';
+      data.title = 'DIALOG.selectAction';
+      return data;
+    }
+
     const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = this.actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), this.actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
@@ -190,7 +201,7 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
       });
     }
 
-    const navalEntries = this.actor?.type !== 'vehicle' ? NavalHeroActionHandler.dialogEntries() : null;
+    const navalEntries = NavalHeroActionHandler.dialogEntries();
     if (navalEntries?.length) {
       data.items = navalEntries;
       data.dieClass = 'die-mu';

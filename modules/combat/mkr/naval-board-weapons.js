@@ -38,11 +38,8 @@ export default class NavalBoardWeapons {
   }
 
   static shotsPerMkr(weapon, combat = game.combat) {
-    const reloadKr = Number(String(weapon.system?.reloadTime?.value ?? '1').split('/')[0]) || 1;
-    if (reloadKr <= 0) return Infinity;
-
     const krPerMkr = combat?.system?.krPerMkr ?? NavalCombat.DEFAULT_KR_PER_MKR;
-    return Math.max(1, Math.floor(krPerMkr / reloadKr));
+    return NavalCombat.shotsPerMkr(weapon.system?.reloadTime?.value, krPerMkr);
   }
 
   static isWeaponReady(weapon, rollingActor, vehicle = null) {
@@ -135,13 +132,13 @@ export default class NavalBoardWeapons {
   }
 
   static async applyRamCooldown(attacker) {
-    const vehicle = this.#resolveAttackingVehicle(attacker);
+    const vehicle = this.resolveAttackingVehicle(attacker);
     if (!vehicle || !this.isRamCapable(vehicle)) return;
 
     await vehicle.update({ 'system.combatState.ramCooldownMKR': VehicleRamWeapon.COOLDOWN_MKR });
   }
 
-  static #resolveAttackingVehicle(attacker) {
+  static resolveAttackingVehicle(attacker) {
     let vehicle = DSA5_Utility.getSpeaker(attacker.speaker);
     if (vehicle?.type === 'vehicle') return vehicle;
 
@@ -168,15 +165,21 @@ export default class NavalBoardWeapons {
   }
 
   static #enrichRam(weapon, vehicle, operator) {
-    const stp = weapon.system?.damage?.stp || weapon.system?.damage?.value || '—';
+    const halfStp = VehicleRamWeapon.targetStpDamage(vehicle);
+    const stpLabel = _loc('VEHICLE.ramTargetDamage', { stp: halfStp });
     const cooldown = vehicle.system.combatState?.ramCooldownMKR ?? 0;
     const ramSpeed = vehicle.system.status?.speed?.ram ?? 0;
 
     weapon.boardWeaponCrewTooltip = _loc('VEHICLE.ramCrewTooltip');
     weapon.isBoardWeaponLoaded = VehicleRamWeapon.isRamReady(vehicle);
-    weapon.damageDisplay = `0 / ${stp}`;
-    weapon.damageTooltip = _loc('VEHICLE.boardWeaponDamageTooltip', { tp: '0', stp });
-    weapon.stpFormula = stp;
+    weapon.damageTp = '0';
+    weapon.damageStp = stpLabel;
+    weapon.damageDisplay = `0 / ${stpLabel}`;
+    weapon.damageTooltip = [
+      _loc('VEHICLE.boardWeaponDamageTooltip', { tp: '0', stp: stpLabel }),
+      _loc('VEHICLE.ramSelfDamageHint', { formula: VehicleRamWeapon.SELF_DAMAGE }),
+    ].join('\n');
+    weapon.stpFormula = VehicleRamWeapon.targetStpFormula(vehicle);
     weapon.boardWeaponReloadLabel = cooldown > 0
       ? _loc('VEHICLE.ramCooldownStatus', { mkr: cooldown })
       : _loc('VEHICLE.ramReady');
@@ -184,9 +187,11 @@ export default class NavalBoardWeapons {
     const fireParts = [weapon.attackTooltip];
     if (NavalCombat.isNavalMkrActive()) {
       fireParts.push(_loc('VEHICLE.ramSpeedHint', { speed: ramSpeed }));
+      fireParts.push(_loc('VEHICLE.ramAttackModifier'));
       fireParts.push(weapon.boardWeaponReloadLabel);
       if (!weapon.isBoardWeaponLoaded) fireParts.push(_loc('VEHICLE.ramCooldownHint'));
       fireParts.push(_loc('VEHICLE.ramContactHint'));
+      fireParts.push(weapon.damageTooltip);
       if (operator) fireParts.push(_loc('VEHICLE.ramHeroFireMode', { name: operator.name }));
       else fireParts.push(_loc('VEHICLE.ramCrewFireMode'));
     }
@@ -200,6 +205,8 @@ export default class NavalBoardWeapons {
     if (!stp) return;
 
     const tp = `${weapon.damagedie ?? ''}${weapon.damageAdd ?? ''}` || weapon.system?.damage?.value || '—';
+    weapon.damageTp = tp;
+    weapon.damageStp = stp;
     weapon.damageDisplay = `${tp} / ${stp}`;
     weapon.damageTooltip = _loc('VEHICLE.boardWeaponDamageTooltip', { tp, stp });
     weapon.stpFormula = stp;
@@ -224,15 +231,17 @@ export default class NavalBoardWeapons {
     if (weapon.system?.siegeRules) {
       const tp = weapon.system?.damage?.value || weapon.damagedie || '—';
       const stpVal = stp || tp;
+      weapon.damageTp = tp;
+      weapon.damageStp = stpVal;
       weapon.damageDisplay = `${tp} / ${stpVal}`;
       weapon.damageTooltip = _loc('VEHICLE.boardWeaponDamageTooltip', { tp, stp: stpVal });
       weapon.stpFormula = stp || tp;
     } else if (stp) {
-      weapon.damageDisplay = `${weapon.damagedie ?? ''}${weapon.damageAdd ?? ''} / ${stp}`;
-      weapon.damageTooltip = _loc('VEHICLE.boardWeaponDamageTooltip', {
-        tp: `${weapon.damagedie ?? ''}${weapon.damageAdd ?? ''}`,
-        stp,
-      });
+      const tp = `${weapon.damagedie ?? ''}${weapon.damageAdd ?? ''}`;
+      weapon.damageTp = tp;
+      weapon.damageStp = stp;
+      weapon.damageDisplay = `${tp} / ${stp}`;
+      weapon.damageTooltip = _loc('VEHICLE.boardWeaponDamageTooltip', { tp, stp });
     }
 
     if (lz > 0) {

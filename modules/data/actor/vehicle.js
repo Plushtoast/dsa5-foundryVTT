@@ -4,12 +4,29 @@ import VehicleStatusTemplate from './templates/vehicle-status.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import VehicleRamWeapon from './vehicle-ram-weapon.js';
+import NavalHouseRules from '../../combat/mkr/naval-house-rules.js';
 
 const { SchemaField, StringField, NumberField, BooleanField, HTMLField, ArrayField, TypedObjectField } = foundry.data.fields;
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, VehicleStatusTemplate) {
-  /** LocalizedIDs keys for vehicle Fortbewegungstalente (Boote & Schiffe / Fahrzeuge). */
+  /** Default TaW for vehicle crew / hero-action skills. */
+  static DEFAULT_SKILL_TALENT_VALUE = 8;
+
+  /**
+   * LocalizedIDs keys for skills every vehicle should carry:
+   * locomotion (Boote & Schiffe / Fahrzeuge) + hero-action talents.
+   */
+  static DEFAULT_SKILL_KEYS = [
+    'boatsAndShips',
+    'driving',
+    'woodworking',
+    'clothworking',
+    'warfare',
+    'treatWounds',
+  ];
+
+  /** @deprecated Use DEFAULT_SKILL_KEYS */
   static LOCOMOTION_SKILL_KEYS = ['boatsAndShips', 'driving'];
 
   static defineSchema() {
@@ -71,18 +88,19 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
   }
 
   static async getDefaultItems() {
-    const [combatSkills, money, locomotionSkills] = await Promise.all([
+    const [combatSkills, money, defaultSkills] = await Promise.all([
       DSA5_Utility.allCombatSkills(),
       DSA5_Utility.allMoneyItems(),
-      this.locomotionSkillItemsFromCompendium(),
+      this.defaultSkillItemsFromCompendium(),
     ]);
     const crossbows = combatSkills.find((skill) => skill.name === _loc('LocalizedIDs.Crossbows'));
     const impactName = game.i18n.lang === 'de' ? 'Hiebwaffen' : 'Impact Weapons';
     const impact = combatSkills.find((skill) => skill.name === impactName);
-    const items = [...money, ...locomotionSkills];
+    const items = [...money, ...defaultSkills];
     if (crossbows) {
-      crossbows.system.attack.value = 12;
-      items.push(crossbows);
+      const crossbowsData = foundry.utils.duplicate(crossbows);
+      crossbowsData.system.attack.value = 12;
+      items.push(crossbowsData);
     } else {
       items.push({
         name: _loc('LocalizedIDs.Crossbows'),
@@ -96,33 +114,54 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
         },
       });
     }
-    if (impact) items.push(impact);
+    if (impact) items.push(foundry.utils.duplicate(impact));
     items.push(VehicleRamWeapon.buildItemData());
     return items;
   }
 
-  /** Fortbewegungstalente from the default skill pack (Boote & Schiffe / Fahrzeuge). */
-  static async locomotionSkillItemsFromCompendium() {
+  /** Clone skill pack entries with vehicle default TaW. */
+  static async defaultSkillItemsFromCompendium(keys = this.DEFAULT_SKILL_KEYS) {
     const skills = await DSA5_Utility.allSkills();
-    return this.LOCOMOTION_SKILL_KEYS.flatMap((key) => {
+    const taw = this.DEFAULT_SKILL_TALENT_VALUE;
+    return keys.flatMap((key) => {
       const name = _loc(`LocalizedIDs.${key}`);
       const found = skills.find((skill) => skill.name === name);
-      return found ? [found] : [];
+      if (!found) return [];
+      const item = foundry.utils.duplicate(found);
+      foundry.utils.setProperty(item, 'system.talentValue.value', taw);
+      return [item];
     });
   }
 
-  /** Add missing Fortbewegungstalente on older vehicles (e.g. created before this shipped). */
-  async ensureLocomotionSkills() {
-    const missingKeys = this.constructor.LOCOMOTION_SKILL_KEYS.filter((key) => {
+  /** @deprecated Use defaultSkillItemsFromCompendium */
+  static async locomotionSkillItemsFromCompendium() {
+    return this.defaultSkillItemsFromCompendium(this.LOCOMOTION_SKILL_KEYS);
+  }
+
+  /** Add missing default vehicle skills (locomotion + hero actions) on older vehicles. */
+  async ensureDefaultSkills() {
+    const missingKeys = this.constructor.DEFAULT_SKILL_KEYS.filter((key) => {
       const name = _loc(`LocalizedIDs.${key}`);
       return !this.parent.items.some((i) => i.type === 'skill' && i.name === name);
     });
     if (!missingKeys.length) return;
 
-    const all = await this.constructor.locomotionSkillItemsFromCompendium();
-    const names = new Set(missingKeys.map((key) => _loc(`LocalizedIDs.${key}`)));
-    const toCreate = all.filter((item) => names.has(item.name));
+    const toCreate = await this.constructor.defaultSkillItemsFromCompendium(missingKeys);
     if (toCreate.length) await this.parent.createEmbeddedDocuments('Item', toCreate);
+  }
+
+  /** @deprecated Use ensureDefaultSkills */
+  async ensureLocomotionSkills() {
+    return this.ensureDefaultSkills();
+  }
+
+  /** Embedded default skills in DEFAULT_SKILL_KEYS order. */
+  defaultSkills() {
+    return this.constructor.DEFAULT_SKILL_KEYS.flatMap((key) => {
+      const name = _loc(`LocalizedIDs.${key}`);
+      const item = this.parent.items.find((i) => i.type === 'skill' && i.name === name);
+      return item ? [item] : [];
+    });
   }
 
   /** Embedded locomotion skills in LocalizedIDs key order. */
@@ -143,7 +182,7 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     mergeObject(this, {
       itemModifiers: {},
       condition: {},
-      skillModifiers: {},
+      skillModifiers: this._createSkillModifiersStructure(),
       totalArmor: 0,
       carryModifier: 0,
       totalWeight: 0,
@@ -237,8 +276,10 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     const wounded = Math.max(0, Number(data.combatState?.woundedCrew ?? 0));
     data.availableCrew = Math.max(0, crewValue - wounded);
 
-    data.isImmobile = data.status.structurePoints.value <= 10;
-    data.isSinking = data.status.structurePoints.value <= 0;
+    const stpValue = Number(data.status.structurePoints.value ?? 0);
+    const stpMax = Number(data.status.structurePoints.max ?? 0);
+    data.isImmobile = NavalHouseRules.isImmobile(stpValue, stpMax);
+    data.isSinking = stpValue <= 0;
   }
 
   _calculateWeight(data) {
@@ -274,10 +315,16 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
 
   _calculateSpeed(data) {
     const speed = data.status.speed;
-    speed.max = Math.max(0, (speed.initial || 0) + (speed.modifier || 0));
+    const shipCondition = NavalHouseRules.enabled('shipCondition')
+      ? Number(data.condition?.[NavalHouseRules.CONDITION_SHIP] || 0)
+      : 0;
+    const base = Math.max(0, (speed.initial || 0) + (speed.modifier || 0));
+    const waterBase = Math.max(0, Number(speed.water || 0) + (speed.modifier || 0));
+    const airBase = Math.max(0, Number(speed.air || 0) + (speed.modifier || 0));
+    speed.max = NavalHouseRules.applySpeedMalus(base, shipCondition);
     speed.value = speed.max;
-    speed.waterMax = Math.max(0, Number(speed.water || 0) + (speed.modifier || 0));
-    speed.airMax = Math.max(0, Number(speed.air || 0) + (speed.modifier || 0));
+    speed.waterMax = NavalHouseRules.applySpeedMalus(waterBase, shipCondition);
+    speed.airMax = NavalHouseRules.applySpeedMalus(airBase, shipCondition);
   }
 
   /** Used when a rider lazily needs mount speed during prepare. */

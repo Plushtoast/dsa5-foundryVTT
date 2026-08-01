@@ -216,6 +216,27 @@
             background: rgba(26, 74, 138, 0.85);
             white-space: nowrap;
         }
+
+        button.mkr-phase-badge.mkr-phase-control {
+            cursor: pointer;
+        }
+
+        .mkr-phase-step {
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--chase-badge-height);
+            height: var(--chase-badge-height);
+            min-height: var(--chase-badge-height);
+            padding: 0;
+            border-radius: var(--chase-badge-radius);
+            border: 1px solid rgba(26, 92, 138, 0.7);
+            color: #fff;
+            background: rgba(26, 74, 138, 0.85);
+            cursor: pointer;
+            line-height: 1;
+        }
     }
 
     .chase-badge-row {

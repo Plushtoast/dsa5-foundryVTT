@@ -4,6 +4,7 @@ import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
+import NavalHouseRules, { NavalHouseRulesMenu } from '../combat/mkr/naval-house-rules.js';
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
@@ -946,6 +947,7 @@ export function setupConfiguration() {
       type: String,
     }
   };
+  NavalHouseRules.registerSettings(settings);
   for (const [key, value] of Object.entries(settings)) {
     game.settings.register('dsa5', key, value);
   }
@@ -957,6 +959,13 @@ export function setupConfiguration() {
       hint: 'DSASETTINGS.changelog',
       type: ChangelogForm,
       restricted: false,
+    },
+    navalHouseRules: {
+      name: 'VEHICLE.houseRules.menu',
+      label: 'VEHICLE.houseRules.menu',
+      hint: 'VEHICLE.houseRules.menuHint',
+      type: NavalHouseRulesMenu,
+      restricted: true,
     },
     exportConfiguration: {
       name: 'Export/Import Configuration',

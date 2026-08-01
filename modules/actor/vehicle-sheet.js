@@ -4,11 +4,12 @@ import DSA5 from '../config/config-dsa5.js';
 import Actordsa5 from './actor-dsa5.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
-import NavalCombat from '../combat/mkr/naval-combat.js';
 import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
 import NavalCombatDamage from '../combat/mkr/naval-combat-damage.js';
 import VehicleChase from '../combat/chase/vehicle-chase.js';
 import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
+import DSA5Combatant from '../combat/combatant.js';
+import CombatskillData from '../data/item/combatskill.js';
 
 const { duplicate } = foundry.utils;
 
@@ -104,7 +105,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   async _prepareContext(options) {
     if (this.isEditable) {
       await NavalBoardWeapons.ensureRamWeapon(this.actor);
-      await this.actor.system.ensureLocomotionSkills?.();
+      await this.actor.system.ensureDefaultSkills?.();
     }
 
     const context = await super._prepareContext(options);
@@ -114,7 +115,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       label,
       checked: travelModes.includes(value),
     }));
-    context.prepare.vehicleLocomotionSkills = (this.actor.system.locomotionSkills?.() ?? [])
+    context.prepare.vehicleLocomotionSkills = (this.actor.system.defaultSkills?.() ?? this.actor.system.locomotionSkills?.() ?? [])
       .map((skill) => skill.toObject());
     this.#prepareVehicleCombatContext(context.prepare);
     this.#prepareNavalHeroContext(context.prepare);
@@ -178,18 +179,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   }
 
   #prepareNavalHeroContext(prepare) {
-    if (!NavalCombat.isNavalMkrActive()) {
-      prepare.navalHeroActionsEnabled = false;
-      prepare.navalBoardingEnabled = false;
-      prepare.showNavalSail = false;
-      prepare.showNavalDrive = false;
-      return;
-    }
-
     const propulsion = this.actor.system.details.propulsion;
     const travelModes = this.actor.system.details.travelModes ?? [];
-    prepare.navalHeroActionsEnabled = NavalCombat.canUseHeroActions();
-    prepare.navalBoardingEnabled = game.combat?.system?.mkrPhase === 'attacks';
     prepare.showNavalSail = (
       (['row', 'sail', 'mixed'].includes(propulsion) && travelModes.includes('sea'))
       || travelModes.includes('air')
@@ -206,6 +197,9 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       const operator = operatorUuid ? fromUuidSync(operatorUuid) : null;
       weapon.crewOperatorUuid = operatorUuid ?? '';
       weapon.crewOperatorName = operator?.name ?? '';
+      weapon.crewOperatorImg = operator
+        ? (DSA5Combatant.tokenImageFor(operator) || operator.img)
+        : '';
       weapon.combatskillLabel = weapon.system.combatskill.value ?? '';
       weapon.attack = this.#computeWeaponAttack(weapon, operator, vehicleSkills);
       weapon.attackTooltip = operator
@@ -256,9 +250,12 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     }
 
     if (operator) {
-      const skills = operator.items.filter((i) => i.type === 'combatskill');
-      const skill = skills.find((s) => s.name === weapon.system.combatskill.value);
-      if (skill) return Number(skill.system.attack.value) + atmod + ammoMod;
+      const skillName = weapon.system.combatskill.value;
+      const skillItem = operator.items.find((i) => i.type === 'combatskill' && i.name === skillName);
+      if (skillItem) {
+        const skill = CombatskillData._calculateCombatSkillValues(skillItem.toObject(), operator.system);
+        return Number(skill.system.attack.value) + atmod + ammoMod;
+      }
     }
 
     const gunnery = Number(this.actor.system.status.gunnery?.value ?? 12);
@@ -341,28 +338,53 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const itemId = target.closest('[data-item-id]')?.dataset.itemId;
     if (!itemId) return;
 
+    const candidates = ActorSheetdsa5Vehicle.#weaponOperatorCandidates(this.actor);
+    if (!candidates.length) {
+      ui.notifications.warn('DSAError.noProperActor', { localize: true });
+      return;
+    }
+
+    const actors = ActorPickerDialog.buildActorPickerData({ actors: candidates });
     const [actorId] = await ActorPickerDialog.open({
       title: 'VEHICLE.pickCrewOperator',
       selectionMode: 'single',
-      showSourceToggle: true,
+      actors,
     });
     if (!actorId) return;
 
     const actor = game.actors.get(actorId);
-    if (!actor) return;
+    if (!actor || !['character', 'npc', 'creature'].includes(actor.type)) {
+      ui.notifications.warn('VEHICLE.crewInvalidActor', { localize: true });
+      return;
+    }
 
     const operators = duplicate(this.actor.system.weaponOperators ?? {});
     operators[itemId] = actor.uuid;
     await this.actor.update({ 'system.weaponOperators': operators });
   }
 
+  /** Gunners may be characters, NPCs, or creatures (crew preferred in list order). */
+  static #weaponOperatorCandidates(vehicle) {
+    const types = new Set(['character', 'npc', 'creature']);
+    const crewIds = new Set();
+    const crew = [];
+
+    for (const actor of vehicle.system.crewActors ?? []) {
+      if (!types.has(actor.type) || crewIds.has(actor.id)) continue;
+      crewIds.add(actor.id);
+      crew.push(actor);
+    }
+
+    const others = game.actors.filter((actor) => types.has(actor.type) && !crewIds.has(actor.id));
+    others.sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang));
+    return [...crew, ...others];
+  }
+
   static async _clearWeaponCrew(_ev, target) {
     const itemId = target.closest('[data-item-id]')?.dataset.itemId;
     if (!itemId) return;
 
-    const operators = duplicate(this.actor.system.weaponOperators ?? {});
-    delete operators[itemId];
-    await this.actor.update({ 'system.weaponOperators': operators });
+    await this.actor.update({ [`system.weaponOperators.${itemId}`]: _del });
   }
 
   static async _pickWeaponAmmo(_ev, target) {

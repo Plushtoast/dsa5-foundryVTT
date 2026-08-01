@@ -2,6 +2,7 @@ import Actordsa5 from '../actor/actor-dsa5.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import NavalCombat from './mkr/naval-combat.js';
 import NavalCombatDamage from './mkr/naval-combat-damage.js';
+import NavalHouseRules from './mkr/naval-house-rules.js';
 import Chase from './chase/chase.js';
 import VehicleChase from './chase/vehicle-chase.js';
 const { renderTemplate } = foundry.applications.handlebars;
@@ -632,6 +633,7 @@ export default class DSA5Combat extends Combat {
     const mkrRound = (this.system.mkrRound || 1) + 1;
 
     await this.#tickVehicleRamCooldown();
+    await NavalHouseRules.tickAutoReload(this);
     await this.update({
       round: nextRound,
       'system.mkrRound': mkrRound,
@@ -741,10 +743,22 @@ export default class DSA5Combat extends Combat {
     if (!game.user.isGM || !this.isNavalMkr) return;
 
     const next = NavalCombat.nextPhase(this.system.mkrPhase || 'heroActions');
+    if (!next) return;
+
     await this.update({ 'system.mkrPhase': next });
 
     if (next === 'attacks') await NavalCombatDamage.promptCommandedGuns(this);
     if (next === 'damageReport') await NavalCombatDamage.processDamageReport(this);
+  }
+
+  /** Step back one MKR phase without undoing damage / gun prompts. */
+  async retreatMkrPhase() {
+    if (!game.user.isGM || !this.isNavalMkr) return;
+
+    const prev = NavalCombat.previousPhase(this.system.mkrPhase || 'heroActions');
+    if (!prev) return;
+
+    await this.update({ 'system.mkrPhase': prev });
   }
 
   async #removeVehicleCombatants() {

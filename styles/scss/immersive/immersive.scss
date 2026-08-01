@@ -16,7 +16,6 @@
     color: #191813;
 
     .chase-bar-label,
-    .mkr-loop-label,
     .chase-round-badge,
     .form-group > label,
     .chase-terrain-readonly,
@@ -48,7 +47,8 @@
       border-color: rgba(25, 24, 19, 0.45);
     }
 
-    button.mkr-phase-badge.mkr-phase-control {
+    button.mkr-phase-badge.mkr-phase-control,
+    .mkr-phase-step {
       color: #191813;
       background: rgba(255, 255, 255, 0.55);
       background-image: none;

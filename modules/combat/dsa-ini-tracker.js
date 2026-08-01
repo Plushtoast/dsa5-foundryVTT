@@ -23,6 +23,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     },
     actions: {
       nextMkr: this._onNextMkr,
+      cycleMkrPhase: { handler: this._onMkrPhaseControl, buttons: [0, 2] },
+      advanceMkrPhase: this._advanceMkrPhase,
+      retreatMkrPhase: this._retreatMkrPhase,
       aggroButton: function () {
         DSA5CombatTracker.runActAttackDialog();
       },
@@ -52,6 +55,23 @@ export default class DSAIniTracker extends DefaultAppv2 {
   static _onNextMkr() {
     if (!game.user.isGM) return;
     game.combat?.nextMkr();
+  }
+
+  static _onMkrPhaseControl(event) {
+    if (!game.user.isGM) return;
+    event.preventDefault();
+    if (event.button === 2) game.combat?.retreatMkrPhase();
+    else game.combat?.advanceMkrPhase();
+  }
+
+  static _advanceMkrPhase() {
+    if (!game.user.isGM) return;
+    game.combat?.advanceMkrPhase();
+  }
+
+  static _retreatMkrPhase() {
+    if (!game.user.isGM) return;
+    game.combat?.retreatMkrPhase();
   }
 
   setPosition(position) {
@@ -99,15 +119,22 @@ export default class DSAIniTracker extends DefaultAppv2 {
     if (data.turns && data.combat) {
       data.turns = ChaseCombatTracker.prepareIniTurns(data.turns, data.combat);
     }
-    const turnsToUse = data.turns;
+    const isChase = Chase.isChaseActive(data.combat);
+    const isNavalMkr = NavalCombat.isNavalMkrActive(data.combat);
+    const mkrPhase = data.combat?.system?.mkrPhase;
+    let turnsToUse = data.turns ?? [];
+    if (isNavalMkr) {
+      turnsToUse = turnsToUse.filter((turn) => {
+        const combatant = data.combat.combatants.get(turn.id);
+        return NavalCombat.isCombatantRelevantToPhase(combatant, mkrPhase);
+      });
+    }
 
     const waitingTurns = [];
     const skipDefeated = game.settings.get('core', Combat.CONFIG_SETTING).skipDefeated;
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    const isChase = Chase.isChaseActive(data.combat);
-    const isNavalMkr = NavalCombat.isNavalMkrActive(data.combat);
     const unRolled = !isChase && data.turns.some((x) => {
       if (x.isChaseSection || !x.isOwner || x.initiative) return false;
       if (!game.user.isGM) return true;
@@ -165,6 +192,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
         }
       }
       data.turns = filteredTurns;
+    } else if (isNavalMkr) {
+      data.turns = [];
     }
 
     data.isLastRound = data.turns[1]?.newRound;
@@ -178,6 +207,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
       itemWidth,
       unRolled,
       waitingTurns,
+      isNavalMkr,
+      mkr: NavalCombat.getMkrProgress(data.combat) ?? data.mkr,
     });
 
     const combatMode = NavalCombat.resolveCombatMode(data.combat);
@@ -262,6 +293,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
       });
       input.addEventListener('click', (ev) => ev.stopPropagation());
     }
+
+    this.element.querySelectorAll('.mkr-phase-control').forEach((el) => {
+      el.addEventListener('contextmenu', (ev) => ev.preventDefault());
+    });
   }
 
   async #betterTooltip(ev) {

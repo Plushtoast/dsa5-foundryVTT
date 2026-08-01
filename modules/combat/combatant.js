@@ -165,6 +165,26 @@ export default class DSA5Combatant extends Combatant {
     return this.system.roundInitiative >= 0 ? this.system.roundInitiative : this.initiative;
   }
 
+  /**
+   * Prefer token art over actor portrait for combatants without a placed token
+   * (e.g. added from the combat tracker / ship-crew prompt).
+   */
+  prepareDerivedData() {
+    super.prepareDerivedData();
+    if (this.token || this._videoSrc || !this.actor) return;
+
+    const tokenArt = DSA5Combatant.tokenImageFor(this.actor);
+    if (tokenArt && (!this.img || this.img === this.actor.img)) this.img = tokenArt;
+  }
+
+  /** Scene token texture, else prototype token texture (not portrait). */
+  static tokenImageFor(actor, sceneToken = null) {
+    if (!actor) return null;
+    if (sceneToken?.texture?.src) return sceneToken.texture.src;
+    if (actor.prototypeToken?.randomImg) return null;
+    return actor.prototypeToken?.texture?.src || null;
+  }
+
   async recalcInitiative() {
     if (this.initiative) {
       const roll = (await this.getFlag('dsa5', 'baseRoll')) || 0;

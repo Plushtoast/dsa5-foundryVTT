@@ -13,6 +13,7 @@ import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
+import NavalCombat from '../../combat/mkr/naval-combat.js';
 
 const { getProperty, setProperty } = foundry.utils;
 
@@ -155,7 +156,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
   }
 
   get schussProMKR() {
-    return Math.floor(60 / this.reloadTime.value);
+    return NavalCombat.shotsPerMkr(this.reloadTime.value);
   }
 
   get rwRE() {

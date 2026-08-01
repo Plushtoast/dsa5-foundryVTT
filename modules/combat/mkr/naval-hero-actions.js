@@ -23,7 +23,7 @@ export default class NavalHeroActionHandler {
         id: 'naval-repair',
         special: 'navalHeroAction',
         heroAction: 'repair',
-        img: 'icons/tools/smithing/hammer-sledge.webp',
+        img: 'systems/dsa5/icons/talents/Holzbearbeitung.webp',
         icon: 'fas fa-hammer',
         tooltip: 'VEHICLE.mkr.repairTooltip',
       },
@@ -32,7 +32,7 @@ export default class NavalHeroActionHandler {
         id: 'naval-maneuver',
         special: 'navalHeroAction',
         heroAction: 'maneuver',
-        img: 'icons/tools/nautical/anchor.webp',
+        img: 'systems/dsa5/icons/talents/BootSchifffe.webp',
         icon: 'fas fa-wind',
         tooltip: 'VEHICLE.mkr.sailTooltip',
       },
@@ -41,7 +41,7 @@ export default class NavalHeroActionHandler {
         id: 'naval-commands',
         special: 'navalHeroAction',
         heroAction: 'commands',
-        img: 'icons/sundries/flags/banner-flag-red.webp',
+        img: 'systems/dsa5/icons/categories/ability_command.webp',
         icon: 'fas fa-flag',
         tooltip: 'VEHICLE.mkr.commandsTooltip',
       },
@@ -50,7 +50,7 @@ export default class NavalHeroActionHandler {
         id: 'naval-heal',
         special: 'navalHeroAction',
         heroAction: 'heal',
-        img: 'icons/commodities/biological/organ-heart-red.webp',
+        img: 'systems/dsa5/icons/talents/HeilkundeWunden.webp',
         icon: 'fas fa-kit-medical',
         tooltip: 'VEHICLE.mkr.healTooltip',
       },
@@ -165,13 +165,14 @@ export default class NavalHeroActionHandler {
     }
 
     const character = actor ?? game.user.character;
-    if (character) {
+    if (character && character.type !== 'vehicle') {
       await this.#rollAsPlayer(vehicle, action, character);
       return;
     }
 
     if (game.user.isGM) {
-      await this.#requestRollAsGM(vehicle, action);
+      // No assigned hero: roll the action with the ship's own skills (TaW 8 defaults).
+      await this.#rollAsPlayer(vehicle, action, vehicle);
       return;
     }
 

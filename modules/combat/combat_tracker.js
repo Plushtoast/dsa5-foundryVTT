@@ -30,7 +30,9 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     actions: {
       convertToBrawl: this._convertToBrawl,
       nextMkr: this._nextMkr,
+      cycleMkrPhase: { handler: this._onMkrPhaseControl, buttons: [0, 2] },
       advanceMkrPhase: this._advanceMkrPhase,
+      retreatMkrPhase: this._retreatMkrPhase,
       setChaseTerrain: this._setChaseTerrain,
       setChaseMaxRounds: this._setChaseMaxRounds,
       setChaseDefaultSkill: this._setChaseDefaultSkill,
@@ -66,8 +68,18 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     game.combat?.nextMkr();
   }
 
+  static _onMkrPhaseControl(event) {
+    event.preventDefault();
+    if (event.button === 2) game.combat?.retreatMkrPhase();
+    else game.combat?.advanceMkrPhase();
+  }
+
   static _advanceMkrPhase() {
     game.combat?.advanceMkrPhase();
+  }
+
+  static _retreatMkrPhase() {
+    game.combat?.retreatMkrPhase();
   }
 
   static _setChaseTerrain(_ev, target) {
@@ -212,6 +224,14 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (combatant.actor?.type === 'vehicle') {
       turn.vehicleImmobile = combatant.actor.system.isImmobile;
       turn.vehicleSinking = combatant.actor.system.isSinking;
+    }
+
+    if (NavalCombat.isNavalMkrActive(combat)) {
+      turn.isVehicle = combatant.actor?.type === 'vehicle';
+      turn.mkrPhaseRelevant = NavalCombat.isCombatantRelevantToPhase(combatant, combat.system.mkrPhase);
+      if (!turn.mkrPhaseRelevant) {
+        turn.css = `${turn.css || ''} mkr-phase-irrelevant`.trim();
+      }
     }
 
     return ChaseCombatTracker.enrichTurn(turn, combatant, combat);
@@ -415,6 +435,10 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       });
       input.addEventListener('click', (ev) => ev.stopPropagation());
     }
+
+    this.element.querySelectorAll('.mkr-phase-control').forEach((el) => {
+      el.addEventListener('contextmenu', (ev) => ev.preventDefault());
+    });
 
     for (const select of this.element.querySelectorAll('select[data-action="setChaseDefaultSkill"]')) {
       select.addEventListener('change', (ev) => {

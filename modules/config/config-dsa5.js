@@ -23,6 +23,32 @@ DSA5.statusEffects = [
     },
   },
   {
+    id: 'maneuverReadiness',
+    name: 'CONDITION.maneuverReadiness',
+    img: 'icons/svg/downgrade.svg',
+    description: 'CONDITIONDESCRIPTION.maneuverReadiness',
+    system: {
+      condition: {
+        value: 1,
+        max: 4,
+      },
+      changes: [{ key: 'system.condition.maneuverReadiness', type: 'add', value: 1 }],
+    },
+  },
+  {
+    id: 'shipCondition',
+    name: 'CONDITION.shipCondition',
+    img: 'icons/svg/ruins.svg',
+    description: 'CONDITIONDESCRIPTION.shipCondition',
+    system: {
+      condition: {
+        value: 1,
+        max: 4,
+      },
+      changes: [{ key: 'system.condition.shipCondition', type: 'add', value: 1 }],
+    },
+  },
+  {
     id: 'prone',
     name: 'CONDITION.prone',
     img: 'icons/svg/falling.svg',

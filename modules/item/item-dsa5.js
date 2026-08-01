@@ -1415,7 +1415,7 @@ class SkillItemDSA5 extends Itemdsa5 {
     );
 
     // Add global skill modifiers
-    for (const thing of actor.system.skillModifiers.global) {
+    for (const thing of actor.system.skillModifiers?.global ?? []) {
       situationalModifiers.push({
         name: thing.source,
         value: thing.value

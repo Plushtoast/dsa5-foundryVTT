@@ -1,3 +1,5 @@
+import DSA5Combatant from '../combatant.js';
+
 /**
  * When vehicles join combat, optionally add their assigned crew as combatants.
  * One dialog covers all ships added in the same batch.
@@ -90,13 +92,13 @@ export default class VehicleCrewCombatPrompt {
     const ships = entries.map(({ vehicle, crew }) => ({
       id: vehicle.id,
       name: vehicle.name,
-      img: vehicle.img,
+      img: DSA5Combatant.tokenImageFor(vehicle) || vehicle.img,
       crew: crew.map((actor) => {
         const token = scene?.tokens.find((t) => t.actorId === actor.id) ?? null;
         return {
           id: actor.id,
           name: actor.name,
-          img: actor.img,
+          img: DSA5Combatant.tokenImageFor(actor, token) || actor.img,
           hasToken: !!token,
           tokenHint: token
             ? _loc('VEHICLE.crewCombat.hasToken')
@@ -127,7 +129,10 @@ export default class VehicleCrewCombatPrompt {
             hidden: token.hidden,
           });
         } else {
-          createData.push({ actorId: actor.id });
+          createData.push({
+            actorId: actor.id,
+            img: DSA5Combatant.tokenImageFor(actor) || actor.img,
+          });
         }
       }
     }

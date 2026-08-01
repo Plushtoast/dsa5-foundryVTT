@@ -13,9 +13,10 @@
     <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
       <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack {{#unless item.isBoardWeaponLoaded}}board-weapon-unloaded{{/unless}}" data-tooltip="{{item.boardWeaponFireTooltip}}">{{item.attack}}</a>
     </div>
-    <div class="combat-item-damage col ten center" data-tooltip="{{item.damageTooltip}}">
-      {{#if item.damageDisplay}}
-      <span class="board-weapon-damage">{{item.damageDisplay}}</span>
+    <div class="combat-item-damage col ten center flexcol" data-tooltip="{{item.damageTooltip}}">
+      {{#if item.damageStp}}
+      <span class="board-weapon-damage board-weapon-damage-tp">{{item.damageTp}}</span>
+      <span class="board-weapon-damage board-weapon-damage-stp small">{{item.damageStp}}</span>
       {{else}}
       <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>
       {{/if}}
@@ -33,9 +34,12 @@
       {{/if}}
     </div>
     {{/if}}
-    <div class="col five center small vehicle-crew-cell" data-tooltip="{{item.boardWeaponCrewTooltip}}">
-      {{#if item.crewOperatorName}}
-      <a data-action="assignWeaponCrew" data-item-id="{{item._id}}" class="vehicle-crew-link ellipsis">{{item.crewOperatorName}}</a>
+    <div class="col five center small vehicle-crew-cell">
+      {{#if item.crewOperatorImg}}
+      <a data-action="assignWeaponCrew" data-item-id="{{item._id}}" class="vehicle-crew-operator"
+         data-tooltip-text="{{item.crewOperatorName}}">
+        <img class="vehicle-crew-avatar" src="{{item.crewOperatorImg}}" alt="{{item.crewOperatorName}}" />
+      </a>
       <button type="button" data-action="clearWeaponCrew" data-item-id="{{item._id}}" class="icon fas fa-times noBorder dsadesignbutton very-small vehicle-crew-clear" data-tooltip="VEHICLE.clearCrew"></button>
       {{else}}
       <button type="button" data-action="assignWeaponCrew" data-item-id="{{item._id}}" class="icon fas fa-user-plus noBorder dsadesignbutton very-small" data-tooltip="VEHICLE.assignCrew"></button>
