@@ -347,17 +347,29 @@ export default function () {
     if (!actor) return;
 
     const modify = {};
-    if (getProperty(actor, 'system.merchant.merchantType') == 'loot') {
+    const isVehicle = actor.type === 'vehicle';
+    const isLoot = getProperty(actor, 'system.merchant.merchantType') == 'loot';
+
+    // Vehicles use loot merchant for cargo, but still show StP / crew bars.
+    if (isLoot && !isVehicle) {
       mergeObject(modify, { displayBars: 0 });
     } else if (getProperty(actor, 'system.config.autoBar')) {
-      mergeObject(modify, { bar1: { attribute: 'status.wounds' } });
-
-      if (actor.system.isMage) {
-        mergeObject(modify, { bar2: { attribute: 'status.astralenergy' } });
-      } else if (actor.system.isPriest) {
-        mergeObject(modify, { bar2: { attribute: 'status.karmaenergy' } });
+      if (isVehicle) {
+        // Same Foundry bar1/bar2 color slots as LeP / AsP.
+        mergeObject(modify, {
+          bar1: { attribute: 'status.structurePoints' },
+          bar2: { attribute: 'status.crew' },
+        });
       } else {
-        mergeObject(modify, { bar2: { attribute: 'tbd' } });
+        mergeObject(modify, { bar1: { attribute: 'status.wounds' } });
+
+        if (actor.system.isMage) {
+          mergeObject(modify, { bar2: { attribute: 'status.astralenergy' } });
+        } else if (actor.system.isPriest) {
+          mergeObject(modify, { bar2: { attribute: 'status.karmaenergy' } });
+        } else {
+          mergeObject(modify, { bar2: { attribute: 'tbd' } });
+        }
       }
     }
 

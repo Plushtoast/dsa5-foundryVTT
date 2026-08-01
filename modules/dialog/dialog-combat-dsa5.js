@@ -464,8 +464,11 @@ export default class DSA5CombatDialog extends DialogShared {
 
       if (actor) {
         const combatskill = source.system.combatskill.value;
+        const skillItem = actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill);
+        if (!skillItem) return;
+
         let weapon;
-        const skill = CombatskillData._calculateCombatSkillValues(actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill).toObject(), actor.system, {
+        const skill = CombatskillData._calculateCombatSkillValues(skillItem.toObject(), actor.system, {
           step: this.syncSituationalModifiers(testData, 'step'),
           [this.dialogData.mode]: this.syncSituationalModifiers(testData, this.dialogData.mode),
         });

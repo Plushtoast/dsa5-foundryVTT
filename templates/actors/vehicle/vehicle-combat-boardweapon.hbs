@@ -11,7 +11,7 @@
       {{item.combatskillLabel}}
     </div>
     <div class="combat-item-attack col ten center item" data-item-id="{{item._id}}" data-mod="attack">
-      <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack {{#unless item.isBoardWeaponLoaded}}board-weapon-unloaded{{/unless}}" data-tooltip="{{item.boardWeaponFireTooltip}}">{{item.attack}}</a>
+      <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack {{#unless item.isBoardWeaponLoaded}}board-weapon-unloaded{{/unless}}" data-tooltip-html="{{{item.boardWeaponFireTooltip}}}">{{item.attack}}</a>
     </div>
     <div class="combat-item-damage col ten center flexcol" data-tooltip="{{item.damageTooltip}}">
       {{#if item.damageStp}}
@@ -22,7 +22,7 @@
       {{/if}}
     </div>
     {{#if showAmmoColumn}}
-    <div class="col ten flexrow vehicle-ammo-cell">
+    <div class="col ten flexrow flexAlignCenter vehicle-ammo-cell">
       {{#if item.hasAmmunition}}
       <button type="button" data-action="pickWeaponAmmo" data-item-id="{{item._id}}" class="dsadesignbutton very-small vehicle-ammo-btn" data-tooltip="{{item.ammoTooltip}}">
         {{#if item.ammoEmpty}}
@@ -31,6 +31,10 @@
         <span class="vehicle-ammo-count">{{item.ammoLabel}}</span>
         {{/if}}
       </button>
+      {{else if item.ammoInfinite}}
+      <span class="vehicle-ammo-infinite center" data-tooltip="{{item.ammoTooltip}}">
+        <i class="fas fa-infinity" aria-hidden="true"></i>
+      </span>
       {{/if}}
     </div>
     {{/if}}

@@ -41,9 +41,18 @@
                     {{/if}}
                 </div>
                 {{#if isOwner}}
+                {{#if showVehicleBars}}
+                <div class="item-structure vehicle-stp" style="--a: {{maxLP}}; --b: {{currentLP}}" data-tooltip="VEHICLE.structurePoints">
+                    <div class="inner"></div>
+                </div>
+                <div class="item-structure vehicle-crew" style="--a: {{maxCrew}}; --b: {{currentCrew}}" data-tooltip="VEHICLE.crewCurrent">
+                    <div class="inner"></div>
+                </div>
+                {{else}}
                 <div class="item-structure" style="--a: {{maxLP}}; --b: {{currentLP}}">
                     <div class="inner"></div>
                 </div>
+                {{/if}}
                 {{/if}}
                 <div class="hoverbuttons">
                     <div class="combatant-controls flexrow">
@@ -115,7 +124,12 @@
     {{else}}
     {{#if (or control user.isGM)}}
     <div class="row-section">
+        {{#if mkrEndTurnLabel}}
+        <button type="button" class="col {{ifThen isDamageReportPhase 'combat-control' 'two combat-control'}} {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding mkrEndTurnLabel 'combatTrackerNext'}}">{{localize mkrEndTurnLabel}}</button>
+        {{else}}
         <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        {{/if}}
+        {{#unless isDamageReportPhase}}
         {{#if isChase}}
         <button type="button" class="col two combat-control chase-roll-current" data-action="aggroButton" data-tooltip="CHASE.actionTooltip">{{localize 'CHASE.action'}}</button>
         {{else if (and isNavalMkr (eq mkr.phase "heroActions"))}}
@@ -123,6 +137,7 @@
         {{else}}
         <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
         {{/if}}
+        {{/unless}}
     </div>
     {{#if isNavalMkr}}
     <div class="row-section mkr-phase-badge-row">

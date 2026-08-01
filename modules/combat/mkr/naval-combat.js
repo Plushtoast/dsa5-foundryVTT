@@ -83,6 +83,7 @@ export default class NavalCombat {
       wood: _loc('LocalizedIDs.woodworking'),
       cloth: _loc('LocalizedIDs.clothworking'),
       boats: _loc('LocalizedIDs.boatsAndShips'),
+      driving: _loc('LocalizedIDs.driving'),
       warfare: _loc('LocalizedIDs.warfare'),
       wounds: _loc('LocalizedIDs.treatWounds'),
     };
@@ -90,9 +91,17 @@ export default class NavalCombat {
 
   /** Every actor is assumed to have Boote & Schiffe at least at TaW 0. */
   static boatsSkillFor(actor) {
-    if (!actor) return null;
+    return this.#ephemeralSkillFor(actor, this.skillNames().boats);
+  }
 
-    const name = this.skillNames().boats;
+  /** Fahrzeuge at TaW 0 when missing from the sheet. */
+  static drivingSkillFor(actor) {
+    return this.#ephemeralSkillFor(actor, this.skillNames().driving);
+  }
+
+  static #ephemeralSkillFor(actor, name) {
+    if (!actor || !name) return null;
+
     const existing = actor.items.find((i) => i.type === 'skill' && i.name === name);
     if (existing) return existing;
 
@@ -116,7 +125,9 @@ export default class NavalCombat {
 
   static resolveSkill(actor, skillName) {
     if (!actor) return null;
-    if (skillName === this.skillNames().boats) return this.boatsSkillFor(actor);
+    const names = this.skillNames();
+    if (skillName === names.boats) return this.boatsSkillFor(actor);
+    if (skillName === names.driving) return this.drivingSkillFor(actor);
     return actor.items.find((i) => i.type === 'skill' && i.name === skillName) ?? null;
   }
 
@@ -142,5 +153,37 @@ export default class NavalCombat {
       default:
         return true;
     }
+  }
+
+  /** Combatants that act in the given phase (respects skipDefeated). */
+  static phaseRelevantCombatants(combat, phase = combat?.system?.mkrPhase) {
+    if (!combat) return [];
+    const skipDefeated = combat.settings?.skipDefeated;
+    const normalized = this.normalizePhase(phase);
+    return combat.turns.filter((c) => {
+      if (skipDefeated && c.isDefeated) return false;
+      return this.isCombatantRelevantToPhase(c, normalized);
+    });
+  }
+
+  /** Index in combat.turns of the first phase-relevant combatant, or null. */
+  static firstRelevantTurnIndex(combat, phase = combat?.system?.mkrPhase) {
+    const relevant = this.phaseRelevantCombatants(combat, phase);
+    if (!relevant.length) return null;
+    const idx = combat.turns.findIndex((c) => c.id === relevant[0].id);
+    return idx >= 0 ? idx : null;
+  }
+
+  /** True when the current combatant is last in the phase loop (or no active turn). */
+  static isLastRelevantTurn(combat) {
+    if (!combat || !this.isNavalMkrActive(combat)) return false;
+    const phase = this.normalizePhase(combat.system.mkrPhase);
+    if (phase === 'damageReport') return true;
+    const relevant = this.phaseRelevantCombatants(combat, phase);
+    if (!relevant.length) return true;
+    const currentId = combat.combatant?.id;
+    if (!currentId) return true;
+    const idx = relevant.findIndex((c) => c.id === currentId);
+    return idx < 0 || idx >= relevant.length - 1;
   }
 }

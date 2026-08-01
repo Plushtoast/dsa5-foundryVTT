@@ -6,22 +6,28 @@ import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
 import NavalCombatDamage from '../combat/mkr/naval-combat-damage.js';
+import NavalBroadside from '../combat/mkr/naval-broadside.js';
 import VehicleChase from '../combat/chase/vehicle-chase.js';
 import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
+import VehicleRamWeapon from '../data/actor/vehicle-ram-weapon.js';
 import DSA5Combatant from '../combat/combatant.js';
-import CombatskillData from '../data/item/combatskill.js';
 
 const { duplicate } = foundry.utils;
 
 export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   static DEFAULT_OPTIONS = {
     classes: ['vehicle-sheet'],
+    ownerRollActions: {
+      chRollCombat: ActorSheetdsa5Vehicle._chRollCombat,
+      navalRam: ActorSheetdsa5Vehicle._navalRam,
+    },
     ownerActions: {
       assignWeaponCrew: ActorSheetdsa5Vehicle._assignWeaponCrew,
       clearWeaponCrew: ActorSheetdsa5Vehicle._clearWeaponCrew,
       pickWeaponAmmo: ActorSheetdsa5Vehicle._pickWeaponAmmo,
       navalHeroAction: ActorSheetdsa5Vehicle._navalHeroAction,
       navalBoarding: ActorSheetdsa5Vehicle._navalBoarding,
+      navalBroadside: ActorSheetdsa5Vehicle._navalBroadside,
       memberCardLink: ActorSheetdsa5Vehicle._crewMemberLink,
       memberContextMenu: ActorSheetdsa5Vehicle._crewMemberContextMenu,
     },
@@ -104,7 +110,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
 
   async _prepareContext(options) {
     if (this.isEditable) {
-      await NavalBoardWeapons.ensureRamWeapon(this.actor);
+      await VehicleRamWeapon.removeLegacyEmbedded(this.actor);
       await this.actor.system.ensureDefaultSkills?.();
     }
 
@@ -121,7 +127,6 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     this.#prepareNavalHeroContext(context.prepare);
     this.#prepareNavalChaseContext(context.prepare);
     this.#prepareCrewMembers(context.prepare);
-    this.#filterRamFromInventory(context.prepare);
     return context;
   }
 
@@ -190,7 +195,6 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
 
   #prepareVehicleCombatContext(prepare) {
     const operators = this.actor.system.weaponOperators ?? {};
-    const vehicleSkills = this.actor.items.filter((i) => i.type === 'combatskill');
 
     const enrichWeapon = (weapon) => {
       const operatorUuid = operators[weapon._id];
@@ -201,7 +205,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
         ? (DSA5Combatant.tokenImageFor(operator) || operator.img)
         : '';
       weapon.combatskillLabel = weapon.system.combatskill.value ?? '';
-      weapon.attack = this.#computeWeaponAttack(weapon, operator, vehicleSkills);
+      weapon.attack = NavalBoardWeapons.computeWeaponAttack(this.actor, weapon, operator);
       weapon.attackTooltip = operator
         ? _loc('VEHICLE.attackOperator', { name: operator.name, value: weapon.attack })
         : _loc('VEHICLE.attackCrew', { value: weapon.attack });
@@ -216,11 +220,10 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     };
 
     prepare.wornRangedWeapons = (prepare.wornRangedWeapons ?? []).map(enrichRangedWeapon);
-
-    const canRam = NavalBoardWeapons.isRamCapable(this.actor);
     prepare.wornMeleeWeapons = (prepare.wornMeleeWeapons ?? [])
-      .filter((weapon) => !NavalBoardWeapons.isRamWeapon(weapon) || canRam)
+      .filter((weapon) => !NavalBoardWeapons.isRamWeapon(weapon))
       .map(enrichWeapon);
+    prepare.ramAttack = NavalBoardWeapons.prepareRamContext(this.actor);
     prepare.vehicleGunnerySkills = (prepare.combatskills ?? [])
       .filter((skill) => skill?.name === _loc('LocalizedIDs.Crossbows'))
       .map((skill) => ({
@@ -229,49 +232,16 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       }));
   }
 
-  #filterRamFromInventory(prepare) {
-    const filterItems = (items) => (items ?? []).filter((item) => !NavalBoardWeapons.isRamWeapon(item));
-
-    if (prepare.inventory?.meleeweapons?.items) {
-      prepare.inventory.meleeweapons.items = filterItems(prepare.inventory.meleeweapons.items);
-      prepare.inventory.meleeweapons.show = prepare.inventory.meleeweapons.items.length > 0;
-    }
-  }
-
-  #computeWeaponAttack(weapon, operator, vehicleSkills) {
-    const atmod = Number(weapon.system?.atmod?.value ?? 0);
-    let ammoMod = 0;
-
-    if (weapon.type === 'rangeweapon' && weapon.system?.ammunitiongroup?.value !== '-') {
-      const ammoId = weapon.system?.currentAmmo?.value;
-      const ammoSource = operator ?? this.actor;
-      const ammo = ammoId ? ammoSource.items?.get?.(ammoId) : null;
-      if (ammo) ammoMod = Number(ammo.system?.atmod) || 0;
-    }
-
-    if (operator) {
-      const skillName = weapon.system.combatskill.value;
-      const skillItem = operator.items.find((i) => i.type === 'combatskill' && i.name === skillName);
-      if (skillItem) {
-        const skill = CombatskillData._calculateCombatSkillValues(skillItem.toObject(), operator.system);
-        return Number(skill.system.attack.value) + atmod + ammoMod;
-      }
-    }
-
-    const gunnery = Number(this.actor.system.status.gunnery?.value ?? 12);
-    const weaponSkill = vehicleSkills.find((s) => s.name === weapon.system.combatskill.value);
-    const useGunnery = weapon.system?.siegeRules || weaponSkill?.name === _loc('LocalizedIDs.Crossbows');
-
-    if (useGunnery) return gunnery + atmod + ammoMod;
-
-    if (weaponSkill) return Number(weaponSkill.system.attack.value) + atmod + ammoMod;
-
-    return weapon.attack ?? 0;
-  }
-
   #enrichAmmo(weapon) {
-    weapon.hasAmmunition = weapon.system?.ammunitiongroup?.value !== '-';
-    if (!weapon.hasAmmunition) return;
+    const needsAmmoGroup = weapon.system?.ammunitiongroup?.value !== '-';
+    const tracksAmmo = this.actor.system.requiresAmmunition?.() !== false && needsAmmoGroup;
+    weapon.hasAmmunition = tracksAmmo;
+    // NPC / no player crew: munition not tracked → show ∞ in the Mun column.
+    weapon.ammoInfinite = !tracksAmmo && needsAmmoGroup;
+    if (!weapon.hasAmmunition) {
+      if (weapon.ammoInfinite) weapon.ammoTooltip = _loc('infinite');
+      return;
+    }
 
     const currentAmmo = weapon.ammo?.find((a) => a._id === weapon.system.currentAmmo?.value);
     if (currentAmmo?.system?.ammunitiongroup?.value === 'mag') {
@@ -437,6 +407,14 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   static async _chRollCombat(ev, target) {
     const dataset = this._getItemDataset(target);
     const mode = target.dataset.mode;
+    if (mode === 'attack') {
+      await NavalBoardWeapons.executeWeaponAttack(this.actor, dataset.itemId, {
+        tokenId: this.getTokenId(),
+        subweapon: dataset.subweapon,
+      });
+      return;
+    }
+
     const itemDoc = this.actor.items.get(dataset.itemId);
     const item = Actordsa5.buildSubweapon(itemDoc, dataset.subweapon) ?? itemDoc?.toObject?.() ?? itemDoc;
     if (!item) return;
@@ -448,8 +426,17 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     });
     if (!setup) return;
 
-    const setupData = await setup.rollingActor.setupWeapon(item, mode, setup.options, this.getTokenId());
+    const setupData = await setup.rollingActor.setupWeapon(
+      setup.weapon ?? item,
+      mode,
+      setup.options,
+      setup.rollTokenId ?? this.getTokenId(),
+    );
     if (setupData) await setup.rollingActor.basicTest(setupData);
+  }
+
+  static async _navalRam() {
+    await NavalBoardWeapons.executeRam(this.actor, { tokenId: this.getTokenId() });
   }
 
   static async _navalHeroAction(_ev, target) {
@@ -460,5 +447,9 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
 
   static async _navalBoarding() {
     await NavalCombatDamage.initiateBoarding();
+  }
+
+  static async _navalBroadside() {
+    await NavalBroadside.open(this.actor, { tokenId: this.getTokenId() });
   }
 }

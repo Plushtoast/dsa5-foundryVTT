@@ -1,0 +1,40 @@
+<div class="dsa5 chat-card naval-damage-report-card roll-request-card">
+  <p class="flexrow flexAlignCenter gap5px roll-request-header">
+    <b>{{localize "VEHICLE.mkr.damageReportTitle"}}</b>
+  </p>
+
+  <div class="roll-request-rows">
+    {{#each vehicles as |vehicle|}}
+    <div class="naval-damage-report-vehicle">
+      <div class="flexrow flexAlignCenter roll-request-row gap5px naval-damage-report-expand">
+        <div class="roll-request-row-identity flexrow flexAlignCenter gap5px">
+          <span class="roll-request-row-title">{{vehicle.vehicleName}}</span>
+        </div>
+        <div class="roll-request-result-stack flex0">
+          <b class="roll-request-result-label">{{vehicle.stpTotal}} {{localize "VEHICLE.mkr.damageReportStp"}}</b>
+          {{#if vehicle.crewTotal}}
+            <span class="roll-request-result-sublabel">{{vehicle.crewTotal}} {{localize "VEHICLE.mkr.damageReportCrew"}}</span>
+          {{/if}}
+        </div>
+        <i class="fas fa-plus naval-damage-report-expand-icon flex0" aria-hidden="true"></i>
+      </div>
+      <div class="naval-damage-report-attackers">
+        {{#each vehicle.attackers as |attacker|}}
+        <div class="flexrow flexAlignCenter roll-request-row gap5px naval-damage-report-attacker">
+          <div class="roll-request-row-identity flexrow flexAlignCenter gap5px">
+            <span class="roll-request-row-title">{{attacker.attackerName}}</span>
+            <span class="very-small">{{localize "VEHICLE.mkr.damageReportHits" count=attacker.hitCount}}</span>
+          </div>
+          <div class="roll-request-result-stack flex0">
+            <b class="roll-request-result-label">{{attacker.stpTotal}} {{localize "VEHICLE.mkr.damageReportStp"}}</b>
+            {{#if attacker.crewTotal}}
+              <span class="roll-request-result-sublabel">{{attacker.crewTotal}} {{localize "VEHICLE.mkr.damageReportCrew"}}</span>
+            {{/if}}
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

@@ -16,6 +16,8 @@ import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
+import NavalBoardWeapons from '../../combat/mkr/naval-board-weapons.js';
+import NavalBroadside from '../../combat/mkr/naval-broadside.js';
 const { mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -520,6 +522,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'enchantment':
         this.handleEnchantment(ev, actor, id, tokenId);
         break;
+      case 'navalBoardWeapon':
+        await NavalBoardWeapons.executeWeaponAttack(actor, id, { tokenId, subweapon });
+        break;
+      case 'navalRam':
+        await NavalBoardWeapons.executeRam(actor, { tokenId });
+        break;
+      case 'navalBroadside':
+        await NavalBroadside.open(actor, { tokenId });
+        break;
       default:
         this.handleSkillRoll(ev, actor, id, tokenId, subweapon);
     }
@@ -569,7 +580,36 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       const rideName = _loc('LocalizedIDs.riding');
 
       effects = await this._effectEntries(actor);
-      if (game.combat) {
+      if (actor.type === 'vehicle') {
+        items.attacks.push(...NavalBoardWeapons.hotbarAttackEntries(actor));
+        const descendingSkills = [];
+        for (const x of actor.items) {
+          if (x.type !== 'skill') {
+            if (OnUseEffect.hasOnUseEffect(x)) {
+              onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+            }
+            continue;
+          }
+
+          const elem = this._skillEntry(x, 'skill filterable', {
+            addClass: x.system.group?.value,
+          });
+          if (!items.default.length) items.default.push(elem);
+          else moreSkills.push(elem);
+          if ((x.system.talentValue?.value || 0) > 0) descendingSkills.push(elem);
+
+          if (OnUseEffect.hasOnUseEffect(x)) {
+            onUsages.push(this._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+          }
+        }
+        if (!game.combat) {
+          items.skills.push(
+            ...descendingSkills
+              .sort((a, b) => b.tw - a.tw)
+              .slice(0, 5),
+          );
+        }
+      } else if (game.combat) {
         const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
         const brawl = this._brawlEntry(combatskills);
 

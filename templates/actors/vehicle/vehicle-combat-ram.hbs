@@ -1,0 +1,53 @@
+{{#if prepare.ramAttack}}
+{{#with prepare.ramAttack as |ram|}}
+<div class="groupbox vehicle-board-weapons vehicle-ram-attack">
+  <div class="row-section table-title lineheight">
+    <div class="col zerofive"></div>
+    <div class="title-type col four">
+      <b data-tooltip="{{localize 'VEHICLE.ramCrewTooltip'}}">{{localize "VEHICLE.ramWeapon"}}</b>
+    </div>
+    <div class="col fifteen center small">{{localize "TYPES.Item.skill"}}</div>
+    <div class="col ten center small" data-tooltip="CHAR.ATTACK">{{localize "CHARAbbrev.FW"}}</div>
+    <div class="col ten center small" data-tooltip="damage">{{localize "CHARAbbrev.damage"}}</div>
+    <div class="col five center small" data-tooltip="{{localize 'VEHICLE.crewOperator'}}">{{localize "VEHICLE.crewOperatorShort"}}</div>
+    <div class="col zerofive"></div>
+  </div>
+
+  <div class="row-section wrap rowtable inventory">
+    <div class="combat-weapon-wrapper col item" data-item-id="{{ram.operatorKey}}">
+      <div class="combat-weapon row-section">
+        <div class="combat-item-image col zerofive image" style="background-image: url('{{ram.img}}')"></div>
+        <div class="combat-item-name col four ellipsis">
+          <span>{{ram.name}}</span>
+          {{#if ram.boardWeaponReloadLabel}}
+          <span class="vehicle-reload-badge small">{{ram.boardWeaponReloadLabel}}</span>
+          {{/if}}
+        </div>
+        <div class="combat-item-skill col fifteen center small ellipsis" data-tooltip="{{ram.skillName}}">
+          {{ram.skillName}} ({{ram.skillModifier}})
+        </div>
+        <div class="combat-item-attack col ten center item">
+          <a data-action="navalRam" class="d20 die-attack {{#unless ram.isReady}}board-weapon-unloaded{{/unless}}" data-tooltip-html="{{{ram.boardWeaponFireTooltip}}}">{{ram.fw}}</a>
+        </div>
+        <div class="combat-item-damage col ten center flexcol" data-tooltip="{{ram.damageTooltip}}">
+          <span class="board-weapon-damage board-weapon-damage-tp">{{ram.damageTp}}</span>
+          <span class="board-weapon-damage board-weapon-damage-stp small">{{ram.damageStp}}</span>
+        </div>
+        <div class="col five center small vehicle-crew-cell">
+          {{#if ram.crewOperatorImg}}
+          <a data-action="assignWeaponCrew" data-item-id="{{ram.operatorKey}}" class="vehicle-crew-operator"
+             data-tooltip-text="{{ram.crewOperatorName}}">
+            <img class="vehicle-crew-avatar" src="{{ram.crewOperatorImg}}" alt="{{ram.crewOperatorName}}" />
+          </a>
+          <button type="button" data-action="clearWeaponCrew" data-item-id="{{ram.operatorKey}}" class="icon fas fa-times noBorder dsadesignbutton very-small vehicle-crew-clear" data-tooltip="VEHICLE.clearCrew"></button>
+          {{else}}
+          <button type="button" data-action="assignWeaponCrew" data-item-id="{{ram.operatorKey}}" class="icon fas fa-user-plus noBorder dsadesignbutton very-small" data-tooltip="VEHICLE.assignCrew"></button>
+          {{/if}}
+        </div>
+        <div class="col zerofive"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{{/with}}
+{{/if}}

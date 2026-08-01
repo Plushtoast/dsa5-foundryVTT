@@ -122,8 +122,11 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const isChase = Chase.isChaseActive(data.combat);
     const isNavalMkr = NavalCombat.isNavalMkrActive(data.combat);
     const mkrPhase = data.combat?.system?.mkrPhase;
+    const isDamageReportPhase = isNavalMkr && NavalCombat.normalizePhase(mkrPhase) === 'damageReport';
     let turnsToUse = data.turns ?? [];
-    if (isNavalMkr) {
+    if (isDamageReportPhase) {
+      turnsToUse = [];
+    } else if (isNavalMkr) {
       turnsToUse = turnsToUse.filter((turn) => {
         const combatant = data.combat.combatants.get(turn.id);
         return NavalCombat.isCombatantRelevantToPhase(combatant, mkrPhase);
@@ -173,9 +176,16 @@ export default class DSAIniTracker extends DefaultAppv2 {
           turn.round = data.combat.round + loops;
           if (turn.isOwner && combatant.actor) {
             const status = combatant.actor.system.status;
-            const pool = status.structurePoints ?? status.wounds;
-            turn.maxLP = pool?.max ?? 0;
-            turn.currentLP = pool?.value ?? 0;
+            if (combatant.actor.type === 'vehicle') {
+              turn.maxLP = status.structurePoints?.max ?? 0;
+              turn.currentLP = status.structurePoints?.value ?? 0;
+              turn.maxCrew = status.crew?.max ?? 0;
+              turn.currentCrew = status.crew?.value ?? 0;
+              turn.showVehicleBars = true;
+            } else {
+              turn.maxLP = status.wounds?.max ?? 0;
+              turn.currentLP = status.wounds?.value ?? 0;
+            }
           }
           turn.isVehicle = combatant.actor?.type === 'vehicle';
           turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
@@ -196,7 +206,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
       data.turns = [];
     }
 
-    data.isLastRound = data.turns[1]?.newRound;
+    data.isLastRound = isNavalMkr
+      ? NavalCombat.isLastRelevantTurn(data.combat)
+      : data.turns[1]?.newRound;
 
     const roundSeparators = data.turns?.filter((turn) => turn.newRound).length ?? 0;
     options.position.width = itemWidth * actorCount + actorCount * 3 + 70
@@ -208,6 +220,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
       unRolled,
       waitingTurns,
       isNavalMkr,
+      isDamageReportPhase,
+      mkrEndTurnLabel: isNavalMkr
+        ? (isDamageReportPhase ? 'COMBAT.TurnEnd' : 'VEHICLE.mkr.endPhase')
+        : null,
       mkr: NavalCombat.getMkrProgress(data.combat) ?? data.mkr,
     });
 

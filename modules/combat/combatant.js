@@ -1,5 +1,6 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import MeleeweaponData from '../data/item/meleeweapon.js';
+import { DSACombatantDataModel } from '../data/combatant/dsacombatant.js';
 
 export default class DSA5Combatant extends Combatant {
   constructor(data, context) {
@@ -165,6 +166,11 @@ export default class DSA5Combatant extends Combatant {
     return this.system.roundInitiative >= 0 ? this.system.roundInitiative : this.initiative;
   }
 
+  /** Embedded update entry that clears round-scoped system fields for this combatant. */
+  getRoundStateResetUpdate() {
+    return { _id: this.id, ...DSACombatantDataModel.getRoundStateResetUpdate() };
+  }
+
   /**
    * Prefer token art over actor portrait for combatants without a placed token
    * (e.g. added from the combat tracker / ship-crew prompt).
@@ -175,6 +181,15 @@ export default class DSA5Combatant extends Combatant {
 
     const tokenArt = DSA5Combatant.tokenImageFor(this.actor);
     if (tokenArt && (!this.img || this.img === this.actor.img)) this.img = tokenArt;
+  }
+
+  /** Vehicles track StP instead of LeP as the combat resource. */
+  updateResource() {
+    if (!this.combat || !this.actor) return this.resource = null;
+    if (this.actor.type === 'vehicle') {
+      return this.resource = this.actor.system.status?.structurePoints?.value ?? null;
+    }
+    return this.resource = foundry.utils.getProperty(this.actor.system, this.parent.settings.resource) ?? null;
   }
 
   /** Scene token texture, else prototype token texture (not portrait). */

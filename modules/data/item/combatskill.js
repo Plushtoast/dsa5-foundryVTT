@@ -55,7 +55,27 @@ export default class CombatskillData extends ItemDataModel.mixin(SkillTemplate, 
     return [{ key: 'Description', val: `Combatskilldescr.${name}`, localizeVal: true }];
   }
 
-  static _calculateCombatSkillValues(skill, actorData, { step, parry, attack } = { step: 0, parry: 0, attack: 0 }) {
+  static _calculateCombatSkillValues(skill, actorData, { step = 0, parry = 0, attack = 0 } = {}) {
+    if (!skill) return skill;
+
+    // Vehicles (and similar) have no characteristics — use gunnery / stored AT.
+    if (!actorData?.characteristics) {
+      const data = typeof skill.toObject === 'function' ? skill.toObject() : foundry.utils.duplicate(skill);
+      const gunnery = actorData?.status?.gunnery?.value;
+      const isRanged = Number(data.system.weapontype?.value) !== 0;
+      let baseAttack = Number(data.system.attack?.value ?? 0);
+      if (isRanged && gunnery != null) baseAttack = Number(gunnery);
+
+      data.system.attack.value = baseAttack + Number(step || 0) + Number(attack || 0);
+      data.system.parry.value = isRanged
+        ? 0
+        : Number(data.system.parry?.value ?? 0) + Number(parry || 0);
+      data.cost = _loc('advancementCost', {
+        cost: DSA5_Utility._calculateAdvCost(data.system.talentValue.value, data.system.StF.value),
+      });
+      return data;
+    }
+
     const modifiedTalentValue = skill.system.talentValue.value + step;
 
     if (skill.system.weapontype.value == 0) {

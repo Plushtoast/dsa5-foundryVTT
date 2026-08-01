@@ -130,6 +130,29 @@
     .item-structure {
         top: -102%;
         border-color: rgb(14, 12, 12);
+
+        &.vehicle-stp,
+        &.vehicle-crew {
+            position: absolute;
+            top: 0;
+            height: 100%;
+        }
+
+        &.vehicle-stp {
+            left: 0;
+
+            .inner {
+                background: linear-gradient(180deg, #c9a227 0%, #5c3d1e 100%);
+            }
+        }
+
+        &.vehicle-crew {
+            left: 5px;
+
+            .inner {
+                background: linear-gradient(180deg, #2bb3c0 0%, #0f4c5c 100%);
+            }
+        }
     }
 
     .combatant-advanced {

@@ -163,6 +163,12 @@ export function connectSocket() {
           if (movTokenDoc) game.combat.handleMovementCost(movTokenDoc);
         }
         break;
+      case 'advanceMkrPhase':
+        if (game.user.isGM) {
+          const combat = game.combats.get(data.payload?.combatId) ?? game.combat;
+          combat?.advanceMkrPhase();
+        }
+        break;
       case 'trade':
         {
           const source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);

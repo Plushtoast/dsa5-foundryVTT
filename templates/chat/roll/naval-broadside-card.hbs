@@ -1,0 +1,35 @@
+<div class="dsa5 chat-card naval-broadside-card roll-request-card">
+  <p class="flexrow flexAlignCenter gap5px roll-request-header">
+    <b>{{localize "VEHICLE.mkr.broadside"}}</b>
+    <span class="very-small naval-broadside-target">{{vehicleName}} → {{targetName}}</span>
+  </p>
+
+  <div class="roll-request-rows">
+    {{#each weapons as |weapon|}}
+    <div class="naval-broadside-weapon">
+      <div class="flexrow flexAlignCenter roll-request-row gap5px {{weapon.resultRowClass}} naval-broadside-expand"
+        data-weapon-id="{{weapon.weaponId}}"
+        {{#if weapon.resultTooltip}}data-tooltip="{{weapon.resultTooltip}}" aria-label="{{weapon.resultTooltip}}"{{/if}}>
+        <div class="roll-request-row-identity flexrow flexAlignCenter gap5px">
+          <span class="roll-request-row-title">{{weapon.weaponName}}</span>
+        </div>
+        {{#if weapon.hit}}
+          <div class="roll-request-result-stack flex0">
+            <b class="roll-request-result-label">{{weapon.resultLabel}}</b>
+            {{#if weapon.resultSubLabel}}
+              <span class="roll-request-result-sublabel">{{weapon.resultSubLabel}}</span>
+            {{/if}}
+          </div>
+        {{else}}
+          <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight icon-red"
+            {{#if weapon.resultTooltip}}data-tooltip="{{weapon.resultTooltip}}"{{/if}}>
+            <span class="fas fa-times" inert></span>
+          </span>
+        {{/if}}
+        <i class="fas fa-plus naval-broadside-expand-icon flex0" aria-hidden="true"></i>
+      </div>
+      <div class="naval-broadside-shot-details" data-weapon-id="{{weapon.weaponId}}"></div>
+    </div>
+    {{/each}}
+  </div>
+</div>

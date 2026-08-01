@@ -1844,6 +1844,53 @@ a.img-entity-link {
   }
 }
 
+.dsa5.naval-broadside-app {
+  .window-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .naval-broadside-dialog {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .naval-broadside-weapons {
+    flex: 1 1 auto;
+    min-height: 120px;
+    overflow-y: auto;
+  }
+
+  .naval-broadside-weapon-row {
+    .naval-broadside-weapon-img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+      flex: 0 0 32px;
+    }
+
+    .naval-broadside-weapon-shots {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .naval-broadside-shots-input {
+      width: 2.25rem;
+      min-width: 2.25rem;
+      text-align: center;
+      flex: 0 0 auto;
+    }
+  }
+
+  .form-footer {
+    flex: 0 0 auto;
+    margin-top: 8px;
+  }
+}
+
 .naval-chase-speed {
   .form-group {
     align-items: center;
@@ -1982,6 +2029,117 @@ a.img-entity-link {
   margin: 0 -4px;
   padding: 3px 4px;
   border-radius: 3px;
+}
+
+.naval-damage-report-card {
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  .roll-request-row-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.4rem;
+  }
+
+  .naval-damage-report-vehicle {
+    min-width: 0;
+  }
+
+  .naval-damage-report-expand {
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .naval-damage-report-expand-icon {
+    font-size: var(--font-size-10, 10px);
+    opacity: 0.7;
+    margin-left: 2px;
+  }
+
+  .naval-damage-report-attackers {
+    display: none;
+    padding: 0.15rem 0 0.35rem 0.75rem;
+
+    &.expanded {
+      display: block;
+    }
+  }
+
+  .naval-damage-report-attacker {
+    margin: 0;
+    opacity: 0.95;
+  }
+}
+
+.naval-broadside-card {
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  .roll-request-header {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .naval-broadside-target {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .roll-request-row-success,
+  .roll-request-row-critical,
+  .roll-request-row-failure,
+  .roll-request-row-botch {
+    margin: 0;
+  }
+
+  .roll-request-row-title {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-left: 0.4rem;
+  }
+
+  .naval-broadside-weapon {
+    min-width: 0;
+  }
+
+  .naval-broadside-expand {
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .naval-broadside-expand-icon {
+    font-size: var(--font-size-10, 10px);
+    opacity: 0.7;
+    margin-left: 2px;
+  }
+
+  .naval-broadside-shot-details {
+    display: none;
+    padding: 0.25rem 0 0.35rem 0.75rem;
+
+    &.expanded {
+      display: block;
+    }
+  }
+
+  .naval-broadside-shot-card {
+    margin: 0.3rem 0;
+    padding: 0.35rem 0.5rem 0.35rem 0.65rem;
+    border-left: 2px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .naval-broadside-total {
+    word-break: break-word;
+  }
 }
 
 .roll-request-row-success {
@@ -5324,6 +5482,27 @@ input[type='text'].emphasize {
 
 #combat li.combatant .token-resource {
   color: rgb(119, 113, 113);
+
+  &.dual {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    line-height: 1.1;
+  }
+
+  .resource-stp {
+    color: #a67c3d;
+  }
+
+  .resource-crew {
+    color: #1b7a8c;
+  }
+
+  .resource-max {
+    opacity: 0.65;
+    font-size: 0.85em;
+  }
 }
 
 .progress-dsa5 {

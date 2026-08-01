@@ -32,9 +32,9 @@
     <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
     <button type="button" class="combat-control combat-control-lg" data-action="nextTurn"
-            data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnEnd' 'combatTrackerNext'}}">
+            data-tooltip-text="{{tooltipWithKeybinding (ifThen mkrEndTurnLabel mkrEndTurnLabel 'COMBAT.TurnEnd') 'combatTrackerNext'}}">
         <i class="fa-solid fa-check"></i>
-        <span>{{ localize "COMBAT.TurnEnd" }}</span>
+        <span>{{ localize (ifThen mkrEndTurnLabel mkrEndTurnLabel "COMBAT.TurnEnd") }}</span>
     </button>
     <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>

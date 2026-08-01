@@ -344,18 +344,8 @@ export default class DSA5Combat extends Combat {
 
   async clearRoundState() {
     if (game.user.isGM) {
-      for (const k of this.turns) {
-        await k.update({
-          'system.defenseCount': 0,
-          'system.roundInitiative': -1,
-          'system.actionsUsed': 0,
-          'system.freeActionUsed': false,
-          'system.movementActionConsumed': false,
-          'system.chaseRolled': false,
-          'system.chaseLastMove': 0,
-          'system.chaseDistanceBefore': null,
-        });
-      }
+      const updates = this.turns.map((combatant) => combatant.getRoundStateResetUpdate());
+      if (updates.length) await this.updateEmbeddedDocuments('Combatant', updates);
     } else {
       await game.socket.emit('system.dsa5', {
         type: 'clearCombat',
@@ -394,6 +384,56 @@ export default class DSA5Combat extends Combat {
   async nextRound() {
     await this.clearRoundState();
     return await super.nextRound();
+  }
+
+  /**
+   * Naval MKR: cycle phase-relevant combatants; at end of the loop advance the MKR phase.
+   * Damage report has no active turn — End Turn finishes the MKR.
+   */
+  async nextTurn() {
+    if (!this.isNavalMkr) return super.nextTurn();
+    if (this.round === 0) return this.nextRound();
+
+    const phase = NavalCombat.normalizePhase(this.system.mkrPhase);
+    if (phase === 'damageReport') return this.nextMkr();
+
+    const relevant = NavalCombat.phaseRelevantCombatants(this, phase);
+    if (!relevant.length) return this.#requestAdvanceMkrPhase();
+
+    const currentId = this.combatant?.id;
+    const idx = relevant.findIndex((c) => c.id === currentId);
+    if (idx < 0) {
+      return this.#setCombatTurn(this.turns.findIndex((c) => c.id === relevant[0].id));
+    }
+    if (idx >= relevant.length - 1) return this.#requestAdvanceMkrPhase();
+
+    const next = relevant[idx + 1];
+    return this.#setCombatTurn(this.turns.findIndex((c) => c.id === next.id));
+  }
+
+  async #setCombatTurn(turn) {
+    if (turn < 0) return this;
+    await this.#clearBroadsideShots();
+    const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, turn);
+    const updateData = { round: this.round, turn };
+    const updateOptions = { direction: 1, worldTime: { delta: advanceTime } };
+    Hooks.callAll('combatTurn', this, updateData, updateOptions);
+    await this.update(updateData, updateOptions);
+    return this;
+  }
+
+  async previousTurn() {
+    if (this.isNavalMkr) await this.#clearBroadsideShots();
+    return super.previousTurn();
+  }
+
+  async #requestAdvanceMkrPhase() {
+    if (game.user.isGM) return this.advanceMkrPhase();
+    await game.socket.emit('system.dsa5', {
+      type: 'advanceMkrPhase',
+      payload: { combatId: this.id },
+    });
+    return this;
   }
 
   async getDefenseCount(speaker) {
@@ -631,11 +671,14 @@ export default class DSA5Combat extends Combat {
     const mkrKrStart = this.system.mkrKrStart ?? this.round ?? 1;
     const nextRound = mkrKrStart + krPerMkr;
     const mkrRound = (this.system.mkrRound || 1) + 1;
+    const turn = NavalCombat.firstRelevantTurnIndex(this, 'heroActions') ?? 0;
 
     await this.#tickVehicleRamCooldown();
     await NavalHouseRules.tickAutoReload(this);
+    await this.#clearBroadsideShots();
     await this.update({
       round: nextRound,
+      turn,
       'system.mkrRound': mkrRound,
       'system.mkrKrStart': nextRound,
       'system.mkrPhase': 'heroActions',
@@ -643,6 +686,15 @@ export default class DSA5Combat extends Combat {
       'system.pendingHits': [],
     });
     await this.#announceMkrChat('VEHICLE.mkr.advanced', { mkr: mkrRound, round: nextRound });
+  }
+
+  async #clearBroadsideShots() {
+    // TypedObjectField merges plain `{}`; ForcedReplacement is required to wipe keys.
+    const empty = foundry.data.operators.ForcedReplacement.create({});
+    const updates = this.combatants
+      .filter((c) => c.system?.broadsideShots && Object.keys(c.system.broadsideShots).length)
+      .map((c) => ({ _id: c.id, 'system.broadsideShots': empty }));
+    if (updates.length) await this.updateEmbeddedDocuments('Combatant', updates);
   }
 
   async setChaseTerrain(terrain) {
@@ -745,7 +797,8 @@ export default class DSA5Combat extends Combat {
     const next = NavalCombat.nextPhase(this.system.mkrPhase || 'heroActions');
     if (!next) return;
 
-    await this.update({ 'system.mkrPhase': next });
+    await this.#clearBroadsideShots();
+    await this.update(this.#mkrPhaseTurnUpdate(next));
 
     if (next === 'attacks') await NavalCombatDamage.promptCommandedGuns(this);
     if (next === 'damageReport') await NavalCombatDamage.processDamageReport(this);
@@ -758,7 +811,20 @@ export default class DSA5Combat extends Combat {
     const prev = NavalCombat.previousPhase(this.system.mkrPhase || 'heroActions');
     if (!prev) return;
 
-    await this.update({ 'system.mkrPhase': prev });
+    await this.#clearBroadsideShots();
+    await this.update(this.#mkrPhaseTurnUpdate(prev));
+  }
+
+  /** Phase change payload: damage report clears the active turn; others jump to first actor. */
+  #mkrPhaseTurnUpdate(phase) {
+    const update = { 'system.mkrPhase': phase };
+    if (phase === 'damageReport') {
+      update.turn = null;
+      return update;
+    }
+    const turn = NavalCombat.firstRelevantTurnIndex(this, phase);
+    if (turn !== null) update.turn = turn;
+    return update;
   }
 
   async #removeVehicleCombatants() {

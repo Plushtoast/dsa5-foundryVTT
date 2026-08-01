@@ -1,12 +1,20 @@
 const RAM_COOLDOWN_MKR = 6;
-const RAM_AT_MODIFIER = -4;
 const RAM_SELF_DAMAGE = '30d6';
+const RAM_SKILL_MODIFIER = -4;
+/** Synthetic key in system.weaponOperators (not an Item id). */
+const RAM_OPERATOR_KEY = 'ram';
 
+/**
+ * Vehicle ram attack rules — not an Item.
+ * Rolls Boote & Schiffe / Fahrzeuge with a default −4 modifier.
+ */
 export default class VehicleRamWeapon {
   static COOLDOWN_MKR = RAM_COOLDOWN_MKR;
-  static AT_MODIFIER = RAM_AT_MODIFIER;
   static SELF_DAMAGE = RAM_SELF_DAMAGE;
+  static SKILL_MODIFIER = RAM_SKILL_MODIFIER;
+  static OPERATOR_KEY = RAM_OPERATOR_KEY;
 
+  /** Legacy embedded ram meleeweapons (remove on sheet prepare). */
   static isRamWeapon(item) {
     return item?.type === 'meleeweapon' && !!item.system?.vehicleRam;
   }
@@ -29,47 +37,11 @@ export default class VehicleRamWeapon {
     return String(this.targetStpDamage(vehicle));
   }
 
-  static buildItemData() {
-    const impactName = game.i18n.lang === 'de' ? 'Hiebwaffen' : 'Impact Weapons';
-
-    return {
-      name: _loc('VEHICLE.ramWeapon'),
-      type: 'meleeweapon',
-      img: 'icons/skills/melee/unarmed-punch-fist.webp',
-      system: {
-        vehicleRam: true,
-        combatskill: { value: impactName },
-        damage: { value: '0', stp: '½ StP' },
-        worn: { value: true },
-        reach: { value: 'short' },
-        guidevalue: { value: '-' },
-        atmod: { value: this.AT_MODIFIER },
-        pamod: { value: 0 },
-      },
-    };
-  }
-
-  static async ensureEmbedded(vehicle) {
-    if (vehicle.type !== 'vehicle') return null;
-    const existing = vehicle.items.find((item) => this.isRamWeapon(item));
-    if (existing) {
-      await this.#syncEmbedded(existing);
-      return existing;
-    }
-
-    const [created] = await vehicle.createEmbeddedDocuments('Item', [this.buildItemData()]);
-    return created ?? null;
-  }
-
-  /** Keep older ram items on the new AT / damage display contract. */
-  static async #syncEmbedded(item) {
-    const updates = {};
-    if (Number(item.system.atmod?.value) !== this.AT_MODIFIER) {
-      updates['system.atmod.value'] = this.AT_MODIFIER;
-    }
-    if (item.system.damage?.stp === '2d6+4' || !item.system.damage?.stp) {
-      updates['system.damage.stp'] = '½ StP';
-    }
-    if (Object.keys(updates).length) await item.update(updates);
+  /** Delete leftover ram meleeweapons from older vehicles. */
+  static async removeLegacyEmbedded(vehicle) {
+    if (vehicle?.type !== 'vehicle') return;
+    const ids = vehicle.items.filter((item) => this.isRamWeapon(item)).map((item) => item.id);
+    if (!ids.length) return;
+    await vehicle.deleteEmbeddedDocuments('Item', ids);
   }
 }

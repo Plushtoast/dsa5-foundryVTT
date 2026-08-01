@@ -28,6 +28,7 @@ import NavalCombat from './combat/mkr/naval-combat.js';
 import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
 import NavalHouseRules from './combat/mkr/naval-house-rules.js';
 import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
+import NavalBroadside from './combat/mkr/naval-broadside.js';
 import VehicleCrewCombatPrompt from './combat/mkr/vehicle-crew-combat.js';
 import VehicleCombatJoinPrompt from './combat/mkr/vehicle-combat-join.js';
 import Chase from './combat/chase/chase.js';
@@ -162,6 +163,7 @@ Hooks.once('init', () => {
       NavalHeroActionHandler,
       NavalCombatDamage,
       NavalHouseRules,
+      NavalBroadside,
       Chase,
       VehicleChase,
       NavalBoardWeapons,
@@ -301,6 +303,7 @@ Hooks.once('init', () => {
   NavalHeroActionHandler.register();
   NavalCombatDamage.register();
   NavalHouseRules.register();
+  NavalBroadside.register();
   VehicleChase.register();
   NavalBoardWeapons.register();
   VehicleCrewCombatPrompt.register();

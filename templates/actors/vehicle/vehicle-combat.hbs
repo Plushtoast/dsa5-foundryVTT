@@ -25,6 +25,9 @@
       <button type="button" data-action="navalBoarding" class="combat-action item" data-tooltip="VEHICLE.mkr.boardingActionTooltip">
         <i class="fas fa-people-arrows"></i> {{localize "VEHICLE.mkr.boardingAction"}}
       </button>
+      <button type="button" data-action="navalBroadside" class="combat-action item" data-tooltip="VEHICLE.mkr.broadsideTooltip">
+        <i class="fas fa-ship"></i> {{localize "VEHICLE.mkr.broadside"}}
+      </button>
       <span class="hint" data-tooltip="VEHICLE.mkr.heroActionsOnlyTooltip"><i class="fas fa-circle-info flexrow flexAlignCenter"></i></span>
     </div>
 
@@ -62,6 +65,8 @@
       </div>
 
 
+
+      {{> systems/dsa5/templates/actors/vehicle/vehicle-combat-ram.hbs}}
 
       <div class="groupbox vehicle-board-weapons">
 

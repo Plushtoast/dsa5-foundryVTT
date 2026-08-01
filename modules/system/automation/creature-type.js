@@ -31,7 +31,13 @@ export default class CreatureType {
   }
 
   static detectCreatureType(actor) {
-    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
+    if (!actor || !CreatureType.creatureData?.types) return [];
+
+    const creatureClass = actor.type === 'creature'
+      ? actor.system?.creatureClass?.value
+      : actor.system?.details?.species?.value;
+    if (!creatureClass || typeof creatureClass !== 'string') return [];
+
     const types = Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0);
     return types.map((x) => this.getClass(CreatureType.creatureData.types[x], creatureClass));
   }
@@ -125,10 +131,13 @@ export default class CreatureType {
   }
 
   static creatureTypeName(actor) {
-    if (actor.type == 'creature') {
-      const creatureClass = actor.system.creatureClass.value;
-      return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0];
-    } else return actor.system.details.species.value;
+    if (!actor) return '';
+    if (actor.type === 'creature') {
+      const creatureClass = actor.system?.creatureClass?.value;
+      if (!creatureClass || !CreatureType.creatureData?.types) return '';
+      return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0] ?? '';
+    }
+    return actor.system?.details?.species?.value ?? '';
   }
 
   classDescription() {
@@ -179,8 +188,12 @@ export default class CreatureType {
 
   static creatureBonusDamage(actor, attacker) {
     const bonusModifiers = [];
-    const creatureClass = actor.type == 'creature' ? actor.system.creatureClass.value : actor.system.details.species.value;
-    const mods = getProperty(attacker, 'system.creatureBonus');
+    const creatureClass = actor?.type === 'creature'
+      ? actor.system?.creatureClass?.value
+      : actor?.system?.details?.species?.value;
+    if (!creatureClass || typeof creatureClass !== 'string') return bonusModifiers;
+
+    const mods = getProperty(attacker, 'system.creatureBonus') || [];
     for (const mod of mods) {
       if (creatureClass.indexOf(mod.target) >= 0) bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true));
     }

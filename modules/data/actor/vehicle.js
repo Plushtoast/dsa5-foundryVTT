@@ -3,7 +3,6 @@ import MerchantTemplate from './templates/merchant.js';
 import VehicleStatusTemplate from './templates/vehicle-status.js';
 import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
-import VehicleRamWeapon from './vehicle-ram-weapon.js';
 import NavalHouseRules from '../../combat/mkr/naval-house-rules.js';
 
 const { SchemaField, StringField, NumberField, BooleanField, HTMLField, ArrayField, TypedObjectField } = foundry.data.fields;
@@ -115,7 +114,6 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       });
     }
     if (impact) items.push(foundry.utils.duplicate(impact));
-    items.push(VehicleRamWeapon.buildItemData());
     return items;
   }
 
@@ -232,6 +230,20 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     return false;
   }
 
+  /** True if any assigned crew actor is owned by a non-GM player. */
+  hasPlayerCrew() {
+    for (const member of Object.values(this.crewMembers ?? {})) {
+      const actor = fromUuidSync(member.uuid);
+      if (actor?.hasPlayerOwner) return true;
+    }
+    return false;
+  }
+
+  /** NPC/GM-only ships do not track ammunition for board guns. */
+  requiresAmmunition() {
+    return this.hasPlayerCrew();
+  }
+
   async addCrewMember(actor) {
     if (!actor || actor.type === 'vehicle' || actor.type === 'group') {
       ui.notifications.warn('VEHICLE.crewInvalidActor', { localize: true });
@@ -272,9 +284,9 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
       if (res.value === undefined || res.value === null) res.value = res.max;
     }
 
+    // Crew value is reduced when casualties are applied; woundedCrew tracks healable losses.
     const crewValue = Math.max(0, Number(data.status.crew.value ?? 0));
-    const wounded = Math.max(0, Number(data.combatState?.woundedCrew ?? 0));
-    data.availableCrew = Math.max(0, crewValue - wounded);
+    data.availableCrew = crewValue;
 
     const stpValue = Number(data.status.structurePoints.value ?? 0);
     const stpMax = Number(data.status.structurePoints.max ?? 0);

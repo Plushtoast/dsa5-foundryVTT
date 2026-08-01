@@ -5,6 +5,7 @@ import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import Select2Dialog from './select2Dialog.js';
 import Chase from '../combat/chase/chase.js';
 import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
+import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -133,11 +134,11 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
 
-    // Vehicles have no characteristics — skip weapon/AT prep (would crash on ff/mu).
+    // Vehicles have no characteristics — use board-weapon / ram entries (not character AT prep).
     if (this.actor?.type === 'vehicle') {
-      data.items = [];
+      data.items = NavalBoardWeapons.dialogAttackEntries(this.actor);
       const chaseEntry = Chase.actionEntryFor(this.actor);
-      if (chaseEntry) data.items.push(chaseEntry);
+      if (chaseEntry) data.items.unshift(chaseEntry);
       data.dieClass = 'die-mu';
       data.title = 'DIALOG.selectAction';
       return data;
@@ -223,6 +224,10 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
 
     if ('navalHeroAction' == dataset.special) {
       NavalHeroActionHandler.executeFromActor(actor, dataset.heroAction);
+    } else if ('navalBoardWeapon' == dataset.special) {
+      NavalBoardWeapons.executeWeaponAttack(actor, dataset.value, { tokenId, subweapon: dataset.subweapon });
+    } else if ('navalRam' == dataset.special) {
+      NavalBoardWeapons.executeRam(actor, { tokenId });
     } else if ('chaseAction' == dataset.special) {
       Chase.rollAction(actor, tokenId);
     } else if ('castSpell' == dataset.special) {

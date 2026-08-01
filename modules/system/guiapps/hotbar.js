@@ -14,6 +14,8 @@ import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 import GroupActorSheet from '../../actor/group-sheet.js';
 import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js';
+import NavalBoardWeapons from '../../combat/mkr/naval-board-weapons.js';
+import NavalBroadside from '../../combat/mkr/naval-broadside.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -458,10 +460,28 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   static async #onRollWeapon(ev, target) {
-    const { id, subweapon } = target.dataset;
+    const { id, subweapon, mode } = target.dataset;
 
     const options = {};
     const activeTokenID = this.actor?.token?.id ?? this.actor?.getActiveTokens()[0]?.id;
+
+    if (this.actor?.type === 'vehicle') {
+      if (id === 'navalBroadside' || mode === 'navalBroadside') {
+        await NavalBroadside.open(this.actor, { tokenId: activeTokenID });
+        return;
+      }
+      if (id === 'navalRam' || mode === 'navalRam') {
+        await NavalBoardWeapons.executeRam(this.actor, { tokenId: activeTokenID });
+        return;
+      }
+      if (id) {
+        await NavalBoardWeapons.executeWeaponAttack(this.actor, id, {
+          tokenId: activeTokenID,
+          subweapon,
+        });
+      }
+      return;
+    }
 
     if (!id) {
       this.actor.setupWeaponless('attack', options, activeTokenID).then((setupData) => {
@@ -527,6 +547,21 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #prepareActorActions(actor, groups) {
+    groups.functions = this.tokenHotbar?._functionEntries() || [];
+
+    if (actor.type === 'vehicle') {
+      groups.attacks.push(...NavalBoardWeapons.hotbarAttackEntries(actor));
+      for (const x of actor.items) {
+        if (x.type === 'skill') {
+          this.#pushSkill(groups, 'skill', this.tokenHotbar?._skillEntry(x, 'skill'));
+        }
+        if (OnUseEffect.hasOnUseEffect(x)) {
+          this.#pushSkill(groups, x.type, this.tokenHotbar?._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
+        }
+      }
+      return;
+    }
+
     const combatskills = actor.items.reduce((arr, i) => {
       if (i.type === 'combatskill') arr.push(CombatskillData._calculateCombatSkillValues(i.toObject(), actor.system));
       return arr;
@@ -541,8 +576,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
 
     if (brawl) groups.attacks.push(brawl);
-
-    groups.functions = this.tokenHotbar?._functionEntries() || [];
 
     for (const x of actor.items) {
       switch (x.type) {
@@ -1012,6 +1045,24 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #prepareResources(context) {
+    if (this.actor.type === 'vehicle') {
+      const stp = this.actor.system.status.structurePoints ?? {};
+      const crew = this.actor.system.status.crew ?? {};
+      return {
+        LeP: {
+          value: Number(stp.value) || 0,
+          max: Number(stp.max) || Number(stp.initial) || 0,
+          label: _loc('VEHICLE.structurePoints'),
+        },
+        AsP: {
+          value: Number(this.actor.system.availableCrew ?? crew.value) || 0,
+          max: Number(crew.max) || Number(crew.initial) || 0,
+          label: _loc('VEHICLE.crew'),
+        },
+        KaP: { value: 0, max: 0, label: _loc('CHAR.KAP') },
+      };
+    }
+
     return {
       LeP: {
         value: this.actor.system.status.wounds.value,
@@ -1096,6 +1147,10 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #weaponPositions(context) {
+    if (this.actor?.type === 'vehicle') {
+      return this.#vehicleWeaponPositions(context);
+    }
+
     const weapons = context.token.groups.attacks;
     const positions = [];
 
@@ -1134,6 +1189,38 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         });
       }
     }*/
+
+    return positions;
+  }
+
+  #vehicleWeaponPositions(context) {
+    const weapons = context.token?.groups?.attacks ?? [];
+    const positions = [];
+    let positionIndex = 0;
+
+    for (const entry of weapons) {
+      if (entry.cssClass === 'unequipped') continue;
+      if (entry.subfunction === 'navalBroadside' || entry.id === 'navalBroadside') continue;
+
+      let weapon;
+      if (entry.subfunction === 'navalRam' || entry.id === 'navalRam') {
+        weapon = { id: 'navalRam', name: entry.name, img: entry.icon };
+      } else {
+        weapon = this.actor.items.get(entry.id);
+      }
+      if (!weapon) continue;
+
+      positions.push({
+        weapon: {
+          id: weapon.id,
+          name: weapon.name,
+          img: weapon.img || entry.icon,
+        },
+        mode: entry.subfunction || 'attack',
+        style: DSA5Hotbar.WEAPON_POSITIONS[positionIndex++] || 'display:none;',
+      });
+      if (positionIndex >= DSA5Hotbar.WEAPON_POSITIONS.length) break;
+    }
 
     return positions;
   }

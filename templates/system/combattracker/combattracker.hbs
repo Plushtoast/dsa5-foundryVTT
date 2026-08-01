@@ -74,8 +74,11 @@
             </div>
         </div>
         {{#if resource includeZero=true}}
-        <div class="token-resource">
-            <span class="resource">{{ resource }}</span>
+        <div class="token-resource{{#if resourceSecondary includeZero=true}} dual{{/if}}">
+            <span class="resource{{#if resourceSecondary includeZero=true}} resource-stp{{/if}}" data-tooltip="{{#if resourceSecondary includeZero=true}}VEHICLE.structurePoints{{else}}wounds{{/if}}">{{ resource }}{{#if resourceMax includeZero=true}}<span class="resource-max">/{{ resourceMax }}</span>{{/if}}</span>
+            {{#if resourceSecondary includeZero=true}}
+            <span class="resource resource-crew" data-tooltip="VEHICLE.crewCurrent">{{ resourceSecondary }}{{#if resourceSecondaryMax includeZero=true}}<span class="resource-max">/{{ resourceSecondaryMax }}</span>{{/if}}</span>
+            {{/if}}
         </div>
         {{/if}}
         <div class="token-initiative">

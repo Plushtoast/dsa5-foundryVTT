@@ -393,9 +393,11 @@ export default class Actordsa5 extends Actor {
   getCombatEffectSkillModifier(name, mode) {
     const result = [];
     const keys = ['step', mode, 'CMP'];
+    const combatMods = this.system.skillModifiers?.combat;
+    if (!combatMods) return result;
 
     for (const k of keys) {
-      const modifiers = this.system.skillModifiers.combat[k] || [];
+      const modifiers = combatMods[k] || [];
       result.push(
         ...modifiers
           .filter((x) => {
@@ -1148,6 +1150,8 @@ export default class Actordsa5 extends Actor {
   }
 
   get hasTokenHotbar() {
+    // Vehicles use loot merchantType for cargo, but still need combat hotbar actions.
+    if (this.type === 'vehicle') return true;
     return this.type !== 'group' && !['epic', 'loot'].includes(this.system.merchant?.merchantType);
   }
 
@@ -1342,24 +1346,28 @@ export default class Actordsa5 extends Actor {
   }
 
   tokenScrollingText(texts) {
-    const tokens = this.isToken ? [this.token?.object] : this.getActiveTokens(true);
-    for (const t of tokens) {
-      if (!t) continue;
+    try {
+      const tokens = this.isToken ? [this.token?.object] : this.getActiveTokens(true);
+      for (const t of tokens) {
+        if (!t?.center || !canvas?.interface?.createScrollingText) continue;
 
-      let index = 0;
-      for (const k of texts) {
-        canvas.interface.createScrollingText(t.center, k.value, {
-          anchor: index,
-          direction: k.value > 0 ? 2 : 1,
-          fontSize: game.settings.get('dsa5', 'scrollingFontsize'),
-          stroke: k.stroke || 0x000000,
-          strokeThickness: 1,
-          jitter: 0.25,
-          duration: 1000,
-        });
+        let index = 0;
+        for (const k of texts) {
+          canvas.interface.createScrollingText(t.center, k.value, {
+            anchor: index,
+            direction: k.value > 0 ? 2 : 1,
+            fontSize: game.settings.get('dsa5', 'scrollingFontsize'),
+            stroke: k.stroke || 0x000000,
+            strokeThickness: 1,
+            jitter: 0.25,
+            duration: 1000,
+          });
 
-        index += 1;
+          index += 1;
+        }
       }
+    } catch (err) {
+      console.warn('DSA5 | tokenScrollingText failed', err);
     }
   }
 
@@ -1386,6 +1394,34 @@ export default class Actordsa5 extends Actor {
         scrolls.push({
           value: value - this.system.status[key].value,
           stroke: statusText[key],
+        });
+      }
+    }
+
+    if (this.type === 'vehicle') {
+      const stpVal = this._containsChangedAttribute(data, 'system.status.structurePoints.value');
+      if (stpVal !== false) {
+        scrolls.push({
+          value: stpVal - (this.system.status.structurePoints?.value ?? 0),
+          stroke: 0xa67c2a,
+        });
+      }
+
+      const crewVal = this._containsChangedAttribute(data, 'system.status.crew.value');
+      if (crewVal !== false) {
+        scrolls.push({
+          value: crewVal - (this.system.status.crew?.value ?? 0),
+          stroke: 0x5c4033,
+        });
+      }
+
+      // More wounded crew = effective crew loss (negative scroll), heal = gain.
+      const woundedVal = this._containsChangedAttribute(data, 'system.combatState.woundedCrew');
+      if (woundedVal !== false) {
+        const prev = this.system.combatState?.woundedCrew ?? 0;
+        scrolls.push({
+          value: prev - woundedVal,
+          stroke: 0x5c4033,
         });
       }
     }
@@ -1818,7 +1854,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareMeleeWeapon(item, combatskills, actor, wornWeapons = null, isBaseWeapon = true) {
-    const skill = combatskills.find((s) => s.name === item.system.combatskill.value);
+    const skill = combatskills.find((s) => s?.name === item.system.combatskill.value);
 
     if (!skill) {
       if (isBaseWeapon) {
@@ -2230,7 +2266,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {
-    const skill = combatskills.find((s) => s.name === item.system.combatskill.value);
+    const skill = combatskills.find((s) => s?.name === item.system.combatskill.value);
     item.calculatedRange = item.system.reach.value;
 
     let currentAmmo;
@@ -2395,6 +2431,9 @@ export default class Actordsa5 extends Actor {
   }
 
   async consumeAmmunition(testData) {
+    // Board-weapon rolls (crew emptyActor / hero operator) must update the ship item.
+    const ammoActor = await this.#ammoUpdateActor(testData);
+
     const hasTrackedAmmo = testData.extra.ammo && !testData.extra.ammoDecreased;
     if (hasTrackedAmmo) {
       testData.extra.ammoDecreased = true;
@@ -2417,7 +2456,7 @@ export default class Actordsa5 extends Actor {
         ammoUpdate['system.quantity.value'] = ammo.system.quantity.value;
       }
 
-      await this.updateEmbeddedDocuments('Item', [
+      await ammoActor.updateEmbeddedDocuments('Item', [
         ammoUpdate,
         {
           _id: testData.source._id,
@@ -2431,7 +2470,7 @@ export default class Actordsa5 extends Actor {
     const isRangeAttack = testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack');
     if (isRangeAttack && !testData.extra.ammoDecreased) {
       testData.extra.ammoDecreased = true;
-      await this.updateEmbeddedDocuments('Item', [
+      await ammoActor.updateEmbeddedDocuments('Item', [
         {
           _id: testData.source._id,
           'system.reloadTime.progress': 0,
@@ -2442,7 +2481,7 @@ export default class Actordsa5 extends Actor {
     }
 
     if (['spell', 'liturgy'].includes(testData.source.type) && testData.extra.speaker.token != 'emptyActor') {
-      await this.updateEmbeddedDocuments('Item', [
+      await ammoActor.updateEmbeddedDocuments('Item', [
         {
           _id: testData.source._id,
           'system.castingTime.progress': 0,
@@ -2450,6 +2489,20 @@ export default class Actordsa5 extends Actor {
         },
       ]);
     }
+  }
+
+  /** Prefer the vehicle behind vehicleSpeaker / emptyActor parent for ammo & reload updates. */
+  async #ammoUpdateActor(testData) {
+    const vehicleSpeaker = testData.extra?.options?.vehicleSpeaker;
+    if (vehicleSpeaker?.actor) {
+      const vehicle = game.actors.get(vehicleSpeaker.actor);
+      if (vehicle) return vehicle;
+    }
+    if (this.emptyActor?.parent_source_uuid) {
+      const parent = await fromUuid(this.emptyActor.parent_source_uuid);
+      if (parent) return parent;
+    }
+    return this;
   }
 
   canUserRoll(user = game.user) {
@@ -2487,9 +2540,11 @@ export default class Actordsa5 extends Actor {
       if (cardOptions.isOpposedTest && cardOptions.title.match(opposed + '$') != opposed) cardOptions.title += opposed;
     }
 
-    await this.consumeAmmunition(testData);
-    await this.payMiracles(testData);
-    await this._consumeActiveEffectChargesFromRoll(testData);
+    if (!options.skipConsume) {
+      await this.consumeAmmunition(testData);
+      await this.payMiracles(testData);
+      await this._consumeActiveEffectChargesFromRoll(testData);
+    }
 
     if (!options.suppressMessage) {
       const msg = await DiceDSA5.renderRollCard(cardOptions, result, options.rerenderMessage);

@@ -1206,7 +1206,7 @@ class MeleeweaponDSA5 extends WeaponItemDSA5 {
     }
     CombatSystem.addWeaponModifiers(situationalModifiers, source, data.mode);
 
-    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.meleeStats[data.mode]);
+    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.meleeStats?.[data.mode]);
     CombatSystem.addSpeciesModifiers(situationalModifiers, actor, data, source);
 
     if ([ITEM_CONSTANTS.COMBAT_MODES.ATTACK, ITEM_CONSTANTS.COMBAT_MODES.PARRY].includes(data.mode)) {
@@ -1312,13 +1312,16 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
         ...actor.getCombatEffectSkillModifier(source.system.combatskill.value, data.mode),
       );
     }
-    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.rangeStats[data.mode]);
+    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system.rangeStats?.[data.mode]);
     CombatSystem.addSpeciesModifiers(situationalModifiers, actor, data, _source);
   }
 
   static async checkAmmunitionState(item, testData, actor, mode) {
     let hasAmmo = true;
     if (mode != ITEM_CONSTANTS.COMBAT_MODES.DAMAGE) {
+      // NPC/GM-only vehicles do not require ammunition for board guns.
+      if (this.#vehicleSkipsAmmunition(actor, testData)) return true;
+
       const itemData = item.system;
       if (itemData.ammunitiongroup.value == 'infinite') {
         //Dont count ammo
@@ -1343,6 +1346,17 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
     if (!hasAmmo) ui.notifications.error('DSAError.NoAmmo', { localize: true });
 
     return hasAmmo;
+  }
+
+  /** Vehicles without player-owned crew skip ammo checks (crew/operator rolls included). */
+  static #vehicleSkipsAmmunition(actor, testData) {
+    let vehicle = actor?.type === 'vehicle' ? actor : null;
+    if (!vehicle) {
+      const vehicleId = testData?.extra?.options?.vehicleSpeaker?.actor;
+      if (vehicleId) vehicle = game.actors.get(vehicleId);
+    }
+    if (vehicle?.type !== 'vehicle') return false;
+    return !vehicle.system.requiresAmmunition?.();
   }
 
   static async setupDialog(ev, options, item, actor, tokenId) {
@@ -1484,7 +1498,7 @@ class TraitItemDSA5 extends WeaponItemDSA5 {
       CombatSystem.prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecialabilities, false);
     }
     CombatSystem.addWeaponModifiers(situationalModifiers, source, data.mode);
-    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats'][data.mode]);
+    CombatSystem.addAttackStatEffect(situationalModifiers, actor.system[traitType == 'meleeAttack' ? 'meleeStats' : 'rangeStats']?.[data.mode]);
   }
 
   static setupDialog(ev, options, item, actor, tokenId) {

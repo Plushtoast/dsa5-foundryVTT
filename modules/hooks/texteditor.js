@@ -1,5 +1,6 @@
 import DSA5 from '../config/config-dsa5.js';
 import InformationData from '../data/item/information.js';
+import DSA5Payment from '../system/payment/payment.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -127,13 +128,14 @@ export function setEnrichers() {
     },
     {
       pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
-      enricher: (match, options) => {
+      enricher: async (match, options) => {
         const str = match[0];
         const type = match[1];
         const mod = Number(str.match(payRegex)[0]);
         const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : payStrings[type];
+        const amountLabel = type === 'AP' ? mod : await DSA5Payment._moneyToString(mod);
         return $(
-          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${mod})</a>`,
+          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${amountLabel})</a>`,
         )[0];
       },
     },

@@ -303,6 +303,9 @@ export default class OpposedDsa5 {
             await OpposedDsa5.resolveUndefended(startMessage, _loc('OPPOSED.attackOfOpportunity'));
           } else if (isDamageRoll) {
             await OpposedDsa5.resolveUndefended(startMessage);
+          } else if (target.actor.type === 'vehicle') {
+            // Vehicles have no dodge/parry — auto-resolve as unopposed.
+            await OpposedDsa5.resolveUndefended(startMessage);
           }
           Hooks.call('DSAOpposedRollStart', target);
         }
@@ -754,7 +757,7 @@ export default class OpposedDsa5 {
 
     opposeResult.winner = 'attacker';
 
-    if (['weapon', 'spell', 'liturgy', 'ceremony', 'ritual', 'combatskill'].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
+    if (['weapon', 'spell', 'liturgy', 'ceremony', 'ritual', 'combatskill', 'talent'].includes(attackerTest.rollType) && defenderTest.successLevel == undefined) {
       defenderTest.successLevel = -5;
     }
     if (attackerTest.rollType == 'damage') {

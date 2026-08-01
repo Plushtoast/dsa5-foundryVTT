@@ -108,14 +108,45 @@ export class GlobalToolTipHandler {
         if (!actor || (!game.user.isGM && !actor.isOwner)) return;
         if (!actor.hasTokenHotbar) return;
 
-        const attributes = [
-            { label: _loc('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
-            { label: _loc('speed'), value: actor.system.status.speed.max, icon: 'fas fa-running' },
-            { label: _loc('soulpower'), value: actor.system.status.soulpower.max, icon: 'fas fa-sun' },
-            { label: _loc('toughness'), value: actor.system.status.toughness.max, icon: 'fas fa-shield-alt' },
-        ];
+        const attributes = actor.type === 'vehicle'
+            ? this.#vehicleSummaryAttributes(actor)
+            : this.#characterSummaryAttributes(actor);
         const effects = await actor.actorEffects();
         return await renderTemplate('systems/dsa5/templates/tooltips/actor_summary.hbs', { actor, attributes, effects });
+    }
+
+    static #characterSummaryAttributes(actor) {
+        const status = actor.system.status ?? {};
+        return [
+            { label: _loc('actionCount'), value: actor.system.actionCount?.value, icon: 'fas fa-fist-raised' },
+            { label: _loc('speed'), value: status.speed?.max, icon: 'fas fa-running' },
+            { label: _loc('soulpower'), value: status.soulpower?.max, icon: 'fas fa-sun' },
+            { label: _loc('toughness'), value: status.toughness?.max, icon: 'fas fa-shield-alt' },
+        ];
+    }
+
+    static #vehicleSummaryAttributes(actor) {
+        const status = actor.system.status ?? {};
+        const stp = status.structurePoints ?? {};
+        const crew = status.crew ?? {};
+        const wounded = Number(actor.system.combatState?.woundedCrew ?? 0);
+        const available = Number(actor.system.availableCrew ?? crew.value ?? 0);
+        const hull = Number(status.hullArmor?.value ?? 0) + Number(status.hullArmor?.modifier ?? 0);
+
+        return [
+            {
+                label: _loc('VEHICLE.structurePoints'),
+                value: `${stp.value ?? 0}/${stp.max ?? 0}`,
+                icon: 'fas fa-ship',
+            },
+            {
+                label: _loc('VEHICLE.crewCurrent'),
+                value: wounded > 0 ? `${available} / ${_loc('VEHICLE.woundedCrew')}: ${wounded}` : String(available),
+                icon: 'fas fa-users',
+            },
+            { label: _loc('speed'), value: status.speed?.max, icon: 'fas fa-wind' },
+            { label: _loc('VEHICLE.hullArmor'), value: hull || null, icon: 'fas fa-shield-alt' },
+        ];
     }
 
     static async _handleOnUseTooltip(data, actor) {

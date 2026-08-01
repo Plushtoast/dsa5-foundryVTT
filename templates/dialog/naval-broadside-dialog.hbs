@@ -1,0 +1,59 @@
+<div class="naval-broadside-dialog flexcol gap8px height100">
+  <p class="hint">{{localize "VEHICLE.mkr.broadsideDialogHint" vehicle=vehicleName}}</p>
+  <p class="small"><b>{{localize "target"}}</b>: {{targetLabel}}</p>
+
+  <div class="flexrow gap8px flexAlignCenter">
+    <button type="button" data-action="selectAll" class="dsadesignbutton">
+      <i class="fas fa-check-double"></i> {{localize "VEHICLE.mkr.broadsideSelectAll"}}
+    </button>
+    <button type="button" data-action="selectNone" class="dsadesignbutton">
+      <i class="fas fa-times"></i> {{localize "VEHICLE.mkr.broadsideSelectNone"}}
+    </button>
+  </div>
+
+  <div class="naval-broadside-weapons flexcol gap4px scrollable dsapr-3">
+    {{#each weapons as |weapon|}}
+    <div class="flexrow flexAlignCenter gap8px naval-broadside-weapon-row {{#unless weapon.canFire}}dimmed{{/unless}}"
+      data-weapon-id="{{weapon.id}}">
+      <div class="flex0 center">
+        <input type="checkbox" name="weapon.{{weapon.id}}.selected" data-weapon-select
+          {{#if weapon.selected}}checked{{/if}} {{#unless weapon.canFire}}disabled{{/unless}} />
+      </div>
+      <img class="flex0 naval-broadside-weapon-img" src="{{weapon.img}}" alt="" width="32" height="32" />
+      <div class="flex1">
+        <b>{{weapon.name}}</b>
+        <div class="small hint">
+          {{#unless weapon.loaded}}
+            {{localize "VEHICLE.mkr.broadsideNotLoaded"}}
+          {{else}}
+            {{#unless weapon.inRange}}
+              {{localize "VEHICLE.mkr.broadsideOutOfRange" reach=weapon.reach}}
+            {{else}}
+              {{#if (eq weapon.remaining 0)}}
+                {{localize "VEHICLE.mkr.broadsideBudgetSpent"}}
+              {{else}}
+                {{localize "VEHICLE.mkr.broadsideBudget" already=weapon.already max=weapon.maxShots remaining=weapon.remaining}}
+              {{/if}}
+            {{/unless}}
+          {{/unless}}
+        </div>
+      </div>
+      <div class="flex0 naval-broadside-weapon-shots flexrow flexAlignCenter gap2px" data-tooltip="VEHICLE.mkr.broadsideShots">
+        <input class="quantity-click center naval-broadside-shots-input" type="text" name="weapon.{{weapon.id}}.shots"
+          value="{{weapon.defaultShots}}" data-min="0" data-max="{{weapon.remaining}}" data-tooltip="TT.strgx10"
+          data-tooltip-direction="RIGHT" {{#unless weapon.canFire}}disabled{{/unless}} />
+        <span>/ {{weapon.remaining}}</span>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+
+  <footer class="form-footer flexrow gap8px">
+    <button type="button" data-action="fire">
+      <i class="fas fa-bullseye"></i> {{localize "VEHICLE.mkr.broadsideFire"}}
+    </button>
+    <button type="button" data-action="cancel">
+      <i class="fas fa-times"></i> {{localize "cancel"}}
+    </button>
+  </footer>
+</div>

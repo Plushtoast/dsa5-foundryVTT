@@ -125,7 +125,7 @@ export default class NavalHouseRules {
 
   /** Multiply a static StP formula when the house rule is active and ≠ 1. */
   static applyMultiplierToFormula(formula) {
-    if (!formula) return formula;
+    if (formula === undefined || formula === null || formula === '') return formula;
     const mul = this.structureDamageMultiplier();
     if (mul === 1) return formula;
     return `(${formula})*${mul}`;

@@ -224,6 +224,12 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (combatant.actor?.type === 'vehicle') {
       turn.vehicleImmobile = combatant.actor.system.isImmobile;
       turn.vehicleSinking = combatant.actor.system.isSinking;
+      const stp = combatant.actor.system.status?.structurePoints;
+      const crew = combatant.actor.system.status?.crew;
+      turn.resource = stp?.value ?? turn.resource ?? null;
+      turn.resourceSecondary = crew?.value ?? null;
+      turn.resourceMax = stp?.max ?? null;
+      turn.resourceSecondaryMax = crew?.max ?? null;
     }
 
     if (NavalCombat.isNavalMkrActive(combat)) {
@@ -277,6 +283,8 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
   #prepareNavalMkrContext(context, combat) {
     context.mkr = NavalCombat.getMkrProgress(combat);
     context.mkrPhase = combat?.system?.mkrPhase;
+    context.isDamageReportPhase = NavalCombat.normalizePhase(combat?.system?.mkrPhase) === 'damageReport';
+    context.mkrEndTurnLabel = context.isDamageReportPhase ? 'COMBAT.TurnEnd' : 'VEHICLE.mkr.endPhase';
   }
 
   _canSortInitiative(event) {
@@ -661,11 +669,17 @@ class RepeatingEffectsHelper {
   }
 
   static async startOfRoundEffects(turn, combat) {
+    const startOfRound = turn.actor?.system?.repeatingEffects?.startOfRound;
+    if (!startOfRound) return;
+
     const regenerationAttributes = ['wounds', 'astralenergy', 'karmaenergy'];
     for (const attr of regenerationAttributes) {
       if (getProperty(turn.actor?.system.repeatingEffects, `disabled.${attr}`)) continue;
 
-      const effectvalues = turn.actor.system.repeatingEffects.startOfRound[attr].map((x) => x.value).join('+');
+      const effects = startOfRound[attr];
+      if (!effects?.length) continue;
+
+      const effectvalues = effects.map((x) => x.value).join('+');
 
       if (!effectvalues) continue;
 
@@ -681,7 +695,7 @@ class RepeatingEffectsHelper {
   }
 
   static async applyBleeding(turn, combat) {
-    if (turn.actor.system.status.wounds.value < 1) return;
+    if ((turn.actor.system.status?.wounds?.value ?? 0) < 1) return;
 
     const msg = _loc('CHATNOTIFICATION.bleeding', {
       actor: this.buildActorName(turn),
@@ -691,7 +705,7 @@ class RepeatingEffectsHelper {
   }
 
   static async applyBurning(turn, combat) {
-    if (turn.actor?.system.status.wounds.value < 1) return;
+    if ((turn.actor?.system.status?.wounds?.value ?? 0) < 1) return;
 
     const step = turn.actor?.system.condition.burning;
     const protection = DSA5StatusEffects.resistantToEffect(turn.actor, 'burning');

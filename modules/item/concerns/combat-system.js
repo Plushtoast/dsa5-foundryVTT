@@ -177,14 +177,13 @@ export class CombatSystem {
      * @param {number} value - Stat value
      */
     static addAttackStatEffect(situationalModifiers, value) {
-        if (value !== 0) {
-            value = isNaN(value) ? value : Number(value);
-            situationalModifiers.push({
-                name: _loc('statuseffects'),
-                value,
-                selected: true,
-            });
-        }
+        if (value == null || value === 0) return;
+        value = isNaN(value) ? value : Number(value);
+        situationalModifiers.push({
+            name: _loc('statuseffects'),
+            value,
+            selected: true,
+        });
     }
 
     /**
@@ -223,7 +222,7 @@ export class CombatSystem {
         });
         const targetSize = CombatSystem.getTargetSizeAndModifier(actor, source, situationalModifiers);
         CombatSystem.getCombatSkillModifier(actor, source, situationalModifiers);
-        const defenseMalus = Number(actor.system.meleeStats.defenseMalus) * -1;
+        const defenseMalus = Number(actor.system.meleeStats?.defenseMalus ?? 0) * -1;
         if (defenseMalus !== 0) {
             situationalModifiers.push({
                 name: `${_loc('statuseffects')} - ${_loc('MODS.defenseMalus')}`,
@@ -294,7 +293,7 @@ export class CombatSystem {
         situationalModifiers.push(...AdvantageRulesDSA5.getVantageAsModifier(actor, 'LocalizedIDs.restrictedSenseSight', -2));
         CombatSystem.getCombatSkillModifier(actor, source, situationalModifiers);
         const targetSize = CombatSystem.getTargetSizeAndModifier(actor, source, situationalModifiers);
-        const defenseMalus = Number(actor.system.rangeStats.defenseMalus) * -1;
+        const defenseMalus = Number(actor.system.rangeStats?.defenseMalus ?? 0) * -1;
         if (defenseMalus !== 0) {
             situationalModifiers.push({
                 name: `${_loc('statuseffects')} - ${_loc('MODS.defenseMalus')}`,
@@ -351,8 +350,10 @@ export class CombatSystem {
    */
     static addSpeciesModifiers(situationalModifiers, actor, data, source) {
         const creatureClass = actor.type === 'creature'
-            ? actor.system.creatureClass.value
-            : actor.system.details.species.value;
+            ? actor.system.creatureClass?.value
+            : actor.system.details?.species?.value;
+        if (!creatureClass) return;
+
         const localizedSpecies = _loc(`LocalizedSpecies.${creatureClass}`);
         const speciesObject = DSA5.speciesCombatModifiers[localizedSpecies];
         if (speciesObject) {

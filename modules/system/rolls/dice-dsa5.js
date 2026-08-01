@@ -156,7 +156,9 @@ export default class DiceDSA5 {
     let roll = await configHandler();
 
     roll = await ManualRollDialog.apply(roll, ManualRollDialog.getRollDescription(testData), testData.extra.options);
-    await this.showDiceSoNice(roll, cardOptions.messageMode);
+    if (!testData.extra?.options?.skipDiceSoNice) {
+      await this.showDiceSoNice(roll, cardOptions.messageMode);
+    }
 
     testData.roll = roll;
     testData.messageMode = cardOptions.messageMode;
@@ -1453,9 +1455,32 @@ export default class DiceDSA5 {
     const source = testData.source;
     const combatskill = source.system.combatskill.value;
     const actor = this.#actorFromTestData(testData);
+    const isMelee = source.type == 'meleeweapon';
+
+    let skillItem = actor?.items.find((x) => x.type == 'combatskill' && x.name == combatskill);
+    // Crew-fire emptyActor can lose embedded skills on speaker recreate — synthesize from ship gunnery.
+    if (!skillItem) {
+      let talent = 12;
+      if (actor?.emptyActor?.parent_source_uuid) {
+        const parent = fromUuidSync(actor.emptyActor.parent_source_uuid);
+        talent = Number(parent?.system?.status?.gunnery?.value ?? 12);
+      }
+      skillItem = {
+        name: combatskill,
+        type: 'combatskill',
+        system: {
+          talentValue: { value: talent },
+          weapontype: { value: isMelee ? 0 : 1 },
+          guidevalue: { value: 'ff' },
+          attack: { value: talent },
+          parry: { value: 0 },
+          StF: { value: 'B' },
+        },
+      };
+    }
 
     const skill = CombatskillData._calculateCombatSkillValues(
-      actor.items.find((x) => x.type == 'combatskill' && x.name == combatskill),
+      skillItem,
       actor.system,
       {
         step: await this._situationalModifiers(testData, 'step'),
@@ -1463,7 +1488,6 @@ export default class DiceDSA5 {
       },
     );
 
-    const isMelee = source.type == 'meleeweapon';
     if (isMelee) {
       weapon = Actordsa5._prepareMeleeWeapon(source, [skill], actor);
       if (testData.mode == ATTACK) {

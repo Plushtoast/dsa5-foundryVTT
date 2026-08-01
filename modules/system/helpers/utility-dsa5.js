@@ -497,6 +497,8 @@ export default class DSA5_Utility {
 
     const actor = new Actordsa5(duplicate(createData), { noHook: true });
     actor.prepareData();
+    // Persist constructed items (with ids) so getSpeaker() recreations keep them.
+    if (actor.items.size) createData.items = actor.items.map((i) => i.toObject());
     actor.emptyActor = createData;
     return actor;
   }
