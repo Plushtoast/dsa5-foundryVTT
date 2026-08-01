@@ -189,7 +189,7 @@ export default class Chase {
 
   /** LocalizedIDs keys for Fortbewegungsarten skill choices. */
   static locomotionSkillKeys(actor = null, combat = game.combat) {
-    if (actor?.type === 'vehicle') return ['boatsAndShips'];
+    if (actor?.type === 'vehicle') return ['boatsAndShips', 'driving'];
     const keys = [...CHASE_LOCOMOTION_SKILL_KEYS];
     if (this.isVehicleChase(combat)) {
       return ['boatsAndShips', ...keys.filter((k) => k !== 'boatsAndShips')];
@@ -208,10 +208,11 @@ export default class Chase {
     return actor.items.find((i) => i.type === 'skill' && i.name === name) ?? null;
   }
 
-  /** Entries for the Verfolgungsaktion skill picker. */
+  /** Entries for the Verfolgungsaktion skill picker (vehicle + crew Boote & Schiffe). */
   static chaseSkillsFor(actor, combat = game.combat) {
     if (!actor) return [];
-    return this.locomotionSkillKeys(actor, combat).flatMap((key) => {
+
+    const skills = this.locomotionSkillKeys(actor, combat).flatMap((key) => {
       const item = this.skillFor(actor, key);
       if (!item) return [];
       return [{
@@ -219,8 +220,32 @@ export default class Chase {
         name: item.name,
         value: Number(item.system?.talentValue?.value) || 0,
         item,
+        roller: actor,
+        img: item.img || actor.img,
       }];
     });
+
+    if (actor.type === 'vehicle') {
+      const sorted = Object.entries(actor.system.crewMembers ?? {})
+        .sort(([, a], [, b]) => (a.sort ?? 0) - (b.sort ?? 0));
+      for (const [, member] of sorted) {
+        const crew = fromUuidSync(member.uuid);
+        if (!crew) continue;
+        const item = this.skillFor(crew, 'boatsAndShips');
+        if (!item) continue;
+        skills.push({
+          key: `crew:${crew.uuid}`,
+          name: _loc('CHASE.crewSkillLabel', { skill: item.name, crew: crew.name }),
+          value: Number(item.system?.talentValue?.value) || 0,
+          item,
+          roller: crew,
+          img: crew.img || item.img,
+          isCrew: true,
+        });
+      }
+    }
+
+    return skills;
   }
 
   /** Mode-preferred default LocalizedIDs skill key. */
@@ -246,14 +271,19 @@ export default class Chase {
     }));
   }
 
-  /** Ask which Fortbewegungsart skill to roll. */
+  /**
+   * Ask which Fortbewegungsart skill to roll.
+   * @returns {Promise<{ item: Item, roller: Actor }|null>}
+   */
   static async pickChaseSkill(actor, combat = game.combat) {
     const skills = this.chaseSkillsFor(actor, combat);
     if (!skills.length) {
       ui.notifications.warn('CHASE.noSkill', { localize: true });
       return null;
     }
-    if (skills.length === 1) return skills[0].item;
+    if (skills.length === 1) {
+      return { item: skills[0].item, roller: skills[0].roller ?? actor };
+    }
 
     return ChaseSkillDialog.prompt(actor, skills, this.defaultSkillKey(combat));
   }
@@ -369,29 +399,40 @@ export default class Chase {
    * Roll the chase skill (Körperbeherrschung / Boote & Schiffe / …),
    * apply movement to distances, and mark the combatant as rolled this KR.
    * Fate points / roll edits re-run distance via postFunction (like falling damage).
-   * @param {Actor} actor
+   * @param {Actor} actor Vehicle or character combatant actor (distance/GS source)
    * @param {string} [tokenId]
-   * @param {{ skill?: Item, skipPicker?: boolean }} [options]
+   * @param {{ skill?: Item, skipPicker?: boolean, roller?: Actor }} [options]
    *   skipPicker — roll the combat default skill without opening the picker
+   *   roller — actor that owns the skill (crew member); defaults to actor
    */
-  static async rollAction(actor, tokenId, { skill = null, skipPicker = false } = {}) {
+  static async rollAction(actor, tokenId, { skill = null, skipPicker = false, roller = null } = {}) {
     if (!actor || !this.isChaseActive()) return;
 
     const Handler = this.handlerFor();
     if (!skill) {
-      skill = skipPicker
-        ? Handler.defaultSkillFor(actor)
-        : await Handler.pickChaseSkill(actor);
+      if (skipPicker) {
+        skill = Handler.defaultSkillFor(actor);
+        roller = actor;
+      } else {
+        const picked = await Handler.pickChaseSkill(actor);
+        skill = picked?.item ?? null;
+        roller = picked?.roller ?? actor;
+      }
     }
     if (!skill) {
       if (skipPicker) ui.notifications.warn('CHASE.noSkill', { localize: true });
       return;
     }
 
+    const rollerActor = roller ?? actor;
+    const rollerTokenId = rollerActor === actor
+      ? tokenId
+      : rollerActor.getActiveTokens?.(true)?.[0]?.id;
+
     const postFunction = {
       functionName: 'game.dsa5.chase.updateDistanceFromRoll',
       tokenId,
-      speaker: ActorDialogBuilder.buildSpeaker(actor, tokenId),
+      speaker: ActorDialogBuilder.buildSpeaker(rollerActor, rollerTokenId),
       combatantId: game.combat?.combatants.find((c) => (
         (tokenId && c.tokenId === tokenId) || c.actorId === actor.id
       ))?.id,
@@ -399,7 +440,7 @@ export default class Chase {
     };
 
     const combat = game.combat;
-    const setupData = await actor.setupSkill(skill, {
+    const setupData = await rollerActor.setupSkill(skill, {
       subtitle: ` (${_loc('CHASE.action')})`,
       postFunction,
       additionalOptions: {
@@ -415,11 +456,11 @@ export default class Chase {
           }
         },
       },
-    }, tokenId);
+    }, rollerTokenId);
     if (!setupData) return;
     if (setupData?.testData) setupData.testData.opposable = false;
 
-    const rolled = await actor.basicTest(setupData);
+    const rolled = await rollerActor.basicTest(setupData);
     if (!rolled?.result) return;
 
     await this.updateDistanceFromRoll(postFunction, { result: rolled.result });
@@ -501,15 +542,17 @@ export default class Chase {
     if (!actor || !this.isChaseActive()) return null;
     const Handler = this.handlerFor();
     const skill = Handler.defaultSkillFor(actor);
-    if (!skill) return null;
+    const fallback = skill ? null : Handler.chaseSkillsFor(actor)[0];
+    const display = skill ?? fallback?.item;
+    if (!display) return null;
 
     return {
       name: _loc('CHASE.action'),
       id: 'chaseAction',
       special: 'chaseAction',
-      img: skill.img || 'systems/dsa5/icons/categories/Skill.webp',
-      value: Number(skill.system?.talentValue?.value) || 0,
-      skillName: skill.name,
+      img: display.img || 'systems/dsa5/icons/categories/Skill.webp',
+      value: Number(display.system?.talentValue?.value) || 0,
+      skillName: display.name,
     };
   }
 

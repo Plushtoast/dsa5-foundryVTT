@@ -102,7 +102,10 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
   }
 
   async _prepareContext(options) {
-    if (this.isEditable) await NavalBoardWeapons.ensureRamWeapon(this.actor);
+    if (this.isEditable) {
+      await NavalBoardWeapons.ensureRamWeapon(this.actor);
+      await this.actor.system.ensureLocomotionSkills?.();
+    }
 
     const context = await super._prepareContext(options);
     const travelModes = this.actor.system.details.travelModes ?? [];
@@ -111,6 +114,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       label,
       checked: travelModes.includes(value),
     }));
+    context.prepare.vehicleLocomotionSkills = (this.actor.system.locomotionSkills?.() ?? [])
+      .map((skill) => skill.toObject());
     this.#prepareVehicleCombatContext(context.prepare);
     this.#prepareNavalHeroContext(context.prepare);
     this.#prepareNavalChaseContext(context.prepare);

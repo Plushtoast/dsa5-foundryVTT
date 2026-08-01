@@ -3994,6 +3994,8 @@
     "dropCrewHint": "Drop a character, NPC or creature here to add it to the crew.",
     "alreadyCrew": "This actor is already crew of this vehicle.",
     "crewInvalidActor": "Vehicles and groups cannot be assigned as crew.",
+    "locomotionSkills": "Crew skills",
+    "noLocomotionSkills": "No crew skills on this vehicle. Drag Sailing and Driving from the skill pack onto the sheet.",
     "removeCrewMember": "Remove from crew",
     "crewCombat": {
       "title": "Add crew to combat",
@@ -4004,7 +4006,9 @@
       "noToken": "No token — tracker only"
     },
     "combat": {
-      "mkrOnly": "Vehicles can only join combat in naval MKR mode."
+      "mkrOnly": "Vehicles can only join combat in naval MKR or vehicle chase mode.",
+      "startTitle": "Start vehicle combat",
+      "startHint": "At least one vehicle is selected. Vehicles can only join a naval MKR fight or a vehicle chase. Which mode should this combat use?"
     },
     "vehicleType": "Vehicle type",
     "short": {
@@ -4689,11 +4693,14 @@
     "distanceTooltip": "Distance to the fleeing target (set by the GM at the start; not initiative).",
     "fleeingDistanceHint": "Fleeing — chasers track distance to this target.",
     "action": "Chase action",
-    "actionTooltip": "Pick a chase skill (Body Control, Riding, Driving, Swimming, Flying, Sailing) and roll movement.",
+    "actionTooltip": "Pick a chase skill (vehicle or crew: Sailing / Driving, etc.) and roll movement.",
     "maxRounds": "Max CR",
     "maxRoundsTooltip": "How many combat rounds until escape succeeds without a catch (default 5). GM may extend.",
     "rolledTooltip": "Already rolled the chase action this round.",
     "noSkill": "No suitable chase skill found on this actor.",
+    "crewSkillLabel": "{skill} ({crew})",
+    "crewSkillSection": "Crew",
+    "crewSkillTooltip": "Roll this crew member's Sailing skill; movement still applies to the vehicle.",
     "roundProgress": "CR {elapsed}/{max}",
     "movedChasing": "{name} closes by {delta} {unit} (GS {gs} + FP {fp}) -> {distance} {unit}",
     "movedFleeing": "{name} extends the lead by {delta} {unit} (GS {gs} + FP {fp})",

@@ -28,6 +28,7 @@ import NavalCombat from './combat/mkr/naval-combat.js';
 import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
 import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
 import VehicleCrewCombatPrompt from './combat/mkr/vehicle-crew-combat.js';
+import VehicleCombatJoinPrompt from './combat/mkr/vehicle-combat-join.js';
 import Chase from './combat/chase/chase.js';
 import VehicleChase from './combat/chase/vehicle-chase.js';
 import DSA5Hotbar from './system/guiapps/hotbar.js';
@@ -163,6 +164,7 @@ Hooks.once('init', () => {
       VehicleChase,
       NavalBoardWeapons,
       VehicleCrewCombatPrompt,
+      VehicleCombatJoinPrompt,
     },
     animation: {      
       TokenScatter,

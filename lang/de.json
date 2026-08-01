@@ -4003,6 +4003,8 @@
     "dropCrewHint": "Einen Charakter, NSC oder Kreatur hierher ziehen, um ihn der Besatzung hinzuzufügen.",
     "alreadyCrew": "Dieser Akteur ist bereits Besatzung dieses Fahrzeugs.",
     "crewInvalidActor": "Fahrzeuge und Gruppen können nicht als Besatzung zugewiesen werden.",
+    "locomotionSkills": "Crew-Talente",
+    "noLocomotionSkills": "Keine Crew-Talente auf diesem Fahrzeug. Ziehe „Boote & Schiffe“ und „Fahrzeuge“ aus dem Kompendium hierher.",
     "removeCrewMember": "Aus Besatzung entfernen",
     "crewCombat": {
       "title": "Besatzung zum Kampf hinzufügen",
@@ -4013,7 +4015,9 @@
       "noToken": "Kein Token — nur im Kampftracker"
     },
     "combat": {
-      "mkrOnly": "Fahrzeuge können nur im Seegefecht (MKR) am Kampf teilnehmen."
+      "mkrOnly": "Fahrzeuge können nur im Seegefecht (MKR) oder der Fahrzeug-Verfolgungsjagd am Kampf teilnehmen.",
+      "startTitle": "Fahrzeugkampf starten",
+      "startHint": "Mindestens ein Fahrzeug ist ausgewählt. Fahrzeuge können nur an einem Seegefecht (MKR) oder einer Fahrzeug-Verfolgungsjagd teilnehmen. Welchen Modus soll der Kampf nutzen?"
     },
     "vehicleType": "Fahrzeugtyp",
     "short": {
@@ -4691,11 +4695,14 @@
     "distanceTooltip": "Distanz zum Flüchtenden (vom SL zu Beginn gesetzt; keine Initiative).",
     "fleeingDistanceHint": "Flüchtend — Verfolger speichern die Distanz zu diesem Ziel.",
     "action": "Verfolgungsaktion",
-    "actionTooltip": "Verfolgungstalent wählen (Körperbeherrschung, Reiten, Fahrzeuge, Schwimmen, Fliegen, Boote & Schiffe) und Bewegung würfeln.",
+    "actionTooltip": "Verfolgungstalent wählen (Fahrzeug oder Besatzung: Boote & Schiffe / Fahrzeuge u. a.) und Bewegung würfeln.",
     "maxRounds": "Max. KR",
     "maxRoundsTooltip": "Nach so vielen Kampfrunden ohne Einholen gilt die Flucht als gelungen (Standard: 5). Der SL kann verlängern.",
     "rolledTooltip": "Verfolgungsaktion in dieser Runde bereits gewürfelt.",
     "noSkill": "Kein passendes Verfolgungstalent auf diesem Akteur gefunden.",
+    "crewSkillLabel": "{skill} ({crew})",
+    "crewSkillSection": "Besatzung",
+    "crewSkillTooltip": "Probe mit dem Boote-&-Schiffe-Talent dieses Besatzungsmitglieds; Bewegung gilt für das Fahrzeug.",
     "roundProgress": "KR {elapsed}/{max}",
     "movedChasing": "{name} verkürzt um {delta} {unit} (GS {gs} + FP {fp}) -> {distance} {unit}",
     "movedFleeing": "{name} vergrößert den Vorsprung um {delta} {unit} (GS {gs} + FP {fp})",

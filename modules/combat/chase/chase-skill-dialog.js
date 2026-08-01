@@ -1,6 +1,7 @@
 /**
  * Verfolgungsjagd locomotion skill picker — two-column buttons like ActAttackDialog,
  * with the GM default skill centered in its own row above the rest.
+ * Crew Boote & Schiffe options appear under the vehicle's own skills.
  */
 export default class ChaseSkillDialog extends foundry.applications.api.HandlebarsApplicationMixin(
   foundry.applications.api.ApplicationV2,
@@ -24,7 +25,7 @@ export default class ChaseSkillDialog extends foundry.applications.api.Handlebar
    * @param {Actor} actor
    * @param {object[]} skills  from Chase.chaseSkillsFor
    * @param {string} defaultKey LocalizedIDs key for the combat default skill
-   * @param {(item: Item|null) => void} resolve
+   * @param {(entry: { item: Item, roller: Actor }|null) => void} resolve
    */
   constructor(actor, skills, defaultKey, resolve) {
     super();
@@ -39,7 +40,7 @@ export default class ChaseSkillDialog extends foundry.applications.api.Handlebar
    * @param {Actor} actor
    * @param {object[]} skills
    * @param {string} defaultKey
-   * @returns {Promise<Item|null>}
+   * @returns {Promise<{ item: Item, roller: Actor }|null>}
    */
   static prompt(actor, skills, defaultKey) {
     const existing = foundry.applications.instances.get(this.DEFAULT_OPTIONS.id);
@@ -56,13 +57,17 @@ export default class ChaseSkillDialog extends foundry.applications.api.Handlebar
   static _onPickSkill(_event, target) {
     const key = target.dataset.key;
     const entry = this.skills.find((s) => s.key === key);
-    this.#finish(entry?.item ?? null);
+    if (!entry?.item) {
+      this.#finish(null);
+      return;
+    }
+    this.#finish({ item: entry.item, roller: entry.roller ?? this.actor });
   }
 
-  #finish(item) {
+  #finish(entry) {
     if (this._resolved) return;
     this._resolved = true;
-    this._resolve?.(item);
+    this._resolve?.(entry);
     this.close();
   }
 
@@ -77,7 +82,8 @@ export default class ChaseSkillDialog extends foundry.applications.api.Handlebar
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
     const defaultEntry = this.skills.find((s) => s.key === this.defaultKey) ?? null;
-    const otherSkills = this.skills.filter((s) => s.key !== defaultEntry?.key);
+    const vehicleSkills = this.skills.filter((s) => !s.isCrew && s.key !== defaultEntry?.key);
+    const crewSkills = this.skills.filter((s) => s.isCrew);
 
     data.title = 'CHASE.pickSkill';
     data.defaultSkill = defaultEntry
@@ -85,15 +91,22 @@ export default class ChaseSkillDialog extends foundry.applications.api.Handlebar
           key: defaultEntry.key,
           name: defaultEntry.name,
           value: defaultEntry.value,
-          img: defaultEntry.item?.img || 'systems/dsa5/icons/categories/Skill.webp',
+          img: defaultEntry.img || defaultEntry.item?.img || 'systems/dsa5/icons/categories/Skill.webp',
         }
       : null;
-    data.items = otherSkills.map((s) => ({
+    data.items = vehicleSkills.map((s) => ({
       key: s.key,
       name: s.name,
       value: s.value,
-      img: s.item?.img || 'systems/dsa5/icons/categories/Skill.webp',
+      img: s.img || s.item?.img || 'systems/dsa5/icons/categories/Skill.webp',
     }));
+    data.crewSkills = crewSkills.map((s) => ({
+      key: s.key,
+      name: s.name,
+      value: s.value,
+      img: s.img || s.item?.img || 'systems/dsa5/icons/categories/Skill.webp',
+    }));
+    data.crewSectionLabel = 'CHASE.crewSkillSection';
     return data;
   }
 }

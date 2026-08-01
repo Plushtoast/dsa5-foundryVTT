@@ -1,0 +1,24 @@
+<div class="groupbox vehicle-locomotion-skills">
+  <div class="row-section table-title lineheight">
+    <div class="col two"><b>{{localize "VEHICLE.locomotionSkills"}}</b></div>
+    <div class="headline-test col third center">{{localize "probe"}}</div>
+    <div class="col five center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+  </div>
+
+  {{#each prepare.vehicleLocomotionSkills as |item|}}
+  <div class="row-section wrap skills lineheight tableOdd item" data-item-id="{{item._id}}">
+    <div class="skill-name col two withContext">
+      <a data-action="itemEdit" class="talentName" data-category="skill" data-id="{{item._id}}">{{item.name}}</a>
+    </div>
+    <div class="skill-props col third center flexrow">
+      {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
+      <a></a>
+    </div>
+    <div class="skill-value col five flexrow">
+      <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+    </div>
+  </div>
+  {{else}}
+  <p class="hint">{{localize "VEHICLE.noLocomotionSkills"}}</p>
+  {{/each}}
+</div>

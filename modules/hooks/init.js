@@ -115,6 +115,7 @@ Hooks.once('init', () => {
     'systems/dsa5/templates/dialog/parts/actor-picker-list.hbs',
     'systems/dsa5/templates/items/browse/actor.hbs',
     'systems/dsa5/templates/items/browse/garadan.hbs',
+    'systems/dsa5/templates/items/browse/vehicle-stats.hbs',
     'systems/dsa5/templates/items/browse/culture.hbs',
     'systems/dsa5/templates/items/browse/species.hbs',
     'systems/dsa5/templates/items/browse/career.hbs',

@@ -9,6 +9,8 @@ const { SchemaField, StringField, NumberField, BooleanField, HTMLField, ArrayFie
 const { getProperty, mergeObject } = foundry.utils;
 
 export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, VehicleStatusTemplate) {
+  /** LocalizedIDs keys for vehicle Fortbewegungstalente (Boote & Schiffe / Fahrzeuge). */
+  static LOCOMOTION_SKILL_KEYS = ['boatsAndShips', 'driving'];
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
@@ -69,14 +71,15 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
   }
 
   static async getDefaultItems() {
-    const [combatSkills, money] = await Promise.all([
+    const [combatSkills, money, locomotionSkills] = await Promise.all([
       DSA5_Utility.allCombatSkills(),
       DSA5_Utility.allMoneyItems(),
+      this.locomotionSkillItemsFromCompendium(),
     ]);
     const crossbows = combatSkills.find((skill) => skill.name === _loc('LocalizedIDs.Crossbows'));
     const impactName = game.i18n.lang === 'de' ? 'Hiebwaffen' : 'Impact Weapons';
     const impact = combatSkills.find((skill) => skill.name === impactName);
-    const items = [...money];
+    const items = [...money, ...locomotionSkills];
     if (crossbows) {
       crossbows.system.attack.value = 12;
       items.push(crossbows);
@@ -96,6 +99,39 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     if (impact) items.push(impact);
     items.push(VehicleRamWeapon.buildItemData());
     return items;
+  }
+
+  /** Fortbewegungstalente from the default skill pack (Boote & Schiffe / Fahrzeuge). */
+  static async locomotionSkillItemsFromCompendium() {
+    const skills = await DSA5_Utility.allSkills();
+    return this.LOCOMOTION_SKILL_KEYS.flatMap((key) => {
+      const name = _loc(`LocalizedIDs.${key}`);
+      const found = skills.find((skill) => skill.name === name);
+      return found ? [found] : [];
+    });
+  }
+
+  /** Add missing Fortbewegungstalente on older vehicles (e.g. created before this shipped). */
+  async ensureLocomotionSkills() {
+    const missingKeys = this.constructor.LOCOMOTION_SKILL_KEYS.filter((key) => {
+      const name = _loc(`LocalizedIDs.${key}`);
+      return !this.parent.items.some((i) => i.type === 'skill' && i.name === name);
+    });
+    if (!missingKeys.length) return;
+
+    const all = await this.constructor.locomotionSkillItemsFromCompendium();
+    const names = new Set(missingKeys.map((key) => _loc(`LocalizedIDs.${key}`)));
+    const toCreate = all.filter((item) => names.has(item.name));
+    if (toCreate.length) await this.parent.createEmbeddedDocuments('Item', toCreate);
+  }
+
+  /** Embedded locomotion skills in LocalizedIDs key order. */
+  locomotionSkills() {
+    return this.constructor.LOCOMOTION_SKILL_KEYS.flatMap((key) => {
+      const name = _loc(`LocalizedIDs.${key}`);
+      const item = this.parent.items.find((i) => i.type === 'skill' && i.name === name);
+      return item ? [item] : [];
+    });
   }
 
   prepareBaseData() {

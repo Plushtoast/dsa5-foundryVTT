@@ -2,6 +2,7 @@ import { DSAAura } from '../system/automation/aura.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import Riding from '../system/automation/riding.js';
 import NavalCombat from '../combat/mkr/naval-combat.js';
+import VehicleCombatJoinPrompt from '../combat/mkr/vehicle-combat-join.js';
 const { getProperty } = foundry.utils;
 const { Token } = foundry.canvas.placeables;
 
@@ -158,6 +159,16 @@ export class DSATokenDocument extends TokenDocument {
     }
 
     return tokenData;
+  }
+
+  /**
+   * If vehicles are among the tokens, ensure Seegefecht / Fahrzeug-Verfolgungsjagd
+   * before creating combatants (Begegnung beitreten).
+   */
+  static async createCombatants(tokens, options = {}) {
+    const combat = await VehicleCombatJoinPrompt.ensureVehicleCombatMode([...tokens], options);
+    if (tokens.some((t) => t.actor?.type === 'vehicle') && !combat) return [];
+    return super.createCombatants(tokens, { ...options, combat });
   }
 
   _inferMovementAction() {

@@ -27,4 +27,21 @@
         </div>
         {{/each}}
     </div>
+    {{#if crewSkills.length}}
+    <p class="chase-crew-skill-heading"><b>{{localize crewSectionLabel}}</b></p>
+    <div class="row-section wrap">
+        {{#each crewSkills as |itm|}}
+        <div class="col two flexrow">
+            <button type="button" data-action="pickSkill" class="reactClick row-section" data-key="{{itm.key}}"
+                    data-tooltip="CHASE.crewSkillTooltip">
+                <div class="col ten">
+                    <span class="d20">{{itm.value}}</span>
+                </div>
+                <img class="col ten" src="{{itm.img}}" alt="" />
+                <div class="col eighty">{{itm.name}}</div>
+            </button>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
 </div>

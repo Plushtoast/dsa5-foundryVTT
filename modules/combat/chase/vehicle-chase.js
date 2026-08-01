@@ -150,6 +150,11 @@ export default class VehicleChase extends Chase {
     return super.skillFor(actor, key);
   }
 
+  static locomotionSkillKeys(actor = null, combat = game.combat) {
+    if (actor?.type === 'vehicle') return ['boatsAndShips', 'driving'];
+    return super.locomotionSkillKeys(actor, combat);
+  }
+
   static #propulsionMultiplier(propulsion, factors) {
     if (!factors) return 1;
     if (propulsion === 'row') return factors.row;

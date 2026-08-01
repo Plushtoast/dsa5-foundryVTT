@@ -24,6 +24,8 @@ export const combatPartTemplates = [
 export const vehicleCombatPartTemplates = [
   'systems/dsa5/templates/actors/vehicle/vehicle-combat-stats.hbs',
   'systems/dsa5/templates/actors/vehicle/vehicle-combat-boardweapon.hbs',
+  'systems/dsa5/templates/actors/vehicle/vehicle-locomotion-skills.hbs',
+  'systems/dsa5/templates/actors/parts/skillselect.hbs',
 ];
 
 /** Book library intro (renderTemplate in BookWizard.getChapter, not ApplicationV2 root). */
