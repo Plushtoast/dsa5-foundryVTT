@@ -71,10 +71,17 @@ export default class DSA5Combat extends Combat {
 
     return foundry.applications.api.DialogV2.wait({
       window: { title: 'BRAWLING.name' },
-      position: { width: 480, height: 'auto' },
+      position: { width: 480 },
       content,
       rejectClose: false,
       modal: true,
+      // Same DialogV2 scroll workaround as ActorPickerDialog: content scrolls, footer stays put.
+      render: (_event, dialog) => {
+        const form = dialog.element.querySelector('form');
+        if (!form) return;
+        form.style.overflowY = 'hidden';
+        form.querySelector('.dialog-content')?.classList.add('scrollable');
+      },
       buttons: [
         {
           action: 'ok',
