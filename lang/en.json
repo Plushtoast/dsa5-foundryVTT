@@ -4061,7 +4061,11 @@
       "shipCondition": "Ship Condition",
       "shipConditionHint": "Like Pain based on structure points. Penalty for ship and crew rolls, plus −1 MOV per level.",
       "altReadiness": "Alternative Readiness",
-      "altReadinessHint": "Immobile at 5% of maximum structure points instead of at 10 StP."
+      "altReadinessHint": "Immobile at 5% of maximum structure points instead of at 10 StP.",
+      "structureDamageMul": "Structure Damage Multiplier",
+      "structureDamageMulHint": "Ranged attacks (not ramming) and creature melee/range traits against vehicles multiply TP/StP. Shown as a situational modifier when enabled and not equal to 1.",
+      "structureDamageMulValue": "Multiplier",
+      "structureDamageMulValueHint": "Structure damage factor (one decimal place). Default: 2."
     },
     "sinking": "Sinking (0 StP)",
     "siegeFireMode": "Fire board weapon",

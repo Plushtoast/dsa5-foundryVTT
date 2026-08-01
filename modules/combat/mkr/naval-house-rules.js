@@ -1,8 +1,9 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { FormAppv2 } from '../../actor/formapp.js';
+import VehicleRamWeapon from '../../data/actor/vehicle-ram-weapon.js';
 import NavalCombat from './naval-combat.js';
 
-const { BooleanField } = foundry.data.fields;
+const { BooleanField, NumberField } = foundry.data.fields;
 
 /** Setting keys under the dsa5 namespace (config: false — only via Hausregeln menu). */
 export const NAVAL_HOUSE_RULE_SETTINGS = {
@@ -10,6 +11,8 @@ export const NAVAL_HOUSE_RULE_SETTINGS = {
   maneuverReadiness: 'navalHouseRuleManeuverReadiness',
   shipCondition: 'navalHouseRuleShipCondition',
   altReadiness: 'navalHouseRuleAltReadiness',
+  structureDamageMul: 'navalHouseRuleStructureDamageMulEnabled',
+  structureDamageMulValue: 'navalHouseRuleStructureDamageMul',
 };
 
 /**
@@ -70,7 +73,62 @@ export default class NavalHouseRules {
         type: Boolean,
         onChange: () => this.refreshAllVehicles(),
       },
+      [NAVAL_HOUSE_RULE_SETTINGS.structureDamageMul]: {
+        name: 'VEHICLE.houseRules.structureDamageMul',
+        hint: 'VEHICLE.houseRules.structureDamageMulHint',
+        scope: 'world',
+        config: false,
+        default: true,
+        type: Boolean,
+      },
+      [NAVAL_HOUSE_RULE_SETTINGS.structureDamageMulValue]: {
+        name: 'VEHICLE.houseRules.structureDamageMulValue',
+        hint: 'VEHICLE.houseRules.structureDamageMulValueHint',
+        scope: 'world',
+        config: false,
+        default: 2,
+        type: Number,
+        range: { min: 0.1, max: 9.9, step: 0.1 },
+      },
     });
+  }
+
+  /** Active structure-damage multiplier (1 when disabled). One decimal place. */
+  static structureDamageMultiplier() {
+    if (!this.enabled('structureDamageMul')) return 1;
+    try {
+      const raw = Number(game.settings.get('dsa5', NAVAL_HOUSE_RULE_SETTINGS.structureDamageMulValue));
+      if (!Number.isFinite(raw) || raw <= 0) return 1;
+      return Math.round(raw * 10) / 10;
+    } catch {
+      return 2;
+    }
+  }
+
+  /** Range / trait sources that deal StP to vehicles under this house rule (not ram). */
+  static isStructureDamageSource(source) {
+    if (!source) return false;
+    if (VehicleRamWeapon.isRamWeapon(source)) return false;
+    if (source.type === 'rangeweapon') {
+      return !!(source.system?.damage?.stp || source.system?.siegeRules);
+    }
+    if (source.type === 'trait') {
+      const traitType = source.system?.traitType?.value;
+      return traitType === 'meleeAttack' || traitType === 'rangeAttack';
+    }
+    return false;
+  }
+
+  static targetsVehicle() {
+    return [...game.user.targets].some((t) => t.actor?.type === 'vehicle');
+  }
+
+  /** Multiply a static StP formula when the house rule is active and ≠ 1. */
+  static applyMultiplierToFormula(formula) {
+    if (!formula) return formula;
+    const mul = this.structureDamageMultiplier();
+    if (mul === 1) return formula;
+    return `(${formula})*${mul}`;
   }
 
   /** Pain-like level from remaining/max (25% / 50% / 75% lost → 1–3; ≤5 absolute → 4). */
@@ -193,8 +251,13 @@ export default class NavalHouseRules {
     }
   }
 
-  /** Inject Schiffszustand onto crew members’ rolls. */
-  static prepareRollSituationalModifiers(actor, situationalModifiers, _context) {
+  /** Inject Schiffszustand onto crew members’ rolls + structure-damage multiplier. */
+  static prepareRollSituationalModifiers(actor, situationalModifiers, context) {
+    this.#prepareShipConditionModifier(actor, situationalModifiers);
+    this.#prepareStructureDamageMultiplier(situationalModifiers, context);
+  }
+
+  static #prepareShipConditionModifier(actor, situationalModifiers) {
     if (!actor || actor.type === 'vehicle') return;
     if (!this.enabled('shipCondition')) return;
 
@@ -209,6 +272,24 @@ export default class NavalHouseRules {
     situationalModifiers.push({
       name: _loc(`CONDITION.${this.CONDITION_SHIP}`),
       value: -level,
+      selected: true,
+    });
+  }
+
+  static #prepareStructureDamageMultiplier(situationalModifiers, context) {
+    if (!NavalCombat.isNavalMkrActive()) return;
+    if (context?.mode !== 'attack') return;
+
+    const mul = this.structureDamageMultiplier();
+    if (mul === 1) return;
+    if (!this.isStructureDamageSource(context.source)) return;
+    if (!this.targetsVehicle()) return;
+
+    situationalModifiers.push({
+      name: _loc('VEHICLE.houseRules.structureDamageMul'),
+      type: 'dmg',
+      damageBonus: `*${mul}`,
+      value: `*${mul}`,
       selected: true,
     });
   }
@@ -237,6 +318,20 @@ export class NavalHouseRulesFields extends foundry.abstract.DataModel {
         initial: true,
         label: 'VEHICLE.houseRules.altReadiness',
         hint: 'VEHICLE.houseRules.altReadinessHint',
+      }),
+      structureDamageMul: new BooleanField({
+        initial: true,
+        label: 'VEHICLE.houseRules.structureDamageMul',
+        hint: 'VEHICLE.houseRules.structureDamageMulHint',
+      }),
+      structureDamageMulValue: new NumberField({
+        required: true,
+        initial: 2,
+        min: 0.1,
+        max: 9.9,
+        integer: false,
+        label: 'VEHICLE.houseRules.structureDamageMulValue',
+        hint: 'VEHICLE.houseRules.structureDamageMulValueHint',
       }),
     };
   }
@@ -272,12 +367,13 @@ export class NavalHouseRulesForm extends FormAppv2 {
 
   async _onRender(context, options) {
     await super._onRender(context, options);
-    this.element.querySelectorAll('input[type="checkbox"][name]').forEach((input) => {
+    this.element.querySelectorAll('input[name]').forEach((input) => {
       input.addEventListener('change', async (ev) => {
-        const key = ev.currentTarget.name;
-        const setting = NAVAL_HOUSE_RULE_SETTINGS[key];
+        const el = ev.currentTarget;
+        const setting = NAVAL_HOUSE_RULE_SETTINGS[el.name];
         if (!setting) return;
-        await game.settings.set('dsa5', setting, ev.currentTarget.checked);
+        const value = el.type === 'checkbox' ? el.checked : Math.round(Number(el.value) * 10) / 10;
+        await game.settings.set('dsa5', setting, value);
       });
     });
   }

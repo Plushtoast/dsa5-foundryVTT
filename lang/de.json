@@ -4070,7 +4070,11 @@
       "shipCondition": "Schiffszustand",
       "shipConditionHint": "Wie Schmerz anhand der Strukturpunkte. Erschwerung für Schiff und Besatzung sowie GS-Malus (−1 pro Stufe).",
       "altReadiness": "Alternative Fahrbereitschaft",
-      "altReadinessHint": "Manövrierunfähig ab 5 % der maximalen Strukturpunkte statt ab 10 StP."
+      "altReadinessHint": "Manövrierunfähig ab 5 % der maximalen Strukturpunkte statt ab 10 StP.",
+      "structureDamageMul": "Strukturschaden-Multiplikator",
+      "structureDamageMulHint": "Fernkampfangriffe (kein Rammen) und Nahkampf-Traits von Kreaturen gegen Fahrzeuge erhalten einen Schadensmultiplikator auf TP/StP. Erscheint als Situationsmodifikator, wenn aktiv und ungleich 1.",
+      "structureDamageMulValue": "Multiplikator",
+      "structureDamageMulValueHint": "Faktor für Strukturschaden (eine Nachkommastelle). Standard: 2."
     },
     "sinking": "Sinkt (0 StP)",
     "siegeFireMode": "Bordwaffe abfeuern",

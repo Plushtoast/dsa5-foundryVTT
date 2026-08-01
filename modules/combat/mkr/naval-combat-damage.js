@@ -3,6 +3,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import NavalCombat from './naval-combat.js';
 import NavalBoardWeapons from './naval-board-weapons.js';
+import NavalHouseRules from './naval-house-rules.js';
 import VehicleRamWeapon from '../../data/actor/vehicle-ram-weapon.js';
 
 const { duplicate, randomID } = foundry.utils;
@@ -326,10 +327,12 @@ export default class NavalCombatDamage {
     const source = attacker?.testResult?.source;
     if (!source) return null;
 
+    const mulStatic = (formula) => NavalHouseRules.applyMultiplierToFormula(formula);
+
     if (source.type === 'rangeweapon') {
       const stp = source.system?.damage?.stp;
-      if (stp) return stp;
-      if (source.system?.siegeRules) return source.system.damage?.value || null;
+      if (stp) return mulStatic(stp);
+      if (source.system?.siegeRules) return mulStatic(source.system.damage?.value || null);
     }
 
     if (source.type === 'meleeweapon') {
@@ -343,8 +346,18 @@ export default class NavalCombatDamage {
       const vehicleSpeaker = msg?.flags?.data?.extra?.options?.vehicleSpeaker;
       if (vehicleSpeaker) {
         const stp = source.system?.damage?.stp;
-        return stp || null;
+        return stp ? mulStatic(stp) : null;
       }
+    }
+
+    // House rule: creature melee/range traits deal StP to vehicles (rolled damage already includes mul).
+    if (
+      source.type === 'trait'
+      && NavalHouseRules.enabled('structureDamageMul')
+      && NavalHouseRules.isStructureDamageSource(source)
+    ) {
+      if (attacker.testResult?.damage != null) return String(attacker.testResult.damage);
+      return mulStatic(source.system?.damage?.value || null);
     }
 
     const attActor = DSA5_Utility.getSpeaker(attacker.speaker);
@@ -357,7 +370,8 @@ export default class NavalCombatDamage {
     const vehicleSpeaker = msg?.flags?.data?.extra?.options?.vehicleSpeaker;
     if (vehicleSpeaker) {
       const stp = source.system?.damage?.stp;
-      return stp || (source.system?.siegeRules ? source.system.damage?.value : null);
+      if (stp) return mulStatic(stp);
+      if (source.system?.siegeRules) return mulStatic(source.system.damage?.value || null);
     }
 
     return null;

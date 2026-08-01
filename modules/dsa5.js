@@ -26,6 +26,7 @@ import DSA5Combatant from './combat/combatant.js';
 import NavalHeroActionHandler from './combat/mkr/naval-hero-actions.js';
 import NavalCombat from './combat/mkr/naval-combat.js';
 import NavalCombatDamage from './combat/mkr/naval-combat-damage.js';
+import NavalHouseRules from './combat/mkr/naval-house-rules.js';
 import NavalBoardWeapons from './combat/mkr/naval-board-weapons.js';
 import VehicleCrewCombatPrompt from './combat/mkr/vehicle-crew-combat.js';
 import VehicleCombatJoinPrompt from './combat/mkr/vehicle-combat-join.js';
@@ -160,6 +161,7 @@ Hooks.once('init', () => {
       NavalCombat,
       NavalHeroActionHandler,
       NavalCombatDamage,
+      NavalHouseRules,
       Chase,
       VehicleChase,
       NavalBoardWeapons,
@@ -298,6 +300,7 @@ Hooks.once('init', () => {
   RollRequestService.register();
   NavalHeroActionHandler.register();
   NavalCombatDamage.register();
+  NavalHouseRules.register();
   VehicleChase.register();
   NavalBoardWeapons.register();
   VehicleCrewCombatPrompt.register();
