@@ -394,7 +394,34 @@
       "Winter": "Winter",
       "YearSuffix": "BF",
       "ZunehmendesRad": "Waxing Wheel",
-      "backward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+      "advance": {
+        "dayBack": "−1 day",
+        "dayForward": "+1 day",
+        "hourBack": "−1 hour",
+        "hourForward": "+1 hour",
+        "hours6Back": "−6 hours",
+        "hours6Forward": "+6 hours",
+        "minBack": "−1 minute",
+        "minForward": "+1 minute",
+        "mins30Back": "−30 minutes",
+        "mins30Forward": "+30 minutes",
+        "weekBack": "−1 week",
+        "weekForward": "+1 week"
+      },
+      "advanceShort": {
+        "dayBack": "−1d",
+        "dayForward": "+1d",
+        "hourBack": "−1h",
+        "hourForward": "+1h",
+        "hours6Back": "−6h",
+        "hours6Forward": "+6h",
+        "minBack": "−1m",
+        "minForward": "+1m",
+        "mins30Back": "−30m",
+        "mins30Forward": "+30m",
+        "weekBack": "−1w",
+        "weekForward": "+1w"
+      },
       "calendar": "Calendar",
       "config": "Configuration",
       "day": "Day",
@@ -417,13 +444,10 @@
       },
       "defaultName": "The Calendar of the Twelvegods",
       "events": "Events",
-      "fastBackward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 day<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 week",
-      "fastForward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 day<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 week",
       "featureVisibility": {
         "hint": "Choose which calendar features are visible to players. GMs always have access to all features.",
         "label": "Player Feature Visibility"
       },
-      "forward": "Left-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 6 h",
       "holiday": {
         "Allaventurisches Gauklertreffen": "All-Aventuri Meeting of Jesters",
         "Bardentreffen": "Annual convention of bards",
@@ -538,8 +562,8 @@
       },
       "season": "Season",
       "second": "Second",
-      "smallBackward": "Left-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 1 min",
-      "smallForward": "Left-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Right-<i class=\"fas fa-computer-mouse\"></i> 6 h",
+      "weather": "Weather",
+      "weatherUnavailable": "No weather data",
       "weekday": "Weekday",
       "year": "Year"
     }
@@ -790,7 +814,7 @@
     },
     "Notification": {
       "ActorSummoned": "{name} has been summoned to your side",
-      "AnimalTrainingWarning": "To train animals, you need the Animal Trainer special ability.",
+      "AnimalTrainingWarning": "To train animals, you need the Animal Tamer special ability.",
       "AutoLearnedTricks": "{name} automatically learned the following tricks through training: {tricks}",
       "CompanionAdded": "{name} gained the 'Companion' trait.",
       "FamiliarOwnerWarning": "A familiar can only be assigned to its master.",
@@ -809,7 +833,7 @@
       "TokenLinkExplanation": "<p><b>{name}</b> does not have <i>Link Actor Data</i> enabled.</p><p><b>Linked</b> — Every token on the map references the same actor. Changes to hit points, conditions, etc. are shared across all tokens and the character sheet.</p><p><b>Unlinked</b> — Each token placed on the map is an independent copy. Changes to one token do not affect others or the base actor.</p><p>Companions should usually be <b>linked</b> so that the companion tab shows the correct, up-to-date values.</p>",
       "TokenLinkWarning": "Action cancelled: The companion must have 'Link Actor Data' enabled in the token settings!",
       "WildAnimalLoyaltyWarning": "Wild animals require a loyalty value of 10 or higher for training.",
-      "WildAnimalTrainerWarning": "To train wild animals, you need the Animal Trainer special ability."
+      "WildAnimalTrainerWarning": "To train wild animals, you need the Animal Tamer special ability."
     },
     "OpenCompanionSheet": "Open Companion Sheet",
     "Owner": "Owner",
@@ -834,9 +858,9 @@
     },
     "TradeWithCompanion": "Trade with Companion",
     "Training": {
-      "AnimalTrainer": "Animal Trainer",
+      "AnimalTrainer": "Animal Tamer",
       "Available": "Available Training Modules",
-      "DomRule": "If the heroine has the Animal Trainer special ability, she can begin a lengthy training program to give the animal a training module.",
+      "DomRule": "If the heroine has the Animal Tamer special ability, she can begin a lengthy training program to give the animal a training module.",
       "FamiliarRule": "Contrary to the general rule, familiars may be given an additional training module because they have a special relationship with their mistress and are willing to learn.",
       "Finished": "The training was successfully completed and {trickName} was added to {petName}.",
       "InTraining": "In Training",
@@ -857,7 +881,7 @@
       "TabName": "Training",
       "TeachBtn": "Train",
       "TestName": "Animal training of {petName} (Training module): {trainingName}",
-      "WildRule": "If the loyalty of a wild animal reaches 10 through training by a heroine with the Animal Trainer special ability, it is possible for her, and only her, to give the wild animal a training module from this point on.",
+      "WildRule": "If the loyalty of a wild animal reaches 10 through training by a heroine with the Animal Tamer special ability, it is possible for her, and only her, to give the wild animal a training module from this point on.",
       "label": "Training"
     },
     "Trick": {

@@ -1,31 +1,61 @@
 <div>
-  <div class='flexrow calendar-widget-content'>
-    {{#if isGM}}
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-backward' data-tooltip='CALENDAR.DSA.fastBackward' data-action='fastBackward'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-left' data-tooltip='CALENDAR.DSA.backward' data-action='backward'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-left' data-tooltip='CALENDAR.DSA.smallBackward' data-action='smallBackward'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon {{ifThen toggleAutoTime 'fas' 'far'}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
-    {{/if}}
-    <div data-tooltip='{{dateTooltip}}' class='center button dayProgress noBorder ui-control' style='--p:{{dayProgress}}%;width:auto;background:{{dayTimeBackground.gradient}};color:{{dayTimeBackground.textColor}}' data-action='edit'>
-      <span class="timeIndicator">{{dateString}}</span>
-      <div class="slideIndicator"></div>
+  <div class='calendar-widget-content{{#if isGM}} is-gm{{/if}}'>
+    <div class='calendar-header-row'>
+      <div class='calendar-header-side calendar-header-left'>
+        {{#if isGM}}
+          <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
+        {{/if}}
+        {{#if canOpenAlmanac}}
+          <button type='button' class='calendar-nav-btn noBorder icon fas fa-calendar' data-tooltip='CALENDAR.DSA.calendar' data-action='openAlmanac'></button>
+        {{/if}}
+      </div>
+      <button type='button' class='calendar-date-label noBorder{{#unless canOpenCalendarPicker}} is-static{{/unless}}' data-tooltip='{{dateTooltip}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}}>{{dateString}}</button>
+      <div class='calendar-header-side calendar-header-right'>
+        {{#if canOpenEvents}}
+          <button type='button' class='calendar-nav-btn noBorder icon fas fa-person-praying' data-tooltip='CALENDAR.DSA.holidays' data-action='openEvents'></button>
+        {{/if}}
+        {{#if isGM}}
+          <button type='button' class='calendar-config-btn noBorder icon fas fa-toggle-{{ifThen autoLightEnabled "on" "off"}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>
+        {{/if}}
+      </div>
     </div>
-    {{#if isGM}}
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-toggle-{{ifThen autoLightEnabled 'on' 'off'}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>      
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-square-caret-right' data-tooltip='CALENDAR.DSA.smallForward' data-action='smallForward'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-caret-right' data-tooltip='CALENDAR.DSA.forward' data-action='forward'></button>
-      <button type='button' class='visibilitynone noBorder ui-control icon fas fa-forward' data-tooltip='CALENDAR.DSA.fastForward' data-action='fastForward'></button>
-    {{/if}}
+    <div class='calendar-day-row'>
+      <i class='{{dayTimeIcon}} calendar-bookend calendar-daytime-icon' data-tooltip='{{dateTooltip}}' aria-hidden='true'></i>
+      <div class='dayProgress noBorder' style='--p:{{dayProgress}}%;--fill-tint:{{dayTimeBackground.fillColor}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}} data-tooltip='{{dateTooltip}}'>
+        <div class='dayProgress-track'>
+          <div class='dayProgress-fill'></div>
+          <div class='dayProgress-ticks'></div>
+        </div>
+        <div class='slideIndicator' aria-hidden='true'><i class='fas fa-hourglass-half'></i></div>
+      </div>
+      <i class='{{weatherIcon}} calendar-bookend calendar-weather-icon{{#unless weatherAvailable}} is-muted{{/unless}}' data-tooltip='{{dateTooltip}}' aria-hidden='true'></i>
+    </div>
     <div class='moons flexrow'>
       <div class='moon-phase previous'>
-        <div class="disc phase{{components.moon.previousMoon}}"></div>
+        <div class='disc phase{{components.moon.previousMoon}}'></div>
       </div>
       <div class='moon-phase'>
-        <div data-tooltip="{{components.moon.phase.name}}" class="disc phase{{components.moon.phaseIndex}}"></div>
+        <div data-tooltip='{{components.moon.phase.name}}' class='disc phase{{components.moon.phaseIndex}}'></div>
       </div>
       <div class='moon-phase next'>
-        <div class="disc phase{{components.moon.nextMoon}}"></div>
+        <div class='disc phase{{components.moon.nextMoon}}'></div>
       </div>
     </div>
+    {{#if isGM}}
+      <div class='calendar-advance-menu'>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.weekBack' data-action='weekBack'>{{localize "CALENDAR.DSA.advanceShort.weekBack"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.dayBack' data-action='dayBack'>{{localize "CALENDAR.DSA.advanceShort.dayBack"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.hours6Back' data-action='hours6Back'>{{localize "CALENDAR.DSA.advanceShort.hours6Back"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.hourBack' data-action='hourBack'>{{localize "CALENDAR.DSA.advanceShort.hourBack"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.mins30Back' data-action='mins30Back'>{{localize "CALENDAR.DSA.advanceShort.mins30Back"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.minBack' data-action='minBack'>{{localize "CALENDAR.DSA.advanceShort.minBack"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.minForward' data-action='minForward'>{{localize "CALENDAR.DSA.advanceShort.minForward"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.mins30Forward' data-action='mins30Forward'>{{localize "CALENDAR.DSA.advanceShort.mins30Forward"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.hourForward' data-action='hourForward'>{{localize "CALENDAR.DSA.advanceShort.hourForward"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.hours6Forward' data-action='hours6Forward'>{{localize "CALENDAR.DSA.advanceShort.hours6Forward"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.dayForward' data-action='dayForward'>{{localize "CALENDAR.DSA.advanceShort.dayForward"}}</button>
+        <button type='button' class='calendar-step noBorder' data-tooltip='CALENDAR.DSA.advance.weekForward' data-action='weekForward'>{{localize "CALENDAR.DSA.advanceShort.weekForward"}}</button>
+      </div>
+    {{/if}}
   </div>
 </div>

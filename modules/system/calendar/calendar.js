@@ -59,26 +59,31 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     return _loc(translationKey);
   }
 
-  static async autoDayLight() {
+  /**
+   * @param {object} [options]
+   * @param {object} [options.components] Components for a scrubbed display time (defaults to worldTime)
+   * @param {number} [options.animateDarkness=1000] Darkness transition duration in ms
+   */
+  static async autoDayLight({ components = null, animateDarkness = 1000 } = {}) {
     const selectedCalendar = this.selectedCalendar();
     if (!selectedCalendar) return;
 
     const settings = game.settings.get('dsa5', 'calendarSettings');
     if (!settings.lightByDayTime) return;
 
-    const components = game.time.calendar.timeToComponents(game.time.worldTime);
-    const currentGradient = CalendarWidget.dayTimeBackground(components);
+    const comps = components ?? game.time.calendar.timeToComponents(game.time.worldTime);
+    const currentGradient = CalendarWidget.dayTimeBackground(comps);
 
     let lightLevel = settings.dayDarknessAdjust[currentGradient.key] || 0;
 
-    if (settings.moonAddsLight && currentGradient.key === 'night' && components.moon) {
-      lightLevel -= settings.moon.darknessAdjust * components.moon.phase.lightAdjust;
+    if (settings.moonAddsLight && currentGradient.key === 'night' && comps.moon) {
+      lightLevel -= settings.moon.darknessAdjust * comps.moon.phase.lightAdjust;
     }
 
     if (canvas.scene) {
       canvas.scene.update(
         { 'environment.darknessLevel': Math.clamp(lightLevel, 0, 1) },
-        { animateDarkness: 1000 }
+        { animateDarkness }
       );
     }
   }
@@ -146,9 +151,9 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const month = calendar.months.values[components.month];
     const mm = calendar.translate(month.name);
     const dd = components.dayOfMonth + 1;
-    const h = components.hour.toString().padStart(2, '0');
-    const m = components.minute.toString().padStart(2, '0');
-    const s = components.second.toString().padStart(2, '0');
+    const h = Math.floor(components.hour).toString().padStart(2, '0');
+    const m = Math.floor(components.minute).toString().padStart(2, '0');
+    const s = Math.floor(components.second).toString().padStart(2, '0');
 
     return `${h}:${m}:${s}, ${dd}. ${mm} ${yyyy}`;
   }
@@ -240,10 +245,17 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
 }
 
 // Set up hook to update calendar displays when world time changes
-Hooks.on('updateWorldTime', () => {
-  game.dsa5.apps.CalendarWidget.render(true);
+Hooks.on('updateWorldTime', (worldTime, dt) => {
+  const widget = game.dsa5?.apps?.CalendarWidget;
+  const animated = widget?.maybeAnimateTimeChange?.(worldTime, dt) === true;
+
+  if (!animated) {
+    widget?.render(true);
+  }
+
   game.dsa5?.apps?.CalendarPicker?.refreshCalendar?.();
 
+  if (animated) return;
   if (!DSA5_Utility.isActiveGM(true) || !game.canvas) return;
 
   DSAWorldCalendar.autoDayLight();

@@ -394,7 +394,34 @@
       "Winter": "Winter",
       "YearSuffix": "BF",
       "ZunehmendesRad": "Zunehmendes Rad",
-      "backward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 6h",
+      "advance": {
+        "dayBack": "−1 Tag",
+        "dayForward": "+1 Tag",
+        "hourBack": "−1 Stunde",
+        "hourForward": "+1 Stunde",
+        "hours6Back": "−6 Stunden",
+        "hours6Forward": "+6 Stunden",
+        "minBack": "−1 Minute",
+        "minForward": "+1 Minute",
+        "mins30Back": "−30 Minuten",
+        "mins30Forward": "+30 Minuten",
+        "weekBack": "−1 Woche",
+        "weekForward": "+1 Woche"
+      },
+      "advanceShort": {
+        "dayBack": "−1d",
+        "dayForward": "+1d",
+        "hourBack": "−1h",
+        "hourForward": "+1h",
+        "hours6Back": "−6h",
+        "hours6Forward": "+6h",
+        "minBack": "−1m",
+        "minForward": "+1m",
+        "mins30Back": "−30m",
+        "mins30Forward": "+30m",
+        "weekBack": "−1w",
+        "weekForward": "+1w"
+      },
       "calendar": "Kalender",
       "config": "Einstellungen",
       "day": "Tag",
@@ -417,13 +444,10 @@
       },
       "defaultName": "Der Zwölfgöttliche Kalender",
       "events": "Ereignisse",
-      "fastBackward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 Tag<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 Woche",
-      "fastForward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 Tag<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 Woche",
       "featureVisibility": {
         "hint": "Wähle welche Kalenderfunktionen für Spieler sichtbar sind. Spielleiter haben immer Zugriff auf alle Funktionen.",
         "label": "Spieler Funktionssichtbarkeit"
       },
-      "forward": "Links-<i class=\"fas fa-computer-mouse\"></i> 1 h<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 6h",
       "holiday": {
         "Allaventurisches Gauklertreffen": "Allaventurisches Gauklertreffen",
         "Bardentreffen": "Bardentreffen",
@@ -538,8 +562,8 @@
       },
       "season": "Jahreszeit",
       "second": "Sekunde",
-      "smallBackward": "Links-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min",
-      "smallForward": "Links-<i class=\"fas fa-computer-mouse\"></i> 30 min<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> 1 min",
+      "weather": "Wetter",
+      "weatherUnavailable": "Keine Wetterdaten",
       "weekday": "Wochentag",
       "year": "Jahr"
     }
