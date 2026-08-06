@@ -505,9 +505,11 @@ export const MerchantSheetMixin = (superclass) =>
         case 'creature':
         case 'npc':
         case 'character':
-          //TODO skip if not trading window enabled
-          this.setTradeFriend(item);
-          break;
+          if (this.merchantSheetActivated()) {
+            this.setTradeFriend(item);
+            break;
+          }
+          return super._manageDragItems(item, typeClass);
         default:
           return super._manageDragItems(item, typeClass);
       }
