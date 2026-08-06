@@ -1101,7 +1101,7 @@ export default class Actordsa5 extends Actor {
       hasTrait,
       demonmarks,
       diseases,
-      canBuild: game.dsa5.sheets.DSACharBuilder && !this.system.details.species?.value,
+      canBuild: this.type === 'character' && game.dsa5.sheets.DSACharBuilder && !this.system.details.species?.value,
       itemModifiers: this.system.itemModifiers,
       languagePoints: this.system.freeLanguagePoints?.value
         ? `<span data-tooltip="languagePoints">(${this.system.freeLanguagePoints?.used}/${this.system.freeLanguagePoints?.value})</span>`
