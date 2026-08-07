@@ -65,7 +65,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     await super.getSheetData(data);
     data.combatskills = await DSA5_Utility.allCombatSkillsList('range');
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    data.breakPointRating = this.defaultBreakPointRating;
   }
 
   static chatData(data, name) {

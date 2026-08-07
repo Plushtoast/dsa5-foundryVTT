@@ -1,5 +1,4 @@
 import DialogShared from '../../dialog/dialog-shared.js';
-import DSA5 from '../../config/config-dsa5.js';
 import CreatureType from './creature-type.js';
 import DiceDSA5 from '../rolls/dice-dsa5.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
@@ -66,11 +65,10 @@ export default class EquipmentDamage {
     let category;
     if (item.type == 'armor') {
       category = _loc(`ARMORSUBCATEGORIES.${item.system.subcategory}`);
-      breakingResistance = item.system.structure.breakPointRating || DSA5.armorSubcategories[item.system.subcategory];
     } else {
       category = item.system.combatskill.value;
-      breakingResistance = item.system.structure.breakPointRating || DSA5.weaponStabilities[_loc(`LocalizedCTs.${category}`)];
     }
+    breakingResistance = item.system.effectiveBreakPointRating;
     if (!breakingResistance) {
       ui.notifications.error('DSAError.noBreakingResistance', { format: { item: item.name }, localize: true });
       return;

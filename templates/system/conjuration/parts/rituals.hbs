@@ -52,9 +52,7 @@
     <div class="dsa-stat-row dsapx-1">
         <span class="dsa-stat-row__label">{{item.name}}</span>
         <span class="dsa-stat-row__value">
-            <select name="{{item.name}}" class="moreModifiers" data-name="{{item.name}}">
-                {{selectOptions item.options selected=item.selected valueAttr="val" nameAttr="label"}}
-            </select>
+            {{> systems/dsa5/templates/system/parts/detail-select.hbs picker=item.picker}}
         </span>
     </div>
     {{/each}}

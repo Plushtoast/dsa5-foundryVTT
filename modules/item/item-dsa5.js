@@ -566,6 +566,12 @@ export default class Itemdsa5 extends Item {
     changes.sort((a, b) => a.priority - b.priority);
     foundry.documents.ActiveEffect.implementation._shimChanges(changes);
 
+    // Many weapons/armor leave BF unset (defaults live on StructureTemplate).
+    // Foundry ADD on undefined → NaN and the change is discarded with a validation warning.
+    if (changes.some((change) => change.key === EnhancementHelper.BREAK_POINT_RATING_KEY)) {
+      this.system.ensureBreakPointRating?.();
+    }
+
     const replacementData = this.getRollData();
     for (const change of changes) {
       if (!change.key) continue;
@@ -612,7 +618,8 @@ export default class Itemdsa5 extends Item {
   }
 
   _applyEnhancementRangeMultiplier(change) {
-    const multiplier = Number(change.value) || 1;
+    // Reach enhancements store an additive delta (e.g. 0.1 = +10%), applied as ×(1 + delta).
+    const multiplier = 1 + (Number(change.value) || 0);
     if (multiplier === 1) return;
 
     const base = foundry.utils.getProperty(this, 'system.reach.value') || '';

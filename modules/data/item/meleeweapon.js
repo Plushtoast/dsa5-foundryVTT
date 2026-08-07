@@ -109,7 +109,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     data.isShield = RuleChaos.isShield(data.document);
     data.showImprovisedToggle = this.hasImprovisedName;
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.weaponStabilities[_loc(`LocalizedCTs.${data.document.system.combatskill.value}`)];
+    data.breakPointRating = this.defaultBreakPointRating;
     foundry.utils.mergeObject(data, this.getGripInfo());
     
     if (!this.actor) return;

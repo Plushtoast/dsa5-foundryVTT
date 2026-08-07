@@ -24,8 +24,9 @@ export class PlayerMenuSubApp {
   get part() {
     return {
       template: this.constructor.template,
-      scrollable: ['']
-    }
+      templates: ['systems/dsa5/templates/system/parts/detail-select.hbs'],
+      scrollable: [''],
+    };
   }
 
   addTab(tabs, activeTab, group) {
@@ -84,6 +85,17 @@ export class PlayerMenuSubApp {
   }
 
   /**
+   * Artefaktzauberei requires Arcanovi and at least one spell to bind.
+   * @param {Actor} actor
+   */
+  static canEnchantArtifacts(actor) {
+    if (!actor) return false;
+    const hasArcanovi = PlayerMenuSubApp.hasAnyNamedItem(actor, [game.i18n.localize('LocalizedIDs.arcanovi')]);
+    const hasSpell = actor.items.some((item) => item.type === 'spell');
+    return hasArcanovi && hasSpell;
+  }
+
+  /**
    * Shared capability → badge mapping used by subapps and the built-in Beschwörung tab.
    * @param {'conjurer'|'alchemy'|'smith'|'artifact'} capability
    * @param {Actor} actor
@@ -104,7 +116,7 @@ export class PlayerMenuSubApp {
       artifact: {
         label: 'PLAYER.badge.artifactMage',
         icon: 'fas fa-gem',
-        qualifies: () => PlayerMenuSubApp.hasAnyNamedItem(actor, [game.i18n.localize('LocalizedIDs.arcanovi')]),
+        qualifies: () => PlayerMenuSubApp.canEnchantArtifacts(actor),
       },
     };
 
@@ -121,6 +133,44 @@ export class PlayerMenuSubApp {
   /** Craft skills that count toward the Schmied badge. */
   static SMITH_SKILLS = ['metalworking'];
 
+  constructor() {
+    this._openPickers = new Set();
+  }
+
+  /**
+   * Scope selector for this subapp's tab root (avoids colliding with summoning/other tabs).
+   * @returns {string}
+   */
+  get detailSelectScope() {
+    return `[data-tab="${this.tabName}"]`;
+  }
+
+  /**
+   * Bind shared detail-select toggle/pick handlers scoped to this subapp tab.
+   * @param {JQuery} html
+   * @param {(field: string, id: string) => void|boolean|Promise<void>} onPick
+   */
+  bindDetailSelect(html, onPick) {
+    const scope = this.detailSelectScope;
+    html.find(`${scope} [data-action="toggleDetailSelect"]`).on('click', (ev) => {
+      ev.preventDefault();
+      const field = ev.currentTarget.closest('.dsa-detail-select')?.dataset.field;
+      if (!field) return;
+      if (this._openPickers.has(field)) this._openPickers.delete(field);
+      else this._openPickers.add(field);
+      this.render();
+    });
+    html.find(`${scope} [data-action="pickDetailSelect"]`).on('click', async (ev) => {
+      ev.preventDefault();
+      const field = ev.currentTarget.dataset.field;
+      const id = ev.currentTarget.dataset.id ?? '';
+      if (!field) return;
+      this._openPickers.delete(field);
+      await onPick?.(field, id);
+      this.render();
+    });
+  }
+
   async _onRender(html) {}
 
   async render() {
@@ -128,7 +178,19 @@ export class PlayerMenuSubApp {
   }
 
   async activateTab() {
-    await game.dsa5.apps.playerMenu.changeTab(this.tabName, 'sheet');
+    const menu = game.dsa5.apps.playerMenu;
+    if (menu.tabGroups?.sheet === this.tabName) return;
+    await menu.changeTab(this.tabName, 'sheet');
+  }
+
+  /**
+   * Whether this subapp can consume the dropped document.
+   * Override in subapps that accept item drops.
+   * @param {Document} _data
+   * @returns {boolean}
+   */
+  canAcceptDrop(_data) {
+    return false;
   }
 
   get actor() {

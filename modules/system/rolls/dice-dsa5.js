@@ -2110,7 +2110,7 @@ export default class DiceDSA5 {
     const hideDamage = rerenderMessage ? rerenderMessage.flags.data.hideDamage : preData.mode == ATTACK;
     await DSATriggers.postRoll({ testData, preData });
     Hooks.call('postProcessDSARoll', chatOptions, testData, rerenderMessage, hideDamage);
-    await DSA5_Utility.callAsyncHooks('postProcessDSARoll', [testData]);
+    await DSA5_Utility.callAsyncHooks('postProcessDSARoll', [testData, chatOptions, rerenderMessage, hideDamage]);
     delete testData.actor;
     delete testData.preData;
 

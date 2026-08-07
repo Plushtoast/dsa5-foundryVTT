@@ -1,6 +1,7 @@
 export default class EnhancementHelper {
   static ACTOR_CHANGE_REGEX = /^@actor\./;
   static ANCHORED_SPELL_REDUCTION_KEY = 'system.powersource.anchoredSpellReduction';
+  static BREAK_POINT_RATING_KEY = 'system.structure.breakPointRating';
 
   static ARTIFACT_KEYS = new Set([
     'system.powersource.anchoredSpellReduction',
@@ -8,6 +9,16 @@ export default class EnhancementHelper {
 
   static getEffectChanges(effect) {
     return effect?.system?.changes ?? effect?.changes ?? [];
+  }
+
+  /** @see StructureTemplate#defaultBreakPointRating */
+  static defaultBreakPointRating(item) {
+    return item?.system?.defaultBreakPointRating;
+  }
+
+  /** @see StructureTemplate#ensureBreakPointRating */
+  static ensureBreakPointRating(item) {
+    return item?.system?.ensureBreakPointRating?.();
   }
 
   static isActorChange(change) {

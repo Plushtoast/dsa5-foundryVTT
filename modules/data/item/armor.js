@@ -54,7 +54,7 @@ export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, Descri
   async getSheetData(data) {
     await super.getSheetData(data);
     data.domains = this.prepareDomains();
-    data.breakPointRating = DSA5.armorSubcategories[data.document.system.subcategory];
+    data.breakPointRating = this.defaultBreakPointRating;
   }
 
   static chatData(data, name) {

@@ -278,6 +278,15 @@ export default class DSA5Payment {
     if (track) await MoneyTracker.track(actor, { type: 'payment', previous: oldSum, next: newSum }, newSum - oldSum);
   }
 
+  /**
+   * Format a silverthaler amount as HTML with coin icons (shared by @Pay enricher and templates).
+   * @param {number} money
+   * @returns {Promise<string>}
+   */
+  static async moneyToString(money) {
+    return this._moneyToString(money);
+  }
+
   static async _moneyToString(money) {
     const coins = await DSA5Payment._moneyToCoins(money);
     const res = [];
@@ -288,6 +297,17 @@ export default class DSA5Payment {
 
     if (res.length == 0) return '-';
     return res.join(', ');
+  }
+
+  /**
+   * Format a numeric range as coin HTML, e.g. "1–3" with coin icons on each bound.
+   * @param {number} min
+   * @param {number} max
+   * @returns {Promise<string>}
+   */
+  static async moneyRangeToString(min, max) {
+    const [a, b] = await Promise.all([this.moneyToString(min), this.moneyToString(max)]);
+    return `${a}–${b}`;
   }
 
   static async chatListeners(html) {

@@ -83,6 +83,7 @@ export default function () {
     },
     joinStr: (a, b) => b.join(a),
     itemPrice: (a) => DSA5_Utility.itemPrice(a),
+    moneyString: (html) => new Handlebars.SafeString(html || '-'),
     specAbSubCat: (a) => {
       return _loc(`COMBATSKILLCATEGORY.${a}`);
     },

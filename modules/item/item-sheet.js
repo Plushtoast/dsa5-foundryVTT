@@ -795,6 +795,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
       actor: this.actor,
       item: resultItem,
       actorImg: OpposedDsa5.videoOrImgTag(this.actor.img),
+      showDragHint: true,
     });
     const chatData = DSA5_Utility.chatDataSetup(template);
     chatData.flags = {

@@ -21,6 +21,13 @@
         gap: 8px;
     }
 
+    .summoning-type-row {
+        .dsa-detail-select {
+            width: 100%;
+            margin-bottom: 0;
+        }
+    }
+
     .summoning-type-picker {
         display: flex;
         align-items: center;

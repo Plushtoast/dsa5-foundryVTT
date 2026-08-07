@@ -1,0 +1,63 @@
+{{!-- Shared dropdown used by summoning, production-style apps, alchemy, artifacts.
+     picker: { field, owner, open, selectedId, selectedLabel, selectedBadge, selectedBadgeClass,
+               selectedIcon, selectedImg, selectedUuid, noneLabel, groups:[{label, options}] }
+     option: { id, name, badge, badgeClass, icon, img, uuid, selected, tooltip } --}}
+<div class="dsa-detail-select" data-field="{{picker.field}}" data-owner="{{picker.owner}}">
+	<div class="dsa-detail-select__control flexrow gap5px flexAlignCenter">
+		<button type="button" class="dsa-detail-select__toggle flex1" data-action="toggleDetailSelect"
+			{{#if picker.selectedTooltip}}data-tooltip="{{picker.selectedTooltip}}"{{/if}}>
+			{{#if picker.selectedImg}}
+			<img class="dsa-detail-select__icon" src="{{picker.selectedImg}}" alt="" loading="lazy" />
+			{{else if picker.selectedIcon}}
+			<i class="dsa-detail-select__icon {{picker.selectedIcon}}" aria-hidden="true"></i>
+			{{/if}}
+			<span class="dsa-detail-select__label">{{picker.selectedLabel}}</span>
+			{{#if picker.selectedBadge}}
+			<span class="dsa-detail-select__badge {{picker.selectedBadgeClass}}">{{picker.selectedBadge}}</span>
+			{{/if}}
+			<i class="fas fa-caret-{{#if picker.open}}up{{else}}down{{/if}}" aria-hidden="true"></i>
+		</button>
+		{{#if picker.selectedUuid}}
+		<button type="button" class="icon fas fa-book-open noBorder dsadesignbutton"
+			data-action="openDetailSelect" data-uuid="{{picker.selectedUuid}}"
+			data-tooltip="{{localize 'PRODUCTION.openDetails'}}"></button>
+		{{/if}}
+	</div>
+	{{#if picker.open}}
+	<div class="dsa-detail-select__menu">
+		{{#if picker.noneLabel}}
+		<div class="dsa-detail-select__option {{#unless picker.selectedId}}selected{{/unless}}">
+			<button type="button" class="dsa-detail-select__pick" data-action="pickDetailSelect"
+				data-field="{{picker.field}}" data-id="">{{picker.noneLabel}}</button>
+		</div>
+		{{/if}}
+		{{#each picker.groups as |group|}}
+		{{#if group.label}}
+		<div class="dsa-detail-select__group">{{group.label}}</div>
+		{{/if}}
+		{{#each group.options as |opt|}}
+		<div class="dsa-detail-select__option {{#if opt.selected}}selected{{/if}}">
+			<button type="button" class="dsa-detail-select__pick" data-action="pickDetailSelect"
+				data-field="{{picker.field}}" data-id="{{opt.id}}"
+				{{#if opt.tooltip}}data-tooltip="{{opt.tooltip}}"{{/if}}>
+				{{#if opt.img}}
+				<img class="dsa-detail-select__icon" src="{{opt.img}}" alt="" loading="lazy" />
+				{{else if opt.icon}}
+				<i class="dsa-detail-select__icon {{opt.icon}}" aria-hidden="true"></i>
+				{{/if}}
+				<span class="dsa-detail-select__option-label">{{opt.name}}</span>
+			</button>
+			{{#if opt.badge}}
+			<span class="dsa-detail-select__badge {{opt.badgeClass}}">{{opt.badge}}</span>
+			{{/if}}
+			{{#if opt.uuid}}
+			<button type="button" class="icon fas fa-book-open noBorder dsadesignbutton"
+				data-action="openDetailSelect" data-uuid="{{opt.uuid}}"
+				data-tooltip="{{localize 'PRODUCTION.openDetails'}}"></button>
+			{{/if}}
+		</div>
+		{{/each}}
+		{{/each}}
+	</div>
+	{{/if}}
+</div>

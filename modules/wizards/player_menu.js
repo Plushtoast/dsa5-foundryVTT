@@ -9,12 +9,14 @@ import CreatureType from '../system/automation/creature-type.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
 import { CONJURATION_TYPES, CONJURATION_CONTROL_MODES, controlModeForType } from '../config/conjuration-constants.js';
+import DetailSelect from '../system/helpers/detail-select.js';
 
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
 /** Partial chain shared by the Beschwörung tab and the GM confirmation dialog. */
 const conjurationPartTemplates = [
+  'systems/dsa5/templates/system/parts/detail-select.hbs',
   'systems/dsa5/templates/system/conjuration/parts/summary.hbs',
   'systems/dsa5/templates/system/conjuration/parts/creature-card.hbs',
   'systems/dsa5/templates/system/conjuration/parts/type-picker.hbs',
@@ -30,6 +32,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     super(app);
     this.entityAbilities = [];
     this.summoningPhase = 'ritual';
+    this._openPickers = new Set();
 
     game.dsa5.apps.PlayerMenuSubApp = PlayerMenuSubApp;
     this.summoningModifiers = [
@@ -379,9 +382,20 @@ export default class PlayerMenu extends DefaultAppv2 {
       ev.stopPropagation();
       fromUuid(ev.currentTarget.dataset.uuid).then(itm => itm.sheet.render(true));
     });
-    html.find('.moreModifiers').on('change', (ev) => {
-      const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].find((x) => x.name == ev.currentTarget.dataset.name);
-      mod.selected = $(ev.currentTarget).val();
+    html.find('.summoning-tab [data-action="toggleDetailSelect"]').on('click', (ev) => {
+      ev.preventDefault();
+      const field = ev.currentTarget.closest('.dsa-detail-select')?.dataset.field;
+      if (!field) return;
+      if (this._openPickers.has(field)) this._openPickers.delete(field);
+      else this._openPickers.add(field);
+      this.render(true);
+    });
+    html.find('.summoning-tab [data-action="pickDetailSelect"]').on('click', (ev) => {
+      ev.preventDefault();
+      const field = ev.currentTarget.dataset.field;
+      const id = ev.currentTarget.dataset.id ?? '';
+      if (!field) return;
+      this.#applyDetailSelectPick(field, id);
     });
 
     new foundry.applications.ux.DragDrop.implementation({
@@ -541,7 +555,6 @@ export default class PlayerMenu extends DefaultAppv2 {
       quickSelectActor: this.#quickSelectActor,
       unselectActor: this.#unselectActor,
       selectConjurationType: this.#selectConjurationType,
-      openConjurationTypeMenu: this.#openConjurationTypeMenu,
       showEntity: this._onShowEntity,
       setSummoningPhase: this.#setSummoningPhase,
       openActorBadge: this.#openActorBadge,
@@ -606,7 +619,11 @@ export default class PlayerMenu extends DefaultAppv2 {
   static #selectConjurationType(ev, target) {
     const typeId = target.dataset.typeId;
     if (typeId === undefined || typeId === null) return;
-    if (typeId === String(this.conjurationData.conjurationType)) return;
+    this._openPickers?.clear();
+    if (typeId === String(this.conjurationData.conjurationType)) {
+      this.render(true);
+      return;
+    }
 
     this.conjurationData.conjurationType = typeId;
     this.conjurationData.selectedIds = [];
@@ -619,26 +636,21 @@ export default class PlayerMenu extends DefaultAppv2 {
     this.render(true);
   }
 
-  static async #openConjurationTypeMenu(ev, target) {
-    const app = this;
-    const items = app.#prepareTypeCards().map((card) => ({
-      label: card.name,
-      icon: card.img
-        ? `<img src="${card.img}" alt="" style="width:1em;height:1em;object-fit:contain" />`
-        : `<i class="${card.icon}"></i>`,
-      onClick: () => {
-        PlayerMenu.#selectConjurationType.call(app, ev, { dataset: { typeId: String(card.id) } });
-      },
-    }));
-
-    const contextMenu = new foundry.applications.ux.ContextMenu(this.element, '', items, {
-      jQuery: false,
-      fixed: true,
-      eventName: 'none',
-    });
-    ui.context?.close();
-    await contextMenu.render(target, { animate: true });
-    ui.context = contextMenu;
+  #applyDetailSelectPick(field, id) {
+    this._openPickers.delete(field);
+    if (field === 'conjurationType') {
+      PlayerMenu.#selectConjurationType.call(this, null, { dataset: { typeId: String(id) } });
+      return;
+    }
+    if (field.startsWith('moreMod:')) {
+      const name = field.slice('moreMod:'.length);
+      const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType]?.find((x) => x.name == name);
+      if (mod) {
+        mod.selected = id;
+        this.render(true);
+      }
+      return;
+    }
   }
 
   static async _onShowEntity(ev, target) {
@@ -723,7 +735,16 @@ export default class PlayerMenu extends DefaultAppv2 {
         this.render(true);
       }
     } else {
+      // Prefer the active tab when it can accept this drop (e.g. weapon on Artefaktzauberei
+      // must not jump to Herstellung just because ProductionHelper registered first).
+      const activeTab = this.tabGroups?.sheet;
+      const activeApp = this.subApps.find((app) => app.tabName === activeTab);
+      if (activeApp?.canAcceptDrop?.(data)) {
+        const res = await activeApp._onDrop(data);
+        if (res === true) return;
+      }
       for (const app of this.subApps) {
+        if (app === activeApp) continue;
         const res = await app._onDrop(data);
         if (res === true) break;
       }
@@ -812,6 +833,22 @@ export default class PlayerMenu extends DefaultAppv2 {
             x.label = `${x.name} (${x.val})`;
             return x;
           });
+          const selectedOpt = item.options.find((x) => String(x.val) === String(item.selected)) || item.options[0];
+          item.picker = DetailSelect.build({
+            field: `moreMod:${item.name}`,
+            owner: 'summoning',
+            open: this._openPickers.has(`moreMod:${item.name}`),
+            selectedId: selectedOpt?.val ?? item.selected ?? '',
+            selectedLabel: selectedOpt?.label || selectedOpt?.name || '',
+            groups: [{
+              label: '',
+              options: item.options.map((opt) => ({
+                id: String(opt.val),
+                name: opt.label || `${opt.name} (${opt.val})`,
+                selected: String(opt.val) === String(selectedOpt?.val ?? item.selected),
+              })),
+            }],
+          });
         }
       }
 
@@ -844,6 +881,32 @@ export default class PlayerMenu extends DefaultAppv2 {
     }
 
     const conjurationTypeCards = this.#prepareTypeCards();
+    const selectedType = conjurationTypeCards.find((c) => c.selected) || conjurationTypeCards[0];
+    const conjurationTypePicker = DetailSelect.build({
+      field: 'conjurationType',
+      owner: 'summoning',
+      open: this._openPickers.has('conjurationType'),
+      selectedId: selectedType?.id ?? '',
+      selectedLabel: selectedType?.name || '',
+      selectedBadge: selectedType ? _loc(selectedType.controlModeLabel) : '',
+      selectedBadgeClass: 'dsa-detail-select__badge--accent',
+      selectedIcon: selectedType?.img ? '' : (selectedType?.icon || ''),
+      selectedImg: selectedType?.img || '',
+      selectedTooltip: selectedType?.hint || '',
+      groups: [{
+        label: '',
+        options: conjurationTypeCards.map((card) => ({
+          id: String(card.id),
+          name: card.name,
+          icon: card.img ? '' : card.icon,
+          img: card.img || '',
+          badge: _loc(card.controlModeLabel),
+          badgeClass: 'dsa-detail-select__badge--accent',
+          tooltip: card.hint || '',
+          selected: !!card.selected,
+        })),
+      }],
+    });
     const phase = this.summoningPhase === 'extensions' ? 'extensions' : 'ritual';
     mergeObject(data, {
       actor: this.actor || {
@@ -853,7 +916,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       conjurationData: this.conjurationData,
       conjurationTypes: this.conjurationData.conjurationTypes,
       conjurationTypeCards,
-      selectedConjurationType: conjurationTypeCards.find((c) => c.selected),
+      selectedConjurationType: selectedType,
+      conjurationTypePicker,
       summoningPhase: phase,
       showRitualPhase: phase === 'ritual',
       showExtensionsPhase: phase === 'extensions',

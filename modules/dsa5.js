@@ -101,6 +101,7 @@ import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
 import AspPaymentDialog from './dialog/asp-payment-dialog.js';
 import EnhancementHelper from './system/enhancement/enhancement-helper.js';
+import DetailSelect from './system/helpers/detail-select.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
 
@@ -109,6 +110,7 @@ Hooks.once('init', () => {
   game.dsa5 = {
     apps: {
       DSA5_Utility,
+      DetailSelect,
       DSA5Initializer,
       DSA5ChatListeners,
       ChatCommandService,
