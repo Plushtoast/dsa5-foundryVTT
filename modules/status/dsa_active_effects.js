@@ -368,7 +368,7 @@ export default class DSAActiveEffect extends ActiveEffect {
       update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
     }
 
-    if (Object.keys(update).length) this.updateSource(update);
+    if (!foundry.utils.isEmpty(update)) this.updateSource(update);
   }
 
   async _preUpdate(changed, options, user) {

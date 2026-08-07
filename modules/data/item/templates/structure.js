@@ -41,7 +41,8 @@ export default class StructureTemplate extends DSADataModel {
   }
 
   /**
-   * Seed `structure.breakPointRating` in memory so Foundry ADD does not start from undefined.
+   * Seed `structure.breakPointRating` in memory so Foundry ADD does not start from null/undefined.
+   * (null + delta coerces to 0 + delta; undefined + delta is NaN and is discarded.)
    * Does not persist; source stays empty so category inheritance remains.
    * @returns {number|undefined}
    */

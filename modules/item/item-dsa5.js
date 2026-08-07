@@ -554,7 +554,9 @@ export default class Itemdsa5 extends Item {
     }
 
     if (specialAttributeParts.length) {
-      const existing = (foundry.utils.getProperty(this, 'system.effect.attributes') || '').split(',').map(s => s.trim()).filter(Boolean);
+      // Re-apply from source so repeated prepareData does not accumulate attributes.
+      const sourceAttrs = foundry.utils.getProperty(this._source, 'system.effect.attributes') || '';
+      const existing = sourceAttrs.split(',').map(s => s.trim()).filter(Boolean);
       for (const attr of specialAttributeParts) {
         if (!existing.includes(attr)) existing.push(attr);
       }
@@ -566,8 +568,10 @@ export default class Itemdsa5 extends Item {
     changes.sort((a, b) => a.priority - b.priority);
     foundry.documents.ActiveEffect.implementation._shimChanges(changes);
 
-    // Many weapons/armor leave BF unset (defaults live on StructureTemplate).
-    // Foundry ADD on undefined → NaN and the change is discarded with a validation warning.
+    // Re-apply against source values so prepareData stays idempotent (ADD must not stack).
+    this.#restoreEnhancementChangeBases(changes);
+
+    // Unset BF inherits category defaults; Foundry ADD on null is `null+n → n`, so seed first.
     if (changes.some((change) => change.key === EnhancementHelper.BREAK_POINT_RATING_KEY)) {
       this.system.ensureBreakPointRating?.();
     }
@@ -595,6 +599,30 @@ export default class Itemdsa5 extends Item {
 
       if (change.key === 'system.protection.value' && this.type === 'armor') {
         this._replicateProtectionToZones(change);
+      }
+    }
+  }
+
+  /**
+   * Copy enhancement target fields from `_source` before applying changes.
+   * Without this, calling `prepareData()` without a prior `reset()` stacks ADD deltas.
+   * @param {object[]} changes
+   */
+  #restoreEnhancementChangeBases(changes) {
+    const restored = new Set();
+    const restoreKey = (key) => {
+      if (!key || restored.has(key)) return;
+      restored.add(key);
+      const sourceValue = foundry.utils.getProperty(this._source, key);
+      foundry.utils.setProperty(this, key, foundry.utils.deepClone(sourceValue));
+    };
+
+    for (const change of changes) {
+      restoreKey(change.key);
+      if (change.key === 'system.protection.value' && this.type === 'armor') {
+        for (const zone of ['head', 'leftarm', 'rightarm', 'leftleg', 'rightleg']) {
+          restoreKey(`system.protection.${zone}`);
+        }
       }
     }
   }

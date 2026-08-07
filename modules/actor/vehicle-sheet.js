@@ -197,7 +197,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     const operators = this.actor.system.weaponOperators ?? {};
 
     const enrichWeapon = (weapon) => {
-      const operatorUuid = operators[weapon._id];
+      const weaponId = weapon._id;
+      const operatorUuid = operators[weaponId];
       const operator = operatorUuid ? fromUuidSync(operatorUuid) : null;
       weapon.crewOperatorUuid = operatorUuid ?? '';
       weapon.crewOperatorName = operator?.name ?? '';

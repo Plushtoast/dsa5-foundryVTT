@@ -13,6 +13,7 @@ export class DSACombatantDataModel extends DSADataModel {
     'chaseRolled',
     'chaseLastMove',
     'chaseDistanceBefore',
+    'broadsideShots',
   ]);
 
   static defineSchema() {

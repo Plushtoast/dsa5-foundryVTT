@@ -75,7 +75,7 @@ export default class MaintainedEffects {
       update['flags.data.maintenanceTargetUuids'] = finalTargets;
     }
 
-    if (Object.keys(update).length) {
+    if (!foundry.utils.isEmpty(update)) {
       await this.#updateMessage(messageId, update);
     }
 

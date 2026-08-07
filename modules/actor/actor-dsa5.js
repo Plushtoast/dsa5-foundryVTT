@@ -55,10 +55,8 @@ export default class Actordsa5 extends Actor {
       return await super.create(data, options);
     }
 
-    if (data.type === 'vehicle') {
-      await CONFIG.Actor.dataModels.vehicle.prepareCreateData(data);
-      return await super.create(data, options);
-    }
+    // Vehicle defaults are applied in createDocuments (bulk pack items).
+    if (data.type === 'vehicle') return await super.create(data, options);
 
     data.items = [].concat(...(await Promise.all([DSA5_Utility.allSkills(), DSA5_Utility.allCombatSkills(), DSA5_Utility.allMoneyItems()])));
 
@@ -67,6 +65,24 @@ export default class Actordsa5 extends Actor {
     if (data.type != 'creature' && [undefined, 0].includes(getProperty(data, 'system.status.wounds.value'))) mergeObject(data, { system: { status: { wounds: { value: 16 } } } });
 
     return await super.create(data, options);
+  }
+
+  /**
+   * Attach vehicle default items on the create payload. Bulk pack items via
+   * updateSource in _preCreate proved unreliable (empty create results).
+   */
+  static async createDocuments(source, context = {}) {
+    const prepared = [];
+    for (const data of source) {
+      if (data.type === 'vehicle' && !data.items?.length) {
+        const copy = foundry.utils.deepClone(data);
+        await CONFIG.Actor.dataModels.vehicle.prepareCreateData(copy);
+        prepared.push(copy);
+      } else {
+        prepared.push(data);
+      }
+    }
+    return super.createDocuments(prepared, context);
   }
 
   static async deferredEffectAddition(effect, actor, target) {
@@ -1989,7 +2005,8 @@ export default class Actordsa5 extends Actor {
         },
       });
     }
-    this.updateSource(update);
+
+    if (!foundry.utils.isEmpty(update)) this.updateSource(update);
   }
 
   async exclusiveEquipWeapon(itemId, offHand = false) {

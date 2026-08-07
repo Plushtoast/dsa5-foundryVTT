@@ -236,6 +236,32 @@
         cursor: grab;
     }
 
+    .dsa-sortable-handle {
+        flex: 0 0 auto;
+        align-self: center;
+        padding: 0 2px;
+        opacity: 0.45;
+        cursor: grab;
+
+        &:hover {
+            opacity: 0.85;
+        }
+    }
+
+    .dsa-sortable-item {
+        &.dragging {
+            opacity: 0.45;
+        }
+
+        &.drag-over-before {
+            box-shadow: 0 -2px 0 0 var(--dsadesign1);
+        }
+
+        &.drag-over-after {
+            box-shadow: 0 2px 0 0 var(--dsadesign1);
+        }
+    }
+
     .dsa-detail-select {
         // Match select2 dropdown colors (light: --bg-color, dark: --select2bg)
         --dsa-detail-select-bg: var(--select2bg, var(--bg-color));
