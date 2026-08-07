@@ -11,6 +11,7 @@
                         {{#if isGM}}
                             <button type='button' class='icon fas fa-plus list-add-button' data-action='newQuest' data-tooltip='{{localize "DSAQUESTLOG.createQuest"}}'></button>
                         {{/if}}
+                        <button type='button' class='icon fas fa-bars list-context-menu noBorder dsadesignbutton' data-action='questlogListMenu' data-tooltip='{{localize "JOURNAL.ActionShow"}}'></button>
                     </div>
                 </div>
 
@@ -27,7 +28,7 @@
                                 </div>
                                 <div class='faction-body'>
                                 {{#each group.quests as |quest|}}
-                                    <div class='persona-list-item{{ifThen quest.isVisibleToPlayers "" " invisible"}} {{ifThen (and @root.detailData (eq @root.detailData.questKey quest.questKey) (eq @root.detailData.uuid quest.uuid)) "selected" ""}}' data-quest-uuid='{{quest.uuid}}' data-quest-key='{{quest.questKey}}' data-action='selectQuest' tabindex='0'>
+                                    <div class='persona-list-item{{ifThen quest.isVisibleToPlayers "" " invisible"}} {{ifThen (and @root.detailData (eq @root.detailData.questKey quest.questKey) (eq @root.detailData.uuid quest.uuid)) "selected" ""}}' data-quest-uuid='{{quest.uuid}}' data-quest-key='{{quest.questKey}}' data-quest-status='{{quest.status}}' data-action='selectQuest' tabindex='0'>
                                         <div class='persona-list-image center flexAlignCenter'>
                                             <i class='fas {{ifThen quest.pinToTop "fa-star" "fa-scroll"}}'></i>
                                         </div>

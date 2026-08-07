@@ -1728,6 +1728,7 @@
     "dragToReorder": "Zum Umsortieren ziehen",
     "emptyHint": "Erstelle oder registriere ein Auftrags-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
     "emptyTitle": "Noch keine Aufträge",
+    "filterOpenOnly": "Nur offene",
     "journals": {
       "hint": "Wähle Journale mit Auftrags-Einträgen für dein Spiel. Du kannst die Journale oder Einträge beliebig anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)",
       "label": "Auftrags-Journale"

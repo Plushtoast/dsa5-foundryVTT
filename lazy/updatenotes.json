@@ -124,6 +124,10 @@
         {
             "version": "8.0.0",
             "text": "<ul><li>Foundry v14 compatibility</li><li>Built-in shapeshifting with animated token transitions</li><li>Native payment requests and shared transaction summaries</li><li>Query-based roll requests</li><li>Calendar-integrated adventure questlog</li><li>Scene regions replace measured templates for spells and auras</li><li>New group actor type for party management</li><li>New English modules: Secret of the Dragon Knight, Aventurian Armory II, Aventurian Pandaemonium, Aventurian Bestiary II, Aventurian Companions</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel, Twolli, Zoidable, Qowy, Neilo, Grimheimr, Wero999, Shurikan, Goronius, Tarion, Thierry and in memoriam <i class=\"garjourn boronsrad\"></i>Niemand.</li></ul>"
+        },
+        {
+            "version": "8.1.0",
+            "text": "<ul><li>Continuous deployment strategy for features</li><li>Player apps overhaul (summoning, alchemy, artifacts, crafting)</li><li>Advanced combat sidebar: brawling persistence, chases, ship chases, mass combat rounds</li><li>New vehicle actor sheet (ships)</li><li>Magical analysis on information items</li><li>Design and accessibility reworks across many apps</li><li>Improved Compendium II crit tables</li><li>Free Heldenwerk adventures and The Nine-Fingered Claw campaign coming soon</li><li>And big thanks again to all our voluntary helpers! Especially Gunthgard, VTTom, Nellkir, Lambert, Adalariel, Mckee, Rapunzel, Twolli, Zoidable, Qowy, Neilo, Grimheimr, Wero999, Shurikan, Goronius, Tarion, Thierry, Albinosheep, WujekKlawy and in memoriam <i class=\"garjourn boronsrad\"></i>Niemand.</li></ul>"
         }
 
     ]

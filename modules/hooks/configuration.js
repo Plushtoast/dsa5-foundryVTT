@@ -692,6 +692,13 @@ export function setupConfiguration() {
       default: 'timeline',
       type: String,
     },
+    questlogFilterOpenOnly: {
+      name: 'DSAQUESTLOG.filterOpenOnly',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
     enableCombatFlow: {
       name: 'DSASETTINGS.enableCombatFlow',
       hint: 'DSASETTINGS.enableCombatFlowHint',

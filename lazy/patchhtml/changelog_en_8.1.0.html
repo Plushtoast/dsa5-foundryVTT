@@ -1,0 +1,91 @@
+<h1 id="major-enhancements">Major Enhancements</h1>
+
+<h2 id="deployment-strategy">New deployment strategy</h2>
+<p>Some of you might have noticed it already. We are not patching new features in in one big patch but instead continuously whenever they are ready.</p>
+<p>This brings other disadvantages and advantages:</p>
+<p><strong>Pros:</strong></p>
+<ul class="dsalist">
+<li>Early testing with mostly power users and getting some feedback (special thanks to Albinosheep, WujekKlawy and Wero and a few more unsung heros in the shadows for having an opinion about everything).</li>
+<li>Gating background issues have no effect anymore on updates.</li>
+<li>Moving faster</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul class="dsalist">
+<li>No explanations provided until the changelog for anyone by policy.</li>
+<li>No big surprises anymore, it is less epic now.</li>
+</ul>
+
+<h2 id="player-apps">Player Apps Overhaul</h2>
+<p>We enhanced the look and feel of the player app which contains functions for summoning, alchemy, artifact creation and weapon/armor creation.</p>
+<p>Among the enhancement you'll find better explanations and tooltips, general wider cover of functions and more accessibility. Among the new things you can enjoy these:</p>
+<ul class="dsalist">
+<li>Summoning is now available through the actor sheet with extra buttons (e.g. on companion tab for summoners)</li>
+<li>Summoning now has active effects to modify e.g. services amount for demons or conjuration of specific creature types.</li>
+<li>Summoned creatures should now appear in the companion tab of the summoner</li>
+<li>Enchanting now also works for items not in the enchanters inventory</li>
+<li>and a bunch of other minor things</li>
+</ul>
+
+<h2 id="combat-sidebar">Advanced combat sidebar</h2>
+<p>In the combat tracker sidebar you'll find some more advanced functions now to cover specific type of competitions that are not plain beating on each other :)</p>
+<ul class="dsalist">
+<li>Normal combat is still there</li>
+<li>Brawling has been massively enhanced to allow to keep the bruised state of the combatants between brawls, if the gm decides to switch to lethal combat in between but also expects that they will later will have their fists talking again against those really loud neighbours in the room above in the tavern. Specifically that means that the level of damage on the actors persists until the gamemaster decides to convert it to real pain. A regeneration roll will though always clear the brawling damage.</li>
+<li>Chases are now a part of the system allowing the group to track the distance between prey and predator while also counting the change in distance according to the rules. Please also note that the tracker in the sidebar and the dsainitracker behave a little different offering new actions for chasing and showing the participants in order of distance</li>
+<li>The same exists for ship chases now as well with a bunch of modifications that mostly target ship types and terrain difficulties.</li>
+<li>A new combat mode called mass combat rounds which allows vehicles (specifically ships) to fight with each other. To make this work in foundry better we also added houseruling that deals with specific circumstances special to foundry to make the experience more smooth. Alongside the upgrade there is also a new actor type called "vehicle" (see below). The upcoming (german) module "Unergründliche Meere" will contain some ships to test out this feature!</li>
+</ul>
+
+<h2 id="vehicle-sheet">New Vehicle sheet</h2>
+<p>There is now a new actor sheet for vehicles. This is mainly currently prepared for ships especially those coming from the new module "Unergründliche Meere".</p>
+<p>This is certainly only the beginning as we incorporate the vehicle sheet deeper into the game system. Special rules for ships can also be read in this book.</p>
+
+<h2 id="magical-analysis">Magical analysis</h2>
+<p>The information item has been upgraded to support magical analysis. You can configure it like a normal information item with uncoverable text per QL. The analysis can then be posted to the chat triggering a analysis flow that takes skills and abilities into account and provides custom and general information according to the rules on success.</p>
+<p>You can drag these upgraded information items (and normal ones) onto equipment now as well to prepare your magical lint for your party.</p>
+
+<h2 id="design-accessibility">Design and accessibility</h2>
+<p>A lot of pre-existing apps have been upgraded and reworked to contain a clearer layout and additionally tooltips for easier understanding and hopefully a more pleasing visual experience. Among those you can find:</p>
+<ul class="dsalist">
+<li>Rework of the "Breeding pit"</li>
+<li>Rework of some generators mostly from master's workshop</li>
+<li>Player menu rework</li>
+<li>Calendar widget rework</li>
+<li>Item library rework. New filters, compact design but most importantly new table view that lets you compare item stats easier.</li>
+<li>Roll queries chatcards and group tests chat cards</li>
+</ul>
+
+<h2 id="crit-tables">Please don't read this</h2>
+<p>We enhanced the crit tables coming from compendium II by a huge margin. They have been part of the system for quite some time but unfortunately with a lot of bugs. This is due to them adding a large amount of new rule systems that actually don't work well with similar systems in parallel in TDE/DSA.</p>
+<p>But... we improved those. Hope they'll now work... but maybe still not. It's hundred of distinct rules still...</p>
+<p>And... normal combat tables should now be able to inflict self-damage properly. If your players decide to roll 20s and touch their own sharp blades instead of being heros.</p>
+
+<h1 id="improvements">Improvements</h1>
+<ul class="dsalist">
+<li>Enrichers for group checks now support alternative talents e.g.: <code>@Gc[Sinnesschärfe 1,Selbstbeherrschung -1]</code>. That will trigger a roll request where the players can pick any of the valid skills.</li>
+<li>Active effects can already be removed automatically through charges in a previous patch. This now also applies to some healing effects e.g. "Treat wounds" which will delete the beneficial effect on the regeneration check after it has been used once.</li>
+<li>Animal traits that cost AE (familiars) can now deduct AE points on usage automatically.</li>
+<li>It is now possible to deactivate attack from behind on a defense dialog in combat without disabling the automation.</li>
+<li>Active effects can now be consumed by skill rolls. If an active effect has a charge and is used as optional effect in a skill roll then the effect will lose one charge (e.g. a potion that would allow three times perception+1). That is mainly for consumables now. Special thanks to Wero for laying foundations here.</li>
+<li>The hotbar now has a context menu option to change token disposition (friendly, enemy, neutral). So auras and actual friends and enemies on the map can be handled easier.</li>
+<li>Dramatis Personae/Almanach has now new keyboard navigation. Try arrow keys and tab.</li>
+<li>Dramatis Personae actor can now be flagged "important"</li>
+<li>Gamemaster functions targeting groups are now visible on the group actor sheet. This is only the beginning...</li>
+<li>Dramatis Personae actors can now have multiple factions (comma separated)</li>
+<li>A few special abilities should now work better with regeneration.</li>
+<li>The tab for religion on actor sheets now has a ceremonial item section similar to tradition artifacts for spellcasters.</li>
+<li>The events section in the campaign tool (click on the date at the top of the window) has been enhanced with a few nice things. Among those the option to show the events as actual calendar if you like square shaped entries.</li>
+<li>Click on carried weight lets you now quickly modify an active effect to set the pack mule rule for companions so they can carry the heavy rocks you accumulated on your soul ... err I mean travel.</li>
+<li>The journal browser allows now to attach your own custom journal compendiums if you follow some minor formatting rules.</li>
+<li>A gem as power source can now be created. Create in an active effect compendium an active effect of type enhancement with subtype power source and drag it on your gem. You will find prepared gems already in the upcoming module "Arkane Schmieden und Labore"</li>
+<li>The calendar has now a 24h time formatter instead of ingame TDE/DSA time format.</li>
+<li>Quest objectives can now be resorted via drag and drop (in edit view)</li>
+<li>The quests tab in the campaign tool (calendar) can now hide resolved quests.</li>
+<li>The calendar now animates time shift (work best with magna carta)</li>
+</ul>
+
+<h1 id="bugfixes">Bugfixes</h1>
+<p>We will not list bugfixes anymore. Instead you can find the timeline when what bugfixes has been resolved right here:</p>
+<p><a href="https://github.com/users/Plushtoast/projects/1/views/10">Bugfix Timeline</a></p>
+<p>On the same board you can also find plans for future enhancements on the system.<br>
+Note that you can also use the search function there.</p>

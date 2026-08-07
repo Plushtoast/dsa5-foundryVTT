@@ -1726,6 +1726,7 @@
     "dragToReorder": "Drag to reorder",
     "emptyHint": "Create or register a quest journal to track adventure progress here.",
     "emptyTitle": "No quests yet",
+    "filterOpenOnly": "Open only",
     "journals": {
       "hint": "Select journals with quest entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)",
       "label": "Quest Journals"

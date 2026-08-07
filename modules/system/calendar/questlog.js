@@ -1,6 +1,9 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 import ListKeyboardNavigation from './list_keyboard_navigation.js';
 
+const OPEN_STATUS = 0;
+const FILTER_SETTING = 'questlogFilterOpenOnly';
+
 export class QuestLogFeature {
     static #parent;
     static #lastSelectedQuest = null;
@@ -28,6 +31,7 @@ export class QuestLogFeature {
         toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
         toggleLinkedDocumentVisibility: QuestLogFeature.toggleLinkedDocumentVisibility,
         toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
+        questlogListMenu: QuestLogFeature.questlogListMenu,
     };
 
     async _preparePartContext(context, _options) {
@@ -96,6 +100,76 @@ export class QuestLogFeature {
         return Array.from(groups.entries())
             .sort(([left], [right]) => collator.compare(left, right))
             .map(([group, questsInGroup]) => ({ group, quests: questsInGroup, isCollapsed: QuestLogFeature.#collapsedGroups.has(group) }));
+    }
+
+    static #isOpenOnlyFilterActive() {
+        return !!game.settings.get('dsa5', FILTER_SETTING);
+    }
+
+    static async questlogListMenu(event, target) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const openOnly = QuestLogFeature.#isOpenOnlyFilterActive();
+        const menuItems = [];
+        if (game.user.isGM) {
+            menuItems.push({
+                label: _loc('DSAQUESTLOG.createQuest'),
+                icon: '<i class="fas fa-plus"></i>',
+                onClick: () => QuestLogFeature.newQuest(),
+            });
+        }
+        menuItems.push({
+            label: _loc('DSAQUESTLOG.filterOpenOnly'),
+            icon: openOnly ? '<i class="fas fa-check"></i>' : '<i class="fas fa-scroll"></i>',
+            onClick: () => QuestLogFeature.#toggleOpenOnlyFilter(),
+        });
+
+        const menu = new foundry.applications.ux.ContextMenu(
+            QuestLogFeature.#parent.element,
+            '',
+            menuItems,
+            { jQuery: false, fixed: true, eventName: 'none' },
+        );
+        ui.context?.close();
+        await menu.render(target, { animate: true });
+        ui.context = menu;
+    }
+
+    static async #toggleOpenOnlyFilter() {
+        const next = !QuestLogFeature.#isOpenOnlyFilterActive();
+        await game.settings.set('dsa5', FILTER_SETTING, next);
+        QuestLogFeature.#applyListFilters();
+    }
+
+    static #applyListFilters() {
+        const html = QuestLogFeature.#parent.element?.querySelector('.tab[data-tab="questlog"] .questlog-list');
+        if (!html) return;
+
+        const searchInput = html.closest('.personae-list-column')?.querySelector('input.questSearch[type=search]');
+        const query = foundry.applications.ux.SearchFilter.cleanQuery(searchInput?.value || '');
+        const rgx = query ? new RegExp(query, 'i') : null;
+        QuestLogFeature.#filterListContent(html, query, rgx);
+    }
+
+    static #filterListContent(html, query, rgx) {
+        const openOnly = QuestLogFeature.#isOpenOnlyFilterActive();
+        for (const entry of html.querySelectorAll('.persona-list-item')) {
+            const matchesStatus = !openOnly || Number(entry.dataset.questStatus) === OPEN_STATUS;
+            let matchesSearch = true;
+            if (query) {
+                const title = entry.querySelector('.persona-list-name')?.textContent || '';
+                const meta = entry.querySelector('.persona-list-meta')?.textContent || '';
+                const summary = entry.querySelector('.questlog-summary')?.textContent || '';
+                matchesSearch = [title, meta, summary].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
+            }
+            entry.hidden = !(matchesStatus && matchesSearch);
+        }
+
+        for (const group of html.querySelectorAll('.faction-group')) {
+            const visibleChildren = Array.from(group.querySelectorAll('.persona-list-item')).some(item => !item.hidden);
+            group.hidden = !visibleChildren;
+        }
     }
 
     static toggleQuestGroup(event, target) {
@@ -251,6 +325,7 @@ export class QuestLogFeature {
             selectItem: (event, item) => QuestLogFeature.selectQuest(event, item),
         });
         this.#keyboardNavigation.bind(this.element);
+        QuestLogFeature.#applyListFilters();
     }
 
     _tearDown() {
@@ -259,22 +334,6 @@ export class QuestLogFeature {
     }
 
     #onSearchFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll('.persona-list-item')) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const title = entry.querySelector('.persona-list-name')?.textContent || '';
-            const meta = entry.querySelector('.persona-list-meta')?.textContent || '';
-            const summary = entry.querySelector('.questlog-summary')?.textContent || '';
-            const isMatch = [title, meta, summary].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
-            entry.hidden = !isMatch;
-        }
-
-        for (const group of html.querySelectorAll('.faction-group')) {
-            const visibleChildren = Array.from(group.querySelectorAll('.persona-list-item')).some(item => !item.hidden);
-            group.hidden = !visibleChildren;
-        }
+        QuestLogFeature.#filterListContent(html, query, rgx);
     }
 }
