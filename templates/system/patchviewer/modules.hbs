@@ -60,6 +60,10 @@
           <button type='button' class='modules-filters__clear' data-action='clearFilters'>{{localize 'DSA5.patchViewer.modules.filtersClear'}}</button>
         </div>
       {{/if}}
+
+      <div class='modules-hero__links modules-toc__scriptorium'>
+        <a href='{{scriptoriumUrl}}' target='_blank' rel='noopener' data-tooltip="{{localize 'DSA5.patchViewer.modules.scriptorium.tooltip'}}">{{localize 'DSA5.patchViewer.modules.scriptorium.title'}}</a>
+      </div>
     </aside>
 
     <div class='modules-content'>
@@ -103,7 +107,7 @@
                       </div>
                     {{/if}}
                     <div class='flexrow gap5px'>
-                      {{#if id}}
+                      {{#if (and id (not isScriptorium))}}
                         <a class='module-card__cta' data-action='openModuleDetails' data-module-id='{{id}}'>
                           {{localize 'DSA5.patchViewer.modules.details'}}
                         </a>

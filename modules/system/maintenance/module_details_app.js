@@ -20,7 +20,7 @@ export default class ModuleDetailsApp extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
     classes: ['dsa5', 'sheet', 'patchviewer'],
     position: {
-      width: 840,
+      width: 1000,
       height: 860,
     },
     window: {

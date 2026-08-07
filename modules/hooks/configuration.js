@@ -768,6 +768,14 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    hideJournalBrowserFreeModules: {
+      name: 'DSASETTINGS.hideJournalBrowserFreeModules',
+      hint: 'DSASETTINGS.hideJournalBrowserFreeModulesHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
     disableTokenhotbar: {
       name: 'DSASETTINGS.disableTokenhotbar',
       hint: 'DSASETTINGS.disableTokenhotbarHint',

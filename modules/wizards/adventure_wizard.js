@@ -10,7 +10,7 @@ import CustomBookDialog from './custom_book_dialog.js';
 import { bookLibraryPartTemplates } from '../actor/template-configs.js';
 import FlexSearch from '../../libs/flexsearch.bundle.module.min.js';
 
-const { mergeObject, duplicate } = foundry.utils;
+const { mergeObject, duplicate, escapeHTML } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
@@ -164,6 +164,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       selectLibraryView: this._selectLibraryView,
       addCustomBook: this._addCustomBook,
       removeCustomBook: this._removeCustomBook,
+      hideFreeModules: this._hideFreeModules,
+      toggleFreeModules: this._toggleFreeModules,
     },
     window: {
       title: 'Book.Wizard',
@@ -173,6 +175,18 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
           action: 'increaseFontSize',
           label: 'SHEET.increaseFontSize',
           icon: 'fas fa-arrows-up-down',
+        },
+        {
+          action: 'toggleFreeModules',
+          label: 'Book.hideFreeModules',
+          icon: 'fas fa-eye-slash',
+          visible: () => game.user.isGM && !game.settings.get('dsa5', 'hideJournalBrowserFreeModules'),
+        },
+        {
+          action: 'toggleFreeModules',
+          label: 'Book.showFreeModules',
+          icon: 'fas fa-eye',
+          visible: () => game.user.isGM && game.settings.get('dsa5', 'hideJournalBrowserFreeModules'),
         },
       ],
     },
@@ -245,6 +259,21 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     await game.settings.set('dsa5', BookWizard.#customBooksSettingKey, books);
     this.loadCustomBooks();
     ui.notifications.info('Book.customBookAdded', { localize: true });
+    await this.loadPage($(this.element));
+  }
+
+  static async _hideFreeModules() {
+    if (!game.user.isGM) return;
+    await game.settings.set('dsa5', 'hideJournalBrowserFreeModules', true);
+    ui.notifications.info('Book.freeModulesHiddenHint', { localize: true });
+    await this.loadPage($(this.element));
+  }
+
+  static async _toggleFreeModules() {
+    if (!game.user.isGM) return;
+    const hidden = game.settings.get('dsa5', 'hideJournalBrowserFreeModules');
+    await game.settings.set('dsa5', 'hideJournalBrowserFreeModules', !hidden);
+    if (!hidden) ui.notifications.info('Book.freeModulesHiddenHint', { localize: true });
     await this.loadPage($(this.element));
   }
 
@@ -533,6 +562,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         return;
       }
       const { bookId, bookType } = entry.dataset;
+      if (bookType === 'freeModules') {
+        this.#scheduleReset();
+        return;
+      }
       if (bookId && bookType) {
         this.#schedulePreview(bookType, bookId, entry);
       }
@@ -563,6 +596,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       }
       const title =
         entry.querySelector('[data-action="loadBook"]')?.textContent?.trim() ||
+        entry.querySelector('.book-list-link')?.textContent?.trim() ||
         entry.querySelector('h3')?.textContent?.trim() ||
         entry.dataset.bookId ||
         '';
@@ -1095,6 +1129,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       const rules = this.filterBooks(this.books);
       const rshs = this.filterBooks(this.rshs);
       const customBooks = this.filterBooks(this.customBooks);
+      const freeModules = await this.#loadFreeModules();
       const showCustomBooksSection = game.user.isGM || customBooks.length > 0;
       const bookSections = this.#buildBookLibrarySections({
         manuals,
@@ -1102,11 +1137,16 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         rules,
         rshs,
         customBooks,
+        freeModules,
         showCustomBooksSection,
       });
 
       if (this.libraryViewMode === 'cards') {
-        await Promise.all(bookSections.map((section) => this.#enrichBooksWithSplash(section.type, section.books)));
+        await Promise.all(
+          bookSections
+            .filter((section) => section.type !== 'freeModules')
+            .map((section) => this.#enrichBooksWithSplash(section.type, section.books)),
+        );
       }
 
       return await renderTemplate('systems/dsa5/templates/wizard/adventure/adventure_intro.hbs', {
@@ -1117,11 +1157,56 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     }
   }
 
-  #buildBookLibrarySections({ manuals, adventures, rules, rshs, customBooks, showCustomBooksSection }) {
+  async #loadFreeModules() {
+    if (!game.user.isGM || game.settings.get('dsa5', 'hideJournalBrowserFreeModules')) return [];
+
+    const lang = game.i18n.lang === 'de' ? 'de' : 'en';
+    let expansions;
+    try {
+      expansions = await foundry.utils.fetchJsonWithTimeout(`systems/dsa5/lazy/expansions_${lang}.json`);
+    } catch (err) {
+      console.warn('DSA5 | Failed to load free modules catalogue', err);
+      return [];
+    }
+
+    const seeMore = escapeHTML(_loc('Book.freeModulesSeeMore'));
+    const items = [];
+    for (const category of expansions?.categories ?? []) {
+      for (const item of category.items ?? []) {
+        if (!item?.journalBrowser || !item.id || !item.href) continue;
+        if (game.modules.get(item.id)?.active) continue;
+
+        const label = item.label || item.id;
+        const splash = item.image?.src || '';
+        const description = item.description || '';
+        const parts = [];
+        if (splash) {
+          parts.push(
+            `<img src="${escapeHTML(splash)}" alt="${escapeHTML(label)}" class="book-free-module-tooltip__img" />`,
+          );
+        }
+        if (description) parts.push(`<p>${escapeHTML(description)}</p>`);
+        parts.push(`<span class="book-free-module-tooltip__more">${seeMore}</span>`);
+
+        items.push({
+          id: item.id,
+          displayName: label,
+          href: item.href,
+          splash,
+          description,
+          tooltipHtml: parts.join(''),
+        });
+      }
+    }
+
+    return items.sort((a, b) => a.displayName.localeCompare(b.displayName, undefined, { sensitivity: 'base' }));
+  }
+
+  #buildBookLibrarySections({ manuals, adventures, rules, rshs, customBooks, freeModules, showCustomBooksSection }) {
     const enrich = (books, useTitle) =>
       books.map((book) => ({
         ...book,
-        displayName: useTitle ? book.title ?? book.id : book.id,
+        displayName: useTitle ? book.title ?? book.id : book.displayName ?? book.id,
       }));
 
     const sections = [
@@ -1160,6 +1245,17 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         showEmpty: true,
         allowRemove: false,
         allowAdd: false,
+      },
+      {
+        type: 'freeModules',
+        labelKey: 'Book.freeModules',
+        books: enrich(freeModules, false),
+        show: freeModules.length > 0,
+        showEmpty: false,
+        allowRemove: false,
+        allowAdd: false,
+        allowHide: true,
+        isExternal: true,
       },
       {
         type: 'customBooks',

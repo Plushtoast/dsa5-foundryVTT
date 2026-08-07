@@ -294,6 +294,12 @@
     "availableModules": "Verfügbare Abenteuermodule",
     "availableRSHs": "Verfügbare Regionalspielhilfen",
     "availableRules": "Verfügbare Regelwerke",
+    "freeModules": "Kostenlose Module",
+    "freeModulesSeeMore": "Mehr erfahren",
+    "hideFreeModules": "Kostenlose-Module-Sektion ausblenden",
+    "showFreeModules": "Kostenlose-Module-Sektion einblenden",
+    "toggleFreeModules": "Kostenlose-Module-Sektion umschalten",
+    "freeModulesHiddenHint": "Sektion mit kostenlosen Modulen ausgeblendet. Wieder einblenden über die Spieleinstellungen oder das Kontextmenü dieses Fensters.",
     "background": "Hintergrund",
     "easy": "Wenn du eine bestimmte Szene für die Helden leichter machen möchtest, dann kannst du die Vorschläge dieses Abschnittes übernehmen.",
     "fa-check": "Modul aktiv und installiert",
@@ -1189,6 +1195,8 @@
         "enNote": "Einige Module sind nur im deutschen F-Shop erhältlich. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Zum deutschen F-Shop</a>. Prüfe die englische Verfügbarkeit hier: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">Englischer F-Shop</a>.",
         "filtersClear": "Filter zurücksetzen",
         "filtersNotOwned": "Nicht gekauft",
+        "filtersOfficial": "Offiziell",
+        "filtersScriptorium": "Scriptorium",
         "filtersTitle": "Nach Tags filtern",
         "gettingStarted": {
           "coreCta": "Grundmodul holen",
@@ -1202,6 +1210,10 @@
           "subtitle": "Erweitere deinen Spieltisch mit vollständig vorbereiteten offiziellen Abenteuern, Regeln und mehr."
         },
         "owned": "Im Besitz",
+        "scriptorium": {
+          "title": "Scriptorium",
+          "tooltip": "Das Scriptorium Aventuris ist der Community-Shop von Ulisses für Fan-Inhalte zu Das Schwarze Auge."
+        },
         "tocTitle": "Kategorien"
       },
       "tab": {
@@ -1788,6 +1800,8 @@
     "dicesonicesettings": "Wähle Farbschemen für Würfeltypen",
     "disableDidYouKnow": "\"Wusstest du Schon?\" deaktivieren",
     "disableDidYouKnowHint": "Sag NEIN zu Weiterbildung!",
+    "hideJournalBrowserFreeModules": "Kostenlose Module im Journalbrowser ausblenden",
+    "hideJournalBrowserFreeModulesHint": "Blendet die Sektion mit kostenlosen Modulen im Journalbrowser dauerhaft aus. Kann hier oder über das Kontextmenü des Journalbrowsers jederzeit wieder aktiviert werden.",
     "disableTokenhotbar": "Tokenhotbar deaktivieren",
     "disableTokenhotbarHint": "Die Tokenhotbar wird bei der Markierung eines Tokens nicht mehr angezeigt.",
     "disableTokenhotbarMaster": "Meisterleiste deaktivieren",

@@ -371,6 +371,7 @@
             "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coverde.webp"
           },
           "description": "Ein simples Einführungsabenteuer für das Schwarze Auge.",
+          "journalBrowser": true,
           "badges": [
             "Einsteiger",
             "Kostenlos"
@@ -528,9 +529,51 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coverde.webp"
           },
           "description": "Hexenreigen ist ein kostenloses Einstiegsabenteuer für das Schwarze Auge.",
+          "journalBrowser": true,
           "badges": [
             "Einsteiger",
             "Kostenlos"
+          ]
+        },
+        {
+          "id": "dsa5-ohnehre",
+          "label": "Ohne Ehre",
+          "href": "https://www.ulisses-ebooks.de/product/444078",
+          "image": {
+            "src": "https://d1vzi28wh99zvq.cloudfront.net/images/3444/444078.webp"
+          },
+          "description": "Kostenloses Foundry-exklusives Kurzabenteuer von Studio VTT-Bastler. Ideal als Oneshot für einen Abend, mit Plothooks zur Weiterführung.",
+          "journalBrowser": true,
+          "badges": [],
+          "tags": [
+            "scriptorium",
+            "Kostenlos"
+          ]
+        },
+        {
+          "id": "dsa5-gruenecape",
+          "label": "Das grüne Cape",
+          "href": "https://www.ulisses-ebooks.de/product/525158/Das-grune-Cape-Foundry-VTT-Modul",
+          "image": {
+            "src": "https://d1vzi28wh99zvq.cloudfront.net/images/3444/525158.webp"
+          },
+          "description": "Foundry-Umsetzung des Abenteuers „Das grüne Cape“ von Studio VTT-Bastler mit Szenen, Journalen, Akteuren, Items und Playlists.",
+          "badges": [],
+          "tags": [
+            "scriptorium"
+          ]
+        },
+        {
+          "id": "dsa5-wesenseins",
+          "label": "Das Wesen des Seins",
+          "href": "https://www.ulisses-ebooks.de/product/528098",
+          "image": {
+            "src": "https://d1vzi28wh99zvq.cloudfront.net/images/3444/528098.webp"
+          },
+          "description": "Foundry-Umsetzung des Abenteuers „Das Wesen des Seins“ von Studio VTT-Bastler mit neuen Szenen, Portraits, Token und spielbereiten Journalen.",
+          "badges": [],
+          "tags": [
+            "scriptorium"
           ]
         }
       ]

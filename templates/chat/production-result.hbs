@@ -8,7 +8,16 @@
     <div class='col two attacker'>{{{actorImg}}}</div>
 
     <div class='col two chatImgPreview'>
-      <div data-tooltip='PRODUCTION.dragElem' class='image embeddedItemDrag' style='background-image:url({{item.img}})'></div>
+      <a class="img-entity-link cursor-drag embeddedItemDrag" draggable="true"
+        data-tooltip="{{localize 'PRODUCTION.dragElem'}}">
+        <div class='image' style='background-image:url({{item.img}})'></div>
+      </a>
     </div>
   </div>
+
+  {{#if showDragHint}}
+  <div class="center small">
+    <i class="fas fa-hand-pointer"></i> {{localize "PRODUCTION.dragToActor"}}
+  </div>
+  {{/if}}
 </div>

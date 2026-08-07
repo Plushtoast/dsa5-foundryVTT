@@ -1,9 +1,10 @@
 <section class="book-section">
     {{#if section.labelKey}}
-        {{#if section.allowAdd}}
-        <div class="flexrow book-section-header">
-            <h2 class="flex1">{{localize section.labelKey}}</h2>
-            {{#if isGM}}<button type="button" class="dsadesignbutton icon noBorder fa-solid fa-plus" data-action="addCustomBook" data-tooltip="{{localize 'Book.addCustomBook'}}" aria-label="{{localize 'Book.addCustomBook'}}"></button>{{/if}}
+        {{#if (or section.allowAdd section.allowHide)}}
+        <div class="book-section-header">
+            <h2>{{localize section.labelKey}}</h2>
+            {{#if (and section.allowAdd isGM)}}<button type="button" class="book-section-header__action dsadesignbutton icon noBorder fa-solid fa-plus" data-action="addCustomBook" data-tooltip="{{localize 'Book.addCustomBook'}}" aria-label="{{localize 'Book.addCustomBook'}}"></button>{{/if}}
+            {{#if (and section.allowHide isGM)}}<button type="button" class="book-section-header__action dsadesignbutton icon noBorder fa-solid fa-eye-slash" data-action="hideFreeModules" data-tooltip="{{localize 'Book.hideFreeModules'}}" aria-label="{{localize 'Book.hideFreeModules'}}"></button>{{/if}}
         </div>
         {{else}}
         <h2>{{localize section.labelKey}}</h2>

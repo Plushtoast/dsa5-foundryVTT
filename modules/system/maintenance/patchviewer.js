@@ -526,6 +526,7 @@ export class PatchViewer extends DefaultAppv2 {
             ? 'https://ulisses-us.com/ulisses-virtual-tabletops/virtual-tabletop-dsa-vtt/'
             : 'https://ulisses-spiele.de/game-system/das-schwarze-auge-vtt/';
         const preparedModules = this.#prepareModules(modules);
+        const scriptoriumUrl = 'https://www.ulisses-ebooks.de/de/publisher/3444/ulisses-spiele/category/49201/ulisses-scriptorium?keyword=foundry%20vtt';
 
         return mergeObject(data, {
             patchName,
@@ -541,6 +542,7 @@ export class PatchViewer extends DefaultAppv2 {
             storeDeUrl,
             storeEnUrl,
             vttInfoUrl,
+            scriptoriumUrl,
             isEnglish: lang === 'en',
             ...this.#buildWelcomeData({ lang, storeCTAUrl, vttInfoUrl }),
             welcomeParts: await this.#buildAllWelcomeParts({ storeCTAUrl, preparedModules, version }),
@@ -637,9 +639,14 @@ export class PatchViewer extends DefaultAppv2 {
                 item.category = category.name;
                 item.badges = item.badges ?? [];
                 item.tags = Array.isArray(item.tags) ? item.tags : [];
-                item.filters = [...item.badges, ...item.tags]
-                    .map((value) => foundry.applications.ux.SearchFilter.cleanQuery(String(value)))
-                    .filter(Boolean);
+                const isScriptorium = item.tags.some((value) => String(value).toLowerCase() === 'scriptorium');
+                item.isScriptorium = isScriptorium;
+                const originKey = isScriptorium ? 'scriptorium' : 'official';
+                item.filters = [...new Set(
+                    [...item.badges, ...item.tags, originKey]
+                        .map((value) => foundry.applications.ux.SearchFilter.cleanQuery(String(value)))
+                        .filter(Boolean),
+                )];
                 item.filterString = item.filters.join('|');
                 if (item.id) {
                     this.#moduleLookup.set(item.id, item);
@@ -666,12 +673,21 @@ export class PatchViewer extends DefaultAppv2 {
 
     #collectModuleFilters(modules) {
         const filters = new Map();
+        let officialCount = 0;
+        let scriptoriumCount = 0;
+        const originKeys = new Set(['official', 'scriptorium', 'offiziell']);
+
         for (const category of modules.categories ?? []) {
             for (const item of category.items ?? []) {
+                const isScriptorium = (item.filters ?? []).includes('scriptorium')
+                    || (item.tags ?? []).some((value) => String(value).toLowerCase() === 'scriptorium');
+                if (isScriptorium) scriptoriumCount += 1;
+                else officialCount += 1;
+
                 for (const value of [...(item.badges ?? []), ...(item.tags ?? [])]) {
                     if (!value) continue;
                     const key = foundry.applications.ux.SearchFilter.cleanQuery(String(value));
-                    if (!key) continue;
+                    if (!key || originKeys.has(key)) continue;
                     const existing = filters.get(key);
                     if (existing) {
                         existing.count += 1;
@@ -681,7 +697,24 @@ export class PatchViewer extends DefaultAppv2 {
                 }
             }
         }
-        return Array.from(filters.values()).sort((a, b) => a.label.localeCompare(b.label));
+
+        const result = [];
+        if (officialCount) {
+            result.push({
+                label: _loc('DSA5.patchViewer.modules.filtersOfficial'),
+                value: 'official',
+                count: officialCount,
+            });
+        }
+        if (scriptoriumCount) {
+            result.push({
+                label: _loc('DSA5.patchViewer.modules.filtersScriptorium'),
+                value: 'scriptorium',
+                count: scriptoriumCount,
+            });
+        }
+        result.push(...Array.from(filters.values()).sort((a, b) => a.label.localeCompare(b.label)));
+        return result;
     }
 
     async #buildAllWelcomeParts({ storeCTAUrl, preparedModules, version }) {

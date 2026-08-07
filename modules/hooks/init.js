@@ -142,15 +142,15 @@ Hooks.once('init', () => {
     { sheetClass: ActorSheetdsa5Creature, types: ['creature'], makeDefault: true },
     { sheetClass: ActorSheetdsa5NPC, types: ['npc'], makeDefault: true },
     { sheetClass: ActorSheetdsa5Vehicle, types: ['vehicle'], makeDefault: true },
-    { sheetClass: VehicleMerchantSheetDSA5, types: ['vehicle'] },
-    { sheetClass: MerchantSheetDSA5, types: ['npc'] },
-    { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'] },
-    { sheetClass: CharacterMerchantSheetDSA5, types: ['character'] },
+    { sheetClass: VehicleMerchantSheetDSA5, types: ['vehicle'], canBeDefault: false },
+    { sheetClass: MerchantSheetDSA5, types: ['npc'], canBeDefault: false },
+    { sheetClass: CreatureMerchantSheetDSA5, types: ['creature'], canBeDefault: false },
+    { sheetClass: CharacterMerchantSheetDSA5, types: ['character'], canBeDefault: false },
     { sheetClass: GroupActorSheet, types: ['group'], makeDefault: true },
   ];
 
-  actorSheets.forEach(({ sheetClass, types, makeDefault }) => {
-    foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault });
+  actorSheets.forEach(({ sheetClass, types, makeDefault, canBeDefault }) => {
+    foundry.documents.collections.Actors.registerSheet('dsa5', sheetClass, { types, makeDefault, canBeDefault });
   });
 
   const journalSheets = [

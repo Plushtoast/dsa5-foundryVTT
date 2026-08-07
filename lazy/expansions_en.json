@@ -119,6 +119,7 @@
             "src": "https://raw.githubusercontent.com/Plushtoast/dsa5_introduction/master/icons/journal/coveren.webp"
           },
           "description": "A free introduction adventure for The Dark Eye.",
+          "journalBrowser": true,
           "badges": [
             "Beginners",
             "Free"
@@ -132,6 +133,7 @@
             "src": "https://ulisses-digital.de/R20/dsa5/modules/dsa5-witchsdance/icons/journal/coveren.webp"
           },
           "description": "Aventurian Witch's Dance, an free beginners-friendly Add-on Module for Foundry Virtual Tabletop",
+          "journalBrowser": true,
           "badges": [
             "Beginners",
             "Free"

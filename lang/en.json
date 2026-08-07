@@ -294,6 +294,12 @@
     "availableModules": "Available adventure modules",
     "availableRSHs": "Available regional supplements",
     "availableRules": "Available rulebooks",
+    "freeModules": "Free modules",
+    "freeModulesSeeMore": "See more",
+    "hideFreeModules": "Hide free modules section",
+    "showFreeModules": "Show free modules section",
+    "toggleFreeModules": "Toggle free modules section",
+    "freeModulesHiddenHint": "Free modules section hidden. Show it again via game settings or this window's context menu.",
     "background": "Background",
     "easy": "If you want to make a certain scene easier for the heroes, you can adopt the suggestions of this section.",
     "fa-check": "Module activated and installed",
@@ -1189,6 +1195,8 @@
         "enNote": "Some modules are only available in the German F-Shop. <a href=\"{deUrl}\" target=\"_blank\" rel=\"noopener\">Open German F-Shop</a>. Check English availability here: <a href=\"{enUrl}\" target=\"_blank\" rel=\"noopener\">English F-Shop</a>.",
         "filtersClear": "Clear filters",
         "filtersNotOwned": "Not owned",
+        "filtersOfficial": "Official",
+        "filtersScriptorium": "Scriptorium",
         "filtersTitle": "Filter by tags",
         "gettingStarted": {
           "coreCta": "Get the core module",
@@ -1202,6 +1210,10 @@
           "subtitle": "Expand your tabletop with fully prepared official adventures, rules, and more."
         },
         "owned": "Owned",
+        "scriptorium": {
+          "title": "Scriptorium",
+          "tooltip": "Scriptorium Aventuris is Ulisses’ community store for fan-created The Dark Eye content."
+        },
         "tocTitle": "Browse categories"
       },
       "tab": {
@@ -1786,6 +1798,8 @@
     "dicesonicesettings": "Chose colors for dice types",
     "disableDidYouKnow": "Disable \"Did you know?\"",
     "disableDidYouKnowHint": "Say NO to education!",
+    "hideJournalBrowserFreeModules": "Hide free modules in Journal Browser",
+    "hideJournalBrowserFreeModulesHint": "Permanently hide the free modules section in the Journal Browser. You can re-enable it here or via the Journal Browser context menu anytime.",
     "disableTokenhotbar": "Deactivate Tokenhotbar",
     "disableTokenhotbarHint": "The Tokenhotbar will not be shown anymore on selecting a token.",
     "disableTokenhotbarMaster": "Deactive gm functions",
