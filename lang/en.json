@@ -1723,6 +1723,7 @@
     "completionDate": "Ended",
     "createQuest": "Create quest entry",
     "defaultJournalName": "Quests",
+    "dragToReorder": "Drag to reorder",
     "emptyHint": "Create or register a quest journal to track adventure progress here.",
     "emptyTitle": "No quests yet",
     "journals": {

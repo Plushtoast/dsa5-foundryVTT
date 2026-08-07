@@ -1725,6 +1725,7 @@
     "completionDate": "Beendet",
     "createQuest": "Auftrag erstellen",
     "defaultJournalName": "Aufträge",
+    "dragToReorder": "Zum Umsortieren ziehen",
     "emptyHint": "Erstelle oder registriere ein Auftrags-Journal, um hier den Abenteuerfortschritt zu verfolgen.",
     "emptyTitle": "Noch keine Aufträge",
     "journals": {

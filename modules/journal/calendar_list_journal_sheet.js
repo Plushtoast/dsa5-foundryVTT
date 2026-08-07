@@ -120,6 +120,7 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
         this.constructor.updateSelectionUI(target);
 
         detailsContainer.innerHTML = await this.renderDetail(key);
+        await this._onDetailRendered(key);
     }
 
     static updateSelectionUI(clickedElement) {
@@ -158,6 +159,10 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
 
     async _onRenderEditable(_context, _options) {
         // Optional subclass hook.
+    }
+
+    async _onDetailRendered(_key) {
+        // Optional subclass hook after edit-detail HTML is injected (initial render or list select).
     }
 
     async _afterRegistrationChange() {

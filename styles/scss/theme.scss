@@ -238,13 +238,11 @@
 
     .dsa-sortable-handle {
         flex: 0 0 auto;
-        align-self: center;
-        padding: 0 2px;
-        opacity: 0.45;
+        opacity: 0.55;
         cursor: grab;
 
         &:hover {
-            opacity: 0.85;
+            opacity: 1;
         }
     }
 

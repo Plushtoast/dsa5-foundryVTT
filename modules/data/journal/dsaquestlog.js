@@ -46,6 +46,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             ArrayField,
             HTMLField,
             DocumentUUIDField,
+            IntegerSortField,
         } = foundry.data.fields;
 
         const dateField = () => new SchemaField({
@@ -76,10 +77,12 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                     text: new StringField({ required: true, initial: '', label: 'DSAQUESTLOG.FIELDS.quests.objectives.text.label' }),
                     status: new NumberField({ required: true, initial: 0, choices: DSAQuestLogEntry.STATUS_CHOICES, label: 'DSAQUESTLOG.FIELDS.quests.objectives.status.label' }),
                     visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.objectives.visible.label' }),
+                    sort: new IntegerSortField(),
                 })),
                 linkedPages: new TypedObjectField(new SchemaField({
                     uuid: new DocumentUUIDField({ required: false, blank: true, label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.label', hint: 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint' }),
                     visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.visible.label' }),
+                    sort: new IntegerSortField(),
                 })),
             })),
         };
@@ -94,7 +97,24 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 objective.status = objective.done ? 1 : 0;
                 delete objective.done;
             }
+            this.#migrateCollectionSort(quest?.objectives);
+            this.#migrateCollectionSort(quest?.linkedPages);
         }
+    }
+
+    /** Assign IntegerSortField values from current key order when missing or all zero-colliding. */
+    static #migrateCollectionSort(collection) {
+        if (!collection || typeof collection !== 'object') return;
+        const entries = Object.entries(collection).filter(([, value]) => value && typeof value === 'object');
+        if (!entries.length) return;
+
+        const hasExplicitSort = entries.some(([, value]) => Object.hasOwn(value, 'sort') && Number.isFinite(Number(value.sort)));
+        if (hasExplicitSort) return;
+
+        const density = CONST.SORT_INTEGER_DENSITY;
+        entries.forEach(([, value], index) => {
+            value.sort = index * density;
+        });
     }
 
     static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
@@ -129,7 +149,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.isGM = game.user.isGM;
         entry.isVisibleToPlayers = !!entry.visible && entry.audience !== 2;
         entry.preparedAudienceBadges = this.prepareAudienceBadges(entry);
-        entry.preparedObjectives = Object.entries(entry.objectives || {})
+        entry.preparedObjectives = this.sortedTypedObjectEntries(entry.objectives)
             .filter(([, objective]) => objective && (objective.visible || game.user.isGM))
             .map(([objectiveKey, objective]) => ({
                 objectiveKey,
@@ -147,11 +167,11 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             { icon: 'fa-bullseye', tooltip: 'DSAQUESTLOG.targetDate', value: entry.targetDateLabel },
             { icon: 'fa-flag-checkered', tooltip: 'DSAQUESTLOG.completionDate', value: entry.completionDateLabel },
         ].filter(x => x.value);
-        entry.preparedLinkedDocuments = (await Promise.all(Object.entries(entry.linkedPages || {})
+        entry.preparedLinkedDocuments = (await Promise.all(this.sortedTypedObjectEntries(entry.linkedPages)
             .filter(([, reference]) => this.#referenceUuid(reference) && (reference.visible !== false || game.user.isGM))
             .map(([linkKey, reference]) => {
                 return this.resolveDocumentReference(linkKey, reference);
-            }))).filter(Boolean).sort(this.#sortDocumentReferences);
+            }))).filter(Boolean);
         entry.preparedLinkedPages = entry.preparedLinkedDocuments;
         entry.uuid = page?.uuid;
         entry.questKey = key;
@@ -216,6 +236,69 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         return this.createDocumentReference(uuid);
     }
 
+    /**
+     * Keys for a TypedObjectField after reordering visible items.
+     * Walks the collection in current sort order so non-listed keys keep their slots;
+     * listed keys fill the visible slots in `orderedVisibleKeys` order.
+     * @param {Record<string, unknown>} source
+     * @param {string[]} orderedVisibleKeys
+     * @returns {string[]}
+     */
+    static orderedTypedObjectKeys(source, orderedVisibleKeys) {
+        const current = source || {};
+        const visibleSet = new Set(orderedVisibleKeys);
+        const resultKeys = [];
+        let visibleIndex = 0;
+
+        for (const [key] of this.sortedTypedObjectEntries(current)) {
+            if (!visibleSet.has(key)) {
+                resultKeys.push(key);
+                continue;
+            }
+            const nextKey = orderedVisibleKeys[visibleIndex++];
+            if (nextKey && nextKey in current) resultKeys.push(nextKey);
+        }
+
+        return resultKeys;
+    }
+
+    /** @deprecated Use orderedTypedObjectKeys */
+    static reorderTypedObjectKeys(source, orderedVisibleKeys) {
+        const current = foundry.utils.duplicate(source || {});
+        return Object.fromEntries(this.orderedTypedObjectKeys(current, orderedVisibleKeys).map(key => [key, current[key]]));
+    }
+
+    static compareSort(a, b) {
+        return (Number(a?.sort) || 0) - (Number(b?.sort) || 0);
+    }
+
+    static sortedTypedObjectEntries(collection) {
+        return Object.entries(collection || {}).sort(([, a], [, b]) => this.compareSort(a, b));
+    }
+
+    static nextSortValue(collection) {
+        const density = CONST.SORT_INTEGER_DENSITY;
+        const sorts = Object.values(collection || {}).map(entry => Number(entry?.sort) || 0);
+        return (sorts.length ? Math.max(...sorts) : -density) + density;
+    }
+
+    /**
+     * Document update payload that assigns IntegerSortField values for the given visible order.
+     * @param {string} basePath  e.g. system.quests.<id>.objectives
+     * @param {Record<string, unknown>} source
+     * @param {string[]} orderedVisibleKeys
+     * @returns {Record<string, number>}
+     */
+    static buildTypedObjectSortUpdate(basePath, source, orderedVisibleKeys) {
+        const density = CONST.SORT_INTEGER_DENSITY;
+        const orderedKeys = this.orderedTypedObjectKeys(source, orderedVisibleKeys);
+        const update = {};
+        orderedKeys.forEach((key, index) => {
+            update[`${basePath}.${key}.sort`] = index * density;
+        });
+        return update;
+    }
+
     static async resolveDocumentReference(linkKey, reference) {
         const uuid = this.#referenceUuid(reference);
         const document = uuid ? await fromUuid(uuid) : null;
@@ -259,11 +342,5 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         if (!documentType) return _loc('DSAQUESTLOG.unknownDocumentType');
         const label = CONFIG[documentType]?.documentClass?.metadata?.label || documentType;
         return game.i18n.has(label) ? _loc(label) : label;
-    }
-
-    static #sortDocumentReferences(a, b) {
-        const typeSort = a.documentTypeLabel.localeCompare(b.documentTypeLabel, game.i18n?.lang, { sensitivity: 'base' });
-        if (typeSort) return typeSort;
-        return a.label.localeCompare(b.label, game.i18n?.lang, { sensitivity: 'base' });
     }
 }

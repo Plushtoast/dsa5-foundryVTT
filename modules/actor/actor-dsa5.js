@@ -55,7 +55,7 @@ export default class Actordsa5 extends Actor {
       return await super.create(data, options);
     }
 
-    // Vehicle defaults are applied in createDocuments (bulk pack items).
+    // Vehicle defaults are applied in _preCreate (covers create + createDocuments).
     if (data.type === 'vehicle') return await super.create(data, options);
 
     data.items = [].concat(...(await Promise.all([DSA5_Utility.allSkills(), DSA5_Utility.allCombatSkills(), DSA5_Utility.allMoneyItems()])));
@@ -65,24 +65,6 @@ export default class Actordsa5 extends Actor {
     if (data.type != 'creature' && [undefined, 0].includes(getProperty(data, 'system.status.wounds.value'))) mergeObject(data, { system: { status: { wounds: { value: 16 } } } });
 
     return await super.create(data, options);
-  }
-
-  /**
-   * Attach vehicle default items on the create payload. Bulk pack items via
-   * updateSource in _preCreate proved unreliable (empty create results).
-   */
-  static async createDocuments(source, context = {}) {
-    const prepared = [];
-    for (const data of source) {
-      if (data.type === 'vehicle' && !data.items?.length) {
-        const copy = foundry.utils.deepClone(data);
-        await CONFIG.Actor.dataModels.vehicle.prepareCreateData(copy);
-        prepared.push(copy);
-      } else {
-        prepared.push(data);
-      }
-    }
-    return super.createDocuments(prepared, context);
   }
 
   static async deferredEffectAddition(effect, actor, target) {
@@ -2004,6 +1986,20 @@ export default class Actordsa5 extends Actor {
           actorLink: true,
         },
       });
+    }
+
+    // Actor.createDocuments() calls the base class, so subclass createDocuments
+    // overrides never run. _preCreate always runs on the configured documentClass.
+    if (this.type === 'vehicle' && !this.items.size && !data.items?.length) {
+      const prepared = foundry.utils.deepClone(data);
+      await CONFIG.Actor.dataModels.vehicle.prepareCreateData(prepared);
+      // Fresh embedded ids — keepEmbeddedIds defaults to true on Actor creates.
+      update.items = (prepared.items ?? []).map((item) => {
+        const copy = foundry.utils.deepClone(item);
+        delete copy._id;
+        return copy;
+      });
+      if (prepared.system) update.system = prepared.system;
     }
 
     if (!foundry.utils.isEmpty(update)) this.updateSource(update);

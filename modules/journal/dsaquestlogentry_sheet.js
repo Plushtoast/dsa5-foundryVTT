@@ -4,6 +4,7 @@ import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
 export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'quests';
     static settingName = DSAQuestLogEntry.SETTING_NAME;
+    static #SORT_DRAG_TYPE = 'dsaQuestNestedSort';
 
     static DEFAULT_OPTIONS = {
         actions: {
@@ -69,6 +70,108 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
 
     async _afterRegistrationChange() {
         await game.dsa5?.apps?.CalendarPicker?.refreshParts?.(['questlog', 'config']);
+    }
+
+    async _onRenderEditable(_context, _options) {
+        this.#bindNestedSortDragDrop();
+    }
+
+    async _onDetailRendered(_key) {
+        this.#bindNestedSortDragDrop();
+    }
+
+    #bindNestedSortDragDrop() {
+        if (this.isView || !(this.isEditable || game.user.isGM)) return;
+        if (!this.element?.querySelector('.quest-sortable-item')) return;
+
+        new foundry.applications.ux.DragDrop.implementation({
+            dragSelector: '.quest-sortable-handle',
+            dropSelector: '.quest-sortable-item',
+            permissions: {
+                dragstart: () => true,
+                drop: () => true,
+            },
+            callbacks: {
+                dragstart: this.#onNestedSortDragStart.bind(this),
+                dragover: this.#onNestedSortDragOver.bind(this),
+                drop: this.#onNestedSortDrop.bind(this),
+                dragend: this.#clearNestedSortIndicators.bind(this),
+            },
+        }).bind(this.element);
+    }
+
+    #onNestedSortDragStart(event) {
+        const item = event.currentTarget.closest('.quest-sortable-item');
+        const list = item?.closest('[data-sort-collection]');
+        if (!item || !list) return;
+
+        event.dataTransfer.setData('text/plain', JSON.stringify({
+            type: DSAQuestLogEntrySheet.#SORT_DRAG_TYPE,
+            questKey: list.dataset.questKey,
+            collection: list.dataset.sortCollection,
+            key: item.dataset.sortKey,
+        }));
+        event.dataTransfer.effectAllowed = 'move';
+        item.classList.add('dragging');
+    }
+
+    #onNestedSortDragOver(event) {
+        const target = event.currentTarget;
+        if (!(target instanceof HTMLElement)) return;
+
+        this.#clearNestedSortIndicators({ keepDragging: true });
+        const rect = target.getBoundingClientRect();
+        const midY = rect.top + (rect.height / 2);
+        target.classList.add(event.clientY < midY ? 'drag-over-before' : 'drag-over-after');
+    }
+
+    #clearNestedSortIndicators({ keepDragging = false } = {}) {
+        this.element?.querySelectorAll('.quest-sortable-item').forEach(el => {
+            el.classList.remove('drag-over-before', 'drag-over-after');
+            if (!keepDragging) el.classList.remove('dragging');
+        });
+    }
+
+    async #onNestedSortDrop(event) {
+        this.#clearNestedSortIndicators();
+
+        let dragData;
+        try {
+            dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+        } catch {
+            return;
+        }
+        if (dragData?.type !== DSAQuestLogEntrySheet.#SORT_DRAG_TYPE) return;
+
+        const target = event.currentTarget;
+        const list = target?.closest('[data-sort-collection]');
+        if (!list) return;
+        if (list.dataset.sortCollection !== dragData.collection || list.dataset.questKey !== dragData.questKey) return;
+
+        const items = [...list.querySelectorAll('.quest-sortable-item')];
+        const keys = items.map(el => el.dataset.sortKey);
+        const fromIndex = keys.indexOf(dragData.key);
+        const toIndex = keys.indexOf(target.dataset.sortKey);
+        if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
+
+        const rect = target.getBoundingClientRect();
+        const midY = rect.top + (rect.height / 2);
+        const [movedKey] = keys.splice(fromIndex, 1);
+        const adjustedToIndex = keys.indexOf(target.dataset.sortKey);
+        keys.splice(event.clientY < midY ? adjustedToIndex : adjustedToIndex + 1, 0, movedKey);
+
+        if (this.isEditable && this.form) await this.submit();
+
+        const quest = this.document.system.quests[dragData.questKey];
+        const collection = quest?.[dragData.collection];
+        if (!collection) return;
+
+        const update = DSAQuestLogEntry.buildTypedObjectSortUpdate(
+            `system.quests.${dragData.questKey}.${dragData.collection}`,
+            collection,
+            keys,
+        );
+        if (!foundry.utils.isEmpty(update)) await this.document.update(update);
     }
 
     static buildTOC(html, { includeElement = true } = {}) {
@@ -150,14 +253,14 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             selected: quest.playerOwners.includes(player.id),
         }));
         const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-        const objectiveEntries = Object.entries(quest.objectives || {})
+        const objectiveEntries = DSAQuestLogEntry.sortedTypedObjectEntries(quest.objectives)
             .filter(([, objective]) => objective && (objective.visible || game.user.isGM))
             .map(([objectiveKey, objective]) => ({
                 objectiveKey,
                 ...objective,
                 ...DSAQuestLogEntry.prepareObjectiveState(objective),
             }));
-        const linkedDocumentEntries = Object.entries(quest.linkedPages || {}).map(([linkKey, link]) => ({
+        const linkedDocumentEntries = DSAQuestLogEntry.sortedTypedObjectEntries(quest.linkedPages).map(([linkKey, link]) => ({
             linkKey,
             uuid: link?.uuid || link?.pageUuid || '',
             visible: link?.visible !== false,
@@ -186,11 +289,13 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     static async #addObjective(event, target) {
         const questKey = target.dataset.key;
         const objectiveKey = foundry.utils.randomID();
+        const quest = this.document.system.quests[questKey];
         await this.document.update({
             [`system.quests.${questKey}.objectives.${objectiveKey}`]: {
                 text: _loc('DSAQUESTLOG.newObjectivePlaceholder'),
                 status: 0,
                 visible: true,
+                sort: DSAQuestLogEntry.nextSortValue(quest?.objectives),
             },
         });
     }
@@ -247,7 +352,13 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     static async #addLinkedDocument(event, target) {
         const questKey = target.dataset.key;
         const linkKey = foundry.utils.randomID();
-        await this.document.update({ [`system.quests.${questKey}.linkedPages.${linkKey}`]: DSAQuestLogEntry.createDocumentReference() });
+        const quest = this.document.system.quests[questKey];
+        await this.document.update({
+            [`system.quests.${questKey}.linkedPages.${linkKey}`]: {
+                ...DSAQuestLogEntry.createDocumentReference(),
+                sort: DSAQuestLogEntry.nextSortValue(quest?.linkedPages),
+            },
+        });
     }
 
     static async #removeLinkedDocument(event, target) {

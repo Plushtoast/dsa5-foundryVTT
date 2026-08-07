@@ -94,9 +94,10 @@
       <button type='button' data-action='addObjective' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addObjective"}}'></button>
     </div>
     <div class='form-fields'>
-      <div class="flexcol gap5px">
+      <div class="flexcol gap5px quest-sortable-list" data-sort-collection="objectives" data-quest-key="{{key}}">
       {{#each objectiveEntries as |objective|}}
-        <div class='flexrow'>
+        <div class='flexrow dsa-sortable-item quest-sortable-item' data-sort-key='{{objective.objectiveKey}}'>
+          <button type='button' class='fas icon fa-grip-vertical dsa-sortable-handle quest-sortable-handle' data-tooltip='{{localize "DSAQUESTLOG.dragToReorder"}}' tabindex='-1'></button>
           <button type='button' data-action='toggleObjectiveDone' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{stateIcon}}' data-tooltip='{{localize stateTooltip}}'></button>
           {{#if ../isGM}}
             <button type='button' data-action='toggleObjectiveVisibility' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{ifThen objective.visible "fa-eye" "fa-eye-slash"}}'></button>
@@ -117,9 +118,10 @@
       <button type='button' data-action='addLinkedDocument' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addLinkedDocument"}}'></button>
     </div>
     <div class='form-fields'>
-      <div class="flexcol gap5px">
+      <div class="flexcol gap5px quest-sortable-list" data-sort-collection="linkedPages" data-quest-key="{{key}}">
       {{#each linkedDocumentEntries as |link|}}
-        <div class='flexrow' style="align-items:flex-end">
+        <div class='flexrow dsa-sortable-item quest-sortable-item' style="align-items:flex-end" data-sort-key='{{link.linkKey}}'>
+          <button type='button' class='fas icon fa-grip-vertical dsa-sortable-handle quest-sortable-handle' data-tooltip='{{localize "DSAQUESTLOG.dragToReorder"}}' tabindex='-1'></button>
           {{formInput ../document.system.schema.fields.quests.element.fields.linkedPages.element.fields.uuid value=link.uuid localize=true name=(concat 'system.quests.' ../key '.linkedPages.' link.linkKey '.uuid')}}
           {{#if ../isGM}}
             <button type='button' data-action='toggleLinkedDocumentVisibility' data-key='{{../key}}' data-link-key='{{link.linkKey}}' class='fas icon {{ifThen link.visible "fa-eye" "fa-eye-slash"}}' data-tooltip='{{localize "DSAQUESTLOG.toggleLinkedDocumentVisibility"}}'></button>
