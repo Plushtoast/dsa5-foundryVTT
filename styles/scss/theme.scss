@@ -69,6 +69,22 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+
+            &[data-action] {
+                cursor: pointer;
+                color: var(--dsa-link, inherit);
+                text-decoration: underline;
+                text-underline-offset: 2px;
+            }
+        }
+
+        &__imgLink {
+            flex: 0 0 56px;
+            display: block;
+            cursor: pointer;
+            border: none;
+            line-height: 0;
+            text-decoration: none;
         }
 
         &__meta {
@@ -690,6 +706,59 @@
 
         .group-helper-panel {
             grid-column: 1 / -1;
+        }
+    }
+
+    // Compact inline badges (actor species/culture/career, player-menu capabilities, …)
+    .headerbadgeflex {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        align-items: center;
+        --input-height: 1.2rem;
+
+        .group-attr-icon {
+            font-size: 0.7rem;
+            padding: 1px 3px;
+            border-radius: 3px;
+            background-color: var(--oddColor);
+            border: 1px solid var(--dsadesign1);
+            color: var(--dsadesign1);
+            cursor: pointer;
+            line-height: 1;
+
+            &:hover {
+                background-color: var(--dsadesign1);
+                color: white;
+            }
+        }
+
+        button,
+        .headerbadge,
+        input,
+        &.headerInput input {
+            flex: 0 0 auto;
+            width: auto;
+            max-width: 400px;
+            height: var(--input-height);
+            min-height: var(--input-height);
+            padding: 0 6px;
+            text-align: center;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            border-radius: 4px;
+            background-color: var(--oddColor);
+            font-family: 'Fira Code', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: var(--font-size-12);
+            border: 1px solid var(--dsadesign1);
+            color: var(--dsadesign1);
+            box-shadow: none;
+
+            &:hover {
+                background-color: var(--dsadesign1);
+                color: white;
+            }
         }
     }
 

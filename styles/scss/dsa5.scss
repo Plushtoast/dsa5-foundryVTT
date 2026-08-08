@@ -430,50 +430,6 @@ table.infoTable {
     }
   }
 
-  .headerbadgeflex {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    --input-height: 1.2rem;
-
-    .group-attr-icon {
-      font-size: 0.7rem;
-      padding: 1px 3px;
-      border-radius: 3px;
-      background-color: var(--oddColor);
-      border: 1px solid var(--dsadesign1);
-      color: var(--dsadesign1);
-      cursor: pointer;
-      line-height: 1;
-
-      &:hover {
-        background-color: var(--dsadesign1);
-        color: white;
-      }
-    }
-
-    button,
-    .headerbadge,
-    input {
-      text-align: center;
-      border-radius: 4px;
-      background-color: var(--oddColor);
-      padding: 0 2px;
-      max-width: 400px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      width: auto;
-      text-align: center;
-      font-family: 'Fira Code', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-      border: 1px solid var(--dsadesign1);
-      color: var(--dsadesign1);
-
-      &:hover {
-        background-color: var(--dsadesign1);
-        color: white;
-      }
-    }
-  }
 }
 
 .dsadesignbutton {
