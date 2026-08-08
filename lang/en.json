@@ -2607,6 +2607,7 @@
     "combatTurmoil": "Shooting into Melee",
     "compensation": "Compensation",
     "creatureBonus": "Bonus damage (creature)",
+    "creatureArmor": "Armor (creature)",
     "damage": "Damage modifier",
     "defenseMalus": "Defense malus",
     "doubleAttack": "Two-Weapon Combat",

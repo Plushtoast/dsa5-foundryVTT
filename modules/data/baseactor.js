@@ -71,6 +71,7 @@ export class ActorDataModel extends DSADataModel {
       immunities: [],
       thresholds: { effects: [] },
       creatureBonus: [],
+      creatureArmor: [],
       miracle: { attack: 0, parry: 0 },
       spellStats: { damage: '0' },
       liturgyStats: { damage: '0' },

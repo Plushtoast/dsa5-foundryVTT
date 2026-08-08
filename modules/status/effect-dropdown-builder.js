@@ -168,6 +168,12 @@ export default class EffectDropdownBuilder {
                 ph: '1',
             },
             {
+                name: _loc('MODS.creatureArmor'),
+                val: 'system.creatureArmor',
+                type: 'custom',
+                ph: `${_loc('CONJURATION.demon')} 1`,
+            },
+            {
                 name: _loc('carrycapacity'),
                 val: 'system.carryModifier',
                 type: 'add',

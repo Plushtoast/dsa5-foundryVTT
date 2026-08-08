@@ -6,6 +6,7 @@ import EquipmentDamage from '../automation/equipment-damage.js';
 import DSAActiveEffectConfig from '../../status/active_effect_config.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSATriggers from '../automation/triggers.js';
+import CreatureType from '../automation/creature-type.js';
 
 const { mergeObject, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -833,6 +834,7 @@ export default class OpposedDsa5 {
       if (damage.armorMultiplier != 1) title += `*${damage.armorMultiplier} ${_loc('Modifier')}`;
       if (damage.spellArmor != 0) title += `${damage.spellArmor} ${_loc('spellArmor')}`;
       if (damage.liturgyArmor != 0) title += `${damage.liturgyArmor} ${_loc('liturgyArmor')}`;
+      if (damage.creatureArmor != 0) title += `${damage.creatureArmor} ${_loc('MODS.creatureArmor')}`;
 
       const dmgString = _loc(game.combat?.isBrawling ? 'BRAWLING.temporary' : 'damage');
       const description = `<b>${dmgString}</b>: <span${damage.tooltip ? ` data-tooltip="${damage.tooltip}"` : ''}>${damage.damage}</span><i class="lighticon fas fa-hand-fist" data-tooltip="Roll"></i> - <span data-tooltip="${title}">${damage.armor}</span><i class="lighticon fa fa-shield-alt" data-tooltip="protection"></i> = ${damage.sum}`;
@@ -844,6 +846,7 @@ export default class OpposedDsa5 {
         armorMultiplier: damage.armorMultiplier,
         spellArmor: damage.spellArmor,
         liturgyArmor: damage.liturgyArmor,
+        creatureArmor: damage.creatureArmor,
       };
     } else {
       opposeResult.winner = 'defender';
@@ -964,12 +967,15 @@ export default class OpposedDsa5 {
     if (['spell', 'ritual'].includes(attackerTest.source.type)) spellArmor += actor.system.spellArmor || 0;
     else if (['liturgy', 'ceremony'].includes(attackerTest.source.type)) spellArmor += actor.system.liturgyArmor || 0;
 
+    const attacker = DSA5_Utility.getSpeaker(attackerTest.speaker);
+    const creatureArmor = CreatureType.creatureArmorBonus(actor, attacker);
+
     armor += armorMod;
     const armorMultiplier = multipliers.reduce((sum, x) => {
       return sum * x;
     }, 1);
     armor = Math.max(Math.round(armor * armorMultiplier), 0);
-    armor += spellArmor + liturgyArmor;
+    armor += spellArmor + liturgyArmor + creatureArmor;
     const armorDamaged = EquipmentDamage.armorGetsDamage(damage, attackerTest);
     const ids = wornArmor.map((x) => actor.items.get(x._id).uuid);
 
@@ -980,6 +986,7 @@ export default class OpposedDsa5 {
       armorMod,
       spellArmor,
       liturgyArmor,
+      creatureArmor,
       armorMultiplier,
       messages,
       sum: damage - armor,

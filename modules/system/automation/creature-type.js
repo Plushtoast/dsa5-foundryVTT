@@ -186,18 +186,73 @@ export default class CreatureType {
     return [];
   }
 
+  /**
+   * DSA Tierkunde "Ungeheuer": not demons, fairies, ghosts, or ordinary animals.
+   * Vampire/werecreatures are explicitly included; other monster-like types approximated.
+   * @see https://dsa.ulisses-regelwiki.de/regel_erlaeuterungen/ungeheuer.html
+   */
+  static UNGEHEUER_TYPES = new Set([
+    'ChimeraType',
+    'DaimonidType',
+    'DragonType',
+    'GolemType',
+    'HomunculiType',
+    'SupernaturalType',
+    'MagicalConstructType',
+    'WerCreatureType',
+    'VampireType',
+  ]);
+
+  static #ungeheuerLabels = new Set(['ungeheuer', 'monster', 'monsters']);
+
+  static creatureClassString(actor) {
+    if (!actor) return '';
+    const creatureClass = actor.type === 'creature'
+      ? actor.system?.creatureClass?.value
+      : actor.system?.details?.species?.value;
+    return typeof creatureClass === 'string' ? creatureClass : '';
+  }
+
+  static matchesCreatureTarget(actor, target) {
+    if (!actor || !target) return false;
+    const label = `${target}`.trim();
+    if (!label) return false;
+
+    if (CreatureType.#ungeheuerLabels.has(label.toLowerCase())) {
+      return CreatureType.detectCreatureType(actor).some((t) => CreatureType.UNGEHEUER_TYPES.has(t.constructor.name));
+    }
+
+    const creatureClass = CreatureType.creatureClassString(actor);
+    return creatureClass.indexOf(label) >= 0;
+  }
+
   static creatureBonusDamage(actor, attacker) {
     const bonusModifiers = [];
-    const creatureClass = actor?.type === 'creature'
-      ? actor.system?.creatureClass?.value
-      : actor?.system?.details?.species?.value;
-    if (!creatureClass || typeof creatureClass !== 'string') return bonusModifiers;
-
     const mods = getProperty(attacker, 'system.creatureBonus') || [];
     for (const mod of mods) {
-      if (creatureClass.indexOf(mod.target) >= 0) bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true));
+      if (CreatureType.matchesCreatureTarget(actor, mod.target)) {
+        bonusModifiers.push(...this.buildDamageMod(mod.source, mod.value, true));
+      }
     }
     return bonusModifiers;
+  }
+
+  /**
+   * Sum defender RS bonuses that match the attacker's creature class / Ungeheuer group.
+   * @param {Actor} defender
+   * @param {Actor} attacker
+   * @returns {number}
+   */
+  static creatureArmorBonus(defender, attacker) {
+    if (!defender || !attacker) return 0;
+    const mods = getProperty(defender, 'system.creatureArmor') || [];
+    let armor = 0;
+    for (const mod of mods) {
+      if (!CreatureType.matchesCreatureTarget(attacker, mod.target)) continue;
+      const value = Number(`${mod.value}`.replace(/^\+/, ''));
+      if (!Number.isNaN(value)) armor += value;
+    }
+    return armor;
   }
 
   /**
