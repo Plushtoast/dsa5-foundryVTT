@@ -9,6 +9,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
+import ReloadTimeField from './fields/reload_time_field.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
@@ -42,7 +43,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       }),
       siegeRules: new BooleanField({ initial: false, label: 'siegeRules' }),
       reloadTime: new SchemaField({
-        value: new ScopableStringField({ initial: '1', label: 'reloadTime', min: 0 }),
+        value: new ReloadTimeField({ initial: '1', label: 'reloadTime', min: 0 }),
         progress: new ScopableNumberField({ initial: 0 }),
       }),
       aimTime: new SchemaField({

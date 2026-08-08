@@ -13,6 +13,7 @@ import CombatskillData from '../data/item/combatskill.js';
 import { ModifierCalculator } from '../item/concerns/modifier-calculator.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
+import ReloadTimeField from '../data/item/fields/reload_time_field.js';
 import SpecialabilityData from '../data/item/specialability.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectScopedRules from '../status/active_effect_scoped_rules.js';
@@ -1025,7 +1026,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
     if (testData.source.type == 'rangeweapon' || (testData.source.type == 'trait' && testData.source.system.traitType.value == 'rangeAttack')) {
       const actor = DSA5_Utility.getSpeaker(testData.extra.speaker);
-      const LZ = testData.source.type == 'trait' ? Number(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, actor);
+      const LZ = testData.source.type == 'trait' ? ReloadTimeField.evaluateSegment(testData.source.system.reloadTime.value) : Actordsa5.calcLZ(testData.source, actor);
       const progress = testData.source.system.reloadTime.progress;
       if (progress < LZ) {
         buttons.push({
@@ -1060,7 +1061,7 @@ export default class DSA5CombatDialog extends DialogShared {
             const weapon = actor?.items?.get(testData.source._id);
             if (!weapon) return;
 
-            const lz = weapon.type === 'trait' ? Number(weapon.system.reloadTime?.value) || 0 : Actordsa5.calcLZ(weapon, actor);
+            const lz = weapon.type === 'trait' ? ReloadTimeField.evaluateSegment(weapon.system.reloadTime?.value) : Actordsa5.calcLZ(weapon, actor);
             const reloadProgress = Number(weapon.system.reloadTime?.progress) || 0;
             const loaded = lz === 0 || reloadProgress >= lz;
             if (!loaded) return;

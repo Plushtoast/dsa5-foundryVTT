@@ -23,6 +23,7 @@ import DSAActiveEffect from '../status/dsa_active_effects.js';
 import EffectDropdownBuilder from '../status/effect-dropdown-builder.js';
 import { ItemDataModel } from '../data/baseitem.js';
 import RangeweaponData from '../data/item/rangeweapon.js';
+import ReloadTimeField from '../data/item/fields/reload_time_field.js';
 import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
@@ -2301,7 +2302,7 @@ export default class Actordsa5 extends Actor {
       reloadTime = reloadTime[0];
     }
 
-    return Math.max(0, Math.round(Number(reloadTime) * factor) + modifier);
+    return Math.max(0, Math.round(ReloadTimeField.evaluateSegment(reloadTime) * factor) + modifier);
   }
 
   static _prepareRangeWeapon(item, ammunitions, combatskills, actor, isBaseWeapon = true) {

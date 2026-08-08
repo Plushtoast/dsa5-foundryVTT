@@ -6,6 +6,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import RangeweaponData from './rangeweapon.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import ReloadTimeField from './fields/reload_time_field.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
@@ -27,7 +28,7 @@ export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, Descri
         value: new StringField({ initial: '1d6', label: 'damage' }),
       }),
       reloadTime: new SchemaField({
-        value: new StringField({ initial: '', label: 'reloadTime' }),
+        value: new ReloadTimeField({ initial: '', label: 'reloadTime' }),
         progress: new NumberField({ initial: 0 }),
       }),
       aimTime: new SchemaField({
@@ -164,7 +165,7 @@ export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, Descri
 
   static _prepareRangeTrait(item, actorData) {
     item.attack = Number(item.system.at.value);
-    item.LZ = Number(item.system.reloadTime.value);
+    item.LZ = ReloadTimeField.evaluateSegment(item.system.reloadTime.value);
     if (item.LZ > 0) RangeweaponData.buildReloadProgress(item);
     RangeweaponData.buildAimProgress(item);
 

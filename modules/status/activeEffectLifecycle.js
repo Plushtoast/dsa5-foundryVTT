@@ -1,6 +1,7 @@
 import OnUseEffect from '../system/automation/onUseEffects.js';
 import ActiveEffectScopedRules from './active_effect_scoped_rules.js';
 import EffectDuration from './effectDuration.js';
+import ReloadTimeField from '../data/item/fields/reload_time_field.js';
 
 const { duplicate, getProperty } = foundry.utils;
 
@@ -43,7 +44,7 @@ export default class ActiveEffectLifecycle {
     if (!actor?.isOwner) return;
 
     const progress = Number(item.system.reloadTime.progress) || 0;
-    const reloadTime = Number(item.LZ ?? item.system.reloadTime.value) || 0;
+    const reloadTime = Number(item.LZ) || ReloadTimeField.evaluateSegment(item.system.reloadTime.value);
     if (progress < reloadTime) return;
 
     const effectIds = ActiveEffectScopedRules.activeEntries(actor, 'restriction')

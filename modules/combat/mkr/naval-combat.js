@@ -1,3 +1,5 @@
+import ReloadTimeField from '../../data/item/fields/reload_time_field.js';
+
 export const MKR_PHASES = ['heroActions', 'movement', 'attacks', 'damageReport'];
 export const RE_PER_STEP = 16;
 export const DEFAULT_KR_PER_MKR = 60;
@@ -11,7 +13,7 @@ export default class NavalCombat {
 
   /** Shots per MKR from reload time (KR), rounded to 1 decimal (e.g. LZ 120 → 0.5). */
   static shotsPerMkr(reloadTimeValue, krPerMkr = DEFAULT_KR_PER_MKR) {
-    const reloadKr = Number(String(reloadTimeValue ?? '1').split('/')[0]) || 1;
+    const reloadKr = ReloadTimeField.evaluateSegment(reloadTimeValue);
     if (reloadKr <= 0) return Infinity;
     return Math.round((krPerMkr / reloadKr) * 10) / 10;
   }
