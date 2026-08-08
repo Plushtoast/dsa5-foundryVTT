@@ -12,7 +12,7 @@
         <div class="flexrow flexAlignCenter roll-request-row gap5px{{#if regenApplied}} regen-applied{{/if}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if regenApplied}} data-tooltip="{{localize "ROLLREQUEST.regenApplied"}}" aria-label="{{localize "ROLLREQUEST.regenApplied"}}"{{else if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
           {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
           {{#if resultIcon}}
-            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"><i class="fas {{resultIcon}}"></i></span>
+            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}"><i class="fas {{resultIcon}}"></i></span>
           {{/if}}
           <div class="roll-request-row-side flexrow flexAlignEnd gap2px">
             {{#if regenResults.length}}

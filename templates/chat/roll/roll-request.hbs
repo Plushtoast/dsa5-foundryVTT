@@ -15,7 +15,7 @@
         <div class="flexrow flexAlignCenter roll-request-row gap5px {{resultRowClass}}" data-actor-id="{{actorId}}" data-status="{{status}}"{{#if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
           {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
           {{#if resultIcon}}
-            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}" data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"><i class="fas {{resultIcon}}"></i></span>
+            <span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight {{resultIconClass}}"><i class="fas {{resultIcon}}"></i></span>
           {{else if resultLabel}}
             <div class="roll-request-result-stack flex0">
               <b class="roll-request-result-label">{{resultLabel}}</b>

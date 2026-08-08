@@ -601,12 +601,11 @@ export default class RollRequestService {
 
     if (entry.status === 'skipped') {
       const label = $(`<span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight ${statusStyle.colorClass}"></span>`);
-      label
-        .attr('data-tooltip', outcome.resultTooltip)
-        .attr('aria-label', outcome.resultTooltip)
-        .html(`<i class="fas ${statusStyle.icon}"></i>`);
+      label.html(`<i class="fas ${statusStyle.icon}"></i>`);
       row.find('.roll-request-row-side').before(label);
-      row.attr('data-tooltip', outcome.resultTooltip).attr('aria-label', outcome.resultTooltip);
+      if (outcome.resultTooltip) {
+        row.attr('data-tooltip', outcome.resultTooltip).attr('aria-label', outcome.resultTooltip);
+      }
       return;
     }
 
