@@ -11,7 +11,7 @@ class PracticalApplicationApp extends ApplicationV2 {
             resizable: true 
         },
         position: {
-            width: 500,
+            width: 550,
             height: "auto"
         },
 
@@ -74,7 +74,12 @@ class PracticalApplicationApp extends ApplicationV2 {
             return {
                 rolled: false,
                 description: _loc('PRACTICAL_APPLICATION.description'),
-                skills: skills.map(s => ({ id: s.id, name: s.name }))
+                skills: skills.map(s => ({
+                    id: s.id,
+                    name: s.name,
+                    img: s.img || 'systems/dsa5/icons/categories/Skill.webp',
+                    value: s.system.talentValue?.value ?? 0,
+                }))
             };
         }
     }

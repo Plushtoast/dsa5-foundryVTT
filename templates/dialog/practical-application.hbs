@@ -23,10 +23,20 @@
   {{else}}
     <p class="center marginBottom">{{description}}</p>
 
-    <div class="row-section gap5px wrap">
-      {{#each skills}}
-        <button type="button" data-action="rollKnowledge" data-id="{{this.id}}" class="col two dsa5 button">{{this.name}}</button>
-      {{/each}}
+    <div class="selection">
+      <div class="row-section wrap">
+        {{#each skills as |skill|}}
+        <div class="col two flexrow">
+          <button type="button" data-action="rollKnowledge" data-id="{{skill.id}}" class="reactClick row-section">
+            <div class="col ten">
+              <span class="die-kl d20">{{skill.value}}</span>
+            </div>
+            <img class="col ten" src="{{skill.img}}" alt="" />
+            <div class="col eighty">{{skill.name}}</div>
+          </button>
+        </div>
+        {{/each}}
+      </div>
     </div>
   {{/if}}
 </div>
