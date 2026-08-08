@@ -146,29 +146,55 @@ export class PlayerMenuSubApp {
   }
 
   /**
-   * Bind shared detail-select toggle/pick handlers scoped to this subapp tab.
-   * @param {JQuery} html
+   * Register the pick callback for this subapp's detail-selects.
+   * Actual clicks are handled by {@link PlayerMenu} delegated binding so nested
+   * Handlebars `data-field` on option buttons is not required (it often renders empty).
+   * @param {JQuery} _html
    * @param {(field: string, id: string) => void|boolean|Promise<void>} onPick
    */
-  bindDetailSelect(html, onPick) {
-    const scope = this.detailSelectScope;
-    html.find(`${scope} [data-action="toggleDetailSelect"]`).on('click', (ev) => {
-      ev.preventDefault();
-      const field = ev.currentTarget.closest('.dsa-detail-select')?.dataset.field;
-      if (!field) return;
+  bindDetailSelect(_html, onPick) {
+    this._detailSelectOnPick = onPick;
+  }
+
+  /**
+   * Handle a detail-select action for this subapp.
+   * Field is always read from the outer `.dsa-detail-select` (reliable), never from nested option buttons.
+   * @param {'toggle'|'pick'|'open'} action
+   * @param {HTMLElement} target
+   * @returns {Promise<boolean>} true if handled
+   */
+  async handleDetailSelect(action, target) {
+    const select = target.closest('.dsa-detail-select');
+    if (!select) return false;
+
+    if (action === 'toggle') {
+      const field = select.dataset.field;
+      if (!field) return false;
       if (this._openPickers.has(field)) this._openPickers.delete(field);
       else this._openPickers.add(field);
-      this.render();
-    });
-    html.find(`${scope} [data-action="pickDetailSelect"]`).on('click', async (ev) => {
-      ev.preventDefault();
-      const field = ev.currentTarget.dataset.field;
-      const id = ev.currentTarget.dataset.id ?? '';
-      if (!field) return;
+      await this.render();
+      return true;
+    }
+
+    if (action === 'pick') {
+      const field = select.dataset.field;
+      const id = target.dataset.id ?? '';
+      if (!field) return false;
       this._openPickers.delete(field);
-      await onPick?.(field, id);
-      this.render();
-    });
+      await this._detailSelectOnPick?.(field, id);
+      await this.render();
+      return true;
+    }
+
+    if (action === 'open') {
+      const uuid = target.dataset.uuid;
+      if (!uuid) return false;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
+      return true;
+    }
+
+    return false;
   }
 
   async _onRender(html) {}

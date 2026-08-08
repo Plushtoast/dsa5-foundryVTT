@@ -276,6 +276,15 @@
         }
     }
 
+    // Flex/grid parents default to min-width:auto; without this, a long selected label
+    // expands the column instead of ellipsizing inside the control.
+    .col:has(.dsa-detail-select),
+    .flex1:has(.dsa-detail-select),
+    .flexrow:has(> .dsa-detail-select),
+    .row-section:has(.dsa-detail-select) > .col {
+        min-width: 0;
+    }
+
     .dsa-detail-select {
         // Match select2 dropdown colors (light: --bg-color, dark: --select2bg)
         --dsa-detail-select-bg: var(--select2bg, var(--bg-color));
@@ -284,10 +293,15 @@
 
         position: relative;
         width: 100%;
+        max-width: 100%;
+        min-width: 0;
         margin-bottom: 4px;
+        box-sizing: border-box;
 
         &__control {
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
         }
 
         &__toggle {
@@ -296,6 +310,9 @@
             justify-content: space-between;
             gap: 6px;
             width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            overflow: hidden;
             text-align: left;
             padding: 4px 8px;
             border: 1px solid var(--border-color);
@@ -309,6 +326,11 @@
             &:focus-visible {
                 color: var(--dsa-detail-select-fg);
                 background: var(--dsa-detail-select-bg);
+            }
+
+            > .fa-caret-up,
+            > .fa-caret-down {
+                flex: 0 0 auto;
             }
         }
 
@@ -325,6 +347,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            min-width: 0;
+            flex: 1 1 auto;
         }
 
         &__icon {
@@ -343,6 +367,9 @@
 
         &__badge {
             flex: 0 0 auto;
+            max-width: 40%;
+            overflow: hidden;
+            text-overflow: ellipsis;
             font-size: 0.75em;
             opacity: 0.8;
             white-space: nowrap;
@@ -368,6 +395,9 @@
             z-index: 30;
             left: 0;
             right: 0;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             max-height: 220px;
             overflow: auto;
             margin-top: 2px;
@@ -392,6 +422,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
+            min-width: 0;
             padding: 2px 4px 2px 0;
             color: inherit;
 
@@ -714,7 +745,6 @@
         display: flex;
         gap: 6px;
         flex-wrap: wrap;
-        align-items: center;
         --input-height: 1.2rem;
 
         .group-attr-icon {
@@ -740,17 +770,11 @@
             flex: 0 0 auto;
             width: auto;
             max-width: 400px;
-            height: var(--input-height);
-            min-height: var(--input-height);
-            padding: 0 6px;
+            padding: 0 2px;
             text-align: center;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
             border-radius: 4px;
             background-color: var(--oddColor);
             font-family: 'Fira Code', 'Roboto Mono', 'Consolas', 'Menlo', 'Monaco', 'Courier New', monospace;
-            font-size: var(--font-size-12);
             border: 1px solid var(--dsadesign1);
             color: var(--dsadesign1);
             box-shadow: none;

@@ -382,21 +382,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       ev.stopPropagation();
       fromUuid(ev.currentTarget.dataset.uuid).then(itm => itm.sheet.render(true));
     });
-    html.find('.summoning-tab [data-action="toggleDetailSelect"]').on('click', (ev) => {
-      ev.preventDefault();
-      const field = ev.currentTarget.closest('.dsa-detail-select')?.dataset.field;
-      if (!field) return;
-      if (this._openPickers.has(field)) this._openPickers.delete(field);
-      else this._openPickers.add(field);
-      this.render(true);
-    });
-    html.find('.summoning-tab [data-action="pickDetailSelect"]').on('click', (ev) => {
-      ev.preventDefault();
-      const field = ev.currentTarget.dataset.field;
-      const id = ev.currentTarget.dataset.id ?? '';
-      if (!field) return;
-      this.#applyDetailSelectPick(field, id);
-    });
+    this.#bindDetailSelectDelegation(html);
 
     new foundry.applications.ux.DragDrop.implementation({
       dropSelector: '.window-content',
@@ -410,6 +396,69 @@ export default class PlayerMenu extends DefaultAppv2 {
 
     for (const app of this.subApps) {
       app._onRender(html);
+    }
+  }
+
+  /**
+   * Single delegated click handler for all detail-select controls (summoning + subapps).
+   * Reads `field` from `.dsa-detail-select` so nested option `data-field` (often empty in Handlebars each) is unused.
+   * @param {JQuery} html
+   */
+  #bindDetailSelectDelegation(html) {
+    html.off('click.dsaDetailSelect').on('click.dsaDetailSelect', '[data-dsa-select]', async (ev) => {
+      const target = ev.currentTarget;
+      const action = target.dataset.dsaSelect;
+      const select = target.closest('.dsa-detail-select');
+      if (!action || !select) return;
+
+      ev.preventDefault();
+      ev.stopPropagation();
+
+      const owner = select.dataset.owner || '';
+      if (owner === 'summoning' || select.closest('.summoning-tab')) {
+        await this.#handleSummoningDetailSelect(action, target, select);
+        return;
+      }
+
+      const app = this.subApps.find((a) => a.tabName === owner || a.constructor.name === owner);
+      if (app) {
+        await app.handleDetailSelect(action, target);
+        return;
+      }
+
+      // Fallback: active tab subapp when owner is missing
+      const activeTab = this.tabGroups?.sheet;
+      const activeApp = this.subApps.find((a) => a.tabName === activeTab);
+      if (activeApp) await activeApp.handleDetailSelect(action, target);
+    });
+  }
+
+  /**
+   * @param {'toggle'|'pick'|'open'} action
+   * @param {HTMLElement} target
+   * @param {HTMLElement} select
+   */
+  async #handleSummoningDetailSelect(action, target, select) {
+    if (action === 'toggle') {
+      const field = select.dataset.field;
+      if (!field) return;
+      if (this._openPickers.has(field)) this._openPickers.delete(field);
+      else this._openPickers.add(field);
+      this.render(true);
+      return;
+    }
+    if (action === 'pick') {
+      const field = select.dataset.field;
+      const id = target.dataset.id ?? '';
+      if (!field) return;
+      this.#applyDetailSelectPick(field, id);
+      return;
+    }
+    if (action === 'open') {
+      const uuid = target.dataset.uuid;
+      if (!uuid) return;
+      const doc = await fromUuid(uuid);
+      doc?.sheet?.render(true);
     }
   }
 
@@ -560,8 +609,17 @@ export default class PlayerMenu extends DefaultAppv2 {
       openActorBadge: this.#openActorBadge,
       clearConjuration: this.#clearConjuration,
       selectFavoriteCreature: this.#selectFavoriteCreature,
+      openSelectedItem: this.#openSelectedItem,
     }
   };
+
+  static async #openSelectedItem(event, target) {
+    event.preventDefault();
+    const uuid = target.dataset.uuid;
+    if (!uuid) return;
+    const doc = await fromUuid(uuid);
+    doc?.sheet?.render(true);
+  }
 
   static #openActorBadge(ev, target) {
     const tab = target.dataset.tab;

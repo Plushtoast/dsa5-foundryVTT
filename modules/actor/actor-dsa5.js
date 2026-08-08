@@ -1585,10 +1585,21 @@ export default class Actordsa5 extends Actor {
     return true;
   }
 
+  /**
+   * @param {string|number} rollFormula
+   * @param {'AsP'|'KaP'} type
+   * @param {object} [options]
+   * @param {number} [options.permanentCost] Permanent AsP/KaP loss applied after a successful payment
+   */
   async applyMana(rollFormula, type, options = {}) {
     const state = type == 'AsP' ? 'astralenergy' : 'karmaenergy';
     const amount = (await new Roll(`${rollFormula}`).evaluate()).total;
-    if (amount === 0) return true;
+    const permanentCost = Math.max(0, Number(options.permanentCost) || 0);
+
+    if (amount === 0) {
+      if (permanentCost > 0) await this.applyPermanentManaCost(state, permanentCost);
+      return true;
+    }
 
     // Negative amount restores mana (same convention as applyDamage).
     if (amount < 0) {
@@ -1606,16 +1617,31 @@ export default class Actordsa5 extends Actor {
 
       const allocation = await AspPaymentDialog.prompt(this, amount, options);
       if (!allocation) return false;
-      return this.applyAspAllocation(amount, allocation, options);
+      const paid = await this.applyAspAllocation(amount, allocation, options);
+      if (paid && permanentCost > 0) await this.applyPermanentManaCost(state, permanentCost);
+      return paid;
     }
 
     const newVal = Math.min(this.system.status[state].max, this.system.status[state].value - amount);
     if (newVal >= 0) {
       await this.update({ [`system.status.${state}.value`]: newVal });
+      if (permanentCost > 0) await this.applyPermanentManaCost(state, permanentCost);
       return true;
     }
     ui.notifications.error(`DSAError.NotEnough${type}`, { localize: true });
     return false;
+  }
+
+  /**
+   * Increase permanent AsP/KaP loss on the actor (e.g. artifact creation).
+   * @param {'astralenergy'|'karmaenergy'} state
+   * @param {number} amount
+   */
+  async applyPermanentManaCost(state, amount) {
+    const cost = Math.max(0, Number(amount) || 0);
+    if (cost <= 0) return;
+    const previous = Number(this.system.status[state].permanentLoss) || 0;
+    await this.update({ [`system.status.${state}.permanentLoss`]: previous + cost });
   }
 
   async fatererollDamage(infoMsg, cardOptions, newTestData, message, data, schipsource) {

@@ -1,10 +1,12 @@
 {{!-- Shared dropdown used by summoning, production-style apps, alchemy, artifacts.
      picker: { field, owner, open, selectedId, selectedLabel, selectedBadge, selectedBadgeClass,
                selectedIcon, selectedImg, selectedUuid, noneLabel, groups:[{label, options}] }
-     option: { id, name, badge, badgeClass, icon, img, uuid, selected, tooltip } --}}
+     option: { id, name, badge, badgeClass, icon, img, uuid, selected, tooltip }
+     Uses data-dsa-select (not data-action) so ApplicationV2 does not intercept clicks.
+     Field lives only on the root .dsa-detail-select — nested {{picker.field}} inside #each is empty. --}}
 <div class="dsa-detail-select" data-field="{{picker.field}}" data-owner="{{picker.owner}}">
 	<div class="dsa-detail-select__control flexrow gap5px flexAlignCenter">
-		<button type="button" class="dsa-detail-select__toggle flex1" data-action="toggleDetailSelect"
+		<button type="button" class="dsa-detail-select__toggle flex1" data-dsa-select="toggle"
 			{{#if picker.selectedTooltip}}data-tooltip="{{picker.selectedTooltip}}"{{/if}}>
 			{{#if picker.selectedImg}}
 			<img class="dsa-detail-select__icon" src="{{picker.selectedImg}}" alt="" loading="lazy" />
@@ -19,7 +21,7 @@
 		</button>
 		{{#if picker.selectedUuid}}
 		<button type="button" class="icon fas fa-book-open noBorder dsadesignbutton"
-			data-action="openDetailSelect" data-uuid="{{picker.selectedUuid}}"
+			data-dsa-select="open" data-uuid="{{picker.selectedUuid}}"
 			data-tooltip="{{localize 'PRODUCTION.openDetails'}}"></button>
 		{{/if}}
 	</div>
@@ -27,8 +29,8 @@
 	<div class="dsa-detail-select__menu">
 		{{#if picker.noneLabel}}
 		<div class="dsa-detail-select__option {{#unless picker.selectedId}}selected{{/unless}}">
-			<button type="button" class="dsa-detail-select__pick" data-action="pickDetailSelect"
-				data-field="{{picker.field}}" data-id="">{{picker.noneLabel}}</button>
+			<button type="button" class="dsa-detail-select__pick" data-dsa-select="pick"
+				data-id="">{{picker.noneLabel}}</button>
 		</div>
 		{{/if}}
 		{{#each picker.groups as |group|}}
@@ -37,8 +39,8 @@
 		{{/if}}
 		{{#each group.options as |opt|}}
 		<div class="dsa-detail-select__option {{#if opt.selected}}selected{{/if}}">
-			<button type="button" class="dsa-detail-select__pick" data-action="pickDetailSelect"
-				data-field="{{picker.field}}" data-id="{{opt.id}}"
+			<button type="button" class="dsa-detail-select__pick" data-dsa-select="pick"
+				data-id="{{opt.id}}"
 				{{#if opt.tooltip}}data-tooltip="{{opt.tooltip}}"{{/if}}>
 				{{#if opt.img}}
 				<img class="dsa-detail-select__icon" src="{{opt.img}}" alt="" loading="lazy" />
@@ -52,7 +54,7 @@
 			{{/if}}
 			{{#if opt.uuid}}
 			<button type="button" class="icon fas fa-book-open noBorder dsadesignbutton"
-				data-action="openDetailSelect" data-uuid="{{opt.uuid}}"
+				data-dsa-select="open" data-uuid="{{opt.uuid}}"
 				data-tooltip="{{localize 'PRODUCTION.openDetails'}}"></button>
 			{{/if}}
 		</div>
