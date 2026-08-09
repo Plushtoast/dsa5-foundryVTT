@@ -141,6 +141,14 @@
         "Via an actor's context menu you can add them directly to Dramatis Personae / Almanac.",
         "Area spells and auras use scene regions and respect walls.",
         "The Active Effects assistant groups effect keys by category — expert mode is rarely needed.",
-        "The wiki has guidance on automated special abilities and system features: https://plushtoast.github.io/dsa5-foundryVTT-wiki/"
+        "The wiki has guidance on automated special abilities and system features: https://plushtoast.github.io/dsa5-foundryVTT-wiki/",
+        "Summoning is also available from the actor sheet (e.g. companion tab). Summoned creatures appear there as companions.",
+        "You can drag Magical Analysis (and normal) information items onto equipment to prepare magical lint for the party.",
+        "On the combat tracker you can switch to mass combat rounds for ship and vehicle fights.",
+        "Group-check enrichers support alternative talents, e.g. @Gc[Perception 1,Self-Control -1]. Players pick one of the listed skills.",
+        "Active effects with charges used as optional modifiers on skill rolls lose one charge per use — handy for consumables like potions.",
+        "In brawling mode the bruised state persists between brawls until the GM converts it — a regeneration roll always clears brawling damage.",
+        "The journal browser can attach your own custom journal compendiums if you follow the formatting rules.",
+        "In the calendar questlog you can reorder objectives via drag and drop and hide resolved quests."
     ]
 }

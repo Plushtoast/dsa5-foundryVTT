@@ -144,6 +144,14 @@
     "Über das Kontextmenü eines Akteurs kannst du ihn direkt zu Dramatis Personae / Almanach hinzufügen.",
     "Flächenzauber und Auren nutzen Szenenregionen und berücksichtigen dabei Wände.",
     "Active-Effects-Assistent gruppiert Effektkeys nach Kategorie – den Expertenmodus brauchst du nur noch selten.",
-    "Im Wiki findest du Hinweise zu automatisierten Sonderfertigkeiten und Systemfunktionen: https://plushtoast.github.io/dsa5-foundryVTT-wiki/"
+    "Im Wiki findest du Hinweise zu automatisierten Sonderfertigkeiten und Systemfunktionen: https://plushtoast.github.io/dsa5-foundryVTT-wiki/",
+    "Beschwörungen sind auch über das Charakterblatt verfügbar (z.B. Begleiter-Tab). Beschworene Kreaturen erscheinen dort als Begleiter.",
+    "Du kannst Informationsitems vom Typ Magische Analyse (und normale) auf Ausrüstung ziehen, um magische Spuren für die Gruppe vorzubereiten.",
+    "Am Combat Tracker kannst du Massenkampf-Runden für Schiff- und Fahrzeugkämpfe aktivieren.",
+    "Gruppenproben-Enricher unterstützen alternative Talente, z.B. @Gc[Sinnesschärfe 1,Selbstbeherrschung -1]. Spieler wählen eines der gelisteten Talente.",
+    "Aktive Effekte mit Ladungen, die als optionale Modifikatoren bei Talentproben genutzt werden, verlieren pro Verwendung eine Ladung – praktisch für Verbrauchsgegenstände wie Tränke.",
+    "Im Prügelmodus bleibt der angeschlagene Zustand zwischen Prügeleien erhalten, bis der SL ihn umwandelt – eine Regenerationsprobe räumt Prügelschaden immer ab.",
+    "Der Journalbrowser kann eigene Journal-Kompendien einbinden, wenn du dich an die Formatierungsregeln hältst.",
+    "Im Questlog des Kalenders kannst du Ziele per Drag & Drop umsortieren und erledigte Quests ausblenden."
   ]
 }
