@@ -921,6 +921,7 @@
     "domesticatedAnimal": "Domesticated Animal",
     "dropHint": "Drag & drop an actor here to add it as a companion.",
     "Favorites": {
+      "add": "As summoning favorite",
       "added": "{name} was saved as a summoning favorite.",
       "already": "{name} is already saved as a favorite.",
       "dropHint": "Drag favorites here for quick select",

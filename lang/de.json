@@ -921,6 +921,7 @@
     "domesticatedAnimal": "Domestiziertes Tier",
     "dropHint": "Eine Kreatur hierher ziehen, um sie als Begleiter hinzuzufügen.",
     "Favorites": {
+      "add": "Als Beschwörungsfavorit",
       "added": "{name} wurde als Beschwörungsfavorit gespeichert.",
       "already": "{name} ist bereits als Favorit gespeichert.",
       "dropHint": "Favoriten zum Schnellauswählen hierher ziehen",

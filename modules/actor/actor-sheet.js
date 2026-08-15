@@ -35,6 +35,7 @@ import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
+import CreatureDropDialog from './creature-drop-dialog.js';
 import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
@@ -1986,37 +1987,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async creatureDrop(item) {
-    new foundry.applications.api.DialogV2({
-      window: {
-        title: _loc('DIALOG.ItemRequiresAdoption') + ': ' + item.name,
-      },
-      content: `<p>${_loc('DIALOG.whichFunction') + ': ' + item.name}</p>`,
-      buttons: [
-        {
-          action: 'companion',
-          icon: 'fas fa-handshake',
-          label: 'SHEET.AnimalCompanion',
-          callback: () => {
-            CompanionHandler.setCompanion(this, item.uuid);
-          },
-        },
-        {
-          action: 'shapeshift',
-          icon: 'fas fa-paw',
-          label: 'CONDITION.shapeshift',
-          callback: () => game.dsa5.apps.ShapeshiftingAPI.open({ sourceActor: this.actor, targetActor: item }),
-        },
-        {
-          action: 'horse',
-          icon: 'fas fa-horse',
-          label: 'RIDING.horse',
-          default: true,
-          callback: () => {
-            Riding.setHorse(this.actor, item, this.token);
-          },
-        },
-      ],
-    }).render(true);
+    CreatureDropDialog.show(this, item);
   }
 
   async _manageDragItems(item, typeClass) {
@@ -2140,7 +2111,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   async _onDropActor(event, item) {
     if (item.uuid === this.actor.uuid) return false;
 
-    if (event.target?.closest?.('.conjuration-favorites-drop')) {
+    const onCompanionTab = this.tabGroups?.sheet === CompanionHandler.COMPANION_TAB_ID;
+    if (onCompanionTab && event.target?.closest?.('.conjuration-favorites-drop')) {
       return CompanionHandler.addConjurationFavorite(this.actor, item);
     }
 

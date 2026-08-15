@@ -18,15 +18,21 @@
         </div>
 
         {{#if showSummoningTools}}
-        <div class="bags flexrow flexAlignCenter gap2px wrap conjuration-favorites-list">
-            {{#each @root.conjurationFavorites as |fav|}}
-            <div class="slot conjuration-favorite-slot" style="background-image:url('{{fav.img}}')"
-                data-action="conjurationFavorite" data-uuid="{{fav.uuid}}" data-favorite-id="{{fav.id}}"
-                data-tooltip="{{fav.name}}"></div>
-            {{/each}}
-            <div class="slot conjuration-favorites-drop" data-tooltip="COMPANIONS.Favorites.dropHint"
+        <div class="conjuration-favorites-block">
+            {{#if @root.conjurationFavorites.length}}
+            <div class="bags flexrow flexAlignCenter gap2px wrap conjuration-favorites-list">
+                {{#each @root.conjurationFavorites as |fav|}}
+                <div class="slot conjuration-favorite-slot" style="background-image:url('{{fav.img}}')"
+                    data-action="conjurationFavorite" data-uuid="{{fav.uuid}}" data-favorite-id="{{fav.id}}"
+                    data-tooltip="{{fav.name}}"></div>
+                {{/each}}
+            </div>
+            {{/if}}
+            <div class="droparea droparea--compact conjuration-favorites-drop"
+                data-tooltip="COMPANIONS.Favorites.dropHint"
                 aria-label="{{localize 'COMPANIONS.Favorites.dropHint'}}">
                 <i class="fas fa-plus" aria-hidden="true"></i>
+                <span>{{localize 'COMPANIONS.Favorites.dropHint'}}</span>
             </div>
         </div>
         {{/if}}

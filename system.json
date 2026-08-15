@@ -116,7 +116,7 @@
     "secondaryTokenAttribute": "status.astralenergy",
     "compatibility": {
         "minimum": "14.364",
-        "verified": "14.365",
+        "verified": "14.366",
         "maximum": "14"
     },
     "url": "https://github.com/Plushtoast/dsa5-foundryVTT",

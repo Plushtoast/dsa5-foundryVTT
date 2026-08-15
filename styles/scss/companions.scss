@@ -21,6 +21,17 @@
 }
 
 /* Shared by actor companions tab and player-menu summoning */
+.conjuration-favorites-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 6px 0 8px;
+
+    .conjuration-favorites-list {
+        margin: 0;
+    }
+}
+
 .conjuration-favorites-list {
     margin: 6px 0 4px;
 
@@ -36,8 +47,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-style: dashed;
-    opacity: 0.65;
+    gap: 8px;
+    min-height: 44px;
+    opacity: 0.85;
 
     i {
         font-size: 1.1em;
