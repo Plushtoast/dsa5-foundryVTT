@@ -658,6 +658,18 @@ export function setupConfiguration() {
       default: true,
       type: Boolean,
     },
+    libraryIndexLoadMode: {
+      name: 'DSASETTINGS.libraryIndexLoadMode',
+      hint: 'DSASETTINGS.libraryIndexLoadModeHint',
+      scope: 'client',
+      config: true,
+      default: 'bulk',
+      type: String,
+      choices: {
+        bulk: 'DSASETTINGS.libraryIndexLoadModeBulk',
+        chunked: 'DSASETTINGS.libraryIndexLoadModeChunked',
+      },
+    },
     filterDuplicateItems: {
       name: 'DSASETTINGS.filterDuplicateItems',
       scope: 'client',

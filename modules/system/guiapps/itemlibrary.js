@@ -8,6 +8,7 @@ import SearchDocument, { AdvancedSearchDocument } from './itemlibrary/searchDocu
 import LibraryModulsFilter from './itemlibrary/libraryModulesFilter.js';
 import ItemLibraryModuleOptions from './itemlibrary/moduleOptions.js';
 import ItemLibraryListColumns from './itemlibrary/listColumns.js';
+import ItemLibraryPackLoader from './itemlibrary/packDocumentLoader.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -17,6 +18,8 @@ const VIEW_MODES = ['compact', 'browse', 'list'];
 //todo check if items on index have permission
 
 export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
+  static PackLoader = ItemLibraryPackLoader;
+
   pageSize = 60
   filterLimit = 10000
 
@@ -61,7 +64,23 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
           icon: "fas fa-filter",
           label: "DSASETTINGS.libraryModulsFilter",
           visible: true,
-        }
+        },
+        {
+          action: "swapIndexLoadMode",
+          icon: "fas fa-layer-group",
+          label: "Library.switchToChunkedHint",
+          visible: function () {
+            return this.constructor.PackLoader.resolveMode() === 'bulk';
+          },
+        },
+        {
+          action: "swapIndexLoadMode",
+          icon: "fas fa-bolt",
+          label: "Library.switchToBulkHint",
+          visible: function () {
+            return this.constructor.PackLoader.resolveMode() === 'chunked';
+          },
+        },
       ],
     },
     actions: {
@@ -69,6 +88,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       selectLibraryView: ItemLibraryBase.prototype._selectLibraryView,
       sortListColumn: ItemLibraryBase.prototype._sortListColumn,
       showCompendiumFilter: ItemLibraryBase._showCompendiumFilter,
+      swapIndexLoadMode: ItemLibraryBase.prototype._swapIndexLoadMode,
       selectListFontSize: ItemLibraryBase.prototype._selectListFontSize,
     },
     classes: ["dsa5", "sheet", "itemlibrary"]
@@ -1112,92 +1132,144 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
     index.build = true;
     index.store = {};
+    index.abortController?.abort();
+    index.abortController = new AbortController();
+    const { signal } = index.abortController;
     index.buildToken = this.indexLoader?.bumpBuildToken?.() || (index.buildToken + 1);
     const filteredCompendiums = game.settings.get("dsa5", "libraryModulsFilter");
-    const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true });
+    const progress = ui.notifications.info('Library.loading', { format: { item: "" }, progress: true, console: false });
     this.showLoading(documentName);
 
-    const packs = game.packs.filter(p =>
-      p.documentName === documentName &&
-      (game.user.isGM || p.visible) &&
-      !filteredCompendiums[p.metadata.packageName]
-    );
+    try {
+      const packs = game.packs.filter(p =>
+        p.documentName === documentName &&
+        (game.user.isGM || p.visible) &&
+        !filteredCompendiums[p.metadata.packageName]
+      );
 
-    index.workerReady = false;
-    if (!this.indexLoader?.enabled) {
-      this.hideLoading(documentName);
-      index.build = false;
-      ui.notifications.error('DSA5 | ItemLibrary: Worker indexing unavailable');
-      return;
-    }
-
-    const fields = this.systemConfiguration.getSearchFields(documentName, undefined, this.fullTextSearch).index;
-    await this.indexLoader.reset({ documentName, token: index.buildToken });
-    const ok = await this.indexLoader.ensureIndex({
-      documentName,
-      fields,
-      fullTextSearch: this.fullTextSearch,
-      token: index.buildToken
-    });
-    index.workerReady = !!ok;
-    if (!index.workerReady) {
-      this.hideLoading(documentName);
-      index.build = false;
-      ui.notifications.error('DSA5 | ItemLibrary: Worker indexing failed');
-      return;
-    }
-
-    await this.indexWorldItems(worldItems, documentName);
-    progress.update({
-      message: 'Library.loading',
-      format: { item: "world items" },
-      pct: 0.1
-    });
-
-    const percentage = 0.9 / Math.max(packs.length, 1);
-    let completedCount = 0;
-
-    const getDocumentsFunction = documentName === "JournalEntry"
-      ? p => p.getDocuments()
-      : documentName === "Actor"
-        ? p => p.getDocuments()
-        : p => p.getDocuments({ type__in: Object.keys(game.system.documentTypes.Item).filter(x => x != 'information') });
-
-    await Promise.all(packs.map(async (p, i) => {
-      if (i > 2) {
-        await new Promise(resolve => setTimeout(resolve, 50 * (i % 3)));
+      index.workerReady = false;
+      if (!this.indexLoader?.enabled) {
+        progress.remove?.();
+        index.build = false;
+        ui.notifications.error('DSA5 | ItemLibrary: Worker indexing unavailable');
+        return;
       }
 
-      const documents = await getDocumentsFunction(p);
-
-      const batch = [];
-      const BATCH_SIZE = 200;
-      for (const item of documents) {
-        const so = SearchDocument.toSearchableObject(item, documentName);
-        index.store[so.uuid] = so;
-        batch.push(so);
-
-        if (batch.length >= BATCH_SIZE) {
-          await this.indexLoader.addBatch({ documentName, batch, token: index.buildToken });
-          batch.length = 0;
-        }
+      const fields = this.systemConfiguration.getSearchFields(documentName, undefined, this.fullTextSearch).index;
+      await this.indexLoader.reset({ documentName, token: index.buildToken });
+      if (signal.aborted) return;
+      const ok = await this.indexLoader.ensureIndex({
+        documentName,
+        fields,
+        fullTextSearch: this.fullTextSearch,
+        token: index.buildToken
+      });
+      if (signal.aborted) return;
+      index.workerReady = !!ok;
+      if (!index.workerReady) {
+        progress.remove?.();
+        index.build = false;
+        ui.notifications.error('DSA5 | ItemLibrary: Worker indexing failed');
+        return;
       }
 
-      if (batch.length) {
-        await this.indexLoader.addBatch({ documentName, batch, token: index.buildToken });
-      }
-
-      completedCount++;
+      await this.indexWorldItems(worldItems, documentName);
+      if (signal.aborted) return;
       progress.update({
         message: 'Library.loading',
-        format: { item: `${p.metadata.label} (${p.metadata.id})` },
-        pct: 0.1 + (completedCount * percentage)
+        format: { item: "world items" },
+        pct: 0.1
       });
-    }));
 
-    progress.update({ message: 'Library.loading', format: { item: "" }, pct: 1 });
+      const PackLoader = this.constructor.PackLoader;
+      const mode = PackLoader.resolveMode();
+      const packFrac = new Map(packs.map((p) => [p.collection, 0]));
+      const updateProgress = (pack, frac, label) => {
+        if (signal.aborted) return;
+        packFrac.set(pack.collection, Math.max(packFrac.get(pack.collection) ?? 0, frac));
+        const sum = [...packFrac.values()].reduce((a, b) => a + b, 0);
+        progress.update({
+          message: 'Library.loading',
+          format: { item: label },
+          pct: 0.1 + 0.9 * (sum / Math.max(packs.length, 1))
+        });
+      };
 
-    this.hideLoading(documentName);
+      await PackLoader.mapPool(packs, PackLoader.packConcurrency(mode), async (p) => {
+        if (signal.aborted) return;
+        try {
+          const documents = await PackLoader.loadPack(p, {
+            documentName,
+            mode,
+            signal,
+            onProgress: (loaded, total) => {
+              updateProgress(p, total ? loaded / total : 1, `${p.metadata.label} (${loaded}/${total})`);
+            }
+          });
+          if (signal.aborted) return;
+          await this._indexSearchableObjects(documents, documentName, index);
+        } catch (err) {
+          if (signal.aborted) return;
+          console.warn(`DSA5 | ItemLibrary: failed to index pack ${p.collection}`, err);
+        }
+
+        updateProgress(p, 1, `${p.metadata.label} (${p.metadata.id})`);
+      }, signal);
+
+      if (signal.aborted) return;
+      progress.update({ message: 'Library.loading', format: { item: "" }, pct: 1 });
+    } finally {
+      if (signal.aborted) progress.remove?.();
+      else this.hideLoading(documentName);
+    }
+  }
+
+  _worldItemsFor(documentName) {
+    if (documentName === 'Actor') return game.actors;
+    if (documentName === 'JournalEntry') return game.journal;
+    return game.items;
+  }
+
+  async _swapIndexLoadMode(_event, _target) {
+    if (this._indexModeSwapInFlight) return;
+    this._indexModeSwapInFlight = true;
+    try {
+      const PackLoader = this.constructor.PackLoader;
+      const next = PackLoader.otherMode();
+      await game.settings.set('dsa5', 'libraryIndexLoadMode', next);
+      const building = Object.values(this.indexes ?? {}).filter((index) => index.build);
+      for (const index of building) {
+        const documentName = index.documentName;
+        index.abortController?.abort();
+        index.build = false;
+        index.workerReady = false;
+        this.hideLoading(documentName);
+        await this._createIndex(documentName, this._worldItemsFor(documentName));
+      }
+    } finally {
+      this._indexModeSwapInFlight = false;
+    }
+  }
+
+  async _indexSearchableObjects(items, documentName, index) {
+    if (!items?.length || !index?.workerReady) return;
+
+    const batch = [];
+    const batchSize = this.constructor.PackLoader.WORKER_BATCH_SIZE;
+    for (const item of items) {
+      const so = SearchDocument.toSearchableObject(item, documentName);
+      index.store[so.uuid] = so;
+      batch.push(so);
+
+      if (batch.length >= batchSize) {
+        await this.indexLoader.addBatch({ documentName, batch: batch.slice(), token: index.buildToken });
+        batch.length = 0;
+      }
+    }
+
+    if (batch.length) {
+      await this.indexLoader.addBatch({ documentName, batch: batch.slice(), token: index.buildToken });
+    }
   }
 
   subcategoryFields(subcategory) {
@@ -1210,15 +1282,11 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   async indexWorldItems(worldItems, documentName) {
+    const wrapper = this.findIndex(documentName);
     if (game.settings.get('dsa5', 'indexWorldItems')) {
-      for (const item of worldItems.filter(x => x.visible)) {
-        const wrapper = this.findIndex(documentName);
-        const so = SearchDocument.toSearchableObject(item, documentName);
-        wrapper.store[so.uuid] = so;
-        if (wrapper.workerReady) await this.indexLoader.addBatch({ documentName, batch: [so], token: wrapper.buildToken });
-      }
+      await this._indexSearchableObjects(worldItems.filter(x => x.visible), documentName, wrapper);
     }
-    this.findIndex(documentName).worldBuild = true
+    wrapper.worldBuild = true;
   }
 
   selectIndex(category) {

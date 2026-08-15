@@ -1867,7 +1867,7 @@
     "lessRegeneration": "Weaker Regeneration",
     "lessRegenerationHint": "Regeneration of LE only with 1D3",
     "libraryIndexLoadMode": "Item library loading",
-    "libraryIndexLoadModeHint": "Bulk (default) loads each pack in one request and is fastest on this computer and on strong connections. Chunked uses smaller requests and is more stable on slow internet. You can also switch this on the library loading bar; it takes effect immediately and restarts indexing.",
+    "libraryIndexLoadModeHint": "Bulk (default) loads each pack in one request and is fastest on this computer and on strong connections. Chunked uses smaller requests and is more stable on slow internet. You can also switch this from the library window menu; it takes effect immediately and restarts indexing if a load is in progress.",
     "libraryIndexLoadModeBulk": "Bulk",
     "libraryIndexLoadModeChunked": "Chunked (slow internet)",
     "libraryModulsFilter": "Filter modules permanent",

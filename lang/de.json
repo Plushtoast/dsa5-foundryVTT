@@ -1869,7 +1869,7 @@
     "lessRegeneration": "Weniger Regeneration",
     "lessRegenerationHint": "Regeneration von LeP nur mit 1W3",
     "libraryIndexLoadMode": "Item-Bibliothek laden",
-    "libraryIndexLoadModeHint": "Bulk (Standard) lädt jedes Pack in einer Anfrage und ist lokal und auf starken Verbindungen am schnellsten. Chunks sind auf langsamem Internet stabiler. Du kannst das auch an der Ladeleiste der Bibliothek umschalten; es wirkt sofort und startet die Indexierung neu.",
+    "libraryIndexLoadModeHint": "Bulk (Standard) lädt jedes Pack in einer Anfrage und ist lokal und auf starken Verbindungen am schnellsten. Chunks sind auf langsamem Internet stabiler. Du kannst das auch im Fenstermenü der Bibliothek umschalten; es wirkt sofort und startet eine laufende Indexierung neu.",
     "libraryIndexLoadModeBulk": "Bulk",
     "libraryIndexLoadModeChunked": "Chunks (langsames Internet)",
     "libraryModulsFilter": "Module permanent filtern",
