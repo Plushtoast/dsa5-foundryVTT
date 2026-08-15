@@ -21,21 +21,18 @@
         </div>
         <div class="col morph">
             <div class="groupbox actor-tradition">
-                <legend class="table-title lineheight autosizing">{{formInput systemFields.tradition.fields.clerical value=document.system.tradition.clerical placeholder=(localize 'tradition')}}</legend>
+                <legend class="table-title lineheight autosizing" data-tooltip="FORMULA.traditionClerical">{{formInput systemFields.tradition.fields.clerical value=document.system.tradition.clerical placeholder=(localize 'tradition')}}</legend>
 
-                <div class="actor-tradition-item ">
-                    {{formGroup systemFields.guidevalue.fields.clerical value=document.system.guidevalue.clerical
-                    localize=true}}
+                <div class="actor-tradition-item" data-tooltip="FORMULA.guidevalueClerical">
+                    {{formGroup systemFields.guidevalue.fields.clerical value=document.system.guidevalue.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item">
-                    {{formGroup systemFields.feature.fields.clerical value=document.system.feature.clerical
-                    localize=true}}
+                <div class="actor-tradition-item" data-tooltip="FORMULA.featureClerical">
+                    {{formGroup systemFields.feature.fields.clerical value=document.system.feature.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item">
-                    {{formGroup systemFields.energyfactor.fields.clerical value=document.system.energyfactor.clerical
-                    localize=true}}
+                <div class="actor-tradition-item" data-tooltip="FORMULA.energyfactor">
+                    {{formGroup systemFields.energyfactor.fields.clerical value=document.system.energyfactor.clerical localize=true}}
                 </div>
-                <div class="actor-tradition-item">
+                <div class="actor-tradition-item" data-tooltip="FORMULA.happyTalents">
                     {{formGroup systemFields.happyTalents.fields.value value=document.system.happyTalents.value rows=8
                     localize=true elementType='textarea'}}
                 </div>

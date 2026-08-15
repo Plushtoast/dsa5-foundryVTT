@@ -4,7 +4,7 @@
         <div class="flexrow charBtns">
             <div class="col flexrow" style="min-width:190px;justify-content: space-evenly;">
                 {{#each document.system.characteristics as |ch c|}}
-                <div class="center flexrow attribibcard" data-char="{{c}}" data-action="chValue" data-tooltip="{{attrName c}}">
+                <div class="center flexrow attribibcard" data-char="{{c}}" data-action="chValue" data-tooltip="{{concat 'FORMULA.attr.' c}}">
                     <div>
                         <div class="d20 die-{{c}}">{{ch.value}}</div>
                     </div>

@@ -22,7 +22,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "wounds"}} {{#if prepare.canAdvance}}<a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
+                        <span data-tooltip="FORMULA.wounds">{{localize "wounds"}}</span> {{#if prepare.canAdvance}}<a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
                         <a data-attr="wounds" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
                     <div class="col eight lineheight center">
@@ -41,7 +41,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "CHARAbbrev.LeP"}} {{localize 'regenerate'}}
+                        <span data-tooltip="FORMULA.regenerationLeP">{{localize "CHARAbbrev.LeP"}} {{localize 'regenerate'}}</span>
                     </div>
                     <div class="col eight lineheight center">
 
@@ -60,7 +60,7 @@
                 {{#if prepare.magic.hasSpells}}
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "astralenergy"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
+                        <span data-tooltip="FORMULA.astralenergy">{{localize "astralenergy"}}</span> {{#if prepare.canAdvance}}<a data-attr="astralenergy"
                             class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
                         <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
@@ -80,7 +80,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}
+                        <span data-tooltip="FORMULA.regenerationAsP">{{localize "CHARAbbrev.AsP"}} {{localize 'regenerate'}}</span>
                     </div>
                     <div class="col eight lineheight center">
 
@@ -96,8 +96,8 @@
                     </div>
                 </div>
                 <div class="derivedAttrs row-section">
-                    <div class="col two lineheight" data-tooltip="permanentCost">
-                        {{localize "CHARAbbrev.pAsP"}} {{#if prepare.canAdvance}}<a data-attr="astralenergy"
+                    <div class="col two lineheight">
+                        <span data-tooltip="FORMULA.permanentAsP">{{localize "CHARAbbrev.pAsP"}}</span> {{#if prepare.canAdvance}}<a data-attr="astralenergy"
                             class="advance" data-action="advanceWrapper" data-fct="_refundPC"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
                         <a data-attr="astralenergy" class="advance" data-action="advanceWrapper" data-fct="_rebuyPC"><i data-tooltip="rebuyCost"
                                 class="fas fa-plus"></i></a>{{/if}}
@@ -119,7 +119,7 @@
                 {{/if}} {{#if prepare.magic.hasPrayers}}
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "karmaenergy"}} {{#if prepare.canAdvance}} <a data-attr="karmaenergy"
+                        <span data-tooltip="FORMULA.karmaenergy">{{localize "karmaenergy"}}</span> {{#if prepare.canAdvance}} <a data-attr="karmaenergy"
                             class="advance" data-action="advanceWrapper" data-fct="_refundPointsAdvance"><i class="fas fa-minus"></i></a>
                         <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_advancePoints"><i class="fas fa-plus"></i></a>{{/if}}
                     </div>
@@ -139,7 +139,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}
+                        <span data-tooltip="FORMULA.regenerationKaP">{{localize "CHARAbbrev.KaP"}} {{localize 'regenerate'}}</span>
                     </div>
                     <div class="col eight lineheight center">
 
@@ -155,8 +155,8 @@
                     </div>
                 </div>
                 <div class="derivedAttrs row-section">
-                    <div class="col two lineheight" data-tooltip="permanentCost">
-                        {{localize "CHARAbbrev.pKaP"}} {{#if prepare.canAdvance}}<a data-attr="karmaenergy"
+                    <div class="col two lineheight">
+                        <span data-tooltip="FORMULA.permanentKaP">{{localize "CHARAbbrev.pKaP"}}</span> {{#if prepare.canAdvance}}<a data-attr="karmaenergy"
                             class="advance" data-action="advanceWrapper" data-fct="_refundPC"><i data-tooltip="rebuyRevertCost" class="fas fa-minus"></i></a>
                         <a data-attr="karmaenergy" class="advance" data-action="advanceWrapper" data-fct="_rebuyPC"><i data-tooltip="rebuyCost"
                                 class="fas fa-plus"></i></a>{{/if}}
@@ -179,7 +179,7 @@
                 {{/if}}
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "soulpower"}}
+                        <span data-tooltip="FORMULA.soulpower">{{localize "soulpower"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.soulpower.value}}
@@ -196,7 +196,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "toughness"}}
+                        <span data-tooltip="FORMULA.toughness">{{localize "toughness"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.toughness.value}}
@@ -213,7 +213,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "dodge"}}
+                        <span data-tooltip="FORMULA.dodge">{{localize "dodge"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.dodge.value}}
@@ -230,7 +230,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "speed"}}
+                        <span data-tooltip="FORMULA.speed">{{localize "speed"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.speed.initial}}
@@ -248,7 +248,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initiative"}}
+                        <span data-tooltip="FORMULA.initiative">{{localize "initiative"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                     </div>
@@ -264,7 +264,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initDie"}}
+                        <span data-tooltip="FORMULA.initDie">{{localize "initDie"}}</span>
                     </div>
                     <div class="col two lineheight center">
                         {{formInput systemFields.status.fields.initiative.fields.die value=document.system.status.initiative.die}}
@@ -272,7 +272,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initDieMod"}}
+                        <span data-tooltip="FORMULA.initDieMod">{{localize "initDieMod"}}</span>
                     </div>
 
                     <div class="col two lineheight center">
@@ -281,7 +281,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "sizeCategory"}}
+                        <span data-tooltip="FORMULA.sizeCategory">{{localize "sizeCategory"}}</span>
                     </div>
                     <div class="col two lineheight center">
                         {{formInput systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true}}
@@ -289,7 +289,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "fatePoints"}}
+                        <span data-tooltip="FORMULA.fatePoints">{{localize "fatePoints"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{formInput systemFields.status.fields.fatePoints.fields.current value=document.system.status.fatePoints.current}}

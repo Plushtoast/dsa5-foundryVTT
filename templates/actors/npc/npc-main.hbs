@@ -21,7 +21,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "wounds"}}
+                        <span data-tooltip="FORMULA.wounds">{{localize "wounds"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.wounds.current}}
@@ -36,7 +36,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "astralenergy"}}
+                        <span data-tooltip="FORMULA.astralenergy">{{localize "astralenergy"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.astralenergy.current}}
@@ -51,7 +51,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "karmaenergy"}}
+                        <span data-tooltip="FORMULA.karmaenergy">{{localize "karmaenergy"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.karmaenergy.current}}
@@ -66,7 +66,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "soulpower"}}
+                        <span data-tooltip="FORMULA.soulpower">{{localize "soulpower"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.soulpower.value}}
@@ -81,7 +81,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "toughness"}}
+                        <span data-tooltip="FORMULA.toughness">{{localize "toughness"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.toughness.value}}
@@ -96,7 +96,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "dodge"}}
+                        <span data-tooltip="FORMULA.dodge">{{localize "dodge"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.dodge.value}}
@@ -111,7 +111,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "speed"}}
+                        <span data-tooltip="FORMULA.speed">{{localize "speed"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{document.system.status.speed.initial}}
@@ -126,7 +126,7 @@
 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initiative"}}
+                        <span data-tooltip="FORMULA.initiative">{{localize "initiative"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                     </div>
@@ -140,7 +140,7 @@
                 
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initDie"}}
+                        <span data-tooltip="FORMULA.initDie">{{localize "initDie"}}</span>
                     </div>
                     <div class="col two lineheight center">
                         {{formInput systemFields.status.fields.initiative.fields.die value=document.system.status.initiative.die}}
@@ -148,7 +148,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "initDieMod"}}
+                        <span data-tooltip="FORMULA.initDieMod">{{localize "initDieMod"}}</span>
                     </div>
 
                     <div class="col two lineheight center">
@@ -157,7 +157,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "sizeCategory"}}
+                        <span data-tooltip="FORMULA.sizeCategory">{{localize "sizeCategory"}}</span>
                     </div>
                     <div class="col two lineheight center">
                         {{formInput systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true}}
@@ -165,7 +165,7 @@
                 </div>
                 <div class="derivedAttrs row-section">
                     <div class="col two lineheight">
-                        {{localize "fatePoints"}}
+                        <span data-tooltip="FORMULA.fatePoints">{{localize "fatePoints"}}</span>
                     </div>
                     <div class="col eight lineheight center">
                         {{formInput systemFields.status.fields.fatePoints.fields.current value=document.system.status.fatePoints.current}}

@@ -3,11 +3,11 @@
         <div class="table-row">
             <div class="table-header"></div>
             {{#each prepare.mentalAttrs as |ch|}}
-            <div data-tooltip="{{attrName ch}}" class="table-header">
+            <div class="table-header">
                 <div class="header-label">
-                    {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_refundAttributeAdvance"><i class="fas fa-minus"></i></a> <b>{{attrAbbr ch}}</b> <a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_advanceAttribute"><i class="fas fa-plus"></i></a>
+                    {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_refundAttributeAdvance"><i class="fas fa-minus"></i></a> <b data-tooltip="{{concat 'FORMULA.attr.' ch}}">{{attrAbbr ch}}</b> <a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_advanceAttribute"><i class="fas fa-plus"></i></a>
                     {{else}}
-                    <b>{{attrAbbr ch}}</b>
+                    <b data-tooltip="{{concat 'FORMULA.attr.' ch}}">{{attrAbbr ch}}</b>
                     {{/if}}
                 </div>
             </div>
@@ -18,10 +18,10 @@
         <div class="table-row">
             <div class="table-header onlySingleColumn"></div>
             {{#each prepare.bodyAttrs as |ch|}}
-            <div data-tooltip="{{attrName ch}}" class="table-header">
+            <div class="table-header">
                 <div class="header-label">
                     {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_refundAttributeAdvance"><i class="fas fa-minus"></i></a>{{/if}}
-                    <b>{{attrAbbr ch}}</b> {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_advanceAttribute"><i class="fas fa-plus"></i></a>{{/if}}
+                    <b data-tooltip="{{concat 'FORMULA.attr.' ch}}">{{attrAbbr ch}}</b> {{#if ../prepare.canAdvance}}<a data-attr="{{ch}}" class="advance" data-action="advanceWrapper" data-fct="_advanceAttribute"><i class="fas fa-plus"></i></a>{{/if}}
                 </div>
             </div>
             {{/each}}

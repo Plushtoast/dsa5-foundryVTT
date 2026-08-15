@@ -35,7 +35,7 @@
         {{#if isGM}}
         <div class="headerbadgeflex headerInput flexAlignCenter">
           {{#each characteristics as |ch|}}
-          <a class="group-attr-icon" data-action="requestAttributeRoll" data-attr="{{ch.key}}" data-tooltip="{{ch.name}}"><b>{{ch.abbr}}</b></a>
+          <a class="group-attr-icon" data-action="requestAttributeRoll" data-attr="{{ch.key}}" data-tooltip="{{concat 'FORMULA.attr.' ch.key}}"><b>{{ch.abbr}}</b></a>
           {{/each}}
         </div>
         <div class="headerbadgeflex headerInput flexAlignCenter">

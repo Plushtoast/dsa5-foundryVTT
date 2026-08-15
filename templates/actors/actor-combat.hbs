@@ -1,6 +1,6 @@
 <div class='tab scrollable gap0px {{tabs.combat.cssClass}}' data-tab='combat' data-group='{{tabs.combat.group}}'>
     <div class="combat-actions">
-        <button type="button" data-mod="dodge" data-action="chStatus" class="combat-action item"><i class="fas fa-reply"></i> {{localize "dodge"}} ({{document.system.status.dodge.max}})</button>
+        <button type="button" data-mod="dodge" data-action="chStatus" class="combat-action item" data-tooltip="FORMULA.dodge"><i class="fas fa-reply"></i> {{localize "dodge"}} ({{document.system.status.dodge.max}})</button>
         <button type="button" data-char="attack" data-action="chWeaponless" class="combat-action item" data-mod="attackWeaponless"><i class="fa fa-hand-fist"></i> {{localize "attackWeaponless"}} ({{prepare.brawling.attack}})</button>
         <button type="button" data-char="parry" data-action="chWeaponless" class="combat-action item" data-mod="parryWeaponless"><i class="fa fa-shield-alt"></i> {{localize "parryWeaponless"}} ({{prepare.brawling.parry}})</button>
         <button type="button" data-action="chFallingDamage" class="combat-action item"><i class="fas fa-skull-crossbones"></i> {{localize "fallingDamage"}}</button>
@@ -14,10 +14,10 @@
             <div class="col fifteen center small onlyMultiColumn">
                 {{localize "Group"}}
             </div>
-            <div class="col zerofive center small" data-tooltip="CHAR.ATTACK">
+            <div class="col zerofive center small" data-tooltip="FORMULA.attackMelee">
                 {{localize "CHARAbbrev.AT"}}
             </div>
-            <div class="col zerofive center small" data-tooltip="CHAR.PARRY">
+            <div class="col zerofive center small" data-tooltip="FORMULA.parry">
                 {{localize "CHARAbbrev.PA"}}
             </div>
 
@@ -47,10 +47,10 @@
                     {{localize "TYPES.Item.trait"}}
                 </div>
                 <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-mod="attack">
-                    <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+                    <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack" data-tooltip="FORMULA.traitAttack">{{item.attack}}</a>
                 </div>
                 <div class="combat-item-parry col zerofive center item" data-item-id="{{item._id}}" data-mod="parry">
-                    {{#if item.parry}} <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a> {{else}} - {{/if}}
+                    {{#if item.parry}} <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry" data-tooltip="FORMULA.traitParry">{{item.parry}}</a> {{else}} - {{/if}}
                 </div>
                 <div class="combat-item-damage col ten center">
                     <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage"><span>{{item.damagedie}}</span></a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>
@@ -79,7 +79,7 @@
                 {{localize "Group"}}
             </div>
 
-            <div class="col zerofive center small" data-tooltip="CHAR.ATTACK">
+            <div class="col zerofive center small" data-tooltip="FORMULA.ranged">
                 {{localize "CHARAbbrev.AT"}}
             </div>
             <div class="col ten center small" data-tooltip="damage">
@@ -109,7 +109,7 @@
                         {{localize "TYPES.Item.trait"}}
                     </div>
                     <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-mod="attack">
-                        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+                        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack" data-tooltip="FORMULA.traitRanged">{{item.attack}}</a>
                     </div>
                     <div class="combat-item-damage col ten center">
                         <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="damageOverThreshold">{{item.damageAdd}}</span>

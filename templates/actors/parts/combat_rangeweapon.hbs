@@ -16,7 +16,7 @@
         </div>
 
         <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-mod="attack">
-            <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+            <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack" data-tooltip="FORMULA.weaponRanged">{{item.attack}}</a>
         </div>
         <div class="combat-item-damage col ten center">
             <a data-mode="damage" data-action="chRollCombat" class="d6 die-damage">{{item.damagedie}}</a><span data-tooltip="{{localize 'damageOverThreshold'}}{{item.damageBonusDescription}}">{{item.damageAdd}}</span>

@@ -21,14 +21,14 @@
         </div>
         <div class="col morph">
             <div class="groupbox actor-tradition">
-                <legend class="table-title lineheight autosizing">{{formInput systemFields.tradition.fields.magical value=document.system.tradition.magical placeholder=(localize 'tradition')}}</legend>
-                <div class="actor-tradition-item">
+                <legend class="table-title lineheight autosizing" data-tooltip="FORMULA.traditionMagical">{{formInput systemFields.tradition.fields.magical value=document.system.tradition.magical placeholder=(localize 'tradition')}}</legend>
+                <div class="actor-tradition-item" data-tooltip="FORMULA.guidevalueMagical">
                     {{formGroup systemFields.guidevalue.fields.magical value=document.system.guidevalue.magical localize=true}}
                 </div>
-                <div class="actor-tradition-item">
+                <div class="actor-tradition-item" data-tooltip="FORMULA.featureMagical">
                     {{formGroup systemFields.feature.fields.magical value=document.system.feature.magical localize=true}}
                 </div>
-                <div class="actor-tradition-item">
+                <div class="actor-tradition-item" data-tooltip="FORMULA.energyfactor">
                     {{formGroup systemFields.energyfactor.fields.magical value=document.system.energyfactor.magical localize=true}}
                 </div>
             </div>

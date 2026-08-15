@@ -15,7 +15,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "wounds"}}
+            <span data-tooltip="FORMULA.creature.wounds">{{localize "wounds"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.wounds.fields.initial value=document.system.status.wounds.initial}}
@@ -30,7 +30,7 @@
     {{#if prepare.magic.hasSpells}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "astralenergy"}}
+            <span data-tooltip="FORMULA.creature.astralenergy">{{localize "astralenergy"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.astralenergy.fields.initial value=document.system.status.astralenergy.initial}}
@@ -45,7 +45,7 @@
     {{/if}} {{#if prepare.magic.hasPrayers}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "karmaenergy"}}
+            <span data-tooltip="FORMULA.creature.karmaenergy">{{localize "karmaenergy"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.karmaenergy.fields.initial value=document.system.status.karmaenergy.initial}}
@@ -61,7 +61,7 @@
     {{/if}}
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "soulpower"}}
+            <span data-tooltip="FORMULA.creature.soulpower">{{localize "soulpower"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.soulpower.fields.value value=document.system.status.soulpower.value}}
@@ -77,7 +77,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "toughness"}}
+            <span data-tooltip="FORMULA.creature.toughness">{{localize "toughness"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.toughness.fields.value value=document.system.status.toughness.value}}
@@ -93,7 +93,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight flexrow">
-            <span>{{localize (ifThen document.system.config.defense "defense" "dodge")}}</span> <button type="button" data-action="defenseToggle" class="defenseToggle icon dsadesignbutton noBorder"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}"></i></button>
+            <span data-tooltip="{{ifThen document.system.config.defense 'FORMULA.creature.defense' 'FORMULA.dodge'}}">{{localize (ifThen document.system.config.defense "defense" "dodge")}}</span> <button type="button" data-action="defenseToggle" class="defenseToggle icon dsadesignbutton noBorder"><i class="fas fa-shield-alt {{#unless document.system.config.defense}}off{{/unless}}"></i></button>
         </div>
         <div class="col eight lineheight center">
             {{document.system.status.dodge.value}}
@@ -109,7 +109,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "actionCount"}}
+            <span data-tooltip="FORMULA.creature.actionCount">{{localize "actionCount"}}</span>
         </div>
         <div class="col eight lineheight center">
 
@@ -124,7 +124,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "conjuringDifficulty"}}
+            <span data-tooltip="FORMULA.creature.conjuringDifficulty">{{localize "conjuringDifficulty"}}</span>
         </div>
         <div class="col eight lineheight center">
 
@@ -139,7 +139,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "count"}}
+            <span data-tooltip="FORMULA.creature.count">{{localize "count"}}</span>
         </div>
 
 
@@ -149,7 +149,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "sizeCategory"}}
+            <span data-tooltip="FORMULA.sizeCategory">{{localize "sizeCategory"}}</span>
         </div>
         <div class="col two lineheight center">
             {{formInput systemFields.status.fields.size.fields.value value=document.system.status.size.value localize=true}}
@@ -157,7 +157,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight flexrow">
-            <span>{{localize "speed"}}</span> <button type="button" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="TT.addSpeedCategory" data-action="addSpeedCategory"></button>
+            <span data-tooltip="FORMULA.creature.speed">{{localize "speed"}}</span> <button type="button" class="icon dsadesignbutton noBorder fas fa-plus very-small" data-tooltip="TT.addSpeedCategory" data-action="addSpeedCategory"></button>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.speed.fields.initial value=document.system.status.speed.initial}}
@@ -203,7 +203,7 @@
     </div>
     {{/if}}
     <div class="derivedAttrs row-section">
-        <div class="col two lineheight">
+        <div class="col two lineheight" data-tooltip="FORMULA.creature.initiative">
             {{localize "initiative"}}
         </div>
         <div class="col eight lineheight center">
@@ -219,7 +219,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "initDie"}}
+            <span data-tooltip="FORMULA.initDie">{{localize "initDie"}}</span>
         </div>
         <div class="col two lineheight center">
             {{formInput systemFields.status.fields.initiative.fields.die value=document.system.status.initiative.die}}
@@ -227,7 +227,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "initDieMod"}}
+            <span data-tooltip="FORMULA.initDieMod">{{localize "initDieMod"}}</span>
         </div>
 
         <div class="col two lineheight center">
@@ -236,7 +236,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            {{localize "fatePoints"}}
+            <span data-tooltip="FORMULA.fatePoints">{{localize "fatePoints"}}</span>
         </div>
         <div class="col eight lineheight center">
             {{formInput systemFields.status.fields.fatePoints.fields.current value=document.system.status.fatePoints.current}}

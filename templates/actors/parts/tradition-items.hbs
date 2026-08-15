@@ -10,6 +10,7 @@
                 <div class="col third center"></div>
                 {{/if}}
                 <div class='col ten center flexAlignCenter flexrow'>
+                    <button class="icon noBorder dsadesignbutton flex0 fas fa-circle-info flexAlignEnd" data-tooltip-html="{{specCategoryHelp (ifThen (eq kind 'magical') 'staff' 'ceremonial')}}"></button>
                     <button type="button" data-action='selectTraditionItem' data-tradition-kind="{{kind}}" class='icon fas fa-plus noBorder dsadesignbutton very-small' data-tooltip='{{localize pickerTitle}}'></button>
                 </div>
             </div>

@@ -14,10 +14,10 @@
        {{localize item.system.combatskill.value}}
     </div>
     <div class="combat-item-attack col zerofive center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="attack">
-        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack">{{item.attack}}</a>
+        <a data-mode="attack" data-action="chRollCombat" class="d20 die-attack" data-tooltip="FORMULA.weaponAttack">{{item.attack}}</a>
     </div>
     <div class="combat-item-parry col zerofive center item" data-item-id="{{item._id}}" data-subweapon="{{isSub}}" data-mod="parry">
-        <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry">{{item.parry}}</a>
+        <a data-mode="parry" data-action="chRollCombat" class="d20 die-parry" data-tooltip="FORMULA.weaponParry">{{item.parry}}</a>
     </div>
 
     <div class="combat-item-damage col ten center">

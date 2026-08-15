@@ -1,4 +1,5 @@
 import DSA5 from '../config/config-dsa5.js';
+import SpecCategoryHelp from '../system/helpers/speccategory-help.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 
 const { getProperty } = foundry.utils;
@@ -89,6 +90,7 @@ export default function () {
     },
     attrName: (a) => DSA5_Utility.attributeLocalization(a),
     attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
+    specCategoryHelp: (key) => SpecCategoryHelp.getText(key),
     diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
     clickableAbilities: (a, b) => clickableAbilities(a, b),
     traitName: (a) => _loc(DSA5.traitCategories[a]),
