@@ -27,6 +27,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
     static SEVERE_WIND = new Set(['HIGH_WIND', 'GALE', 'SEVERE_GALE', 'STORM', 'HURRICANE']);
 
+    static FEATURE_TABS = ['calendar', 'events', 'questlog', 'personae'];
+
     static DEFAULT_OPTIONS = {
         id: 'dsa-calendar-widget',
         window: {
@@ -517,8 +519,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
                 }
             }
             const featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
-            data.canOpenCalendarPicker = Object.values(featureVisibility).some(v => v);
-            data.canOpenAlmanac = !!featureVisibility.calendar;
+            data.canOpenCalendarPicker = this.constructor.FEATURE_TABS.some(tab => featureVisibility[tab]);
+            data.canOpenAlmanac = !!featureVisibility.personae;
             data.canOpenEvents = !!featureVisibility.events;
         } else {
             data.canOpenCalendarPicker = true;
@@ -537,39 +539,45 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             components.second;
     }
 
+    /**
+     * Resolve which picker tab to open for the current user.
+     * @param {string|null} [preferredTab] Explicit tab (shortcut buttons), or null for first allowed.
+     * @param {object} [featureVisibility]
+     * @returns {string|null}
+     */
+    static resolveOpenTab(preferredTab = null, featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility')) {
+        if (game.user.isGM) return preferredTab || 'calendar';
+
+        if (preferredTab) return featureVisibility[preferredTab] ? preferredTab : null;
+
+        return this.FEATURE_TABS.find(tab => featureVisibility[tab]) ?? null;
+    }
+
     static editCalendar(ev, target) {
         if (this.wasDragging) {
             this.wasDragging = false;
             return;
         }
 
-        if (!game.user.isGM) {
-            const featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
-            if (!Object.values(featureVisibility).some(v => v)) return;
-        }
-
-        this.constructor.openCalendarPicker();
+        this.constructor.openCalendarPicker(null);
     }
 
     static openAlmanac() {
-        this.constructor.openCalendarPicker('calendar');
+        this.constructor.openCalendarPicker('personae');
     }
 
     static openEvents() {
         this.constructor.openCalendarPicker('events');
     }
 
-    static async openCalendarPicker(tab = 'calendar') {
-        if (!game.user.isGM) {
-            const featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
-            if (tab && !featureVisibility[tab]) return;
-            if (!tab && !Object.values(featureVisibility).some(v => v)) return;
-        }
+    static async openCalendarPicker(tab = null) {
+        const resolvedTab = this.resolveOpenTab(tab);
+        if (!resolvedTab) return;
 
         const picker = game.dsa5.apps.CalendarPicker;
-        if (tab) picker.tabGroups.sheet = tab;
+        picker.tabGroups.sheet = resolvedTab;
         await picker.render({ force: true });
-        if (tab && picker.rendered) picker.changeTab(tab, 'sheet');
+        if (picker.rendered) picker.changeTab(resolvedTab, 'sheet');
     }
 
     timeAdvance(seconds) {

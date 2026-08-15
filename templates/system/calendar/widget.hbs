@@ -6,7 +6,7 @@
           <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
         {{/if}}
         {{#if canOpenAlmanac}}
-          <button type='button' class='calendar-nav-btn noBorder icon fas fa-calendar' data-tooltip='CALENDAR.DSA.calendar' data-action='openAlmanac'></button>
+          <button type='button' class='calendar-nav-btn noBorder icon fas fa-user' data-tooltip='PERSONAE.title' data-action='openAlmanac'></button>
         {{/if}}
       </div>
       <button type='button' class='calendar-date-label noBorder{{#unless canOpenCalendarPicker}} is-static{{/unless}}' data-tooltip='{{dateTooltip}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}}>{{dateString}}</button>

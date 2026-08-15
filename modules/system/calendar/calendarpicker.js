@@ -240,6 +240,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       for (const key of ['calendar', 'events', 'personae', 'questlog']) {
         if (!visibility[key]) delete tabs[key];
       }
+      const active = this.tabGroups.sheet;
+      if (active && !tabs[active]) {
+        const firstId = Object.keys(tabs)[0];
+        if (firstId) {
+          this.tabGroups.sheet = firstId;
+          tabs[firstId].active = true;
+          tabs[firstId].cssClass = 'active';
+        }
+      }
     }
     return tabs;
   }
