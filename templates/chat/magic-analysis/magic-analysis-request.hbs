@@ -20,7 +20,7 @@
         {{#each steps}}
           <div class='flexrow flexAlignCenter roll-request-row magic-analysis-step-row gap5px {{resultRowClass}}' data-step-id='{{stepId}}' data-status='{{status}}'{{#if resultTooltip}} data-tooltip='{{resultTooltip}}' aria-label='{{resultTooltip}}'{{/if}}>
             {{#if resultIcon}}
-              <span class='roll-request-result-label icon noBorder flex0 flexAlignRight {{resultIconClass}}'><i class='fas {{resultIcon}}'></i></span>
+              <span class='roll-request-result-label icon flex0 {{resultIconClass}}'><i class='fas {{resultIcon}}'></i></span>
             {{else if resultLabel}}
               <div class='roll-request-result-stack flex0'>
                 <b class='roll-request-result-label'>{{resultLabel}}</b>

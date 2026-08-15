@@ -221,8 +221,6 @@ export default class MagicAnalysisQueryService {
       : null;
 
     const steps = (state.steps || []).map((step) => {
-      const statusStyle = QueryOrchestrator.statusStyle(step.status);
-      const isSkipped = step.status === 'skipped';
       const outcome = QueryOrchestrator.outcomeDisplay({ status: step.status });
       const rollTooltip = step.optional
         ? _loc('MAGICANALYSIS.rollOptional')
@@ -232,9 +230,9 @@ export default class MagicAnalysisQueryService {
         : _loc('DSAQUERIES.COMMANDS.rollOnBehalf');
       return {
         ...step,
-        resultLabel: isSkipped ? '' : this.buildStepResultLabel(step),
-        resultIcon: isSkipped ? statusStyle.icon : '',
-        resultIconClass: isSkipped ? statusStyle.colorClass : '',
+        resultLabel: outcome.resultIcon ? '' : this.buildStepResultLabel(step),
+        resultIcon: outcome.resultIcon,
+        resultIconClass: outcome.resultIconClass,
         resultTooltip: outcome.resultTooltip,
         resultSubLabel: outcome.resultSubLabel,
         resultRowClass: outcome.resultRowClass,
@@ -300,13 +298,11 @@ export default class MagicAnalysisQueryService {
   }
 
   static buildStepResultLabel(step) {
-    if (step.status === 'skipped') return '';
+    if (QueryOrchestrator.isIconResultStatus(step.status)) return '';
     if (['success', 'critical'].includes(step.status)) {
       const qs = step.resultDetails?.qualityStep;
       return `${_loc('CHARAbbrev.QS')} ${qs ?? 0}`;
     }
-    if (step.status === 'failure') return _loc('DSAQUERIES.STATUS.failure');
-    if (step.status === 'botch') return _loc('DSAQUERIES.STATUS.botch');
     return '';
   }
 

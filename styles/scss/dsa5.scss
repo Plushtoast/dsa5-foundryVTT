@@ -1978,15 +1978,6 @@ a.img-entity-link {
   border-color: rgba(0, 111, 61, 0.3);
 }
 
-.roll-request-row-success,
-.roll-request-row-critical,
-.roll-request-row-failure,
-.roll-request-row-botch {
-  margin: 0 -4px;
-  padding: 3px 4px;
-  border-radius: 3px;
-}
-
 .naval-damage-report-card {
   max-width: 100%;
   overflow: hidden;
@@ -2047,13 +2038,6 @@ a.img-entity-link {
     white-space: nowrap;
   }
 
-  .roll-request-row-success,
-  .roll-request-row-critical,
-  .roll-request-row-failure,
-  .roll-request-row-botch {
-    margin: 0;
-  }
-
   .roll-request-row-title {
     min-width: 0;
     overflow: hidden;
@@ -2098,28 +2082,6 @@ a.img-entity-link {
   }
 }
 
-.roll-request-row-success {
-  background: rgba(0, 111, 61, 0.12);
-  box-shadow: inset 3px 0 0 #0c5c36;
-}
-
-.roll-request-row-critical {
-  background: var(--dsa-critical-bg);
-  border: 1px solid var(--dsa-critical);
-  box-shadow: inset 0 0 0 1px rgba(74, 144, 200, 0.25);
-}
-
-.roll-request-row-failure {
-  background: rgba(164, 36, 26, 0.12);
-  box-shadow: inset 3px 0 0 #7a1f19;
-}
-
-.roll-request-row-botch {
-  background: rgba(122, 31, 25, 0.28);
-  border: 1px solid #7a1f19;
-  box-shadow: inset 0 0 0 1px rgba(164, 36, 26, 0.4);
-}
-
 .roll-request-result-stack {
   display: flex;
   flex-direction: column;
@@ -2149,6 +2111,12 @@ a.img-entity-link {
   align-items: flex-start;
   gap: 1px;
   line-height: 1.25;
+  border-left-width: 3px;
+  border-left-style: solid;
+  border-left-color: transparent;
+  padding: 3px 4px;
+  border-radius: 3px;
+  box-sizing: border-box;
 }
 
 .roll-request-card {
@@ -2171,9 +2139,14 @@ a.img-entity-link {
   }
 
   .roll-request-row {
-    padding: 3px 0;
+    // Reserve accent gutter so tokens stay aligned with/without outcome status
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: transparent;
+    padding: 3px 4px;
     line-height: 1.15;
     min-height: 0;
+    box-sizing: border-box;
 
     &:not(:last-child) {
       border-bottom: 1px solid var(--border-color);
@@ -2185,13 +2158,17 @@ a.img-entity-link {
     flex: 1;
     align-items: center;
     gap: 4px;
-    min-width: 0;
+    // Keep at least the avatar; names ellipsis via .roll-request-row-names min-width: 0
+    min-width: 22px;
     overflow: hidden;
   }
 
   .roll-request-row-avatar {
     width: 22px;
     height: 22px;
+    min-width: 22px;
+    // Override Foundry `img { max-width: 100% }` so squeezed result rows cannot shrink the token
+    max-width: 22px;
     flex: 0 0 22px;
     object-fit: cover;
     border: none;
@@ -2219,6 +2196,14 @@ a.img-entity-link {
   .roll-request-row-side {
     flex: 0 0 auto;
     align-items: center;
+  }
+
+  // Status chips sit on tinted outcome rows — elevated surface + border so they don't blend in
+  .roll-request-result-label.icon {
+    --button-size: 22px;
+    flex: 0 0 var(--button-size);
+    border-radius: 3px;
+    background-color: var(--dsa-surface-elevated);
   }
 
   &:not(.roll-request-card-regeneration) {
@@ -3367,6 +3352,12 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   }
 
   .group-check-result-row {
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-left-color: transparent;
+    padding: 3px 4px;
+    border-radius: 3px;
+    box-sizing: border-box;
     font-size: var(--font-size-13, 13px);
   }
 
@@ -3378,6 +3369,33 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     text-align: right;
     font-weight: bold;
     line-height: 1.15;
+  }
+}
+
+// Outcome accents — must beat reserved transparent gutter (same/higher specificity)
+.roll-request-card .roll-request-row,
+.group-check-card .group-check-result-row,
+.information-query-result-roll {
+  &.roll-request-row-success {
+    background: rgba(0, 111, 61, 0.12);
+    border-left-color: #0c5c36;
+  }
+
+  &.roll-request-row-critical {
+    background: var(--dsa-critical-bg);
+    border-left-color: var(--dsa-critical);
+    box-shadow: inset 0 0 0 1px rgba(74, 144, 200, 0.25);
+  }
+
+  &.roll-request-row-failure {
+    background: rgba(164, 36, 26, 0.12);
+    border-left-color: #7a1f19;
+  }
+
+  &.roll-request-row-botch {
+    background: rgba(122, 31, 25, 0.28);
+    border-left-color: #7a1f19;
+    box-shadow: inset 0 0 0 1px rgba(164, 36, 26, 0.4);
   }
 }
 

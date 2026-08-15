@@ -32,6 +32,8 @@ export default class QueryOrchestrator {
     failure: 'roll-request-row-failure',
   };
 
+  static ICON_RESULT_STATUSES = new Set(['skipped', 'failure', 'botch']);
+
   static #DEFAULT_STYLE = { icon: 'fa-circle-question', colorClass: 'icon-gray' };
 
   static registerQuery(type, config) {
@@ -224,21 +226,27 @@ export default class QueryOrchestrator {
     return Object.values(this.RESULT_ROW_CLASSES).join(' ');
   }
 
+  static isIconResultStatus(status) {
+    return this.ICON_RESULT_STATUSES.has(status);
+  }
+
   /**
    * Shared chat-row outcome presentation for roll request, group check, information, etc.
    * @param {{ status?: string, successLevel?: number, detail?: string }} [options]
-   * @returns {{ status: string, resultRowClass: string, resultTooltip: string, resultSubLabel: string }}
+   * @returns {{ status: string, resultRowClass: string, resultTooltip: string, resultSubLabel: string, resultIcon: string, resultIconClass: string }}
    */
   static outcomeDisplay({ status, successLevel, detail } = {}) {
     const resolvedStatus = status || this.statusFromSuccessLevel(successLevel) || '';
     const resultRowClass = this.resultRowClass(resolvedStatus);
     const resultSubLabel = resolvedStatus === 'critical' ? _loc('CHARAbbrev.Crit') : '';
+    const statusStyle = this.statusStyle(resolvedStatus);
+    const useIcon = this.isIconResultStatus(resolvedStatus);
 
     let resultTooltip = '';
     if (resolvedStatus === 'critical') resultTooltip = _loc('CriticalSuccess');
     else if (resolvedStatus === 'botch') resultTooltip = _loc('CriticalFailure');
     else if (['success', 'failure', 'skipped'].includes(resolvedStatus)) {
-      resultTooltip = this.statusStyle(resolvedStatus).label;
+      resultTooltip = statusStyle.label;
     }
 
     if (detail) {
@@ -250,6 +258,8 @@ export default class QueryOrchestrator {
       resultRowClass,
       resultTooltip,
       resultSubLabel,
+      resultIcon: useIcon ? statusStyle.icon : '',
+      resultIconClass: useIcon ? statusStyle.colorClass : '',
     };
   }
 

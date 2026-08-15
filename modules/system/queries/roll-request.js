@@ -182,18 +182,16 @@ export default class RollRequestService {
     const isRegeneration = state.category === 'regeneration';
 
     const recipients = state.recipients.map((entry) => {
-      const statusStyle = QueryOrchestrator.statusStyle(entry.status);
-      const isSkipped = entry.status === 'skipped';
-      const resultLabel = isRegeneration || isSkipped ? '' : this.buildResultLabel(entry, state.category);
-      const resultIcon = isSkipped ? statusStyle.icon : '';
-      const resultIconClass = isSkipped ? statusStyle.colorClass : '';
+      const outcome = isRegeneration
+        ? { resultRowClass: '', resultTooltip: '', resultSubLabel: '', resultIcon: '', resultIconClass: '' }
+        : QueryOrchestrator.outcomeDisplay({ status: entry.status });
+      const resultLabel = isRegeneration || outcome.resultIcon
+        ? ''
+        : this.buildResultLabel(entry, state.category);
       const regenResults = isRegeneration && ['success', 'critical'].includes(entry.status)
         ? RegenerationHelper.formatResultRows(entry.resultDetails)
         : [];
       const regenApplied = isRegeneration && entry.status === 'success' && RegenerationHelper.isRollRequestEntryApplied(entry);
-      const outcome = isRegeneration
-        ? { resultRowClass: '', resultTooltip: '', resultSubLabel: '' }
-        : QueryOrchestrator.outcomeDisplay({ status: entry.status });
       const actor = game.actors.get(entry.actorId);
       const canAct = !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status);
       return {
@@ -202,8 +200,8 @@ export default class RollRequestService {
         actorImg: this.getActorPortrait(actor),
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
         resultLabel,
-        resultIcon,
-        resultIconClass,
+        resultIcon: outcome.resultIcon,
+        resultIconClass: outcome.resultIconClass,
         regenResults,
         regenApplied,
         resultRowClass: outcome.resultRowClass,
@@ -273,6 +271,7 @@ export default class RollRequestService {
   }
 
   static buildResultLabel(entry, category) {
+    if (QueryOrchestrator.isIconResultStatus(entry.status)) return '';
     const data = entry.resultDetails;
     const qs = data?.qualityStep || 0;
     switch (entry.status) {
@@ -280,12 +279,6 @@ export default class RollRequestService {
       case 'critical':
         if (category === 'regeneration') return RegenerationHelper.formatTooltip(data);
         return `${_loc('CHARAbbrev.QS')} ${qs}`;
-      case 'failure':
-        return _loc('DSAQUERIES.STATUS.failure');
-      case 'botch':
-        return _loc('DSAQUERIES.STATUS.botch');
-      case 'skipped':
-        return '';
       default:
         return '';
     }
@@ -629,21 +622,14 @@ export default class RollRequestService {
     const outcome = QueryOrchestrator.outcomeDisplay({ status: entry.status });
     if (outcome.resultRowClass) row.addClass(outcome.resultRowClass);
 
-    const statusStyle = QueryOrchestrator.statusStyle(entry.status);
     const resultLabel = this.buildResultLabel(entry, category);
     row.find('.roll-request-result-stack, .roll-request-result-label').remove();
 
-    if (entry.status === 'skipped') {
-      const label = $(`<span class="roll-request-result-label icon noBorder flexrow flex0 flexAlignRight ${statusStyle.colorClass}"></span>`);
-      label.html(`<i class="fas ${statusStyle.icon}"></i>`);
+    if (outcome.resultIcon) {
+      const label = $(`<span class="roll-request-result-label icon flex0 ${outcome.resultIconClass}"></span>`);
+      label.html(`<i class="fas ${outcome.resultIcon}"></i>`);
       row.find('.roll-request-row-side').before(label);
-      if (outcome.resultTooltip) {
-        row.attr('data-tooltip', outcome.resultTooltip).attr('aria-label', outcome.resultTooltip);
-      }
-      return;
-    }
-
-    if (resultLabel) {
+    } else if (resultLabel) {
       const stack = $('<div class="roll-request-result-stack flex0"></div>');
       stack.append($('<b class="roll-request-result-label"></b>').text(resultLabel));
       if (outcome.resultSubLabel) {
