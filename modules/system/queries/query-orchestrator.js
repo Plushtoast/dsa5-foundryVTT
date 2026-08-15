@@ -32,6 +32,11 @@ export default class QueryOrchestrator {
     failure: 'roll-request-row-failure',
   };
 
+  static RESULT_SUB_LABELS = {
+    critical: 'CHARAbbrev.Crit',
+    botch: 'CHARAbbrev.Botch',
+  };
+
   static ICON_RESULT_STATUSES = new Set(['skipped', 'failure', 'botch']);
 
   static #DEFAULT_STYLE = { icon: 'fa-circle-question', colorClass: 'icon-gray' };
@@ -238,7 +243,8 @@ export default class QueryOrchestrator {
   static outcomeDisplay({ status, successLevel, detail } = {}) {
     const resolvedStatus = status || this.statusFromSuccessLevel(successLevel) || '';
     const resultRowClass = this.resultRowClass(resolvedStatus);
-    const resultSubLabel = resolvedStatus === 'critical' ? _loc('CHARAbbrev.Crit') : '';
+    const subLabelKey = this.RESULT_SUB_LABELS[resolvedStatus];
+    const resultSubLabel = subLabelKey ? _loc(subLabelKey) : '';
     const statusStyle = this.statusStyle(resolvedStatus);
     const useIcon = this.isIconResultStatus(resolvedStatus);
 

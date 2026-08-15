@@ -18,16 +18,29 @@
       <div class='col sixty'>
         <b>{{localize 'skill'}}</b>
       </div>
-      <div class='col fifteen center' data-tooltip='Modifier'>
+      <div class='col fifteen center' data-tooltip='modifier'>
         <b>{{localize 'ABBR.modifiers'}}</b>
       </div>
     </div>
     {{#each rollOptions as |optn|}}
       <div class='row-section lineheight'>
         <div class='col sixty flexrow'>
-          <button class='request-gc' data-type='{{optn.type}}' data-modifier='{{optn.calculatedModifier}}' data-name='{{optn.target}}'><i
-              class='fas fa-dice'
-            ></i>{{optn.target}}</button>
+          <button
+            type='button'
+            class='request-gc group-check-skill-button flexrow flexAlignCenter gap5px'
+            data-gc-type='{{optn.type}}'
+            data-gc-name='{{optn.target}}'
+            data-type='{{optn.type}}'
+            data-modifier='{{optn.calculatedModifier}}'
+            data-name='{{optn.target}}'
+            data-tooltip='{{optn.target}}'
+            aria-label='{{optn.target}}'
+          >
+            {{#if optn.skillIcon}}
+              <img src='{{optn.skillIcon}}' alt='' class='group-check-skill-icon' draggable='false'>
+            {{/if}}
+            <span class='ellipsis'>{{optn.target}}</span>
+          </button>
         </div>
         <div class='col fifteen flexrow flexAlignCenter center'>
           {{optn.calculatedModifier}}
@@ -36,21 +49,39 @@
     {{/each}}
   {{/if}}
 
-  {{#if results.length}}
-    <ul class='group-check-results'>
-      {{#each results as |item|}}
-        <li class='flexrow flexAlignCenter group-check-result-row gap5px {{item.resultRowClass}}' data-tooltip='{{item.resultTooltip}}' aria-label='{{item.resultTooltip}}'>
-          <div class='group-check-result-name flex1'><b>{{item.actor}}</b></div>
-          <div class='group-check-result-skill flex1'>{{item.target}}</div>
-          <div class='group-check-result-qs flex0'>
-            <span>{{item.qs}}</span>
-            {{#if item.resultSubLabel}}
-              <span class='roll-request-result-sublabel'>{{item.resultSubLabel}}</span>
+  {{#if resultSections.length}}
+    <div class='group-check-sections'>
+      {{#each resultSections as |section|}}
+        <div class='group-check-section'>
+          <p class='flexrow flexAlignCenter gap5px group-check-section-header'>
+            {{#if section.skillIcon}}
+              <img src='{{section.skillIcon}}' alt='{{section.target}}' class='group-check-skill-icon'>
             {{/if}}
+            <b>{{section.target}}</b>
+          </p>
+          <div class='group-check-results'>
+            {{#each section.results as |item|}}
+              <div
+                class='flexrow flexAlignCenter group-check-result-row gap5px {{item.resultRowClass}}'
+                data-tooltip='{{item.resultTooltip}}'
+                aria-label='{{item.resultTooltip}}'
+              >
+                {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs
+                  actorImg=item.actorImg
+                  actorName=item.actorName
+                }}
+                <div class='group-check-result-qs flex0'>
+                  <span class='group-check-result-label'>{{item.qs}}</span>
+                  {{#if item.resultSubLabel}}
+                    <span class='roll-request-result-sublabel'>{{item.resultSubLabel}}</span>
+                  {{/if}}
+                </div>
+              </div>
+            {{/each}}
           </div>
-        </li>
+        </div>
       {{/each}}
-    </ul>
+    </div>
   {{/if}}
 
   <div>

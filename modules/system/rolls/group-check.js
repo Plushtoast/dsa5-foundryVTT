@@ -3,6 +3,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import GroupCheckConfigDialog from '../../dialog/group-check-dialog.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import QueryOrchestrator from '../queries/query-orchestrator.js';
+import RollRequestService from '../queries/roll-request.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -12,29 +13,145 @@ export default class GroupCheck {
   static #updateSemaphore = new foundry.utils.Semaphore(1);
   static DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/group-check-dialog.hbs';
   static SKILL_ROW_TEMPLATE = 'systems/dsa5/templates/dialog/parts/group-check-skill-row.hbs';
+  static CHAT_TEMPLATE = 'systems/dsa5/templates/chat/roll/groupcheck.hbs';
 
   static #dialogId(messageId) {
     return messageId ? `dsa-group-check-config-${messageId}` : 'dsa-group-check-config';
   }
 
-  static #enrichResultsForDisplay(results = []) {
-    return results.map((item) => {
-      const detail = `${item.qs} ${_loc('CHARAbbrev.QS')} ${item.target}`;
-      const outcome = QueryOrchestrator.outcomeDisplay({ successLevel: item.success });
-      const resultTooltip = ['critical', 'botch'].includes(outcome.status)
-        ? `${outcome.resultTooltip} — ${detail}`
-        : detail;
-      return {
-        ...item,
-        resultRowClass: outcome.resultRowClass,
-        resultTooltip,
-        resultSubLabel: outcome.resultSubLabel,
-      };
-    });
+  static #skillKey(type, target) {
+    return `${type}|${target}`;
+  }
+
+  static #skillIcon(type, target) {
+    return RollRequestService.getRequestedIcon(type, target);
+  }
+
+  static #sanitizeResult(item = {}) {
+    const qs = Number(item.qs);
+    const success = Number(item.success);
+    return {
+      messageId: item.messageId,
+      actor: item.actor,
+      actorId: item.actorId,
+      tokenId: item.tokenId,
+      qs: Number.isFinite(qs) ? qs : 0,
+      success: Number.isFinite(success) ? success : 0,
+      target: item.target,
+      type: item.type,
+    };
+  }
+
+  /**
+   * Consecutive failure penalty for cumulative checks (crit resets the streak).
+   * @param {Array<{ success?: number }>} results
+   * @returns {{ qs: number, failed: number }}
+   */
+  static tallyResults(results = []) {
+    let failed = 0;
+    const qs = results.reduce((total, entry) => {
+      const successNum = Number(entry.success);
+      const success = Number.isFinite(successNum) ? successNum : 0;
+      if (success < 0) failed += 1;
+      if (success > 1) failed = 0;
+      const qsNum = Number(entry.qs);
+      return total + (Number.isFinite(qsNum) ? qsNum : 0);
+    }, 0);
+    return { qs, failed };
+  }
+
+  static #resolveActorImg(item = {}) {
+    if (item.tokenId && canvas?.ready) {
+      const token = canvas.tokens?.get(item.tokenId);
+      const tokenSrc = token?.document?.texture?.src;
+      if (tokenSrc) return tokenSrc;
+    }
+
+    let actor = null;
+    if (item.actorId) {
+      actor = DSA5_Utility.getSpeaker({ actor: item.actorId, token: item.tokenId });
+    }
+    if (!actor && item.actor) {
+      actor = game.actors.find((entry) => entry.name === item.actor) || null;
+    }
+    return RollRequestService.getActorPortrait(actor);
+  }
+
+  static #enrichResultForDisplay(item) {
+    const sanitized = this.#sanitizeResult(item);
+    const detail = `${sanitized.qs} ${_loc('CHARAbbrev.QS')} ${sanitized.target}`;
+    const outcome = QueryOrchestrator.outcomeDisplay({ successLevel: sanitized.success });
+    const resultTooltip = ['critical', 'botch'].includes(outcome.status)
+      ? `${outcome.resultTooltip} — ${detail}`
+      : detail;
+    return {
+      ...sanitized,
+      actorName: sanitized.actor,
+      actorImg: this.#resolveActorImg(sanitized),
+      resultRowClass: outcome.resultRowClass,
+      resultTooltip,
+      resultSubLabel: outcome.resultSubLabel,
+    };
+  }
+
+  static #buildResultSections(results = [], rollOptions = []) {
+    const enriched = results.map((item) => this.#enrichResultForDisplay(item));
+    const bySkill = new Map();
+    for (const item of enriched) {
+      const key = this.#skillKey(item.type, item.target);
+      if (!bySkill.has(key)) bySkill.set(key, []);
+      bySkill.get(key).push(item);
+    }
+
+    const sections = [];
+    const seen = new Set();
+    for (const optn of rollOptions) {
+      const key = this.#skillKey(optn.type, optn.target);
+      const sectionResults = bySkill.get(key);
+      if (!sectionResults?.length) continue;
+      seen.add(key);
+      sections.push({
+        target: optn.target,
+        type: optn.type,
+        skillIcon: this.#skillIcon(optn.type, optn.target),
+        results: sectionResults,
+      });
+    }
+
+    for (const [key, sectionResults] of bySkill) {
+      if (seen.has(key) || !sectionResults.length) continue;
+      const first = sectionResults[0];
+      sections.push({
+        target: first.target,
+        type: first.type,
+        skillIcon: this.#skillIcon(first.type, first.target),
+        results: sectionResults,
+      });
+    }
+
+    return sections;
+  }
+
+  static #enrichRollOptions(rollOptions = []) {
+    return rollOptions.map((optn) => ({
+      ...optn,
+      skillIcon: this.#skillIcon(optn.type, optn.target),
+    }));
+  }
+
+  static #buildTemplateData(data) {
+    return {
+      ...data,
+      rollOptions: this.#enrichRollOptions(data.rollOptions),
+      resultSections: this.#buildResultSections(data.results, data.rollOptions),
+    };
   }
 
   static async requestGC(category, name, messageId, modifier = 0) {
-    const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
+    const skillName = (name || '').trim();
+    if (!skillName) return;
+
+    const { actor, tokenId } = this.#resolveRollingActor();
     if (!actor) return;
 
     if (game.canvas.ready) game.user._onUpdateTokenTargets([]);
@@ -47,18 +164,52 @@ export default class GroupCheck {
         speaker: RollDialogBuilder.buildSpeaker(actor, tokenId),
       },
     };
-    switch (category) {
+
+    const resolvedType = this.#resolveRollType(category, skillName, messageId);
+    switch (resolvedType) {
       case 'attribute':
         break;
-      default:
-        const skill = actor.items.find((i) => i.name == name && i.type == category);
-        if (!skill) return ui.notifications.error('DSAError.elementNotFound', { format: { element: name }, localize: true });
+      default: {
+        const skill = this.#findActorSkill(actor, skillName, resolvedType);
+        if (!skill) {
+          return ui.notifications.error('DSAError.elementNotFound', { format: { element: skillName }, localize: true });
+        }
 
         actor.setupSkill(skill, options, tokenId).then(async (setupData) => {
           const result = await actor.basicTest(setupData);
-          await GroupCheck.editGroupCheckRoll(messageId, result, name, category, options.postFunction);
+          await GroupCheck.editGroupCheckRoll(messageId, result, skillName, skill.type, options.postFunction);
         });
+      }
     }
+  }
+
+  /** Prefer the player's assigned character when no owned token is controlled. */
+  static #resolveRollingActor() {
+    if (!game.user.isGM && game.user.character) {
+      const controlled = canvas.tokens?.controlled?.filter((token) => token.actor?.isOwner) ?? [];
+      const assigned = controlled.find((token) => token.actor.id === game.user.character.id);
+      if (assigned) return { actor: assigned.actor, tokenId: assigned.id };
+      if (controlled.length === 1) return { actor: controlled[0].actor, tokenId: controlled[0].id };
+      return { actor: game.user.character, tokenId: null };
+    }
+    return DSA5ChatAutoCompletion._getActor();
+  }
+
+  static #resolveRollType(category, skillName, messageId) {
+    const invalid = !category || category === 'submit' || category === 'button';
+    if (!invalid) return category;
+
+    const optn = game.messages.get(messageId)?.flags?.gc?.rollOptions?.find((entry) => entry.target === skillName);
+    return optn?.type || 'skill';
+  }
+
+  static #findActorSkill(actor, name, type = 'skill') {
+    if (!actor || !name) return null;
+    return (
+      actor.items.find((item) => item.name === name && item.type === type)
+      || (type !== 'skill' ? actor.items.find((item) => item.name === name && item.type === 'skill') : null)
+      || null
+    );
   }
 
   static async autoEditGroupCheckRoll(postFunction, result, source) {
@@ -69,12 +220,15 @@ export default class GroupCheck {
     const rollResult = result.result;
     const isCrit = rollResult.successLevel > 1;
     const critMultiplier = isCrit ? 2 : 1;
-    const actor = DSA5_Utility.getSpeaker(postFunction?.speaker ?? rollResult.speaker);
+    const speaker = postFunction?.speaker ?? rollResult.speaker;
+    const actor = DSA5_Utility.getSpeaker(speaker);
     if (!actor) return;
 
     const update = {
       messageId: rollResult.messageId,
       actor: actor.name,
+      actorId: actor.id,
+      tokenId: speaker?.token,
       qs: (rollResult.qualityStep || 0) * critMultiplier,
       success: rollResult.successLevel,
       target,
@@ -105,11 +259,12 @@ export default class GroupCheck {
       data.botched = data.botched || update.botched;
       delete update.botched;
 
-      const index = data.results.findIndex((x) => x.messageId == update.messageId);
+      const sanitized = this.#sanitizeResult(update);
+      const index = data.results.findIndex((x) => x.messageId == sanitized.messageId);
       if (index >= 0) {
-        data.results[index] = update;
+        data.results[index] = sanitized;
       } else {
-        data.results.push(update);
+        data.results.push(sanitized);
       }
       await GroupCheck.rerenderGC(message, data);
     });
@@ -117,20 +272,17 @@ export default class GroupCheck {
 
   static async rerenderGC(message, data) {
     if (game.user.isGM) {
-      let failed = 0;
-      data.qs = data.results.reduce((a, b) => {
-        failed += b.success < 0 ? 1 : 0;
-        if (b.success > 1) failed = 0;
-        return a + b.qs;
-      }, 0);
-      data.failed = failed;
+      data.results = (data.results || []).map((entry) => this.#sanitizeResult(entry));
+      const tally = this.tallyResults(data.results);
+      data.qs = tally.qs;
+      data.failed = tally.failed;
       for (const optn of data.rollOptions) {
-        optn.calculatedModifier = optn.modifier - failed;
+        optn.calculatedModifier = optn.modifier - data.failed;
+        delete optn.skillIcon;
       }
       data.openRolls = data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
-      data.results = this.#enrichResultsForDisplay(data.results);
-      const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
+      const content = await renderTemplate(this.CHAT_TEMPLATE, this.#buildTemplateData(data));
       await message.update({ content, flags: { gc: data }, timestamp: Date.now() });
     } else {
       game.socket.emit('system.dsa5', {
@@ -366,19 +518,22 @@ export default class GroupCheck {
     let results = [];
 
     for (const row of form.querySelectorAll('.gc-result-row')) {
-      results.push({
+      results.push(this.#sanitizeResult({
         messageId: row.dataset.messageId,
         actor: row.dataset.actor,
+        actorId: row.dataset.actorId,
+        tokenId: row.dataset.tokenId,
         target: row.dataset.target,
         type: row.dataset.type,
         success: Number(row.dataset.success),
-        botched: row.dataset.botched === 'true',
         qs: Number(row.querySelector('[name="resultQs"]')?.value) || 0,
-      });
+      }));
     }
 
     if (!results.length && existingData?.results?.length) {
-      results = existingData.results.filter((r) => skillKeys.has(`${r.type}|${r.target}`));
+      results = existingData.results
+        .filter((r) => skillKeys.has(`${r.type}|${r.target}`))
+        .map((r) => this.#sanitizeResult(r));
     } else {
       results = results.filter((r) => skillKeys.has(`${r.type}|${r.target}`));
     }
@@ -422,7 +577,7 @@ export default class GroupCheck {
       data.enrichedsuccess = await TextEditor.enrichHTML(parsed.success, { secrets: game.user.isGM });
     }
 
-    const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
+    const content = await renderTemplate(this.CHAT_TEMPLATE, this.#buildTemplateData(data));
     const chatData = DSA5_Utility.chatDataSetup(
       content,
       postOptions.modeOverride,
@@ -456,7 +611,7 @@ export default class GroupCheck {
     };
     if (configuration.enrichedsuccess) data.enrichedsuccess = configuration.enrichedsuccess;
     if (configuration.enrichedpartsuccess) data.enrichedpartsuccess = configuration.enrichedpartsuccess;
-    const content = await renderTemplate('systems/dsa5/templates/chat/roll/groupcheck.hbs', data);
+    const content = await renderTemplate(this.CHAT_TEMPLATE, this.#buildTemplateData(data));
     const chatData = DSA5_Utility.chatDataSetup(content, modeOverride, undefined, forceWhisperIDs);
     chatData.flags = { gc: data };
     if (datasetOptions) chatData.flags.gc.datasetOptions = datasetOptions;
@@ -477,15 +632,25 @@ export default class GroupCheck {
   }
 
   static async chatListeners(html) {
-    html.on('click', '.request-gc', (ev) => {
-      const elem = ev.currentTarget.dataset;
-      GroupCheck.requestGC(elem.type, elem.name, $(ev.currentTarget).parents('.message').attr('data-message-id'), Number(elem.modifier) || 0);
+    html.off('click.dsaGroupCheck', '.request-gc');
+    html.on('click.dsaGroupCheck', '.request-gc', (ev) => {
+      ev.preventDefault();
+      ev.stopImmediatePropagation();
+      const btn = ev.currentTarget;
+      const name = btn.dataset.gcName || btn.dataset.name || '';
+      const type = btn.dataset.gcType || btn.dataset.type || 'skill';
+      const modifier = Number(btn.dataset.modifier) || 0;
+      const messageId = btn.closest('.message')?.dataset.messageId
+        || $(btn).parents('.message').attr('data-message-id');
+      GroupCheck.requestGC(type, name, messageId, modifier);
     });
-    html.on('click', '.edit-gc-config', (ev) => {
+    html.off('click.dsaGroupCheck', '.edit-gc-config');
+    html.on('click.dsaGroupCheck', '.edit-gc-config', (ev) => {
       ev.preventDefault();
       ev.stopImmediatePropagation();
       if (!game.user.isGM) return;
-      const messageId = $(ev.currentTarget).closest('.message').attr('data-message-id');
+      const messageId = ev.currentTarget.closest('.message')?.dataset.messageId
+        || $(ev.currentTarget).closest('.message').attr('data-message-id');
       GroupCheck.openDialog({ messageId });
     });
   }

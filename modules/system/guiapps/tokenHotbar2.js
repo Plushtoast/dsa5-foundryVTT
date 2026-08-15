@@ -57,6 +57,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           subfunction: 'gm',
         },
         {
+          name: 'ItemLibrary',
+          disabled: setting.itemLibrary,
+          iconClass: 'fas fa-university',
+          id: 'itemLibrary',
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
+        {
           name: 'MASTER.randomPlayer',
           disabled: setting.randomVictim,
           iconClass: 'fa fa-dice-six',
@@ -438,6 +447,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     switch (id) {
       case 'masterMenu':
         DSA5_Utility.renderToggle(game.dsa5.apps.gameMasterMenu);
+        break;
+      case 'itemLibrary':
+        DSA5_Utility.renderToggle(game.dsa5.itemLibrary);
         break;
       case DSACalendarEntry.HOTBAR_ID:
         DSACalendarEntry.startCreation(null, game.time.calendar.timeToComponents(game.time.worldTime));

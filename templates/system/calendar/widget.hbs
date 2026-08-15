@@ -28,7 +28,11 @@
         </div>
         <div class='slideIndicator' aria-hidden='true'><i class='fas fa-hourglass-half'></i></div>
       </div>
-      <i class='{{weatherIcon}} calendar-bookend calendar-weather-icon{{#unless weatherAvailable}} is-muted{{/unless}}' data-tooltip='{{dateTooltip}}' aria-hidden='true'></i>
+      {{#if canToggleAutoWeather}}
+        <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' data-action='toggleAutoWeather' role='button' tabindex='0' aria-pressed='{{#if autoWeatherEnabled}}true{{else}}false{{/if}}'></i>
+      {{else}}
+        <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' aria-hidden='true'></i>
+      {{/if}}
     </div>
     <div class='moons flexrow'>
       <div class='moon-phase previous'>

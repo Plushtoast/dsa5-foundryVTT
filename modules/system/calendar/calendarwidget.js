@@ -42,6 +42,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             openEvents: this.openEvents,
             toggleAutoLight: this.toggleAutoLight,
             toggleAutoTime: this.onToggleAutoTime,
+            toggleAutoWeather: this.toggleAutoWeather,
             weekBack: this.weekBack,
             dayBack: this.dayBack,
             hours6Back: this.hours6Back,
@@ -127,6 +128,23 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             || game.i18n.localize('CALENDAR.DSA.weather');
 
         return { icon, available: true, tooltip };
+    }
+
+    /**
+     * CSS classes for the calendar weather bookend icon.
+     * Auto-weather on/off uses is-active (sidebar aria-pressed parity); is-muted is only for missing weather data.
+     * @param {{ icon: string, available: boolean }} info
+     * @param {{ canToggle?: boolean, autoWeatherEnabled?: boolean }} [options]
+     */
+    static weatherIconClassName(info, { canToggle = false, autoWeatherEnabled = true } = {}) {
+        return [
+            info.icon,
+            'calendar-bookend',
+            'calendar-weather-icon',
+            !info.available ? 'is-muted' : null,
+            canToggle ? 'is-toggle' : null,
+            canToggle && autoWeatherEnabled ? 'is-active' : null,
+        ].filter(Boolean).join(' ');
     }
 
     static currentWeather() {
@@ -463,8 +481,14 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const info = this.constructor.resolveWeatherIcon(weather);
         const weatherIcon = this.element.querySelector('.calendar-weather-icon');
         if (weatherIcon) {
-            weatherIcon.className = `${info.icon} calendar-bookend calendar-weather-icon${info.available ? '' : ' is-muted'}`;
-            weatherIcon.dataset.tooltip = info.tooltip;
+            const canToggle = weatherIcon.dataset.action === 'toggleAutoWeather';
+            const autoWeatherEnabled = !canToggle
+                || (game.dsa5?.atlas?.shouldAutoUpdateWeather?.() ?? false);
+            weatherIcon.className = this.constructor.weatherIconClassName(info, { canToggle, autoWeatherEnabled });
+            if (canToggle) weatherIcon.setAttribute('aria-pressed', autoWeatherEnabled ? 'true' : 'false');
+            weatherIcon.dataset.tooltip = canToggle
+                ? this.constructor.composeWeatherToggleTooltip(info.tooltip, autoWeatherEnabled)
+                : info.tooltip;
         }
 
         if (weather) {
@@ -501,7 +525,15 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const weatherInfo = this.constructor.resolveWeatherIcon(this.constructor.currentWeather());
         data.weatherIcon = weatherInfo.icon;
         data.weatherAvailable = weatherInfo.available;
-        data.weatherTooltip = weatherInfo.tooltip;
+        data.canToggleAutoWeather = data.isGM && DSA5_Utility.moduleEnabled('dsa5-atlas')
+            && typeof game.dsa5?.atlas?.setAutoWeather === 'function';
+        data.autoWeatherEnabled = data.canToggleAutoWeather
+            ? (game.dsa5.atlas.shouldAutoUpdateWeather?.() ?? false)
+            : true;
+        data.weatherIconClass = this.constructor.weatherIconClassName(weatherInfo, {
+            canToggle: data.canToggleAutoWeather,
+            autoWeatherEnabled: data.autoWeatherEnabled,
+        });
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
         data.toggleAutoTime = this.toggleAutoTime;
 
@@ -529,6 +561,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         }
 
         Hooks.call('dsa5.calendarWidgetDataReady', data, this);
+
+        // Prefer the atlas-enriched date tooltip on the weather icon; append sidebar-equivalent toggle hint for GMs.
+        data.weatherTooltip = data.canToggleAutoWeather
+            ? this.constructor.composeWeatherToggleTooltip(data.dateTooltip, data.autoWeatherEnabled)
+            : data.dateTooltip;
 
         return data;
     }
@@ -629,6 +666,34 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         await game.settings.set('dsa5', 'calendarSettings', calendarSettings);
         target.classList.toggle('fa-toggle-on', calendarSettings.lightByDayTime);
         target.classList.toggle('fa-toggle-off', !calendarSettings.lightByDayTime);
+    }
+
+    static composeWeatherToggleTooltip(weatherTooltip, autoWeatherEnabled) {
+        const status = game.i18n.localize(autoWeatherEnabled
+            ? 'DEREATLAS.CONTROLS.AutoWeatherEnabled'
+            : 'DEREATLAS.CONTROLS.AutoWeatherDisabled');
+        const action = game.i18n.localize('DEREATLAS.CONTROLS.ToggleAutoWeather');
+        return [weatherTooltip, `${action} (${status})`].filter(Boolean).join(' — ');
+    }
+
+    static async toggleAutoWeather(ev, target) {
+        if (!DSA5_Utility.isActiveGM()) return;
+
+        const atlas = game.dsa5?.atlas;
+        if (typeof atlas?.setAutoWeather !== 'function') return;
+
+        // Same semantics as the sidebar tool: onChange(event, active) with the desired next state.
+        const next = !(atlas.shouldAutoUpdateWeather?.() ?? false);
+        const enabled = await atlas.setAutoWeather(next);
+        if (enabled == null) return;
+
+        const info = this.constructor.resolveWeatherIcon(this.constructor.currentWeather());
+        target.className = this.constructor.weatherIconClassName(info, {
+            canToggle: true,
+            autoWeatherEnabled: enabled,
+        });
+        target.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        target.dataset.tooltip = this.constructor.composeWeatherToggleTooltip(info.tooltip, enabled);
     }
 
     /**

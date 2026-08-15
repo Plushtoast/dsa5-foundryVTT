@@ -3347,17 +3347,94 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 }
 
 .group-check-card {
+  .group-check-skill-icon {
+    width: 22px;
+    height: 22px;
+    object-fit: cover;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    flex: 0 0 22px;
+    pointer-events: none;
+  }
+
+  .group-check-skill-button {
+    min-width: 0;
+    max-width: 100%;
+    justify-content: flex-start;
+
+    .group-check-skill-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+    }
+  }
+
+  .group-check-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0.45rem 0;
+  }
+
+  .group-check-section {
+    padding: 0.2rem 0 0.15rem 0.45rem;
+    border-left: 2px solid var(--border-color);
+  }
+
+  .group-check-section-header {
+    margin: 0 0 0.2rem;
+    opacity: 0.95;
+  }
+
   .group-check-results {
-    margin: 0.25rem 0;
+    display: flex;
+    flex-direction: column;
+    padding-left: 0.35rem;
   }
 
   .group-check-result-row {
-    border-left-width: 3px;
-    border-left-style: solid;
-    border-left-color: transparent;
     padding: 3px 4px;
     border-radius: 3px;
     box-sizing: border-box;
+    font-size: var(--font-size-13, 13px);
+    line-height: 1.15;
+    min-height: 0;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
+
+  .roll-request-row-identity {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 4px;
+    min-width: 22px;
+    overflow: hidden;
+  }
+
+  .roll-request-row-avatar {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    max-width: 22px;
+    flex: 0 0 22px;
+    object-fit: cover;
+    border: none;
+    border-radius: 3px;
+  }
+
+  .roll-request-row-names {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    gap: 0;
+  }
+
+  .roll-request-row-title {
+    font-weight: bold;
     font-size: var(--font-size-13, 13px);
   }
 
@@ -3365,16 +3442,32 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    flex: 0 0 auto;
     min-width: 1.5em;
     text-align: right;
-    font-weight: bold;
     line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .group-check-result-label {
+    font-weight: bold;
+    white-space: nowrap;
+    font-size: var(--font-size-13, 13px);
+  }
+
+  .roll-request-row-critical .roll-request-result-sublabel {
+    color: var(--dsa-critical);
+    opacity: 1;
+  }
+
+  .roll-request-row-botch .roll-request-result-sublabel {
+    color: #a4241a;
+    opacity: 1;
   }
 }
 
 // Outcome accents — must beat reserved transparent gutter (same/higher specificity)
 .roll-request-card .roll-request-row,
-.group-check-card .group-check-result-row,
 .information-query-result-roll {
   &.roll-request-row-success {
     background: rgba(0, 111, 61, 0.12);
@@ -3395,6 +3488,27 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   &.roll-request-row-botch {
     background: rgba(122, 31, 25, 0.28);
     border-left-color: #7a1f19;
+    box-shadow: inset 0 0 0 1px rgba(164, 36, 26, 0.4);
+  }
+}
+
+// Group check: background tint only (no left accent gutter)
+.group-check-card .group-check-result-row {
+  &.roll-request-row-success {
+    background: rgba(0, 111, 61, 0.12);
+  }
+
+  &.roll-request-row-critical {
+    background: var(--dsa-critical-bg);
+    box-shadow: inset 0 0 0 1px rgba(74, 144, 200, 0.25);
+  }
+
+  &.roll-request-row-failure {
+    background: rgba(164, 36, 26, 0.12);
+  }
+
+  &.roll-request-row-botch {
+    background: rgba(122, 31, 25, 0.28);
     box-shadow: inset 0 0 0 1px rgba(164, 36, 26, 0.4);
   }
 }

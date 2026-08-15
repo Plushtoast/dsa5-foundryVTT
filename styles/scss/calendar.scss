@@ -736,6 +736,24 @@
       &.is-muted {
         opacity: 0.45;
       }
+
+      &.calendar-weather-icon.is-toggle {
+        cursor: var(--cursor-pointer);
+        opacity: 0.45;
+
+        &.is-active {
+          opacity: 1;
+        }
+
+        &.is-muted {
+          opacity: 0.3;
+        }
+
+        &:hover {
+          color: #efe2c0;
+          opacity: 1;
+        }
+      }
     }
 
     .dayProgress {

@@ -79,14 +79,15 @@ class DSAMenuLayer extends foundry.canvas.layers.InteractionLayer {
     }
     if (game.settings.get('dsa5', 'masterCanvasControls')) {
       if (game.dsa5.apps.tokenHotbar) {
-        for (let i = 3; i < game.dsa5.apps.tokenHotbar._gmEntries().length; i++) {
-          const entry = game.dsa5.apps.tokenHotbar._gmEntries()[i];
+        const callbacks = game.dsa5.apps.tokenHotbar.callbackFunctions || {};
+        for (const entry of game.dsa5.apps.tokenHotbar._gmEntries()) {
+          if (!(entry.id in callbacks)) continue;
           tools[entry.id] = {
             name: entry.id,
             title: entry.name,
             icon: `fa-dsa5 fa-dsa5-${entry.id}`,
             button: true,
-            onChange: () => game.dsa5.apps.tokenHotbar.callbackFunctions[entry.id](),
+            onChange: () => callbacks[entry.id](),
           };
         }
       }
