@@ -7,7 +7,12 @@
         {{formGroup systemFields.status.fields.crew.fields.initial value=document.system.status.crew.initial localize=true label='VEHICLE.crewCapacity' tooltip='VEHICLE.crewCapacityHint'}}
       </div>
       <div class="vehicle-stat-field">
-        {{formGroup systemFields.status.fields.crew.fields.value value=document.system.status.crew.value localize=true label='VEHICLE.crewCurrent' tooltip='VEHICLE.crewCurrentHint'}}
+        <div class="form-group" data-tooltip="{{localize 'VEHICLE.crewCurrentHint'}}">
+          <label>{{localize "VEHICLE.crewCurrent"}}</label>
+          <div class="form-fields">
+            <span>{{document.system.status.crew.value}}</span>
+          </div>
+        </div>
       </div>
       <div class="vehicle-stat-field">
         {{formGroup systemFields.combatState.fields.woundedCrew value=document.system.combatState.woundedCrew localize=true label='VEHICLE.woundedCrew' tooltip='VEHICLE.woundedCrewHint'}}
