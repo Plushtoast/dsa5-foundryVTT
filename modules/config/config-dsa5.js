@@ -416,14 +416,12 @@ DSA5.systemTables = [
     attrs: '',
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
-    setting: { module: '', key: '' },
   },
   {
     name: 'Spell',
     attrs: '',
     roll: 'botch-roll',
     pack: { de: 'dsa5.patzer', en: 'dsa5.botch' },
-    setting: { module: '', key: '' },
   },
 ];
 

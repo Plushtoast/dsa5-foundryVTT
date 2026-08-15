@@ -116,7 +116,8 @@ export default class DSATables {
 
   static async tableEnabledFor(key) {
     const table = DSA5.systemTables.find((x) => x.name == key);
-    if (!table?.setting?.module) return false;
+    if (!table) return false;
+    if (!table.setting?.module) return true;
     return game.settings.get(table.setting.module, table.setting.key);
   }
 
