@@ -520,15 +520,14 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
                     );
                     const macroCallResults = [];
                     const callMacroProxy = (packName, name, macroActor, macroItem, macroQs, args = {}) => {
-                      const macroArgs = mergeObject(
-                        {
-                          regionEvent: options.regionEvent,
-                          messageMode: options.messageMode,
-                          sourceActor,
-                        },
-                        args || {},
-                        { inplace: false },
-                      );
+                      // Shallow merge only: mergeObject would recursively write into Document
+                      // instances (e.g. sourceActor.items) when macros pass { options, sourceActor }.
+                      const macroArgs = {
+                        regionEvent: options.regionEvent,
+                        messageMode: options.messageMode,
+                        sourceActor,
+                      };
+                      if (args && isPlainObject(args)) Object.assign(macroArgs, args);
                       if (options.maintenance.parentEffectUuid) {
                         macroArgs.maintenance ??= { effectUuid: options.maintenance.parentEffectUuid };
                       }

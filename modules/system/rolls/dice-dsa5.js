@@ -441,14 +441,29 @@ export default class DiceDSA5 {
 
     return renderTemplate(dialogOptions.template, dialogOptions.data)
       .then(content => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
+          let settled = false;
+          const settle = (value) => {
+            if (settled) return;
+            settled = true;
+            resolve(value);
+          };
+
           const dlg = new dialog({
             window: { title: dialogOptions.title },
             content,
-            buttons: dialog.getRollButtons(testData, dialogOptions, resolve, reject),
+            buttons: dialog.getRollButtons(testData, dialogOptions, settle, () => settle(null)),
           })
             .recallSettings(testData.extra.speaker, testData.source, testData.mode, dialogOptions.data);
           dlg.testData = testData;
+
+          const originalClose = dlg.close.bind(dlg);
+          dlg.close = async (options = {}) => {
+            const result = await originalClose(options);
+            // Dismiss (X / Esc) must not leave setupDialog hanging — treat as cancel.
+            settle(null);
+            return result;
+          };
 
           const parent = resolveDetachedParent({
             actor,
