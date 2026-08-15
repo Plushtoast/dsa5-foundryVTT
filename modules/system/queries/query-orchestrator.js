@@ -7,6 +7,8 @@ export default class QueryOrchestrator {
   static #messageQueues = new Map();
 
   static QUERY_TIMEOUT_MS = 120_000;
+  /** Close/respond slightly before socket.io times out so the dialog can settle cleanly. */
+  static QUERY_CLIENT_EXPIRY_BUFFER_MS = 1_500;
   static TERMINAL_STATES = new Set(['accepted', 'rejected', 'failed', 'skipped', 'success', 'critical', 'failure', 'botch', 'cancelled', 'error']);
   static STATUS_STYLES = {
     pending:   { icon: 'fa-spinner fa-spin',        colorClass: 'icon-gray' },
@@ -36,10 +38,165 @@ export default class QueryOrchestrator {
     CONFIG.queries ??= {};
     this.#queries.set(type, config);
 
-    CONFIG.queries[type] = async (queryData) => {
+    CONFIG.queries[type] = async (queryData, queryContext) => {
       const query = this.getQuery(type);
-      return await query?.handleQuery?.(queryData);
+      return await query?.handleQuery?.(queryData, queryContext);
     };
+  }
+
+  static clientExpiryMs(timeoutMs = this.QUERY_TIMEOUT_MS) {
+    const timeout = Number.isFinite(timeoutMs) ? timeoutMs : this.QUERY_TIMEOUT_MS;
+    return Math.max(0, timeout - this.QUERY_CLIENT_EXPIRY_BUFFER_MS);
+  }
+
+  static isTimeoutError(error) {
+    const message = error?.message || String(error || '');
+    return /timed?\s*out|timeout/i.test(message);
+  }
+
+  static isSoftQueryFailure(error) {
+    return this.isTimeoutError(error) || /disconnected/i.test(error?.message || '');
+  }
+
+  static notifyRequestExpired() {
+    ui.notifications.warn('DSAQUERIES.NOTIFICATIONS.requestExpired', { localize: true });
+  }
+
+  static #activeQueryDialogs = new Set();
+
+  /**
+   * DialogV2.wait that registers the app so {@link #closeActiveQueryDialogs} / expiry can close it.
+   * @param {object} config DialogV2.wait config
+   * @param {{ signal?: AbortSignal }} [options]
+   */
+  static async waitDialog(config = {}, { signal } = {}) {
+    let dialog;
+    const closeOnAbort = () => { void dialog?.close(); };
+
+    if (signal) {
+      if (signal.aborted) return null;
+      signal.addEventListener('abort', closeOnAbort, { once: true });
+    }
+
+    try {
+      return await foundry.applications.api.DialogV2.wait({
+        ...config,
+        render: (event, app) => {
+          dialog = app;
+          this.#activeQueryDialogs.add(app);
+          config.render?.(event, app);
+        },
+        close: (event, app) => {
+          this.#activeQueryDialogs.delete(app);
+          return config.close?.(event, app);
+        },
+      });
+    } catch (error) {
+      if (signal?.aborted) return null;
+      throw error;
+    } finally {
+      signal?.removeEventListener('abort', closeOnAbort);
+    }
+  }
+
+  static closeActiveQueryDialogs() {
+    for (const app of [...this.#activeQueryDialogs]) {
+      void app.close();
+    }
+    this.#activeQueryDialogs.clear();
+  }
+
+  static closeMatchingApplications(predicate) {
+    for (const app of foundry.applications.instances.values()) {
+      if (predicate(app)) void app.close();
+    }
+  }
+
+  /** Close open DSA test dialogs for an actor (skill/spell/etc. roll windows). */
+  static closeOpenTestDialogsForActor(actorId) {
+    if (!actorId) return;
+    this.closeMatchingApplications((app) => {
+      const speakerActor = app.testData?.extra?.speaker?.actor ?? app.dialogData?.speaker?.actor;
+      return speakerActor === actorId;
+    });
+  }
+
+  /**
+   * Race a query handler against the client expiry window.
+   * On expiry: closes tracked query dialogs, runs onExpire, notifies, returns null.
+   * @param {(signal: AbortSignal) => Promise<*>} execute
+   * @param {{ timeout?: number }} [queryContext]
+   * @param {{ onExpire?: (signal: AbortSignal) => void|Promise<void> }} [options]
+   */
+  static async runWithClientExpiry(execute, queryContext = {}, { onExpire } = {}) {
+    const abortController = new AbortController();
+    const timeoutMs = queryContext.timeout ?? this.QUERY_TIMEOUT_MS;
+    const expiryMs = this.clientExpiryMs(timeoutMs);
+
+    let expireTimer;
+    const expired = new Promise((resolve) => {
+      expireTimer = setTimeout(() => {
+        abortController.abort('expired');
+        resolve({ expired: true });
+      }, expiryMs);
+    });
+
+    try {
+      const outcome = await Promise.race([
+        Promise.resolve()
+          .then(() => execute(abortController.signal))
+          .then((result) => ({ result })),
+        expired,
+      ]);
+
+      if (outcome.expired || abortController.signal.aborted) {
+        this.closeActiveQueryDialogs();
+        await onExpire?.(abortController.signal);
+        this.notifyRequestExpired();
+        return null;
+      }
+
+      return outcome.result;
+    } finally {
+      clearTimeout(expireTimer);
+    }
+  }
+
+  /**
+   * Dispatch a user query. Timeout/disconnect leaves the chat card pending (returns null result path).
+   * @param {object} options
+   * @param {string} options.userId
+   * @param {string} options.queryType
+   * @param {object} options.payload
+   * @param {(result: *) => void|Promise<void>} [options.onResult]
+   * @param {(error: Error) => void|Promise<void>} [options.onHardError]
+   * @param {string} [options.label]
+   * @param {object} [options.queryOptions]
+   * @returns {Promise<{ status: 'ok'|'expired'|'error', result?: *, error?: Error }>}
+   */
+  static async dispatchRecipientQuery({
+    userId,
+    queryType,
+    payload,
+    onResult,
+    onHardError,
+    label = queryType,
+    queryOptions = {},
+  }) {
+    try {
+      const result = await this.dispatchToRecipient(userId, queryType, payload, queryOptions);
+      if (result == null) return { status: 'expired' };
+      if (onResult) await onResult(result);
+      return { status: 'ok', result };
+    } catch (error) {
+      if (this.isSoftQueryFailure(error)) {
+        console.warn(`${label} query expired`, error);
+        return { status: 'expired' };
+      }
+      console.error(`Failed to query ${label}`, error);
+      if (onHardError) await onHardError(error);
+      return { status: 'error', error };
+    }
   }
 
   static getQuery(type) {

@@ -303,25 +303,47 @@ export default class RollRequestService {
   }
 
   static async dispatchRecipientQuery(messageId, actorId, userId, state) {
-    try {
-      const result = await QueryOrchestrator.dispatchToRecipient(
-        userId,
-        this.QUERY_TYPE,
-        this.#buildQueryPayload(state, { messageId, actorId }),
-      );
-
-      if (!result) return;
-      await this.#submitResult(messageId, actorId, result);
-    } catch (error) {
-      console.error(`Failed to query roll request recipient ${actorId}`, error);
-      await this.#submitResult(messageId, actorId, {
+    await QueryOrchestrator.dispatchRecipientQuery({
+      userId,
+      queryType: this.QUERY_TYPE,
+      payload: this.#buildQueryPayload(state, { messageId, actorId }),
+      label: `roll request recipient ${actorId}`,
+      onResult: (result) => this.#submitResult(messageId, actorId, result),
+      onHardError: () => this.#submitResult(messageId, actorId, {
         userId,
         status: 'error',
-      });
-    }
+      }),
+    });
   }
 
-  static async handleQuery(payload) {
+  static async handleQuery(payload, queryContext = {}) {
+    return QueryOrchestrator.runWithClientExpiry(
+      () => this.#executeRollQuery(payload),
+      queryContext,
+      {
+        onExpire: () => {
+          this.closeOpenRollRequestDialog(payload);
+          QueryOrchestrator.closeOpenTestDialogsForActor(payload.actorId);
+        },
+      },
+    );
+  }
+
+  /**
+   * Close an auto-opened roll dialog that belongs to this roll request.
+   * @param {{ messageId?: string, actorId?: string }} payload
+   */
+  static closeOpenRollRequestDialog(payload = {}) {
+    QueryOrchestrator.closeMatchingApplications((app) => {
+      const postFunction = app.testData?.extra?.options?.postFunction;
+      if (postFunction?.functionName !== 'game.dsa5.queries.RollRequestService.postRollRequestResult') return false;
+      if (payload.messageId && postFunction.requestMessageId !== payload.messageId) return false;
+      if (payload.actorId && postFunction.actorId !== payload.actorId) return false;
+      return true;
+    });
+  }
+
+  static async #executeRollQuery(payload) {
     const actor = game.actors.get(payload.actorId);
     if (!actor) {
       return {
@@ -375,6 +397,8 @@ export default class RollRequestService {
       }
 
       if (!setupData) {
+        // Dialog dismissed — leave the chat card pending so the roll can be retried from there.
+        if (payload.messageId) return null;
         return { userId: game.user.id, status: 'cancelled' };
       }
 
@@ -388,11 +412,13 @@ export default class RollRequestService {
 
       const result = await actor.basicTest(setupData);
       if (!result) {
+        if (payload.messageId) return null;
         return { userId: game.user.id, status: 'cancelled' };
       }
 
       return this.buildResultPayload(payload.category, result, payload.messageMode);
     } catch {
+      if (payload.messageId) return null;
       return { userId: game.user.id, status: 'cancelled' };
     }
   }
@@ -424,6 +450,14 @@ export default class RollRequestService {
 
   static async postRollRequestResult(postFunction, payload) {
     if (!postFunction?.requestMessageId) return;
+
+    const message = game.messages.get(postFunction.requestMessageId);
+    const state = message?.getFlag('dsa5', this.FLAG_KEY);
+    const entry = state?.recipients?.find((recipient) => recipient.actorId === postFunction.actorId);
+    if (!message || !entry || state.finalized || QueryOrchestrator.TERMINAL_STATES.has(entry.status)) {
+      QueryOrchestrator.notifyRequestExpired();
+      return;
+    }
 
     const result = RollRequestService.buildResultPayload(postFunction.category, payload, postFunction.messageMode);
     if (postFunction.byGM) result.resultDetails = { ...result.resultDetails, byGM: true };

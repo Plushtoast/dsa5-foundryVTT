@@ -1477,7 +1477,8 @@
       "noActors": "Keine Helden ausgewählt.",
       "noAvailableActors": "Es können keine weiteren Akteure hinzugefügt werden.",
       "noGMOnline": "Es ist kein SL online, um diese Anfrage zu genehmigen.",
-      "queryFailed": "Die Anfrage konnte nicht zugestellt werden."
+      "queryFailed": "Die Anfrage konnte nicht zugestellt werden.",
+      "requestExpired": "Die Anfrage ist abgelaufen. Du kannst sie über die Chatkarte fortsetzen."
     },
     "STATUS": {
       "accepted": "Erledigt",

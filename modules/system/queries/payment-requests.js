@@ -81,24 +81,19 @@ export default class PaymentRequestService {
   }
 
   static async dispatchRecipientQuery(messageId, actorId, userId, state) {
-    try {
-      const result = await QueryOrchestrator.dispatchToRecipient(
-        userId,
-        this.QUERY_TYPE,
-        {
-          messageId,
-          actorId,
-          mode: state.mode,
-          amount: state.amount,
-          description: state.description,
-        },
-      );
-
-      if (!result) return;
-      await QueryOrchestrator.handleResult({ messageId, actorId, result });
-    } catch (error) {
-      console.error(`Failed to query payment recipient ${actorId}`, error);
-      await QueryOrchestrator.handleResult({
+    await QueryOrchestrator.dispatchRecipientQuery({
+      userId,
+      queryType: this.QUERY_TYPE,
+      payload: {
+        messageId,
+        actorId,
+        mode: state.mode,
+        amount: state.amount,
+        description: state.description,
+      },
+      label: `payment recipient ${actorId}`,
+      onResult: (result) => QueryOrchestrator.handleResult({ messageId, actorId, result }),
+      onHardError: () => QueryOrchestrator.handleResult({
         messageId,
         actorId,
         result: {
@@ -106,11 +101,18 @@ export default class PaymentRequestService {
           status: 'failed',
           resultDetails: _loc('DSAQUERIES.NOTIFICATIONS.queryFailed'),
         },
-      });
-    }
+      }),
+    });
   }
 
-  static async handleQuery(payload) {
+  static async handleQuery(payload, queryContext = {}) {
+    return QueryOrchestrator.runWithClientExpiry(
+      (signal) => this.#executePaymentQuery(payload, signal),
+      queryContext,
+    );
+  }
+
+  static async #executePaymentQuery(payload, signal) {
     const actor = game.actors.get(payload.actorId);
     if (!actor) {
       return {
@@ -120,7 +122,8 @@ export default class PaymentRequestService {
       };
     }
 
-    const confirmed = await this.promptRecipient(actor, payload.mode, payload.amount, payload.description);
+    const confirmed = await this.promptRecipient(actor, payload.mode, payload.amount, payload.description, { signal });
+    if (signal?.aborted) return null;
     if (!confirmed) {
       return {
         userId: game.user.id,
@@ -144,7 +147,7 @@ export default class PaymentRequestService {
     };
   }
 
-  static async promptRecipient(actor, mode, amount, description) {
+  static async promptRecipient(actor, mode, amount, description, { signal } = {}) {
     const amountString = await DSA5Payment._moneyToString(amount);
     const content = `
       <p>${_loc(mode === 'pay' ? 'PAYMENT.requestPromptPay' : 'PAYMENT.requestPromptGetPaid', { actor: actor.name, amount: amountString })}</p>
@@ -152,7 +155,7 @@ export default class PaymentRequestService {
     `;
 
     try {
-      return await foundry.applications.api.DialogV2.wait({
+      return await QueryOrchestrator.waitDialog({
         window: {
           title: _loc(mode === 'pay' ? 'PAYMENT.requestTitlePay' : 'PAYMENT.requestTitleGetPaid'),
         },
@@ -172,7 +175,7 @@ export default class PaymentRequestService {
             callback: () => false,
           },
         ],
-      });
+      }, { signal });
     } catch {
       return false;
     }

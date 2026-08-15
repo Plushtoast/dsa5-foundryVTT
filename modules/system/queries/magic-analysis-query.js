@@ -346,7 +346,17 @@ export default class MagicAnalysisQueryService {
     };
   }
 
-  static async handleQuery(payload) {
+  static async handleQuery(payload, queryContext = {}) {
+    return QueryOrchestrator.runWithClientExpiry(
+      () => this.#executeAnalysisQuery(payload),
+      queryContext,
+      {
+        onExpire: () => QueryOrchestrator.closeOpenTestDialogsForActor(payload.actorId),
+      },
+    );
+  }
+
+  static async #executeAnalysisQuery(payload) {
     const actor = game.actors.get(payload.actorId);
     const message = game.messages.get(payload.messageId);
     const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
@@ -514,7 +524,7 @@ export default class MagicAnalysisQueryService {
 
     if (result.status === 'approved') {
       await this.#applyApproval(messageId, result.selected);
-    } else {
+    } else if (result.status !== 'expired') {
       await this.#rejectApproval(messageId);
     }
   }

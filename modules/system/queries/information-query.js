@@ -163,12 +163,12 @@ export default class InformationQueryService {
     return html;
   }
 
-  static async promptApprovalDialog({ dialogData, infoName, approvalData }) {
+  static async promptApprovalDialog({ dialogData, infoName, approvalData, signal } = {}) {
     const content = await renderTemplate(this.APPROVAL_TEMPLATE, dialogData);
     const { qsEntries, critText, botchText, failText } = approvalData;
 
     try {
-      const result = await foundry.applications.api.DialogV2.wait({
+      const result = await QueryOrchestrator.waitDialog({
         window: {
           title: `${_loc('DSAQUERIES.INFORMATIONREQUEST.knowledgeCheck')}: ${infoName}`,
           resizable: true,
@@ -202,7 +202,9 @@ export default class InformationQueryService {
             callback: () => ({ action: 'reject' }),
           },
         ],
-      });
+      }, { signal });
+
+      if (signal?.aborted || result == null) return { status: 'expired' };
 
       if (result?.action === 'approve') {
         return { status: 'approved', selected: result.selected };
@@ -214,7 +216,14 @@ export default class InformationQueryService {
     }
   }
 
-  static async handleQuery(payload) {
+  static async handleQuery(payload, queryContext = {}) {
+    return QueryOrchestrator.runWithClientExpiry(
+      (signal) => this.#executeInformationQuery(payload, signal),
+      queryContext,
+    );
+  }
+
+  static async #executeInformationQuery(payload, signal) {
     const item = await fromUuid(payload.itemUuid);
     if (!item && !payload.virtualInfo) {
       return { status: 'rejected' };
@@ -241,7 +250,8 @@ export default class InformationQueryService {
       ...this.#outcomeDisplay(payload.successLevel),
     };
 
-    const result = await this.promptApprovalDialog({ dialogData, infoName, approvalData });
+    const result = await this.promptApprovalDialog({ dialogData, infoName, approvalData, signal });
+    if (result.status === 'expired' || signal?.aborted) return null;
 
     if (result.status === 'approved') {
       await this.postApprovedResult(item, payload, result.selected);
@@ -329,18 +339,25 @@ export default class InformationQueryService {
     });
 
     try {
-      const queryResult = await QueryOrchestrator.dispatchToRecipient(
-        gmUser.id,
-        this.QUERY_TYPE,
+      await QueryOrchestrator.dispatchRecipientQuery({
+        userId: gmUser.id,
+        queryType: this.QUERY_TYPE,
         payload,
-      );
-
-      if (queryResult) {
-        await QueryOrchestrator.enqueueMessageUpdate(message.id, async (currentState) => {
-          currentState.status = queryResult.status || 'rejected';
-          return currentState;
-        });
-      }
+        label: 'Information query',
+        onResult: async (queryResult) => {
+          await QueryOrchestrator.enqueueMessageUpdate(message.id, async (currentState) => {
+            currentState.status = queryResult.status || 'rejected';
+            return currentState;
+          });
+        },
+        onHardError: async () => {
+          await QueryOrchestrator.enqueueMessageUpdate(message.id, async (currentState) => {
+            currentState.status = 'rejected';
+            return currentState;
+          });
+        },
+      });
+      // Soft expiry leaves status pending so the GM can still resolve via chat / resend later.
     } catch (error) {
       console.error('Information query dispatch failed', error);
       await QueryOrchestrator.enqueueMessageUpdate(message.id, async (currentState) => {

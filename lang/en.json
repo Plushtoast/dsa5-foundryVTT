@@ -1475,7 +1475,8 @@
       "noActors": "No actors selected.",
       "noAvailableActors": "No more actors can be added.",
       "noGMOnline": "No GM is currently online to approve this request.",
-      "queryFailed": "The request could not be delivered."
+      "queryFailed": "The request could not be delivered.",
+      "requestExpired": "Sorry, this request has expired. You can continue from the chat card."
     },
     "STATUS": {
       "accepted": "Accepted",
