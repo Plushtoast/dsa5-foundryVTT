@@ -2038,11 +2038,15 @@ export default class DiceDSA5 {
   static async showDiceSoNice(roll, messageMode) {
     if (!DSA5_Utility.moduleEnabled('dice-so-nice') || !game.dice3d) return;
 
-    const { whisper, blind } = this.#getDiceVisibilitySettings(messageMode);
-    const promise = game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
+    try {
+      const { whisper, blind } = this.#getDiceVisibilitySettings(messageMode);
+      const promise = game.dice3d.showForRoll(roll, game.user, true, whisper, blind);
 
-    if (!game.settings.get('dice-so-nice', 'immediatelyDisplayChatMessages')) {
-      await promise;
+      if (!game.settings.get('dice-so-nice', 'immediatelyDisplayChatMessages')) {
+        await promise;
+      }
+    } catch (error) {
+      console.warn('Dice So Nice animation failed; continuing without 3D dice.', error);
     }
   }
 

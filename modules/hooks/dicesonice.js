@@ -7,7 +7,7 @@ export default function () {
     game.dsa5.apps.DiceSoNiceCustomization = new DiceSoNiceCustomization();
   });
 
-  Hooks.once('diceSoNiceReady', (dice3d, b, c, d) => {
+  Hooks.once('diceSoNiceReady', (dice3d) => {
     dice3d.addColorset({
       name: 'mu',
       description: 'DSA5.mu',
@@ -120,6 +120,7 @@ export default function () {
     });
 
     game.dsa5.apps.DiceSoNiceCustomization.initConfigs();
+    DiceSoNiceCustomization.healInvalidSettings();
     DiceSoNiceCustomization.onConnect();
   });
 }
@@ -129,10 +130,67 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
   static retries = 0;
   static retrying = false;
   static attrs = ['mu', 'kl', 'in', 'ch', 'ff', 'ge', 'ko', 'kk', 'attack', 'dodge', 'parry', 'damage'];
+  static DEFAULT_SYSTEM = 'standard';
+
+  static defaultColorset(attr) {
+    return attr === 'damage' ? 'black' : attr;
+  }
+
+  static get systems() {
+    return game.dice3d?.DiceFactory?.systems;
+  }
+
+  static get colorsets() {
+    return game.dice3d?.exports?.COLORSETS;
+  }
+
+  /**
+   * DSN v6 keeps systems in a Map — fall back to standard when the id is missing.
+   * @param {string} systemId
+   * @returns {string}
+   */
+  static resolveSystem(systemId) {
+    const systems = this.systems;
+    if (systemId && systems?.has?.(systemId)) return systemId;
+    return this.DEFAULT_SYSTEM;
+  }
+
+  /**
+   * Fall back to the DSA default colorset when the configured set was removed.
+   * @param {string} colorset
+   * @param {string} attr
+   * @returns {string}
+   */
+  static resolveColorset(colorset, attr) {
+    const fallback = this.defaultColorset(attr);
+    if (!colorset) return fallback;
+
+    const colorsets = this.colorsets;
+    if (colorsets && colorset !== 'custom' && !colorsets[colorset]) return fallback;
+
+    return colorset;
+  }
+
+  /**
+   * Persist defaults for any stored system/colorset that no longer exists.
+   */
+  static healInvalidSettings() {
+    if (!DSA5_Utility.moduleEnabled('dice-so-nice') || !game.dice3d) return;
+
+    for (const attr of this.attrs) {
+      const colorKey = `dice3d_${attr}`;
+      const systemKey = `dice3d_system_${attr}`;
+      const storedColor = game.settings.get('dsa5', colorKey);
+      const storedSystem = game.settings.get('dsa5', systemKey);
+      const colorset = this.resolveColorset(storedColor, attr);
+      const system = this.resolveSystem(storedSystem);
+
+      if (colorset !== storedColor) void game.settings.set('dsa5', colorKey, colorset);
+      if (system !== storedSystem) void game.settings.set('dsa5', systemKey, system);
+    }
+  }
 
   initConfigs() {
-    const otherKey = { damage: 'black' };
-
     game.settings.registerMenu('dsa5', 'dicesonicesettings', {
       name: 'DiceSoNiceSettings',
       label: 'DiceSoNice Settings',
@@ -145,14 +203,14 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
         name: `CHAR.${attr.toUpperCase()}`,
         scope: 'client',
         config: false,
-        default: otherKey[attr] || attr,
+        default: DiceSoNiceCustomization.defaultColorset(attr),
         type: String,
       });
       game.settings.register('dsa5', `dice3d_system_${attr}`, {
         name: `CHAR.${attr.toUpperCase()}`,
         scope: 'client',
         config: false,
-        default: 'standard',
+        default: DiceSoNiceCustomization.DEFAULT_SYSTEM,
         type: String,
       });
     }
@@ -160,11 +218,24 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
 
   getAttributeConfiguration(value) {
     if (DSA5_Utility.moduleEnabled('dice-so-nice') && game.dice3d) {
+      let storedColor;
+      let storedSystem;
+      try {
+        storedColor = game.settings.get('dsa5', `dice3d_${value}`);
+        storedSystem = game.settings.get('dsa5', `dice3d_system_${value}`);
+      } catch {
+        storedColor = DiceSoNiceCustomization.defaultColorset(value);
+        storedSystem = DiceSoNiceCustomization.DEFAULT_SYSTEM;
+      }
+
+      const colorset = DiceSoNiceCustomization.resolveColorset(storedColor, value);
+      const system = DiceSoNiceCustomization.resolveSystem(storedSystem);
+
       return {
-        colorset: game.settings.get('dsa5', `dice3d_${value}`),
+        colorset,
         appearance: {
-          colorset: game.settings.get('dsa5', `dice3d_${value}`),
-          system: game.settings.get('dsa5', `dice3d_system_${value}`),
+          colorset,
+          system,
         },
       };
     }
@@ -182,9 +253,7 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
       DiceSoNiceCustomization.preloadDiceAssets([ev.currentTarget.value]);
       game.socket.emit('system.dsa5', {
         type: 'preloadDice3d',
-        payload: {
-          toPreload: [ev.currentTarget.value],
-        },
+        payload: [ev.currentTarget.value],
       });
     });
   }
@@ -209,17 +278,17 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
   }
 
   static collectPreloads(loadSelf = true) {
-    let payload = new Set();
+    const payload = [];
     for (const attr of DiceSoNiceCustomization.attrs) {
-      payload.add(game.settings.get('dsa5', `dice3d_system_${attr}`));
+      payload.push(this.resolveSystem(game.settings.get('dsa5', `dice3d_system_${attr}`)));
     }
-    payload = Array.from(payload);
+    const systems = [...new Set(payload)];
 
-    if (loadSelf) this.preloadDiceAssets(payload);
+    if (loadSelf) this.preloadDiceAssets(systems);
 
     game.socket.emit('system.dsa5', {
       type: 'preloadDice3d',
-      payload,
+      payload: systems,
     });
   }
 
@@ -227,16 +296,36 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
     this.collectPreloads(false);
   }
 
+  static #normalizeSystemNames(names) {
+    if (!names) return [];
+    if (Array.isArray(names) || names instanceof Set) return [...names];
+    if (names.toPreload) return this.#normalizeSystemNames(names.toPreload);
+    return [names];
+  }
+
+  static #diceModels(system) {
+    const dice = system?.dice;
+    if (!dice) return [];
+    if (typeof dice.values === 'function') return [...dice.values()];
+    if (Array.isArray(dice)) return dice;
+    return Object.values(dice);
+  }
+
   static async preloadDiceAssets(names, types = []) {
-    console.warn('loading', names);
-    for (const name of names) {
-      const dieModel = game.dice3d.DiceFactory.systems[name];
+    const systemNames = this.#normalizeSystemNames(names);
+    console.warn('loading', systemNames);
+
+    for (const name of systemNames) {
+      const systemId = this.resolveSystem(name);
+      const dieModel = this.systems?.get?.(systemId);
       if (!dieModel) {
         this.unloadedModels.push(name);
         continue;
       }
 
-      const dieModelsToLoad = dieModel.dice.filter((el) => types.length == 0 || types.includes(el.type));
+      const dieModelsToLoad = this.#diceModels(dieModel).filter(
+        (el) => types.length === 0 || types.includes(el.type) || types.includes(el.id),
+      );
       for (const model of dieModelsToLoad) {
         try {
           if (model.modelFile) {
@@ -263,14 +352,15 @@ export class DiceSoNiceCustomization extends DefaultAppv2 {
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
+    DiceSoNiceCustomization.healInvalidSettings();
     data.choices = game.dice3d.exports.Utils.prepareColorsetList();
     delete data.choices.custom;
     data.systems = game.dice3d.exports.Utils.prepareSystemList();
     data.selections = {};
     for (const attr of DiceSoNiceCustomization.attrs) {
       data.selections[attr] = {
-        color: game.settings.get('dsa5', `dice3d_${attr}`),
-        system: game.settings.get('dsa5', `dice3d_system_${attr}`),
+        color: DiceSoNiceCustomization.resolveColorset(game.settings.get('dsa5', `dice3d_${attr}`), attr),
+        system: DiceSoNiceCustomization.resolveSystem(game.settings.get('dsa5', `dice3d_system_${attr}`)),
       };
     }
     return data;
