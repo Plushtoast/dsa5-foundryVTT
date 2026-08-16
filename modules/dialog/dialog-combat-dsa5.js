@@ -93,14 +93,16 @@ export default class DSA5CombatDialog extends DialogShared {
   };
 
   static setData(actor, type, testData, renderData) {
-    const rollModifiers = duplicate(DSA5CombatDialog.isMelee(testData.source) ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
+    const isMelee = DSA5CombatDialog.isMelee(testData.source);
+    const rollModifiers = duplicate(isMelee ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
     rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode);
     if (renderData.rangeOptions) {
       for (const key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
     }
 
     const flattendRollModifiers = foundry.utils.flattenObject(rollModifiers);
-    const tt = `${type}RollModifiers`;
+    // Traits/dodge share melee/range modifier AEs, not `${source.type}RollModifiers`.
+    const tt = `${isMelee ? 'meleeweapon' : 'rangeweapon'}RollModifiers`;
 
     if (actor.system[tt]) {
       const flattenedActorData = foundry.utils.flattenObject(foundry.utils.duplicate(actor.system[tt]));
@@ -176,6 +178,7 @@ export default class DSA5CombatDialog extends DialogShared {
     await super._onRender(context, options);
 
     const html = $(this.element);
+    this.applyMovementWaterDefaults(html);
     const specAbs = html.find('.specAbs');
     specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
@@ -663,23 +666,55 @@ export default class DSA5CombatDialog extends DialogShared {
     return result;
   }
 
+  /**
+   * Default / hide water combat options from token movement once on dialog open.
+   * Swim defaults to shoulder-depth unless a recalled value exists or penalties are fully cancelled.
+   * @param {JQuery} html
+   */
+  applyMovementWaterDefaults(html) {
+    const actor = DSA5_Utility.getSpeaker(this.dialogData?.speaker);
+    if (!actor) return;
+
+    const token = actor.getActiveTokens()[0] || actor.token;
+    if (!token) return;
+
+    const waterElement = html.find('[name="waterOptions"]');
+    if (!waterElement.length) return;
+
+    const moveAction = token.document.movementAction;
+    if (moveAction === 'fly') {
+      waterElement.prop('selectedIndex', 0);
+      html.find('.waterblock').hide();
+      return;
+    }
+
+    if (moveAction !== 'swim') {
+      html.find('.waterblock').show();
+      return;
+    }
+
+    const options = [...waterElement.find('option')];
+    const penaltiesRemain = options.some((opt, index) => index > 0 && Number(opt.value) !== 0);
+    if (!penaltiesRemain) {
+      waterElement.prop('selectedIndex', 0);
+      html.find('.waterblock').hide();
+      return;
+    }
+
+    html.find('.waterblock').show();
+    if (this.recallData?.waterOptions === undefined) {
+      waterElement.prop('selectedIndex', Math.min(2, options.length - 1));
+    }
+  }
+
   static combatInWaterModifiers(testData, formData, html, actor) {
     let waterOptions = Number(formData.waterOptions) || 0;
 
     const token = actor.getActiveTokens()[0] || actor.token;
-    if (token) {
-      const moveAction = token.document.movementAction;
-      if (moveAction === 'swim' && !waterOptions) {
-        const waterElement = html.find('[name="waterOptions"]');
-        waterElement.prop('selectedIndex', 2);
-        waterOptions = waterElement.val();
-      } else if (moveAction === 'fly') {
-        html.find('[name="waterOptions"]').val(0);
-        html.find('.waterblock').hide();
-        waterOptions = 0;
-      } else {
-        html.find('.waterblock').show();
-      }
+    if (token?.document.movementAction === 'fly') {
+      html.find('[name="waterOptions"]').prop('selectedIndex', 0);
+      html.find('.waterblock').hide();
+      waterOptions = 0;
     }
 
     const waterIndex = html.find('[name="waterOptions"]').prop('selectedIndex');
@@ -711,7 +746,7 @@ export default class DSA5CombatDialog extends DialogShared {
     }
 
     const isGoodWeapon = DSA5.goodWeaponsForWater.has(reverseCombatskill);
-    const isDeepWater = waterOptions == 4;
+    const isDeepWater = waterIndex === 3;
 
     let damageBonus = 1;
     if (!isGoodWeapon) {
