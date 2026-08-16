@@ -867,7 +867,7 @@ class SpellItemDSA5 extends Itemdsa5 {
               })
               .join(',');
           } else {
-            ef.apply(source, change);
+            DSAActiveEffect.applyChange(source, change);
           }
         }
       }

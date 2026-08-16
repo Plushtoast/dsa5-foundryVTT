@@ -2,6 +2,7 @@ import DPS from '../system/automation/derepositioningsystem.js';
 import DiceDSA5 from '../system/rolls/dice-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import DSAActiveEffect from '../status/dsa_active_effects.js';
 import DSA5Dialog from './dialog-dsa5.js';
 import DialogShared from './dialog-shared.js';
 
@@ -105,13 +106,13 @@ export default class DSA5SpellDialog extends DialogShared {
           } else if (change.key == 'macro.transform') {
             await DSA5_Utility.callItemTransformationMacro(change.value, source, ef);
           } else if (rollModifierKeys.includes(change.key)) {
-            ef.apply(this.dialogData.renderData.rollModifiersPrepared, change);
+            DSAActiveEffect.applyChange(this.dialogData.renderData.rollModifiersPrepared, change);
           } else if (change.key == 'system.effectFormula.value' && change.type === 'add') {
             source.system.effectFormula.value = source.system.effectFormula.value.split(',').map(x => {
               return x + change.value
             }).join(',');
           } else {
-            ef.apply(source, change);
+            DSAActiveEffect.applyChange(source, change);
           }
         }
       }
