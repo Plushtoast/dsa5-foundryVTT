@@ -2,6 +2,8 @@ import RuleChaos from '../system/rules/rule_chaos.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import { ValueWidget } from '../system/helpers/valuewidget.js';
+import DiceDSA5 from '../system/rolls/dice-dsa5.js';
+import { DICE_CONSTANTS } from '../config/dice-constants.js';
 
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
@@ -134,16 +136,34 @@ export default class DialogShared extends DetachedWindowMixin(foundry.applicatio
     }
   }
 
-  calculateProbability(actor, item, mod, fw) {
+  /**
+   * Per-die TPM (situational) plus the advanced ch0/ch1/ch2 fields, and the QS/QL offset
+   * from the qs input plus QL-type situational modifiers.
+   * @param {object} data Dialog form data including situationalModifiers
+   * @returns {Promise<{tpm: number[], qlMod: number}>}
+   */
+  static async resolveProbabilityModifiers(data = {}) {
+    const situationalTpm = DiceDSA5._situationalPartCheckModifiers(data);
+    const tpm = [0, 1, 2].map((i) => situationalTpm[i] + (Number(data[`ch${i}`]) || 0));
+    const qlMod = (Number(data.qs) || 0) + (await DiceDSA5._situationalModifiers(data, DICE_CONSTANTS.MODIFIER_TYPES.QL));
+    return { tpm, qlMod };
+  }
+
+  async calculateProbability(actor, item, mod, fw, data = {}) {
     if (!DSA5_Utility.moduleEnabled('dsa5-core')) return;
 
     const config = game.settings.get('dsa5-core', 'showProbability');
     if (!(config === 1 || (config === 2 && game.user.isGM))) return;
 
+    const { tpm, qlMod } = await this.constructor.resolveProbabilityModifiers(data);
+
     const possibilities = [];
     for (let i = 0; i < 6; i++) {
       const qs = 1 + i;
-      const probability = game.dsa5.apps.DSACharacterCalculator.rollSuccessCalculation(actor, item, mod, qs, fw);
+      const probability = game.dsa5.apps.DSACharacterCalculator.rollSuccessCalculation(actor, item, mod, qs, fw, {
+        tpm,
+        qlMod,
+      });
 
       if (probability <= 1) break;
 

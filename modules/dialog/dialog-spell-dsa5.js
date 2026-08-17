@@ -293,7 +293,7 @@ export default class DSA5SpellDialog extends DialogShared {
         .reduce((a, b) => a + b, 0) +
       maintainedSpells * -1;
 
-    super.calculateProbability(actor, this.dialogData.source, mod, fw);
+    await super.calculateProbability(actor, this.dialogData.source, mod, fw, data);
   }
 
   async _onRender(context, options) {

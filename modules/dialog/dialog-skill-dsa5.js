@@ -129,7 +129,7 @@ export default class DSA5SkillDialog extends DialogShared {
         : routineLabel
     );
 
-    this.calculateProbability(actor, this.dialogData.source, mod, fw);
+    await this.calculateProbability(actor, this.dialogData.source, mod, fw, data);
   }
 
   static DEFAULT_OPTIONS = {
