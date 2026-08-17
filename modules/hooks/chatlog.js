@@ -147,13 +147,13 @@ export default function () {
       case '/pay': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
         if (game.user.isGM) ChatCommandService.openPaymentDialog('pay', { amount: moneyString, description });
-        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
+        else DSA5Payment.payMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString, false, true, description);
         return false;
       }
       case '/getpaid': {
         const { moneyString, description } = DSA5Payment.parseChatCommand(normalizedContent);
         if (game.user.isGM) ChatCommandService.openPaymentDialog('getPaid', { amount: moneyString, description });
-        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString);
+        else DSA5Payment.getMoney(DSA5_Utility.getSpeaker(msg.speaker), moneyString, false, true, description);
         return false;
       }
       case '/help':

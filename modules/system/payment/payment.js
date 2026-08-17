@@ -4,7 +4,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 
 export default class DSA5Payment {
   static async executePayment(actor, mode, moneyString, options = {}) {
-    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent, track = !silent } = options;
+    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent, track = !silent, description = '' } = options;
 
     if (!actor) {
       return {
@@ -16,7 +16,7 @@ export default class DSA5Payment {
 
     if (mode === 'pay') {
       const canPay = await DSA5Payment.canPay(actor, moneyString, notifyOnFailure);
-      if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, track);
+      if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, track, description);
 
       if (showChatMessage && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
 
@@ -33,7 +33,7 @@ export default class DSA5Payment {
     }
 
     const actorsMoney = this._actorsMoney(actor);
-    await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, track);
+    await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, track, description);
     const msg = `<p>${_loc('PAYMENT.getPaid', { actor: actor.name, amount: await DSA5Payment._moneyToString(money) })}</p>`;
     if (showChatMessage) {
       ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
@@ -46,12 +46,13 @@ export default class DSA5Payment {
     };
   }
 
-  static async payMoney(actor, moneyString, silent = false, render = true) {
+  static async payMoney(actor, moneyString, silent = false, render = true, description = '') {
     const result = await DSA5Payment.executePayment(actor, 'pay', moneyString, {
       silent,
       render,
       showChatMessage: !silent,
       notifyOnFailure: silent,
+      description,
     });
 
     return result.success;
@@ -82,12 +83,13 @@ export default class DSA5Payment {
     return result;
   }
 
-  static async getMoney(actor, moneyString, silent = false, render = true) {
+  static async getMoney(actor, moneyString, silent = false, render = true, description = '') {
     const result = await this.executePayment(actor, 'getPaid', moneyString, {
       silent,
       render,
       showChatMessage: !silent,
       notifyOnFailure: false,
+      description,
     });
     return result.success;
   }
@@ -259,7 +261,7 @@ export default class DSA5Payment {
     await DSA5Payment._updateMoney(actor, DSA5Payment._actorsMoney(actor).money, money.sum);
   }
 
-  static async _updateMoney(actor, money, newSum, render = true, track = true) {
+  static async _updateMoney(actor, money, newSum, render = true, track = true, purpose = '') {
     const coins = await DSA5Payment._moneyToCoins(newSum, money);
     const update = [];
     let oldSum = 0;
@@ -275,7 +277,12 @@ export default class DSA5Payment {
     }
 
     await actor.updateEmbeddedDocuments('Item', update, { render });
-    if (track) await MoneyTracker.track(actor, { type: 'payment', previous: oldSum, next: newSum }, newSum - oldSum);
+    if (track) {
+      const payload = { type: 'payment', previous: oldSum, next: newSum };
+      const name = typeof purpose === 'string' ? purpose.trim() : '';
+      if (name) payload.name = name;
+      await MoneyTracker.track(actor, payload, newSum - oldSum);
+    }
   }
 
   /**

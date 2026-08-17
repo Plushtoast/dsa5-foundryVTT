@@ -12,6 +12,7 @@ export default class MoneyTracker extends JournalTracker {
     static buildDescription(description) {
         switch (description.type) {
             case 'payment':
+                if (description.name) return description.name;
                 return description.next > description.previous
                     ? _loc('PAYMENT.wage')
                     : _loc('PAYMENT.wagePaid');
