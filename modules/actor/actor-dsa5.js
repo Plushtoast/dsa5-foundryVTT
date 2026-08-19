@@ -2628,15 +2628,6 @@ export default class Actordsa5 extends Actor {
       effect.name = _loc(effect.name);
       effect.description = _loc(effect.description || effect.name);
 
-      if (effect.system?.changes) {
-        effect.system.changes = effect.system.changes.map((change) => {
-          if (/^system\.condition\./.test(change.key)) {
-            change.value = value;
-          }
-          return change;
-        });
-      }
-
       effect.statuses = [effect.id];
 
       delete effect.id;
