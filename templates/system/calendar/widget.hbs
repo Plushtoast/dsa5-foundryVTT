@@ -3,7 +3,7 @@
     <div class='calendar-header-row'>
       <div class='calendar-header-side calendar-header-left'>
         {{#if isGM}}
-          <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime'></button>
+          <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock{{#if toggleAutoTime}} is-active{{/if}}' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime' aria-pressed='{{#if toggleAutoTime}}true{{else}}false{{/if}}'></button>
         {{/if}}
         {{#if canOpenAlmanac}}
           <button type='button' class='calendar-nav-btn noBorder icon fas fa-user' data-tooltip='PERSONAE.title' data-action='openAlmanac'></button>

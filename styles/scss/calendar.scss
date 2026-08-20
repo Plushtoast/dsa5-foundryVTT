@@ -685,12 +685,30 @@
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s ease-in-out;
+      transition: opacity 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out, background 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
       &:hover {
         color: #efe2c0;
         border-color: rgba(200, 179, 138, 0.6);
         background: rgba(28, 34, 44, 0.92);
+      }
+
+      // Toggle state is only relevant while the button is revealed on hover
+      &.is-active,
+      &[aria-pressed="true"] {
+        color: #f5e6b8;
+        border-color: rgba(232, 201, 120, 0.85);
+        background: rgba(70, 52, 22, 0.92);
+        box-shadow: 0 0 0 1px rgba(232, 201, 120, 0.35), 0 0 8px rgba(232, 201, 120, 0.45);
+        text-shadow: 0 0 6px rgba(232, 201, 120, 0.7), 0 1px 2px rgba(0, 0, 0, 0.85);
+      }
+
+      &[aria-pressed="false"] {
+        color: rgba(200, 179, 138, 0.55);
+        border-color: rgba(200, 179, 138, 0.2);
+        background: rgba(20, 24, 30, 0.55);
+        box-shadow: none;
+        text-shadow: none;
       }
     }
 

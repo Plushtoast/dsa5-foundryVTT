@@ -644,6 +644,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
         target.classList.toggle('fas', this.toggleAutoTime);
         target.classList.toggle('far', !this.toggleAutoTime);
+        target.classList.toggle('is-active', this.toggleAutoTime);
+        target.setAttribute('aria-pressed', this.toggleAutoTime ? 'true' : 'false');
 
         this.autoInterval = this.toggleAutoTime ? setInterval(() => {
             if (!game.paused && !game.combat) game.time.advance(15);
