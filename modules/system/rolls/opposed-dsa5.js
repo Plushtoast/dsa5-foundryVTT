@@ -311,7 +311,7 @@ export default class OpposedDsa5 {
           Hooks.call('DSAOpposedRollStart', target);
         }
       }
-      message.flags.data.startMessagesList = startMessagesList;
+      await message.update({ 'flags.data.startMessagesList': startMessagesList });
     } else {
       for (const target of game.user.targets) {
         if (target.actor) {

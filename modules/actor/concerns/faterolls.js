@@ -33,12 +33,15 @@ export class FateRolls {
      */
     static async fatererollDamage(actor, infoMsg, cardOptions, newTestData, message, data, schipsource) {
         cardOptions.fatePointDamageRerollUsed = true;
-        this.#resetTargetAndMessage(data, cardOptions);
+        // Damage-only: keep the existing opposed chain and never reopen defender reactions.
+        this.#preserveOpposedChain(data, cardOptions);
+        DSA5_Utility.clearUserTargets();
         const { damageRoll } = data.postData;
         const rollFormula = damageRoll.formula || damageRoll._formula;
         const newRoll = await DiceDSA5.manualRolls(
             await new Roll(rollFormula).evaluate(),
-            'CHATCONTEXT.rerollDamage'
+            'CHATCONTEXT.rerollDamage',
+            newTestData.extra?.options || {}
         );
         newRoll.dice.forEach(die => die.options.colorset = this.DICE_COLOR_BLACK);
         await DiceDSA5.showDiceSoNice(newRoll, newTestData.messageMode);
@@ -258,14 +261,7 @@ export class FateRolls {
      */
     static async fateaddQS(actor, infoMsg, cardOptions, newTestData, message, data, schipsource) {
         await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-        // Clear all current targets
-        game.user.targets.forEach(target =>
-            target.setTarget(false, {
-                user: game.user,
-                releaseOthers: false,
-                groupSelection: true,
-            })
-        );
+        DSA5_Utility.clearUserTargets();
         cardOptions.fatePointAddQSUsed = true;
         newTestData.qualityStep = 1;
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -325,6 +321,17 @@ export class FateRolls {
             cardOptions.startMessagesList = startMessagesList;
         }
     }
+
+    /**
+     * Keeps opposed-chain message links without restoring combat targets.
+     * Used by damage-only fate rerolls so handleOpposedTarget updates the
+     * existing result card instead of creating a new reaction request.
+     */
+    static #preserveOpposedChain(data, cardOptions) {
+        for (const prop of ['attackerMessage', 'defenderMessage', 'unopposedStartMessage', 'startMessagesList']) {
+            if (data[prop]) cardOptions[prop] = data[prop];
+        }
+    }
     /**
      * Reduces fate points (schips) from the appropriate source
      * @param {Object} actor - The actor spending fate points
@@ -378,7 +385,7 @@ export class FateRolls {
             title,
             user: author,
         };
-        const optionalProps = ['attackerMessage', 'defenderMessage', 'unopposedStartMessage'];
+        const optionalProps = ['attackerMessage', 'defenderMessage', 'unopposedStartMessage', 'startMessagesList'];
         optionalProps.forEach(prop => {
             if (data[prop]) cardOptions[prop] = data[prop];
         });

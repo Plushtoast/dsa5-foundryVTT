@@ -383,6 +383,17 @@ export default class DSA5_Utility {
     return actor.system.status.fatePoints.value > 0;
   }
 
+  static clearUserTargets() {
+    const user = game.user;
+    for (const target of Array.from(user.targets)) {
+      target.setTarget(false, {
+        user,
+        releaseOthers: false,
+        groupSelection: true,
+      });
+    }
+  }
+
   static _calculateAdvCost(currentAdvances, type, modifier = 1) {
     return DSA5.advancementCosts[type][Number(currentAdvances) + modifier];
   }
