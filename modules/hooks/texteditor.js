@@ -77,9 +77,8 @@ export function setEnrichers() {
     {
       pattern: /@Gc\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match) => {
-        const str = match[0];
-        const inner = match[1];
-        const customTextOverride = match[2] ? match[2].replace(/[{}]/g, '') : null;
+        const [str, inner, customTextMatch] = match;
+        const customTextOverride = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : null;
         const rollOptions = parseGcRollOptions(inner);
 
         if (rollOptions?.length) {
@@ -109,12 +108,11 @@ export function setEnrichers() {
     {
       pattern: /@(Rq|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match) => {
-        const str = match[0];
-        const type = match[1];
+        const [str, type, , , customTextMatch] = match;
         const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
         const { skill, mod } = parseSkillModSegment(str.match(innerRegex)[1].replace(optionRegex, '').trim());
-        let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]{}]/g, '') : skill;
+        let customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : skill;
 
         if (json.attrs) {
           customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
@@ -127,11 +125,10 @@ export function setEnrichers() {
     },
     {
       pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
-      enricher: async (match, options) => {
-        const str = match[0];
-        const type = match[1];
+      enricher: async (match) => {
+        const [str, type, , , customTextMatch] = match;
         const mod = Number(str.match(payRegex)[0]);
-        const customText = str.match(/\{.*\}/) ? str.match(/\{.*\}/)[0].replace(/[{}]/g, '') : payStrings[type];
+        const customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : payStrings[type];
         const amountLabel = type === 'AP' ? mod : await DSA5Payment._moneyToString(mod);
         return $(
           `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${amountLabel})</a>`,
