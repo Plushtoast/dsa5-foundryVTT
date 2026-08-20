@@ -108,13 +108,12 @@ export function setEnrichers() {
     },
     {
       pattern: /@(Rq|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
-      enricher: (match, options) => {
+      enricher: (match) => {
         const str = match[0];
         const type = match[1];
-        const mod = Number(str.match(modRegex)[0]);
         const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
         const data = encodeURIComponent(JSON.stringify(json));
-        const skill = str.match(innerRegex)[1].replace(mod, '').replace(optionRegex, '').trim();
+        const { skill, mod } = parseSkillModSegment(str.match(innerRegex)[1].replace(optionRegex, '').trim());
         let customText = str.match(/\]\{.*\}/) ? str.match(/\]\{.*\}/)[0].replace(/[\]{}]/g, '') : skill;
 
         if (json.attrs) {
