@@ -1,0 +1,353 @@
+.dsa5.merchant-sheet {
+  .merchant-subtab {
+    padding-top: 8px;
+  }
+
+  .standard-form .tab.merchant-subtab.gap5px.active {
+    gap: 5px;
+  }
+
+  .navWrapper {
+    margin-bottom: 6px;
+  }
+
+  .dsa-shop-hero {
+    width: 100%;
+    min-height: 110px;
+    flex: 0 0 auto;
+  }
+
+  .dsa-shop-hero__content .sheet-header {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dsa-shop-specials,
+  .dsa-shop-services,
+  .dsa-shop-stall {
+    margin-bottom: 12px;
+  }
+
+  .dsa-shop-loot-purse {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .dsa-shop-sign-thumb {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    flex: 0 0 auto;
+  }
+
+  .dsa-merchant-type-picker.form-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+
+    > label {
+      flex: 0 0 auto;
+      margin: 0;
+      margin-right: auto;
+    }
+
+    .dsa-step-slider {
+      flex: 0 1 auto;
+      min-width: 0;
+      width: auto;
+    }
+  }
+
+  .inventory .item.dsa-shop-hidden-today {
+    opacity: 0.45;
+  }
+
+  /* Presentation: hero stays put; catalog + stage scroll independently */
+  .tab.scrollable:has(.dsa-shop-presentation) {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+
+    > .dsa-shop-banner {
+      flex: 0 0 auto;
+    }
+  }
+
+  .dsa-shop-presentation {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .dsa-shop-presentation > .dsa-info-box {
+    flex: 0 0 auto;
+  }
+
+  .dsa-shop-presentation__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .dsa-shop-presentation__layout--gm {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .dsa-shop-presentation__catalog {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 13rem;
+    max-width: 14rem;
+    min-width: 10rem;
+    min-height: 0;
+    overflow: hidden;
+    padding: 6px;
+    border: 1px solid var(--dsa-muted-border);
+    border-radius: 6px;
+    background: var(--dsa-muted-bg);
+
+    > .underlined-header,
+    > .itemlibrary-search-wrap {
+      flex: 0 0 auto;
+    }
+
+    .itemlibrary-search-wrap {
+      margin-bottom: 6px;
+    }
+  }
+
+  .dsa-shop-presentation__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .dsa-shop-presentation__pick {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    margin: 0;
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+
+    &:hover {
+      background: color-mix(in srgb, var(--table-title-bg) 60%, transparent);
+    }
+
+    i {
+      flex: 0 0 auto;
+      width: 1em;
+      text-align: center;
+    }
+
+    span {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  .dsa-shop-presentation__list-item--featured .dsa-shop-presentation__pick {
+    font-weight: 600;
+    color: var(--dsadesign1);
+  }
+
+  .dsa-shop-presentation__stage {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    overflow-y: auto;
+  }
+
+  .dsa-shop-presentation__card {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 20px;
+    padding: 16px;
+    border: 1px solid var(--dsa-muted-border);
+    border-radius: 10px;
+    background: var(--oddColor, var(--dsa-muted-bg));
+    text-align: left;
+  }
+
+  .dsa-shop-presentation__remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+  }
+
+  .dsa-shop-presentation__art {
+    flex: 1 1 45%;
+    width: clamp(14rem, 45%, 32rem);
+    min-width: 14rem;
+    max-width: min(32rem, 55%);
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background-color: var(--dsa-muted-bg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    border: 1px solid var(--border-color);
+  }
+
+  .dsa-shop-presentation__details {
+    flex: 1 1 40%;
+    min-width: 12rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .dsa-shop-presentation__name {
+    margin: 0;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    font-weight: 700;
+
+    a {
+      color: inherit;
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+  }
+
+  .dsa-shop-presentation__qty {
+    display: grid;
+    grid-template-columns: max-content minmax(5.5rem, 1fr);
+    column-gap: 12px;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .dsa-shop-presentation__qty-label {
+    opacity: 0.85;
+    font-weight: 500;
+  }
+
+  .dsa-shop-presentation__qty-value {
+    font-weight: 700;
+    text-align: right;
+    justify-self: stretch;
+    width: 100%;
+  }
+
+  .dsa-shop-presentation__price {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+  }
+
+  .dsa-shop-presentation__prices {
+    display: grid;
+    grid-template-columns: max-content minmax(5.5rem, 1fr);
+    column-gap: 12px;
+    row-gap: 6px;
+    align-items: center;
+    width: max-content;
+    max-width: 100%;
+  }
+
+  .dsa-shop-presentation__price-row {
+    display: contents;
+  }
+
+  .dsa-shop-presentation__price-label {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    opacity: 0.85;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  .dsa-shop-presentation__price-value {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.3;
+    text-align: right;
+    justify-self: stretch;
+  }
+
+  .dsa-shop-presentation__prices .customPriceTag {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 5.5rem;
+    max-width: 8rem;
+    margin: 0;
+    justify-self: stretch;
+    font: inherit;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .dsa-shop-presentation__buy {
+    min-width: 10rem;
+  }
+}
+
+/* Stock fill dialog: tabs/footer fixed, active tab scrolls */
+.application.dsa5.stock-fill-dialog {
+  .window-content {
+    overflow: hidden;
+    min-height: 0;
+
+    > [data-application-part='tabs'],
+    > [data-application-part='footer'] {
+      flex: 0 0 auto;
+    }
+
+    > .tab[data-tab].active {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    &.standard-form > .tab.gap5px.active {
+      gap: 5px;
+    }
+  }
+}

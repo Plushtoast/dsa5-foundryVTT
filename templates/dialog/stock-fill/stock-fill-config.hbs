@@ -1,0 +1,53 @@
+<div class="tab scrollable gap5px {{tabs.config.cssClass}}" data-tab="config" data-group="{{tabs.config.group}}">
+  <div class="dsa-preset-set flex0" data-tooltip="MERCHANT.fill.presetHint">
+    {{#each presets}}
+    <button type="button" class="dsa-preset-set__step {{#if active}}active{{/if}}" data-action="applyPreset"
+      data-preset-id="{{id}}" data-tooltip="{{tooltip}}">
+      <i class="{{icon}}"></i>
+      <span>{{localize label}}</span>
+    </button>
+    {{/each}}
+  </div>
+
+  <div class="row-section table-title lineheight flexAlignCenter flex0">
+    <div class="col eight"></div>
+    <div class="col"><b>{{localize 'MERCHANT.fill.category'}}</b></div>
+    <div class="col five center" data-tooltip="MERCHANT.fill.numberHint">
+      <b>{{localize 'MERCHANT.fill.numberLabel'}}</b>
+    </div>
+    <div class="col five center" data-tooltip="MERCHANT.fill.eachHint">
+      <b>{{localize 'MERCHANT.fill.eachLabel'}}</b>
+    </div>
+  </div>
+
+  {{#each categoryRows}}
+  <div class="groupbox dsam-1">
+    <div class="row-section flexAlignCenter">
+      <div class="col eight center">
+        <input type="checkbox" name="cat.{{key}}.enabled" {{checked enabled}} data-tooltip="{{localize label}}">
+      </div>
+      <div class="col">
+        <label>{{localize label}}</label>
+      </div>
+      <div class="col five" data-tooltip="MERCHANT.fill.numberHint">
+        <input type="number" class="quantity-click" name="cat.{{key}}.number" value="{{number}}" min="0" step="1"
+          data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" {{disabled disabled}}>
+      </div>
+      <div class="col five" data-tooltip="MERCHANT.fill.eachHint">
+        <input type="number" class="quantity-click" name="cat.{{key}}.each" value="{{qtyEach}}" min="1" step="1"
+          data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" {{disabled disabled}}>
+      </div>
+    </div>
+    {{#if types}}
+    <div class="dsa-check-grid dsa-check-grid--nested">
+      {{#each types}}
+      <label class="dsa-check-grid__item" data-tooltip="{{localize label}}">
+        <input type="checkbox" name="cat.{{../key}}.types.{{key}}" {{checked enabled}} {{disabled ../disabled}}>
+        {{localize label}}
+      </label>
+      {{/each}}
+    </div>
+    {{/if}}
+  </div>
+  {{/each}}
+</div>

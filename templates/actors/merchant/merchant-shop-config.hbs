@@ -1,0 +1,143 @@
+<div class="groupbox">
+  <legend class="table-title lineheight flexrow">
+    <span>{{localize 'MERCHANT.identity'}}</span>
+    <button type="button"
+      class="icon fas fa-toggle-{{ifThen document.system.playerView 'on' 'off'}} noBorder dsadesignbutton flex0 flexAlignEnd"
+      data-action="playerview" data-tooltip="SHEET.switchLimited"></button>
+  </legend>
+  <div class="form-group" data-tooltip="MERCHANT.shopNameHint">
+    <label>{{localize 'MERCHANT.shopName'}}</label>
+    <div class="form-fields">
+      <input type="text" name="system.merchant.shop.shopName" value="{{shop.shopName}}"
+        placeholder="{{shopTitle}}">
+    </div>
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.shopImageHint">
+    <label>{{localize 'MERCHANT.shopImage'}}</label>
+    <div class="form-fields gap0px">
+      {{#if shop.shopImage}}
+      <img class="dsa-shop-sign-thumb" src="{{shop.shopImage}}" alt="" />
+      {{/if}}
+      <button type="button" class="icon fas fa-file-import noBorder dsadesignbutton" data-action="pickShopImage"
+        data-tooltip="MERCHANT.pickShopImage"></button>
+      <button type="button" class="icon fas fa-crop-simple noBorder dsadesignbutton" data-action="configureShopBannerFrame"
+        data-tooltip="MERCHANT.shopImageFrame" {{#unless shop.shopImage}}disabled{{/unless}}></button>
+      <button type="button" class="icon fas fa-user noBorder dsadesignbutton" data-action="useActorImage"
+        data-tooltip="MERCHANT.useActorImage"></button>
+      <button type="button" class="icon fas fa-times noBorder dsadesignbutton" data-action="clearShopImage"
+        data-tooltip="MERCHANT.clearBanner" {{#unless shop.shopImage}}disabled{{/unless}}></button>
+    </div>
+  </div>
+</div>
+
+<div class="groupbox">
+  <legend class="table-title lineheight" data-tooltip="MERCHANT.priceTier.hint">{{localize 'MERCHANT.sellingFactor'}}</legend>
+  <div class="dsa-factor-row flexrow flexAlignCenter">
+    {{> systems/dsa5/templates/system/parts/icon-range.hbs steps=priceTierSteps value=shop.priceTier
+      action="setPriceTier" hint="MERCHANT.priceTier.hint"}}
+    {{formInput systemFields.merchant.fields.sellingFactor value=document.system.merchant.sellingFactor
+      classes="dsa-factor-row__input"}}
+  </div>
+  <div class="dsa-info-box dsam-2">
+    <p class="dsa-info-text">{{localize 'MERCHANT.pricePreview' list=sellPreview.list shop=sellPreview.shop tier=shop.priceTier}}</p>
+  </div>
+</div>
+
+<div class="groupbox">
+  <legend class="table-title lineheight" data-tooltip="MERCHANT.buyTierHint">{{localize 'MERCHANT.buyingFactor'}}</legend>
+  <div class="dsa-factor-row flexrow flexAlignCenter">
+    {{> systems/dsa5/templates/system/parts/icon-range.hbs steps=buyTierSteps value=shop.buyTier
+      action="setBuyTier" hint="MERCHANT.buyTierHint"}}
+    {{formInput systemFields.merchant.fields.buyingFactor value=document.system.merchant.buyingFactor
+      classes="dsa-factor-row__input"}}
+  </div>
+  <div class="dsa-info-box dsam-2">
+    <p class="dsa-info-text">{{localize 'MERCHANT.buyPreview' list=buyPreview.list shop=buyPreview.shop}}</p>
+  </div>
+</div>
+
+<div class="groupbox">
+  <legend class="table-title lineheight">{{localize 'MERCHANT.stockDefaults'}}</legend>
+  <div class="form-group" data-tooltip="MERCHANT.regionHint">
+    <label>{{localize 'PLANT.region'}}</label>
+    <input type="text" name="system.merchant.shop.region" value="{{shop.region}}">
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.maxPriceHint">
+    <label>{{localize 'MERCHANT.maxPrice'}}</label>
+    <input type="number" name="system.merchant.shop.maxPrice" value="{{shop.maxPrice}}" min="0" step="1">
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.enhanceChanceHint">
+    <label>{{localize 'MERCHANT.enhanceChance'}}</label>
+    <range-picker min="0" max="100" step="1" value="{{enhanceChancePercent}}"
+      data-shop-control="setEnhanceChance"></range-picker>
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.qlBandHint">
+    <label>{{localize 'MERCHANT.qlBand'}}</label>
+    {{formInput systemFields.merchant.fields.shop.fields.qlBand value=shop.qlBand}}
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.poisonStepBandHint">
+    <label>{{localize 'MERCHANT.poisonStepBand'}}</label>
+    {{formInput systemFields.merchant.fields.shop.fields.poisonStepBand value=shop.poisonStepBand}}
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.ammoStackHint">
+    <label>{{localize 'MERCHANT.ammoStack'}}</label>
+    <input type="number" name="system.merchant.shop.ammoStack" value="{{shop.ammoStack}}" min="1" step="1">
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.restockModeHint">
+    <label>{{localize 'MERCHANT.restockMode.label'}}</label>
+    {{formInput systemFields.merchant.fields.shop.fields.stockRules.fields.restockMode
+      value=shop.stockRules.restockMode localize=true}}
+  </div>
+  <div class="row-section">
+    <div class="col two form-group" data-tooltip="MERCHANT.tradeableOnlyHint">
+      <label>{{localize 'MERCHANT.tradeableOnly'}}</label>
+      <input type="checkbox" name="system.merchant.shop.tradeableOnly" {{checked shop.tradeableOnly}}>
+    </div>
+    <div class="col two form-group" data-tooltip="MERCHANT.allowDuplicatesHint">
+      <label>{{localize 'MERCHANT.allowDuplicates'}}</label>
+      <input type="checkbox" name="system.merchant.shop.allowDuplicates" {{checked shop.allowDuplicates}}>
+    </div>
+  </div>
+</div>
+
+<div class="groupbox">
+  <legend class="table-title lineheight">{{localize 'MERCHANT.fill.shopDay'}}</legend>
+  <div class="form-group" data-tooltip="MERCHANT.dailyHidePercentHint">
+    <label>{{localize 'MERCHANT.dailyHidePercent'}}</label>
+    <range-picker name="system.merchant.shop.stockRules.dailyHidePercent" min="0" max="100" step="1"
+      value="{{shop.stockRules.dailyHidePercent}}"></range-picker>
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.dailyHideModeHint">
+    <label>{{localize 'MERCHANT.dailyHideMode.label'}}</label>
+    {{formInput systemFields.merchant.fields.shop.fields.stockRules.fields.dailyHideMode
+      value=shop.stockRules.dailyHideMode localize=true}}
+  </div>
+  <div class="form-group" data-tooltip="MERCHANT.priceVariationHint">
+    <label>{{localize 'MERCHANT.priceVariation'}}</label>
+    <range-picker name="system.merchant.shop.stockRules.priceVariationPercent" min="0" max="50" step="1"
+      value="{{shop.stockRules.priceVariationPercent}}"></range-picker>
+  </div>
+</div>
+
+<div class="groupbox">
+  <legend class="table-title lineheight" data-tooltip="MERCHANT.fillAllowListHint">{{localize 'MERCHANT.fillAllowList'}}</legend>
+  <p class="hint">{{localize 'MERCHANT.fillAllowListHint'}}</p>
+  <div class="dsa-check-grid">
+    {{#each fillCategories}}
+    <label class="dsa-check-grid__item" data-tooltip="{{localize label}}">
+      <input type="checkbox" {{checked enabled}} data-shop-control="toggleFillCategory" data-category="{{key}}">
+      {{localize label}}
+    </label>
+    {{#if types}}
+    <div class="dsa-check-grid dsa-check-grid--nested">
+      {{#each types}}
+      <label class="dsa-check-grid__item">
+        <input type="checkbox" {{checked enabled}} data-shop-control="toggleFillEquipmentType" data-type="{{key}}">
+        {{localize label}}
+      </label>
+      {{/each}}
+    </div>
+    {{/if}}
+    {{/each}}
+  </div>
+</div>

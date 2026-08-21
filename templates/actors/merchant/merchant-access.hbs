@@ -1,0 +1,56 @@
+<div class="groupbox">
+  <legend class="table-title lineheight">{{localize 'MERCHANT.actorSection'}}</legend>
+  <p class="hint">{{localize 'MERCHANT.actorSectionHelp'}}</p>
+  <div class="form-group dsa-merchant-type-picker flexAlignEnd">
+    <label>{{localize 'creatureClass'}}</label>
+    {{> systems/dsa5/templates/system/parts/icon-range.hbs steps=merchantTypeSteps
+      action="setMerchantType" sliderClass="dsa-step-slider--fit4"}}
+  </div>
+  {{#if (eq document.system.merchant.merchantType "epic")}}
+  <div class="form-group dsa-garadan-picker flexAlignEnd">
+    <label>{{localize 'Garadan'}}</label>
+    {{> systems/dsa5/templates/system/parts/icon-range.hbs steps=garadanSteps
+      action="setGaradan" sliderClass="dsa-step-slider--icons"}}
+  </div>
+  {{/if}}
+
+  {{#if isGM}}
+  <div class="row-section">
+    <div class="col two form-group" data-tooltip="MERCHANT.hidePlayerHint">
+      <label>{{localize 'MERCHANT.hidePlayer'}}</label>
+      {{formInput systemFields.merchant.fields.hidePlayer value=document.system.merchant.hidePlayer}}
+    </div>
+    {{#if (or (eq document.system.merchant.merchantType "merchant") (eq document.system.merchant.merchantType "loot"))}}
+    <div class="col two form-group" data-tooltip="MERCHANT.allowPlayerItemDetailsHint">
+      <label>{{localize 'MERCHANT.allowPlayerItemDetails'}}</label>
+      {{formInput systemFields.merchant.fields.allowPlayerItemDetails value=document.system.merchant.allowPlayerItemDetails}}
+    </div>
+    {{/if}}
+    {{#if (eq document.system.merchant.merchantType "merchant")}}
+    <div class="col two form-group" data-tooltip="MERCHANT.hideMoneyHint">
+      <label>{{localize 'MERCHANT.hideMoney'}}</label>
+      {{formInput systemFields.merchant.fields.hideMoney value=document.system.merchant.hideMoney}}
+    </div>
+    {{/if}}
+    {{#if (eq document.system.merchant.merchantType "loot")}}
+    <div class="col two form-group" data-tooltip="MERCHANT.lockedHint">
+      <label>{{localize 'MERCHANT.locked'}}</label>
+      {{formInput systemFields.merchant.fields.locked value=document.system.merchant.locked}}
+    </div>
+    {{/if}}
+  </div>
+  {{#if (eq document.system.merchant.merchantType "loot")}}
+  <div class="form-group" data-tooltip="MERCHANT.emptyDestroyHint">
+    <label>{{localize 'MERCHANT.emptyDestroy'}}</label>
+    {{formInput systemFields.merchant.fields.temporary value=document.system.merchant.temporary}}
+  </div>
+  {{/if}}
+  {{/if}}
+</div>
+
+{{#if (ne document.system.merchant.merchantType "none")}}
+<div class="dsa-info-box dsam-2">
+  <p class="dsa-info-text small">{{localize 'MERCHANT.accessHelp'}}</p>
+</div>
+{{> systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs}}
+{{/if}}

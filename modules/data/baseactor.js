@@ -400,16 +400,19 @@ export class ActorDataModel extends DSADataModel {
       data.status.regeneration.AsPMod + data.status.regeneration.AsPgearmodifier;
   }
 
+  _permanentEnergyLoss(status) {
+    if (this.parent.type !== 'character') return 0;
+    return status.permanentLoss - status.rebuy + status.permanentGear;
+  }
+
   _calculateEnergyPoints(data) {
     data.status.astralenergy.rebuy ||= 0;
     data.status.karmaenergy.rebuy ||= 0;
     data.status.astralenergy.permanentLoss ||= 0;
     data.status.karmaenergy.permanentLoss ||= 0;
 
-    data.status.astralenergy.permanentLossSum = data.status.astralenergy.permanentLoss -
-      data.status.astralenergy.rebuy + data.status.astralenergy.permanentGear;
-    data.status.karmaenergy.permanentLossSum = data.status.karmaenergy.permanentLoss -
-      data.status.karmaenergy.rebuy + data.status.karmaenergy.permanentGear;
+    data.status.astralenergy.permanentLossSum = this._permanentEnergyLoss(data.status.astralenergy);
+    data.status.karmaenergy.permanentLossSum = this._permanentEnergyLoss(data.status.karmaenergy);
 
     const guide = data.guidevalue;
 

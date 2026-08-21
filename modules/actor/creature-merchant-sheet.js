@@ -1,6 +1,6 @@
 import { MerchantSheetMixin } from './mixins/merchantmixin.js';
 import ActorSheetdsa5Creature from './creature-sheet.js';
-import { gearSearchPartTemplates } from './template-configs.js';
+import { merchantCommercePartTemplates } from './template-configs.js';
 
 export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Creature) {
   static MERCHANTPARTS = {
@@ -39,7 +39,7 @@ export default class CreatureMerchantSheetDSA5 extends MerchantSheetMixin(ActorS
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],
-      templates: [...gearSearchPartTemplates],
+      templates: [...merchantCommercePartTemplates],
     },
     companion: super.PARTS.companion,
     status: super.PARTS.status,

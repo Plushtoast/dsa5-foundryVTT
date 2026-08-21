@@ -10,6 +10,29 @@ export const gearSearchPartTemplates = [
   'systems/dsa5/templates/actors/parts/purse.hbs',
 ];
 
+export const merchantStallPartTemplates = [
+  'systems/dsa5/templates/actors/merchant/parts/shop-tile.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-filters.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-purse.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-buyer.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-viewers.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-banner.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-list.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-presentation-body.hbs',
+];
+
+export const merchantCommercePartTemplates = [
+  ...gearSearchPartTemplates,
+  'systems/dsa5/templates/system/dsatabs.hbs',
+  'systems/dsa5/templates/system/parts/icon-range.hbs',
+  'systems/dsa5/templates/actors/parts/containerContent.hbs',
+  'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
+  'systems/dsa5/templates/actors/merchant/merchant-stock.hbs',
+  'systems/dsa5/templates/actors/merchant/merchant-shop-config.hbs',
+  'systems/dsa5/templates/actors/merchant/merchant-access.hbs',
+];
+
 /** Nested partials for actor-combat.hbs (ApplicationV2 combat PART). */
 export const combatPartTemplates = [
   'systems/dsa5/templates/actors/parts/combat_weapon.hbs',

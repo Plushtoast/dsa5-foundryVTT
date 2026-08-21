@@ -17,6 +17,7 @@ import DSA5Payment from './system/payment/payment.js';
 import QueryOrchestrator from './system/queries/query-orchestrator.js';
 import PaymentRequestService from './system/queries/payment-requests.js';
 import TransactionSummaryService from './system/payment/transaction-summary.js';
+import MerchantShopPresence from './system/merchant/merchant-shop-presence.js';
 import InformationQueryService from './system/queries/information-query.js';
 import RollRequestService from './system/queries/roll-request.js';
 import ActorPickerDialog from './dialog/actor-picker-dialog.js';
@@ -46,6 +47,13 @@ import TestModuleLoader from './tests/testModuleLoader.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
 import DSA5StatusEffects from './status/status_effects.js';
 import { MerchantSheetMixin, RandomGoodsAddition } from './actor/mixins/merchantmixin.js';
+import MerchantModeHelper from './actor/concerns/merchant-mode.js';
+import MerchantConfig from './config/merchant-config.js';
+import MerchantShopHelper from './system/merchant/merchant-shop-helper.js';
+import MerchantStockService from './system/merchant/merchant-stock-service.js';
+import AttrFilterUi from './system/guiapps/attr-filter-ui.js';
+import MerchantStallHelper from './system/merchant/merchant-stall.js';
+import StockFillDialog from './system/merchant/stock-fill-dialog.js';
 import DSATour from './tours/dsa_tour.js';
 import OpposeDSA from './system/rolls/opposed-dsa5.js';
 import DSAActiveEffect from './status/dsa_active_effects.js';
@@ -125,6 +133,13 @@ Hooks.once('init', () => {
       TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,
+      MerchantModeHelper,
+      MerchantConfig,
+      MerchantShopHelper,
+      MerchantStockService,
+      MerchantStallHelper,
+      AttrFilterUi,
+      StockFillDialog,
       DiceDSA5,
       DSATour,
       OpposeDSA,
@@ -210,6 +225,7 @@ Hooks.once('init', () => {
       ActAttackDialog,
       ReactToAttackDialog,
       RandomGoodsAddition,
+      StockFillDialog,
     },
     api: {
       RollDialogBurgerMenuRule,
@@ -242,10 +258,12 @@ Hooks.once('init', () => {
     config: DSA5,
     ITEM_CONSTANTS,
     CONJURATION,
+    MERCHANT: MerchantConfig,
     TestSuite,
     memory: new RollMemory(),
     dsa5HookRegistry: new Set(),
   };
+  DSA5.merchantStockPresets = MerchantConfig.STOCK_FILL_PRESETS;
 
   CONFIG.Actor.documentClass = Actordsa5;
   CONFIG.Actor.dataModels = ActorDataModels;
@@ -301,6 +319,7 @@ Hooks.once('init', () => {
   PaymentRequestService.register();
   TransactionSummaryService.register();
   InformationQueryService.register();
+  MerchantShopPresence.register();
   RollRequestService.register();
   NavalHeroActionHandler.register();
   NavalCombatDamage.register();

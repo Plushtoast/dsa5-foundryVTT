@@ -1,0 +1,23 @@
+<div class="dsa-shop-tile item dsa-shop-hover {{tile.enchantClass}} {{#if tile.featured}}dsa-shop-tile--featured{{/if}} {{#if tile.enhanced}}dsa-shop-tile--enhanced{{/if}} {{#if tile.service}}dsa-shop-tile--service{{/if}} {{#if tile.unaffordable}}dsa-shop-tile--unaffordable{{/if}}" data-item-id="{{tile.id}}" data-price-label="{{tile.priceLabel}}">
+  <div class="dsa-shop-tile__icon image {{tile.enchantClass}}">
+    <div class="image" style="background-image: url('{{tile.img}}')"></div>
+    {{#if tile.featured}}<i class="fas fa-star dsa-shop-tile__star"></i>{{/if}}
+  </div>
+  <div class="dsa-shop-tile__body">
+    <div class="equipment-item-name dsa-shop-tile__name">
+      {{#if stall.allowItemDetails}}
+      <a data-action="itemEdit">{{tile.name}}</a>
+      {{else}}
+      <span>{{tile.name}}</span>
+      {{/if}}
+    </div>
+    {{#if tile.hook}}<div class="dsa-shop-tile__hook">{{tile.hook}}</div>{{/if}}
+  </div>
+  <div class="dsa-shop-tile__meta">
+    {{#unless isLoot}}
+    <span class="dsa-shop-tile__price">{{tile.priceLabel}}</span>
+    {{/unless}}
+    <span class="dsa-shop-tile__qty">×{{tile.qty}}</span>
+  </div>
+  <a class="button icon noBorder dsadesignbutton {{actionIcon}}" data-action="tradeWrapper" data-fct="{{actionFct}}" data-price="{{tile.price}}" data-tooltip="{{localize actionTooltip}}"></a>
+</div>

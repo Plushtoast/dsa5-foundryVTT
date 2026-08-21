@@ -1,6 +1,6 @@
-import { DefaultAppv2 } from '../actor/baseapp.js';
 import DPS from '../system/automation/derepositioningsystem.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import ActorPickerDialog from './actor-picker-dialog.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export class AddTargetDialog extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
@@ -94,27 +94,36 @@ export class AddTargetDialog extends foundry.applications.api.HandlebarsApplicat
   }
 }
 
-export class SelectUserDialog extends DefaultAppv2 {
-  static DEFAULT_OPTIONS = {
-    window: {
+export class SelectUserDialog {
+  static async open() {
+    const characters = [];
+    const seen = new Set();
+    for (const user of game.users.filter((u) => u.active && !u.isGM)) {
+      if (!user.character || seen.has(user.character.id)) continue;
+      seen.add(user.character.id);
+      characters.push(user.character);
+    }
+
+    if (!characters.length) {
+      ui.notifications.warn('DIALOG.noLoggedinUser', { localize: true });
+      return;
+    }
+
+    const actors = ActorPickerDialog.buildActorPickerData({ actors: characters });
+    const [actorId] = await ActorPickerDialog.open({
+      actors,
       title: 'DIALOG.setTargetToUser',
-    },
-  };
+      header: game.i18n.localize('DIALOG.setTargetToUserHint'),
+      selectionMode: 'single',
+    });
+    if (!actorId) return;
 
-  static PARTS = {
-    main: {
-      template: 'systems/dsa5/templates/dialog/selectForUserDialog.hbs',
-    },
-  };
+    const user = game.users.find((u) => u.active && !u.isGM && u.character?.id === actorId);
+    if (!user) return;
 
-  static async getDialog() {
-    return new SelectUserDialog();
-  }
-
-  async _prepareContext(_options) {
-    const data = await super._prepareContext(_options);
-    data.users = game.users.filter((x) => x.active && !x.isGM);
-    return data;
+    const targetIds = Array.from(game.user.targets).map((x) => x.id);
+    user._onUpdateTokenTargets(targetIds);
+    game.socket.emit('userActivity', user.id, { targets: targetIds });
   }
 
   static registerButtons() {
@@ -127,28 +136,10 @@ export class SelectUserDialog extends DefaultAppv2 {
         icon: 'fa fa-bullseye',
         button: true,
         order: 2,
-        onChange: async () => {
-          (await SelectUserDialog.getDialog()).render(true);
-        },
+        onChange: () => SelectUserDialog.open(),
       };
       btns.tokens.tools.targetUser = userSelect;
     });
-  }
-
-  async _onRender(context, options) {
-    await super._onRender(context, options);
-
-    const html = $(this.element);
-    html.find('.combatant').on('click', (ev) => this.setTargetToUser(ev));
-  }
-
-  setTargetToUser(ev) {
-    const targetIds = Array.from(game.user.targets).map((x) => x.id);
-    const userId = ev.currentTarget.dataset.userId;
-    const user = game.users.get(userId);
-    user._onUpdateTokenTargets(targetIds);
-    game.socket.emit('userActivity', userId, { targets: targetIds });
-    this.close();
   }
 }
 

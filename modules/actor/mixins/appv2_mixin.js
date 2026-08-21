@@ -135,6 +135,18 @@ export const AppV2Mixin = (superclass) =>
       this._updateDetachedTabLayout();
     }
 
+    /**
+     * Foundry's default `_onClickTab` reads `event.target`, which fails when the click
+     * lands on nested label/icon nodes inside `data-action="tab"` elements.
+     */
+    _onClickTab(event) {
+      const button = event.target.closest?.('[data-action="tab"]');
+      if (!button) return;
+      const tab = button.dataset.tab;
+      if (!tab || button.classList.contains('active') || event.button !== 0) return;
+      this.changeTab(tab, button.dataset.group, { event, navElement: button.closest('.tabs') });
+    }
+
     _tearDown(options) {
       this.element?.ownerDocument?.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
       this._detachedResizeHandler = null;

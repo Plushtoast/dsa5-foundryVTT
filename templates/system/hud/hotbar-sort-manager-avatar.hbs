@@ -12,35 +12,20 @@
     </div>
 
     <div class="avatar-preview-area flexcol flexAlignCenter">
-        <div class="avatar-preview {{#if (eq avatar.source 'portrait')}}interactive{{/if}}">
-            <img class="avatar-preview-img" src="{{previewImg}}" draggable="false" />
-        </div>
-        {{#if (eq avatar.source 'portrait')}}
-        <span class="avatar-hint">
-            <i class="fas fa-arrows-alt"></i> {{localize "DSA5HOTBARCONFIG.avatarDragHint"}}
-        </span>
-        {{/if}}
+        {{> systems/dsa5/templates/system/parts/image-frame-picker.hbs
+          imageSrc=previewImg
+          interactive=(eq avatar.source 'portrait')
+          frameClass=frameClass
+          imgStyle=imgStyle
+          frame=frame
+          offsetXMin=offsetXMin
+          offsetXMax=offsetXMax
+          offsetYMin=offsetYMin
+          offsetYMax=offsetYMax
+          zoomMin=zoomMin
+          zoomMax=zoomMax
+        }}
     </div>
-
-    {{#if (eq avatar.source 'portrait')}}
-    <div class="avatar-offset-controls flexcol gap4px">
-        <div class="flexrow flexAlignCenter gap4px">
-            <label class="flex0">X</label>
-            <input type="range" class="flex1" data-prop="offsetX"
-                   min="-100" max="100" value="{{avatar.offsetX}}" />
-        </div>
-        <div class="flexrow flexAlignCenter gap4px">
-            <label class="flex0">Y</label>
-            <input type="range" class="flex1" data-prop="offsetY"
-                   min="-100" max="100" value="{{avatar.offsetY}}" />
-        </div>
-        <div class="flexrow flexAlignCenter gap4px">
-            <label class="flex0">{{localize "DSA5HOTBARCONFIG.avatarZoom"}}</label>
-            <input type="range" class="flex1" data-prop="zoom"
-                   min="50" max="300" value="{{avatar.zoom}}" />
-        </div>
-    </div>
-    {{/if}}
 
     <div class="sort-manager-footer flexrow flexAlignCenter">
         <button type="button" class="sort-save-btn" data-action="saveAvatar" {{#unless isAvatarDirty}}disabled{{/unless}}>

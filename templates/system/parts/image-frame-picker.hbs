@@ -1,0 +1,40 @@
+<div class="dsa-image-frame {{frameClass}}">
+  {{#if layerModel}}
+  <div class="dsa-image-frame__preview dsa-media-frame {{#if interactive}}interactive{{/if}}" style="{{frameVars}}">
+    <img class="dsa-media-frame__img" src="{{imageSrc}}" alt="" draggable="false" />
+  </div>
+  {{else}}
+  <div class="dsa-image-frame__preview {{#if interactive}}interactive{{/if}}">
+    <img class="dsa-image-frame__img" src="{{imageSrc}}" alt="" draggable="false" style="{{imgStyle}}" />
+  </div>
+  {{/if}}
+  {{#if interactive}}
+  <p class="dsa-image-frame__hint">
+    <i class="fas fa-arrows-alt"></i> {{localize 'DSA5HOTBARCONFIG.avatarDragHint'}}
+  </p>
+  <div class="dsa-image-frame__controls flexcol gap4px">
+    <div class="flexrow flexAlignCenter gap4px">
+      <label class="flex0">X</label>
+      <input type="range" class="dsa-image-frame__slider flex1" data-prop="offsetX"
+        min="{{offsetXMin}}" max="{{offsetXMax}}" step="{{offsetStep}}" value="{{frame.offsetX}}" />
+    </div>
+    <div class="flexrow flexAlignCenter gap4px">
+      <label class="flex0">Y</label>
+      <input type="range" class="dsa-image-frame__slider flex1" data-prop="offsetY"
+        min="{{offsetYMin}}" max="{{offsetYMax}}" step="{{offsetStep}}" value="{{frame.offsetY}}" />
+    </div>
+    <div class="flexrow flexAlignCenter gap4px">
+      <label class="flex0">{{localize 'DSA5HOTBARCONFIG.avatarZoom'}}</label>
+      <input type="range" class="dsa-image-frame__slider flex1" data-prop="zoom"
+        min="{{zoomMin}}" max="{{zoomMax}}" value="{{frame.zoom}}" />
+    </div>
+    {{#if layerModel}}
+    <div class="flexrow flexAlignCenter gap4px">
+      <label class="flex0">{{localize 'IMAGEFRAME.flipHorizontal'}}</label>
+      <button type="button" class="dsadesignbutton noBorder icon fas fa-left-right{{#if flipX}} active{{/if}}"
+        data-frame-flip="1" data-tooltip="IMAGEFRAME.flipHorizontalHint"></button>
+    </div>
+    {{/if}}
+  </div>
+  {{/if}}
+</div>

@@ -235,9 +235,13 @@ export function tabSlider(html) {
   const sliders = html.find('.navWrapper');
 
   for (const slider of sliders) {
+    if (slider.dataset.tabSliderBound === '1') continue;
+    slider.dataset.tabSliderBound = '1';
+
     const btnLeft = slider.querySelector('.left-btn');
     const btnRight = slider.querySelector('.right-btn');
     const menu = slider.querySelector('.sheet-tabs');
+    if (!btnLeft || !btnRight || !menu) continue;
     let activeDrag = false;
 
     btnRight.addEventListener('click', () => {

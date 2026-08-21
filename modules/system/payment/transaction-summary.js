@@ -8,7 +8,6 @@ export default class TransactionSummaryService {
   static QUERY_TYPE = 'dsa5.transactionSummary';
   static FLAG_KEY = 'transactionSummary';
   static TEMPLATE = 'systems/dsa5/templates/chat/payment/transaction-summary.hbs';
-  static MERCHANT_SUMMARY_DEBOUNCE_MS = 1500;
   static #merchantSessions = new Map();
 
   static register() {
@@ -93,17 +92,19 @@ export default class TransactionSummaryService {
     return ['merchant', source.id, target.id].sort().join(':');
   }
 
+  /** Buffer a line item; chat summary is emitted when the merchant sheet closes. */
   static async recordMerchantTransaction({ source, target, notify, item, receivedItem, amount, price, buy }) {
     const mode = this.notificationMode(notify);
     if (!this.shouldCreateSummary(mode)) return;
 
     const sessionKey = this.merchantSessionKey(source, target);
     const existing = this.#merchantSessions.get(sessionKey) || {
+      sourceId: source.id,
+      targetId: target.id,
       sourceName: source.name,
       targetName: target.name,
       notify: mode,
       transfers: [],
-      timeout: null,
     };
 
     const receiverName = buy ? source.name : target.name;
@@ -113,23 +114,23 @@ export default class TransactionSummaryService {
     });
 
     this.#merchantSessions.set(sessionKey, existing);
-
-    this.resetMerchantFinalizeTimer(sessionKey);
   }
 
-  static resetMerchantFinalizeTimer(sessionKey) {
-    const session = this.#merchantSessions.get(sessionKey);
-    if (!session) return;
-
-    if (session.timeout) clearTimeout(session.timeout);
-    session.timeout = setTimeout(() => {
-      this.finalizeMerchantSummary(sessionKey);
-    }, this.MERCHANT_SUMMARY_DEBOUNCE_MS);
+  /** Flush all open merchant sessions that involve this actor (sheet close). */
+  static async finalizeSessionsForActor(actorId) {
+    if (!actorId || !this.shouldCreateSummary()) return;
+    const keys = [...this.#merchantSessions.entries()]
+      .filter(([, session]) => session.sourceId === actorId || session.targetId === actorId)
+      .map(([key]) => key);
+    for (const key of keys) await this.finalizeMerchantSummary(key);
   }
 
   static async finalizeMerchantSummary(sessionKey) {
     const session = this.#merchantSessions.get(sessionKey);
-    if (!session?.transfers?.length) return;
+    if (!session?.transfers?.length) {
+      this.#merchantSessions.delete(sessionKey);
+      return;
+    }
 
     const byActor = new Map();
     for (const transfer of session.transfers) {
@@ -166,7 +167,6 @@ export default class TransactionSummaryService {
       this.notificationRecipients(session.notify),
     );
 
-    if (session.timeout) clearTimeout(session.timeout);
     this.#merchantSessions.delete(sessionKey);
   }
 

@@ -1,0 +1,46 @@
+<div class="dsa-shop-filters">
+  <div class="itemlibrary-header-toolbar">
+    <div class="itemlibrary-search-wrap">
+      <input type="search" class="input-text gearSearch" placeholder="{{localize 'gearSearch'}}" />
+    </div>
+    <div class="itemlibrary-toolbar-group itemlibrary-view-toggle" role="group" aria-label="{{localize 'MERCHANT.stall.viewMode'}}">
+      <button type="button"
+        class="dsadesignbutton icon fa-solid fa-id-card {{#if stall.isCards}}active on{{/if}}"
+        data-action="setShopViewMode"
+        data-view="cards"
+        aria-pressed="{{#if stall.isCards}}true{{else}}false{{/if}}"
+        data-tooltip="MERCHANT.stall.viewCards"
+        aria-label="{{localize 'MERCHANT.stall.viewCards'}}"></button>
+      <button type="button"
+        class="dsadesignbutton icon fa-solid fa-list {{#if stall.isList}}active on{{/if}}"
+        data-action="setShopViewMode"
+        data-view="list"
+        aria-pressed="{{#if stall.isList}}true{{else}}false{{/if}}"
+        data-tooltip="MERCHANT.stall.viewList"
+        aria-label="{{localize 'MERCHANT.stall.viewList'}}"></button>
+    </div>
+    <div class="itemlibrary-toolbar-group dsa-shop-filters__sort" role="group" aria-label="{{localize 'MERCHANT.stall.sort'}}">
+      <select data-shop-control="setShopSort" data-tooltip="MERCHANT.stall.sort">
+        <option value="featured" {{#if (eq stall.filter.sort 'featured')}}selected{{/if}}>{{localize 'MERCHANT.stall.sortFeatured'}}</option>
+        <option value="name" {{#if (eq stall.filter.sort 'name')}}selected{{/if}}>{{localize 'MERCHANT.stall.sortName'}}</option>
+        <option value="priceAsc" {{#if (eq stall.filter.sort 'priceAsc')}}selected{{/if}}>{{localize 'MERCHANT.stall.sortPriceAsc'}}</option>
+        <option value="priceDesc" {{#if (eq stall.filter.sort 'priceDesc')}}selected{{/if}}>{{localize 'MERCHANT.stall.sortPriceDesc'}}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="dsa-choice-browser__toolbar">
+    <div class="library-filter-chips flex1" role="group">
+      <button type="button" class="library-filter-chip {{#if (eq stall.filter.category 'all')}}active{{/if}}" data-action="setShopChip" data-chip="all">{{localize 'MERCHANT.stall.all'}}</button>
+      {{#each stall.chips as |chip|}}
+      <button type="button" class="library-filter-chip {{#if (eq ../stall.filter.category chip.key)}}active{{/if}}" data-action="setShopChip" data-chip="{{chip.key}}">{{localize chip.label}}</button>
+      {{/each}}
+      {{#unless stall.isLoot}}
+      <button type="button" class="library-filter-chip {{#if stall.filter.affordable}}active{{/if}}" data-action="toggleShopAffordable">{{localize 'MERCHANT.stall.affordable'}}</button>
+      {{/unless}}
+      {{#if stall.hasSpecials}}
+      <button type="button" class="library-filter-chip {{#if stall.filter.specials}}active{{/if}}" data-action="toggleShopSpecials">{{localize 'MERCHANT.stall.specials'}}</button>
+      {{/if}}
+    </div>
+  </div>
+</div>

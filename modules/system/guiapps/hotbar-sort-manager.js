@@ -1,14 +1,14 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { tabSlider } from '../helpers/view_helper.js';
 import DSA5 from '../../config/config-dsa5.js';
+import ImageFramePicker from '../helpers/image-frame-picker.js';
 
 const { mergeObject } = foundry.utils;
 
 export default class HotbarSortManager extends DefaultAppv2 {
   #search;
   _draft;
-  #previewMouseMove;
-  #previewMouseUp;
+  #framePicker;
 
   static get ORDER_GROUPS() {
     return Object.keys(DSA5.skillGroups);
@@ -30,7 +30,7 @@ export default class HotbarSortManager extends DefaultAppv2 {
     custom: 'DSA5HOTBARCONFIG.sortCustom',
   };
 
-  static DEFAULT_AVATAR = { source: 'token', offsetX: 0, offsetY: 0, zoom: 100 };
+  static DEFAULT_AVATAR = { source: 'token', ...ImageFramePicker.DEFAULT };
 
   static DEFAULT_OPTIONS = {
     id: 'hotbar-sort-manager',
@@ -65,6 +65,7 @@ export default class HotbarSortManager extends DefaultAppv2 {
     },
     avatar: {
       template: 'systems/dsa5/templates/system/hud/hotbar-sort-manager-avatar.hbs',
+      templates: ['systems/dsa5/templates/system/parts/image-frame-picker.hbs'],
       scrollable: [''],
     },
   };
@@ -114,6 +115,21 @@ export default class HotbarSortManager extends DefaultAppv2 {
     this._draft.avatarDirty = true;
   }
 
+  #ensureFramePicker() {
+    if (this.#framePicker) return this.#framePicker;
+    this.#framePicker = new ImageFramePicker({
+      preset: 'portrait',
+      frame: this._draft?.avatar,
+      isInteractive: () => this._draft?.avatar?.source === 'portrait',
+      onChange: (frame) => {
+        if (!this._draft) return;
+        Object.assign(this._draft.avatar, frame);
+        this._markAvatarDirty();
+      },
+    });
+    return this.#framePicker;
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = this.element;
@@ -146,113 +162,23 @@ export default class HotbarSortManager extends DefaultAppv2 {
       },
     }).bind(html);
 
-    this.#bindAvatarPreview(html);
-    this.#bindAvatarSliders(html);
+    this.#ensureFramePicker().bind(html.querySelector('.dsa-image-frame'));
+    if (this._draft?.avatar?.source !== 'portrait') {
+      const img = html.querySelector('.dsa-image-frame__img');
+      if (img) {
+        img.style.objectFit = 'contain';
+        img.style.objectPosition = '';
+        img.style.transform = '';
+      }
+    }
   }
 
   _tearDown(options) {
     super._tearDown(options);
     this.#search?.unbind();
-    this.#removePreviewListeners();
+    this.#framePicker?.unbind();
+    this.#framePicker = null;
     this._draft = null;
-  }
-
-  #removePreviewListeners() {
-    if (this.#previewMouseMove) {
-      window.removeEventListener('mousemove', this.#previewMouseMove);
-      this.#previewMouseMove = null;
-    }
-    if (this.#previewMouseUp) {
-      window.removeEventListener('mouseup', this.#previewMouseUp);
-      this.#previewMouseUp = null;
-    }
-  }
-
-  #bindAvatarPreview(html) {
-    const preview = html.querySelector('.avatar-preview');
-    if (!preview) return;
-
-    // Remove any previously attached window-level listeners
-    this.#removePreviewListeners();
-
-    let dragging = false;
-    let startX, startY, startOffsetX, startOffsetY;
-
-    preview.addEventListener('mousedown', (ev) => {
-      if (this._draft.avatar.source !== 'portrait') return;
-      ev.preventDefault();
-      dragging = true;
-      startX = ev.clientX;
-      startY = ev.clientY;
-      startOffsetX = this._draft.avatar.offsetX;
-      startOffsetY = this._draft.avatar.offsetY;
-      preview.style.cursor = 'grabbing';
-    });
-
-    this.#previewMouseMove = (ev) => {
-      if (!dragging) return;
-      const dx = ev.clientX - startX;
-      const dy = ev.clientY - startY;
-      this._draft.avatar.offsetX = Math.round(Math.max(-100, Math.min(100, startOffsetX + dx)));
-      this._draft.avatar.offsetY = Math.round(Math.max(-100, Math.min(100, startOffsetY + dy)));
-      this._markAvatarDirty();
-      this.#updateAvatarPreview();
-      this.#syncAvatarSliders();
-    };
-    window.addEventListener('mousemove', this.#previewMouseMove);
-
-    this.#previewMouseUp = () => {
-      if (!dragging) return;
-      dragging = false;
-      preview.style.cursor = '';
-    };
-    window.addEventListener('mouseup', this.#previewMouseUp);
-
-    preview.addEventListener('wheel', (ev) => {
-      if (this._draft.avatar.source !== 'portrait') return;
-      ev.preventDefault();
-      const delta = ev.deltaY > 0 ? -5 : 5;
-      this._draft.avatar.zoom = Math.max(50, Math.min(300, this._draft.avatar.zoom + delta));
-      this._markAvatarDirty();
-      this.#updateAvatarPreview();
-      this.#syncAvatarSliders();
-    });
-  }
-
-  #bindAvatarSliders(html) {
-    html.querySelectorAll('.avatar-slider').forEach((slider) => {
-      slider.addEventListener('input', (ev) => {
-        const prop = ev.target.dataset.prop;
-        this._draft.avatar[prop] = Number(ev.target.value);
-        this._markAvatarDirty();
-        this.#updateAvatarPreview();
-      });
-    });
-  }
-
-  #updateAvatarPreview() {
-    const img = this.element?.querySelector('.avatar-preview-img');
-    if (!img) return;
-    const { source, offsetX, offsetY, zoom } = this._draft.avatar;
-    img.src = source === 'portrait' ? this.actor.img : this.actor.prototypeToken.texture.src;
-    if (source === 'portrait') {
-      img.style.objectFit = 'cover';
-      img.style.objectPosition = `calc(50% + ${offsetX}px) calc(50% + ${offsetY}px)`;
-      img.style.transform = `scale(${zoom / 100})`;
-    } else {
-      img.style.objectFit = 'contain';
-      img.style.objectPosition = '';
-      img.style.transform = '';
-    }
-  }
-
-  #syncAvatarSliders() {
-    const html = this.element;
-    if (!html) return;
-    for (const prop of ['offsetX', 'offsetY', 'zoom']) {
-      const slider = html.querySelector(`.avatar-slider[data-prop="${prop}"]`);
-      if (slider) slider.value = this._draft.avatar[prop];
-    }
   }
 
   #onSearchFilter(_event, query, rgx, html) {
@@ -298,6 +224,8 @@ export default class HotbarSortManager extends DefaultAppv2 {
     }
 
     const savedSortMode = game.settings.get('dsa5', 'hotbarSortMode');
+    const picker = this.#ensureFramePicker();
+    picker.setFrame(this._draft.avatar, { silent: true });
 
     mergeObject(data, {
       skills: visibleSkills,
@@ -311,6 +239,12 @@ export default class HotbarSortManager extends DefaultAppv2 {
       previewImg: this._draft.avatar.source === 'portrait'
         ? this.actor.img
         : this.actor.prototypeToken.texture.src,
+      ...picker.templateContext,
+      frame: ImageFramePicker.normalize(this._draft.avatar),
+      interactive: this._draft.avatar.source === 'portrait',
+      imgStyle: this._draft.avatar.source === 'portrait'
+        ? ImageFramePicker.buildStyle(this._draft.avatar)
+        : 'object-fit: contain',
     });
 
     return data;
@@ -426,8 +360,12 @@ export default class HotbarSortManager extends DefaultAppv2 {
   static async _onSaveAvatar() {
     const { avatar } = this._draft;
     const defaultAvatar = HotbarSortManager.DEFAULT_AVATAR;
-    if (avatar.source !== defaultAvatar.source || avatar.offsetX !== defaultAvatar.offsetX || avatar.offsetY !== defaultAvatar.offsetY || avatar.zoom !== defaultAvatar.zoom) {
-      await this.actor.prototypeToken.setFlag('dsa5', 'hotbarAvatar', avatar);
+    const frameChanged = !ImageFramePicker.isDefault(avatar, ImageFramePicker.DEFAULT);
+    if (avatar.source !== defaultAvatar.source || frameChanged) {
+      await this.actor.prototypeToken.setFlag('dsa5', 'hotbarAvatar', {
+        source: avatar.source,
+        ...ImageFramePicker.normalize(avatar),
+      });
     } else {
       await this.actor.prototypeToken.unsetFlag('dsa5', 'hotbarAvatar');
     }
@@ -511,9 +449,8 @@ export default class HotbarSortManager extends DefaultAppv2 {
   }
 
   static _onResetAvatar() {
-    this._draft.avatar.offsetX = 0;
-    this._draft.avatar.offsetY = 0;
-    this._draft.avatar.zoom = 100;
+    Object.assign(this._draft.avatar, ImageFramePicker.DEFAULT);
+    this.#framePicker?.setFrame(ImageFramePicker.DEFAULT, { silent: true });
     this._markAvatarDirty();
     this.render(true);
   }

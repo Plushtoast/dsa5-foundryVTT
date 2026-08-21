@@ -768,7 +768,16 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
     const indexWrapper = this.detailFilter[category];
 
-    let result = await this.executeAdvancedFilter(search.search || '', indexWrapper, search.selects || [], search.inputs || [], search.booleans || [], search.rangeSearches || [], 0);
+    let result = await this.executeAdvancedFilter(
+      search.search || '',
+      indexWrapper,
+      search.selects || [],
+      search.inputs || [],
+      search.booleans || [],
+      search.rangeSearches || [],
+      0,
+      true,
+    );
     if (filterCompendium) result = result.filter((x) => x.compendium != '');
 
     return await Promise.all(result.map((x) => fromUuid(x.uuid)));
@@ -1505,9 +1514,12 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     if (!tooltip) tooltip = await this.systemConfiguration.renderTooltip(item);
     if (hoverToken !== this._hoverToken || !target.matches(':hover')) return;
 
+    const html = typeof tooltip === 'string' ? tooltip : tooltip?.outerHTML;
+    if (!html) return;
+
     const tooltipTarget = this._getLibraryTooltipAnchor(target);
     game.tooltip.activate(tooltipTarget, {
-      html: tooltip,
+      html,
       cssClass: 'itemLibraryTooltip',
     });
   }

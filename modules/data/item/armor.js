@@ -9,6 +9,7 @@ import ArtifactTemplate from './templates/artifact.js';
 import CeremonialItemTemplate from './templates/ceremonial-item.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
+import DSABooleanField from '../fields/dsa_boolean_field.js';
 
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
@@ -40,6 +41,7 @@ export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, Descri
       }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
       isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
+      uniq: new DSABooleanField({ initial: false, label: 'WEAPON.uniq', tooltip: 'WEAPON.uniqHint' }),
     });
   }
 

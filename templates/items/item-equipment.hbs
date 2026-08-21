@@ -23,7 +23,7 @@
       </div>
       <div class='col fourty'>
         {{#if customPrice}}
-          <input data-tooltip='UNITS.money' class='input-text' type='number' value='{{customPrice}}' />
+          <input data-tooltip='UNITS.money' class='input-text' type='number' value='{{customPrice}}' readonly />
         {{else}}
           <input data-tooltip='UNITS.money' class='input-text' type='number' name='system.price.value' value='{{document.system.price.value}}' />
         {{/if}}

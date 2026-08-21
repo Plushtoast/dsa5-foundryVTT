@@ -1,4 +1,4 @@
-import MerchantTemplate from "../actor/templates/merchant.js";
+import MerchantConfig from "../../config/merchant-config.js";
 import { JournalListDataModel } from './journallistdatamodel.js';
 const { TextEditor } = foundry.applications.ux;
 export class DSAPersonaEntry extends JournalListDataModel {
@@ -45,7 +45,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     static defineSchema() {
         const { TypedObjectField, SchemaField, DocumentUUIDField, StringField, NumberField, BooleanField, HTMLField, FilePathField } = foundry.data.fields;
-        const GaradanChoices = foundry.utils.deepClone(MerchantTemplate.GARADAN_CHOICES);
+        const GaradanChoices = foundry.utils.deepClone(MerchantConfig.GARADAN_CHOICES);
         return {
             personae: new TypedObjectField(new SchemaField({
                 name: new StringField({ required: true, initial: 'New Entry', label: "PERSONAE.FIELDS.personae.name.label" }),

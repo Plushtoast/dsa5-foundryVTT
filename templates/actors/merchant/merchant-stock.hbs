@@ -1,0 +1,146 @@
+{{#if isGM}}
+<div class="groupbox">
+  <legend class="table-title lineheight flexrow">
+    <span>{{localize 'MERCHANT.fill.toolbar'}}</span>
+    <div class="flexrow flexAlignEnd gap5px">
+      <button type="button" class="icon fas fa-university noBorder dsadesignbutton flex0"
+        data-action="openItemLibrary" data-tooltip="SHEET.Library"></button>
+      <button type="button"
+        class="icon fas fa-toggle-{{ifThen document.system.playerView 'on' 'off'}} noBorder dsadesignbutton flex0"
+        data-action="playerview" data-tooltip="SHEET.switchLimited"></button>
+    </div>
+  </legend>
+  <div class="flexrow gap5px flexAlignCenter">
+    <button type="button" data-action="fillStock" class="sheetButton" data-tooltip="MERCHANT.fill.openHint">{{localize "MERCHANT.fill.open"}}</button>
+    <button type="button" data-action="refillStock" class="sheetButton" data-tooltip="MERCHANT.fill.refillHint">{{localize "MERCHANT.fill.refill"}}</button>
+    <button type="button" data-action="applyDailyHide" class="sheetButton" data-tooltip="MERCHANT.fill.shopDayHint">{{localize "MERCHANT.fill.shopDay"}}</button>
+    <button type="button" data-action="clearInventory" class="sheetButton" data-tooltip="MERCHANT.deleteAllGoods">{{localize "MERCHANT.clearInventory"}}</button>
+    {{#if (eq document.system.merchant.merchantType "merchant")}}
+    <button type="button"
+      class="sheetButton {{#if document.system.merchant.presentationMode}}active{{/if}}"
+      data-action="togglePresentationMode"
+      data-tooltip="MERCHANT.presentationModeHint"
+      aria-pressed="{{#if document.system.merchant.presentationMode}}true{{else}}false{{/if}}">
+      <i class="fas fa-toggle-{{ifThen document.system.merchant.presentationMode 'on' 'off'}}"></i>
+      {{localize 'MERCHANT.presentationMode'}}:
+      {{#if document.system.merchant.presentationMode}}{{localize 'MERCHANT.presentation.stateOn'}}{{else}}{{localize 'MERCHANT.presentation.stateOff'}}{{/if}}
+    </button>
+    {{/if}}
+  </div>
+</div>
+{{/if}}
+
+{{> systems/dsa5/templates/actors/parts/gearSearchV2.hbs}}
+{{#each prepare.inventory as |section sid|}}
+{{#if section.show}}
+<div class="groupbox">
+  <div class="row-section table-title lineheight">
+    <div class="col eight"></div>
+    <div class="col">
+      <b>{{localize (concat "Equipment." @key)}}</b>
+    </div>
+    {{#if (or (eq ../document.system.merchant.merchantType "merchant") (eq ../document.system.merchant.merchantType "loot"))}}
+    <div class="col three center flexrow flexAlignCenter gap2px nobr">
+      <button type="button" class="icon noBorder dsadesignbutton flex0 fa fa-lock" data-tooltip="MERCHANT.untradable"
+        data-action="lockTradeSection" data-type="{{section.dataType}}"></button>
+      <button type="button" class="icon noBorder dsadesignbutton flex0 {{ifThen section.hasFeatured 'fas' 'far'}} fa-star"
+        data-action="toggleShopFeaturedSection" data-type="{{section.dataType}}"
+        data-tooltip="MERCHANT.fill.featuredSection"></button>
+      <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-eye{{ifThen section.hasHiddenToday '-slash' ''}}"
+        data-action="toggleShopHiddenTodaySection" data-type="{{section.dataType}}"
+        data-tooltip="MERCHANT.fill.hiddenTodaySection"></button>
+    </div>
+    {{/if}}
+    <div class="col eight center">
+      <i class="fa fa-shield-alt" data-tooltip="equipped"></i>
+    </div>
+    <div class="col four center">
+      <span data-tooltip="price"><i class="fas fa-coins"></i></span>
+    </div>
+    <div class="col eight flexrow flexAlignCenter">
+      <button type="button" class="icon noBorder dsadesignbutton" data-action="changeAmountAllItems"
+        data-type="{{section.dataType}}" data-tooltip="MERCHANT.changeAmountAll" data-tooltip-direction="RIGHT">#</button>
+    </div>
+    <div class="col eight center">
+      <i class="fa fa-anchor" data-tooltip="Weight"></i>
+    </div>
+    <div class="col ten center flexAlignCenter flexrow">
+      <button type="button" data-action="merchantSectionMenu"
+        class="icon fas fa-ellipsis-vertical noBorder dsadesignbutton very-small"
+        data-tooltip="SHEET.EditItem" item-section="{{sid}}" data-type="{{section.dataType}}"></button>
+    </div>
+  </div>
+  <div class="row-section wrap rowtable inventory">
+    {{#each section.items as |item i|}}
+    <div class="col item {{#if item.flags.dsa5.shopHiddenToday}}dsa-shop-hidden-today{{/if}}" data-item-id="{{item._id}}">
+      <div class="row-section">
+        <div class="col eight image {{item.enchantClass}}">
+          <div class="image" style="background-image: url('{{item.img}}')">
+            {{#if item.structureMax}}
+            <div class="item-structure" style="--a: {{item.structureMax}}; --b: {{item.structureCurrent}}">
+              <div class="inner"></div>
+            </div>
+            {{/if}}
+          </div>
+        </div>
+        <div class="equipment-item-name col withContext">
+          <a data-action="itemEdit">{{item.name}}</a>
+        </div>
+        {{#if (or (eq ../../document.system.merchant.merchantType "merchant") (eq ../../document.system.merchant.merchantType "loot"))}}
+        <div class="col three center flexrow flexAlignCenter gap2px nobr">
+          <button type="button" class="icon noBorder dsadesignbutton flex0" data-action="toggleTradeLock" data-tooltip="MERCHANT.untradable"><i
+              class="fas fa-{{ifThen item.system.tradeLocked '' 'un'}}lock"></i></button>
+          <button type="button" class="icon noBorder dsadesignbutton flex0 {{ifThen item.flags.dsa5.shopFeatured 'fas' 'far'}} fa-star"
+            data-action="toggleShopFeatured" data-tooltip="MERCHANT.fill.featured"></button>
+          <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-eye{{ifThen item.flags.dsa5.shopHiddenToday '-slash' ''}}"
+            data-action="toggleShopHiddenToday" data-tooltip="MERCHANT.fill.hiddenToday"></button>
+        </div>
+        {{/if}}
+        <div class="col eight flexrow flexAlignCenter">
+          {{#if item.toggle}}
+          {{#if item.toggleValue}}
+          <button type="button" class="icon noBorder dsadesignbutton far fa-check-circle" data-action="itemToggle"
+            data-tooltip="SHEET.EquipItem"></button>
+          {{else}}
+          <button type="button" class="icon noBorder dsadesignbutton far fa-circle" data-action="itemToggle"
+            data-tooltip="SHEET.EquipItem"></button>
+          {{/if}}
+          {{/if}}
+        </div>
+        <div data-action="setCustomPrice" class="col four center setCustomPrice" data-tooltip="MERCHANT.priceMod">
+          {{item.defaultPrice}}<span class="priceTag">{{item.priceTag}}</span>
+          <input class="customPriceTag" type="number" value="{{item.flags.dsa5.customPriceTag}}" />
+        </div>
+        <div class="col eight flexrow flexAlignCenter">
+          <button type="button" class="noBorder dsadesignbutton" data-action="quantityClick" data-tooltip="TT.strgx10"
+            data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</button>
+        </div>
+        <div class="equipment-item-weight col eight flexrow flexAlignCenter">
+          {{item.system.preparedWeight}}
+        </div>
+        <div class="col ten very-small center flexrow">
+          {{#if item.OnUseEffect}}
+          <button type="button" data-tooltip="SHEET.onUseEffect"
+            class="icon fas fa-dice-six autoFlex very-small noBorder dsadesignbutton" data-action="onUseItem"></button>
+          {{/if}}
+          {{#if item.children}}
+          <button type="button" data-action="itemDropdown"
+            class="icon fas fa-chevron-down autoFlex very-small noBorder dsadesignbutton"
+            data-tooltip="SHEET.Dropdown"></button>
+          {{/if}}
+          <button type="button" data-action="itemContextMenu"
+            class="icon fas fa-ellipsis-vertical autoFlex very-small noBorder dsadesignbutton"
+            data-tooltip="SHEET.EditItem"></button>
+        </div>
+      </div>
+      <div class="row-section lineheight expandDetails {{item.detailed}}">
+        <div class="col">
+          {{#if item.children}} {{> systems/dsa5/templates/actors/parts/containerContent.hbs this}} {{/if}}
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
+{{/if}}
+{{/each}}

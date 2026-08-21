@@ -2,8 +2,8 @@
     "id": "dsa5",
     "title": "Das Schwarze Auge/The Dark Eye (5th Edition)",
     "description": "The \"Das Schwarze Auge\" system for Foundry VTT. Includes all relevant mechanisms to play in the wonderous world of Aventuria and Das Schwarze Auge/The Dark Eye.",
-    "version": "8.1.1",
-    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/8.1.1/dsa5-foundryVTT-8.1.1.zip",
+    "version": "8.1.2",
+    "download": "https://github.com/Plushtoast/dsa5-foundryVTT/releases/download/8.1.2/dsa5-foundryVTT-8.1.2.zip",
     "authors": [
         {
             "name": "Plushtoast"
@@ -181,6 +181,9 @@
         },
         "Actor": {
             "character": {
+                "filePathFields": {
+                    "merchant.shop.shopImage": ["IMAGE"]
+                },
                 "htmlFields": [
                     "details.notes.ownerdescription",
                     "details.notes.gmdescription",
@@ -189,6 +192,9 @@
                 ]
             },
             "creature": {
+                "filePathFields": {
+                    "merchant.shop.shopImage": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "behavior.value",
@@ -199,6 +205,9 @@
                 ]
             },
             "npc": {
+                "filePathFields": {
+                    "merchant.shop.shopImage": ["IMAGE"]
+                },
                 "htmlFields": [
                     "details.notes.ownerdescription",
                     "details.notes.gmdescription",
@@ -213,6 +222,9 @@
                 ]
             },
             "vehicle": {
+                "filePathFields": {
+                    "merchant.shop.shopImage": ["IMAGE"]
+                },
                 "htmlFields": [
                     "description.value",
                     "details.notes.value",

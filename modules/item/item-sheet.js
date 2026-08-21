@@ -19,6 +19,7 @@ import TraitData from '../data/item/trait.js';
 import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 import ItemEnchantment from './item-enchantment.js';
+import MerchantStallHelper from '../system/merchant/merchant-stall.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -283,9 +284,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     if (data.isOwned) {
       data.canAdvance = this.actor.canAdvance && this._advancable();
-      const customPrice = getProperty(this.item, 'flags.dsa5.customPriceTag');
-
-      if (!this.isEditable && customPrice) data.customPrice = customPrice;
     }
 
     data.enableWeaponAdvantages = game.settings.get('dsa5', 'enableWeaponAdvantages');
@@ -298,6 +296,17 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     data.onUseActions = OnUseEffect.getOnUseActions(this.item);
 
     await this.item.system.getSheetData(data);
+
+    if (data.isOwned && !this.isEditable) {
+      if (this.actor.isMerchant?.()) {
+        const shopPrice = MerchantStallHelper.playerFacingPrice(this.item, this.actor);
+        data.customPrice = shopPrice;
+        data.calculatedPrice = shopPrice;
+      } else {
+        const customPrice = getProperty(this.item, 'flags.dsa5.customPriceTag');
+        if (customPrice) data.customPrice = customPrice;
+      }
+    }
 
     const allEffects = Array.from(data.conditions || this.item.effects)
       .filter((effect) => game.user.isGM || !effect.system?.visibility?.hidePlayers);
@@ -1948,6 +1957,7 @@ class VantageSheetDSA5 extends WithEffectsSheet {
       xpCost = await AdvantageRulesDSA5.reduceSingularVantages(this.actor, this.item, xpCost);
       await this.actor._updateAPs(xpCost * -1, {}, { render: false });
       await this.item.update({ 'system.step.value': value - 1 });
+      await AdvantageRulesDSA5.vantageStepsChanged(this.actor, this.item, -1);
       await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value - 1 }, xpCost);
       return true;
     }
@@ -1963,6 +1973,7 @@ class VantageSheetDSA5 extends WithEffectsSheet {
       if (await this.actor.checkEnoughXP(xpCost)) {
         await this.actor._updateAPs(xpCost, {}, { render: false });
         await this.item.update({ 'system.step.value': value + 1 });
+        await AdvantageRulesDSA5.vantageStepsChanged(this.actor, this.item, 1);
         await APTracker.track(this.actor, { type: 'item', item: this.item, previous: value, next: value + 1 }, xpCost);
         return true;
       }

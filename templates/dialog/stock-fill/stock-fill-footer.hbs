@@ -1,0 +1,18 @@
+<div class="stock-fill-footer flexcol gap5px flex0">
+  <div class="row-section table-title lineheight">
+    {{#each modes}}
+    <label class="col three center">
+      <input type="radio" name="mode" value="{{value}}" {{checked active}} data-tooltip="{{hint}}">
+      <span data-tooltip="{{hint}}">{{localize label}}</span>
+    </label>
+    {{/each}}
+  </div>
+  <p class="hint stock-fill-mode-hint">{{localize activeModeHint}}</p>
+  <div class="flexrow gap5px">
+    <button type="button" class="default" data-action="fill" {{disabled filling}} data-tooltip="MERCHANT.fill.confirmHint">
+      {{#if filling}}<i class="fa fa-spin fa-spinner"></i>{{/if}}
+      {{localize 'MERCHANT.fill.confirm'}}
+    </button>
+    <button type="button" data-action="cancel">{{localize 'Cancel'}}</button>
+  </div>
+</div>

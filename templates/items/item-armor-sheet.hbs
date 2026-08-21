@@ -1,4 +1,4 @@
-<div class="tab standard-form scrollable {{tabs.details.cssClass}}" data-tab="details" data-group="{{tabs.details.group}}">
+<div class="tab standard-form scrollable {{tabs.details.cssClass}} gap5px" data-tab="details" data-group="{{tabs.details.group}}">
 
     {{formGroup systemFields.protection.fields.value value=document.system.protection.value localize=true}}
     {{formGroup systemFields.encumbrance.fields.value value=document.system.encumbrance.value localize=true}}
@@ -35,4 +35,5 @@
     {{/if}}
     {{formGroup systemFields.region value=document.system.region localize=true}}
     {{> systems/dsa5/templates/items/traditionArtifact.hbs}}
+    {{formGroup systemFields.uniq value=document.system.uniq localize=true}}
 </div>

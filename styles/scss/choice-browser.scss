@@ -39,9 +39,11 @@
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    max-height: 72px;
+    max-height: 88px;
     overflow-y: auto;
     min-width: 0;
+    padding: 6px 2px;
+    box-sizing: border-box;
   }
 
   .library-filter-chip {
@@ -58,8 +60,12 @@
       pointer-events: none;
     }
 
-    label {
+    label,
+    &:is(button) {
       display: inline-block;
+      box-sizing: border-box;
+      height: auto;
+      min-height: 0;
       padding: 2px 8px;
       border: 1px solid var(--color-border-light-tertiary);
       border-radius: 999px;
@@ -73,14 +79,28 @@
       text-overflow: ellipsis;
       margin: 0;
       min-width: 0;
+      color: var(--bg-contrast-color);
+      box-shadow: none;
     }
 
-    &:hover label {
+    &:is(button) {
+      font-family: inherit;
+      font-weight: inherit;
+      appearance: none;
+      --button-size: auto;
+      --button-height: auto;
+      width: auto;
+      flex: 0 0 auto;
+    }
+
+    &:hover label,
+    &:is(button):hover {
       border-color: var(--dsadesign1);
     }
 
     &.active label,
-    input.filter:checked + label {
+    input.filter:checked + label,
+    &:is(button).active {
       background: rgba(0, 0, 0, 0.65);
       border-color: rgba(0, 0, 0, 0.65);
       color: #fff;
@@ -244,6 +264,10 @@
     flex: 1 1 200px;
     max-width: 360px;
     min-width: 140px;
+
+    input {
+      width: 100%;
+    }
   }
 
   .itemlibrary-toolbar-group {
@@ -378,7 +402,8 @@
       }
 
       .detailFilters > .flexcol,
-      .detailFilters > .cbParent {
+      .detailFilters > .cbParent,
+      .detailFilters > .dsa-attr-filter__field {
         min-width: 0;
       }
 

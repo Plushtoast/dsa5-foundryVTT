@@ -82,6 +82,7 @@ export default class MeleeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       isNotImprovised: new DSABooleanField({ initial: false, label: 'WEAPON.notImprovised', tooltip: 'WEAPON.notImprovisedHint' }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
       isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
+      uniq: new DSABooleanField({ initial: false, label: 'WEAPON.uniq', tooltip: 'WEAPON.uniqHint' }),
       preventsBrawlAttackDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlAttackDamage', tooltip: 'BRAWLING.preventsBrawlAttackDamageHint' }),
       preventsBrawlParryDamage: new DSABooleanField({ initial: false, label: 'BRAWLING.preventsBrawlParryDamage', tooltip: 'BRAWLING.preventsBrawlParryDamageHint' }),
     });

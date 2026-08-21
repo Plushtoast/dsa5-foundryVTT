@@ -1,14 +1,30 @@
-<fieldset class='noBorder' disabled>
-  <header class='sheet-header row-section'>
-
-    <div class='charname headerInput col fourty'>
-      {{formInput fields.name value=document.name placeholder=(localize 'Name')}}
-      <span class='label name'>{{localize 'Name'}}</span>
+<div class="dsa-shop-hero dsa-shop-hero--player{{#if shopBanner}} dsa-shop-hero--has-banner{{/if}}">
+  {{#if shopBanner}}
+  <div class="dsa-shop-hero__media dsa-media-frame" style="{{shopBannerVars}}">
+    <img class="dsa-media-frame__img" src="{{shopBanner}}" alt="" />
+  </div>
+  {{/if}}
+  <div class="dsa-shop-hero__scrim"></div>
+  <div class="dsa-shop-hero__content">
+    <div class="dsa-shop-hero__parties">
+      <div class="dsa-shop-hero__party dsa-shop-hero__party--shop">
+        <div class="dsa-shop-hero__titles">
+          <img class="dsa-shop-hero__thumb" src="{{document.img}}" alt="" />
+          <div class="dsa-shop-hero__titles-body">
+            <h2 class="dsa-shop-hero__title ellipsis">{{shopTitle}}</h2>
+            {{#if showShopOwner}}
+            <p class="dsa-shop-hero__subtitle ellipsis">{{shopOwnerName}}</p>
+            {{/if}}
+            {{> systems/dsa5/templates/actors/merchant/parts/shop-purse.hbs purse=stall.merchantPurse}}
+          </div>
+        </div>
+      </div>
+      <div class="dsa-shop-hero__party dsa-shop-hero__party--buyer">
+        {{> systems/dsa5/templates/actors/merchant/parts/shop-buyer.hbs}}
+      </div>
     </div>
-    <div class='headerInput col fourty'>
-      {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
-      <span class='label species'>{{localize 'TYPES.Item.species'}}</span>
+    <div class="dsa-shop-hero__presence">
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-viewers.hbs}}
     </div>
-
-  </header>
-</fieldset>
+  </div>
+</div>

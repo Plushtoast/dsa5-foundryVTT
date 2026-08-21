@@ -1,0 +1,20 @@
+{{#if stall.sellMode}}
+<aside class="dsa-shop-drawer">
+  <header class="dsa-shop-drawer__head flexrow flexAlignCenter">
+    <h3>{{localize 'MERCHANT.stall.sell'}}</h3>
+    <button type="button" class="icon fas fa-times noBorder dsadesignbutton" data-action="toggleSellMode"></button>
+  </header>
+  {{#unless stall.hasBuyer}}
+  <p class="hint">{{localize 'MERCHANT.stall.noBuyer'}}</p>
+  {{else}}
+  <div class="dsa-shop-grid">
+    {{#each stall.sellTiles as |tile|}}
+    {{> systems/dsa5/templates/actors/merchant/parts/shop-tile.hbs tile=tile isLoot=../stall.isLoot actionFct="sellItem" actionIcon=../stall.sellActionIcon actionTooltip=../stall.sellActionTooltip}}
+    {{/each}}
+  </div>
+  {{#unless stall.sellTiles.length}}
+  <p class="hint">{{localize 'MERCHANT.stall.empty'}}</p>
+  {{/unless}}
+  {{/unless}}
+</aside>
+{{/if}}

@@ -21,6 +21,8 @@ import { DSARegionTemplate } from '../system/automation/measuretemplate.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
+import TransactionSummaryService from '../system/payment/transaction-summary.js';
+import MerchantShopPresence from '../system/merchant/merchant-shop-presence.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
@@ -28,19 +30,22 @@ export function connectSocket() {
       case 'brawlStart':
         DSA5Combat.brawlStart(2000, false);
         return;
+      case MerchantShopPresence.SOCKET_TYPE:
+        MerchantShopPresence.socketListener(data);
+        return;
       case 'hideDeletedSheet':
         const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
         MerchantSheetDSA5.hideDeletedSheet(target);
         return;
       case 'refreshSheets':
         for (const app of Object.values(ui.windows)) {
-          if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render(true);
+          if (data.payload.sheets.find((x) => app?.options?.baseApplication == x.type && x.id == app.object?.id)) app.render();
         }
         for (const sheet of data.payload.sheets) {
           if (!sheet.sheetId) continue;
           const app = foundry.applications.instances.get(sheet.sheetId);
           if (app && app.rendered) {
-            app.render(true);
+            app.render();
           }
         }
         return;
@@ -174,6 +179,11 @@ export function connectSocket() {
           const source = data.payload.source.token ? game.actors.tokens[data.payload.source.token] : game.actors.get(data.payload.source.actor);
           const target = data.payload.target.token ? game.actors.tokens[data.payload.target.token] : game.actors.get(data.payload.target.actor);
           MerchantSheetDSA5.finishTransaction(source, target, data.payload.price, data.payload.itemId, data.payload.buy, data.payload.amount);
+        }
+        break;
+      case 'finalizeMerchantSummary':
+        if (DSA5_Utility.isActiveGM()) {
+          await TransactionSummaryService.finalizeSessionsForActor(data.payload.actorId);
         }
         break;
       case 'playWhisperSound':

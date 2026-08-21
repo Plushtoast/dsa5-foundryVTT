@@ -10,6 +10,11 @@ body.theme-dark {
   --dsa-muted-bg: var(--sheet-bg);
   --dsa-muted-border: var(--border-color);
   --dsa-underline-border: var(--border-color);
+  --dsa-library-card-bg: rgba(255, 255, 255, 0.06);
+  --dsa-library-card-bg-hover: rgba(255, 255, 255, 0.1);
+  --dsa-library-card-border: var(--border-color);
+  --dsa-library-card-border-hover: rgba(196, 168, 106, 0.65);
+  --dsa-library-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
   --bg-color: var(--color-dark-2, #23221f);
   --bg-contrast-color: var(--color-text-light-primary, #e8e6e3);
   --border-color: rgba(255, 255, 255, 0.18);
@@ -22,6 +27,10 @@ body.theme-dark {
   --personae-gold-alpha-1: rgba(196, 168, 106, 0.12);
   --personae-gold-alpha-2: rgba(196, 168, 106, 0.22);
   --personae-gold-alpha-3: rgba(196, 168, 106, 0.32);
+  --dsa-shop-hero-scrim: linear-gradient(180deg, rgba(18, 16, 14, 0.88) 0%, rgba(18, 16, 14, 0.58) 100%);
+  --dsa-shop-hero-scrim-subtle: linear-gradient(180deg, rgba(18, 16, 14, 0.4) 0%, rgba(18, 16, 14, 0.15) 100%);
+  --dsa-shop-hero-scrim-player: linear-gradient(180deg, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.62) 100%);
+  --dsa-shop-hero-player-fg: #f4efe6;
 
   // ── Core DSA5 ──────────────────────────────────────────────────────────────
 

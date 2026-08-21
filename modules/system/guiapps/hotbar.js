@@ -16,12 +16,14 @@ import GroupActorSheet from '../../actor/group-sheet.js';
 import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js';
 import NavalBoardWeapons from '../../combat/mkr/naval-board-weapons.js';
 import NavalBroadside from '../../combat/mkr/naval-broadside.js';
+import ImageFramePicker from '../helpers/image-frame-picker.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static BASEBARHEIGHT = 45;
   static ORDER_GROUPS = ['body', 'social', 'nature', 'knowledge', 'trade'];
   static VISIBLE_ROWS = 2;
+  static EDIT_SLOT_SELECTOR = '.skillItems:not([data-category="attacks"]):not([data-category="macro"]) li.primary';
   static FALLBACK_ICONS = {
     gm: 'systems/dsa5/icons/categories/DSA-Auge.webp',
     skillgm: 'systems/dsa5/icons/categories/Skill.webp',
@@ -50,6 +52,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       collapseBar: this.#onCollapse,
       openPartySheet: this.#openPartySheet,
       toggleFreeAction: this.#onToggleFreeAction,
+      panToActorToken: this.#panToActorToken,
       quickButton: { handler: this.#quickButton, buttons: [0, 2] },
       companionClick: this.#companionClick,
     },
@@ -78,6 +81,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     const html = $(this.element);
     this.element.classList.add('hotbarV4');
+    this.#syncEditModeClasses();
     this.element.querySelectorAll('.quantity-click').forEach(el => {
       el.addEventListener('mousedown', (ev) => RuleChaos.quantityClick(ev));
     });
@@ -388,6 +392,24 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   static async #companionClick(ev, target) {
     await CompanionHotbar.onClick(ev, target);
+  }
+
+  static async #panToActorToken() {
+    if (!canvas.ready) return;
+
+    const token = this.#hotbarTokenObject();
+    if (!token?.isVisible) return;
+
+    token.control({ releaseOthers: true });
+    await canvas.animatePan(token.center);
+  }
+
+  #hotbarTokenObject() {
+    if (!this.actor) return null;
+    if (this.actor.isToken) return this.actor.token?.object ?? null;
+
+    const token = this.actor.getActiveTokens()[0];
+    return token?.object ?? token ?? null;
   }
 
   #addContextColor() {
@@ -921,7 +943,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
         icon: "<i class='fa-solid fa-edit'></i>",
         visible: () => !!this.actor,
         onClick: () => {
-          this.#toggleEditMode();
+          this.toggleEditMode();
         }
       },
       {
@@ -960,14 +982,23 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     ui.context.menuItems = options;
   }
 
-  #toggleEditMode() {
+  toggleEditMode() {
     this.editMode = !this.editMode;
 
     if (!this.editMode) {
       this.#clearAutoScroll();
+    } else if (['attacks', 'macro'].includes(this.activeSection)) {
+      this.activeSection = 'skill';
     }
 
-    this.render(true);
+    return this.render({ force: true });
+  }
+
+  #syncEditModeClasses() {
+    this.element.classList.toggle('hotbar-edit-mode', !!this.editMode);
+    this.element.querySelectorAll(DSA5Hotbar.EDIT_SLOT_SELECTOR).forEach((el) => {
+      el.classList.toggle('wiggle-animation', !!this.editMode);
+    });
   }
 
   _updateToggles() {
@@ -1033,15 +1064,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   }
 
   #buildAvatarStyle(config) {
-    const { offsetX = 0, offsetY = 0, zoom = 100 } = config;
-    const parts = ['object-fit: cover'];
-    if (offsetX || offsetY) {
-      parts.push(`object-position: calc(50% + ${offsetX}px) calc(50% + ${offsetY}px)`);
-    }
-    if (zoom !== 100) {
-      parts.push(`transform: scale(${zoom / 100})`);
-    }
-    return parts.join('; ');
+    return ImageFramePicker.buildStyle(config);
   }
 
   #prepareResources(context) {

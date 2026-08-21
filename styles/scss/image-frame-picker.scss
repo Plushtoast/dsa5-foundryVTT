@@ -1,0 +1,107 @@
+/* Shared image frame picker (hotbar portrait + shop Ladenschild) */
+.dsa5 {
+  /*
+   * Cover sized from natural aspect (--img-ar), then zoomed.
+   * Unlike object-fit:cover + scale, zoom-out reveals more of the source.
+   */
+  .dsa-media-frame {
+    --frame-x: 0%;
+    --frame-y: 0%;
+    --frame-zoom: 1;
+    --img-ar: 1;
+    --frame-ar: calc(480 / 110);
+    position: relative;
+    overflow: hidden;
+    container-type: size;
+    aspect-ratio: var(--frame-aspect, 480 / 110);
+    background: #111;
+
+    &__img {
+      position: absolute;
+      left: calc(50% + var(--frame-x));
+      top: calc(50% + var(--frame-y));
+      /* Cover: max(frameW, frameH * imgAr) × zoom, etc. */
+      width: calc(var(--frame-zoom) * max(100cqw, 100cqh * var(--img-ar)));
+      height: calc(var(--frame-zoom) * max(100cqh, 100cqw / var(--img-ar)));
+      max-width: none;
+      max-height: none;
+      transform: translate(-50%, -50%) scale(var(--frame-flip, 1), 1);
+      object-fit: fill;
+      pointer-events: none;
+      user-select: none;
+    }
+  }
+
+  .dsa-image-frame {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+
+    &__preview {
+      overflow: hidden;
+      background: #111;
+      flex-shrink: 0;
+      border: 2px solid rgba(63, 49, 40, 0.5);
+
+      &.interactive {
+        cursor: grab;
+
+        &:active {
+          cursor: grabbing;
+        }
+      }
+    }
+
+    &__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      transform-origin: center center;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    &__hint {
+      margin: 0;
+      font-size: 0.85em;
+      opacity: 0.65;
+      font-style: italic;
+    }
+
+    &__controls {
+      width: 100%;
+      max-width: 420px;
+      padding: 0 8px;
+
+      label {
+        min-width: 44px;
+        font-weight: bold;
+      }
+
+      .dsadesignbutton.active {
+        background: var(--dsadesign1);
+        color: #fff;
+      }
+    }
+
+    &--portrait .dsa-image-frame__preview {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+    }
+
+    &--banner .dsa-image-frame__preview.dsa-media-frame {
+      width: min(100%, 480px);
+      border-radius: 6px;
+    }
+  }
+}
+
+.application.dsa5.image-frame-dialog {
+  .window-content {
+    overflow: auto;
+  }
+}

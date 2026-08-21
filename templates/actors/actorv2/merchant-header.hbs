@@ -1,14 +1,20 @@
-<div>
+<div class="dsa-shop-hero{{#if shopBanner}} dsa-shop-hero--has-banner{{/if}}">
+  {{#if shopBanner}}
+  <img class="dsa-shop-hero__bg" src="{{shopBanner}}" alt="" />
+  <div class="dsa-shop-hero__scrim"></div>
+  {{/if}}
+  <div class="dsa-shop-hero__content">
     <div class="flexrow wrap">
-        <div class="flexgrow-0">
-            {{> 'systems/dsa5/templates/actors/actorv2/avatar.hbs'}}
-        </div>
-        <div>
-            {{> 'systems/dsa5/templates/actors/merchant/merchant-header.hbs'}}
-            {{#if (ne merchantType 'loot')}}
-            {{> 'systems/dsa5/templates/actors/parts/attributes.hbs'}}
-            {{> 'systems/dsa5/templates/actors/parts/healthbar.hbs'}}
-            {{/if}}
-        </div>        
+      <div class="flexgrow-0">
+        {{> 'systems/dsa5/templates/actors/actorv2/avatar.hbs'}}
+      </div>
+      <div class="dsa-shop-hero__identity">
+        {{> 'systems/dsa5/templates/actors/merchant/merchant-header.hbs'}}
+        {{#if (ne merchantType 'loot')}}
+        {{> 'systems/dsa5/templates/actors/parts/attributes.hbs'}}
+        {{> 'systems/dsa5/templates/actors/parts/healthbar.hbs'}}
+        {{/if}}
+      </div>
     </div>
+  </div>
 </div>

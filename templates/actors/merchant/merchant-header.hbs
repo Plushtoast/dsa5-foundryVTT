@@ -4,12 +4,12 @@
     <a class='button icon fas fa-minimize flexAlignEnd dsadesignbutton noBorder' data-action='collapseHeader' data-tooltip='TT.collapseHeader'></a>
     <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>
   </div>
-  {{#if (ne merchantType 'loot')}}
-    <div class='headerbadgeflex headerInput autosizing'>
-      {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
-      {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
-      {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
-    </div>
-  {{/if}}
-
+  <div class='headerbadgeflex headerInput autosizing flexAlignCenter'>
+    {{#if (ne merchantType 'loot')}}
+    {{formInput systemFields.details.fields.species.fields.value value=document.system.details.species.value placeholder=(localize 'TYPES.Item.species') readonly=true}}
+    {{formInput systemFields.details.fields.culture.fields.value value=document.system.details.culture.value placeholder=(localize 'TYPES.Item.culture')}}
+    {{formInput systemFields.details.fields.career.fields.value value=document.system.details.career.value placeholder=(localize 'TYPES.Item.career')}}
+    {{/if}}
+    <i class='group-attr-icon dsa-merchant-type-icon {{merchantTypeIcon}} flex0' data-tooltip='{{localize merchantTypeLabel}}' aria-label='{{localize merchantTypeLabel}}'></i>
+  </div>
 </header>

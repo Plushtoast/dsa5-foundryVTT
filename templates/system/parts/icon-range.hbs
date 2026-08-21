@@ -1,0 +1,17 @@
+<div class="dsa-step-slider{{#if sliderClass}} {{sliderClass}}{{/if}}{{#if disabled}} dsa-step-slider--disabled{{/if}}" data-tooltip="{{hint}}">
+  <div class="dsa-step-slider__icons">
+    {{#each steps}}
+    <button type="button" class="dsa-step-slider__step{{#if img}} dsa-step-slider__step--img{{/if}}{{#if active}} active{{/if}}" data-action="{{../action}}"
+      data-value="{{value}}" data-tooltip="{{localize tooltip}}" {{disabled ../disabled}}>
+      {{#if img}}
+      <img src="{{img}}" alt="" />
+      {{else if icon}}
+      <i class="{{icon}}"></i>
+      {{/if}}
+      {{#if label}}
+      <span>{{localize label}}</span>
+      {{/if}}
+    </button>
+    {{/each}}
+  </div>
+</div>

@@ -15,6 +15,7 @@ import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 import NavalCombat from '../../combat/mkr/naval-combat.js';
+import DSABooleanField from '../fields/dsa_boolean_field.js';
 
 const { getProperty, setProperty } = foundry.utils;
 
@@ -59,6 +60,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       }),
       isArtifact: new BooleanField({ initial: false, label: 'SpecCategory.staff' }),
       isCeremonial: new BooleanField({ initial: false, label: 'SpecCategory.ceremonial' }),
+      uniq: new DSABooleanField({ initial: false, label: 'WEAPON.uniq', tooltip: 'WEAPON.uniqHint' }),
     });
   }
 

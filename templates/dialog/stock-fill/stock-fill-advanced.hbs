@@ -1,0 +1,62 @@
+<div class="tab scrollable gap5px {{tabs.advanced.cssClass}}" data-tab="advanced" data-group="{{tabs.advanced.group}}">
+  <div class="groupbox">
+    <div class="form-group" data-tooltip="MERCHANT.regionHint">
+      <label>{{localize 'PLANT.region'}}</label>
+      <input type="text" name="region" value="{{config.region}}">
+    </div>
+    <div class="form-group" data-tooltip="MERCHANT.maxPriceHint">
+      <label>{{localize 'MERCHANT.maxPrice'}}</label>
+      <input type="number" name="maxPrice" value="{{config.maxPrice}}" min="0" step="1">
+    </div>
+    <div class="form-group" data-tooltip="MERCHANT.enhanceChanceHint">
+      <label>{{localize 'MERCHANT.enhanceChance'}}</label>
+      <range-picker name="enhanceChance" value="{{enhanceChancePercent}}" min="0" max="100" step="1"></range-picker>
+    </div>
+    <div class="form-group" data-tooltip="MERCHANT.qlBandHint">
+      <label>{{localize 'MERCHANT.qlBand'}}</label>
+      <range-picker name="qlBand" value="{{config.qlBand}}" min="1" max="6" step="1"></range-picker>
+    </div>
+    <div class="form-group" data-tooltip="MERCHANT.poisonStepBandHint">
+      <label>{{localize 'MERCHANT.poisonStepBand'}}</label>
+      <range-picker name="poisonStepBand" value="{{config.poisonStepBand}}" min="1" max="6" step="1"></range-picker>
+    </div>
+    <div class="form-group" data-tooltip="MERCHANT.ammoStackHint">
+      <label>{{localize 'MERCHANT.ammoStack'}}</label>
+      <input type="number" name="ammoStack" value="{{config.ammoStack}}" min="1" step="1">
+    </div>
+    <div class="dsa-check-grid">
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.tradeableOnlyHint">
+        <input type="checkbox" name="tradeableOnly" {{checked config.tradeableOnly}}>
+        {{localize 'MERCHANT.tradeableOnly'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.allowDuplicatesHint">
+        <input type="checkbox" name="allowDuplicates" {{checked config.allowDuplicates}}>
+        {{localize 'MERCHANT.allowDuplicates'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.allowQlVariantsHint">
+        <input type="checkbox" name="allowQlVariants" {{checked config.allowQlVariants}}>
+        {{localize 'MERCHANT.fill.allowQlVariants'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.excludePriceZeroHint">
+        <input type="checkbox" name="hygiene.excludePriceZero" {{checked hygiene.excludePriceZero}}>
+        {{localize 'MERCHANT.fill.excludePriceZero'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.excludeArtifactsHint">
+        <input type="checkbox" name="hygiene.excludeArtifacts" {{checked hygiene.excludeArtifacts}}>
+        {{localize 'MERCHANT.fill.excludeArtifacts'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.excludeUniqHint">
+        <input type="checkbox" name="hygiene.excludeUniq" {{checked hygiene.excludeUniq}}>
+        {{localize 'MERCHANT.fill.excludeUniq'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.excludeMagicalHint">
+        <input type="checkbox" name="hygiene.excludeMagical" {{checked hygiene.excludeMagical}}>
+        {{localize 'MERCHANT.fill.excludeMagical'}}
+      </label>
+      <label class="dsa-check-grid__item" data-tooltip="MERCHANT.fill.includeRestrictedBooksHint">
+        <input type="checkbox" name="includeRestrictedBooks" {{checked includeRestrictedBooks}}>
+        {{localize 'MERCHANT.fill.includeRestrictedBooks'}}
+      </label>
+    </div>
+  </div>
+</div>

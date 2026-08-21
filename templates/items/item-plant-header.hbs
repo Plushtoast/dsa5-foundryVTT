@@ -23,6 +23,11 @@
       <div class='col four'>
         <label data-tooltip='UNITS.money' class='label-text table-title'>{{localize 'price'}}</label>
       </div>
+      {{#if customPrice}}
+      <div class='col fourty'>
+        <input data-tooltip='UNITS.money' class='input-text' type='number' value='{{customPrice}}' readonly />
+      </div>
+      {{else}}
       <div class='col fifteen'>
         <input data-tooltip='UNITS.money' class='input-text' type='number' name='system.price.raw' value='{{document.system.price.raw}}' />
       </div>
@@ -32,6 +37,7 @@
       <div class='col fifteen'>
         <input data-tooltip='UNITS.money' class='input-text' type='number' name='system.price.value' value='{{document.system.price.value}}' />
       </div>
+      {{/if}}
 
       <div class='col four'>
         <label data-tooltip='UNITS.weight' class='label-text table-title'>{{localize 'Weight'}}</label>

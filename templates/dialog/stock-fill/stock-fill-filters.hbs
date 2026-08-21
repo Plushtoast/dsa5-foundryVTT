@@ -1,0 +1,25 @@
+<div class="tab scrollable gap5px {{tabs.filters.cssClass}}" data-tab="filters" data-group="{{tabs.filters.group}}">
+  <div class="dsa-info-box dsam-2">
+    <div class="form-group dsa-attr-filters__enable" data-tooltip="MERCHANT.fill.filtersEnabledHint">
+      <label>{{localize 'MERCHANT.fill.filtersEnabled'}}</label>
+      <input type="checkbox" name="filtersEnabled" {{checked config.filtersEnabled}}>
+    </div>
+    <p class="dsa-info-text">{{localize 'MERCHANT.fill.filtersTabHint'}}</p>
+  </div>
+
+  <div class="dsa-attr-filters{{#unless config.filtersEnabled}} dsa-attr-filters--disabled{{/unless}}">
+    {{#each filterRows}}
+    <div class="dsa-filter-accordion category stock-fill-filter-category{{#if activeCount}} dsa-filter-accordion--active{{/if}}{{#if open}} dsa-filter-accordion--open{{/if}}"
+      data-category="{{key}}">
+      <button type="button" class="dsa-filter-accordion__header" data-action="collapseFilterCategory">
+        <i class="fas fa-angle-{{#if open}}up{{else}}down{{/if}} dsa-filter-accordion__chevron" aria-hidden="true"></i>
+        <span class="dsa-filter-accordion__title">{{localize label}}</span>
+        <span class="dsa-chip dsa-filter-accordion__badge" data-filter-badge {{#unless activeCount}}hidden{{/unless}}>{{activeCount}}</span>
+      </button>
+      <div class="expandDetails dsa-filter-accordion__body{{#if open}} shown{{/if}}">
+        {{{html}}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

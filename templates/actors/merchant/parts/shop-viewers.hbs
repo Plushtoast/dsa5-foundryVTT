@@ -1,0 +1,9 @@
+{{#if shopViewers.length}}
+<ul class="dsa-shop-viewers" aria-label="{{localize 'MERCHANT.stall.shopViewers'}}">
+  {{#each shopViewers}}
+  <li class="dsa-shop-viewers__item{{#if isGM}} dsa-shop-viewers__item--gm{{/if}}" data-tooltip="{{name}}">
+    <img class="dsa-shop-viewers__avatar" src="{{img}}" alt="{{name}}" />
+  </li>
+  {{/each}}
+</ul>
+{{/if}}

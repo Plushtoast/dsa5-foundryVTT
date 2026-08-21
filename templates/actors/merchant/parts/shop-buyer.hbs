@@ -1,0 +1,63 @@
+<div class="dsa-shop-buyer flexrow flexAlignStart">
+  {{#if showShopViewersInBuyer}}
+  <div class="dsa-shop-hero__titles dsa-shop-buyer__who dsa-shop-buyer__who--viewers">
+    <div class="dsa-shop-hero__titles-body">
+      <h2 class="dsa-shop-hero__title ellipsis">{{localize 'MERCHANT.stall.shopViewers'}}</h2>
+      {{#if shopViewers.length}}
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-viewers.hbs}}
+      {{else}}
+      <p class="dsa-shop-hero__subtitle ellipsis">{{localize 'MERCHANT.stall.shopViewersEmpty'}}</p>
+      {{/if}}
+    </div>
+  </div>
+  {{else if stall.hasBuyer}}
+  <div class="dsa-shop-hero__titles dsa-shop-buyer__who">
+    <img class="dsa-shop-buyer__avatar" src="{{tradeFriend.img}}" alt="" />
+    <div class="dsa-shop-hero__titles-body">
+      <h2 class="dsa-shop-hero__title ellipsis">
+        {{#if isGM}}
+        <a data-action="openTradeFriendSheet">{{tradeFriend.name}}</a>
+        {{else}}
+        {{tradeFriend.name}}
+        {{/if}}
+      </h2>
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-purse.hbs purse=stall.buyerPurse}}
+    </div>
+  </div>
+  {{else}}
+  <div class="dsa-shop-hero__titles dsa-shop-buyer__who dsa-shop-buyer__who--empty">
+    <img class="dsa-shop-buyer__avatar dsa-shop-buyer__avatar--empty" src="icons/svg/mystery-man.svg" alt="" />
+    <div class="dsa-shop-hero__titles-body">
+      <h2 class="dsa-shop-hero__title ellipsis">{{localize 'MERCHANT.tradeFriend'}}</h2>
+      <p class="dsa-shop-hero__subtitle ellipsis">{{localize 'MERCHANT.stall.noBuyerHint'}}</p>
+    </div>
+  </div>
+  {{/if}}
+  <div class="dsa-shop-buyer__actions flexrow">
+    {{#if isGM}}
+    {{#unless stall.isLoot}}
+    <button type="button"
+      class="icon fas fa-chalkboard noBorder dsadesignbutton{{#if stall.presentationMode}} active{{/if}}"
+      data-action="togglePresentationMode"
+      data-tooltip="MERCHANT.presentationModeHint"
+      aria-pressed="{{#if stall.presentationMode}}true{{else}}false{{/if}}"></button>
+    {{/unless}}
+    {{/if}}
+    {{#if hasOtherTradeFriend}}
+    <button type="button" class="icon fas fa-times noBorder dsadesignbutton" data-action="removeOtherTradeFriend" data-tooltip="MERCHANT.removeTradeFriend"></button>
+    {{else}}
+    <button type="button" class="icon fas fa-user-pen noBorder dsadesignbutton" data-action="choseTradefriend" data-tooltip="MERCHANT.stall.changeBuyer"></button>
+    {{/if}}
+    {{#if stall.hasBuyer}}
+    {{#if stall.isCards}}
+    {{#unless stall.presentationMode}}
+    {{#unless stall.isLoot}}
+    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="toggleSellMode">{{localize 'MERCHANT.stall.sell'}}</button>
+    {{else}}
+    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="toggleSellMode">{{localize 'MERCHANT.exchange'}}</button>
+    {{/unless}}
+    {{/unless}}
+    {{/if}}
+    {{/if}}
+  </div>
+</div>

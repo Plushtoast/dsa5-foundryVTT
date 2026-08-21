@@ -1,0 +1,133 @@
+{{#if stall.presentationMode}}
+<div class="dsa-shop-presentation">
+  <div class="dsa-info-box dsam-2">
+    <p class="dsa-info-text">{{stall.presentationHint}}</p>
+  </div>
+
+  <div class="dsa-shop-presentation__layout{{#if isGM}} dsa-shop-presentation__layout--gm{{/if}}">
+    {{#if isGM}}
+    <aside class="dsa-shop-presentation__catalog" aria-label="{{localize 'MERCHANT.presentation.catalog'}}">
+      <h3 class="underlined-header">{{localize 'MERCHANT.presentation.catalog'}}</h3>
+      <div class="itemlibrary-search-wrap">
+        <input type="search" class="input-text gearSearch" placeholder="{{localize 'gearSearch'}}" />
+      </div>
+      <ul class="dsa-shop-presentation__list scrollable">
+        {{#each stall.presentationCatalog as |entry|}}
+        <li class="dsa-shop-presentation__list-item item {{#if entry.featured}}dsa-shop-presentation__list-item--featured{{/if}}"
+          data-item-id="{{entry.id}}">
+          <button type="button" class="dsa-shop-presentation__pick" data-action="toggleShopFeatured"
+            data-tooltip="MERCHANT.fill.featured">
+            <i class="{{ifThen entry.featured 'fas' 'far'}} fa-star"></i>
+            <span class="ellipsis">{{entry.name}}</span>
+          </button>
+        </li>
+        {{/each}}
+      </ul>
+    </aside>
+    {{/if}}
+
+    <section class="dsa-shop-presentation__stage scrollable">
+      {{#if stall.presentationTiles.length}}
+      {{#each stall.presentationTiles as |tile|}}
+      <article class="dsa-shop-presentation__card item {{#if tile.unaffordable}}dsa-shop-tile--unaffordable{{/if}}"
+        data-item-id="{{tile.id}}" data-price-label="{{tile.payPriceLabel}}">
+        {{#if @root.isGM}}
+        <button type="button"
+          class="icon fas fa-times noBorder dsadesignbutton dsa-shop-presentation__remove"
+          data-action="toggleShopFeatured"
+          data-tooltip="MERCHANT.presentation.removeOffer"
+          aria-label="{{localize 'MERCHANT.presentation.removeOffer'}}"></button>
+        {{/if}}
+        <div class="dsa-shop-presentation__art"
+          style="background-image: url('{{tile.img}}')"></div>
+        <div class="dsa-shop-presentation__details">
+          <h2 class="dsa-shop-presentation__name">
+            {{#if @root.isGM}}
+            <a data-action="itemEdit">{{tile.name}}</a>
+            {{else}}
+            {{tile.name}}
+            {{/if}}
+          </h2>
+          {{#if @root.isGM}}
+          <div class="dsa-shop-presentation__prices">
+            <div class="dsa-shop-presentation__price-row">
+              <span class="dsa-shop-presentation__price-label">{{localize 'quantity'}}</span>
+              <span class="dsa-shop-presentation__price-value">{{tile.qty}}</span>
+            </div>
+            <div class="dsa-shop-presentation__price-row">
+              <span class="dsa-shop-presentation__price-label">{{localize 'MERCHANT.price.base'}}</span>
+              <span class="dsa-shop-presentation__price-value">{{tile.listPriceLabel}}</span>
+            </div>
+            <div class="dsa-shop-presentation__price-row">
+              <span class="dsa-shop-presentation__price-label">{{localize 'MERCHANT.price.merchant'}}</span>
+              <span class="dsa-shop-presentation__price-value">{{tile.merchantPriceLabel}}</span>
+            </div>
+            <div class="dsa-shop-presentation__price-row">
+              <label class="dsa-shop-presentation__price-label" for="presentation-custom-{{tile.id}}">{{localize 'MERCHANT.price.custom'}}</label>
+              <input id="presentation-custom-{{tile.id}}" class="customPriceTag" type="number" step="0.01" value="{{tile.customPriceTag}}" />
+            </div>
+          </div>
+          {{else}}
+          <p class="dsa-shop-presentation__qty">
+            <span class="dsa-shop-presentation__qty-label">{{localize 'quantity'}}</span>
+            <span class="dsa-shop-presentation__qty-value">{{tile.qty}}</span>
+          </p>
+          <p class="dsa-shop-presentation__price">{{tile.payPriceLabel}}</p>
+          {{/if}}
+          <button type="button" class="sheetButton dsa-shop-presentation__buy"
+            data-action="tradeWrapper" data-fct="buyItem" data-price="{{tile.payPrice}}"
+            data-tooltip="{{localize 'MERCHANT.buy'}}">
+            <i class="fas fa-shopping-cart"></i> {{localize 'MERCHANT.buy'}}
+          </button>
+        </div>
+      </article>
+      {{/each}}
+      {{else}}
+      <p class="hint">{{stall.presentationEmpty}}</p>
+      {{/if}}
+    </section>
+  </div>
+</div>
+{{else}}
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-filters.hbs}}
+
+  {{#if stall.isList}}
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-list.hbs}}
+  {{else}}
+  {{#if stall.specials.length}}
+  <section class="dsa-shop-specials">
+    <h3 class="underlined-header">{{localize 'MERCHANT.stall.specials'}}</h3>
+    <div class="dsa-shop-grid dsa-shop-grid--specials">
+      {{#each stall.specials as |tile|}}
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-tile.hbs tile=tile isLoot=false actionFct="buyItem" actionIcon="fas fa-shopping-cart" actionTooltip="MERCHANT.buy"}}
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  <section class="dsa-shop-stall">
+    {{#if stall.empty}}
+    <p class="hint">{{localize 'MERCHANT.stall.empty'}}</p>
+    {{else}}
+    <div class="dsa-shop-grid">
+      {{#each stall.tiles as |tile|}}
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-tile.hbs tile=tile isLoot=false actionFct="buyItem" actionIcon="fas fa-shopping-cart" actionTooltip="MERCHANT.buy"}}
+      {{/each}}
+    </div>
+    {{/if}}
+  </section>
+
+  {{#if stall.services.length}}
+  <section class="dsa-shop-services">
+    <h3 class="underlined-header">{{localize 'MERCHANT.stall.services'}}</h3>
+    <div class="dsa-shop-grid dsa-shop-grid--services">
+      {{#each stall.services as |tile|}}
+      {{> systems/dsa5/templates/actors/merchant/parts/shop-tile.hbs tile=tile isLoot=false actionFct="buyItem" actionIcon="fas fa-bell-concierge" actionTooltip="MERCHANT.buy"}}
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs}}
+  {{/if}}
+{{/if}}

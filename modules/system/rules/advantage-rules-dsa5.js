@@ -7,12 +7,32 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
   static setupFunctions() {}
-  static async vantageAdded(actor, item) {
-    if (game.dsa5.config.addvantageRules[item.name]) game.dsa5.config.addvantageRules[item.name](actor, item);
+
+  static ruleSteps(item, steps) {
+    const explicit = Number(steps);
+    if (Number.isFinite(explicit) && explicit > 0) return explicit;
+    return Number(item?.system?.step?.value) || 1;
+  }
+
+  static async vantageAdded(actor, item, steps) {
+    const fn = game.dsa5.config.addvantageRules[item.name];
+    if (fn) await fn(actor, item, AdvantageRulesDSA5.ruleSteps(item, steps));
+  }
+
+  static async vantageStepsChanged(actor, item, delta) {
+    const steps = Number(delta);
+    if (!Number.isFinite(steps) || steps === 0) return;
+    if (steps > 0) {
+      await AdvantageRulesDSA5.vantageAdded(actor, item, steps);
+      return;
+    }
+    const fn = game.dsa5.config.removevantageRules[item.name];
+    if (fn) await fn(actor, item, Math.abs(steps));
   }
 
   static async vantageRemoved(actor, item, render = true) {
-    if (game.dsa5.config.removevantageRules[item.name]) game.dsa5.config.removevantageRules[item.name](actor, item);
+    const fn = game.dsa5.config.removevantageRules[item.name];
+    if (fn) await fn(actor, item, AdvantageRulesDSA5.ruleSteps(item));
 
     let xpCost = AdvantageRulesDSA5.calcAPCostSum(item);
     xpCost = (await AdvantageRulesDSA5.removeSingularVantages(actor, item, xpCost)) * -1;
@@ -53,7 +73,7 @@ export default class AdvantageRulesDSA5 extends ItemRulesDSA5 {
         xpCost = this.addSingularVantages(actor, vantage, xpCost);
         await actor._updateAPs(xpCost, {}, { render: false });
         await actor.updateEmbeddedDocuments('Item', [vantage]);
-        await AdvantageRulesDSA5.vantageAdded(actor, vantage);
+        await AdvantageRulesDSA5.vantageAdded(actor, vantage, 1);
         await APTracker.track(
           actor,
           {

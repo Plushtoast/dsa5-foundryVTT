@@ -1,0 +1,13 @@
+<div class="image-frame-dialog flexcol gap5px">
+  <p class="hint">{{localize 'IMAGEFRAME.hint'}}</p>
+  {{> systems/dsa5/templates/system/parts/image-frame-picker.hbs}}
+  <footer class="flexrow flexAlignCenter gap4px">
+    <button type="button" class="sheetButton" data-action="save">
+      <i class="fas fa-save"></i> {{localize 'Save'}}
+    </button>
+    <button type="button" class="dsadesignbutton noBorder icon fas fa-undo" data-action="reset"
+      data-tooltip="DSA5HOTBARCONFIG.avatarReset"></button>
+    <div class="flex1"></div>
+    <button type="button" class="sheetButton" data-action="cancel">{{localize 'Cancel'}}</button>
+  </footer>
+</div>

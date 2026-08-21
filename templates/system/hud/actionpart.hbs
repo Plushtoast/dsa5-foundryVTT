@@ -63,7 +63,7 @@
                 <ul class="skillItems hSection thinscroll  {{#unless (eq ../activeSection @key)}}collapsed{{/unless}}"
                     data-category="{{@key}}">
                     {{#each skills as |item i|}}
-                    <li class="{{item.cssClass}} {{item.addClass}} slot {{../../editMode}} primary" data-action="quickButton"
+                    <li class="{{item.cssClass}} {{item.addClass}} slot {{@root.editMode}} primary" data-action="quickButton"
                         data-category="{{item.cssClass}}" data-id="{{item.id}}"
                         data-tooltip="{{item.name}}" data-name="{{item.name}}" data-subfunction="{{item.subfunction}}" data-tw="{{item.tw}}">
                         <div class="{{item.iconClass}}" style="background-image:url('{{item.icon}}')">{{item.abbrev}}

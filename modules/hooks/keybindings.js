@@ -45,7 +45,7 @@ export default function () {
     name: 'DIALOG.setTargetToUser',
     hint: 'DIALOG.setTargetToUserHint',
     editable: [],
-    onDown: async () => (await SelectUserDialog.getDialog()).render(true),
+    onDown: () => SelectUserDialog.open(),
     restricted: true,
   });
   game.keybindings.register('dsa5', 'openGroupSheet', {

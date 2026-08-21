@@ -1,0 +1,7 @@
+{{#if stall.blockers.length}}
+<div class="dsa-info-box dsa-shop-banner dsam-2">
+  {{#each stall.blockers as |block|}}
+  <p class="dsa-info-text">{{#if block.html}}{{{block.label}}}{{else}}{{block.label}}{{/if}}</p>
+  {{/each}}
+</div>
+{{/if}}

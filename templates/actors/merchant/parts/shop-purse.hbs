@@ -1,0 +1,16 @@
+{{#unless purse.hidden}}
+<button type="button" class="dsa-shop-purse {{#if purse.expanded}}dsa-shop-purse--open{{/if}}" data-action="toggleShopPurse" data-tooltip="{{localize 'MERCHANT.stall.purse'}}">
+  <i class="fas fa-coins"></i>
+  <strong>{{purse.label}}</strong>
+</button>
+{{#if purse.expanded}}
+<div class="dsa-shop-purse__coins flexrow wrap">
+  {{#each purse.coins as |coin|}}
+  <span class="dsa-shop-purse__coin" data-tooltip="{{localize coin.name}}">
+    <i style="background-image: url('{{coin.img}}')"></i>
+    {{coin.system.quantity.value}}
+  </span>
+  {{/each}}
+</div>
+{{/if}}
+{{/unless}}

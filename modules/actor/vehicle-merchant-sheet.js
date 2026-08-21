@@ -1,6 +1,6 @@
 import { MerchantSheetMixin } from './mixins/merchantmixin.js';
 import ActorSheetdsa5Vehicle from './vehicle-sheet.js';
-import { gearSearchPartTemplates } from './template-configs.js';
+import { merchantCommercePartTemplates } from './template-configs.js';
 
 export default class VehicleMerchantSheetDSA5 extends MerchantSheetMixin(ActorSheetdsa5Vehicle) {
   static MERCHANTPARTS = {
@@ -37,11 +37,7 @@ export default class VehicleMerchantSheetDSA5 extends MerchantSheetMixin(ActorSh
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],
-      templates: [
-        ...gearSearchPartTemplates,
-        'systems/dsa5/templates/actors/parts/containerContent.hbs',
-        'systems/dsa5/templates/actors/merchant/merchant-permission-part.hbs',
-      ],
+      templates: [...merchantCommercePartTemplates],
     },
     status: super.PARTS.status,
     notes: {

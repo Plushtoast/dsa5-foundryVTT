@@ -51,7 +51,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
     this.#docParent = parent;
     this.#docPack = pack;
 
-    this.documentTypes = this.#buildDocumentTypes(dialogOptions?.types);
+    this.documentTypes = this._buildDocumentTypes(dialogOptions?.types);
     this.hasTypes = this.documentTypes.length > 0;
     this.defaultType = this.#resolveDefaultType();
     this.selectedType = this.#resolveSelectedType();
@@ -69,7 +69,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
     return _loc('DOCUMENT.Create', { type: this.label });
   }
 
-  #buildDocumentTypes(restrictedTypes) {
+  _buildDocumentTypes(restrictedTypes) {
     const documentTypes = [];
     if (this.documentClass.TYPES.length <= 1) return documentTypes;
     if (restrictedTypes?.length === 0) throw new Error('The array of sub-types to restrict to must not be empty');
@@ -121,8 +121,12 @@ export class ItemCreateDialog extends DefaultAppv2 {
     return collection?._formatFolderSelectOptions() ?? [];
   }
 
-  #defaultName(type = this.selectedType) {
+  _defaultName(type = this.selectedType) {
     return this.cls.defaultName({ type, parent: this.#docParent, pack: this.#docPack });
+  }
+
+  _prepareCreateData(data) {
+    return data;
   }
 
   async _prepareContext(options) {
@@ -135,7 +139,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
       folders: this.folders,
       folder: this.data.folder,
       name: this.data.name || '',
-      defaultName: this.#defaultName(),
+      defaultName: this._defaultName(),
       type: this.selectedType,
       types: this.documentTypes.map((entry) => ({
         ...entry,
@@ -215,7 +219,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
 
   #updateNamePlaceholder() {
     const nameInput = this.element.querySelector('[name="name"]');
-    if (nameInput) nameInput.placeholder = this.#defaultName();
+    if (nameInput) nameInput.placeholder = this._defaultName();
   }
 
   async #onSubmit(event) {
@@ -223,9 +227,9 @@ export class ItemCreateDialog extends DefaultAppv2 {
 
     const form = event.currentTarget;
     const formData = new foundry.applications.ux.FormDataExtended(form).object;
-    const data = mergeObject(deepClone(this.data), formData);
+    const data = this._prepareCreateData(mergeObject(deepClone(this.data), formData));
     if (!data.folder) delete data.folder;
-    if (!data.name?.trim()) data.name = this.#defaultName(data.type);
+    if (!data.name?.trim()) data.name = this._defaultName(data.type);
 
     const created = await this.cls.create(data, { renderSheet: false, ...this.createOptions });
     created.sheet.render(true, this.renderOptions);

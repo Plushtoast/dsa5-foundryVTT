@@ -155,12 +155,18 @@ export default class WizardDSA5 extends DefaultAppv2 {
 
       switch (item.type) {
         case 'advantage':
-        case 'disadvantage':
+        case 'disadvantage': {
           item.system.step.value = Number(k.dataset.step);
           item = ItemRulesDSA5.reverseAdoptionCalculation(this.actor, parsed, item);
 
-          if (!this.mergeLevels(itemsToAdd, item, 'max')) AdvantageRulesDSA5.vantageAdded(this.actor, item);
+          const existing = itemsToAdd.find((x) => x.name == item.name && x.type == item.type);
+          const previous = Number(existing?.system.step.value) || 0;
+          this.mergeLevels(itemsToAdd, item, 'max');
+          const current = Number(itemsToAdd.find((x) => x.name == item.name && x.type == item.type)?.system.step.value) || 0;
+          const steps = current - previous;
+          if (steps) await AdvantageRulesDSA5.vantageAdded(this.actor, item, steps);
           break;
+        }
         case 'specialability':
           item.system.step.value = Number(k.dataset.step);
 

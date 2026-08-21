@@ -28,7 +28,8 @@ import { CombatSystem } from '../item/concerns/combat-system.js';
 import { ItemFactory } from '../item/item-factory.js';
 import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
-import { FateRolls } from './concerns/faterolls.js';
+import { ActorCreateDialog } from './actor-create-dialog.js';
+import MerchantModeHelper from './concerns/merchant-mode.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { getAppliedTraditionItems, prepareTraditionItems } from './tradition-items.js';
 import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
@@ -49,7 +50,14 @@ export default class Actordsa5 extends Actor {
   static skipAlternateWeaponKeys = new Set([['flags', 'system.description']]);
 
   static async create(data, options) {
-    if (Array.isArray(data) || data.items) return await super.create(data, options);
+    if (Array.isArray(data)) {
+      data = data.map((entry) => MerchantModeHelper.prepareCreateData(foundry.utils.deepClone(entry)));
+      return await super.create(data, options);
+    }
+
+    MerchantModeHelper.prepareCreateData(data);
+
+    if (data.items) return await super.create(data, options);
 
     if (data.type === 'group') {
       data.items = await DSA5_Utility.allMoneyItems();
@@ -66,6 +74,19 @@ export default class Actordsa5 extends Actor {
     if (data.type != 'creature' && [undefined, 0].includes(getProperty(data, 'system.status.wounds.value'))) mergeObject(data, { system: { status: { wounds: { value: 16 } } } });
 
     return await super.create(data, options);
+  }
+
+  static async createDocuments(data, operation = {}) {
+    const prepared = (Array.isArray(data) ? data : [data]).map((entry) => MerchantModeHelper.prepareCreateData(foundry.utils.deepClone(entry)));
+    return super.createDocuments(prepared, operation);
+  }
+
+  static async createDialog(data = {}, createOptions = {}, { folders, types, template, context, ...dialogOptions } = {}, renderOptions = {}) {
+    return ActorCreateDialog.wait(this, data, createOptions, { folders, types, template, context, ...dialogOptions }, renderOptions);
+  }
+
+  static defaultName(context = {}) {
+    return MerchantModeHelper.defaultCreateName(context) ?? super.defaultName(context);
   }
 
   static async deferredEffectAddition(effect, actor, target) {
@@ -735,6 +756,7 @@ export default class Actordsa5 extends Actor {
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
     this.#renderCompanionOwnerSheets();
+    if (userId === game.user.id) MerchantModeHelper.reopenSheetIfNeeded(this, changed);
   }
 
   #renderCompanionOwnerSheets() {
@@ -1448,6 +1470,8 @@ export default class Actordsa5 extends Actor {
         }
     }
 
+    MerchantModeHelper.applySheetClassToChange(this, data);
+
     return super._preUpdate(data, options, user);
   }
 
@@ -1635,10 +1659,12 @@ export default class Actordsa5 extends Actor {
 
   /**
    * Increase permanent AsP/KaP loss on the actor (e.g. artifact creation).
+   * NPCs and creatures ignore this — their listed AsP/KaP is already final.
    * @param {'astralenergy'|'karmaenergy'} state
    * @param {number} amount
    */
   async applyPermanentManaCost(state, amount) {
+    if (this.type !== 'character') return;
     const cost = Math.max(0, Number(amount) || 0);
     if (cost <= 0) return;
     const previous = Number(this.system.status[state].permanentLoss) || 0;
