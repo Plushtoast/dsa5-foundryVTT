@@ -931,9 +931,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     new game.dsa5.apps.DSA5Initializer(
       'DSA5 Module Initialization',
-      _loc(`${options?.scope || mod}.importContent`, {
-        defaultText: _loc('importDefault'),
-      }),
+      game.dsa5.apps.DSA5Initializer.moduleText(options?.scope || mod, 'importContent'),
       mod,
       game.i18n.lang,
       options,
@@ -1094,7 +1092,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       if (this.selectedChapter) {
         if (this.selectedChapter == 'prep') {
           const info = {
-            initDescr: _loc(`${this.bookData.options?.scope || this.bookData.moduleName}.importContent`, { defaultText: _loc('importDefault') }),
+            initDescr: game.dsa5.apps.DSA5Initializer.moduleText(this.bookData.options?.scope || this.bookData.moduleName, 'importContent'),
           };
 
           const modules = this.bookData.modules;

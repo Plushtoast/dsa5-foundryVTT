@@ -343,7 +343,10 @@
     "customBookRemoved": "Compendium removed from the journal browser.",
     "customBookDuplicate": "This compendium is already connected.",
     "customBookMissingCompendium": "The selected journal compendium could not be found.",
-    "customBookInvalidForm": "Please fill in all required fields."
+    "customBookInvalidForm": "Please fill in all required fields.",
+    "importHint": "Initialize the {name} module.",
+    "importContent": "<h1>Import the {name} module</h1><p>Import map, tokens, and journal entries for the adventure '{name}'.</p><p>The maps already contain the pre-made journal entries for running the adventure. You can display the entries via the menu on the left edge (<i class=\"fas fa-bookmark\"></i>). The tokens must be placed manually on the map.</p>{defaultText}",
+    "welcome": "<h1>{name}</h1><p>Congratulations on acquiring the adventure '{name}'. In the Journal Directory, you will find access to all relevant information via the <button class=\"openJournalBrowser\">Journal Browser</button> Here you can also initialize the adventure.</p>"
   },
   "CALENDAR": {
     "DSA": {

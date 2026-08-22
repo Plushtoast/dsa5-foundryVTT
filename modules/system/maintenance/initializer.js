@@ -3,6 +3,31 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 const { getProperty } = foundry.utils;
 
 export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
+  static moduleName(scope) {
+    const key = `${scope}.name`;
+    if (game.i18n.has(key)) return _loc(key);
+    return game.modules.get(scope)?.title || scope;
+  }
+
+  static moduleText(scope, key, extra = {}) {
+    const data = {
+      name: this.moduleName(scope),
+      defaultText: _loc('importDefault'),
+      ...extra,
+    };
+    const specificKey = `${scope}.${key}`;
+    if (game.i18n.has(specificKey)) return _loc(specificKey, data);
+    return _loc(`Book.${key}`, data);
+  }
+
+  static postWelcome(moduleId) {
+    if (!game.settings.settings.has(`${moduleId}.firstTimeStart`)) return;
+    if (game.settings.get(moduleId, 'firstTimeStart')) return;
+
+    ChatMessage.create(DSA5_Utility.chatDataSetup(this.moduleText(moduleId, 'welcome')));
+    game.settings.set(moduleId, 'firstTimeStart', true);
+  }
+
   constructor(title, content, module, lang = '', options = {}) {
     const data = {
       window: {
@@ -11,7 +36,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
       position: {
         width: 500,
       },
-      content,
+      content: content || DSA5Initializer.moduleText(options.scope || module, 'importContent'),
       buttons: [
         {
           action: 'initialize',
@@ -366,7 +391,7 @@ export default class DSA5Initializer extends foundry.applications.api.DialogV2 {
   }
 
   async getFolderForType(documentType, parent = null, folderName = null, sort = 0, color = '') {
-    if (!folderName) folderName = _loc(`${this.moduleScope}.name`);
+    if (!folderName) folderName = this.constructor.moduleName(this.moduleScope);
 
     return DSA5_Utility.getFolderForType(documentType, parent, folderName, sort, color);
   }

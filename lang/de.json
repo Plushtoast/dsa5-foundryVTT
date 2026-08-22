@@ -343,7 +343,10 @@
     "customBookRemoved": "Kompendium aus dem Journalbrowser entfernt.",
     "customBookDuplicate": "Dieses Kompendium ist bereits verbunden.",
     "customBookMissingCompendium": "Das ausgewählte Journal-Kompendium wurde nicht gefunden.",
-    "customBookInvalidForm": "Bitte fülle alle Pflichtfelder aus."
+    "customBookInvalidForm": "Bitte fülle alle Pflichtfelder aus.",
+    "importHint": "Initialisiere das {name} Modul.",
+    "importContent": "<h1>Import des {name} Moduls</h1><p>Importiere Map, Tokens und Tagebucheinträge für das Abenteuer '{name}'.</p><p>Die Karten enthalten bereits die vorgefertigten Tagebucheinträge zum Führen des Abenteuers. Die Einträge kannst du über das Menü am linken Rand (<i class=\"fas fa-bookmark\"></i>) einblenden. Die Tokens müssen händisch auf der Map platziert werden.</p>{defaultText}",
+    "welcome": "<h1>{name}</h1><p>Gratulation zum Erwerb des Abenteuers '{name}'. Im Journal Directory findest du Zugang zu allen relevanten Informationen über den <button class=\"openJournalBrowser\">Journal Browser</button> Hier kannst du das Abenteuer auch initialisieren.</p>"
   },
   "CALENDAR": {
     "DSA": {
