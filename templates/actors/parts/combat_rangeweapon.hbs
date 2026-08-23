@@ -24,7 +24,7 @@
 
         <div class="combat-item-range col five center max20">
             {{#if (ne item.system.ammunitiongroup.value "-")}}
-            <div class="row-section">
+            <div class="row-section flexAlignCenter">
 
                 <div class="magazinContainer">
                     {{#if item.ammoMax}}
@@ -33,15 +33,8 @@
                     </div>
                     {{/if}}
                 </div>
-                {{#if item.ammo}}
-                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}">
-                    {{selectOptions item.ammo selected=item.system.currentAmmo.value blank="-" valueAttr="_id" labelAttr="label"}}
-                </select>
-                {{else}}
-                <select name="currentAmmo-{{item._id}}" class="ammo-selector" data-item-id="{{item._id}}">
-                    <option>-</option>  
-                </select>
-                {{/if}}
+                {{> systems/dsa5/templates/actors/parts/combat_ammo_button.hbs ammo=item.selectedAmmo action="pickAmmo"}}
+                {{> systems/dsa5/templates/actors/parts/combat_ammo_menu.hbs ammo=item.ammo clearAmmo=item.clearAmmo}}
                 {{#if (and (ne item.LZ 0) (not (gt item.system.aimTime.progress 0)))}}
                 <a data-action="loadWeapon" data-tooltip="{{item.title}}">
                     <div class="progress-dsa5 blue">

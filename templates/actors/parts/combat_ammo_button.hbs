@@ -1,0 +1,13 @@
+<button type="button"
+    class="dsa-icon-count dsadesignbutton noBorder very-small {{#if ammo.selected}}selected{{/if}}"
+    data-tooltip="{{ammo.tooltip}}"
+    aria-label="{{ammo.tooltip}}"
+    {{#if action}}data-action="{{action}}"{{/if}}
+    {{#if ammo.pickId}}data-ammo-id="{{ammo.pickId}}"{{/if}}>
+    {{#if ammo.img}}
+    <span class="image" style="background-image: url('{{ammo.img}}')"></span>
+    <span class="dsa-icon-count__qty">×{{ammo.count}}</span>
+    {{else}}
+    <i class="fas fa-box-open" aria-hidden="true"></i>
+    {{/if}}
+</button>

@@ -245,6 +245,70 @@
         white-space: nowrap;
     }
 
+    .dsa-icon-count {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        width: auto;
+        min-width: 30px;
+        max-width: none;
+        height: 30px;
+        padding: 0 2px;
+        flex: 0 0 auto;
+        vertical-align: middle;
+
+        .image {
+            display: block;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        &__qty {
+            flex: 0 0 auto;
+            font-size: 12px;
+            font-weight: bold;
+            font-family: var(--boldFont);
+            line-height: 1;
+            white-space: nowrap;
+        }
+
+        &.selected {
+            outline: 2px solid var(--dsadesign1);
+            outline-offset: 1px;
+        }
+    }
+
+    .ammo-picker-menu {
+        ul {
+            width: 320px;
+        }
+
+        li {
+            width: auto;
+            height: 48px;
+        }
+
+        .dsa-icon-count {
+            height: 48px;
+
+            .image {
+                width: 48px;
+                height: 48px;
+                flex: 0 0 48px;
+            }
+
+            &__qty {
+                font-size: 14px;
+            }
+        }
+    }
+
     .member-card {
         padding: 8px;
         margin-bottom: 8px;
@@ -1764,6 +1828,51 @@
                 color: var(--bg-contrast-color);
                 font-size: var(--font-size-12);
             }
+        }
+    }
+}
+
+/* Floating item clone used by DomFlyAnimation (appended to document.body). */
+.dsa-dom-fly {
+    position: fixed;
+    z-index: 99999;
+    pointer-events: none;
+    border-radius: 4px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    will-change: transform, opacity;
+}
+
+.dsa-shop-trade-log {
+    margin-top: 8px;
+
+    &__section {
+        margin-bottom: 12px;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    &__row {
+        align-items: center;
+        min-height: 36px;
+        padding: 4px 6px;
+    }
+
+    a.content-link {
+        color: var(--dsa-link);
+        background: transparent;
+        border: none;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+
+        i {
+            display: none;
         }
     }
 }

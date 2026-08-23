@@ -3238,6 +3238,8 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 
     .vehicle-ammo-cell {
       line-height: 1;
+      overflow: visible;
+      position: relative;
     }
 
     .vehicle-ammo-btn {
@@ -3642,6 +3644,10 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
     width: 30px;
     height: 30px;
     border: none;
+  }
+
+  .dsa-icon-count {
+    color: #f2e8d5;
   }
 }
 
@@ -4360,6 +4366,12 @@ h2 {
 .magazinContainer {
   display: inline-block;
   width: 3px;
+  height: 30px;
+}
+
+.combat-item-range {
+  overflow: visible;
+  position: relative;
 }
 
 .item-structure {

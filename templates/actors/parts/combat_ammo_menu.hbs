@@ -1,0 +1,10 @@
+<div class="statusEffectMenu ammo-picker-menu">
+    <ul>
+        {{#if clearAmmo}}
+        <li>{{> systems/dsa5/templates/actors/parts/combat_ammo_button.hbs ammo=clearAmmo action="selectAmmo"}}</li>
+        {{/if}}
+        {{#each ammo as |am|}}
+        <li>{{> systems/dsa5/templates/actors/parts/combat_ammo_button.hbs ammo=am action="selectAmmo"}}</li>
+        {{/each}}
+    </ul>
+</div>

@@ -42,6 +42,7 @@ import PowersourceBar from '../system/enhancement/powersource-bar.js';
 import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
 import { combatPartTemplates } from './template-configs.js';
 import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
+import AmmoPicker from '../system/helpers/ammo-picker.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -242,6 +243,8 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       defenseToggle: this._defenseToggle,
       chargeSpell: { handler: this._chargeSpell, buttons: [0, 2] },
       loadWeapon: { handler: this._loadWeapon, buttons: [0, 2] },
+      pickAmmo: this._pickAmmo,
+      selectAmmo: this._selectAmmo,
       itemSwapMag: this._itemSwapMag,
       itemToggle: this._itemToggle,
       traditionPayCost: { handler: this._payAeSpecialAbilityCost, buttons: [0, 2] },
@@ -937,6 +940,31 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await this.actor.updateEmbeddedDocuments('Item', [update]);
   }
 
+  static _pickAmmo(_ev, target) {
+    const itemId = this._getItemId(target);
+    const weapon = this.actor.items.get(itemId);
+    if (!weapon) return;
+
+    if (!AmmoPicker.matchingAmmo(this.actor, weapon).length) {
+      ui.notifications.warn('VEHICLE.noAmmunition', { localize: true });
+      return;
+    }
+
+    const menu = $(target).siblings('.statusEffectMenu').find('ul');
+    this.element.querySelectorAll('.statusEffectMenu ul').forEach((ul) => {
+      if (ul !== menu[0]) $(ul).hide();
+    });
+    menu.fadeIn('fast');
+  }
+
+  static async _selectAmmo(_ev, target) {
+    const itemId = this._getItemId(target);
+    const pickId = target.dataset.ammoId;
+    if (!itemId || pickId == null) return;
+
+    await AmmoPicker.assign(this.actor, itemId, pickId === AmmoPicker.CLEAR ? '' : pickId);
+  }
+
   static async _itemSwapMag(ev, target) {
     await this.actor.swapMag(this._getItemId(target));
   }
@@ -1192,12 +1220,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     Riding.onRender(html, this.actor);
 
     if (!this.isEditable) return;
-
-    html.find('.ammo-selector').on('change', async (ev) => {
-      ev.preventDefault();
-      const itemId = this._getItemId(ev.currentTarget);
-      await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'system.currentAmmo.value': $(ev.currentTarget).val() }]);
-    });
 
     html.find('.money-change').on('change', this._onMoneyChange.bind(this));
     html.find('.skill-advances').on('change', async (ev) => {

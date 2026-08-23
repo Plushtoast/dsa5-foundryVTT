@@ -24,13 +24,8 @@
     {{#if showAmmoColumn}}
     <div class="col ten flexrow flexAlignCenter vehicle-ammo-cell">
       {{#if item.hasAmmunition}}
-      <button type="button" data-action="pickWeaponAmmo" data-item-id="{{item._id}}" class="dsadesignbutton very-small vehicle-ammo-btn" data-tooltip="{{item.ammoTooltip}}">
-        {{#if item.ammoEmpty}}
-        <i class="fas fa-box-open"></i>
-        {{else}}
-        <span class="vehicle-ammo-count">{{item.ammoLabel}}</span>
-        {{/if}}
-      </button>
+      {{> systems/dsa5/templates/actors/parts/combat_ammo_button.hbs ammo=item.selectedAmmo action="pickAmmo"}}
+      {{> systems/dsa5/templates/actors/parts/combat_ammo_menu.hbs ammo=item.ammo clearAmmo=item.clearAmmo}}
       {{else if item.ammoInfinite}}
       <span class="vehicle-ammo-infinite center" data-tooltip="{{item.ammoTooltip}}">
         <i class="fas fa-infinity" aria-hidden="true"></i>

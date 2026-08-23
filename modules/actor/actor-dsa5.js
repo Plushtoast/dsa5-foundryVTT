@@ -37,6 +37,7 @@ import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
+import AmmoPicker from '../system/helpers/ammo-picker.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
@@ -2342,8 +2343,7 @@ export default class Actordsa5 extends Actor {
 
       if (item.system.ammunitiongroup.value != '-') {
         item.ammo = ammunitions.filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
-
-        for (const am of item.ammo) am.label = `(${am.system.quantity.value}) ${am.name}`;
+        AmmoPicker.enrichWeapon(item);
 
         currentAmmo = item.ammo.find((x) => x._id == item.system.currentAmmo.value);
         if (currentAmmo) {
@@ -2384,6 +2384,11 @@ export default class Actordsa5 extends Actor {
             item: item.name,
           }),
         );
+    }
+
+    if (item.system.ammunitiongroup.value != '-' && !item.selectedAmmo) {
+      item.ammo = (ammunitions || []).filter((x) => x.system.ammunitiongroup.value == item.system.ammunitiongroup.value);
+      AmmoPicker.enrichWeapon(item);
     }
 
     return ItemDataModel._parseDmg(item, actor.system, currentAmmo);
