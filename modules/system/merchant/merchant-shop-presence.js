@@ -56,7 +56,7 @@ export default class MerchantShopPresence {
     if (!merchantId) return false;
     for (const app of foundry.applications.instances.values()) {
       if (app.actor?.id !== merchantId) continue;
-      if (typeof app.merchantSheetActivated === 'function' && app.merchantSheetActivated()) return true;
+      if (typeof app.tracksShopPresence === 'function' && app.tracksShopPresence()) return true;
     }
     return false;
   }
@@ -163,8 +163,9 @@ export default class MerchantShopPresence {
   static #refreshSheets(merchantId) {
     for (const app of foundry.applications.instances.values()) {
       if (app.actor?.id !== merchantId) continue;
-      if (typeof app.merchantSheetActivated !== 'function' || !app.merchantSheetActivated()) continue;
-      if (!app.rendered || !app.constructor?.PARTS?.header) continue;
+      if (typeof app.tracksShopPresence !== 'function' || !app.tracksShopPresence()) continue;
+      // Epic/Garadan player view has no header part; static PARTS.header still exists.
+      if (!app.rendered || !app.parts?.header) continue;
       app.render({ parts: ['header'] });
     }
   }

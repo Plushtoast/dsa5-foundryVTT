@@ -220,8 +220,19 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
+    /**
+     * Player/limited shop views stay interactive (buy, search, filters) even when the
+     * document is not editable (LIMITED permission or a locked pack). Edit view still
+     * honors Foundry's disabled state.
+     */
     _toggleDisabled(disabled) {
-      console.warn('Merchant sheet does not support disabled state');
+      super._toggleDisabled(this.merchantSheetActivated() ? false : disabled);
+    }
+
+    tracksShopPresence() {
+      if (!this.merchantSheetActivated()) return false;
+      const merchantType = this.actor.system.merchant?.merchantType;
+      return merchantType === 'merchant' || merchantType === 'loot';
     }
 
     _prepareTabs(group) {
@@ -574,9 +585,12 @@ export const MerchantSheetMixin = (superclass) =>
 
       if (this.merchantSheetActivated()) {
         this.#bindStallItemTooltips(signal);
-        await MerchantShopPresence.ensureJoined(this.actor.id, this.#shopPresence);
       } else {
         this.#clearStallTooltipChrome();
+      }
+      if (this.tracksShopPresence()) {
+        await MerchantShopPresence.ensureJoined(this.actor.id, this.#shopPresence);
+      } else {
         await MerchantShopPresence.leave(this.actor.id, this.#shopPresence);
       }
     }
