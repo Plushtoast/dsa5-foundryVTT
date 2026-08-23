@@ -22,6 +22,8 @@
         data-tooltip="MERCHANT.pickShopImage"></button>
       <button type="button" class="icon fas fa-crop-simple noBorder dsadesignbutton" data-action="configureShopBannerFrame"
         data-tooltip="MERCHANT.shopImageFrame" {{#unless shop.shopImage}}disabled{{/unless}}></button>
+      <button type="button" class="icon fas fa-eye noBorder dsadesignbutton" data-action="showShopImage"
+        data-tooltip="MERCHANT.shopImageShow" {{#unless shop.shopImage}}disabled{{/unless}}></button>
       <button type="button" class="icon fas fa-user noBorder dsadesignbutton" data-action="useActorImage"
         data-tooltip="MERCHANT.useActorImage"></button>
       <button type="button" class="icon fas fa-times noBorder dsadesignbutton" data-action="clearShopImage"
@@ -101,7 +103,8 @@
 </div>
 
 <div class="groupbox">
-  <legend class="table-title lineheight">{{localize 'MERCHANT.fill.shopDay'}}</legend>
+  <legend class="table-title lineheight" data-tooltip="MERCHANT.fill.shopDayHint">{{localize 'MERCHANT.fill.shopDay'}}</legend>
+  <p class="hint">{{localize 'MERCHANT.fill.shopDaySectionHint'}}</p>
   <div class="form-group" data-tooltip="MERCHANT.dailyHidePercentHint">
     <label>{{localize 'MERCHANT.dailyHidePercent'}}</label>
     <range-picker name="system.merchant.shop.stockRules.dailyHidePercent" min="0" max="100" step="1"

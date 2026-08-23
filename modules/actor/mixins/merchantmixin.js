@@ -66,6 +66,7 @@ export const MerchantSheetMixin = (superclass) =>
         useActorImage: this._useActorImage,
         clearShopImage: this._clearShopImage,
         configureShopBannerFrame: this._configureShopBannerFrame,
+        showShopImage: this._showShopImage,
         setMerchantType: this._setMerchantType,
         setGaradan: this._setGaradan,
         setPriceTier: this._setPriceTier,
@@ -298,6 +299,20 @@ export const MerchantSheetMixin = (superclass) =>
       });
     }
 
+    static _showShopImage() {
+      const imageSrc = MerchantConfig.shopBannerSrc(this.actor);
+      if (!imageSrc) {
+        ui.notifications.warn('MERCHANT.shopImageFrameNeedImage', { localize: true });
+        return;
+      }
+      return DSA5_Utility.showArtwork({
+        img: imageSrc,
+        name: MerchantConfig.shopDisplayName(this.actor),
+        uuid: this.actor.uuid,
+        isOwner: true,
+      });
+    }
+
     static _setMerchantType(ev, target) {
       return MerchantModeHelper.setMerchantType(this.actor, target.dataset.value);
     }
@@ -463,8 +478,10 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static async _applyDailyHide() {
-      const hidden = await MerchantStockService.applyDailyHide(this.actor);
-      if (hidden != null) ui.notifications.info(_loc('MERCHANT.fill.shopDayDone', { count: hidden }));
+      const result = await MerchantStockService.applyDailyHide(this.actor);
+      if (result == null) return;
+      if (result.reset) ui.notifications.info(_loc('MERCHANT.fill.shopDayReset'));
+      else ui.notifications.info(_loc('MERCHANT.fill.shopDayDone', { count: result.hidden }));
     }
 
     static async _merchantSectionMenu(ev, target) {

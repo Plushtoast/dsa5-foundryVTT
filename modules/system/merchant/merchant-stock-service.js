@@ -183,6 +183,12 @@ export default class MerchantStockService {
       .map(([key]) => key);
   }
 
+  static requestedFillCount(config) {
+    return this.enabledCategoryKeys(config).reduce((sum, key) => {
+      return sum + Math.max(0, Number(config.categories?.[key]?.number) || 0);
+    }, 0);
+  }
+
   static itemPrice(item) {
     if (!item) return 0;
     if (item.type === 'consumable') {
@@ -358,7 +364,7 @@ export default class MerchantStockService {
     if (filter && (filter.selects?.length || filter.inputs?.length || filter.booleans?.length || filter.rangeSearches?.length)) {
       pool = await library.findEquipmentItemDetailed(filter, category, false);
     } else {
-      pool = await library.getRandomItems(category, requested + 8);
+      pool = await library.getRandomItems(category, Math.max(requested * 3, requested + 24));
     }
 
     if (category === 'plant' && config.region) {
@@ -431,8 +437,12 @@ export default class MerchantStockService {
     if (persist && MerchantConfig.shopOf(actor)) {
       await this.#persistFillConfig(actor, normalized);
     }
+    const requested = this.requestedFillCount(normalized);
     if (notify && created.length) {
       ui.notifications.info(_loc('MERCHANT.fill.done', { count: created.length }));
+    }
+    if (notify && items.length < requested) {
+      ui.notifications.warn(_loc('MERCHANT.fill.shortfall', { got: items.length, requested }));
     }
     return created;
   }
@@ -484,18 +494,34 @@ export default class MerchantStockService {
     const shop = MerchantConfig.shopOf(actor);
     const hidePercent = Math.max(0, Math.min(100, Number(shop?.stockRules?.dailyHidePercent) || 0));
     const variationMax = Math.max(0, Math.min(50, Number(shop?.stockRules?.priceVariationPercent ?? 10)));
-    if (hidePercent <= 0 && variationMax <= 0) {
-      ui.notifications.warn(_loc('MERCHANT.fill.shopDayZero'));
-      return null;
-    }
 
-    const mode = shop?.stockRules?.dailyHideMode || 'random';
     const candidates = actor.items.filter((item) => {
       if (!DSA5.equipmentCategories.has(item.type)) return false;
       if (item.system?.tradeLocked) return false;
       return !getProperty(item, 'system.worn.value');
     });
 
+    const hadMods = candidates.some((item) => {
+      if (item.getFlag('dsa5', HIDDEN_FLAG)) return true;
+      const mod = Number(item.getFlag('dsa5', PRICE_MOD_FLAG));
+      return Number.isFinite(mod) && mod !== 0;
+    });
+
+    if (hidePercent <= 0 && variationMax <= 0) {
+      if (!hadMods) {
+        ui.notifications.warn(_loc('MERCHANT.fill.shopDayZero'));
+        return null;
+      }
+      const clears = candidates.map((item) => ({
+        _id: item.id,
+        [`flags.dsa5.${HIDDEN_FLAG}`]: false,
+        [`flags.dsa5.${PRICE_MOD_FLAG}`]: 0,
+      }));
+      if (clears.length) await actor.updateEmbeddedDocuments('Item', clears);
+      return { hidden: 0, reset: true };
+    }
+
+    const mode = shop?.stockRules?.dailyHideMode || 'random';
     const updates = candidates.map((item) => ({
       _id: item.id,
       [`flags.dsa5.${HIDDEN_FLAG}`]: false,
@@ -520,7 +546,7 @@ export default class MerchantStockService {
     }
 
     if (updates.length) await actor.updateEmbeddedDocuments('Item', updates);
-    return updates.filter((row) => row[`flags.dsa5.${HIDDEN_FLAG}`]).length;
+    return { hidden: updates.filter((row) => row[`flags.dsa5.${HIDDEN_FLAG}`]).length, reset: false };
   }
 
   /** Random integer percent in [-max, +max] (1% steps). */
