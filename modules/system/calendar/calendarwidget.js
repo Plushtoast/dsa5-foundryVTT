@@ -43,18 +43,18 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             toggleAutoLight: this.toggleAutoLight,
             toggleAutoTime: this.onToggleAutoTime,
             toggleAutoWeather: this.toggleAutoWeather,
-            weekBack: this.weekBack,
-            dayBack: this.dayBack,
-            hours6Back: this.hours6Back,
-            hourBack: this.hourBack,
-            mins30Back: this.mins30Back,
-            minBack: this.minBack,
-            minForward: this.minForward,
-            mins30Forward: this.mins30Forward,
-            hourForward: this.hourForward,
-            hours6Forward: this.hours6Forward,
-            dayForward: this.dayForward,
-            weekForward: this.weekForward,
+            weekBack: this.#timeStep(this.weekBack),
+            dayBack: this.#timeStep(this.dayBack),
+            hours6Back: this.#timeStep(this.hours6Back),
+            hourBack: this.#timeStep(this.hourBack),
+            mins30Back: this.#timeStep(this.mins30Back),
+            minBack: this.#timeStep(this.minBack),
+            minForward: this.#timeStep(this.minForward),
+            mins30Forward: this.#timeStep(this.mins30Forward),
+            hourForward: this.#timeStep(this.hourForward),
+            hours6Forward: this.#timeStep(this.hours6Forward),
+            dayForward: this.#timeStep(this.dayForward),
+            weekForward: this.#timeStep(this.weekForward),
         },
     };
 
@@ -64,6 +64,10 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             template: 'systems/dsa5/templates/system/calendar/widget.hbs',
         },
     };
+
+    static #timeStep(handler) {
+        return { handler, buttons: [0, 2] };
+    }
 
     isAnimatingTime = false;
     _animationToken = 0;
@@ -161,6 +165,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     static pendingAnimationDurationMs = null;
     /** When true, next scrub uses linear easing to match constant token travel speed */
     static pendingAnimationLinear = false;
+    /** When true, the next world-time jump skips the clock scrub and snaps to the end. */
+    static skipNextTimeAnimation = false;
 
     /**
      * Scrub duration from √hours — snappy for short steps, soft-capped for long jumps.
@@ -271,9 +277,19 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
      * @returns {boolean} True when animation owns the refresh path
      */
     maybeAnimateTimeChange(worldTime, dt) {
+        const skipAnimation = this.constructor.skipNextTimeAnimation;
+        if (skipAnimation) this.constructor.skipNextTimeAnimation = false;
+
         if (!this.rendered || !this.element) {
             this.constructor.pendingAnimationDurationMs = null;
             this.constructor.pendingAnimationLinear = false;
+            return false;
+        }
+
+        if (skipAnimation) {
+            this.constructor.pendingAnimationDurationMs = null;
+            this.constructor.pendingAnimationLinear = false;
+            if (this.isAnimatingTime) this.terminateTimeAnimation();
             return false;
         }
 
@@ -617,25 +633,29 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (picker.rendered) picker.changeTab(resolvedTab, 'sheet');
     }
 
-    timeAdvance(seconds) {
+    timeAdvance(seconds, ev) {
         this._pinAdvanceMenu = true;
+        if (ev?.button === 2) {
+            ev.preventDefault?.();
+            this.constructor.skipNextTimeAnimation = true;
+        }
         const components = game.time.calendar.timeToComponents(game.time.worldTime);
         const adjustment = components.second;
         game.time.advance(seconds + - adjustment);
     }
 
-    static weekBack() { this.timeAdvance(-this.constructor.SECONDS_PER_DAY * 7); }
-    static dayBack() { this.timeAdvance(-this.constructor.SECONDS_PER_DAY); }
-    static hours6Back() { this.timeAdvance(-6 * this.constructor.SECONDS_PER_HOUR); }
-    static hourBack() { this.timeAdvance(-this.constructor.SECONDS_PER_HOUR); }
-    static mins30Back() { this.timeAdvance(-1800); }
-    static minBack() { this.timeAdvance(-60); }
-    static minForward() { this.timeAdvance(60); }
-    static mins30Forward() { this.timeAdvance(1800); }
-    static hourForward() { this.timeAdvance(this.constructor.SECONDS_PER_HOUR); }
-    static hours6Forward() { this.timeAdvance(6 * this.constructor.SECONDS_PER_HOUR); }
-    static dayForward() { this.timeAdvance(this.constructor.SECONDS_PER_DAY); }
-    static weekForward() { this.timeAdvance(this.constructor.SECONDS_PER_DAY * 7); }
+    static weekBack(ev) { this.timeAdvance(-this.constructor.SECONDS_PER_DAY * 7, ev); }
+    static dayBack(ev) { this.timeAdvance(-this.constructor.SECONDS_PER_DAY, ev); }
+    static hours6Back(ev) { this.timeAdvance(-6 * this.constructor.SECONDS_PER_HOUR, ev); }
+    static hourBack(ev) { this.timeAdvance(-this.constructor.SECONDS_PER_HOUR, ev); }
+    static mins30Back(ev) { this.timeAdvance(-1800, ev); }
+    static minBack(ev) { this.timeAdvance(-60, ev); }
+    static minForward(ev) { this.timeAdvance(60, ev); }
+    static mins30Forward(ev) { this.timeAdvance(1800, ev); }
+    static hourForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_HOUR, ev); }
+    static hours6Forward(ev) { this.timeAdvance(6 * this.constructor.SECONDS_PER_HOUR, ev); }
+    static dayForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_DAY, ev); }
+    static weekForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_DAY * 7, ev); }
 
     static onToggleAutoTime(ev, target) {
         if (!DSA5_Utility.isActiveGM()) return;
@@ -658,6 +678,9 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (!game.user.isGM) return;
 
         this._setupDragHandlers();
+        this.element.querySelectorAll('.calendar-step').forEach((el) => {
+            el.addEventListener('contextmenu', (ev) => ev.preventDefault());
+        });
         this._restoreAdvanceMenuAfterRerender();
     }
 
@@ -720,13 +743,18 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     }
 
     _teardownDragHandlers() {
+        const doc = this.element?.ownerDocument;
         if (this._onDocumentMouseMove) {
-            this.element?.ownerDocument?.removeEventListener('mousemove', this._onDocumentMouseMove);
+            doc?.removeEventListener('mousemove', this._onDocumentMouseMove);
             this._onDocumentMouseMove = null;
         }
         if (this._onDocumentMouseUp) {
-            this.element?.ownerDocument?.removeEventListener('mouseup', this._onDocumentMouseUp);
+            doc?.removeEventListener('mouseup', this._onDocumentMouseUp);
             this._onDocumentMouseUp = null;
+        }
+        if (this._onDocumentContextMenu) {
+            doc?.removeEventListener('contextmenu', this._onDocumentContextMenu);
+            this._onDocumentContextMenu = null;
         }
     }
 
@@ -738,16 +766,27 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (!indicator || !container) return;
 
         indicator.addEventListener('mousedown', this._handleMouseDown.bind(this));
+        indicator.addEventListener('contextmenu', (e) => e.preventDefault());
         // Keep scrubbing even if the pointer leaves the small icon while dragging
         this._onDocumentMouseMove = (e) => this._handleMouseMove(container, indicator, e);
         this._onDocumentMouseUp = (e) => this._handleMouseUp(e);
+        this._onDocumentContextMenu = (e) => {
+            if (!this.isDragging && !this._suppressContextMenu) return;
+            e.preventDefault();
+            this._suppressContextMenu = false;
+        };
         this.element.ownerDocument.addEventListener('mousemove', this._onDocumentMouseMove);
         this.element.ownerDocument.addEventListener('mouseup', this._onDocumentMouseUp);
+        this.element.ownerDocument.addEventListener('contextmenu', this._onDocumentContextMenu);
     }
 
     _handleMouseDown(e) {
+        if (e.button !== 0 && e.button !== 2) return;
+
         this.isDragging = true;
         this.wasDragging = false;
+        this._skipTimeAnimation = e.button === 2;
+        this._suppressContextMenu = e.button === 2;
         e.preventDefault();
         e.stopPropagation();
     }
@@ -802,6 +841,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         if (!this.isDragging) return;
 
         this.isDragging = false;
+        const skipAnimation = this._skipTimeAnimation;
+        this._skipTimeAnimation = false;
+        if (this._suppressContextMenu) {
+            setTimeout(() => { this._suppressContextMenu = false; }, 0);
+        }
         ev.preventDefault();
         ev.stopPropagation();
 
@@ -814,6 +858,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const advanceTime = Math.floor(newSeconds - currentSeconds);
         if (advanceTime === 0) return;
 
+        if (skipAnimation) this.constructor.skipNextTimeAnimation = true;
         game.time.advance(advanceTime);
     }
 }
