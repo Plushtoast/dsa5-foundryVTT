@@ -592,15 +592,17 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   async getRandomItems(category, limit) {
-    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: category, limit: this.filterLimit });
+    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
 
     const shuffledItems = this.shuffle(filteredItems)
       .slice(0, limit + 5)
-      .map(x => this._getStoredObject(this.indexes.Item, x));
+      .map(x => this._getStoredObject(this.indexes.Item, x))
+      .filter(x => x?.uuid);
 
     const documents = await Promise.all(shuffledItems.map(x => fromUuid(x.uuid)));
     return documents
       .filter(x => {
+        if (!x) return false;
         const enchantments = x.getFlag('dsa5', 'enchantments');
         return !enchantments || !enchantments.some(enchant => enchant.talisman);
       })

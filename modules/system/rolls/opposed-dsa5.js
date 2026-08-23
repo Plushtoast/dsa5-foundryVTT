@@ -109,19 +109,19 @@ export default class OpposedDsa5 {
 
     if (opposeFlag) {
       // DEFEND - Actor is responding to an attack
-      OpposedDsa5.answerOpposedTest(actor, message, testResult, preData, opposeFlag);
+      await OpposedDsa5.answerOpposedTest(actor, message, testResult, preData, opposeFlag);
     } else if (game.user.targets.size && message.flags.data.isOpposedTest && !message.flags.data.defenderMessage && !message.flags.data.attackerMessage && !message.flags.data.startMessagesList) {
       // ATTACK - Actor is initiating an attack against targets
-      OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
+      await OpposedDsa5.createOpposedTest(actor, message, testResult, preData);
     } else if (message.flags.data.defenderMessage || message.flags.data.attackerMessage) {
       // NOT DEFEND - Resolving final opposed test results
-      OpposedDsa5.resolveFinalMessage(message);
+      await OpposedDsa5.resolveFinalMessage(message);
     } else if (message.flags.data.unopposedStartMessage) {
       // EDIT NOT DEFEND - Re-doing an undefended test
-      OpposedDsa5.redoUndefended(message);
+      await OpposedDsa5.redoUndefended(message);
     } else if (message.flags.data.startMessagesList) {
       // EDIT - Changing start message data
-      OpposedDsa5.changeStartMessage(message);
+      await OpposedDsa5.changeStartMessage(message);
     } else {
       // DMG ONLY ROLL - Handle damage-only scenarios
       await this.showDamage(message);
@@ -173,8 +173,12 @@ export default class OpposedDsa5 {
    */
   static async redoUndefended(message) {
     const startMessage = game.messages.get(message.flags.data.unopposedStartMessage);
-    startMessage.flags.unopposeData.attackMessageId = message.id;
-    this.resolveUndefended(startMessage);
+    if (!startMessage) return;
+
+    if (startMessage.flags.unopposeData.attackMessageId !== message.id) {
+      await startMessage.update({ 'flags.unopposeData.attackMessageId': message.id });
+    }
+    await this.resolveUndefended(startMessage);
   }
 
   /**
@@ -378,29 +382,29 @@ export default class OpposedDsa5 {
    * Resolves and displays the final result of an opposed test
    * Processes either attacker or defender message to complete the opposed test
    * @param {ChatMessage} message - The final message in the opposed test sequence
-   * @returns {void}
+   * @returns {Promise<void>}
    */
-  static resolveFinalMessage(message) {
-    let attacker, defender;
+  static async resolveFinalMessage(message) {
     if (message.flags.data.defenderMessage) {
       for (const msg of message.flags.data.defenderMessage) {
-        attacker = OpposedDsa5.getMessageDude(message);
+        const attacker = OpposedDsa5.getMessageDude(message);
         const defenderMessage = game.messages.get(msg);
-        defender = OpposedDsa5.getMessageDude(defenderMessage);
-        this.completeOpposedProcess(attacker, defender, {
+        const defender = OpposedDsa5.getMessageDude(defenderMessage);
+        await this.completeOpposedProcess(attacker, defender, {
           blind: message.blind,
           whisper: message.whisper,
         });
       }
-    } else {
-      defender = OpposedDsa5.getMessageDude(message);
-      const attackerMessage = game.messages.get(message.flags.data.attackerMessage);
-      attacker = OpposedDsa5.getMessageDude(attackerMessage);
-      this.completeOpposedProcess(attacker, defender, {
-        blind: message.blind,
-        whisper: message.whisper,
-      });
+      return;
     }
+
+    const defender = OpposedDsa5.getMessageDude(message);
+    const attackerMessage = game.messages.get(message.flags.data.attackerMessage);
+    const attacker = OpposedDsa5.getMessageDude(attackerMessage);
+    await this.completeOpposedProcess(attacker, defender, {
+      blind: message.blind,
+      whisper: message.whisper,
+    });
   }
 
   /**

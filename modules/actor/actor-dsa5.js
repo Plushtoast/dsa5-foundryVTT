@@ -30,6 +30,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { ActorCreateDialog } from './actor-create-dialog.js';
 import MerchantModeHelper from './concerns/merchant-mode.js';
+import { FateRolls } from './concerns/faterolls.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { getAppliedTraditionItems, prepareTraditionItems } from './tradition-items.js';
 import AspPaymentDialog from '../dialog/asp-payment-dialog.js';

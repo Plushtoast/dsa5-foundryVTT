@@ -197,7 +197,7 @@ export default class QueryOrchestrator {
       return { status: 'ok', result };
     } catch (error) {
       if (this.isSoftQueryFailure(error)) {
-        console.warn(`${label} query expired`, error);
+        console.warn(`${label} query expired: ${error?.message || error}`);
         return { status: 'expired' };
       }
       console.error(`Failed to query ${label}`, error);

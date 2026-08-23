@@ -365,7 +365,13 @@ export default class MerchantStockService {
       pool = this.#preferRegion(pool, config.region);
     }
 
-    const documents = pool.map((entry) => (entry.toObject ? entry.toObject() : duplicate(entry)));
+    const documents = pool
+      .map((entry) => (entry?.toObject ? entry.toObject() : entry ? duplicate(entry) : null))
+      .filter(Boolean)
+      .map((item) => {
+        delete item._id;
+        return item;
+      });
     const filtered = this.filterSeen(documents, actor, config);
     const shuffled = library.shuffle(filtered);
     return shuffled.slice(0, requested);

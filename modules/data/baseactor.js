@@ -77,6 +77,8 @@ export class ActorDataModel extends DSADataModel {
       liturgyStats: { damage: '0' },
       meleeStats: this._createMeleeStatsStructure(),
       rangeStats: this._createRangeStatsStructure(),
+      meleeweaponRollModifiers: { waterOptions: this._createWaterCombatModifierOverlay() },
+      rangeweaponRollModifiers: { waterOptions: this._createWaterCombatModifierOverlay() },
       defaultWeapon: this._createDefaultWeaponStructure(),
     });
 
@@ -180,6 +182,15 @@ export class ActorDataModel extends DSADataModel {
         KaPConditional: [],
         AsPConditional: [],
       }
+    };
+  }
+
+  _createWaterCombatModifierOverlay() {
+    return {
+      0: { mod: 0 },
+      1: { mod: 0 },
+      2: { mod: 0 },
+      3: { mod: 0 },
     };
   }
 

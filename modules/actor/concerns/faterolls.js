@@ -201,8 +201,7 @@ export class FateRolls {
      * @param {number} schipsource - Source of fate points (0=personal, 1=group)
      */
     static async fatereroll(actor, infoMsg, cardOptions, newTestData, message, data, schipsource) {
-        cardOptions.fatePointDamageRerollUsed = true;
-        this.#resetTargetAndMessage(data, cardOptions);
+        this.#prepareDiceFateRerollContext(data, cardOptions);
         const { characteristics } = data.postData;
         const html = await renderTemplate('systems/dsa5/templates/dialog/fateReroll-dialog.hbs', {
             testData: newTestData,
@@ -235,6 +234,9 @@ export class FateRolls {
                         newTestData.fateUsed = true;
                         const finalInfoMsg = `${infoMsg}<p><b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
                         await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
+                        if (this.#hasOpposedChain(data)) {
+                            DSA5_Utility.clearUserTargets();
+                        }
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                         await message.update({ [`flags.data.${this.FLAGS.FATE_REROLL}`]: true });
                         await this.#reduceSchips(actor, schipsource);
@@ -322,6 +324,28 @@ export class FateRolls {
         }
     }
 
+    static #hasOpposedChain(data) {
+        return !!(
+            data?.startMessagesList?.length ||
+            data?.defenderMessage ||
+            data?.attackerMessage ||
+            data?.unopposedStartMessage
+        );
+    }
+
+    /**
+     * Opposed rolls keep message links and cleared targets so handleOpposedTarget
+     * updates the existing chain. Other rolls still restore targets for opposable skills.
+     */
+    static #prepareDiceFateRerollContext(data, cardOptions) {
+        if (this.#hasOpposedChain(data)) {
+            this.#preserveOpposedChain(data, cardOptions);
+            DSA5_Utility.clearUserTargets();
+        } else {
+            this.#resetTargetAndMessage(data, cardOptions);
+        }
+    }
+
     /**
      * Keeps opposed-chain message links without restoring combat targets.
      * Used by damage-only fate rerolls so handleOpposedTarget updates the
@@ -385,7 +409,7 @@ export class FateRolls {
             title,
             user: author,
         };
-        const optionalProps = ['attackerMessage', 'defenderMessage', 'unopposedStartMessage', 'startMessagesList'];
+        const optionalProps = ['attackerMessage', 'defenderMessage', 'unopposedStartMessage'];
         optionalProps.forEach(prop => {
             if (data[prop]) cardOptions[prop] = data[prop];
         });
