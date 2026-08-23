@@ -303,7 +303,7 @@ export default class DSA5Payment {
     }
 
     if (res.length == 0) return '-';
-    return res.join(', ');
+    return res.join(' ');
   }
 
   /**

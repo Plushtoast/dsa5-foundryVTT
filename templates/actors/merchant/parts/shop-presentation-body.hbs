@@ -89,10 +89,16 @@
   </div>
 </div>
 {{else}}
+  {{#unless stall.sellMode}}
   {{> systems/dsa5/templates/actors/merchant/parts/shop-filters.hbs}}
+  {{/unless}}
 
-  {{#if stall.isList}}
+  {{#if stall.isLog}}
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-trade-log.hbs}}
+  {{else if stall.isList}}
   {{> systems/dsa5/templates/actors/merchant/parts/shop-list.hbs}}
+  {{else if stall.sellMode}}
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs}}
   {{else}}
   {{#if stall.specials.length}}
   <section class="dsa-shop-specials">
@@ -127,7 +133,5 @@
     </div>
   </section>
   {{/if}}
-
-  {{> systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs}}
   {{/if}}
 {{/if}}

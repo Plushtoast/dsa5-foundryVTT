@@ -2746,7 +2746,11 @@
       "unaffordable": "Teurer als die Börse",
       "viewMode": "Darstellung",
       "viewCards": "Kartenansicht",
-      "viewList": "Listenansicht"
+      "viewList": "Listenansicht",
+      "viewLog": "Handelsprotokoll",
+      "tradeLogEmpty": "Noch keine Käufe oder Verkäufe in diesem Besuch.",
+      "tradeLogBought": "{name} hat gekauft",
+      "tradeLogSold": "{name} hat verkauft"
     },
     "fill": {
       "advanced": "Erweitert",
@@ -2956,6 +2960,7 @@
     "paySum": "{amount} sind zu bezahlen.",
     "payexample": "Gib /pay und die Anzahl der Silbermünzen die zu bezahlen sind ein. Z.B.: /pay 13,45",
     "received": "erhalten",
+    "receivedHeading": "{name} erhalten",
     "requestPromptGetPaid": "{actor} soll {amount} erhalten.",
     "requestPromptPay": "{actor} soll {amount} bezahlen.",
     "requestTitleGetPaid": "Zahlung auszahlen",

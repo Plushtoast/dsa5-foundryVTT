@@ -18,6 +18,13 @@
         aria-pressed="{{#if stall.isList}}true{{else}}false{{/if}}"
         data-tooltip="MERCHANT.stall.viewList"
         aria-label="{{localize 'MERCHANT.stall.viewList'}}"></button>
+      <button type="button"
+        class="dsadesignbutton icon fa-solid fa-receipt {{#if stall.isLog}}active on{{/if}}"
+        data-action="setShopViewMode"
+        data-view="log"
+        aria-pressed="{{#if stall.isLog}}true{{else}}false{{/if}}"
+        data-tooltip="MERCHANT.stall.viewLog"
+        aria-label="{{localize 'MERCHANT.stall.viewLog'}}"></button>
     </div>
     <div class="itemlibrary-toolbar-group dsa-shop-filters__sort" role="group" aria-label="{{localize 'MERCHANT.stall.sort'}}">
       <select data-shop-control="setShopSort" data-tooltip="MERCHANT.stall.sort">

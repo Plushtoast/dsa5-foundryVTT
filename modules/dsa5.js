@@ -96,6 +96,7 @@ import { ItemFactory } from './item/item-factory.js';
 import { DSAPersonaEntry } from './data/journal/dsapersonaedramatis.js';
 import GroupAPI from './actor/group-api.js';
 import TokenScatter from './animation/token-scatter.js';
+import DomFlyAnimation from './animation/dom-fly-animation.js';
 import { DSAQuestLogEntry } from './data/journal/dsaquestlog.js';
 import { DSAAPTrackerEntry } from './data/journal/dsaaptracker.js';
 import { DSAMoneyTrackerEntry } from './data/journal/dsamoneytracker.js';
@@ -187,8 +188,9 @@ Hooks.once('init', () => {
       VehicleCrewCombatPrompt,
       VehicleCombatJoinPrompt,
     },
-    animation: {      
+    animation: {
       TokenScatter,
+      DomFlyAnimation,
     },
     entities: {
       Actordsa5,

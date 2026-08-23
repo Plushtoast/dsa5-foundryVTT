@@ -20,6 +20,7 @@ import { fetchBagItems, transferBagWithContents } from '../../hooks/itemDrop.js'
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import ImageFrameDialog from '../../dialog/image-frame-dialog.js';
 import ImageFramePicker from '../../system/helpers/image-frame-picker.js';
+import DomFlyAnimation from '../../animation/dom-fly-animation.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -388,7 +389,54 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static _setShopViewMode(ev, target) {
-      return this.applyStallFilter({ viewMode: target.dataset.view === 'list' ? 'list' : 'cards' });
+      const view = target.dataset.view;
+      if (view === 'log') {
+        // Trade log is ephemeral for this sheet session; do not persist as default layout.
+        this.#stallFilter = { ...this.getStallFilter(), viewMode: 'log' };
+        this.render();
+        return;
+      }
+      return this.applyStallFilter({ viewMode: view === 'list' ? 'list' : 'cards' });
+    }
+
+    #playTradeFlyAnimation(clickTarget, buy) {
+      const sheetEl = this.element;
+      if (!sheetEl || !clickTarget) return;
+
+      const row = clickTarget.closest?.('[data-item-id]') || clickTarget;
+      const imgEl = row.querySelector?.('.image .image, .dsa-shop-tile__icon .image, img');
+      const styleBg = imgEl?.style?.backgroundImage;
+      const img = imgEl?.getAttribute?.('src')
+        || (styleBg && styleBg !== 'none' ? styleBg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '') : null);
+      if (!img) return;
+
+      const source = row.querySelector?.('.dsa-shop-tile__icon, .col.image, .image') || row;
+      const flyTarget = buy
+        ? sheetEl.querySelector('.dsa-shop-buyer__avatar:not(.dsa-shop-buyer__avatar--empty)')
+        : sheetEl.querySelector('.dsa-shop-hero__thumb');
+      if (!flyTarget) return;
+
+      DomFlyAnimation.fly({ source, target: flyTarget, img }).catch(() => undefined);
+    }
+
+    async #recordLocalTradeLog(source, target, dataset, buy) {
+      const item = source.items.get(dataset.itemId);
+      if (!item || getProperty(item.system, 'equipmentType.value') === 'service') return;
+
+      const amount = Number(dataset.amount) || 1;
+      const price = String((Number(dataset.price) || 0) * amount);
+      // Match finishTransaction → transferNotification argument order for buy vs sell.
+      const notifySource = buy ? target : source;
+      const notifyTarget = buy ? source : target;
+      await TransactionSummaryService.recordMerchantTransaction({
+        source: notifySource,
+        target: notifyTarget,
+        notify: game.settings.get('dsa5', 'merchantNotification'),
+        item,
+        amount,
+        price,
+        buy,
+      });
     }
 
     async _onChangeForm(formConfig, event) {
@@ -614,6 +662,7 @@ export const MerchantSheetMixin = (superclass) =>
         await TransactionSummaryService.finalizeSessionsForActor(actorId);
         return;
       }
+      TransactionSummaryService.clearSessionsForActor(actorId);
       game.socket.emit('system.dsa5', {
         type: 'finalizeMerchantSummary',
         payload: { actorId },
@@ -775,35 +824,46 @@ export const MerchantSheetMixin = (superclass) =>
       this.actor.updateEmbeddedDocuments('Item', updates);
     }
 
-    async buyItem(dataset) {
+    async buyItem(dataset, clickTarget = null) {
       DSA5SoundEffect.playMoneySound();
       const tradeFriend = this.getTradeFriend();
       if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
 
-      await this.transferItem(this.actor, tradeFriend, dataset, true);
+      await this.transferItem(this.actor, tradeFriend, dataset, true, clickTarget);
     }
 
-    async sellItem(dataset) {
+    async sellItem(dataset, clickTarget = null) {
       DSA5SoundEffect.playMoneySound();
       const tradeFriend = this.getTradeFriend();
       if (!tradeFriend) return ui.notifications.error('DSAError.noProperActor', { localize: true });
 
-      await this.transferItem(tradeFriend, this.actor, dataset, false);
+      await this.transferItem(tradeFriend, this.actor, dataset, false, clickTarget);
     }
 
     static _tradeWrapper(ev, target) {
       const dataset = { ...target.dataset };
       dataset.itemId = this._getItemId(target);
       dataset.amount = ev.ctrlKey ? 10 : 1;
-      this.advanceWrapper(target, target.dataset.fct, dataset);
+      this.advanceWrapper(target, target.dataset.fct, dataset, target);
     }
 
-    async transferItem(source, target, dataset, buy = true) {
+    async transferItem(source, target, dataset, buy = true, clickTarget = null) {
       const { itemId, price, amount } = dataset;
+      const sourceItem = source.items.get(itemId);
+      const isService = getProperty(sourceItem?.system, 'equipmentType.value') === 'service';
+      const qty = Math.max(1, Number(amount) || 1);
+      const totalPrice = `${(Number(price) || 0) * qty}`;
+
+      const canAfford = this.constructor.noNeedToPay(target, source, totalPrice)
+        || (await DSA5Payment.canPay(target, totalPrice, true)).success;
+      if (!canAfford) return;
+
+      if (!isService) this.#playTradeFlyAnimation(clickTarget, buy);
 
       if (game.user.isGM) {
         await this.constructor.finishTransaction(source, target, price, itemId, buy, amount);
-      } else if (this.constructor.noNeedToPay(target, source, price) || (await DSA5Payment.canPay(target, price, true))) {
+      } else {
+        await this.#recordLocalTradeLog(source, target, dataset, buy);
         game.socket.emit('system.dsa5', {
           type: 'trade',
           payload: {
@@ -927,9 +987,9 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static async transferNotification(item, source, target, buy, price, amount, noNeedToPay, res) {
-      const notify = game.settings.get('dsa5', 'merchantNotification');
-      if (notify == 0 || getProperty(item.system, 'equipmentType.value') == 'service') return;
+      if (getProperty(item.system, 'equipmentType.value') == 'service') return;
 
+      const notify = game.settings.get('dsa5', 'merchantNotification');
       await TransactionSummaryService.recordMerchantTransaction({
         source,
         target,
@@ -1087,6 +1147,13 @@ export const MerchantSheetMixin = (superclass) =>
             isLoot: data.merchantType === 'loot',
             isGM: game.user.isGM,
           });
+          const friendActor = this.getTradeFriend();
+          if (friendActor) {
+            const session = TransactionSummaryService.getMerchantSession(this.actor, friendActor);
+            data.stall.tradeLog = await TransactionSummaryService.listSessionLines(session);
+          } else {
+            data.stall.tradeLog = TransactionSummaryService.emptyTradeLog();
+          }
         }
       }
       data.hasOtherTradeFriend = !!this.otherTradeFriend;

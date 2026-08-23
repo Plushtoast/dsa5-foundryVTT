@@ -2744,7 +2744,11 @@
       "unaffordable": "More than the purse",
       "viewMode": "Layout",
       "viewCards": "Card view",
-      "viewList": "List view"
+      "viewList": "List view",
+      "viewLog": "Trade log",
+      "tradeLogEmpty": "No trades this visit yet.",
+      "tradeLogBought": "{name} bought",
+      "tradeLogSold": "{name} sold"
     },
     "fill": {
       "advanced": "Advanced",
@@ -2954,6 +2958,7 @@
     "paySum": "{amount} has to be paid.",
     "payexample": "Type /pay and the number of silverthalers to pay. e.g.: /pay 13,45",
     "received": "received",
+    "receivedHeading": "{name} received",
     "requestPromptGetPaid": "{actor} should receive {amount}.",
     "requestPromptPay": "{actor} should pay {amount}.",
     "requestTitleGetPaid": "Distribute Payment",

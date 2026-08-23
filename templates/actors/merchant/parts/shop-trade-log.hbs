@@ -1,0 +1,38 @@
+{{!-- Session trade log (same buffer that becomes the chat summary on sheet close). --}}
+<section class="dsa-shop-trade-log" aria-label="{{localize 'MERCHANT.stall.viewLog'}}">
+  {{#if stall.tradeLog.hasEntries}}
+  {{#if stall.tradeLog.buys.lines.length}}
+  <section class="dsa-shop-trade-log__section">
+    <h3 class="underlined-header">{{stall.tradeLog.buys.heading}}</h3>
+    <div class="dsa-shop-trade-log__list">
+      {{#each stall.tradeLog.buys.lines as |line|}}
+      <div class="dsa-shop-trade-log__row row-section tableOdd">
+        <div class="col ten center">{{line.quantity}}×</div>
+        <div class="col ellipsis">{{{line.linkHtml}}}</div>
+        <div class="col four flexrow dsaflex-no-wrap nobr">{{{line.priceHtml}}}</div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
+  {{#if stall.tradeLog.sells.lines.length}}
+  <section class="dsa-shop-trade-log__section">
+    <h3 class="underlined-header">{{stall.tradeLog.sells.heading}}</h3>
+    <div class="dsa-shop-trade-log__list">
+      {{#each stall.tradeLog.sells.lines as |line|}}
+      <div class="dsa-shop-trade-log__row row-section tableOdd">
+        <div class="col ten center">{{line.quantity}}×</div>
+        <div class="col ellipsis">{{{line.linkHtml}}}</div>
+        <div class="col four flexrow dsaflex-no-wrap nobr">{{{line.priceHtml}}}</div>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+  {{else}}
+  <div class="dsa-info-box dsam-2">
+    <p class="dsa-info-text">{{localize 'MERCHANT.stall.tradeLogEmpty'}}</p>
+  </div>
+  {{/if}}
+</section>

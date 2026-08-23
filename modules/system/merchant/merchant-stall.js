@@ -20,6 +20,7 @@ export default class MerchantStallHelper {
   static rememberedFilter() {
     const stored = game.user?.getFlag?.('dsa5', MerchantConfig.STALL_FILTER_FLAG) || {};
     const filter = { ...this.defaultFilter(), ...stored };
+    // Log is a session inspection view only — never restore it as the default layout.
     if (filter.viewMode !== 'list') filter.viewMode = 'cards';
     if (filter.sort === 'price') filter.sort = 'priceAsc';
     return filter;
@@ -283,6 +284,7 @@ export default class MerchantStallHelper {
     let services = isLoot ? [] : this.flattenServices(inventory, tileOpts);
     const chips = this.chipsFromTiles(goods);
     const state = { ...this.defaultFilter(), ...filter };
+    if (state.viewMode !== 'list' && state.viewMode !== 'log') state.viewMode = 'cards';
     if (state.category !== 'all' && !chips.some((chip) => chip.key === state.category)) {
       // Keep preferred category in remembered filter; only fall back for this render.
       state.category = 'all';
@@ -372,8 +374,9 @@ export default class MerchantStallHelper {
       buyActionIcon: isLoot ? 'fas fa-exchange-alt' : 'fas fa-shopping-cart',
       buyActionTooltip: isLoot ? 'MERCHANT.exchange' : 'MERCHANT.buy',
       viewMode: state.viewMode,
-      isCards: state.viewMode !== 'list',
+      isCards: state.viewMode !== 'list' && state.viewMode !== 'log',
       isList: state.viewMode === 'list',
+      isLog: state.viewMode === 'log',
       allowItemDetails: presentationMode
         ? !!isGM
         : actor?.system?.merchant?.allowPlayerItemDetails !== false,

@@ -1,9 +1,13 @@
 <div class='tab scrollable {{tabs.inventory.cssClass}}' data-tab='inventory' data-group='{{tabs.inventory.group}}'>
   {{> systems/dsa5/templates/actors/merchant/parts/shop-banner.hbs}}
+  {{#unless stall.sellMode}}
   {{> systems/dsa5/templates/actors/merchant/parts/shop-filters.hbs}}
+  {{/unless}}
 
   {{#if stall.isList}}
   {{> systems/dsa5/templates/actors/merchant/parts/shop-list.hbs}}
+  {{else if stall.sellMode}}
+  {{> systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs}}
   {{else}}
   {{#if stall.specials.length}}
   <section class="dsa-shop-specials">
@@ -27,7 +31,5 @@
     </div>
     {{/if}}
   </section>
-
-  {{> systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs}}
   {{/if}}
 </div>

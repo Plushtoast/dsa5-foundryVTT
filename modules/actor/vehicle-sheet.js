@@ -11,6 +11,7 @@ import VehicleChase from '../combat/chase/vehicle-chase.js';
 import NavalBoardWeapons from '../combat/mkr/naval-board-weapons.js';
 import VehicleRamWeapon from '../data/actor/vehicle-ram-weapon.js';
 import DSA5Combatant from '../combat/combatant.js';
+import AmmoPicker from '../system/helpers/ammo-picker.js';
 
 const { duplicate } = foundry.utils;
 
@@ -244,20 +245,7 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
       return;
     }
 
-    const currentAmmo = weapon.ammo?.find((a) => a._id === weapon.system.currentAmmo?.value);
-    if (currentAmmo?.system?.ammunitiongroup?.value === 'mag') {
-      weapon.ammoLabel = `${currentAmmo.system.mag.value}/${currentAmmo.system.mag.max}`;
-      weapon.ammoTooltip = `${currentAmmo.name} (${currentAmmo.system.quantity.value})`;
-      weapon.ammoEmpty = currentAmmo.system.mag.value <= 0 && currentAmmo.system.quantity.value <= 0;
-    } else if (currentAmmo) {
-      weapon.ammoLabel = String(currentAmmo.system.quantity.value);
-      weapon.ammoTooltip = currentAmmo.name;
-      weapon.ammoEmpty = currentAmmo.system.quantity.value <= 0;
-    } else {
-      weapon.ammoLabel = '';
-      weapon.ammoTooltip = _loc('VEHICLE.pickAmmo');
-      weapon.ammoEmpty = true;
-    }
+    AmmoPicker.enrichWeapon(weapon);
   }
 
   async _onChangeForm(formConfig, event) {
@@ -358,51 +346,8 @@ export default class ActorSheetdsa5Vehicle extends ActorSheetDsa5 {
     await this.actor.update({ [`system.weaponOperators.${itemId}`]: _del });
   }
 
-  static async _pickWeaponAmmo(_ev, target) {
-    const itemId = target.closest('[data-item-id]')?.dataset.itemId;
-    if (!itemId) return;
-
-    const weapon = this.actor.items.get(itemId);
-    if (!weapon || weapon.system.ammunitiongroup?.value === '-') return;
-
-    const ammoGroup = weapon.system.ammunitiongroup.value;
-    const ammoList = this.actor.items.filter(
-      (i) => i.type === 'ammunition' && i.system.ammunitiongroup?.value === ammoGroup,
-    );
-
-    if (!ammoList.length) {
-      ui.notifications.warn('VEHICLE.noAmmunition', { localize: true });
-      return;
-    }
-
-    const buttons = ammoList.map((ammo) => {
-      const qty = ammo.system.ammunitiongroup?.value === 'mag'
-        ? `${ammo.system.mag.value}/${ammo.system.mag.max} (${ammo.system.quantity.value})`
-        : ammo.system.quantity.value;
-      return {
-        action: ammo.id,
-        label: `${ammo.name} (${qty})`,
-        icon: 'fas fa-bullseye',
-      };
-    });
-
-    buttons.push(
-      { action: 'clear', label: _loc('VEHICLE.clearAmmo'), icon: 'fas fa-ban' },
-      { action: 'cancel', label: _loc('cancel'), icon: 'fas fa-times' },
-    );
-
-    const choice = await foundry.applications.api.DialogV2.wait({
-      window: { title: _loc('VEHICLE.pickAmmo') },
-      content: `<p>${weapon.name}</p>`,
-      buttons,
-    });
-
-    if (!choice || choice === 'cancel') return;
-
-    await this.actor.updateEmbeddedDocuments('Item', [{
-      _id: itemId,
-      'system.currentAmmo.value': choice === 'clear' ? '' : choice,
-    }]);
+  static _pickWeaponAmmo(ev, target) {
+    return ActorSheetDsa5._pickAmmo.call(this, ev, target);
   }
 
   static async _chRollCombat(ev, target) {

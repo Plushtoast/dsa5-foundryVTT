@@ -19,6 +19,7 @@ export const merchantStallPartTemplates = [
   'systems/dsa5/templates/actors/merchant/parts/shop-banner.hbs',
   'systems/dsa5/templates/actors/merchant/parts/shop-sell-drawer.hbs',
   'systems/dsa5/templates/actors/merchant/parts/shop-list.hbs',
+  'systems/dsa5/templates/actors/merchant/parts/shop-trade-log.hbs',
   'systems/dsa5/templates/actors/merchant/parts/shop-presentation-body.hbs',
 ];
 
@@ -37,6 +38,8 @@ export const merchantCommercePartTemplates = [
 export const combatPartTemplates = [
   'systems/dsa5/templates/actors/parts/combat_weapon.hbs',
   'systems/dsa5/templates/actors/parts/combat_rangeweapon.hbs',
+  'systems/dsa5/templates/actors/parts/combat_ammo_button.hbs',
+  'systems/dsa5/templates/actors/parts/combat_ammo_menu.hbs',
   'systems/dsa5/templates/actors/parts/horse.hbs',
   'systems/dsa5/templates/actors/parts/swarm.hbs',
   'systems/dsa5/templates/actors/parts/specblock.hbs',
@@ -47,6 +50,8 @@ export const combatPartTemplates = [
 export const vehicleCombatPartTemplates = [
   'systems/dsa5/templates/actors/vehicle/vehicle-combat-stats.hbs',
   'systems/dsa5/templates/actors/vehicle/vehicle-combat-boardweapon.hbs',
+  'systems/dsa5/templates/actors/parts/combat_ammo_button.hbs',
+  'systems/dsa5/templates/actors/parts/combat_ammo_menu.hbs',
   'systems/dsa5/templates/actors/vehicle/vehicle-combat-ram.hbs',
   'systems/dsa5/templates/actors/vehicle/vehicle-locomotion-skills.hbs',
   'systems/dsa5/templates/actors/parts/skillselect.hbs',

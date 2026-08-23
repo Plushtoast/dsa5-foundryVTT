@@ -1796,11 +1796,11 @@
     }
 
     .dsa-shop-drawer {
-        margin-top: 10px;
-        padding: 8px;
-        border: 1px solid var(--dsa-muted-border);
-        border-radius: 6px;
-        background: var(--dsa-muted-bg);
+        margin-top: 0;
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background: transparent;
 
         &__head {
             justify-content: space-between;
