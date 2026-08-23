@@ -9,6 +9,43 @@
     margin-bottom: 0;
 }
 
+.dsa-die-changes {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.dsa-die-change {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 2px;
+    vertical-align: middle;
+
+    .d20,
+    .d6,
+    .d2,
+    .d3 {
+        width: 26px;
+        height: 26px;
+        line-height: 26px;
+        font-size: 11px;
+    }
+
+    .dsa-die-old {
+        opacity: 0.4;
+    }
+
+    > i {
+        font-size: 0.7em;
+        opacity: 0.7;
+        flex: 0 0 auto;
+    }
+}
+
 .dsa5 {
     .droparea {
         padding: 16px;

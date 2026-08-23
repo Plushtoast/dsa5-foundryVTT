@@ -104,7 +104,7 @@ export class FateRolls {
                         // For post-roll rerolls we create a dedicated ActiveEffect charge-consumption card (see below).
                         // Avoid emitting the standard fate/begabung informational chat message.
                         if (!isPostRollReroll) {
-                            const finalInfoMsg = `${enhancedInfoMsg}<b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}`;
+                            const finalInfoMsg = `${enhancedInfoMsg}${this.formatDieChangesHtml(changedRolls)}`;
                             await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
                         }
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
@@ -119,7 +119,7 @@ export class FateRolls {
                                 const effectName = effect?.name || effect?.label || _loc('ActiveEffects.custom');
                                 const chargeData = typeof effect?.getChargeData === 'function' ? effect.getChargeData() : null;
                                 // Create a dedicated post-roll reroll chat card (no fate/begabung wording).
-                                const rollLine = `<p><b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
+                                const rollLine = this.formatDieChangesHtml(changedRolls);
                                 let chargesLines = '';
                                 if (chargeData && Number.isFinite(chargeData.value)) {
                                     const oldValue = chargeData.value;
@@ -232,7 +232,7 @@ export class FateRolls {
                             isPhex
                         );
                         newTestData.fateUsed = true;
-                        const finalInfoMsg = `${infoMsg}<p><b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
+                        const finalInfoMsg = `${infoMsg}${this.formatDieChangesHtml(changedRolls)}`;
                         await ChatMessage.create(DSA5_Utility.chatDataSetup(finalInfoMsg));
                         if (this.#hasOpposedChain(data)) {
                             DSA5_Utility.clearUserTargets();
@@ -438,6 +438,50 @@ export class FateRolls {
     }
 
     /**
+     * Formats a previous → new die result for chat using the roll-card die faces.
+     * @param {number} originalValue
+     * @param {number} newValue
+     * @param {{ char?: string, faces?: number }} [options]
+     * @returns {{ html: string, text: string }}
+     */
+    static formatDieChange(originalValue, newValue, { char = '', faces = 20 } = {}) {
+        const dieClass = this.#dieFaceClass(char, faces);
+        const charLabel = this.#dieCharLabel(char);
+        const previousLabel = [charLabel, _loc('CHATFATE.previousRoll')].filter(Boolean).join(' — ');
+        const nextLabel = [charLabel, _loc('CHATFATE.newRoll')].filter(Boolean).join(' — ');
+        const oldVal = foundry.utils.escapeHTML(String(originalValue));
+        const newVal = foundry.utils.escapeHTML(String(newValue));
+        const text = `${charLabel ? `${charLabel} ` : ''}${oldVal} → ${newVal}`;
+        const html = `<span class="dsa-die-change" aria-label="${foundry.utils.escapeHTML(text)}"><span class="${dieClass} dsa-die-old" data-tooltip="${foundry.utils.escapeHTML(previousLabel)}">${oldVal}</span><i class="fas fa-arrow-right" aria-hidden="true"></i><span class="${dieClass} dsa-die-new" data-tooltip="${foundry.utils.escapeHTML(nextLabel)}">${newVal}</span></span>`;
+        return { html, text };
+    }
+
+    static formatDieChangesHtml(htmlParts) {
+        if (!htmlParts?.length) return '';
+        return `<div class="dsa-die-changes">${htmlParts.join('')}</div>`;
+    }
+
+    static #dieFaceClass(char, faces) {
+        const size = `d${Number(faces) || 20}`;
+        const type = char ? `die-${String(char).toLowerCase()}` : 'die-ch';
+        return `${type} ${size}`;
+    }
+
+    static #dieCharLabel(char) {
+        if (!char) return '';
+        const key = `CHAR.${String(char).toUpperCase()}`;
+        return game.i18n.has(key) ? _loc(key) : '';
+    }
+
+    static #dieCharForIndex(testData, dieIndex) {
+        const fromSource = testData.source?.system?.[`characteristic${dieIndex + 1}`]?.value;
+        if (fromSource) return fromSource;
+        const mode = testData.mode;
+        if (mode && !this.MULTI_DIE_ROLL_TYPES.includes(mode)) return mode;
+        return '';
+    }
+
+    /**
      * Processes reroll logic for dice, handling roll creation and result calculation
      * @param {number[]} diceIndices - Indices of dice to reroll
      * @param {Object} testData - Test data containing roll information
@@ -445,7 +489,7 @@ export class FateRolls {
      * @param {boolean} useMinimum - Whether to use minimum of old/new values (talented rule)
      * @param {Object} actor - The actor (for Phex tradition check)
      * @param {boolean} isPhex - Whether actor has Phex tradition
-     * @returns {Object} Object containing newRoll, changedRolls array, and changes array
+     * @returns {Object} Object containing newRoll, changedRolls html, changedRollsText, and changes array
      */
     static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false) {
         const rollFormulas = diceIndices.map(index => {
@@ -459,15 +503,19 @@ export class FateRolls {
         );
         await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'rollMode'));
         const changedRolls = [];
+        const changedRollsText = [];
         const changes = [];
         testData.roll = Roll.fromData(testData.roll);
         diceIndices.forEach((dieIndex, rollIndex) => {
-            const characteristic = testData.source.system[`characteristic${dieIndex + 1}`];
-            const attr = characteristic ?
-                `${_loc(`CHARAbbrev.${characteristic.value.toUpperCase()}`)} - ` : '';
+            const term = testData.roll.terms[dieIndex * 2];
             const newValue = newRoll.terms[rollIndex * 2].results[0].result;
-            const originalValue = testData.roll.terms[dieIndex * 2].results[0].result;
-            changedRolls.push(`${attr}${originalValue}/${newValue}`);
+            const originalValue = term.results[0].result;
+            const formatted = this.formatDieChange(originalValue, newValue, {
+                char: this.#dieCharForIndex(testData, dieIndex),
+                faces: term.faces,
+            });
+            changedRolls.push(formatted.html);
+            changedRollsText.push(formatted.text);
             let finalValue = newValue;
             if (useMinimum || isPhex) {
                 finalValue = Math.min(newValue, originalValue);
@@ -475,7 +523,7 @@ export class FateRolls {
             changes.push({ index: dieIndex, val: finalValue });
         });
         testData.roll.editRollAtIndex(changes);
-        return { newRoll, changedRolls, changes };
+        return { newRoll, changedRolls, changedRollsText, changes };
     }
     /**
      * Gets fate point information based on source
@@ -515,7 +563,7 @@ export class FateRolls {
         const icons = schipList
             .map((x) => `<span class="schip tiny ${x.cssClass}"></span>`)
             .join('');
-        return `<div class="row-schips flexrow flexAlignCenter stackedSchips" data-tooltip="${foundry.utils.escapeHTML(tooltipText)}">${icons}</div>`;
+        return `<div class="row-schips flexrow flex0 flexAlignCenter stackedSchips dsaflex-no-wrap" data-tooltip="${foundry.utils.escapeHTML(tooltipText)}">${icons}</div>`;
     }
     /**
      * Builds formatted info message for fate point usage

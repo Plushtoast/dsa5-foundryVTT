@@ -705,6 +705,8 @@
     "addQS": "{character} increases the quality level.",
     "fatepointUsed": "The fate is changing",
     "isTalented": "{character} uses Aptitude.",
+    "newRoll": "New roll",
+    "previousRoll": "Previous roll",
     "reroll": "{character} rolls again.",
     "rerollDamage": "{character} rolls again.",
     "selectDice": "Repeat roll",

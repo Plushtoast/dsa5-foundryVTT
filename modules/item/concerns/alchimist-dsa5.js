@@ -308,13 +308,13 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         if (this.activeTab === 'reroll') {
             const actionLabel = _loc('SAVANT.reroll');
             data.preData.roll = originalRollData;
-            const { changedRolls } = await FateRolls.processSelectedReroll(
+            const { changedRolls, changedRollsText } = await FateRolls.processSelectedReroll(
                 Array.from(this.selectedForReroll).sort((left, right) => left - right),
                 data.preData,
                 { rollContext: 'CHATCONTEXT.Reroll' }
             );
-            const rollDetail = `<p><b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
-            this._addPostRollModifier(data, actionLabel, changedRolls.join(', '));
+            const rollDetail = FateRolls.formatDieChangesHtml(changedRolls);
+            this._addPostRollModifier(data, actionLabel, changedRollsText.join(', '));
             await this._createUsageMessage(actionLabel, cost, rollDetail);
         } else if (this.activeTab === 'addFP') {
             const actionLabel = _loc('SAVANT.addFP');
@@ -325,16 +325,18 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
             data.preData.roll = Roll.fromData(originalRollData);
             const d20s = data.preData.roll.terms.filter((term) => term.faces === 20);
             const changedRolls = [];
+            const changedRollsText = [];
             this.improvedDice.forEach((value, i) => {
                 const originalValue = d20s[i].results[0].result;
                 if (value !== originalValue) {
-                    const attr = this.chars[i] ? `${_loc(`CHARAbbrev.${this.chars[i].toUpperCase()}`)} - ` : '';
-                    changedRolls.push(`${attr}${originalValue}/${value}`);
+                    const formatted = FateRolls.formatDieChange(originalValue, value, { char: this.chars[i], faces: 20 });
+                    changedRolls.push(formatted.html);
+                    changedRollsText.push(formatted.text);
                 }
                 d20s[i].results[0].result = value;
             });
-            const rollDetail = `<p><b>${_loc('Roll')}</b>: ${changedRolls.join(', ')}</p>`;
-            this._addPostRollModifier(data, actionLabel, changedRolls.join(', '), 'roll');
+            const rollDetail = FateRolls.formatDieChangesHtml(changedRolls);
+            this._addPostRollModifier(data, actionLabel, changedRollsText.join(', '), 'roll');
             await this._createUsageMessage(actionLabel, cost, rollDetail);
         }
 

@@ -705,6 +705,8 @@
     "addQS": "{character} erhöht die Qualitätsstufe.",
     "fatepointUsed": "Das Schicksal ändert sich",
     "isTalented": "{character} benutzt Begabung.",
+    "newRoll": "Neuer Wurf",
+    "previousRoll": "Vorheriger Wurf",
     "reroll": "{character} würfelt erneut.",
     "rerollDamage": "{character} würfelt erneut.",
     "selectDice": "Wurf wiederholen",
