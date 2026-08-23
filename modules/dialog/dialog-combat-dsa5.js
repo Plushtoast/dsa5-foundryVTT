@@ -17,7 +17,7 @@ import ReloadTimeField from '../data/item/fields/reload_time_field.js';
 import SpecialabilityData from '../data/item/specialability.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectScopedRules from '../status/active_effect_scoped_rules.js';
-const { mergeObject, duplicate, getProperty } = foundry.utils;
+const { mergeObject, duplicate, getProperty, deepClone } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
   static meleeweaponRollModifiers = {
@@ -94,20 +94,20 @@ export default class DSA5CombatDialog extends DialogShared {
 
   static setData(actor, type, testData, renderData) {
     const isMelee = DSA5CombatDialog.isMelee(testData.source);
-    const rollModifiers = duplicate(isMelee ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
+    const rollModifiers = deepClone(isMelee ? DSA5CombatDialog.meleeweaponRollModifiers : DSA5CombatDialog.rangeweaponRollModifiers);
     rollModifiers.narrowSpace.mod = this.getNarrowSpaceModifier(testData, testData.mode);
     if (renderData.rangeOptions) {
       for (const key of Object.keys(rollModifiers.RangeMod)) if (!renderData.rangeOptions.has(key)) delete rollModifiers.RangeMod[key];
     }
 
-    const flattendRollModifiers = foundry.utils.flattenObject(rollModifiers);
+    const flattenedRollModifiers = this.#flattenRollModifierValues(rollModifiers);
     // Traits/dodge share melee/range modifier AEs, not `${source.type}RollModifiers`.
     const tt = `${isMelee ? 'meleeweapon' : 'rangeweapon'}RollModifiers`;
 
     if (actor.system[tt]) {
-      const flattenedActorData = foundry.utils.flattenObject(foundry.utils.duplicate(actor.system[tt]));
-
-      for (const key of Object.keys(flattendRollModifiers)) flattendRollModifiers[key] += Number(flattenedActorData[key]) || 0;
+      for (const key of Object.keys(flattenedRollModifiers)) {
+        flattenedRollModifiers[key] += Number(getProperty(actor.system[tt], key)) || 0;
+      }
     }
 
     for (const effect of testData.source.effects || []) {
@@ -116,11 +116,30 @@ export default class DSA5CombatDialog extends DialogShared {
       for (const change of effect.system?.changes || []) {
         if (!change.key.startsWith('self.')) continue;
 
-        for (const key of Object.keys(flattendRollModifiers)) if (change.key == `self.${key}`) flattendRollModifiers[key] += Number(change.value) || 0;
+        for (const key of Object.keys(flattenedRollModifiers)) if (change.key == `self.${key}`) flattenedRollModifiers[key] += Number(change.value) || 0;
       }
     }
 
-    return foundry.utils.expandObject(flattendRollModifiers);
+    return foundry.utils.expandObject(flattenedRollModifiers);
+  }
+
+  /**
+   * Flatten roll-modifier trees including numeric-key objects that JSON/`duplicate` turns into arrays.
+   * `foundry.utils.flattenObject` skips arrays, so waterOptions AEs would never merge.
+   */
+  static #flattenRollModifierValues(obj, prefix = '', flat = {}) {
+    if (obj == null) return flat;
+    if (typeof obj !== 'object') {
+      if (prefix) flat[prefix] = obj;
+      return flat;
+    }
+
+    const entries = Array.isArray(obj) ? obj.map((value, index) => [String(index), value]) : Object.entries(obj);
+    for (const [key, value] of entries) {
+      const path = prefix ? `${prefix}.${key}` : key;
+      this.#flattenRollModifierValues(value, path, flat);
+    }
+    return flat;
   }
 
   setCombatSpecTooltip(el) {
@@ -790,9 +809,10 @@ export default class DSA5CombatDialog extends DialogShared {
   static getNarrowSpaceModifier(testData, mode) {
     if (!mode) return 0;
 
-    if (RuleChaos.isShield(testData.source)) return getProperty(DSA5.narrowSpaceModifiers, `shield${testData.source.system.reach.shieldSize}.${mode}`) || 0;
+    const reach = testData.source?.system?.reach;
+    if (RuleChaos.isShield(testData.source)) return getProperty(DSA5.narrowSpaceModifiers, `shield${reach?.shieldSize}.${mode}`) || 0;
 
-    return getProperty(DSA5.narrowSpaceModifiers, `weapon${testData.source.system.reach.value}.${mode}`) || 0;
+    return getProperty(DSA5.narrowSpaceModifiers, `weapon${reach?.value}.${mode}`) || 0;
   }
 
   static getWeaponReachModifier(source, opposingWeaponSize) {

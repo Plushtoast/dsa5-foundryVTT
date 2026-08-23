@@ -1171,10 +1171,15 @@
   "DIALOGDESCRIPTION": {
     "advantageousPosition": "An advantageous position in combat grants a bonus of 2 for attack and defense. Advantageous positions can include standing on a table or large rock, or fighting an enemy who is downhill from you. It is also possible to gain an advantageous position while swimming, climbing a ship’s rigging, flying, and so on.",
     "bigEnemy": "Attacks from large enemies can only be dodged or parried with a shield.",
+    "combatInWater": "Anyone in water typically moves less well than on land and suffers penalties to attack and parry. In roughly waist-deep water the penalty is -2 each. Underwater it rises to -6 each. Ranged weapons cannot be used underwater (unless explicitly stated for the weapon).",
     "giantEnemy": "Attacks from huge enemies can only be dodged.",
     "narrowSpace": "The GM can decide that small rooms, hallways, and similar surroundings are cramped. Short-reach weapons suffer no penalties in cramped spaces, but longer weapons do.",
     "opportunityAttack": "Attacks of opportunity are close combat attacks that do not require an action. No defense is possible against an attack of opportunity, but the attack suffers a penalty of 4 and cannot be combined with combat special abilities (such as Feint or Forceful Blow).",
-    "twoWeaponCombat": "Attack with two weapons."
+    "opposingWeaponSize": "All melee weapons have a reach (short, medium, or long). Short weapons suffer -2 AT against medium and -4 AT against long weapons. Medium weapons suffer -2 AT against long weapons.",
+    "sizeCategory": "Every creature is assigned a size category: tiny, small, medium, large, or huge. Depending on the opponent’s size, heroes gain attack modifiers or face restrictions on defense choices. Tiny: -4 AT. Large: only shield parry or dodge. Huge: only dodge.",
+    "sizeCategoryRanged": "Target size also affects ranged combat. Tiny: -8 RC. Small: -4 RC. Medium: +/-0. Large: +4 RC. Huge: +8 RC. These modifiers can also apply when shooting at targets in cover or partial cover.",
+    "twoWeaponCombat": "Attack with two weapons.",
+    "wrongHand": "The weapon in the wrong hand suffers an additional penalty of -4 to attack and parry. The advantage Ambidextrous removes this penalty. This penalty does not apply when defending with a shield, but does apply when attacking with one."
   },
   "DSA5": {
     "patchViewer": {

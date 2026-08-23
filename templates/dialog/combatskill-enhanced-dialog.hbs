@@ -8,7 +8,7 @@
                 <input type="checkbox" id="narrowSpace" name="narrowSpace" value="{{rollModifiers.narrowSpace.mod}}" {{checked constricted}}>
             </div>
             <div class="form-group">
-                <label>{{localize "MODS.wrongHand"}} [<span class="wrongHandLabel">{{rollModifiers.wrongHand.mod}}</span>]</label>
+                <label data-tooltip="DIALOGDESCRIPTION.wrongHand">{{localize "MODS.wrongHand"}} [<span class="wrongHandLabel">{{rollModifiers.wrongHand.mod}}</span>]</label>
                 <input type="checkbox" id="wrongHand" name="wrongHand" value="{{rollModifiers.wrongHand.mod}}" {{#if wrongHandDisabled}}disabled{{/if}} {{checked offHand}}>
             </div>            
             {{/if}} 
@@ -53,7 +53,7 @@
             {{/if}}
             {{#if weaponSizes}}
             <div class="form-group">
-                <label>{{localize "opposingWeaponSize"}}</label>
+                <label data-tooltip="DIALOGDESCRIPTION.opposingWeaponSize">{{localize "opposingWeaponSize"}}</label>
                 <div class="form-fields">
                     <select name="weaponsize">
                         {{#each weaponReachOptions as |opt|}}
@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>{{localize "sizeCategory"}}</label>
+                <label data-tooltip="DIALOGDESCRIPTION.sizeCategory">{{localize "sizeCategory"}}</label>
                 <div class="form-fields">
                     <select name="size">
                         {{selectOptions meleeSizeOptions selected=targetSize localize=true}}
@@ -73,7 +73,7 @@
             {{/if}}
             <div class="waterblock">
                 <div class="form-group">
-                    <label>{{localize "MODS.combatInWater"}}</label>
+                    <label data-tooltip="DIALOGDESCRIPTION.combatInWater">{{localize "MODS.combatInWater"}}</label>
                     <div class="form-fields">
                         <select name="waterOptions">
                             {{#each rollModifiers.waterOptions as |item key|}}
@@ -95,7 +95,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>{{localize "sizeCategory"}}</label>
+                <label data-tooltip="DIALOGDESCRIPTION.sizeCategoryRanged">{{localize "sizeCategory"}}</label>
                 <div class="form-fields">
                     <select name="size">
                         {{#each rollModifiers.RangeSize as |item key|}}
