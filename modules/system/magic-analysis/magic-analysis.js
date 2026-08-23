@@ -63,20 +63,18 @@ export default class MagicAnalysisService {
       if (item) helpers.push({ key, config, item, source: 'spell', name: item.name });
     }
 
-    for (const sourceItem of actor.items) {
-      for (const enchantment of ItemEnchantment.list(sourceItem)) {
-        const match = nameMap[enchantment.name];
-        if (!match) continue;
-        helpers.push({
-          key: match.key,
-          config: match.config,
-          source: 'enchantment',
-          sourceItemId: sourceItem.id,
-          enchantmentId: enchantment.id,
-          charged: !!enchantment.charged,
-          name: `${enchantment.name} (${sourceItem.name})`,
-        });
-      }
+    for (const { sourceItem, enchantment } of ItemEnchantment.listOnActor(actor)) {
+      const match = nameMap[enchantment.name];
+      if (!match) continue;
+      helpers.push({
+        key: match.key,
+        config: match.config,
+        source: 'enchantment',
+        sourceItemId: sourceItem.id,
+        enchantmentId: enchantment.id,
+        charged: !!enchantment.charged,
+        name: `${enchantment.name} (${sourceItem.name})`,
+      });
     }
 
     return helpers;

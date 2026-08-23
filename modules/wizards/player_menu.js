@@ -10,6 +10,8 @@ import { tabSlider } from '../system/helpers/view_helper.js';
 import { PlayerMenuSubApp } from './player_menu_subapps.js';
 import { CONJURATION_TYPES, CONJURATION_CONTROL_MODES, controlModeForType } from '../config/conjuration-constants.js';
 import DetailSelect from '../system/helpers/detail-select.js';
+import { SummoningFlow } from './summoning/summoning_flow.js';
+import ItemEnchantment from '../item/item-enchantment.js';
 
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -294,8 +296,7 @@ export default class PlayerMenu extends DefaultAppv2 {
         localize: true,
       });
 
-    const itemId = $(target).closest('.item').attr('data-item-id');
-    const skill = this.actor.items.get(itemId);
+    const row = $(target).closest('.item');
     const moreModifiers = [
       {
         name: _loc('conjuringDifficulty'),
@@ -331,6 +332,18 @@ export default class PlayerMenu extends DefaultAppv2 {
         functionName: 'game.dsa5.apps.playerMenu.postConjurationRoll',
       },
     };
+
+    if (row.attr('data-enchantment') === '1') {
+      const sourceItem = this.actor.items.get(row.attr('data-source-item-id'));
+      const enchantmentId = row.attr('data-enchantment-id');
+      if (!sourceItem) return;
+      const res = await ItemEnchantment.roll(sourceItem, enchantmentId, { options });
+      if (res) this.#applyConjurationRollResult(res.result);
+      return;
+    }
+
+    const itemId = row.attr('data-item-id');
+    const skill = this.actor.items.get(itemId);
     this.actor.setupSkill(skill, options, undefined).then(async (setupData) => {
       const res = await this.actor.basicTest(setupData);
       this.#applyConjurationRollResult(res.result);
@@ -864,16 +877,45 @@ export default class PlayerMenu extends DefaultAppv2 {
       const services = this.calculateConjurationServices();
       const equipmentIndexLoaded = game.dsa5.itemLibrary.indexes.Item.build;
       const { entityAbilities, entityPackages } = await this.prepareEntityAbilities();
-      const requiredSkills = this.conjurationData.skills[this.conjurationData.conjurationType]
-      const conjurationskills = this.actor.items
-        .filter((x) => requiredSkills.includes(x.name) && ['liturgy', 'ceremony', 'spell', 'ritual'].includes(x.type))
-        .map((x) => x.toObject());
-      const missingConjurationSkills = requiredSkills.filter((x) => !conjurationskills.some((y) => y.name == x));
+      const { owned, enchantments, missing } = SummoningFlow.collectConjurationRituals(
+        this.actor,
+        this.conjurationData.conjurationType,
+      );
+      const conjurationskills = owned.map((x) => x.toObject());
+      const missingConjurationSkills = missing;
+      const conjurationEnchantments = [];
+      for (const { sourceItem, enchantment } of enchantments) {
+        const resolved = await ItemEnchantment.resolveDocument(enchantment);
+        const system = resolved
+          ? duplicate(resolved.system)
+          : {
+              talentValue: { value: enchantment.fw },
+              characteristic1: { value: 'mu' },
+              characteristic2: { value: 'kl' },
+              characteristic3: { value: 'in' },
+            };
+        if (!system.talentValue) system.talentValue = { value: 0 };
+        system.talentValue.value = enchantment.fw;
+        conjurationEnchantments.push({
+          name: `${enchantment.name} (${sourceItem.name})`,
+          spellName: enchantment.name,
+          source: 'enchantment',
+          sourceItemId: sourceItem.id,
+          enchantmentId: enchantment.id,
+          charged: !!enchantment.charged,
+          hasCharacteristics: !!resolved,
+          system,
+        });
+      }
 
       let hasMighty = false;
       for (const skill of conjurationskills) {
         skill.hasMighty = this.actor.items.find((x) => x.name == `${skill.name} - ${_loc('CONJURATION.powerfulCreature')}`);
         hasMighty ||= skill.hasMighty;
+      }
+      for (const ench of conjurationEnchantments) {
+        ench.hasMighty = this.actor.items.find((x) => x.name == `${ench.spellName} - ${_loc('CONJURATION.powerfulCreature')}`);
+        hasMighty ||= ench.hasMighty;
       }
       const conjurationModifiers = this.conjurationData.modifiers[this.conjurationData.conjurationType];
       const max = hasMighty ? 2 : 1;
@@ -919,6 +961,8 @@ export default class PlayerMenu extends DefaultAppv2 {
 
       mergeObject(data, {
         conjurationskills,
+        conjurationEnchantments,
+        hasAnyConjurationRitual: conjurationskills.length > 0 || conjurationEnchantments.length > 0,
         missingConjurationSkills,
         conjurationModifiers,
         entityAbilities,
@@ -934,6 +978,7 @@ export default class PlayerMenu extends DefaultAppv2 {
           conjurationModifiers,
           entityAbilities,
           conjurationskills,
+          conjurationEnchantments,
         }),
       });
     }
@@ -1012,10 +1057,11 @@ export default class PlayerMenu extends DefaultAppv2 {
    * Everything the summary rail needs: QS budget breakdown, difficulty, resulting services and
    * the reasons why finalizing is not possible yet. Shared shape with {@link ConjurationRequest}.
    */
-  #prepareSummary({ services, serviceMods, difficultyMods, aspMods, conjurationModifiers, entityAbilities, conjurationskills }) {
+  #prepareSummary({ services, serviceMods, difficultyMods, aspMods, conjurationModifiers, entityAbilities, conjurationskills, conjurationEnchantments = [] }) {
     const typeId = this.conjurationData.conjurationType;
     const rawDifficulty = getProperty(this.conjuration, 'system.conjuringDifficulty.value') || 0;
     const difficultyTotal = difficultyMods.reduce((sum, m) => sum + m.value, 0);
+    const hasUsableRitual = conjurationskills.length > 0 || conjurationEnchantments.some((x) => x.charged);
 
     const costs = [];
     for (const id of this.conjurationData.selectedIds) {
@@ -1029,7 +1075,7 @@ export default class PlayerMenu extends DefaultAppv2 {
 
     const blockers = [];
     if (!this.conjuration) blockers.push('CONJURATION.blocker.noCreature');
-    if (!conjurationskills.length) blockers.push('CONJURATION.blocker.noRitual');
+    if (!hasUsableRitual) blockers.push('CONJURATION.blocker.noRitual');
     if (Number(this.conjurationData.qs) <= 0) {
       blockers.push(this.conjurationData.rollAttempted ? 'CONJURATION.blocker.failed' : 'CONJURATION.blocker.noQs');
     }
@@ -1069,7 +1115,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       rollAttempted: !!this.conjurationData.rollAttempted,
       nextStep: PlayerMenu.resolveNextStep({
         hasCreature: !!this.conjuration,
-        hasRitual: conjurationskills.length > 0,
+        hasRitual: hasUsableRitual,
         qs: Number(this.conjurationData.qs) || 0,
         rollAttempted: !!this.conjurationData.rollAttempted,
         overspent: budget.over,

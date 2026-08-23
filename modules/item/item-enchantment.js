@@ -14,6 +14,17 @@ export default class ItemEnchantment {
     return this.list(item).find((e) => e.id == id);
   }
 
+  /** All enchantments on an actor's inventory items. */
+  static listOnActor(actor) {
+    const out = [];
+    for (const sourceItem of actor?.items ?? []) {
+      for (const enchantment of this.list(sourceItem)) {
+        out.push({ sourceItem, enchantment });
+      }
+    }
+    return out;
+  }
+
   static async resolveDocument(enchantment, { notify = false } = {}) {
     if (!enchantment) return null;
 

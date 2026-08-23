@@ -29,6 +29,36 @@
     </div>
     {{/each}}
 
+    {{#each conjurationEnchantments as |item|}}
+    <div class="row-section wrap skills item lineheight tableOdd{{#unless item.charged}} disabledSection{{/unless}}"
+        data-enchantment="1" data-source-item-id="{{item.sourceItemId}}" data-enchantment-id="{{item.enchantmentId}}"
+        {{#unless item.charged}}data-tooltip="DSAError.NotEnoughCharges"{{/unless}}>
+        <div class="col two">
+            <span class="talentName">{{item.name}}</span>
+            <i class="fas fa-wand-sparkles" data-tooltip="enchantment"></i>
+        </div>
+        <div class="col third flexrow flexAlignCenter">
+            {{#if item.charged}}
+            {{#if item.hasCharacteristics}}
+            {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
+            {{else}}
+            <button type="button" data-action="skillSelect" class="noBorder dsadesignbutton" data-tooltip="probe">
+                <i class="fas fa-dice-d20"></i>
+            </button>
+            {{/if}}
+            {{else}}
+            <i class="fas fa-battery-empty" data-tooltip="DSAError.NotEnoughCharges"></i>
+            {{/if}}
+        </div>
+        <div class="col ten center">
+            {{#if item.hasMighty}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-close"></i>{{/if}}
+        </div>
+        <div class="col ten center">
+            {{item.system.talentValue.value}}
+        </div>
+    </div>
+    {{/each}}
+
     {{#each missingConjurationSkills as |item|}}
     <div class="row-section wrap skills item lineheight tableOdd disabledSection dsahidden possibleSpell">
         <div class="col ninety">{{localize item}}</div>
@@ -36,7 +66,7 @@
     </div>
     {{/each}}
 
-    {{#unless conjurationskills.length}}
+    {{#unless hasAnyConjurationRitual}}
     <div class="dsa-info-box dsamt-2">
         <p class="dsa-info-text small">{{localize "CONJURATION.noRitualHint"}}</p>
     </div>

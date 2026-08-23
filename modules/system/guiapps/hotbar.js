@@ -17,6 +17,7 @@ import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js
 import NavalBoardWeapons from '../../combat/mkr/naval-board-weapons.js';
 import NavalBroadside from '../../combat/mkr/naval-broadside.js';
 import ImageFramePicker from '../helpers/image-frame-picker.js';
+import ItemEnchantment from '../../item/item-enchantment.js';
 const { mergeObject } = foundry.utils;
 
 export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
@@ -633,12 +634,13 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       if (OnUseEffect.hasOnUseEffect(x)) {
         this.#pushSkill(groups, x.type, this.tokenHotbar?._actionEntry(x, 'onUse', { subfunction: 'onUse' }));
       }
-      if (x.getFlag('dsa5', 'enchantments')) {
-        if (!groups.skills.enchantment) groups.skills.enchantment = [];
-        for (const enchantment of x.getFlag('dsa5', 'enchantments')) {
-          groups.skills.enchantment.push(this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', x, { subfunction: 'enchantment' }));
-        }
-      }
+    }
+
+    for (const { sourceItem, enchantment } of ItemEnchantment.listOnActor(actor)) {
+      if (!groups.skills.enchantment) groups.skills.enchantment = [];
+      groups.skills.enchantment.push(
+        this.tokenHotbar?._enchantmentEntry(enchantment, 'enchantment', sourceItem, { subfunction: 'enchantment' }),
+      );
     }
 
     for (const effect of actor.allApplicableEffects()) {

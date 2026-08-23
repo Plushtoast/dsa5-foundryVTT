@@ -1,4 +1,4 @@
-import PlayerMenu from '../player_menu.js';
+import ItemEnchantment from '../../item/item-enchantment.js';
 
 /**
  * Entry points into the guided summoning flow.
@@ -13,6 +13,10 @@ export class SummoningFlow {
   /** All conjuration type ids together with the ritual names that summon them. */
   static #skillMap() {
     return game.dsa5.apps.playerMenu?.conjurationData?.skills ?? {};
+  }
+
+  static #allSkillNames() {
+    return Object.values(SummoningFlow.#skillMap()).flat();
   }
 
   /**
@@ -38,9 +42,34 @@ export class SummoningFlow {
     return null;
   }
 
+  /**
+   * Owned rituals and matching item enchantments for a conjuration type.
+   * @param {Actor} actor
+   * @param {string} typeId
+   * @returns {{ owned: Item[], enchantments: { sourceItem: Item, enchantment: object }[], missing: string[], requiredSkills: string[] }}
+   */
+  static collectConjurationRituals(actor, typeId) {
+    const requiredSkills = SummoningFlow.#skillMap()[typeId] ?? [];
+    const owned = (actor?.items ?? []).filter(
+      (x) => requiredSkills.includes(x.name) && SummoningFlow.RITUAL_TYPES.includes(x.type),
+    );
+    const enchantments = ItemEnchantment.listOnActor(actor).filter(({ enchantment }) =>
+      requiredSkills.includes(enchantment.name),
+    );
+    const presentNames = new Set([
+      ...owned.map((x) => x.name),
+      ...enchantments.map(({ enchantment }) => enchantment.name),
+    ]);
+    const missing = requiredSkills.filter((name) => !presentNames.has(name));
+    return { owned, enchantments, missing, requiredSkills };
+  }
+
   /** Does this actor know any summoning ritual at all? Drives the companions-tab button. */
   static hasConjurationSkills(actor) {
-    return !!actor?.items.some((item) => SummoningFlow.isConjurationSkill(item));
+    if (!actor) return false;
+    if (actor.items.some((item) => SummoningFlow.isConjurationSkill(item))) return true;
+    const names = SummoningFlow.#allSkillNames();
+    return ItemEnchantment.listOnActor(actor).some(({ enchantment }) => names.includes(enchantment.name));
   }
 
   /**
