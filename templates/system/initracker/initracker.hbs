@@ -1,17 +1,17 @@
-<div style="--iniTrackerSize:{{itemWidth}}px" class="tooltipConnector">
-    <div class="row-section">
-        <div class="controls right">
+<div style="--iniTrackerSize:{{itemWidth}}px" class="initracker-root tooltipConnector">
+    <div class="initracker-main">
+        <div class="initracker-controls initracker-controls-left">
             {{#if user.isGM}}
-            <button type="button" class="inline-control combat-control icon combat-mode-control fas {{combatModeIcon}}" data-tooltip="{{combatModeTooltip}}" {{#unless combats.length}}disabled{{/unless}} aria-label="{{ localize combatModeTooltip }}"></button>
+            <button type="button" class="icon plain combat-control combat-mode-control fas {{combatModeIcon}}" data-tooltip="{{combatModeTooltip}}" {{#unless combats.length}}disabled{{/unless}} aria-label="{{ localize combatModeTooltip }}"></button>
             {{/if}}
-            {{#if (and user.isGM combat.round)}}            
-            <button type="button" class="inline-control combat-control icon fa-solid fa-step-backward"
+            {{#if (and user.isGM combat.round)}}
+            <button type="button" class="icon plain combat-control fa-solid fa-step-backward"
             data-action="previousRound" data-tooltip="COMBAT.RoundPrev"
             aria-label="{{ localize "COMBAT.RoundPrev" }}"></button>
-            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
+            <button type="button" class="icon plain combat-control fa-solid fa-arrow-left" data-action="previousTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
             {{else if control}}
-            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-left" data-action="previousTurn"
+            <button type="button" class="icon plain combat-control fa-solid fa-arrow-left" data-action="previousTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnPrev' 'combatTrackerPrevious'}}" aria-label="{{ localize "COMBAT.TurnPrev" }}"></button>
             {{/if}}
         </div>
@@ -20,11 +20,11 @@
             {{#if newRound}}
             <li class="iniRoundSeparator" role="separator" data-tooltip="{{localize 'COMBATTRACKER.newRound'}}" aria-label="{{localize 'COMBATTRACKER.newRound'}}"></li>
             {{/if}}
-            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem {{newRound}} {{css}}" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
+            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem dsa-hud-portrait {{newRound}} {{css}}" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
                 <div class="combatant-advanced">
                     {{#if defenseCount}}
                     <i class="fas def fa-shield-alt" data-defense-count="{{defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
-                    <i class="fas fa-shield-alt reversed"></i> {{/if}} 
+                    <i class="fas fa-shield-alt reversed"></i> {{/if}}
                     {{#if ongoing}}
                     <div class="ongoing" data-tooltip="{{ongoings}}">{{ongoing}}</div>
                     {{/if}}
@@ -57,12 +57,12 @@
                 <div class="hoverbuttons">
                     <div class="combatant-controls flexrow">
                         {{#if ../user.isGM}}
-                        <button type="button" class="inline-control combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
+                        <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
                         data-action="toggleHidden" data-tooltip
                         aria-label="{{ localize (ifThen hidden "COMBATANT.Show" "COMBATANT.Hide") }}"></button>
                     </div>
                     <div class="combatant-controls flexrow">
-                        <button type="button" class="inline-control combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
+                        <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
                         data-action="toggleDefeated" data-tooltip
                         aria-label="{{ localize (ifThen isDefeated "COMBATANT.UnmarkDefeated" "COMBATANT.MarkDefeated") }}"></button>
                         {{/if}}
@@ -84,25 +84,25 @@
         </ul>
         {{#if waitingTurns}}
         <ul class="waitingTackerList iniTrackerList">
-            <li class="waitTitle" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
+            <li class="waitTitle dsa-hud-portrait" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns}}
-            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem {{css}}" data-action="restoreInit" style="background-image:url('{{img}}');{{dispositionBorderStyle}}"></li>
+            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem dsa-hud-portrait {{css}}" data-action="restoreInit" style="background-image:url('{{img}}');{{dispositionBorderStyle}}"></li>
             {{/each}}
         </ul>
         {{/if}}
-        <div class="controls">
+        <div class="initracker-controls initracker-controls-right">
             {{#if user.isGM}}
-            <button type="button" class="inline-control combat-control icon fa-solid fa-trash" data-action="endCombat"
+            <button type="button" class="icon plain combat-control fa-solid fa-trash" data-action="endCombat"
                 data-tooltip="COMBAT.End" aria-label="{{ localize "COMBAT.End" }}"></button>
             {{#if combat.round}}
-            <button type="button" class="inline-control combat-control icon fa-solid fa-step-forward" data-action="nextRound"
+            <button type="button" class="icon plain combat-control fa-solid fa-step-forward" data-action="nextRound"
             data-tooltip="COMBAT.RoundNext" aria-label="{{ localize "COMBAT.RoundNext" }}"></button>
-            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
+            <button type="button" class="icon plain combat-control fa-solid fa-arrow-right" data-action="nextTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
             {{else if control}}
-            <button type="button" class="inline-control combat-control icon fa-solid fa-arrow-right" data-action="nextTurn"
+            <button type="button" class="icon plain combat-control fa-solid fa-arrow-right" data-action="nextTurn"
             data-tooltip-text="{{tooltipWithKeybinding 'COMBAT.TurnNext' 'combatTrackerNext'}}" aria-label="{{ localize "COMBAT.TurnNext" }}"></button>
-            {{/if}} 
+            {{/if}}
             {{/if}}
         </div>
         <section class="dragHandler" data-tooltip="TT.resizer">
@@ -111,31 +111,31 @@
     </div>
 
     {{#if unRolled}}
-    <div class="row-section">
-        <button type="button" class="col rollMine" data-action="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
+    <div class="row-section initracker-actions">
+        <button type="button" class="col dsa-hud-action-button rollMine" data-action="rollMine">{{localize 'COMBAT.InitiativeRoll'}}</button>
     </div>
-    {{/if}} 
-    {{#unless combat.round}} 
+    {{/if}}
+    {{#unless combat.round}}
     {{#if user.isGM}}
-    <div class="row-section">
-        <button type="button" class="col combat-control" data-action="startCombat">{{localize 'COMBAT.Begin'}}</button>
+    <div class="row-section initracker-actions">
+        <button type="button" class="col dsa-hud-action-button combat-control" data-action="startCombat">{{localize 'COMBAT.Begin'}}</button>
     </div>
     {{/if}}
     {{else}}
     {{#if (or control user.isGM)}}
-    <div class="row-section">
+    <div class="row-section initracker-actions">
         {{#if mkrEndTurnLabel}}
-        <button type="button" class="col {{ifThen isDamageReportPhase 'combat-control' 'two combat-control'}} {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding mkrEndTurnLabel 'combatTrackerNext'}}">{{localize mkrEndTurnLabel}}</button>
+        <button type="button" class="col dsa-hud-action-button {{ifThen isDamageReportPhase 'combat-control' 'two combat-control'}} {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding mkrEndTurnLabel 'combatTrackerNext'}}">{{localize mkrEndTurnLabel}}</button>
         {{else}}
-        <button type="button" class="col two combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
+        <button type="button" class="col two dsa-hud-action-button combat-control {{ifThen isLastRound 'lastRound' ''}}" data-action="nextTurn" data-tooltip-text="{{tooltipWithKeybinding (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd') 'combatTrackerNext'}}">{{localize (ifThen isLastRound 'COMBAT.RoundNext' 'COMBAT.TurnEnd')}}</button>
         {{/if}}
         {{#unless isDamageReportPhase}}
         {{#if isChase}}
-        <button type="button" class="col two combat-control chase-roll-current" data-action="aggroButton" data-tooltip="CHASE.actionTooltip">{{localize 'CHASE.action'}}</button>
+        <button type="button" class="col two dsa-hud-action-button combat-control chase-roll-current" data-action="aggroButton" data-tooltip="CHASE.actionTooltip">{{localize 'CHASE.action'}}</button>
         {{else if (and isNavalMkr (eq mkr.phase "heroActions"))}}
-        <button type="button" class="col two combat-control naval-hero-action" data-action="aggroButton" data-tooltip="VEHICLE.mkr.heroActionTooltip">{{localize 'VEHICLE.mkr.heroAction'}}</button>
+        <button type="button" class="col two dsa-hud-action-button combat-control naval-hero-action" data-action="aggroButton" data-tooltip="VEHICLE.mkr.heroActionTooltip">{{localize 'VEHICLE.mkr.heroAction'}}</button>
         {{else}}
-        <button type="button" class="col two combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+        <button type="button" class="col two dsa-hud-action-button combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
         {{/if}}
         {{/unless}}
     </div>

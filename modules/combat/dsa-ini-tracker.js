@@ -7,8 +7,17 @@ import NavalCombat from './mkr/naval-combat.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
-  /** Must match `.iniRoundSeparator` in inittracker.scss (bar width + horizontal margins). */
-  static ROUND_SEPARATOR_WIDTH = 12;
+  static TILE_GAP = 4;
+  static ROUND_SEPARATOR_WIDTH = 4;
+  static PANEL_PAD = 0;
+  static PANEL_BORDER = 0;
+  static CONTROL_COLUMN_WIDTH = 18;
+  static DRAG_COLUMN_WIDTH = 14;
+  static CONTROL_GAP = 2;
+  static ACTION_ROW_HEIGHT = 32;
+  static BADGE_ROW_HEIGHT = 28;
+  static INITIATIVE_OVERLAY = 20;
+  static MIN_SIZE = 80;
 
   static DEFAULT_OPTIONS = {
     position: {
@@ -76,11 +85,92 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   setPosition(position) {
     const currentPosition = super.setPosition(position);
-    game.settings.set('dsa5', 'iniTrackerPosition', {
-      left: currentPosition.left,
-      top: currentPosition.top,
-    });
+    if (Number.isFinite(currentPosition?.left) && Number.isFinite(currentPosition?.top)) {
+      game.settings.set('dsa5', 'iniTrackerPosition', {
+        left: currentPosition.left,
+        top: currentPosition.top,
+      });
+    }
     return currentPosition;
+  }
+
+  static #controlColumnWidth() {
+    return this.CONTROL_COLUMN_WIDTH;
+  }
+
+  static #controlColumnHeight(_buttonCount, itemWidth) {
+    return Math.max(30, Number(itemWidth) || 80);
+  }
+
+  static #controlCounts(data, combatStarted) {
+    const isGM = game.user.isGM;
+    const control = !!data?.control;
+    let left = 0;
+    let right = 0;
+
+    if (isGM) {
+      left += 1;
+      right += 1;
+    }
+    if (isGM && combatStarted) {
+      left += 2;
+      right += 2;
+    } else if (control) {
+      left += 1;
+      if (isGM) right += 1;
+    }
+
+    return { left, right };
+  }
+
+  static #computeDimensions({
+    itemWidth,
+    actorCount,
+    roundSeparators,
+    leftControls,
+    rightControls,
+    extraRows,
+    extraBadgeRows,
+  }) {
+    const size = Math.max(30, Number(itemWidth) || 80);
+    const tiles = Math.max(0, Number(actorCount) || 0);
+    const seps = Math.max(0, Number(roundSeparators) || 0);
+    const leftCount = Math.max(0, Number(leftControls) || 0);
+    const rightCount = Math.max(0, Number(rightControls) || 0);
+    const rows = Math.max(0, Number(extraRows) || 0);
+    const badges = Math.max(0, Number(extraBadgeRows) || 0);
+
+    const leftWidth = leftCount > 0 ? this.CONTROL_COLUMN_WIDTH + this.TILE_GAP : 0;
+    const rightWidth = rightCount > 0 ? this.CONTROL_COLUMN_WIDTH + this.TILE_GAP : 0;
+    const dragWidth = this.DRAG_COLUMN_WIDTH + this.TILE_GAP;
+    const itemCount = tiles + seps;
+    const tilesWidth = itemCount > 0
+      ? tiles * size + seps * this.ROUND_SEPARATOR_WIDTH + Math.max(0, itemCount - 1) * this.TILE_GAP
+      : size;
+
+    const width = this.PANEL_PAD + this.PANEL_BORDER
+      + leftWidth
+      + tilesWidth
+      + rightWidth
+      + dragWidth
+      + this.PANEL_PAD;
+
+    const portraitRow = Math.max(
+      size + this.INITIATIVE_OVERLAY,
+      this.#controlColumnHeight(leftCount, size),
+      this.#controlColumnHeight(rightCount, size),
+    );
+
+    const height = this.PANEL_PAD + this.PANEL_BORDER
+      + portraitRow
+      + rows * this.ACTION_ROW_HEIGHT
+      + badges * this.BADGE_ROW_HEIGHT
+      + this.PANEL_PAD;
+
+    return {
+      width: Math.max(this.MIN_SIZE, Math.round(width) || this.MIN_SIZE),
+      height: Math.max(this.MIN_SIZE, Math.round(height) || this.MIN_SIZE),
+    };
   }
 
   static connectHooks() {
@@ -110,12 +200,12 @@ export default class DSAIniTracker extends DefaultAppv2 {
   }
 
   async _prepareContext(options) {
-    const data = this.combatData;
-    mergeObject(options, { position: game.settings.get('dsa5', 'iniTrackerPosition') });
+    const data = this.combatData ?? { turns: [], combat: game.combat };
+    mergeObject(options, { position: game.settings.get('dsa5', 'iniTrackerPosition') ?? {} });
     const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
     const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
 
-    const combatStarted = data.combat.round;
+    const combatStarted = data.combat?.round;
     if (data.turns && data.combat) {
       data.turns = ChaseCombatTracker.prepareIniTurns(data.turns, data.combat);
     }
@@ -138,7 +228,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     //todo change this to one loop
     const anyActive = turnsToUse.some((x) => x.active);
-    const unRolled = !isChase && data.turns.some((x) => {
+    const unRolled = !isChase && (data.turns ?? []).some((x) => {
       if (x.isChaseSection || !x.isOwner || x.initiative) return false;
       if (!game.user.isGM) return true;
       return data.combat.combatants.get(x.id)?.isNPC;
@@ -208,12 +298,30 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
     data.isLastRound = isNavalMkr
       ? NavalCombat.isLastRelevantTurn(data.combat)
-      : data.turns[1]?.newRound;
+      : data.turns?.[1]?.newRound;
 
     const roundSeparators = data.turns?.filter((turn) => turn.newRound).length ?? 0;
-    options.position.width = itemWidth * actorCount + actorCount * 3 + 70
-      + roundSeparators * this.constructor.ROUND_SEPARATOR_WIDTH;
-    options.position.height = itemWidth + 10;
+    const extraRows = [
+      unRolled,
+      !combatStarted && game.user.isGM,
+      combatStarted && (data.control || game.user.isGM),
+    ].filter(Boolean).length;
+    const extraBadgeRows = [
+      combatStarted && (data.control || game.user.isGM) && isNavalMkr,
+      combatStarted && isChase,
+    ].filter(Boolean).length;
+    const { left, right } = this.constructor.#controlCounts(data, combatStarted);
+    const dimensions = this.constructor.#computeDimensions({
+      itemWidth,
+      actorCount,
+      roundSeparators,
+      leftControls: left,
+      rightControls: right,
+      extraRows,
+      extraBadgeRows,
+    });
+    options.position.width = dimensions.width;
+    options.position.height = dimensions.height;
 
     Object.assign(data, {
       itemWidth,

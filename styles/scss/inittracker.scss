@@ -1,397 +1,451 @@
 .initTracker {
-    position: absolute;
+  position: absolute;
 
-    .iniItem.newRound,
-    .newRound {
-        background-color: rgba(73, 111, 215, 0.65);
-    }
+  .window-content {
+    width: fit-content;
+  }
 
-    .iniRoundSeparator {
-        display: inline-block;
-        width: 4px;
-        height: var(--iniTrackerSize);
-        margin: 0 4px;
-        vertical-align: top;
-        background-color: #496fd7;
-        box-shadow: 0 0 6px rgba(73, 111, 215, 0.85);
-        border-radius: 2px;
-        cursor: default;
-        list-style: none;
-    }
+  .initracker-root {
+    --dsa-hud-portrait-size: var(--iniTrackerSize);
+    display: flex;
+    flex-direction: column;
+    gap: var(--dsa-hud-gap);
+    width: fit-content;
+  }
 
-    .dragHandler {
-        width: 15px;
-        background: none;
-        border: none;
-        line-height: var(--iniTrackerSize);
-    }
+  .initracker-main {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--dsa-hud-gap);
+  }
 
-    .waitTitle {
-        background-image: none;
+  .initracker-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 0 0 auto;
+    width: 18px;
+    height: var(--iniTrackerSize);
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
 
-        i {
-            float: left;
-            width: 100%;
-            line-height: calc(var(--iniTrackerSize) * 0.5);
-            text-align: center;
-            color: white;
-        }
-    }
-
-    .hoverbuttons {
-        color: white;
-        position: absolute;
-        right: 0;
-        top: 25%;
-        opacity: 0;
-        transition: opacity 0.3s;
-    }
-
-    li:hover .hoverbuttons {
-        opacity: 1;
-    }
-
-    .controls {
-        i {
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 5px;
-        }
-
-        &.right {
-            text-align: right;
-        }
+    &:not(:has(button)) {
+      display: none;
     }
 
     button {
-        line-height: 21px;
-    }    
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      padding: 0;
+      line-height: 1;
+      font-size: 11px;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+      border: 1px solid var(--dsa-hud-frame-border);
+      border-radius: 4px;
+      color: var(--dsa-hud-text);
+      transition: all 0.2s ease-in-out;
 
-    .token-initiative {
-        position: absolute;
-        bottom: -20px;
-        left: 0;
-        right: 0;
+      &:hover {
+        border-color: var(--dsa-hud-accent);
+        background: linear-gradient(135deg, rgba(196, 30, 58, 0.3) 0%, rgba(196, 30, 58, 0.1) 100%);
+        box-shadow: 0 0 8px rgba(196, 30, 58, 0.4);
+        color: var(--dsa-hud-text-bright);
+      }
+    }
+  }
+
+  .dragHandler {
+    flex: 0 0 14px;
+    width: 14px;
+    height: var(--iniTrackerSize);
+    line-height: var(--iniTrackerSize);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+    color: var(--dsa-hud-text);
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+
+    &:hover {
+      color: var(--dsa-hud-text-bright);
     }
 
-    .aggroButton {
-        left: 0;
-        right: 0;
-        margin: 0 auto 0;
-        bottom: 0;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .iniRoundSeparator {
+    display: block;
+    flex: 0 0 4px;
+    width: 4px;
+    height: var(--iniTrackerSize);
+    margin: 0;
+    background-color: #496fd7;
+    box-shadow: 0 0 6px rgba(73, 111, 215, 0.85);
+    border-radius: 2px;
+    cursor: default;
+    list-style: none;
+    border: none;
+    overflow: visible;
+  }
+
+  .waitTitle {
+    background-image: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      color: var(--dsa-hud-text-bright);
+    }
+  }
+
+  .hoverbuttons {
+    color: var(--dsa-hud-text-bright);
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .dsa-hud-icon-button {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
+  li:hover .hoverbuttons {
+    opacity: 1;
+  }
+
+  .token-initiative {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    right: 0;
+  }
+
+  .aggroButton {
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    bottom: 0;
+  }
+
+  .dsa-hud-portrait {
+    flex: 0 0 auto;
+    pointer-events: all;
+
+    .roll:before {
+      position: absolute;
+      content: '6';
+      color: var(--dsa-hud-text-bright);
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      text-align: center;
     }
 
-    li {
-        position: relative;
-        width: var(--iniTrackerSize);
-        height: var(--iniTrackerSize);
-        box-shadow: none;
-        border: 1px solid transparent;
-        cursor: pointer;
-        background-color: rgba(0, 0, 0, 0.5);
-        border-radius: 10px;
-
-        .roll:before {
-            position: absolute;
-            content: '6';
-            color: white;
-            left: 0;
-            right: 0;
-            top: 0px;
-            bottom: 0;
-            text-align: center;
-        }
-
-        .roll {
-            position: relative;
-            display: block;
-            width: 25px;
-            height: 25px;
-            background: url('../../icons/dice/d6white.svg') no-repeat 50% 50%;
-            margin: 0 auto;
-        }
-
-        &.active {
-            border-color: white;
-            box-shadow: inset 0px 0px 10px white;
-        }
-
-        &.defeated,
-        &.hidden {
-            opacity: 0.5;
-        }
-
-        &.defeated {
-            background-size: 75% 75%;
-            background-position: center;
-        }
+    .roll {
+      position: relative;
+      display: block;
+      width: 25px;
+      height: 25px;
+      background: url('../../icons/dice/d6white.svg') no-repeat 50% 50%;
+      margin: 0 auto;
     }
 
-    .item-structure {
-        top: -102%;
-        border-color: rgb(14, 12, 12);
+    &.defeated {
+      background-size: 75% 75%;
+      background-position: center;
+    }
+  }
 
-        &.vehicle-stp,
-        &.vehicle-crew {
-            position: absolute;
-            top: 0;
-            height: 100%;
-        }
+  .item-structure {
+    top: -102%;
+    border-color: rgb(14, 12, 12);
 
-        &.vehicle-stp {
-            left: 0;
-
-            .inner {
-                background: linear-gradient(180deg, #c9a227 0%, #5c3d1e 100%);
-            }
-        }
-
-        &.vehicle-crew {
-            left: 5px;
-
-            .inner {
-                background: linear-gradient(180deg, #2bb3c0 0%, #0f4c5c 100%);
-            }
-        }
+    &.vehicle-stp,
+    &.vehicle-crew {
+      position: absolute;
+      top: 0;
+      height: 100%;
     }
 
-    .combatant-advanced {
-        height: var(--iniTrackerSize);
+    &.vehicle-stp {
+      left: 0;
 
-        .actions {
-            right: 0;
-            left: unset;
-        }
-
-        .chase-distance-overlay {
-            left: 0;
-            right: unset;
-            top: 0;
-            z-index: 2;
-        }
-
-        .ongoing {
-            bottom: 4px;
-            top: unset;
-        }
-
-        i {
-            left: 4px;
-            bottom: 4px;
-            right: unset;
-        }
-
-        .chase-rolled-mark {
-            left: unset;
-            right: 4px;
-            bottom: 4px;
-            color: #7dcea0;
-        }
+      .inner {
+        background: linear-gradient(180deg, #c9a227 0%, #5c3d1e 100%);
+      }
     }
 
-    .waitingTackerList {
-        position: absolute;
-        top: calc(var(--iniTrackerSize) * -0.5);
-        left: 30px;
+    &.vehicle-crew {
+      left: 5px;
 
-        li {
-            width: calc(var(--iniTrackerSize) * 0.5);
-            height: calc(var(--iniTrackerSize) * 0.5);
-        }
+      .inner {
+        background: linear-gradient(180deg, #2bb3c0 0%, #0f4c5c 100%);
+      }
+    }
+  }
+
+  .combatant-advanced {
+    height: var(--iniTrackerSize);
+
+    .actions {
+      right: 0;
+      left: unset;
     }
 
-    .iniTrackerList {
+    .chase-distance-overlay {
+      left: 0;
+      right: unset;
+      top: 0;
+      z-index: 2;
+    }
+
+    .ongoing {
+      bottom: 4px;
+      top: unset;
+    }
+
+    i {
+      left: 4px;
+      bottom: 4px;
+      right: unset;
+    }
+
+    .chase-rolled-mark {
+      left: unset;
+      right: 4px;
+      bottom: 4px;
+      color: #7dcea0;
+    }
+  }
+
+  .waitingTackerList {
+    position: absolute;
+    top: calc(var(--iniTrackerSize) * -0.5);
+    left: 30px;
+
+    .dsa-hud-portrait {
+      width: calc(var(--iniTrackerSize) * 0.5);
+      height: calc(var(--iniTrackerSize) * 0.5);
+    }
+  }
+
+  .iniTrackerList {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--dsa-hud-gap);
+    list-style: none;
+  }
+
+  .initracker-actions {
+    gap: var(--dsa-hud-gap);
+  }
+
+  .mkr-phase-badge-row {
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+
+    --chase-badge-height: 1.5rem;
+    --chase-badge-pad-x: 8px;
+    --chase-badge-radius: 4px;
+    --chase-badge-font: var(--font-size-11);
+
+    .mkr-phase-badge {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--chase-badge-height);
+      min-height: var(--chase-badge-height);
+      flex: 0 0 auto;
+      font-size: var(--chase-badge-font);
+      font-weight: 700;
+      line-height: 1;
+      padding: 0 var(--chase-badge-pad-x);
+      border-radius: var(--chase-badge-radius);
+      border: 1px solid rgba(26, 92, 138, 0.7);
+      color: #fff;
+      background: rgba(26, 74, 138, 0.85);
+      white-space: nowrap;
+    }
+
+    button.mkr-phase-badge.mkr-phase-control {
+      cursor: pointer;
+    }
+
+    .mkr-phase-step {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--chase-badge-height);
+      height: var(--chase-badge-height);
+      min-height: var(--chase-badge-height);
+      padding: 0;
+      border-radius: var(--chase-badge-radius);
+      border: 1px solid rgba(26, 92, 138, 0.7);
+      color: #fff;
+      background: rgba(26, 74, 138, 0.85);
+      cursor: pointer;
+      line-height: 1;
+    }
+  }
+
+  .chase-badge-row {
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    flex-wrap: nowrap;
+
+    --chase-badge-height: 1.5rem;
+    --chase-badge-pad-x: 8px;
+    --chase-badge-radius: 4px;
+    --chase-badge-font: var(--font-size-11);
+
+    .chase-outcome-banner {
+      flex: 1 1 auto;
+      min-width: 0;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--chase-badge-height);
+      text-align: center;
+      font-size: var(--chase-badge-font);
+      font-weight: 700;
+      line-height: 1;
+      padding: 0 var(--chase-badge-pad-x);
+      border-radius: var(--chase-badge-radius);
+      color: #fff;
+      white-space: nowrap;
+
+      &.caught {
+        background: rgba(180, 80, 40, 0.92);
+      }
+
+      &.escaped {
+        background: rgba(40, 120, 70, 0.92);
+      }
+    }
+
+    .chase-status-badge,
+    .chase-terrain-chip,
+    .chase-default-skill-badge {
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: var(--chase-badge-height);
+      min-height: var(--chase-badge-height);
+      flex: 0 0 auto;
+      font-size: var(--chase-badge-font);
+      font-weight: 700;
+      line-height: 1;
+      padding: 0 var(--chase-badge-pad-x);
+      border-radius: var(--chase-badge-radius);
+      border: 1px solid transparent;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .chase-status-badge {
+      gap: 2px;
+      border-color: rgba(73, 111, 215, 0.7);
+      background: rgba(26, 74, 138, 0.85);
+
+      .chase-max-rounds-input {
+        box-sizing: border-box;
+        width: 1.75rem;
+        height: 1.15rem;
+        min-height: 0;
         margin: 0;
-        padding: 0;
-        display: inline-block;
+        padding: 0 2px;
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        border-radius: 3px;
+        background: rgba(0, 0, 0, 0.25);
+        color: inherit;
+        font: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: 1;
+        text-align: center;
+        appearance: textfield;
+        -moz-appearance: textfield;
 
-        li:last-child {
-            margin-bottom: 0.25rem;
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
         }
+      }
     }
 
-    .mkr-phase-badge-row {
-        justify-content: center;
-        align-items: center;
-        gap: 6px;
-        margin-top: 2px;
+    .chase-terrain-chip {
+      border-color: rgba(50, 120, 100, 0.8);
+      background: rgba(30, 95, 80, 0.9);
 
-        --chase-badge-height: 1.5rem;
-        --chase-badge-pad-x: 8px;
-        --chase-badge-radius: 4px;
-        --chase-badge-font: var(--font-size-11);
+      &.context {
+        cursor: pointer;
 
-        .mkr-phase-badge {
-            box-sizing: border-box;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: var(--chase-badge-height);
-            min-height: var(--chase-badge-height);
-            flex: 0 0 auto;
-            font-size: var(--chase-badge-font);
-            font-weight: 700;
-            line-height: 1;
-            padding: 0 var(--chase-badge-pad-x);
-            border-radius: var(--chase-badge-radius);
-            border: 1px solid rgba(26, 92, 138, 0.7);
-            color: #fff;
-            background: rgba(26, 74, 138, 0.85);
-            white-space: nowrap;
+        &:hover {
+          filter: brightness(1.1);
         }
-
-        button.mkr-phase-badge.mkr-phase-control {
-            cursor: pointer;
-        }
-
-        .mkr-phase-step {
-            box-sizing: border-box;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: var(--chase-badge-height);
-            height: var(--chase-badge-height);
-            min-height: var(--chase-badge-height);
-            padding: 0;
-            border-radius: var(--chase-badge-radius);
-            border: 1px solid rgba(26, 92, 138, 0.7);
-            color: #fff;
-            background: rgba(26, 74, 138, 0.85);
-            cursor: pointer;
-            line-height: 1;
-        }
+      }
     }
 
-    .chase-badge-row {
-        justify-content: center;
-        align-items: center;
-        gap: 6px;
-        margin-top: 2px;
-        flex-wrap: nowrap;
-
-        --chase-badge-height: 1.5rem;
-        --chase-badge-pad-x: 8px;
-        --chase-badge-radius: 4px;
-        --chase-badge-font: var(--font-size-11);
-
-        .chase-outcome-banner {
-            flex: 1 1 auto;
-            min-width: 0;
-            box-sizing: border-box;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: var(--chase-badge-height);
-            text-align: center;
-            font-size: var(--chase-badge-font);
-            font-weight: 700;
-            line-height: 1;
-            padding: 0 var(--chase-badge-pad-x);
-            border-radius: var(--chase-badge-radius);
-            color: #fff;
-            white-space: nowrap;
-
-            &.caught {
-                background: rgba(180, 80, 40, 0.92);
-            }
-
-            &.escaped {
-                background: rgba(40, 120, 70, 0.92);
-            }
-        }
-
-        .chase-status-badge,
-        .chase-terrain-chip,
-        .chase-default-skill-badge {
-            box-sizing: border-box;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: var(--chase-badge-height);
-            min-height: var(--chase-badge-height);
-            flex: 0 0 auto;
-            font-size: var(--chase-badge-font);
-            font-weight: 700;
-            line-height: 1;
-            padding: 0 var(--chase-badge-pad-x);
-            border-radius: var(--chase-badge-radius);
-            border: 1px solid transparent;
-            color: #fff;
-            white-space: nowrap;
-        }
-
-        .chase-status-badge {
-            gap: 2px;
-            border-color: rgba(73, 111, 215, 0.7);
-            background: rgba(26, 74, 138, 0.85);
-
-            .chase-max-rounds-input {
-                box-sizing: border-box;
-                width: 1.75rem;
-                height: 1.15rem;
-                min-height: 0;
-                margin: 0;
-                padding: 0 2px;
-                border: 1px solid rgba(255, 255, 255, 0.45);
-                border-radius: 3px;
-                background: rgba(0, 0, 0, 0.25);
-                color: inherit;
-                font: inherit;
-                font-size: inherit;
-                font-weight: inherit;
-                line-height: 1;
-                text-align: center;
-                appearance: textfield;
-                -moz-appearance: textfield;
-
-                &::-webkit-outer-spin-button,
-                &::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
-                }
-            }
-        }
-
-        .chase-terrain-chip {
-            border-color: rgba(50, 120, 100, 0.8);
-            background: rgba(30, 95, 80, 0.9);
-
-            &.context {
-                cursor: pointer;
-
-                &:hover {
-                    filter: brightness(1.1);
-                }
-            }
-        }
-
-        .chase-default-skill-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 2px;
-            flex: 0 0 auto;
-            height: var(--chase-badge-height);
-        }
-
-        .chase-default-skill-badge {
-            border-color: rgba(120, 90, 40, 0.75);
-            background: rgba(110, 80, 30, 0.88);
-            cursor: pointer;
-
-            &:hover {
-                filter: brightness(1.1);
-            }
-        }
-
-        .chase-default-skill-menu {
-            box-sizing: border-box;
-            width: var(--chase-badge-height);
-            height: var(--chase-badge-height);
-            min-width: var(--chase-badge-height);
-            padding: 0;
-            font-size: var(--chase-badge-font);
-            color: var(--color-text-secondary);
-            cursor: pointer;
-        }
+    .chase-default-skill-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      flex: 0 0 auto;
+      height: var(--chase-badge-height);
     }
+
+    .chase-default-skill-badge {
+      border-color: rgba(120, 90, 40, 0.75);
+      background: rgba(110, 80, 30, 0.88);
+      cursor: pointer;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+    }
+
+    .chase-default-skill-menu {
+      box-sizing: border-box;
+      width: var(--chase-badge-height);
+      height: var(--chase-badge-height);
+      min-width: var(--chase-badge-height);
+      padding: 0;
+      font-size: var(--chase-badge-font);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+    }
+  }
 }

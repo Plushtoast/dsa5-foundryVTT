@@ -5043,7 +5043,6 @@ select.noAppearance {
   }
 }
 
-.initTracker .dragHandler,
 .tokenQuickHot .dragHandler {
   width: 14px;
   height: var(--tokenQuickhotsize);
@@ -5071,7 +5070,6 @@ select.noAppearance {
   }
 }
 
-.initTracker li,
 .tokenQuickHot li {
   background-color: rgba(0, 0, 0, 0.5);
   display: inline-block;
@@ -6781,6 +6779,7 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('citydetails.scss');
 @include meta.load-css('patchviewer.scss');
 @include meta.load-css('adventure-wizard.scss');
+@include meta.load-css('hud.scss');
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');

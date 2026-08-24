@@ -28,6 +28,10 @@ function scheduleSyncScQuickbar(force = false) {
 }
 
 export default class ScQuickbar extends DefaultAppv2 {
+  static DISPLAY_MODE_ALL = 0;
+  static DISPLAY_MODE_LOGGED_IN = 1;
+  static DISPLAY_MODE_COLLAPSED = 2;
+
   static PORTRAIT_SIZE_MIN = 48;
   static PORTRAIT_SIZE_MAX = 120;
   static PORTRAIT_SIZE_STEP = 4;
@@ -46,9 +50,6 @@ export default class ScQuickbar extends DefaultAppv2 {
     },
     actions: {
       panToMember: this.#onPanToMember,
-      toggleLoggedInOnly: this.#toggleLoggedInOnly,
-      toggleLayout: this.#toggleLayout,
-      configure: this.#onConfigure,
     },
     classes: ['dsa5', 'sc-quickbar', 'faded-ui'],
   };
@@ -65,6 +66,8 @@ export default class ScQuickbar extends DefaultAppv2 {
   static register() {
     if (game.dsa5.apps.scQuickbar) return;
 
+    this.#migrateDisplayMode();
+
     game.dsa5.apps.scQuickbar = new ScQuickbar();
     ScQuickbar.connectHooks();
 
@@ -73,6 +76,19 @@ export default class ScQuickbar extends DefaultAppv2 {
     }
 
     Hooks.call('dsa5ScQuickbarReady', game.dsa5.apps.scQuickbar);
+  }
+
+  static #migrateDisplayMode() {
+    const legacy = game.settings.storage.get('client')?.['dsa5.scQuickbarLoggedInOnly'];
+    if (legacy !== true) return;
+    if (game.settings.get('dsa5', 'scQuickbarDisplayMode') !== this.DISPLAY_MODE_ALL) return;
+    game.settings.set('dsa5', 'scQuickbarDisplayMode', this.DISPLAY_MODE_LOGGED_IN);
+  }
+
+  static #normalizeDisplayMode(mode) {
+    const value = Number(mode);
+    if (value === this.DISPLAY_MODE_LOGGED_IN || value === this.DISPLAY_MODE_COLLAPSED) return value;
+    return this.DISPLAY_MODE_ALL;
   }
 
   static connectHooks() {
@@ -259,10 +275,29 @@ export default class ScQuickbar extends DefaultAppv2 {
   static #verticalControlsHeight(portraitSize) {
     const { CONTROLS_WIDTH, CONTROLS_ROW_HEIGHT } = this;
     const gap = 4;
-    const controlCount = 3;
+    const controlCount = 2;
     const buttonsPerRow = Math.max(1, Math.floor((portraitSize + gap) / (CONTROLS_WIDTH + gap)));
     const rows = Math.ceil(controlCount / buttonsPerRow);
     return rows * CONTROLS_ROW_HEIGHT + (rows - 1) * gap;
+  }
+
+  static #controlsOnlyDimensions(portraitSize, vertical) {
+    const { CONTROLS_WIDTH, CONTROLS_ROW_HEIGHT } = this;
+    const gap = 4;
+    const controlCount = 2;
+    const controlColumnHeight = controlCount * CONTROLS_ROW_HEIGHT + (controlCount - 1) * gap;
+
+    if (vertical) {
+      return {
+        width: portraitSize,
+        height: this.#verticalControlsHeight(portraitSize),
+      };
+    }
+
+    return {
+      width: CONTROLS_WIDTH,
+      height: controlColumnHeight,
+    };
   }
 
   static #computeDimensions(memberCount, portraitSize, vertical, reserveResourceRow = true) {
@@ -270,24 +305,20 @@ export default class ScQuickbar extends DefaultAppv2 {
     const gap = 4;
     const resourceRow = reserveResourceRow ? 14 : 0;
     const memberHeight = portraitSize + NAME_GAP + NAME_HEIGHT + resourceRow;
-    const padding = 8;
 
     if (!memberCount) {
-      return {
-        width: CONTROLS_WIDTH + padding,
-        height: 120,
-      };
+      return this.#controlsOnlyDimensions(portraitSize, vertical);
     }
 
     const controlsHeight = vertical ? this.#verticalControlsHeight(portraitSize) : 0;
 
     return {
       width: vertical
-        ? portraitSize + padding
-        : portraitSize * memberCount + gap * (memberCount - 1) + CONTROLS_WIDTH + padding,
+        ? portraitSize
+        : portraitSize * memberCount + gap * (memberCount - 1) + CONTROLS_WIDTH + gap,
       height: vertical
-        ? controlsHeight + gap + memberHeight * memberCount + gap * (memberCount - 1) + padding
-        : memberHeight + padding,
+        ? controlsHeight + gap + memberHeight * memberCount + gap * (memberCount - 1)
+        : memberHeight,
     };
   }
 
@@ -307,8 +338,12 @@ export default class ScQuickbar extends DefaultAppv2 {
 
     const portraitSize = game.settings.get('dsa5', 'scQuickbarSize');
     const layout = game.settings.get('dsa5', 'scQuickbarLayout');
-    const loggedInOnly = game.settings.get('dsa5', 'scQuickbarLoggedInOnly');
-    const members = await this.constructor.prepareMemberEntries({ loggedInOnly });
+    const displayMode = this.constructor.#normalizeDisplayMode(game.settings.get('dsa5', 'scQuickbarDisplayMode'));
+    const collapsed = displayMode === this.constructor.DISPLAY_MODE_COLLAPSED;
+    const loggedInOnly = displayMode === this.constructor.DISPLAY_MODE_LOGGED_IN;
+    const members = collapsed
+      ? []
+      : await this.constructor.prepareMemberEntries({ loggedInOnly });
     const reserveResourceRow = members.some((member) => member.resources);
     const dimensions = this.constructor.#computeDimensions(
       members.length,
@@ -327,11 +362,63 @@ export default class ScQuickbar extends DefaultAppv2 {
       portraitSize,
       layout,
       vertical: layout === 0,
+      displayMode,
+      collapsed,
       loggedInOnly,
       reserveResourceRow,
     });
 
     return context;
+  }
+
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+
+    this._createContextMenu(this._getScQuickbarContextOptions.bind(this), '[data-action="configMenu"]', {
+      eventName: 'click',
+      fixed: true,
+      parentClassHooks: false,
+    });
+  }
+
+  _getScQuickbarContextOptions() {
+    const { DISPLAY_MODE_ALL, DISPLAY_MODE_LOGGED_IN, DISPLAY_MODE_COLLAPSED } = this.constructor;
+    const displayMode = this.constructor.#normalizeDisplayMode(game.settings.get('dsa5', 'scQuickbarDisplayMode'));
+    const layout = game.settings.get('dsa5', 'scQuickbarLayout');
+    const icon = (active, defaultIcon) => (active ? '<i class="fas fa-check"></i>' : defaultIcon);
+
+    return [
+      {
+        label: 'SCQUICKBAR.displayAll',
+        icon: icon(displayMode === DISPLAY_MODE_ALL, '<i class="fas fa-users"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarDisplayMode', DISPLAY_MODE_ALL),
+      },
+      {
+        label: 'SCQUICKBAR.displayLoggedIn',
+        icon: icon(displayMode === DISPLAY_MODE_LOGGED_IN, '<i class="fas fa-user-check"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarDisplayMode', DISPLAY_MODE_LOGGED_IN),
+      },
+      {
+        label: 'SCQUICKBAR.displayCollapsed',
+        icon: icon(displayMode === DISPLAY_MODE_COLLAPSED, '<i class="fas fa-eye-slash"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarDisplayMode', DISPLAY_MODE_COLLAPSED),
+      },
+      {
+        label: 'SCQUICKBAR.layoutHorizontal',
+        icon: icon(layout === 1, '<i class="fas fa-grip-horizontal"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarLayout', 1),
+      },
+      {
+        label: 'SCQUICKBAR.layoutVertical',
+        icon: icon(layout === 0, '<i class="fas fa-grip-vertical"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarLayout', 0),
+      },
+      {
+        label: 'SCQUICKBAR.configure',
+        icon: '<i class="fa-solid fa-cog"></i>',
+        onClick: () => new ConfigureScQuickbar().render(true),
+      },
+    ];
   }
 
   async _onRender(context, options) {
@@ -341,7 +428,6 @@ export default class ScQuickbar extends DefaultAppv2 {
     if (handle) {
       this.#draggable = new foundry.applications.ux.Draggable(this, this.element, handle, false);
       handle.onwheel = (ev) => this.#onWheelResize(ev);
-      handle.oncontextmenu = (ev) => this.#onDragContextMenu(ev);
     }
 
     this.#clearHover();
@@ -398,26 +484,6 @@ export default class ScQuickbar extends DefaultAppv2 {
     if (next === current) return;
 
     await game.settings.set('dsa5', 'scQuickbarSize', next);
-  }
-
-  #onDragContextMenu(ev) {
-    ev.preventDefault();
-    this.constructor.#toggleLayout.call(this);
-  }
-
-  static async #toggleLayout() {
-    let layout = game.settings.get('dsa5', 'scQuickbarLayout') + 1;
-    if (layout > 1) layout = 0;
-    await game.settings.set('dsa5', 'scQuickbarLayout', layout);
-  }
-
-  static async #toggleLoggedInOnly() {
-    const next = !game.settings.get('dsa5', 'scQuickbarLoggedInOnly');
-    await game.settings.set('dsa5', 'scQuickbarLoggedInOnly', next);
-  }
-
-  static #onConfigure() {
-    new ConfigureScQuickbar().render(true);
   }
 
   static async #onPanToMember(ev, target) {
@@ -495,6 +561,7 @@ export class ConfigureScQuickbar extends FormAppv2 {
     await game.settings.set('dsa5', 'scQuickbarPosition', {});
     await game.settings.set('dsa5', 'scQuickbarLayout', 1);
     await game.settings.set('dsa5', 'scQuickbarSize', 64);
+    await game.settings.set('dsa5', 'scQuickbarDisplayMode', ScQuickbar.DISPLAY_MODE_ALL);
     await syncScQuickbar(true);
   }
 }

@@ -1,0 +1,173 @@
+// Shared HUD chrome for hotbar, SC quickbar, and initiative tracker.
+// Compose these classes in templates; keep feature SCSS to layout only.
+
+:root {
+  --dsa-hud-frame: #3f3128;
+  --dsa-hud-frame-border: rgba(63, 49, 40, 0.8);
+  --dsa-hud-text: #cfbea2;
+  --dsa-hud-text-bright: #f4e6d7;
+  --dsa-hud-accent: #c41e3a;
+  --dsa-hud-control-size: 28px;
+  --dsa-hud-gap: 4px;
+  --dsa-hud-pad: 4px;
+  --dsa-hud-radius: 12px;
+  --dsa-hud-portrait-radius: 6px;
+}
+
+@mixin dsa-hud-control-item {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+  border: 1px solid var(--dsa-hud-frame-border);
+  border-radius: 4px;
+  color: var(--dsa-hud-text);
+  padding: 0;
+  transition: all 0.2s ease-in-out;
+  width: var(--dsa-hud-control-size);
+  height: var(--dsa-hud-control-size);
+  line-height: var(--dsa-hud-control-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+
+  &:hover {
+    border-color: var(--dsa-hud-accent);
+    background: linear-gradient(135deg, rgba(196, 30, 58, 0.3) 0%, rgba(196, 30, 58, 0.1) 100%);
+    box-shadow: 0 0 8px rgba(196, 30, 58, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    border-color: var(--dsa-hud-accent);
+    background: linear-gradient(135deg, rgba(196, 30, 58, 0.35) 0%, rgba(196, 30, 58, 0.15) 100%);
+    box-shadow: 0 0 8px rgba(196, 30, 58, 0.45);
+    color: var(--dsa-hud-text-bright);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.dsa5,
+#hotbar.hotbarV4 {
+  .dsa-hud-surface {
+    border-radius: var(--dsa-hud-radius);
+    border: 1px solid var(--dsa-hud-frame-border);
+    box-shadow:
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    background: linear-gradient(135deg, rgba(47, 41, 33, 0.95) 0%, rgba(28, 26, 26, 0.9) 50%, rgba(47, 41, 33, 0.95) 100%);
+  }
+
+  .hotbar-controls {
+    display: flex;
+    gap: var(--dsa-hud-gap);
+    flex-wrap: nowrap;
+    padding: var(--dsa-hud-pad);
+    height: unset;
+    background: linear-gradient(135deg, rgba(63, 49, 40, 0.8) 0%, rgba(47, 41, 33, 0.6) 100%);
+    border-radius: var(--dsa-hud-radius);
+    border: 1px solid var(--dsa-hud-frame-border);
+    box-shadow:
+      0 4px 15px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    button,
+    .dragHandler {
+      @include dsa-hud-control-item;
+    }
+
+    .dragHandler {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+
+  .dsa-hud-icon-button {
+    @include dsa-hud-control-item;
+  }
+
+  .dsa-hud-portrait {
+    position: relative;
+    width: var(--dsa-hud-portrait-size, 64px);
+    height: var(--dsa-hud-portrait-size, 64px);
+    border: 2px solid var(--dsa-hud-frame);
+    border-radius: var(--dsa-hud-portrait-radius);
+    overflow: hidden;
+    background-color: rgba(28, 26, 26, 0.8);
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    cursor: var(--cursor-pointer);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &.active {
+      border-color: var(--dsa-hud-accent);
+      box-shadow:
+        0 0 20px rgba(196, 30, 58, 0.45),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    &.dimmed,
+    &.defeated,
+    &.hidden {
+      filter: grayscale(1) brightness(0.65);
+    }
+
+    &.defeated,
+    &.hidden {
+      opacity: 0.55;
+    }
+  }
+
+  .dsa-hud-action-button {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border: 1px solid var(--dsa-hud-frame-border);
+    border-radius: 4px;
+    color: var(--dsa-hud-text);
+    min-height: var(--dsa-hud-control-size);
+    padding: 4px 8px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+
+    &:hover {
+      border-color: var(--dsa-hud-accent);
+      background: linear-gradient(135deg, rgba(196, 30, 58, 0.3) 0%, rgba(196, 30, 58, 0.1) 100%);
+      box-shadow: 0 0 8px rgba(196, 30, 58, 0.4);
+      color: var(--dsa-hud-text-bright);
+    }
+
+    &.lastRound {
+      border-color: #4a90e2;
+      background: linear-gradient(135deg, rgba(74, 144, 226, 0.35) 0%, rgba(0, 0, 0, 0.45) 100%);
+    }
+  }
+}
+
+.sc-quickbar {
+  .sc-quickbar-controls {
+    gap: var(--dsa-hud-gap);
+
+    button,
+    .dragHandler {
+      @include dsa-hud-control-item;
+    }
+
+    .dragHandler {
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+  }
+}

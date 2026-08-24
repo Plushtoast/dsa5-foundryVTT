@@ -815,13 +815,13 @@ export function setupConfiguration() {
         else game.dsa5.apps.scQuickbar?.close();
       },
     },
-    scQuickbarLoggedInOnly: {
-      name: 'SCQUICKBAR.loggedInOnlySetting',
-      hint: 'SCQUICKBAR.loggedInOnlySettingHint',
+    scQuickbarDisplayMode: {
+      name: 'SCQUICKBAR.displayModeSetting',
+      hint: 'SCQUICKBAR.displayModeSettingHint',
       scope: 'client',
       config: false,
-      default: false,
-      type: Boolean,
+      default: 0,
+      type: Number,
       onChange: () => syncScQuickbar(true),
     },
     scQuickbarLayout: {
