@@ -146,7 +146,7 @@ export default function () {
   function checkIniChange(effect) {
     if (game.combat && effect.system.changes.some((x) => /(system\.status\.initiative|system\.characteristics.mu|system\.characteristics\.ge)/.test(x.key))) {
       const actorId = effect.parent.id;
-      const combatant = game.combat.combatants.find((x) => x.actor.id == actorId);
+      const combatant = game.combat.getCombatantForActor(actorId);
       if (combatant) combatant.recalcInitiative();
     }
   }

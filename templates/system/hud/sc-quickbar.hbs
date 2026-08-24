@@ -1,0 +1,53 @@
+<div class="sc-quickbar-root layout-{{layout}}" style="--portraitSize: {{portraitSize}}px">
+  <ul class="sc-quickbar-member-list">
+    {{#each members}}
+    <li class="sc-quickbar-member {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}} {{#unless onScene}}off-scene{{/unless}}"
+        data-actor-id="{{actorId}}" data-token-id="{{tokenId}}" data-action="panToMember">
+      {{#if @root.reserveResourceRow}}
+      <div class="sc-quickbar-resources flexrow">
+        {{#if resources}}
+        <div class="flex0 LeP" data-tooltip="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
+          {{resources.LeP.value}}/{{resources.LeP.max}}
+        </div>
+        {{#if resources.AsP.max}}
+        <div class="flex0 AsP" data-tooltip="{{resources.AsP.label}} {{resources.AsP.value}}/{{resources.AsP.max}}">
+          {{resources.AsP.value}}/{{resources.AsP.max}}
+        </div>
+        {{/if}}
+        {{#if resources.KaP.max}}
+        <div class="flex0 KaP" data-tooltip="{{resources.KaP.label}} {{resources.KaP.value}}/{{resources.KaP.max}}">
+          {{resources.KaP.value}}/{{resources.KaP.max}}
+        </div>
+        {{/if}}
+        {{/if}}
+      </div>
+      {{/if}}
+      <div class="portrait-frame">
+        <div class="portrait-image" style="background-image: url('{{img}}')"></div>
+        {{#if effects.hasIcons}}
+        <div class="token-effects" data-tooltip="{{effects.tooltip}}">
+          {{#each effects.icons}}
+          <img class="token-effect" src="{{img}}" alt="{{name}}">
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      <span class="sc-quickbar-member-name ellipsis" data-tooltip="{{name}}">{{name}}</span>
+    </li>
+    {{/each}}
+  </ul>
+  <div class="sc-quickbar-controls hotbar-controls">
+    <button type="button"
+      class="sc-quickbar-logged-in icon plain fa-solid fa-user-check {{#if loggedInOnly}}active{{/if}}"
+      data-action="toggleLoggedInOnly"
+      data-tooltip="SCQUICKBAR.loggedInOnlyHint"
+      aria-label="{{localize 'SCQUICKBAR.loggedInOnly'}}"></button>
+    <button type="button" class="sc-quickbar-config icon plain fa-solid fa-cog"
+      data-action="configure"
+      data-tooltip="SCQUICKBAR.configure"
+      aria-label="{{localize 'SCQUICKBAR.configure'}}"></button>
+    <section class="dragHandler" data-tooltip="SCQUICKBAR.dragHint">
+      <i class="fas fa-grip-vertical"></i>
+    </section>
+  </div>
+</div>

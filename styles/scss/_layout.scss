@@ -51,7 +51,8 @@
     }
 
     &.initTracker,
-    &.tokenQuickHot {
+    &.tokenQuickHot,
+    &.sc-quickbar {
       &::after,
       .window-content {
         background: none;
@@ -62,7 +63,8 @@
     }
 
     &.initTracker::after,
-    &.tokenQuickHot::after {
+    &.tokenQuickHot::after,
+    &.sc-quickbar::after {
       content: none;
     }
 

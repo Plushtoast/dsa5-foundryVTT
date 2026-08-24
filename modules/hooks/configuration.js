@@ -5,6 +5,7 @@ import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 import NavalHouseRules, { NavalHouseRulesMenu } from '../combat/mkr/naval-house-rules.js';
+import { syncScQuickbar, ConfigureScQuickbar } from '../system/guiapps/sc-quickbar.js';
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
@@ -601,6 +602,13 @@ export function setupConfiguration() {
       default: {},
       type: Object,
     },
+    scQuickbarPosition: {
+      name: 'scQuickbarPosition',
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
     soundConfig: {
       name: 'DSASETTINGS.soundConfig',
       hint: 'DSASETTINGS.soundConfigHint',
@@ -794,6 +802,54 @@ export function setupConfiguration() {
       config: true,
       default: false,
       type: Boolean,
+    },
+    enableScQuickbar: {
+      name: 'SCQUICKBAR.enable',
+      hint: 'SCQUICKBAR.enableHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+      onChange: (val) => {
+        if (val) syncScQuickbar(true);
+        else game.dsa5.apps.scQuickbar?.close();
+      },
+    },
+    scQuickbarLoggedInOnly: {
+      name: 'SCQUICKBAR.loggedInOnlySetting',
+      hint: 'SCQUICKBAR.loggedInOnlySettingHint',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+      onChange: () => syncScQuickbar(true),
+    },
+    scQuickbarLayout: {
+      name: 'SCQUICKBAR.layout',
+      hint: 'SCQUICKBAR.layoutHint',
+      scope: 'client',
+      config: false,
+      default: 1,
+      type: Number,
+      choices: {
+        0: 'SCQUICKBAR.layoutVertical',
+        1: 'SCQUICKBAR.layoutHorizontal',
+      },
+      onChange: () => syncScQuickbar(true),
+    },
+    scQuickbarSize: {
+      name: 'SCQUICKBAR.size',
+      hint: 'SCQUICKBAR.sizeHint',
+      scope: 'client',
+      config: false,
+      default: 64,
+      type: Number,
+      range: {
+        min: 48,
+        max: 120,
+        step: 4,
+      },
+      onChange: () => syncScQuickbar(true),
     },
     disableTokenhotbar: {
       name: 'DSASETTINGS.disableTokenhotbar',
@@ -1008,6 +1064,13 @@ export function setupConfiguration() {
       type: ConfigureTokenHotbar,
       restricted: false,
     },
+    configureScQuickbar: {
+      name: 'SCQUICKBAR.configure',
+      label: 'SCQUICKBAR.configure',
+      hint: 'SCQUICKBAR.configureHint',
+      type: ConfigureScQuickbar,
+      restricted: false,
+    },
   }
   for (const [key, value] of Object.entries(menus)) {
     game.settings.registerMenu('dsa5', key, value);
@@ -1021,7 +1084,7 @@ const exportSetting = (form) => {
   if (exportOnlyDSA) toExport = toExport.filter((x) => /^dsa5\./.test(x[0]));
 
   const exportData = {};
-  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|migrationVersion)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
+  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|scQuickbarPosition|migrationVersion)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
 
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;

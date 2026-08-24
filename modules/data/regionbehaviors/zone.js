@@ -68,7 +68,7 @@ export class DSAZoneRegionBehavior extends DSARegionBehaviorBase {
 
   static movementActionState(event) {
     const { token, movement } = event.data;
-    const combatant = token?.combatant ?? game.combat?.combatants.find((combatant) => combatant.tokenId === token?.id);
+    const combatant = token?.combatant ?? game.combat?.getCombatantForToken?.(token?.id);
     const combat = combatant?.parent ?? game.combat;
     const state = {
       available: false,

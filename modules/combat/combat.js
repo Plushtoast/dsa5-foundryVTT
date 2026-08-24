@@ -445,12 +445,31 @@ export default class DSA5Combat extends Combat {
     if (!speaker) return undefined;
 
     if (speaker.token) {
-      return this.combatants.find(combatant => combatant.tokenId === speaker.token);
-    } else if (speaker.actor) {
-      return this.combatants.find(combatant => combatant.actorId === speaker.actor);
+      return this.getCombatantForToken(speaker.token);
+    }
+    if (speaker.actor) {
+      return this.getCombatantForActor(speaker.actor);
     }
 
     return undefined;
+  }
+
+  /**
+   * First combatant linked to a token id or TokenDocument.
+   * @param {string|TokenDocument} token
+   * @returns {Combatant|null}
+   */
+  getCombatantForToken(token) {
+    return this.getCombatantsByToken(token)[0] ?? null;
+  }
+
+  /**
+   * First combatant linked to an actor id or Actor.
+   * @param {string|Actor} actor
+   * @returns {Combatant|null}
+   */
+  getCombatantForActor(actor) {
+    return this.getCombatantsByActor(actor)[0] ?? null;
   }
 
   async updateDefenseCount(speaker) {
@@ -498,7 +517,7 @@ export default class DSA5Combat extends Combat {
   }
 
   async handleMovementCost(tokenDoc) {
-    const combatant = this.combatants.find(c => c.tokenId === tokenDoc.id);
+    const combatant = this.getCombatantForToken(tokenDoc);
     if (!combatant) return;
 
     const tokenObj = tokenDoc.object;

@@ -3829,6 +3829,27 @@
     "requiresGM": "Adventure point or money tracking requires a logged in GM or journal edit/creation permissions.",
     "sheetChange": "Character Sheet Change"
   },
+  "SCQUICKBAR": {
+    "title": "Player Characters",
+    "configure": "PC Quickbar configuration",
+    "configureHint": "Configure the draggable player character overview panel.",
+    "enable": "Enable PC Quickbar",
+    "enableHint": "Show a draggable overview of primary party members with LeP, AsP, and KaP. Uses logged-in assigned characters when no primary party is set.",
+    "reset": "Reset PC Quickbar position",
+    "resetHint": "Reset position, layout, and portrait size to defaults.",
+    "layout": "PC Quickbar layout",
+    "layoutHint": "Arrange portraits horizontally or vertically. Right-click the drag grip to toggle.",
+    "layoutHorizontal": "Horizontal",
+    "layoutVertical": "Vertical",
+    "size": "PC Quickbar portrait size",
+    "sizeHint": "Edge length of each portrait frame in pixels.",
+    "loggedInOnlySetting": "PC Quickbar: logged-in only",
+    "loggedInOnlySettingHint": "When enabled, the quickbar lists only characters whose assigned player is currently connected.",
+    "loggedInOnly": "Logged-in only",
+    "loggedInOnlyHint": "Toggle: show only characters whose assigned player is currently connected.",
+    "dragHint": "Drag to move. Scroll to resize. Right-click to toggle layout.",
+    "notOnScene": "This character has no token on the current scene."
+  },
   "TT": {
     "addSpeedCategory": "Add speed category",
     "applyEffectCaster": "Apply effect to caster",

@@ -5,6 +5,7 @@ import { setEnrichers } from './texteditor.js';
 import { connectHook } from './itemDrop.js';
 import DidYouKnow from '../system/helpers/didyouknow.js';
 import TokenHotbar2 from '../system/guiapps/tokenHotbar2.js';
+import ScQuickbar from '../system/guiapps/sc-quickbar.js';
 import DSAIniTracker from '../combat/dsa-ini-tracker.js';
 import VehicleChase from '../combat/chase/vehicle-chase.js';
 import DSATour from '../tours/dsa_tour.js';
@@ -36,6 +37,7 @@ export default function () {
 
     DidYouKnow.showOneMessage();
     TokenHotbar2.registerTokenHotbar();
+    ScQuickbar.register();
 
     connectHook();
     DSAIniTracker.connectHooks();

@@ -5279,35 +5279,15 @@ select.noAppearance {
 .application {
 
   &.initTracker .window-header,
-  &.tokenQuickHot .window-header {
+  &.tokenQuickHot .window-header,
+  &.sc-quickbar .window-header {
     display: none;
   }
 
   &.initTracker,
-  &.tokenQuickHot {
+  &.tokenQuickHot,
+  &.sc-quickbar {
     padding: 0;
-  }
-}
-
-.tokenHotbarInner>ul>li.effect>div:before {
-  font-family: 'Font Awesome 7 Pro';
-  font-weight: 900;
-  content: '\f067';
-}
-
-.application {
-  &.initTracker {
-
-    &::after,
-    .window-content {
-      background: none;
-      margin: 0;
-      padding: 0;
-      overflow: visible;
-    }
-  }
-
-  &.tokenQuickHot {
 
     &::after,
     .window-content {
@@ -5319,9 +5299,16 @@ select.noAppearance {
   }
 
   &.initTracker::after,
-  &.tokenQuickHot::after {
+  &.tokenQuickHot::after,
+  &.sc-quickbar::after {
     content: none;
   }
+}
+
+.tokenHotbarInner>ul>li.effect>div:before {
+  font-family: 'Font Awesome 7 Pro';
+  font-weight: 900;
+  content: '\f067';
 }
 
 .ench-fw {
@@ -6797,6 +6784,7 @@ input[type='checkbox'].autoCheckbox {
 @include meta.load-css('inittracker.scss');
 @include meta.load-css('calendar.scss');
 @include meta.load-css('hotbar.scss');
+@include meta.load-css('sc-quickbar.scss');
 @include meta.load-css('hotbar-sort-manager.scss');
 @include meta.load-css('image-frame-picker.scss');
 @include meta.load-css('theme-dark.scss');

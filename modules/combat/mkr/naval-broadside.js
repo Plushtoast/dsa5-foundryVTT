@@ -88,9 +88,7 @@ export default class NavalBroadside {
 
   static resolveCombatant(vehicle, combat = game.combat) {
     if (!combat || !vehicle) return null;
-    return combat.combatants.find((c) => c.actorId === vehicle.id)
-      ?? combat.combatants.find((c) => c.actor?.id === vehicle.id)
-      ?? null;
+    return combat.getCombatantForActor?.(vehicle) ?? null;
   }
 
   static async open(vehicle, { tokenId } = {}) {

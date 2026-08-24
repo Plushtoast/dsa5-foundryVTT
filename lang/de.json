@@ -3831,6 +3831,27 @@
     "requiresGM": "AP- oder Geld-Tracking benötigt einen eingeloggten Spielleiter oder Journal-Bearbeitungs-/Erstellrechte.",
     "sheetChange": "Charakterblattänderung"
   },
+  "SCQUICKBAR": {
+    "title": "Spielercharaktere",
+    "configure": "SC-Schnellleiste konfigurieren",
+    "configureHint": "Konfiguriere die verschiebbare Spielercharakter-Übersicht.",
+    "enable": "SC-Schnellleiste aktivieren",
+    "enableHint": "Zeigt eine verschiebbare Übersicht der Gruppenmitglieder mit LeP, AsP und KaP. Ohne Hauptgruppe werden angemeldete Spielercharaktere verwendet.",
+    "reset": "SC-Schnellleiste zurücksetzen",
+    "resetHint": "Position, Layout und Porträtgröße auf Standard zurücksetzen.",
+    "layout": "SC-Schnellleiste Layout",
+    "layoutHint": "Portraits horizontal oder vertikal anordnen. Rechtsklick auf den Griff wechselt das Layout.",
+    "layoutHorizontal": "Horizontal",
+    "layoutVertical": "Vertikal",
+    "size": "SC-Schnellleiste Porträtgröße",
+    "sizeHint": "Kantenlänge jedes Porträts in Pixeln.",
+    "loggedInOnlySetting": "SC-Schnellleiste: nur angemeldet",
+    "loggedInOnlySettingHint": "Wenn aktiv, werden nur Charaktere angezeigt, deren zugewiesener Spieler gerade angemeldet ist.",
+    "loggedInOnly": "Nur angemeldet",
+    "loggedInOnlyHint": "Umschalten: nur Charaktere anzeigen, deren zugewiesener Spieler gerade angemeldet ist.",
+    "dragHint": "Ziehen zum Verschieben. Scrollen zum Vergrößern. Rechtsklick wechselt das Layout.",
+    "notOnScene": "Dieser Charakter hat keinen Token auf der aktuellen Szene."
+  },
   "TT": {
     "addSpeedCategory": "Geschwindigkeitskategorie hinzufügen",
     "applyEffectCaster": "Effekt auf Wirkenden übertragen",
