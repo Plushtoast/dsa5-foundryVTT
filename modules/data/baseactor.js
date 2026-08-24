@@ -416,6 +416,29 @@ export class ActorDataModel extends DSADataModel {
     return status.permanentLoss - status.rebuy + status.permanentGear;
   }
 
+  get magicalGuideCharacteristic() {
+    const guide = this.guidevalue?.magical;
+    if (guide && guide !== '-') return guide;
+    return this.isFamiliar ? 'ch' : guide;
+  }
+
+  pointAdvancementLimit(attr) {
+    switch (attr) {
+      case 'wounds':
+        return Number(this.characteristics.ko.value) || 0;
+      case 'astralenergy': {
+        const characteristic = this.characteristics[this.magicalGuideCharacteristic];
+        return characteristic == undefined ? 0 : characteristic.value * this.energyfactor.magical;
+      }
+      case 'karmaenergy': {
+        const characteristic = this.characteristics[this.guidevalue.clerical];
+        return characteristic == undefined ? 0 : characteristic.value * this.energyfactor.clerical;
+      }
+      default:
+        return 0;
+    }
+  }
+
   _calculateEnergyPoints(data) {
     data.status.astralenergy.rebuy ||= 0;
     data.status.karmaenergy.rebuy ||= 0;

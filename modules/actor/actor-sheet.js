@@ -614,26 +614,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   _checkMaximumPointAdvancement(attr, newValue) {
-    let result = false;
-    switch (attr) {
-      case 'wounds':
-        result = newValue <= this.actor.system.characteristics.ko.value;
-        break;
-      case 'astralenergy':
-        result =
-          newValue <=
-          (this.actor.system.characteristics[this.actor.system.guidevalue.magical] == undefined
-            ? 0
-            : this.actor.system.characteristics[this.actor.system.guidevalue.magical].value * this.actor.system.energyfactor.magical);
-        break;
-      case 'karmaenergy':
-        result =
-          newValue <=
-          (this.actor.system.characteristics[this.actor.system.guidevalue.clerical] == undefined
-            ? 0
-            : this.actor.system.characteristics[this.actor.system.guidevalue.clerical].value * this.actor.system.energyfactor.clerical);
-        break;
-    }
+    const result = newValue <= this.actor.system.pointAdvancementLimit(attr);
     if (!result)
       ui.notifications.error('DSAError.AdvanceMaximumReached', {
         localize: true,
