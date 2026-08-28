@@ -1,0 +1,62 @@
+<div>
+    <h3>{{document.name}}</h3>
+    <div class="row-section">
+        {{#unless skipHeader}}
+        <div class="col sixty">
+            {{{enrichedDescription}}}
+        </div>
+        <div class="col zerofive"></div>
+        <div class="col fourty">
+        {{else}}
+        <div class="col row-section">
+        {{/unless}}
+            <div class="row-section wrap col third">
+                <div class="col center">
+                    <img src="{{document.img}}" style="width:100%;border:none;" >
+                </div>
+                <div class="col compendium">
+                    <small>{{document.pack}}</small>
+                </div>
+            </div>
+            <div class="col browseSpacer ten"></div>
+            <div class="row-section col sixty browseElement">
+                <div class="col groupbox">
+                    <div class="row-section wrap">
+                        <div class="col table-title noBorder flexrow">
+                            <div>
+                                {{localize "Enhancement.enhancementType"}}
+                            </div>
+                            <div class="flex0">
+                                {{#if document.uuid}}
+                                <button type="button" class="dsadesignbutton noBorder icon fas fa-info show-item" data-type="ActiveEffect"
+                                data-uuid="{{document.uuid}}"></button>
+                                {{/if}}
+                            </div>
+                        </div>
+                        <div class="col">
+                            {{localize (concat "Enhancement.types." document.system.enhancementType)}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "Enhancement.targetType"}}
+                        </div>
+                        <div class="col">
+                            {{localize (concat "TYPES.Item." document.system.targetType)}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "Enhancement.slotCost"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.slotCost}}
+                        </div>
+                        <div class="col table-title noBorder">
+                            {{localize "Enhancement.materialCost"}}
+                        </div>
+                        <div class="col">
+                            {{document.system.materialCost}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

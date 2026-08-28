@@ -461,17 +461,19 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   prepareDataModels() {
     this.models = {}
 
-    for (const documentName of this.systemConfiguration.documentNames) {
-      const modelData = Object.keys(game.model[documentName]).filter(x => !this.systemConfiguration.skipCategories.includes(x))
+    for (const documentName of this.systemConfiguration.categorySourceNames()) {
+      const modelData = this.systemConfiguration.typeKeysFor(documentName)
 
       for (const key of modelData) {
         const category = this.systemConfiguration.categoryByType(documentName, key)
+        if (!category) continue
         if (!this.models[category]) this.models[category] = []
         const langKey = `TYPES.${documentName}.${key}`
         this.models[category].push({
           label: game.i18n.has(langKey) ? _loc(langKey) : key,
           selected: false,
-          key
+          key,
+          documentName
         })
       }
     }
@@ -1000,7 +1002,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       const row = {
         ...item,
         compendiumLabel: this.resolveCompendiumLabel(item.compendium),
-        typeLabel: this.resolveTypeLabel(itemType, item.type),
+        typeLabel: this.resolveTypeLabel(item.documentName || itemType, item.type),
       };
 
       for (const col of columns) {
@@ -1069,7 +1071,14 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   async renderBrowseItem(uuid) {
     const document = await fromUuid(uuid)
     const template = `systems/dsa5/templates/items/browse/${document.type}.hbs`
-    const item = await renderTemplate(template, { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext()) })
+    const context = { document, isGM: game.user.isGM, ...(await document.sheet._prepareContext()) }
+    if (!context.enrichedDescription) {
+      const description = this.systemConfiguration.getDescription(document)
+        || document.description
+        || '';
+      context.enrichedDescription = await foundry.applications.ux.TextEditor.enrichHTML(description, { secrets: game.user.isGM });
+    }
+    const item = await renderTemplate(template, context)
     return `<li class="uuid libItem ${document.type} col library-item browser-item" draggable="true" data-uuid="${uuid}">${item}</li>`
   }
 
@@ -1152,8 +1161,9 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     this.showLoading(documentName);
 
     try {
+      const packNames = this.systemConfiguration.indexPackNames(documentName);
       const packs = game.packs.filter(p =>
-        p.documentName === documentName &&
+        packNames.includes(p.documentName) &&
         (game.user.isGM || p.visible) &&
         !filteredCompendiums[p.metadata.packageName]
       );
@@ -1210,7 +1220,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
         if (signal.aborted) return;
         try {
           const documents = await PackLoader.loadPack(p, {
-            documentName,
+            documentName: p.documentName,
             mode,
             signal,
             onProgress: (loaded, total) => {
@@ -1268,7 +1278,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     const batch = [];
     const batchSize = this.constructor.PackLoader.WORKER_BATCH_SIZE;
     for (const item of items) {
-      const so = SearchDocument.toSearchableObject(item, documentName);
+      const so = SearchDocument.toSearchableObject(item, item.documentName || documentName);
       index.store[so.uuid] = so;
       batch.push(so);
 
@@ -1356,7 +1366,8 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     this.detailStoreBySubcategory[subcategory] = this.detailStoreBySubcategory[subcategory] || {};
 
     const { index } = this.selectIndex(category);
-    const catName = _loc(`TYPES.${itemType}.${subcategory}`);
+    const chip = Object.values(this.models).flat().find(x => x.key === subcategory);
+    const catName = chip?.label || this.resolveTypeLabel(chip?.documentName || itemType, subcategory);
     const progress = ui.notifications.info('Library.loading', { format: { item: catName }, progress: true });
     const target = $(this.element).find(`*[data-tab="${category}"]`);
 

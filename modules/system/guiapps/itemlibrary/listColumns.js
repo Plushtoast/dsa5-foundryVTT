@@ -1,6 +1,7 @@
 import DSA5 from '../../../config/config-dsa5.js';
 import ADVANCEDFILTERS from '../itemlibrary_advanced_filters.js';
 import SpecialabilityData from '../../../data/item/specialability.js';
+import DSAEnhancementEffectDataModel from '../../../data/activeeffect/enhancement-effect.js';
 
 export default class ItemLibraryListColumns {
   static BUILTIN_COLUMN_DEFS = {
@@ -22,6 +23,7 @@ export default class ItemLibraryListColumns {
       ritual: 'TYPES.Item.ritual',
       ceremony: 'TYPES.Item.ceremony',
     },
+    enhancementTargetTypes: DSAEnhancementEffectDataModel.TARGET_TYPES,
   };
 
   static getListColumnConfig() {

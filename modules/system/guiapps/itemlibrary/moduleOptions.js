@@ -3,7 +3,7 @@ export default class ItemLibraryModuleOptions {
     const options = {};
     const moduleNameCache = new Map();
 
-    for (const pack of game.packs.filter(p => p.metadata.type === 'Item')) {
+    for (const pack of game.packs.filter(p => ['Item', 'ActiveEffect'].includes(p.metadata.type))) {
       const packageName = pack.metadata.packageName;
 
       if (options[packageName + postfix]) continue;

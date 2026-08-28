@@ -152,6 +152,13 @@
       { "attr": "category", "label": "Category" }
     ]
   },
+  "enhancement": {
+    "columns": [
+      { "attr": "enhancementType", "label": "Enhancement.enhancementType", "optionsKey": "enhancementTypes" },
+      { "attr": "targetType", "label": "Enhancement.targetType", "optionsKey": "enhancementTargetTypes" },
+      { "attr": "materialCost", "label": "Enhancement.materialCost" }
+    ]
+  },
   "spellextension": {
     "columns": [
       { "attr": "category", "label": "Category", "optionsKey": "spellextensionCategories" }

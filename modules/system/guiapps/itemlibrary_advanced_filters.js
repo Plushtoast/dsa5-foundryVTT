@@ -1,6 +1,7 @@
 import DSA5 from '../../config/config-dsa5.js';
 import SpecialabilityData from '../../data/item/specialability.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import DSAEnhancementEffectDataModel from '../../data/activeeffect/enhancement-effect.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -388,6 +389,20 @@ Hooks.once('ready', () => {
       demonmark: [],
       essence: [],
       imprint: [{ label: 'Category', attr: 'category', type: 'text' }],
+      enhancement: [
+        {
+          label: 'Enhancement.enhancementType',
+          attr: 'enhancementType',
+          type: 'select',
+          options: DSA5.enhancementTypes,
+        },
+        {
+          label: 'Enhancement.targetType',
+          attr: 'targetType',
+          type: 'select',
+          options: DSAEnhancementEffectDataModel.TARGET_TYPES,
+        },
+      ],
     };
 
     for (const [key, value] of Object.entries(filters)) {

@@ -5,9 +5,11 @@ export default class SearchDocument {
   static cachedKeys = {
     Item: {},
     Actor: {},
+    ActiveEffect: {},
   }
 
   static getSearchFields(documentName, type) {
+    if (!this.cachedKeys[documentName]) this.cachedKeys[documentName] = {};
     const cached = this.cachedKeys[documentName][type]
 
     if (!cached) {
@@ -24,6 +26,8 @@ export default class SearchDocument {
       case 'Actor':
       case 'Item':
         return 'system.description.value'
+      case 'ActiveEffect':
+        return 'description'
       default:
         return 'description.value'
     }
@@ -41,11 +45,13 @@ export default class SearchDocument {
   }
 
   static toSearchableObject(item, documentName) {
-    if (documentName === "JournalEntry") return this.toJournalSearchableObject(item);
+    const resolvedName = item.documentName || documentName;
+    if (resolvedName === "JournalEntry" || documentName === "JournalEntry") return this.toJournalSearchableObject(item);
 
-    const { descriptionKey, fields } = this.getSearchFields(documentName, item.type);
+    const { descriptionKey, fields } = this.getSearchFields(resolvedName, item.type);
     const object = {
       uuid: item.uuid,
+      documentName: resolvedName,
       compendium: item.pack || ''
     };
 

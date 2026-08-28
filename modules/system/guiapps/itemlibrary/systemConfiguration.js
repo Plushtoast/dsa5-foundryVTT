@@ -12,11 +12,17 @@ export default class DSASystemConfiguration {
     },
     "JournalEntry": {
       default: "description"
+    },
+    "ActiveEffect": {
+      default: "description"
     }
   }
 
   static documentGroups = { "Items": 0, "Character": 0, "Religion": 0, "Actors": 1, "JournalEntries": 2 }
   static documentNames = ["Item", "Actor", "JournalEntry"]
+
+  /** Extra document types that appear as library chips but share an existing index. */
+  static extraCategorySources = ["ActiveEffect"]
 
   static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper"]
 
@@ -28,6 +34,22 @@ export default class DSASystemConfiguration {
     return this.documentNames[this.documentGroups[documentGroup]]
   }
 
+  static indexPackNames(documentName) {
+    if (documentName === "Item") return ["Item", "ActiveEffect"]
+    return [documentName]
+  }
+
+  static categorySourceNames() {
+    return [...this.documentNames, ...this.extraCategorySources]
+  }
+
+  static typeKeysFor(documentName) {
+    const fromModel = game.model?.[documentName] ?? {};
+    const fromConfig = CONFIG[documentName]?.dataModels ?? {};
+    return [...new Set([...Object.keys(fromModel), ...Object.keys(fromConfig)])]
+      .filter(x => !this.skipCategories.includes(x))
+  }
+
   static categoryByType(documentName, type) {
     switch (documentName) {
       case "Item":
@@ -36,6 +58,8 @@ export default class DSASystemConfiguration {
         return "Character"
       case "Actor":
         return "Actors"
+      case "ActiveEffect":
+        return type === "enhancement" ? "Items" : null
       default:
         return documentName;
     }

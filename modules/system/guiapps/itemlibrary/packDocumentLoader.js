@@ -12,6 +12,7 @@ export default class ItemLibraryPackLoader {
     Item: 80,
     Actor: 20,
     JournalEntry: 20,
+    ActiveEffect: 80,
   };
 
   static configuredMode() {
@@ -69,13 +70,21 @@ export default class ItemLibraryPackLoader {
   }
 
   static skipTypesFor(documentName) {
-    return documentName === 'Item' ? ['information'] : [];
+    if (documentName === 'Item') return ['information'];
+    if (documentName === 'ActiveEffect') return ['base'];
+    return [];
   }
 
   static bulkQuery(documentName, skipTypes) {
-    if (documentName === 'Item' && skipTypes.includes('information')) {
+    const skip = skipTypes ?? this.skipTypesFor(documentName);
+    if (documentName === 'Item' && skip.includes('information')) {
       const types = game.system?.documentTypes?.Item;
       if (types) return { type__in: Object.keys(types).filter((x) => x !== 'information') };
+    }
+    if (documentName === 'ActiveEffect' && skip.includes('base')) {
+      const types = game.system?.documentTypes?.ActiveEffect;
+      if (types) return { type__in: Object.keys(types).filter((x) => x !== 'base') };
+      return { type__in: ['enhancement'] };
     }
     return {};
   }
