@@ -1,5 +1,5 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
-import { applyTokenDisposition, getDispositionOptions } from '../system/helpers/token_disposition.js';
+import { applyTokenDisposition, getDispositionOptions, getSharedDisposition } from '../system/helpers/token_disposition.js';
 
 export class TokenDispositionDialog extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
@@ -14,6 +14,7 @@ export class TokenDispositionDialog extends DefaultAppv2 {
   static PARTS = {
     main: {
       template: 'systems/dsa5/templates/dialog/token-disposition-dialog.hbs',
+      templates: ['systems/dsa5/templates/dialog/parts/disposition-mode.hbs'],
     },
   };
 
@@ -31,8 +32,10 @@ export class TokenDispositionDialog extends DefaultAppv2 {
   }
 
   async _prepareContext() {
+    const currentDisposition = getSharedDisposition(this.tokens);
     return {
-      dispositions: getDispositionOptions(),
+      dispositions: getDispositionOptions(currentDisposition),
+      currentDisposition,
       tokenCount: this.tokens.length,
       ariaLabel: game.i18n.localize('DIALOG.tokenDispositionTitle'),
       describedBy: 'token-disposition-hint token-disposition-count',

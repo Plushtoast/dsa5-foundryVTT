@@ -23,7 +23,18 @@ export function dispositionBorderStyle(disposition) {
   return `border-color: ${colorToRgba(color, 0.55)}; box-shadow: inset 0 0 10px ${colorToRgba(color, 0.25)};`;
 }
 
-export function getDispositionOptions() {
+export function tokenDisposition(token) {
+  return token?.disposition ?? token?.document?.disposition;
+}
+
+export function getSharedDisposition(tokens) {
+  if (!tokens?.length) return undefined;
+  const first = tokenDisposition(tokens[0]);
+  if (first === undefined) return undefined;
+  return tokens.every((token) => tokenDisposition(token) === first) ? first : undefined;
+}
+
+export function getDispositionOptions(current) {
   const icons = {
     SECRET: 'fas fa-mask',
     HOSTILE: 'fas fa-skull',
@@ -35,6 +46,7 @@ export function getDispositionOptions() {
     value,
     label: game.i18n.localize(`TOKEN.DISPOSITION.${key}`),
     icon: icons[key],
+    selected: current === value,
   }));
 }
 

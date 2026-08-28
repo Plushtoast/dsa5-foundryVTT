@@ -1,6 +1,7 @@
-<div class='form-fields gap0px dsaMessageMode' role='group' aria-label='{{ariaLabel}}' aria-describedby='{{describedBy}}'>
+<div class="split-button" role="group" aria-label="{{ariaLabel}}" aria-describedby="{{describedBy}}">
   {{#each dispositions as |disp|}}
-  <button type='button' class='disposition-mode' data-action='setDisposition' data-disposition='{{disp.value}}'
-    data-tooltip='{{disp.label}}' aria-label='{{disp.label}}'><i class='{{disp.icon}}'></i></button>
+  <button type="button" class="ui-control icon {{disp.icon}}" data-action="setDisposition"
+    data-disposition="{{disp.value}}" data-tooltip="{{disp.label}}" aria-label="{{disp.label}}"
+    aria-pressed="{{#if disp.selected}}true{{else}}false{{/if}}"></button>
   {{/each}}
 </div>
