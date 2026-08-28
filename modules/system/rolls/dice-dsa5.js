@@ -948,52 +948,75 @@ export default class DiceDSA5 {
     return result;
   }
 
-  static async damageFormula(testData) {
-    let weapon;
+  /**
+   * Prepare the weapon used for a standalone TP roll so extras (threshold, grip)
+   * match the attack-path evaluation.
+   * @param {Object} testData
+   * @returns {{ weapon: Object, isRangeWeapon: boolean }}
+   */
+  static #prepareDamageWeapon(testData) {
     const actor = this.#actorFromTestData(testData);
-    if (testData.source.type == 'meleeweapon') {
+    const source = testData.source;
+
+    if (source.type == 'meleeweapon') {
       const skill = CombatskillData._calculateCombatSkillValues(
-        actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
+        actor.items.find((x) => x.type == 'combatskill' && x.name == source.system.combatskill.value),
         actor.system,
       );
-      weapon = Actordsa5._prepareMeleeWeapon(testData.source, [skill], actor);
-    } else if (testData.source.type == 'rangeweapon') {
-      const skill = CombatskillData._calculateCombatSkillValues(
-        actor.items.find((x) => x.type == 'combatskill' && x.name == testData.source.system.combatskill.value),
-        actor.system,
-      );
-      weapon = Actordsa5._prepareRangeWeapon(testData.source, [], [skill], actor);
-    } else {
-      weapon = testData.source.system;
+      return { weapon: Actordsa5._prepareMeleeWeapon(source, [skill], actor), isRangeWeapon: false };
     }
-    return this.replaceDieLocalization(testData.source.system.damage.value) + `+${weapon.extraDamage || 0}`;
-  }
 
-  static async rollDamage(testData) {
-    const modifiers = await this._situationalModifiers(testData);
-    const chars = [];
-
-    const roll = testData.roll;
-    const damage = roll.total + modifiers;
-
-    for (const k of roll.terms) {
-      if (k instanceof foundry.dice.terms.Die || k.class == 'Die') {
-        for (const l of k.results)
-          chars.push({
-            char: testData.mode,
-            res: l.result,
-            die: 'd' + k.faces,
-          });
-      }
+    if (source.type == 'rangeweapon') {
+      const skill = CombatskillData._calculateCombatSkillValues(
+        actor.items.find((x) => x.type == 'combatskill' && x.name == source.system.combatskill.value),
+        actor.system,
+      );
+      return { weapon: Actordsa5._prepareRangeWeapon(source, [], [skill], actor), isRangeWeapon: true };
     }
 
     return {
+      weapon: source,
+      isRangeWeapon: getProperty(source, 'system.traitType.value') == 'rangeAttack',
+    };
+  }
+
+  /**
+   * Dialog TP modifiers are untyped `value`s. `evaluateDamage` only applies `damageBonus`,
+   * so promote leftover untyped entries. Status TP is already applied from melee/range stats.
+   * @param {Object} testData
+   */
+  static #promoteUntypedDamageModifiers(testData) {
+    const statusName = _loc('statuseffects');
+    for (const modifier of testData.situationalModifiers || []) {
+      if (modifier.damageBonus || modifier.type) continue;
+      if (modifier.name === statusName) continue;
+      if (modifier.value === undefined || modifier.value === '' || Number(modifier.value) === 0) continue;
+      modifier.damageBonus = modifier.value;
+    }
+  }
+
+  static async damageFormula(testData) {
+    return this.replaceDieLocalization(testData.source.system.damage.value);
+  }
+
+  static async rollDamage(testData) {
+    const { weapon, isRangeWeapon } = this.#prepareDamageWeapon(testData);
+    this.#promoteUntypedDamageModifiers(testData);
+
+    const result = { characteristics: [], extra: {} };
+    testData.damageRoll = testData.roll;
+    await this.evaluateDamage(testData, result, weapon, isRangeWeapon, testData.doubleDamage);
+
+    return {
       rollType: DAMAGE,
-      damage,
-      characteristics: chars,
+      damage: result.damage,
+      characteristics: result.characteristics,
+      damagedescription: result.damagedescription,
       preData: testData,
-      modifiers,
+      modifiers: await this._situationalModifiers(testData),
       extra: {},
+      armorPen: result.armorPen,
+      damageRoll: result.damageRoll,
     };
   }
 
