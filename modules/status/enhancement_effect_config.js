@@ -83,9 +83,13 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
           obj[key] = _loc(label);
           return obj;
         }, {});
-        const availableTypes = DSAEnhancementEffectDataModel.getAvailableEnhancementTypes(this._targetType);
-        const enhancementTypes = Object.entries(availableTypes).reduce((obj, [key, label]) => {
-          obj[key] = _loc(label);
+        const availableTypes = DSAEnhancementEffectDataModel.getAvailableEnhancementTypes(this._targetType, {
+          item: this.document.parent,
+          exclude: this.document,
+          slotCost: this.document.system.slotCost,
+        });
+        const enhancementTypes = Object.entries(availableTypes).reduce((obj, [key, entry]) => {
+          obj[key] = { label: entry.label, disabled: entry.disabled };
           return obj;
         }, {});
         const slotLimits = DSAEnhancementEffectDataModel.getSlotLimits(this._targetType);

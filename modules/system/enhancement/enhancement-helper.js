@@ -41,6 +41,29 @@ export default class EnhancementHelper {
       && !effect.disabled;
   }
 
+  static #effectId(effect) {
+    return typeof effect === 'string' ? effect : effect?.id;
+  }
+
+  static getSlotLimits(item) {
+    return item?.system?.constructor?.ENHANCEMENT_SLOT_LIMITS ?? {};
+  }
+
+  static getUsedSlots(item, enhancementType, { exclude } = {}) {
+    const excludeId = this.#effectId(exclude);
+    return [...(item?.effects ?? [])]
+      .filter((effect) => effect.type === 'enhancement'
+        && effect.system?.enhancementType === enhancementType
+        && effect.id !== excludeId)
+      .reduce((sum, effect) => sum + (Number(effect.system?.slotCost) || 1), 0);
+  }
+
+  static hasAvailableSlot(item, { enhancementType, slotCost = 1, exclude } = {}) {
+    const maxSlots = this.getSlotLimits(item)[enhancementType] ?? 0;
+    if (maxSlots <= 0) return false;
+    return this.getUsedSlots(item, enhancementType, { exclude }) + (Number(slotCost) || 1) <= maxSlots;
+  }
+
   static formatActorChangeValue(change, item) {
     const value = `${change.value ?? ''}`.trim();
     if (!value) return value;

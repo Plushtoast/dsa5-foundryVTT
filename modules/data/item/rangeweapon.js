@@ -11,6 +11,7 @@ import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ReloadTimeField from './fields/reload_time_field.js';
 import DamageFormulaField from './fields/damage_formula_field.js';
+import RangeReachField from './fields/range_reach_field.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
@@ -52,7 +53,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
         progress: new ScopableNumberField({ initial: 0 }),
       }),
       reach: new SchemaField({
-        value: new ScopableStringField({ initial: '5/25/40', label: 'reach' }),
+        value: new RangeReachField({ initial: '5/25/40', label: 'reach' }),
       }),
       worn: new SchemaField({
         value: new BooleanField({ initial: false }),

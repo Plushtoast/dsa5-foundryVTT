@@ -580,11 +580,6 @@ export default class Itemdsa5 extends Item {
     for (const change of changes) {
       if (!change.key) continue;
 
-      if (change.key === 'system.reach.value' && this.type === 'rangeweapon') {
-        this._applyEnhancementRangeMultiplier(change);
-        continue;
-      }
-
       const result = DSAActiveEffect.applyChange(this, change, { replacementData });
       if (foundry.utils.isPlainObject(result)) Object.assign(this.overrides, result);
 
@@ -616,22 +611,6 @@ export default class Itemdsa5 extends Item {
         }
       }
     }
-  }
-
-  _applyEnhancementRangeMultiplier(change) {
-    // Reach enhancements store an additive delta (e.g. 0.1 = +10%), applied as ×(1 + delta).
-    const multiplier = 1 + (Number(change.value) || 0);
-    if (multiplier === 1) return;
-
-    const base = foundry.utils.getProperty(this, 'system.reach.value') || '';
-    const parts = base.split('/').map(s => s.trim());
-    const result = parts.map(p => {
-      const num = Number(p);
-      return isNaN(num) ? p : Math.round(num * multiplier);
-    }).join('/');
-
-    foundry.utils.setProperty(this, 'system.reach.value', result);
-    Object.assign(this.overrides, { 'system.reach.value': result });
   }
 
   _replicateProtectionToZones(change) {

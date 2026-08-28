@@ -2,6 +2,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import { onUseActionsField, OnUseActionMixin } from '../shared/onuse-action-schema.js';
 import DSANumberField from '../fields/dsa_number_field.js';
 import DSAStringField from '../fields/dsa_string_field.js';
+import EnhancementHelper from '../../system/enhancement/enhancement-helper.js';
 
 const { SchemaField, NumberField } = foundry.data.fields;
 
@@ -93,10 +94,19 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
     return schema;
   }
 
-  static getAvailableEnhancementTypes(targetType) {
+  static getAvailableEnhancementTypes(targetType, { item, exclude, slotCost } = {}) {
     const limits = this.getSlotLimits(targetType);
+    const cost = slotCost ?? exclude?.system?.slotCost ?? 1;
+    const currentType = exclude?.system?.enhancementType;
     return Object.fromEntries(
-      Object.entries(DSA5.enhancementTypes).filter(([key]) => (limits[key] ?? 0) > 0)
+      Object.entries(DSA5.enhancementTypes)
+        .filter(([key]) => (limits[key] ?? 0) > 0)
+        .map(([key, label]) => {
+          const keepCurrent = key === currentType;
+          const disabled = !keepCurrent && !!item
+            && !EnhancementHelper.hasAvailableSlot(item, { enhancementType: key, slotCost: cost, exclude });
+          return [key, { label, disabled }];
+        }),
     );
   }
 
@@ -175,22 +185,39 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       return false;
     }
 
-    // Check slot availability
-    const enhancementType = this.enhancementType;
-    const maxSlots = limits[enhancementType] ?? 0;
-    if (maxSlots <= 0) return false;
-
-    const usedSlots = item.effects
-      .filter(e => e.type === 'enhancement' && e.system.enhancementType === enhancementType)
-      .reduce((sum, e) => sum + (e.system.slotCost || 1), 0);
-
-    if (usedSlots + (this.slotCost || 1) > maxSlots) {
-      ui.notifications.warn('Enhancement.slotsFull', { localize: true });
-      return false;
-    }
+    if (!this.#assertSlotAvailable(item, {
+      enhancementType: this.enhancementType,
+      slotCost: this.slotCost,
+    })) return false;
 
     if (this.enhancementType === 'powersource' && !this.powersource) {
       this.powersource = { value: 0, max: 0 };
     }
+  }
+
+  async _preUpdate(changed, options, user) {
+    const allowed = await super._preUpdate(changed, options, user);
+    if (allowed === false) return false;
+
+    const system = changed.system ?? {};
+    const typeChanged = 'enhancementType' in system && system.enhancementType !== this.enhancementType;
+    const costChanged = 'slotCost' in system && Number(system.slotCost) !== Number(this.slotCost);
+    if (!typeChanged && !costChanged) return;
+
+    const effect = this.parent;
+    const item = effect?.parent;
+    if (!item || item.documentName !== 'Item') return;
+
+    if (!this.#assertSlotAvailable(item, {
+      enhancementType: system.enhancementType ?? this.enhancementType,
+      slotCost: system.slotCost ?? this.slotCost,
+      exclude: effect,
+    })) return false;
+  }
+
+  #assertSlotAvailable(item, occupancy) {
+    if (EnhancementHelper.hasAvailableSlot(item, occupancy)) return true;
+    ui.notifications.warn('Enhancement.slotsFull', { localize: true });
+    return false;
   }
 }
