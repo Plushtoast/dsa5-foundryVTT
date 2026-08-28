@@ -1,38 +1,40 @@
 <div>
   <div class='calendar-widget-content{{#if isGM}} is-gm{{/if}}'>
-    <div class='calendar-header-row'>
-      <div class='calendar-header-side calendar-header-left'>
-        {{#if isGM}}
-          <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock{{#if toggleAutoTime}} is-active{{/if}}' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime' aria-pressed='{{#if toggleAutoTime}}true{{else}}false{{/if}}'></button>
-        {{/if}}
-        {{#if canOpenAlmanac}}
-          <button type='button' class='calendar-nav-btn noBorder icon fas fa-user' data-tooltip='PERSONAE.title' data-action='openAlmanac'></button>
-        {{/if}}
-      </div>
-      <button type='button' class='calendar-date-label noBorder{{#unless canOpenCalendarPicker}} is-static{{/unless}}' data-tooltip='{{dateTooltip}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}}>{{dateString}}</button>
-      <div class='calendar-header-side calendar-header-right'>
-        {{#if canOpenEvents}}
-          <button type='button' class='calendar-nav-btn noBorder icon fas fa-person-praying' data-tooltip='CALENDAR.DSA.holidays' data-action='openEvents'></button>
-        {{/if}}
-        {{#if isGM}}
-          <button type='button' class='calendar-config-btn noBorder icon fas fa-toggle-{{ifThen autoLightEnabled "on" "off"}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>
-        {{/if}}
-      </div>
-    </div>
-    <div class='calendar-day-row'>
-      <i class='{{dayTimeIcon}} calendar-bookend calendar-daytime-icon' data-tooltip='{{dateTooltip}}' aria-hidden='true'></i>
-      <div class='dayProgress noBorder' style='--p:{{dayProgress}}%;--fill-tint:{{dayTimeBackground.fillColor}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}} data-tooltip='{{dateTooltip}}'>
-        <div class='dayProgress-track'>
-          <div class='dayProgress-fill'></div>
-          <div class='dayProgress-ticks'></div>
+    <div class='calendar-main'>
+      <div class='calendar-header-row'>
+        <div class='calendar-header-side calendar-header-left'>
+          {{#if isGM}}
+            <button type='button' class='calendar-config-btn noBorder icon {{ifThen toggleAutoTime "fas" "far"}} fa-clock{{#if toggleAutoTime}} is-active{{/if}}' data-tooltip='CALENDAR.DSA.dayTimes.toggleAutoTime' data-action='toggleAutoTime' aria-pressed='{{#if toggleAutoTime}}true{{else}}false{{/if}}'></button>
+          {{/if}}
+          {{#if canOpenAlmanac}}
+            <button type='button' class='calendar-nav-btn noBorder icon fas fa-user' data-tooltip='PERSONAE.title' data-action='openAlmanac'></button>
+          {{/if}}
         </div>
-        <div class='slideIndicator' aria-hidden='true'><i class='fas fa-hourglass-half'></i></div>
+        <button type='button' class='calendar-date-label noBorder{{#unless canOpenCalendarPicker}} is-static{{/unless}}' data-tooltip='{{dateTooltip}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}}>{{dateString}}</button>
+        <div class='calendar-header-side calendar-header-right'>
+          {{#if canOpenEvents}}
+            <button type='button' class='calendar-nav-btn noBorder icon fas fa-person-praying' data-tooltip='CALENDAR.DSA.holidays' data-action='openEvents'></button>
+          {{/if}}
+          {{#if isGM}}
+            <button type='button' class='calendar-config-btn noBorder icon fas fa-toggle-{{ifThen autoLightEnabled "on" "off"}}' data-tooltip='CALENDAR.DSA.dayTimes.lightByDayTimeHint' data-action='toggleAutoLight'></button>
+          {{/if}}
+        </div>
       </div>
-      {{#if canToggleAutoWeather}}
-        <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' data-action='toggleAutoWeather' role='button' tabindex='0' aria-pressed='{{#if autoWeatherEnabled}}true{{else}}false{{/if}}'></i>
-      {{else}}
-        <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' aria-hidden='true'></i>
-      {{/if}}
+      <div class='calendar-day-row'>
+        <i class='{{dayTimeIcon}} calendar-bookend calendar-daytime-icon' data-tooltip='{{dateTooltip}}' aria-hidden='true'></i>
+        <div class='dayProgress noBorder' style='--p:{{dayProgress}}%;--fill-tint:{{dayTimeBackground.fillColor}}'{{#if canOpenCalendarPicker}} data-action='edit'{{/if}} data-tooltip='{{dateTooltip}}'>
+          <div class='dayProgress-track'>
+            <div class='dayProgress-fill'></div>
+            <div class='dayProgress-ticks'></div>
+          </div>
+          <div class='slideIndicator' aria-hidden='true'><i class='fas fa-hourglass-half'></i></div>
+        </div>
+        {{#if canToggleAutoWeather}}
+          <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' data-action='toggleAutoWeather' role='button' tabindex='0' aria-pressed='{{#if autoWeatherEnabled}}true{{else}}false{{/if}}'></i>
+        {{else}}
+          <i class='{{weatherIconClass}}' data-tooltip='{{weatherTooltip}}' aria-hidden='true'></i>
+        {{/if}}
+      </div>
     </div>
     <div class='moons flexrow'>
       <div class='moon-phase previous'>

@@ -51,7 +51,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     actions: {
       panToMember: this.#onPanToMember,
     },
-    classes: ['dsa5', 'sc-quickbar', 'faded-ui'],
+    classes: ['dsa5', 'sc-quickbar'],
   };
 
   static PARTS = {
@@ -385,6 +385,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     const { DISPLAY_MODE_ALL, DISPLAY_MODE_LOGGED_IN, DISPLAY_MODE_COLLAPSED } = this.constructor;
     const displayMode = this.constructor.#normalizeDisplayMode(game.settings.get('dsa5', 'scQuickbarDisplayMode'));
     const layout = game.settings.get('dsa5', 'scQuickbarLayout');
+    const fadedUi = game.settings.get('dsa5', 'scQuickbarFadedUi');
     const icon = (active, defaultIcon) => (active ? '<i class="fas fa-check"></i>' : defaultIcon);
 
     return [
@@ -414,6 +415,11 @@ export default class ScQuickbar extends DefaultAppv2 {
         onClick: () => game.settings.set('dsa5', 'scQuickbarLayout', 0),
       },
       {
+        label: 'SCQUICKBAR.fadedUi',
+        icon: icon(fadedUi, '<i class="fas fa-circle-half-stroke"></i>'),
+        onClick: () => game.settings.set('dsa5', 'scQuickbarFadedUi', !fadedUi),
+      },
+      {
         label: 'SCQUICKBAR.configure',
         icon: '<i class="fa-solid fa-cog"></i>',
         onClick: () => new ConfigureScQuickbar().render(true),
@@ -423,6 +429,8 @@ export default class ScQuickbar extends DefaultAppv2 {
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+
+    this.element?.classList.toggle('faded-ui', !!game.settings.get('dsa5', 'scQuickbarFadedUi'));
 
     const handle = this.element?.querySelector('.dragHandler');
     if (handle) {
@@ -552,6 +560,7 @@ export class ConfigureScQuickbar extends FormAppv2 {
       enableScQuickbar: game.settings.get('dsa5', 'enableScQuickbar'),
       scQuickbarSize: game.settings.get('dsa5', 'scQuickbarSize'),
       scQuickbarLayout: game.settings.get('dsa5', 'scQuickbarLayout'),
+      scQuickbarFadedUi: game.settings.get('dsa5', 'scQuickbarFadedUi'),
       layoutChoices: game.settings.settings.get('dsa5.scQuickbarLayout').choices,
     });
     return data;
@@ -562,6 +571,7 @@ export class ConfigureScQuickbar extends FormAppv2 {
     await game.settings.set('dsa5', 'scQuickbarLayout', 1);
     await game.settings.set('dsa5', 'scQuickbarSize', 64);
     await game.settings.set('dsa5', 'scQuickbarDisplayMode', ScQuickbar.DISPLAY_MODE_ALL);
+    await game.settings.set('dsa5', 'scQuickbarFadedUi', false);
     await syncScQuickbar(true);
   }
 }

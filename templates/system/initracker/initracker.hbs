@@ -55,18 +55,14 @@
                 {{/if}}
                 {{/if}}
                 <div class="hoverbuttons">
-                    <div class="combatant-controls flexrow">
-                        {{#if ../user.isGM}}
-                        <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
-                        data-action="toggleHidden" data-tooltip
-                        aria-label="{{ localize (ifThen hidden "COMBATANT.Show" "COMBATANT.Hide") }}"></button>
-                    </div>
-                    <div class="combatant-controls flexrow">
-                        <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
-                        data-action="toggleDefeated" data-tooltip
-                        aria-label="{{ localize (ifThen isDefeated "COMBATANT.UnmarkDefeated" "COMBATANT.MarkDefeated") }}"></button>
-                        {{/if}}
-                    </div>
+                    {{#if ../user.isGM}}
+                    <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-eye-slash {{#if hidden}}active{{/if}}"
+                    data-action="toggleHidden" data-tooltip
+                    aria-label="{{ localize (ifThen hidden "COMBATANT.Show" "COMBATANT.Hide") }}"></button>
+                    <button type="button" class="dsa-hud-icon-button combatant-control icon fa-solid fa-skull {{#if isDefeated}}active{{/if}}"
+                    data-action="toggleDefeated" data-tooltip
+                    aria-label="{{ localize (ifThen isDefeated "COMBATANT.UnmarkDefeated" "COMBATANT.MarkDefeated") }}"></button>
+                    {{/if}}
                 </div>
                 <div class="token-initiative">
                     {{#if (and isOwner (or initiative @root.isChase showNavalAggro))}}
@@ -108,6 +104,7 @@
         <section class="dragHandler" data-tooltip="TT.resizer">
             <i class="fas fa-grip-vertical"></i>
         </section>
+        <div class="resize-handle" data-tooltip="COMBATTRACKER.resizeHint" aria-label="{{localize 'COMBATTRACKER.resizeHint'}}"></div>
     </div>
 
     {{#if unRolled}}
@@ -135,7 +132,7 @@
         {{else if (and isNavalMkr (eq mkr.phase "heroActions"))}}
         <button type="button" class="col two dsa-hud-action-button combat-control naval-hero-action" data-action="aggroButton" data-tooltip="VEHICLE.mkr.heroActionTooltip">{{localize 'VEHICLE.mkr.heroAction'}}</button>
         {{else}}
-        <button type="button" class="col two dsa-hud-action-button combat-control" data-action="waitInit">{{localize 'COMBATTRACKER.waitInit'}}</button>
+        <button type="button" class="col two dsa-hud-action-button combat-control" data-action="waitInit" data-tooltip-html="{{{localize 'COMBATTRACKER.waitInitHint'}}}" aria-label="{{localize 'COMBATTRACKER.waitInit'}}">{{localize 'COMBATTRACKER.waitInit'}}</button>
         {{/if}}
         {{/unless}}
     </div>

@@ -615,6 +615,14 @@
       padding-bottom: 92px;
     }
 
+    .calendar-main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
     .calendar-header-row {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
@@ -1031,6 +1039,96 @@
             right: calc(var(--icon-size) * -0.2);
           }
         }
+      }
+    }
+  }
+
+  &.combat-minimized {
+    z-index: 200;
+    overflow: hidden;
+
+    .calendar-widget-content {
+      padding-bottom: 4px;
+      overflow: hidden;
+      pointer-events: none;
+
+      &.is-gm {
+        padding-bottom: 4px;
+      }
+
+      .calendar-main {
+        pointer-events: none;
+      }
+
+      .calendar-header-row {
+        pointer-events: auto;
+      }
+
+      .calendar-day-row {
+        height: 0;
+        overflow: hidden;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .dayProgress {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .moons {
+        display: none;
+      }
+    }
+
+    &:has(.calendar-header-row:hover),
+    &:has(.calendar-day-row:hover),
+    &:has(.calendar-advance-menu:hover),
+    &:has(.moons:hover),
+    &:has(.is-expanded) {
+      overflow: visible;
+    }
+
+    .calendar-widget-content:has(.calendar-header-row:hover),
+    .calendar-widget-content:has(.calendar-day-row:hover),
+    .calendar-widget-content:has(.calendar-advance-menu:hover),
+    .calendar-widget-content:has(.moons:hover),
+    .calendar-widget-content.is-expanded {
+      overflow: visible;
+
+      &.is-gm {
+        padding-bottom: 92px;
+      }
+
+      .calendar-day-row {
+        height: auto;
+        overflow: visible;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .dayProgress {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .moons {
+        display: flex;
+        pointer-events: auto;
+      }
+
+      .calendar-advance-menu {
+        opacity: 1;
+        pointer-events: auto;
+
+        .calendar-step {
+          pointer-events: auto;
+        }
+      }
+
+      .calendar-config-btn {
+        opacity: 1;
+        pointer-events: auto;
       }
     }
   }

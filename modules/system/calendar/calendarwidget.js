@@ -675,6 +675,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     async _onRender(context, options) {
         await super._onRender(context, options);
 
+        if (game.combat?.started && game.settings.get('dsa5', 'iniTrackerDockToTop')) {
+            this.element.classList.add(this.constructor.COMBAT_MINIMIZED_CLASS);
+            this.#nudgeTrackerBelowCollapsed();
+        }
+
         if (!game.user.isGM) return;
 
         this._setupDragHandlers();
@@ -740,6 +745,15 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         clearTimeout(this._advanceMenuLeaveTimer);
         this._advanceMenuLeaveTimer = setTimeout(releasePin, this.constructor.ADVANCE_MENU_LEAVE_MS);
         root.addEventListener('pointerleave', releasePin, { once: true });
+    }
+
+    #nudgeTrackerBelowCollapsed() {
+        const tracker = game.dsa5?.apps?.initTracker;
+        if (!tracker?.rendered) return;
+        const minTop = this.constructor.getDockBottom();
+        const top = tracker.position?.top;
+        if (Number.isFinite(top) && top >= minTop) return;
+        tracker.setPosition({ top: minTop });
     }
 
     _teardownDragHandlers() {
@@ -860,5 +874,48 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
         if (skipAnimation) this.constructor.skipNextTimeAnimation = true;
         game.time.advance(advanceTime);
+    }
+
+    static COMBAT_MINIMIZED_CLASS = 'combat-minimized';
+    static DOCK_GAP = 8;
+    /** Matches `.dsaCalendarWidget { top: 5px }` */
+    static WIDGET_TOP = 5;
+    /**
+     * Collapsed combat strip: content pad 4 + date header 28 (GM config buttons) + pad 4.
+     * Used when the widget is not in the DOM yet (world reload).
+     */
+    static COLLAPSED_STRIP_HEIGHT = 36;
+
+    static isAvailable() {
+        return game.settings.get('dsa5', 'calendar') !== 'none'
+            && !!game.dsa5?.apps?.CalendarWidget?.rendered;
+    }
+
+    static collapseForCombat() {
+        const widget = game.dsa5?.apps?.CalendarWidget;
+        if (!widget?.element) return;
+        widget.element.classList.add(this.COMBAT_MINIMIZED_CLASS);
+    }
+
+    static restoreAfterCombat() {
+        const widget = game.dsa5?.apps?.CalendarWidget;
+        widget?.element?.classList.remove(this.COMBAT_MINIMIZED_CLASS);
+    }
+
+    static collapsedDockBottom() {
+        try {
+            if (game.settings.get('dsa5', 'calendar') === 'none') return this.DOCK_GAP;
+        } catch (_err) { /* settings not ready */ }
+        return this.WIDGET_TOP + this.COLLAPSED_STRIP_HEIGHT + this.DOCK_GAP;
+    }
+
+    static getDockBottom() {
+        const fallback = this.collapsedDockBottom();
+        const widget = game.dsa5?.apps?.CalendarWidget;
+        const el = widget?.element;
+        if (!el?.isConnected) return fallback;
+        const header = el.querySelector('.calendar-header-row');
+        if (!header) return fallback;
+        return Math.max(fallback, Math.round(header.getBoundingClientRect().bottom + this.DOCK_GAP));
     }
 }

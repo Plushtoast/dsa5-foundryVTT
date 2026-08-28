@@ -1,5 +1,6 @@
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
+import { CalendarWidget } from '../system/calendar/calendarwidget.js';
 import { DSA5CombatTracker } from './combat_tracker.js';
 import Chase from './chase/chase.js';
 import ChaseCombatTracker from './chase/chase-combat-tracker.js';
@@ -13,11 +14,23 @@ export default class DSAIniTracker extends DefaultAppv2 {
   static PANEL_BORDER = 0;
   static CONTROL_COLUMN_WIDTH = 18;
   static DRAG_COLUMN_WIDTH = 14;
+  static RESIZE_HANDLE_WIDTH = 10;
   static CONTROL_GAP = 2;
   static ACTION_ROW_HEIGHT = 32;
   static BADGE_ROW_HEIGHT = 28;
   static INITIATIVE_OVERLAY = 20;
   static MIN_SIZE = 80;
+  static COUNT_MIN = 3;
+  static COUNT_MAX = 25;
+  static DOCK_TOP_MARGIN = 12;
+
+  #resizePointerId = null;
+  #resizeStartX = 0;
+  #resizeStartCount = 0;
+  #suppressPositionPersist = false;
+  #layout = null;
+  #dockedCombatId = null;
+  #forceDockOnce = false;
 
   static DEFAULT_OPTIONS = {
     position: {
@@ -27,7 +40,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     },
     window: {
       title: 'DSAIniTracker',
-      resizable: true,
+      resizable: false,
       frame: false,
     },
     actions: {
@@ -85,6 +98,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   setPosition(position) {
     const currentPosition = super.setPosition(position);
+    if (this.#suppressPositionPersist) return currentPosition;
     if (Number.isFinite(currentPosition?.left) && Number.isFinite(currentPosition?.top)) {
       game.settings.set('dsa5', 'iniTrackerPosition', {
         left: currentPosition.left,
@@ -92,6 +106,182 @@ export default class DSAIniTracker extends DefaultAppv2 {
       });
     }
     return currentPosition;
+  }
+
+  dockForNewCombat() {
+    if (!game.settings.get('dsa5', 'iniTrackerDockToTop')) return;
+    this.#dockedCombatId = null;
+    this.#forceDockOnce = true;
+    if (!this.rendered) return;
+    this.render(true, { focus: false, forceDock: true });
+  }
+
+  onCombatEnded() {
+    this.#dockedCombatId = null;
+    this.#forceDockOnce = false;
+    CalendarWidget.restoreAfterCombat();
+  }
+
+  #applyPosition(options, { forceDock = false, combatStarted = false, combatId = null } = {}) {
+    options.position ??= {};
+    const shouldDock = game.settings.get('dsa5', 'iniTrackerDockToTop') && combatStarted;
+    const doDock = shouldDock && (forceDock || this.#forceDockOnce || !this.rendered || combatId !== this.#dockedCombatId);
+    this.#forceDockOnce = false;
+
+    if (doDock) {
+      CalendarWidget.collapseForCombat();
+      const docked = this.constructor.dockPosition(options.position.width);
+      options.position.left = docked.left;
+      options.position.top = docked.top;
+      if (combatId) this.#dockedCombatId = combatId;
+      return;
+    }
+
+    if (shouldDock && this.rendered && Number.isFinite(this.position?.left) && Number.isFinite(this.position?.top)) {
+      options.position.left = this.position.left;
+      options.position.top = Math.max(this.position.top, CalendarWidget.getDockBottom());
+      return;
+    }
+
+    mergeObject(options.position, game.settings.get('dsa5', 'iniTrackerPosition') ?? {});
+  }
+
+  static clampActorCount(count) {
+    return Math.clamp(Math.round(Number(count) || 0), this.COUNT_MIN, this.COUNT_MAX);
+  }
+
+  static actorCountFromDrag(startCount, deltaX, itemWidth) {
+    const slotWidth = Math.max(1, (Number(itemWidth) || 80) + this.TILE_GAP);
+    const deltaSlots = Math.round(deltaX / slotWidth);
+    return this.clampActorCount(startCount + deltaSlots);
+  }
+
+  static widthForActorCount(count, itemWidth, layout = {}) {
+    return this.#computeDimensions({
+      itemWidth,
+      actorCount: count,
+      roundSeparators: layout.roundSeparators ?? 0,
+      leftControls: layout.leftControls ?? 0,
+      rightControls: layout.rightControls ?? 0,
+      extraRows: layout.extraRows ?? 0,
+      extraBadgeRows: layout.extraBadgeRows ?? 0,
+    }).width;
+  }
+
+  static resolveCombatantImage(combatant, fallback) {
+    if (game.settings.get('dsa5', 'iniTrackerPreferAvatar')) {
+      return combatant.actor?.img ?? combatant.img ?? fallback;
+    }
+    return fallback ?? combatant.img;
+  }
+
+  /**
+   * Builds the visible ini-tracker strip and the Zurückstellen waiting row.
+   * Waiting combatants appear once in `waitingTurns` for the round they delayed
+   * and are omitted from that same round in the main strip. Later wrap rounds
+   * still include them like everyone else.
+   */
+  static collectTrackerTurns({
+    turns,
+    combat,
+    actorCount,
+    skipDefeated = false,
+    isGM = false,
+    combatStarted = false,
+    isNavalMkr = false,
+  }) {
+    const waitingTurns = [];
+    const waitingIds = new Set();
+    const filteredTurns = [];
+    const turnsToUse = turns ?? [];
+    if (!turnsToUse.length || !combat) return { turns: filteredTurns, waitingTurns };
+
+    const anyActive = turnsToUse.some((x) => x.active);
+    let toAdd = actorCount;
+    let started = false;
+    let startIndex = -1;
+    let index = 0;
+    let loops = 0;
+    let currentRound;
+
+    const advance = () => {
+      index += 1;
+      if (index >= turnsToUse.length) {
+        index = 0;
+        loops += 1;
+      }
+    };
+
+    while (!(toAdd === 0 || loops === actorCount)) {
+      const turn = duplicate(turnsToUse[index]);
+      const combatant = combat.combatants.get(turn.id);
+      if (!combatant) {
+        advance();
+        continue;
+      }
+
+      const visible = isGM || !combatant.hidden;
+      const displayedRound = combat.round + loops;
+      const isWaitingThisRound = combatant.getFlag?.('dsa5', 'waitInit') == displayedRound
+        && !combatant.defeated
+        && visible;
+
+      if (started && index === startIndex) turn.css = (turn.css || '').replace('active', '');
+
+      if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
+        started = true;
+        startIndex = index;
+      }
+
+      if (isWaitingThisRound) {
+        if (!waitingIds.has(turn.id)) {
+          waitingIds.add(turn.id);
+          turn.img = this.resolveCombatantImage(combatant, turn.img);
+          waitingTurns.push(turn);
+        }
+        advance();
+        continue;
+      }
+
+      if (started && !(skipDefeated && combatant.defeated) && visible) {
+        turn.round = displayedRound;
+        this.#decorateTrackerTurn(turn, combatant, isNavalMkr);
+        if (currentRound && currentRound !== turn.round) turn.newRound = 'newRound';
+        currentRound = turn.round;
+        filteredTurns.push(turn);
+        toAdd -= 1;
+      }
+      advance();
+    }
+
+    return { turns: filteredTurns, waitingTurns };
+  }
+
+  static #decorateTrackerTurn(turn, combatant, isNavalMkr) {
+    if (turn.isOwner && combatant.actor) {
+      const status = combatant.actor.system.status;
+      if (combatant.actor.type === 'vehicle') {
+        turn.maxLP = status.structurePoints?.max ?? 0;
+        turn.currentLP = status.structurePoints?.value ?? 0;
+        turn.maxCrew = status.crew?.max ?? 0;
+        turn.currentCrew = status.crew?.value ?? 0;
+        turn.showVehicleBars = true;
+      } else {
+        turn.maxLP = status.wounds?.max ?? 0;
+        turn.currentLP = status.wounds?.value ?? 0;
+      }
+    }
+    turn.isVehicle = combatant.actor?.type === 'vehicle';
+    turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
+    turn.img = this.resolveCombatantImage(combatant, turn.img);
+  }
+
+  static dockPosition(width, dockBottom = CalendarWidget.getDockBottom()) {
+    const minTop = CalendarWidget.collapsedDockBottom();
+    return {
+      left: Math.max(0, Math.round((window.innerWidth - (Number(width) || 0)) / 2)),
+      top: Math.max(minTop, Math.round(Number(dockBottom) || 0)),
+    };
   }
 
   static #controlColumnWidth() {
@@ -143,6 +333,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const leftWidth = leftCount > 0 ? this.CONTROL_COLUMN_WIDTH + this.TILE_GAP : 0;
     const rightWidth = rightCount > 0 ? this.CONTROL_COLUMN_WIDTH + this.TILE_GAP : 0;
     const dragWidth = this.DRAG_COLUMN_WIDTH + this.TILE_GAP;
+    const resizeWidth = this.RESIZE_HANDLE_WIDTH + this.TILE_GAP;
     const itemCount = tiles + seps;
     const tilesWidth = itemCount > 0
       ? tiles * size + seps * this.ROUND_SEPARATOR_WIDTH + Math.max(0, itemCount - 1) * this.TILE_GAP
@@ -153,6 +344,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       + tilesWidth
       + rightWidth
       + dragWidth
+      + resizeWidth
       + this.PANEL_PAD;
 
     const portraitRow = Math.max(
@@ -183,10 +375,19 @@ export default class DSAIniTracker extends DefaultAppv2 {
         game.dsa5.apps.initTracker.updateTracker(data);
       } else {
         if (game.dsa5.apps.initTracker) {
+          game.dsa5.apps.initTracker.onCombatEnded();
           game.dsa5.apps.initTracker.close();
           game.dsa5.apps.initTracker = undefined;
         }
       }
+    });
+
+    Hooks.on('updateCombat', (combat, changed) => {
+      if (!game.settings.get('dsa5', 'enableCombatFlow')) return;
+      if (!('started' in changed)) return;
+      const tracker = game.dsa5.apps.initTracker;
+      if (combat.started) tracker?.dockForNewCombat();
+      else tracker?.onCombatEnded();
     });
   }
 
@@ -200,10 +401,10 @@ export default class DSAIniTracker extends DefaultAppv2 {
   }
 
   async _prepareContext(options) {
-    const data = this.combatData ?? { turns: [], combat: game.combat };
-    mergeObject(options, { position: game.settings.get('dsa5', 'iniTrackerPosition') ?? {} });
+    const stored = this.combatData ?? { turns: [], combat: game.combat };
+    const data = { ...stored };
     const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
-    const actorCount = game.settings.get('dsa5', 'iniTrackerCount');
+    const actorCount = this.constructor.clampActorCount(game.settings.get('dsa5', 'iniTrackerCount'));
 
     const combatStarted = data.combat?.round;
     if (data.turns && data.combat) {
@@ -223,75 +424,26 @@ export default class DSAIniTracker extends DefaultAppv2 {
       });
     }
 
-    const waitingTurns = [];
     const skipDefeated = game.settings.get('core', Combat.CONFIG_SETTING).skipDefeated;
-
-    //todo change this to one loop
-    const anyActive = turnsToUse.some((x) => x.active);
     const unRolled = !isChase && (data.turns ?? []).some((x) => {
       if (x.isChaseSection || !x.isOwner || x.initiative) return false;
       if (!game.user.isGM) return true;
       return data.combat.combatants.get(x.id)?.isNPC;
     });
+
+    let waitingTurns = [];
     if (turnsToUse.length) {
-      const filteredTurns = [];
-
-      let toAdd = actorCount;
-      let started = false;
-      let startIndex = -1;
-      let index = 0;
-      let loops = 0;
-      let currentRound;
-      while (!(toAdd == 0 || loops == actorCount)) {
-        const turn = duplicate(turnsToUse[index]);
-        const combatant = data.combat.combatants.get(turn.id);
-        if (!combatant) {
-          index++;
-          if (index >= turnsToUse.length) {
-            index = 0;
-            loops++;
-          }
-          continue;
-        }
-        if (started && index == startIndex) turn.css = turn.css.replace('active', '');
-
-        if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
-          started = true;
-          startIndex = index;
-        } else if (combatant.getFlag('dsa5', 'waitInit') == data.combat.round + loops && !combatant.defeated && (game.user.isGM || !combatant.hidden)) {
-          waitingTurns.push(turn);
-        }
-
-        if (started && !(skipDefeated && combatant.defeated) && (game.user.isGM || !combatant.hidden)) {
-          turn.round = data.combat.round + loops;
-          if (turn.isOwner && combatant.actor) {
-            const status = combatant.actor.system.status;
-            if (combatant.actor.type === 'vehicle') {
-              turn.maxLP = status.structurePoints?.max ?? 0;
-              turn.currentLP = status.structurePoints?.value ?? 0;
-              turn.maxCrew = status.crew?.max ?? 0;
-              turn.currentCrew = status.crew?.value ?? 0;
-              turn.showVehicleBars = true;
-            } else {
-              turn.maxLP = status.wounds?.max ?? 0;
-              turn.currentLP = status.wounds?.value ?? 0;
-            }
-          }
-          turn.isVehicle = combatant.actor?.type === 'vehicle';
-          turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
-          if (currentRound && currentRound != turn.round) turn.newRound = 'newRound';
-
-          currentRound = turn.round;
-          filteredTurns.push(turn);
-          toAdd--;
-        }
-        index++;
-        if (index >= turnsToUse.length) {
-          index = 0;
-          loops++;
-        }
-      }
-      data.turns = filteredTurns;
+      const collected = this.constructor.collectTrackerTurns({
+        turns: turnsToUse,
+        combat: data.combat,
+        actorCount,
+        skipDefeated,
+        isGM: game.user.isGM,
+        combatStarted,
+        isNavalMkr,
+      });
+      data.turns = collected.turns;
+      waitingTurns = collected.waitingTurns;
     } else if (isNavalMkr) {
       data.turns = [];
     }
@@ -311,6 +463,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
       combatStarted && isChase,
     ].filter(Boolean).length;
     const { left, right } = this.constructor.#controlCounts(data, combatStarted);
+    this.#layout = {
+      itemWidth,
+      roundSeparators,
+      leftControls: left,
+      rightControls: right,
+      extraRows,
+      extraBadgeRows,
+    };
     const dimensions = this.constructor.#computeDimensions({
       itemWidth,
       actorCount,
@@ -320,8 +480,14 @@ export default class DSAIniTracker extends DefaultAppv2 {
       extraRows,
       extraBadgeRows,
     });
+    options.position ??= {};
     options.position.width = dimensions.width;
     options.position.height = dimensions.height;
+    this.#applyPosition(options, {
+      forceDock: options.forceDock === true,
+      combatStarted: !!combatStarted,
+      combatId: data.combat?.id ?? game.combat?.id ?? null,
+    });
 
     Object.assign(data, {
       itemWidth,
@@ -389,12 +555,70 @@ export default class DSAIniTracker extends DefaultAppv2 {
     await this.render(true);
   }
 
+  #bindResizeHandle() {
+    const handle = this.element.querySelector('.resize-handle');
+    if (!handle) return;
+
+    handle.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      event.preventDefault();
+      event.stopPropagation();
+      this.#resizePointerId = event.pointerId;
+      this.#resizeStartX = event.clientX;
+      this.#resizeStartCount = this.constructor.clampActorCount(game.settings.get('dsa5', 'iniTrackerCount'));
+      handle.setPointerCapture(event.pointerId);
+      handle.classList.add('active');
+    });
+
+    handle.addEventListener('pointermove', (event) => {
+      if (this.#resizePointerId !== event.pointerId) return;
+      const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
+      const next = this.constructor.actorCountFromDrag(
+        this.#resizeStartCount,
+        event.clientX - this.#resizeStartX,
+        itemWidth,
+      );
+      const current = Number(this.element.dataset.previewCount ?? this.#resizeStartCount);
+      if (next === current) return;
+      this.#previewCount(next);
+    });
+
+    const endResize = async (event) => {
+      if (this.#resizePointerId !== event.pointerId) return;
+      handle.releasePointerCapture(event.pointerId);
+      handle.classList.remove('active');
+      this.#resizePointerId = null;
+      const count = this.constructor.clampActorCount(this.element.dataset.previewCount ?? this.#resizeStartCount);
+      delete this.element.dataset.previewCount;
+      if (count !== game.settings.get('dsa5', 'iniTrackerCount')) {
+        await game.settings.set('dsa5', 'iniTrackerCount', count);
+      } else {
+        this.render(true, { focus: false });
+      }
+    };
+
+    handle.addEventListener('pointerup', endResize);
+    handle.addEventListener('pointercancel', endResize);
+  }
+
+  #previewCount(count) {
+    this.element.dataset.previewCount = String(count);
+    const itemWidth = game.settings.get('dsa5', 'iniTrackerSize');
+    const width = this.constructor.widthForActorCount(count, itemWidth, this.#layout ?? {});
+    this.#suppressPositionPersist = true;
+    try {
+      this.setPosition({ width });
+    } finally {
+      this.#suppressPositionPersist = false;
+    }
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = $(this.element);
 
     const container = html.find('.dragHandler');
-    new foundry.applications.ux.Draggable(this, this.element, container[0], this.options.resizable);
+    new foundry.applications.ux.Draggable(this, this.element, container[0], false);
 
     container.on('wheel', async (ev) => {
       ev.stopPropagation();
@@ -402,6 +626,8 @@ export default class DSAIniTracker extends DefaultAppv2 {
       await this._onWheelResize(ev);
       return false;
     });
+
+    this.#bindResizeHandle();
 
     html.find('.betterTooltip').on('pointerover', (ev) => this.#betterTooltip(ev));
 

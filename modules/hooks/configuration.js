@@ -366,6 +366,35 @@ export function setupConfiguration() {
         if (game.dsa5.apps.initTracker && game.combat) game.dsa5.apps.initTracker.render({ force: true });
       },
     },
+    iniTrackerDockToTop: {
+      name: 'DSASETTINGS.iniTrackerDockToTop',
+      hint: 'DSASETTINGS.iniTrackerDockToTopHint',
+      scope: 'client',
+      config: true,
+      default: true,
+      type: Boolean,
+      onChange: () => {
+        const tracker = game.dsa5.apps.initTracker;
+        if (!tracker || !game.combat) return;
+        if (game.settings.get('dsa5', 'iniTrackerDockToTop') && game.combat.started) {
+          tracker.dockForNewCombat();
+        } else {
+          tracker.onCombatEnded();
+          tracker.render({ force: true });
+        }
+      },
+    },
+    iniTrackerPreferAvatar: {
+      name: 'DSASETTINGS.iniTrackerPreferAvatar',
+      hint: 'DSASETTINGS.iniTrackerPreferAvatarHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+      onChange: () => {
+        if (game.dsa5.apps.initTracker && game.combat) game.dsa5.apps.initTracker.render({ force: true });
+      },
+    },
     tokenhotbarSize: {
       name: 'DSASETTINGS.tokenhotbarSize',
       hint: 'DSASETTINGS.tokenhotbarSizeHint',
@@ -850,6 +879,17 @@ export function setupConfiguration() {
         step: 4,
       },
       onChange: () => syncScQuickbar(true),
+    },
+    scQuickbarFadedUi: {
+      name: 'SCQUICKBAR.fadedUi',
+      hint: 'SCQUICKBAR.fadedUiHint',
+      scope: 'client',
+      config: false,
+      default: false,
+      type: Boolean,
+      onChange: (val) => {
+        game.dsa5.apps.scQuickbar?.element?.classList.toggle('faded-ui', !!val);
+      },
     },
     disableTokenhotbar: {
       name: 'DSASETTINGS.disableTokenhotbar',
