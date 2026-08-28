@@ -759,6 +759,8 @@
     "newRound": "Neue Kampfrunde",
     "overusePipHint": "Zusätzliche Aktion – überschreitet dein Aktionsbudget in dieser Runde!",
     "waitInit": "Zurückstellen",
+    "waitInitHint": "<p>Statt die Aktion direkt auszuführen, kannst du sie hinauszögern. Sie darf dann im späteren Verlauf zu einem beliebigen Zeitpunkt nach der eigenen Initiative ausgeführt werden. Aktionen, die bis zum Ende der Kampfrunde nicht ausgeführt worden sind, verfallen.</p><p>Im Tracker hängt dein Portrait in der Warteschlange und kann jederzeit ausgelöst werden. Zurückgestellte Handlungen verfallen am Rundenende.</p>",
+    "resizeHint": "Ziehen, um die Anzahl angezeigter Kämpfer zu ändern",
     "rulesHint": {
       "standard": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>",
       "brawling": "<p><b>Prügelei</b></p><p>Waffenloser / improvisierter Kampf mit vorübergehenden Blessuren (temporäre LeP). Optional werden alle zu Beginn entwaffnet.</p><p>Beim Beenden der Prügelei können temporäre Schäden über die Prügelei-Verletzungstabelle umgerechnet werden.</p>",
@@ -999,6 +1001,10 @@
     "stunned": "Durch zu viel Wein, Erschöpfung oder eine zünftige Schlägerei kann ein Held Stufen von Betäubung erleiden. Eine Stufe Betäubung verschwindet nach einer Ruhephase von 3 Stunden, so nichts anderes angegeben ist.",
     "surprised": "Die üblichen Kampfhandlungen gehen davon aus, dass alle Parteien ihre Gegner sehen oder wahrnehmen. Allerdings gibt es Situationen wie beispielsweise Hinterhalte, in denen man überrascht ist. Gegen überraschte Personen darf eine Aktion ausgeführt werden, gegen die keine Verteidigung genutzt werden darf. Erst danach beginnt die reguläre Kampfrunde.",
     "unconscious": "Wenn eine Person etwa schläft oder einen sehr harten Schlag auf den Kopf bekommen hat, zählt sie als Bewusstlos. Zwar ist ihr Körper nicht eingeschränkt, aber ihr Geist ist entweder anderweitig beschäftigt oder inaktiv. Zusätzlich erleidet der Held auch noch den Status Handlungsunfähig."
+  },
+  "CREATURE": {
+    "vampire": "Vampir",
+    "werecreature": "Werkreatur"
   },
   "CONJURATION": {
     "blocker": {
@@ -1884,6 +1890,10 @@
     "iniTrackerCountHint": "Anzahl der angezeigten Akteure im Kampftracker",
     "iniTrackerSize": "DSA Kampftracker Größe",
     "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
+    "iniTrackerDockToTop": "Kampftracker oben andocken",
+    "iniTrackerDockToTopHint": "Zu Kampfbeginn wird der Kalender auf einen schmalen Streifen am oberen Rand eingeklappt und der Tracker darunter zentriert. Der Streifen lässt sich per Hover wieder ausklappen. Wird bei jedem neuen Kampf zurückgesetzt und stellt den Kalender danach wieder her.",
+    "iniTrackerPreferAvatar": "Heldenporträts bevorzugen",
+    "iniTrackerPreferAvatarHint": "Zeigt im Kampftracker die Actor-Porträts statt der Token-Bilder.",
     "inventorySound": "Inventar Geräusche",
     "inventorySoundHint": "Aktiviere Interface Geräusche im Inventar (benötigt game audio bundles)",
     "lessRegeneration": "Weniger Regeneration",
@@ -3867,7 +3877,7 @@
     "enable": "SC-Schnellleiste aktivieren",
     "enableHint": "Zeigt eine verschiebbare Übersicht der Gruppenmitglieder mit LeP, AsP und KaP. Ohne Hauptgruppe werden angemeldete Spielercharaktere verwendet.",
     "reset": "SC-Schnellleiste zurücksetzen",
-    "resetHint": "Position, Layout und Porträtgröße auf Standard zurücksetzen.",
+    "resetHint": "Position, Layout, Porträtgröße und verblasste UI auf Standard zurücksetzen.",
     "layout": "SC-Schnellleiste Layout",
     "layoutHint": "Portraits horizontal oder vertikal anordnen.",
     "menuHint": "SC-Leiste: Optionen",
@@ -3888,7 +3898,9 @@
     "displayCollapsed": "Eingeklappt",
     "displayCollapsedHint": "Portraits ausblenden, nur Steuerung anzeigen. Klick: wieder alle anzeigen.",
     "dragHint": "Ziehen zum Verschieben. Scrollen zum Vergrößern.",
-    "notOnScene": "Dieser Charakter hat keinen Token auf der aktuellen Szene."
+    "notOnScene": "Dieser Charakter hat keinen Token auf der aktuellen Szene.",
+    "fadedUi": "Verblasste UI nutzen",
+    "fadedUiHint": "Wendet Foundrys faded-ui-Klasse an, damit die Leiste die Interface-Opacity nutzt."
   },
   "TT": {
     "addSpeedCategory": "Geschwindigkeitskategorie hinzufügen",

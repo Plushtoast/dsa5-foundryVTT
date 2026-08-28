@@ -759,6 +759,8 @@
     "newRound": "New combat round",
     "overusePipHint": "Extra action – exceeds your action budget this round!",
     "waitInit": "Wait",
+    "waitInitHint": "<p>Instead of acting immediately, you may delay your action. It may then be used at any later point in the same combat round after your initiative. Actions not used by the end of the round are lost.</p><p>In the tracker, your portrait is attached to the waiting row and can be invoked at any time. Delayed turns expire at the end of the round.</p>",
+    "resizeHint": "Drag to change how many combatants are shown",
     "rulesHint": {
       "standard": "<p>Within a combat round, each participant may perform one action, one or more defenses (unless otherwise specified), and one free action (unless otherwise specified).</p><p><b>Examples of actions</b><ul class=\"dsalist\"><li>Attack<li></li>Ranged attack<li></li>Move up to speed in walk<li></li>Attempt to kick down a door<li></li>Draw a weapon<li></li>Flip a lever<li></li>Load a firearm, depending on loading time multiple actions<li></li>Cast a spell, depending on spell multiple actions<li></li>Perform liturgy, depending on liturgy multiple actions</li></ul></p><p><b>Examples of free actions</b><ul class=\"dsalist\"><li>Call out a short phrase<li></li>Drop an item<li></li>Stand up from a chair<li></li>Throw oneself to the ground<li></li>Turn around<li></li>Move up to speed in walk (only when it is your turn in initiative)</li></ul></p>",
       "brawling": "<p><b>Brawling</b></p><p>Unarmed / improvised fighting with temporary bruises (temporary LeP). Optionally everyone is unarmed when the mode starts.</p><p>When brawling ends, temporary damage may convert via the brawling injury table.</p>",
@@ -999,6 +1001,10 @@
     "stunned": "Whether from wine, drugs, exhaustion, or a good brawl, a hero might gain levels of Stupor and suffer disorientation and lethargy. However, the effects of Stupor do not last very long. Remove 1 level of Stupor for every 3 full hours of rest, unless directed otherwise.",
     "surprised": "People are usually considered to be aware of their surroundings, especially in combat situations. Sometimes, however, a situation arises where a character remains unaware of enemies lurking nearby. Surprise means a hero is startled by an ambush or the sudden appearance of enemies. Surprised characters cannot defend against the first action taken against them. Once this surprise action (most likely an attack) is resolved, regular combat rounds begin.",
     "unconscious": "A sleeping character is considered unconscious, and a hero who suffers a massive blow to the head might be rendered unconscious as well. Even though the body remains functional, the character’s mind is either distracted, seemingly inactive, or otherwise unresponsive. In short, all the lights are out. Furthermore, an unconscious hero is incapacitated."
+  },
+  "CREATURE": {
+    "vampire": "Vampire",
+    "werecreature": "Were Creature"
   },
   "CONJURATION": {
     "blocker": {
@@ -1882,6 +1888,10 @@
     "iniTrackerCountHint": "Count of shown actors in the TDE combat tracker.",
     "iniTrackerSize": "TDE combat tracker size",
     "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
+    "iniTrackerDockToTop": "Dock combat tracker to top",
+    "iniTrackerDockToTopHint": "When combat starts, collapse the calendar widget to a thin top strip and center the tracker below it. Hover the strip to expand the calendar. Resets on each new combat and restores the calendar afterward.",
+    "iniTrackerPreferAvatar": "Prefer actor portraits",
+    "iniTrackerPreferAvatarHint": "Show actor portraits in the combat tracker instead of token images.",
     "inventorySound": "Inventory sounds",
     "inventorySoundHint": "Activate Interface sound in the inventory (requires game audio bundles)",
     "lessRegeneration": "Weaker Regeneration",
@@ -3865,7 +3875,7 @@
     "enable": "Enable PC Quickbar",
     "enableHint": "Show a draggable overview of primary party members with LeP, AsP, and KaP. Uses logged-in assigned characters when no primary party is set.",
     "reset": "Reset PC Quickbar position",
-    "resetHint": "Reset position, layout, and portrait size to defaults.",
+    "resetHint": "Reset position, layout, portrait size, and faded UI to defaults.",
     "layout": "PC Quickbar layout",
     "layoutHint": "Arrange portraits horizontally or vertically.",
     "menuHint": "PC Quickbar options",
@@ -3886,7 +3896,9 @@
     "displayCollapsed": "Collapsed",
     "displayCollapsedHint": "Hide all portraits and show controls only. Click to show all members again.",
     "dragHint": "Drag to move. Scroll to resize.",
-    "notOnScene": "This character has no token on the current scene."
+    "notOnScene": "This character has no token on the current scene.",
+    "fadedUi": "Use Faded UI",
+    "fadedUiHint": "Apply Foundry's faded-ui class so the quickbar uses the interface inactive opacity."
   },
   "TT": {
     "addSpeedCategory": "Add speed category",

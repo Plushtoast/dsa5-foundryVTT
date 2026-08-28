@@ -23,6 +23,20 @@ export default class CreatureType {
   static magical;
   static clerical;
 
+  /** Status ids from content modules that confer a creature type. */
+  static CONDITION_TYPES = {
+    wercreature: 'WerCreatureType',
+    childOfTheDark: 'VampireType',
+    childOfTheNight: 'VampireType',
+    lamijah: 'VampireType',
+    feylamia: 'VampireType',
+    minorVampire: 'VampireType',
+    minorFeylamia: 'VampireType',
+  };
+
+  /** Minor vampires/feylamias take full weapon damage again. */
+  static CONDITION_SKIP_DAMAGE_MOD = new Set(['minorVampire', 'minorFeylamia']);
+
   constructor(creatureClass) {
     this.creatureClass = creatureClass;
     this.spellImmunities = [];
@@ -33,13 +47,52 @@ export default class CreatureType {
   static detectCreatureType(actor) {
     if (!actor || !CreatureType.creatureData?.types) return [];
 
-    const creatureClass = actor.type === 'creature'
-      ? actor.system?.creatureClass?.value
-      : actor.system?.details?.species?.value;
-    if (!creatureClass || typeof creatureClass !== 'string') return [];
+    const typeNames = new Set();
+    const haystack = this.#typeHaystack(actor);
+    if (haystack) {
+      for (const [label, typeName] of Object.entries(CreatureType.creatureData.types)) {
+        if (haystack.indexOf(label) >= 0) typeNames.add(typeName);
+      }
+    }
 
-    const types = Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0);
-    return types.map((x) => this.getClass(CreatureType.creatureData.types[x], creatureClass));
+    const statusIds = this.#actorStatusIds(actor);
+    for (const statusId of statusIds) {
+      const typeName = this.CONDITION_TYPES[statusId];
+      if (typeName) typeNames.add(typeName);
+    }
+
+    if (!typeNames.size) return [];
+
+    const skipVampireDamage = [...statusIds].some((id) => this.CONDITION_SKIP_DAMAGE_MOD.has(id));
+    return [...typeNames].map((typeName) => {
+      const instance = this.getClass(typeName, haystack);
+      if (typeName === 'VampireType' && skipVampireDamage) instance.skipDamageModifier = true;
+      return instance;
+    });
+  }
+
+  static #typeHaystack(actor) {
+    const parts = [];
+    const creatureClass = actor.system?.creatureClass?.value;
+    const species = actor.system?.details?.species?.value;
+    if (typeof creatureClass === 'string' && creatureClass) parts.push(creatureClass);
+    if (typeof species === 'string' && species) parts.push(species);
+    return parts.join(', ');
+  }
+
+  static #actorStatusIds(actor) {
+    if (actor.statuses instanceof Set) return actor.statuses;
+    const ids = new Set();
+    for (const effect of actor.effects ?? []) {
+      if (effect.disabled) continue;
+      const statuses = effect.statuses;
+      if (statuses instanceof Set) {
+        for (const id of statuses) ids.add(id);
+      } else if (Array.isArray(statuses)) {
+        for (const id of statuses) ids.add(id);
+      }
+    }
+    return ids;
   }
 
   static getClass(type, creatureClass) {
@@ -132,12 +185,9 @@ export default class CreatureType {
 
   static creatureTypeName(actor) {
     if (!actor) return '';
-    if (actor.type === 'creature') {
-      const creatureClass = actor.system?.creatureClass?.value;
-      if (!creatureClass || !CreatureType.creatureData?.types) return '';
-      return Object.keys(CreatureType.creatureData.types).filter((x) => creatureClass.indexOf(x) >= 0)[0] ?? '';
-    }
-    return actor.system?.details?.species?.value ?? '';
+    const detected = this.detectCreatureType(actor);
+    if (detected.length) return detected[0].getName();
+    return actor.type === 'creature' ? '' : (actor.system?.details?.species?.value ?? '');
   }
 
   classDescription() {
@@ -207,10 +257,7 @@ export default class CreatureType {
 
   static creatureClassString(actor) {
     if (!actor) return '';
-    const creatureClass = actor.type === 'creature'
-      ? actor.system?.creatureClass?.value
-      : actor.system?.details?.species?.value;
-    return typeof creatureClass === 'string' ? creatureClass : '';
+    return this.#typeHaystack(actor);
   }
 
   static matchesCreatureTarget(actor, target) {
@@ -218,12 +265,14 @@ export default class CreatureType {
     const label = `${target}`.trim();
     if (!label) return false;
 
+    const types = CreatureType.detectCreatureType(actor);
     if (CreatureType.#ungeheuerLabels.has(label.toLowerCase())) {
-      return CreatureType.detectCreatureType(actor).some((t) => CreatureType.UNGEHEUER_TYPES.has(t.constructor.name));
+      return types.some((t) => CreatureType.UNGEHEUER_TYPES.has(t.constructor.name));
     }
 
     const creatureClass = CreatureType.creatureClassString(actor);
-    return creatureClass.indexOf(label) >= 0;
+    if (creatureClass.indexOf(label) >= 0) return true;
+    return types.some((t) => t.getName() === label);
   }
 
   static creatureBonusDamage(actor, attacker) {
@@ -540,6 +589,7 @@ class WerCreatureType extends CreatureType {
 
 class VampireType extends CreatureType {
   damageModifier(attackItem) {
+    if (this.skipDamageModifier) return super.damageModifier(attackItem);
     if (['spell', 'ceremony', 'liturgy', 'ritual'].includes(attackItem.type)) {
       return super.damageModifier(attackItem);
     }
