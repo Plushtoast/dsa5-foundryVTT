@@ -14,8 +14,6 @@ export class ModuleBookPersonaeHelper {
     'system.merchant.garadan',
   ]);
 
-  static #jsonCache = new Map();
-
   static bookDisplayName(book) {
     return book?.displayName || book?.title || book?.id || '';
   }
@@ -37,60 +35,54 @@ export class ModuleBookPersonaeHelper {
     return bookName || unknownFaction;
   }
 
-  static async loadBookJson(book) {
-    if (!book?.path) return null;
-    if (this.#jsonCache.has(book.path)) return this.#jsonCache.get(book.path);
+  static moduleIdFromBook(book) {
+    const path = String(book?.path || '');
+    const fromPath = path.match(/(?:^|\/)modules\/([^/]+)\//)?.[1];
+    if (fromPath && game.modules.get(fromPath)) return fromPath;
 
-    try {
-      const json = await foundry.utils.fetchJsonWithTimeout(book.path);
-      this.#jsonCache.set(book.path, json);
-      return json;
-    } catch (error) {
-      console.warn('DSA5 | Failed to load book descriptor for Dramatis Personae setup', book.path, error);
-      return null;
+    if (book?.moduleName && game.modules.get(book.moduleName)) return book.moduleName;
+
+    const journal = book?.journal;
+    if (typeof journal === 'string' && journal.includes('.')) {
+      const fromJournal = journal.split('.')[0];
+      if (game.modules.get(fromJournal)) return fromJournal;
     }
+
+    return null;
   }
 
-  static async collectActorPacks(book) {
-    const json = await this.loadBookJson(book);
-    if (!json) return [];
+  static collectActorPacks(book) {
+    const moduleId = this.moduleIdFromBook(book);
+    if (!moduleId) return [];
 
-    const module = game.modules.get(json.moduleName);
     const lang = game.i18n.lang;
-    const scope = json.options?.scope?.split('-')[1];
     const packs = [];
     const seen = new Set();
 
-    const addPack = (packId, label) => {
-      const pack = game.packs.get(packId);
-      if (!pack || pack.documentName !== 'Actor') return;
-      if (seen.has(pack.collection)) return;
+    for (const pack of game.packs) {
+      if (pack.documentName !== 'Actor') continue;
+      const packModule = pack.metadata?.packageName || pack.metadata?.package;
+      const belongsToModule = packModule === moduleId || pack.collection?.startsWith(`${moduleId}.`);
+      if (!belongsToModule) continue;
+
+      const packLang = foundry.utils.getProperty(pack.metadata, 'flags.dsalang');
+      if (packLang && packLang !== lang) continue;
+      if (seen.has(pack.collection)) continue;
       seen.add(pack.collection);
+
       packs.push({
         id: pack.collection,
-        label: label || pack.metadata?.label || pack.title || pack.collection,
+        label: pack.metadata?.label || pack.title || pack.collection,
       });
-    };
-
-    if (json.actors) addPack(json.actors);
-
-    if (scope) {
-      for (const modulePack of module?.packs ?? []) {
-        if (modulePack.type !== 'Actor') continue;
-        if (modulePack.flags?.dsalang !== lang) continue;
-        if (!String(modulePack.id).includes(scope)) continue;
-        addPack(modulePack.id, modulePack.label);
-      }
     }
 
     return packs;
   }
 
-  static async enrichBooksWithPacks(books) {
-    await Promise.all((books || []).map(async (book) => {
-      const packs = await this.collectActorPacks(book);
-      book.hasActorPacks = packs.length > 0;
-    }));
+  static enrichBooksWithPacks(books) {
+    for (const book of books || []) {
+      book.hasActorPacks = this.collectActorPacks(book).length > 0;
+    }
   }
 
   static findJournal(bookId, bookType) {
@@ -141,6 +133,7 @@ export class ModuleBookPersonaeHelper {
     const entry = DSAPersonaEntry.createEntryData({
       actor,
       visible: false,
+      showActorDescription: true,
       faction,
       img: actor.img,
     });

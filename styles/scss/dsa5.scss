@@ -719,12 +719,16 @@ form {
   background: rgb(29, 28, 28);
 }
 
-select[multiple] option {
-  background-color: transparent;
+select[multiple] {
+  height: auto;
 
-  &:checked {
-    background-color: #12496c;
-    color: white;
+  option {
+    background-color: transparent;
+
+    &:checked {
+      background-color: #12496c;
+      color: white;
+    }
   }
 }
 

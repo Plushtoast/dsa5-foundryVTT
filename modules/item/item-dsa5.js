@@ -580,11 +580,6 @@ export default class Itemdsa5 extends Item {
     for (const change of changes) {
       if (!change.key) continue;
 
-      if (change.key === 'system.damage.value') {
-        this._applyEnhancementDamage(change);
-        continue;
-      }
-
       if (change.key === 'system.reach.value' && this.type === 'rangeweapon') {
         this._applyEnhancementRangeMultiplier(change);
         continue;
@@ -623,24 +618,6 @@ export default class Itemdsa5 extends Item {
     }
   }
 
-  _applyEnhancementDamage(change) {
-    const bonus = Number(change.value) || 0;
-    if (bonus === 0) return;
-
-    const base = foundry.utils.getProperty(this, 'system.damage.value') || '1d6';
-    let result;
-
-    if (/[+-]\d+$/.test(base)) {
-      const match = base.match(/([+-])(\d+)$/);
-      const newNumber = parseInt(match[0]) + bonus;
-      result = base.replace(match[0], '') + (newNumber >= 0 ? '+' : '-') + Math.abs(newNumber);
-    } else {
-      result = base + (bonus >= 0 ? '+' : '-') + Math.abs(bonus);
-    }
-
-    foundry.utils.setProperty(this, 'system.damage.value', result);
-  }
-
   _applyEnhancementRangeMultiplier(change) {
     // Reach enhancements store an additive delta (e.g. 0.1 = +10%), applied as ×(1 + delta).
     const multiplier = 1 + (Number(change.value) || 0);
@@ -654,6 +631,7 @@ export default class Itemdsa5 extends Item {
     }).join('/');
 
     foundry.utils.setProperty(this, 'system.reach.value', result);
+    Object.assign(this.overrides, { 'system.reach.value': result });
   }
 
   _replicateProtectionToZones(change) {
@@ -664,7 +642,9 @@ export default class Itemdsa5 extends Item {
     for (const zone of zones) {
       const current = foundry.utils.getProperty(this, `system.protection.${zone}`) || 0;
       if (current !== 0) {
-        foundry.utils.setProperty(this, `system.protection.${zone}`, current + bonus);
+        const updated = current + bonus;
+        foundry.utils.setProperty(this, `system.protection.${zone}`, updated);
+        this.overrides[`system.protection.${zone}`] = updated;
       }
     }
   }

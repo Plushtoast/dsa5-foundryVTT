@@ -10,6 +10,7 @@ import ScopableStringField from './fields/scopable_stringfield.js';
 import ScopableNumberField from './fields/scopable_numberfield.js';
 import ScopableBooleanField from './fields/scopable_booleanfield.js';
 import ReloadTimeField from './fields/reload_time_field.js';
+import DamageFormulaField from './fields/damage_formula_field.js';
 import ObfuscableTemplate from './templates/obfuscable.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
@@ -39,7 +40,7 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
       botch: new ScopableNumberField({ initial: 20, min: 2, max: 20 }),
       region: new StringField({ initial: '', label: 'PLANT.region' }),
       damage: new SchemaField({
-        value: new ScopableStringField({ initial: '1d6', label: 'damage' }),
+        value: new DamageFormulaField({ initial: '1d6', label: 'damage' }),
         stp: new ScopableStringField({ initial: '', label: 'stpDamage' }),
       }),
       siegeRules: new BooleanField({ initial: false, label: 'siegeRules' }),

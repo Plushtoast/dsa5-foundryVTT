@@ -12,23 +12,21 @@
     {{/unless}}
 
     {{#if hasPacks}}
-    <div class="form-group">
+    <div class="form-group stacked">
         <label>{{localize "PERSONAE.moduleSetup.packs"}}</label>
-        <div class="form-fields flexcol">
-            {{#each packs as |pack|}}
-            <label class="checkbox">
-                <input type="checkbox" name="packId" value="{{pack.id}}" {{checked pack.checked}}>
-                {{pack.label}}
-            </label>
-            {{/each}}
-        </div>
+        {{#each packs as |pack|}}
+        <label class="checkbox">
+            <input type="checkbox" name="packId" value="{{pack.id}}" {{checked pack.checked}}>
+            {{pack.label}}
+        </label>
+        {{/each}}
         <p class="hint">{{localize "PERSONAE.moduleSetup.packsHint"}}</p>
     </div>
 
     <div class="form-group">
         <label>{{localize "PERSONAE.moduleSetup.actorTypes"}}</label>
         <div class="form-fields">
-            <select name="actorType" multiple size="{{actorTypes.length}}" style="width:100%">
+            <select name="actorType" multiple size="{{actorTypes.length}}">
                 {{#each actorTypes as |type|}}
                 <option value="{{type.id}}" {{#if type.checked}}selected{{/if}}>{{type.label}}</option>
                 {{/each}}
@@ -39,9 +37,7 @@
 
     <div class="form-group">
         <label>{{localize "PERSONAE.moduleSetup.skipExisting"}}</label>
-        <div class="form-fields">
-            <input type="checkbox" name="skipExisting" {{checked skipExisting}}>
-        </div>
+        <input type="checkbox" name="skipExisting" {{checked skipExisting}}>
         <p class="hint">{{localize "PERSONAE.moduleSetup.skipExistingHint"}}</p>
     </div>
     {{/if}}

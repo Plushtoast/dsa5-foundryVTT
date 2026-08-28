@@ -3067,6 +3067,7 @@
     "copyAvatar": "Avatar vom Original kopieren",
     "copyToken": "Token vom Original kopieren",
     "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
+    "filterDuplicates": "Duplikate ausblenden",
     "filterImportant": "Nur Wichtige",
     "filterVisible": "Nur für Spieler sichtbar",
     "journals": {

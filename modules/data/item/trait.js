@@ -7,6 +7,7 @@ import RangeweaponData from './rangeweapon.js';
 import InformableTemplate from './templates/informable.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import ReloadTimeField from './fields/reload_time_field.js';
+import DamageFormulaField from './fields/damage_formula_field.js';
 
 const { NumberField, SchemaField, StringField } = foundry.data.fields;
 
@@ -25,7 +26,7 @@ export default class TraitData extends ItemDataModel.mixin(OnUseTemplate, Descri
         value: new StringField({ initial: '', label: 'reach' }),
       }),
       damage: new SchemaField({
-        value: new StringField({ initial: '1d6', label: 'damage' }),
+        value: new DamageFormulaField({ initial: '1d6', label: 'damage' }),
       }),
       reloadTime: new SchemaField({
         value: new ReloadTimeField({ initial: '', label: 'reloadTime' }),

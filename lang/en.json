@@ -3065,6 +3065,7 @@
     "copyAvatar": "Copy avatar from original actor",
     "copyToken": "Copy token from original actor",
     "dragPersons": "Drag people or creatures here.",
+    "filterDuplicates": "Hide duplicates",
     "filterImportant": "Important only",
     "filterVisible": "Visible to players only",
     "journals": {

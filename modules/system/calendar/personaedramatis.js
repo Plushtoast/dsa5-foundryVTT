@@ -6,7 +6,7 @@ export class PersonaeDramatis {
     static #lastActiveListType = '0';
     static #lastSelectedActor = null;
     static #collapsedGroups = new Set();
-    static #listFilters = { important: false, visible: false };
+    static #listFilters = { important: false, visible: false, duplicates: true };
     #search;
     #keyboardNavigation;
 
@@ -372,6 +372,13 @@ export class PersonaeDramatis {
                 onClick: () => PersonaeDramatis.#toggleListFilter('visible'),
             });
         }
+        menuItems.push({
+            label: _loc('PERSONAE.filterDuplicates'),
+            icon: PersonaeDramatis.#listFilters.duplicates
+                ? '<i class="fas fa-check"></i>'
+                : '<i class="fas fa-clone"></i>',
+            onClick: () => PersonaeDramatis.#toggleListFilter('duplicates'),
+        });
 
         const menu = new foundry.applications.ux.ContextMenu(
             PersonaeDramatis.#parent.element,
@@ -404,7 +411,8 @@ export class PersonaeDramatis {
         const activeListContent = html.querySelector(`.list-content[data-list-type="${activeList}"]`);
         if (!activeListContent) return;
 
-        const { important: filterImportant, visible: filterVisible } = PersonaeDramatis.#listFilters;
+        const { important: filterImportant, visible: filterVisible, duplicates: filterDuplicates } = PersonaeDramatis.#listFilters;
+        const seenActors = new Set();
         const factionGroups = activeListContent.querySelectorAll('.faction-group');
         factionGroups.forEach(factionGroup => {
             let visibleItemsInFaction = 0;
@@ -420,7 +428,14 @@ export class PersonaeDramatis {
                     const tags = entry.dataset.personaTags || '';
                     matchesSearch = [name, faction, factions, tags].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
                 }
-                const isMatch = matchesImportant && matchesVisible && matchesSearch;
+                let isMatch = matchesImportant && matchesVisible && matchesSearch;
+                if (isMatch && filterDuplicates) {
+                    const actorUuid = entry.dataset.actorUuid;
+                    if (actorUuid) {
+                        if (seenActors.has(actorUuid)) isMatch = false;
+                        else seenActors.add(actorUuid);
+                    }
+                }
                 entry.hidden = !isMatch;
                 if (isMatch) visibleItemsInFaction++;
             });

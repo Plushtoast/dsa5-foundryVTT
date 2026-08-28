@@ -65,7 +65,7 @@ export class ModuleBookPersonaeApp extends HandlebarsApplicationMixin(Applicatio
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
-    const packs = await ModuleBookPersonaeHelper.collectActorPacks(this.book);
+    const packs = ModuleBookPersonaeHelper.collectActorPacks(this.book);
     const journal = ModuleBookPersonaeHelper.findJournal(this.book.id, this.bookType);
 
     context.bookName = ModuleBookPersonaeHelper.bookDisplayName(this.book);
