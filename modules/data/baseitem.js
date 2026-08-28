@@ -131,11 +131,12 @@ export class ItemDataModel extends DSADataModel {
   }
 
   /**
-   * Get a copy of the item with overrides applied
+   * Plain-object copy including derived enhancement values (TP, AT, LZ, …).
+   * `toObject()` is source-only; combat rolls already use `toObject(false)`.
    * @returns {Object} The item with overrides applied
    */
   itemWithOverrides() {
-    const object = this.parent.toObject();
+    const object = this.parent.toObject(false);
     const overrides = foundry.utils.flattenObject(this.parent.overrides || {});
     foundry.utils.mergeObject(object, overrides);
     return object;

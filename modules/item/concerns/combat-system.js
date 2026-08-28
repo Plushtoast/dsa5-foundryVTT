@@ -212,7 +212,7 @@ export class CombatSystem {
                     item.system.pa;
                 if (!(isMeleeWeapon && item.system.worn.value) && !isTraitMelee) continue;
 
-                if (isMeleeWeapon) item = Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, targetActor);
+                if (isMeleeWeapon) item = Actordsa5._prepareMeleeWeapon(item.system.itemWithOverrides(), combatskills, targetActor);
                 if (DSA5.meleeRangesArray.indexOf(item.system.reach.value) >
                     DSA5.meleeRangesArray.indexOf(targetWeaponSize)) {
                     targetWeaponSize = item.system.reach.value;

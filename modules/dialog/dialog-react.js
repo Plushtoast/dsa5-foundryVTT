@@ -163,8 +163,8 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
       if (types.includes(item.type) && item.system.worn.value == true) {
         const preparedItem =
           item.type == 'meleeweapon'
-            ? Actordsa5._prepareMeleeWeapon(item.toObject(), combatskills, this.actor)
-            : Actordsa5._prepareRangeWeapon(item.toObject(), [], combatskills, this.actor);
+            ? Actordsa5._prepareMeleeWeapon(item.system.itemWithOverrides(), combatskills, this.actor)
+            : Actordsa5._prepareRangeWeapon(item.system.itemWithOverrides(), [], combatskills, this.actor);
         data.items.push({
           name: item.name,
           id: item.name,
@@ -407,7 +407,7 @@ export class ReactToAttackDialog extends ActAttackDialog {
 
       for (const x of actor.items) {
         if (types.includes(x.type) && x.system.worn.value == true) {
-          const preparedItem = Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor);
+          const preparedItem = Actordsa5._prepareMeleeWeapon(x.system.itemWithOverrides(), combatskills, actor);
           items.push({
             name: x.name,
             id: x.name,

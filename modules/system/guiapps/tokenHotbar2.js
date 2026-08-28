@@ -895,7 +895,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   _traitEntry(x, actorData) {
-    const preparedItem = ItemDataModel._parseDmg(x.toObject(), actorData);
+    const preparedItem = ItemDataModel._parseDmg(x.system.itemWithOverrides(), actorData);
     return {
       name: x.name,
       id: x.id,
@@ -913,8 +913,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
     const preparedItem =
       x.type === 'meleeweapon'
-        ? Actordsa5._prepareMeleeWeapon(x.toObject(), combatskills, actor)
-        : Actordsa5._prepareRangeWeapon(x.toObject(), [], combatskills, actor);
+        ? Actordsa5._prepareMeleeWeapon(x.system.itemWithOverrides(), combatskills, actor)
+        : Actordsa5._prepareRangeWeapon(x.system.itemWithOverrides(), [], combatskills, actor);
 
     const buildEntry = (name, id, img, attack, damagedie, damageAdd, subweapon) => {
       const entry = {
