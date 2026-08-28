@@ -158,4 +158,17 @@ export class JournalEntryTargetHelper {
     await game.settings.set('dsa5', settingName, settings);
     await refresh?.();
   }
+
+  static async unregisterJournal(journal, { settingName, refresh }) {
+    if (!journal) return;
+
+    const settings = game.settings.get('dsa5', settingName) || { activated: [] };
+    const activated = settings.activated || [];
+    const next = activated.filter((entry) => entry.uuid !== journal.uuid);
+    if (next.length === activated.length) return;
+
+    settings.activated = next;
+    await game.settings.set('dsa5', settingName, settings);
+    await refresh?.();
+  }
 }

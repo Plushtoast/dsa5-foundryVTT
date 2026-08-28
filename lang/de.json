@@ -1339,7 +1339,7 @@
       "windowTitle": "Willkommen bei DSA5"
     }
   },
-  "DSA5Error": "DSA5 - Fehler melden",
+  "DSA5Error": "DSA5 Foundry VTT - Fehler melden",
   "DSA5HOTBARCONFIG": {
     "avatarDragHint": "Ziehen zum Verschieben, Scrollen zum Zoomen",
     "avatarPortrait": "Porträt",
@@ -1374,7 +1374,7 @@
     "noImage": "Kein Bild zum Einrahmen vorhanden.",
     "title": "Bildausschnitt"
   },
-  "DSA5Wiki": "DSA5 - Wiki",
+  "DSA5Wiki": "DSA5 Foundry VTT - Wiki",
   "DSA5_TOKENRING": {
     "blank": "DSA5 Tokenring (transparenter Hintergrund)",
     "normal": "DSA5 Tokenring"
@@ -3072,6 +3072,34 @@
     "journals": {
       "hint": "Wähle Journals mit Dramatis Personae Einträgen für dein Spiel aus. Du kannst die Journals bzw. Einträge nach deinen Vorstellungen anpassen. (Rechts-<i class=\"fas fa-computer-mouse\"></i> zum Entfernen)",
       "label": "Dramatis Personae Journals"
+    },
+    "moduleSetup": {
+      "actorTypes": "Akteurstypen",
+      "actorTypesHint": "Halte Strg, um mehrere Typen zu wählen. Gruppenakteure werden immer übersprungen.",
+      "buttonTooltip": "Dramatis Personae aus diesem Modul einrichten",
+      "create": "Journal erstellen",
+      "done": "{added} Einträge zu {name} hinzugefügt ({skipped} übersprungen).",
+      "explanation": "Damit wird ein Dramatis-Personae-Journal für {book} erstellt oder aktualisiert. Die Akteure bleiben in den Modul-Kompendien und werden per UUID verknüpft. Jede erkannte Fraktion erhält eine eigene Journalseite. Neue Einträge sind für Spieler unsichtbar, bis du sie freigibst.",
+      "folder": "Dramatis Personae nach Modulen",
+      "journalName": "{book} – Dramatis Personae",
+      "loadWarning": "Viele verknüpfte Akteure können die Ladezeiten der Welt und des Almanachs erhöhen.",
+      "noPacks": "Dieses Buch hat keine Akteurspacks für die aktuelle Sprache.",
+      "noPacksSelected": "Wähle mindestens ein Akteurspack aus.",
+      "noTypesSelected": "Wähle mindestens einen Akteurstyp aus.",
+      "nothingToAdd": "Es wurden keine neuen Akteure hinzugefügt.",
+      "nothingToRemove": "Für dieses Buch gibt es kein Dramatis-Personae-Journal.",
+      "packs": "Akteurspacks",
+      "packsHint": "Wähle, welche Akteurspacks dieses Moduls verknüpft werden sollen.",
+      "remove": "Journal entfernen",
+      "removeConfirm": "\"{name}\" löschen und aus dem Almanach austragen?",
+      "removeTitle": "Dramatis-Personae-Journal entfernen",
+      "removed": "{name} wurde entfernt.",
+      "skipExisting": "Bereits vorhandene Akteure überspringen",
+      "skipExistingHint": "Wenn aktiv, werden Akteure, die bereits in einem Dramatis-Personae-Journal stehen, nicht erneut hinzugefügt.",
+      "title": "Dramatis Personae aus Modul",
+      "update": "Journal aktualisieren",
+      "windowTitle": "Dramatis Personae: {book}",
+      "working": "Akteure werden gesammelt und Dramatis Personae aktualisiert…"
     },
     "selectJournal": "Journal auswählen",
     "title": "Almanach"

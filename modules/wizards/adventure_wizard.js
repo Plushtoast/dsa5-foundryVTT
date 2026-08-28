@@ -8,6 +8,8 @@ import { slist } from '../system/helpers/view_helper.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
 import CustomBookDialog from './custom_book_dialog.js';
 import { bookLibraryPartTemplates } from '../actor/template-configs.js';
+import { ModuleBookPersonaeApp } from '../system/calendar/module_book_personae_app.js';
+import { ModuleBookPersonaeHelper } from '../system/calendar/module_book_personae_helper.js';
 import FlexSearch from '../../libs/flexsearch.bundle.module.min.js';
 
 const { mergeObject, duplicate, escapeHTML } = foundry.utils;
@@ -42,6 +44,16 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     const type = target.dataset.type;
     const toggle = $(target).find('i').hasClass('fa-toggle-off');
     this.toggleBookVisibility(id, type, toggle);
+  }
+
+  static _setupPersonae(_ev, target) {
+    if (!game.user.isGM) return;
+    const entry = target.closest('.book-entry');
+    const id = entry?.dataset.bookId || target.dataset.itemid;
+    const type = target.dataset.type || entry?.dataset.bookType;
+    const book = this[type]?.find((item) => item.id == id);
+    if (!book) return;
+    ModuleBookPersonaeApp.open(book, type);
   }
 
   static _showMapNote(ev, target) {
@@ -149,6 +161,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         this._showBooks();
       },
       toggleVisibility: this._toggleVisibility,
+      setupPersonae: this._setupPersonae,
       showMapNote: this._showMapNote,
       loadBook: this._loadBook,
       importBook: this._importBook,
@@ -215,6 +228,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     BookWizard.wizard = new BookWizard();
 
     game.dsa5.apps.journalBrowser = BookWizard.wizard;
+    game.dsa5.apps.ModuleBookPersonaeApp = ModuleBookPersonaeApp;
+    game.dsa5.apps.ModuleBookPersonaeHelper = ModuleBookPersonaeHelper;
 
     Hooks.once('ready', () => BookWizard.wizard.loadCustomBooks());
 
@@ -1138,6 +1153,14 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         freeModules,
         showCustomBooksSection,
       });
+
+      if (game.user.isGM) {
+        await Promise.all(
+          bookSections
+            .filter((section) => !section.isExternal)
+            .map((section) => ModuleBookPersonaeHelper.enrichBooksWithPacks(section.books)),
+        );
+      }
 
       if (this.libraryViewMode === 'cards') {
         await Promise.all(

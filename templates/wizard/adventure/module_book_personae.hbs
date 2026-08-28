@@ -1,0 +1,65 @@
+<div class="flexcol gap5px">
+    <div class="dsa-info-box">
+        <p class="dsa-info-text">{{localize "PERSONAE.moduleSetup.explanation" book=bookName}}</p>
+        <p class="dsa-info-text small dsam-2">{{journalName}}</p>
+    </div>
+    <div class="dsa-info-box">
+        <p class="dsa-info-text darkred">{{localize "PERSONAE.moduleSetup.loadWarning"}}</p>
+    </div>
+
+    {{#unless hasPacks}}
+    <p class="hint">{{localize "PERSONAE.moduleSetup.noPacks"}}</p>
+    {{/unless}}
+
+    {{#if hasPacks}}
+    <div class="form-group">
+        <label>{{localize "PERSONAE.moduleSetup.packs"}}</label>
+        <div class="form-fields flexcol">
+            {{#each packs as |pack|}}
+            <label class="checkbox">
+                <input type="checkbox" name="packId" value="{{pack.id}}" {{checked pack.checked}}>
+                {{pack.label}}
+            </label>
+            {{/each}}
+        </div>
+        <p class="hint">{{localize "PERSONAE.moduleSetup.packsHint"}}</p>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "PERSONAE.moduleSetup.actorTypes"}}</label>
+        <div class="form-fields">
+            <select name="actorType" multiple size="{{actorTypes.length}}" style="width:100%">
+                {{#each actorTypes as |type|}}
+                <option value="{{type.id}}" {{#if type.checked}}selected{{/if}}>{{type.label}}</option>
+                {{/each}}
+            </select>
+        </div>
+        <p class="hint">{{localize "PERSONAE.moduleSetup.actorTypesHint"}}</p>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize "PERSONAE.moduleSetup.skipExisting"}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="skipExisting" {{checked skipExisting}}>
+        </div>
+        <p class="hint">{{localize "PERSONAE.moduleSetup.skipExistingHint"}}</p>
+    </div>
+    {{/if}}
+
+    <footer class="form-footer">
+        {{#if hasPacks}}
+        <button type="button" data-action="apply">
+            <i class="fas fa-check"></i>
+            {{#if hasJournal}}{{localize "PERSONAE.moduleSetup.update"}}{{else}}{{localize "PERSONAE.moduleSetup.create"}}{{/if}}
+        </button>
+        {{/if}}
+        {{#if hasJournal}}
+        <button type="button" data-action="remove">
+            <i class="fas fa-trash"></i> {{localize "PERSONAE.moduleSetup.remove"}}
+        </button>
+        {{/if}}
+        <button type="button" data-action="close">
+            <i class="fas fa-times"></i> {{localize "cancel"}}
+        </button>
+    </footer>
+</div>

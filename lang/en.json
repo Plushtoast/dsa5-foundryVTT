@@ -1337,7 +1337,7 @@
       "windowTitle": "Welcome to TDE5"
     }
   },
-  "DSA5Error": "TDE5 - Report error",
+  "DSA5Error": "TDE5 Foundry VTT - Report error",
   "DSA5HOTBARCONFIG": {
     "avatarDragHint": "Drag to pan, scroll to zoom",
     "avatarPortrait": "Portrait",
@@ -1372,7 +1372,7 @@
     "noImage": "No image available to frame.",
     "title": "Image framing"
   },
-  "DSA5Wiki": "TDE5 - Wiki",
+  "DSA5Wiki": "TDE5 Foundry VTT - Wiki",
   "DSA5_TOKENRING": {
     "blank": "TDE5 Tokenring (transparent background)",
     "normal": "TDE5 Tokenring"
@@ -3070,6 +3070,34 @@
     "journals": {
       "hint": "Select journals with Dramatis Personae entries for your game. You can customize the journals or entries as you like. (Right-<i class=\"fas fa-computer-mouse\"></i> to remove)",
       "label": "Dramatis Personae Journals"
+    },
+    "moduleSetup": {
+      "actorTypes": "Actor types",
+      "actorTypesHint": "Hold Ctrl to select multiple types. Group actors are always skipped.",
+      "buttonTooltip": "Set up Dramatis Personae from this module",
+      "create": "Create journal",
+      "done": "Added {added} entries to {name} ({skipped} skipped).",
+      "explanation": "This creates or updates a Dramatis Personae journal for {book}. Actors stay in their module packs and are linked by UUID. Each detected faction becomes its own journal page. New entries are hidden from players until you reveal them.",
+      "folder": "Dramatis Personae by modules",
+      "journalName": "{book} – Dramatis Personae",
+      "loadWarning": "Linking many actors can increase world and Almanac load times.",
+      "noPacks": "This book has no actor packs for the current language.",
+      "noPacksSelected": "Select at least one actor pack.",
+      "noTypesSelected": "Select at least one actor type.",
+      "nothingToAdd": "No new actors were added.",
+      "nothingToRemove": "There is no Dramatis Personae journal for this book.",
+      "packs": "Actor packs",
+      "packsHint": "Choose which actor packs of this module should be linked.",
+      "remove": "Remove journal",
+      "removeConfirm": "Delete \"{name}\" and unregister it from the Almanac?",
+      "removeTitle": "Remove Dramatis Personae journal",
+      "removed": "Removed {name}.",
+      "skipExisting": "Skip actors already in Dramatis Personae",
+      "skipExistingHint": "When enabled, actors that already exist in any Dramatis Personae journal are not added again.",
+      "title": "Dramatis Personae from module",
+      "update": "Update journal",
+      "windowTitle": "Dramatis Personae: {book}",
+      "working": "Collecting actors and updating Dramatis Personae…"
     },
     "selectJournal": "Select Journal",
     "title": "Almanac"

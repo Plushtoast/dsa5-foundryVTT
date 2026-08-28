@@ -97,14 +97,14 @@ export class DSAPersonaEntry extends JournalListDataModel {
     }
 
     async _preUpdate(changed, options, user) {
-        await this.#fillActorFields(changed);
+        if (!options.dsaSkipPersonaFill) await this.#fillActorFields(changed);
         await super._preUpdate(changed, options, user);
     }
 
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
-        DSAPersonaEntry.refreshCalendarPicker();
-        void this.#syncActorGaradan(changed);
+        if (!options.dsaSkipPersonaRefresh) DSAPersonaEntry.refreshCalendarPicker();
+        if (!options.dsaSkipPersonaSync) void this.#syncActorGaradan(changed);
     }
 
     _onCreate(data, options, userId) {
@@ -154,7 +154,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
             if (!actorUuid) continue;
 
             const actor = await fromUuid(actorUuid);
-            if (!actor) continue;
+            if (!actor || actor.pack) continue;
 
             const garadan = DSAPersonaEntry.resolveGaradan(persona);
             const current = DSAPersonaEntry.resolveGaradan({ garadan: actor.system.merchant?.garadan });

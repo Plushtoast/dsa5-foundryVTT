@@ -111,6 +111,8 @@ import { SummoningAPI } from './wizards/summoning/summoning_api.js';
 import { ShapeshiftingAPI } from './wizards/shapeshifting/shapeshifting_api.js';
 import { RollDialogBurgerMenuRule } from './item/burgermenus/base-burger-menu-rule.js';
 import AspPaymentDialog from './dialog/asp-payment-dialog.js';
+import { ModuleBookPersonaeHelper } from './system/calendar/module_book_personae_helper.js';
+import { ModuleBookPersonaeApp } from './system/calendar/module_book_personae_app.js';
 import EnhancementHelper from './system/enhancement/enhancement-helper.js';
 import DetailSelect from './system/helpers/detail-select.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
@@ -170,6 +172,8 @@ Hooks.once('init', () => {
       ShapeshiftingAPI,
       MagicAnalysisService,
       MagicAnalysisQueryService,
+      ModuleBookPersonaeHelper,
+      ModuleBookPersonaeApp,
       //DAGTalentTree,
     },
     queries: {

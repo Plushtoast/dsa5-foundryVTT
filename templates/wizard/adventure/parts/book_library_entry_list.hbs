@@ -1,18 +1,17 @@
 <li class="book-entry" data-book-id="{{item.id}}" data-book-type="{{section.type}}">
     <div class="row-section book-entry-row">
-        <div class="col {{#if (and section.allowRemove isGM)}}eighty{{else}}ninety{{/if}}">
+        <div class="col {{#if (and isGM (not section.isExternal))}}eighty{{else}}ninety{{/if}}">
             {{#if section.isExternal}}
             <a class="book-list-link" href="{{item.href}}" target="_blank" rel="noopener" data-tooltip-html='{{{item.tooltipHtml}}}'>{{item.displayName}}</a>
             {{else}}
             <button type="button" class="noBorder dsadesignbutton book-list-link" data-action="loadBook" data-type="{{section.type}}">{{item.displayName}}</button>
             {{/if}}
         </div>
-        <div class="col ten">
-            {{#if (and isGM (not section.isExternal))}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="{{section.type}}" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
-        </div>
-        {{#if (and section.allowRemove isGM)}}
-        <div class="col ten">
-            <button type="button" class="icon noBorder dsadesignbutton fa-solid fa-trash" data-tooltip="{{localize 'Book.removeCustomBook'}}" data-action="removeCustomBook" data-itemid="{{item.id}}" aria-label="{{localize 'Book.removeCustomBook'}}"></button>
+        {{#if (and isGM (not section.isExternal))}}
+        <div class="col five book-entry-actions">
+            {{#if item.hasActorPacks}}<button type="button" class="icon noBorder dsadesignbutton" data-tooltip="PERSONAE.moduleSetup.buttonTooltip" data-action="setupPersonae" data-type="{{section.type}}" data-itemid="{{item.id}}" aria-label="{{localize 'PERSONAE.moduleSetup.buttonTooltip'}}"><i class="fa-solid fa-address-book"></i></button>{{/if}}
+            <button type="button" class="icon noBorder dsadesignbutton" data-tooltip="Book.playerVisibility" data-action="toggleVisibility" data-type="{{section.type}}" data-itemid="{{item.id}}"><i class="fas {{#if item.visible}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>
+            {{#if section.allowRemove}}<button type="button" class="icon noBorder dsadesignbutton fa-solid fa-trash" data-tooltip="{{localize 'Book.removeCustomBook'}}" data-action="removeCustomBook" data-itemid="{{item.id}}" aria-label="{{localize 'Book.removeCustomBook'}}"></button>{{/if}}
         </div>
         {{/if}}
     </div>

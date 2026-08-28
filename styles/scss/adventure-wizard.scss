@@ -299,10 +299,11 @@
         }
       }
 
-      .book-card__toggle {
+      .book-card__toggle,
+      .book-card__personae,
+      .book-card__remove {
         position: absolute;
         top: 0.35rem;
-        right: 0.35rem;
         z-index: 2;
         background: rgba(255, 255, 255, 0.9);
         border-radius: 4px;
@@ -313,18 +314,16 @@
         padding: 0;
       }
 
+      .book-card__toggle {
+        right: 0.35rem;
+      }
+
+      .book-card__personae {
+        right: calc(0.35rem + 28px);
+      }
+
       .book-card__remove {
-        position: absolute;
-        top: 0.35rem;
         left: 0.35rem;
-        z-index: 2;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 4px;
-        --button-size: 24px;
-        width: var(--button-size);
-        height: var(--button-size);
-        min-height: var(--button-size);
-        padding: 0;
       }
 
       .module-card__cover {
@@ -351,6 +350,13 @@
       list-style: none;
       padding: 0;
       margin: 0;
+    }
+
+    .book-entry-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 2px;
     }
 
     .book-list-link {
