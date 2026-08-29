@@ -44,6 +44,22 @@ export default class MerchantModeHelper {
     return this.defaultSheetClass(actorType);
   }
 
+  /**
+   * Bind the type-appropriate merchant sheet and drop a stale sheet instance.
+   * @returns {foundry.applications.api.Application|null}
+   */
+  static async ensureMerchantSheet(actor) {
+    const desired = this.merchantSheetClass(actor?.type);
+    if (!actor || !desired) return actor?.sheet ?? null;
+    if (actor.getFlag('core', 'sheetClass') !== desired) {
+      await actor.setFlag('core', 'sheetClass', desired);
+    }
+    if (typeof actor.sheet?.setTradeFriend !== 'function') {
+      actor._sheet = null;
+    }
+    return actor.sheet;
+  }
+
   static modeFromCreateType(type) {
     return MerchantConfig.CREATE_TYPE_MODES[type] ?? null;
   }

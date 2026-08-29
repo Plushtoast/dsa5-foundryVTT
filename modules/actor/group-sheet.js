@@ -11,6 +11,7 @@ import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import MerchantSheetDSA5 from './merchant-sheet.js';
+import MerchantModeHelper from './concerns/merchant-mode.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { escapeHTML } = foundry.utils;
@@ -1166,11 +1167,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     }
 
     const openMerchant = async (actor) => {
-      if (!locActor.getFlag('core', 'sheetClass')) {
-        await locActor.setFlag('core', 'sheetClass', 'dsa5.MerchantSheetDSA5');
-      }
-      locActor.sheet.setTradeFriend(actor);
-      locActor.sheet.render(true);
+      const sheet = await MerchantModeHelper.ensureMerchantSheet(locActor);
+      sheet.setTradeFriend(actor);
+      sheet.render(true);
     };
 
     if (ownedMembers.length === 1) {

@@ -344,7 +344,7 @@ export default class DSA5Combat extends Combat {
 
   async clearRoundState() {
     if (game.user.isGM) {
-      const updates = this.turns.map((combatant) => combatant.getRoundStateResetUpdate());
+      const updates = [...this.combatants].map((combatant) => combatant.getRoundStateResetUpdate());
       if (updates.length) await this.updateEmbeddedDocuments('Combatant', updates);
     } else {
       await game.socket.emit('system.dsa5', {
@@ -708,8 +708,8 @@ export default class DSA5Combat extends Combat {
   }
 
   async #clearBroadsideShots() {
-    // TypedObjectField merges plain `{}`; ForcedReplacement is required to wipe keys.
-    const empty = foundry.data.operators.ForcedReplacement.create({});
+    // TypedObjectField merges plain `{}`; _replace is required to wipe keys.
+    const empty = _replace({});
     const updates = this.combatants
       .filter((c) => c.system?.broadsideShots && Object.keys(c.system.broadsideShots).length)
       .map((c) => ({ _id: c.id, 'system.broadsideShots': empty }));

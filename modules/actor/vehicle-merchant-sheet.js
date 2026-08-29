@@ -28,12 +28,8 @@ export default class VehicleMerchantSheetDSA5 extends MerchantSheetMixin(ActorSh
       templates: ['systems/dsa5/templates/actors/actorv2/avatar.hbs', 'systems/dsa5/templates/actors/vehicle/vehicle-header-part.hbs', 'systems/dsa5/templates/actors/parts/vehicle-healthbar.hbs'],
     },
     tabs: super.PARTS.tabs,
-    main: {
-      template: 'systems/dsa5/templates/actors/vehicle/vehicle-main.hbs',
-      scrollable: [''],
-    },
-    combat: super.PARTS.combat,
-    crew: super.PARTS.crew,
+    combat: ActorSheetdsa5Vehicle.PARTS.combat,
+    crew: ActorSheetdsa5Vehicle.PARTS.crew,
     inventory: {
       template: 'systems/dsa5/templates/actors/merchant/merchant-commerce.hbs',
       scrollable: [''],

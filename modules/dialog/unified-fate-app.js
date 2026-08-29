@@ -39,8 +39,7 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
         const partyUuid = game.settings.get('dsa5', 'primaryParty');
         if (partyUuid) groupActor = fromUuidSync(partyUuid);
         if (!groupActor) groupActor = game.actors.find((a) => a.type === 'group');
-        const members = groupActor?.system?.members;
-        if (!members) return false;
+        const members = groupActor?.system?.members ?? {};
         return Object.values(members).some((member) => member.uuid === actor.uuid);
     }
 
@@ -51,7 +50,7 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
         const actor = message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
         const rollData = message.flags?.data?.postData?.roll || message.flags?.data?.preData?.roll;
         if (!actor) return;
-        const roll = rollData ? (rollData instanceof Roll ? rollData : Roll.fromData(rollData)) : null;
+        const roll = DiceDSA5.fromRollData(rollData);
         this.open(message, actor, roll);
     }
 
@@ -124,7 +123,8 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
             if (tabs[this.tabGroups.sheet]) tabs[this.tabGroups.sheet].cssClass = 'active';
         }
 
-        const dice = (postData.characteristics || [])
+        const characteristics = Array.isArray(postData.characteristics) ? postData.characteristics : [];
+        const dice = characteristics
             .filter((item) => item.char !== 'damage')
             .map((item, i) => {
                 let attr = item.char || 'd20';
@@ -192,7 +192,8 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
 
     _buildDamageDice(postData) {
         if (!postData.damageRoll) return [];
-        const rollInstance = postData.damageRoll instanceof Roll ? postData.damageRoll : Roll.fromData(postData.damageRoll);
+        const rollInstance = DiceDSA5.fromRollData(postData.damageRoll);
+        if (!rollInstance?.terms) return [];
         const damageDice = [];
         let dieIndex = 0;
         for (const term of rollInstance.terms) {
@@ -433,7 +434,8 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
         }
 
         const origDamageData = data.postData.damageRoll || data.preData.damageRoll;
-        const originalRoll = origDamageData instanceof Roll ? origDamageData : Roll.fromData(origDamageData);
+        const originalRoll = DiceDSA5.fromRollData(origDamageData);
+        if (!originalRoll?.terms) return null;
         const selectedIndices = Array.from(this.selectedForDamageReroll).sort((a, b) => a - b);
         const rerollFormulas = [];
         const diceMapping = [];

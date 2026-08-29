@@ -48,7 +48,6 @@ export class DSACombatantDataModel extends DSADataModel {
    * @returns {Record<string, unknown>}
    */
   static getRoundStateResetUpdate() {
-    const { ForcedReplacement } = foundry.data.operators;
     const { TypedObjectField } = foundry.data.fields;
     const update = {};
     for (const key of this.ROUND_SCOPED_FIELDS) {
@@ -56,7 +55,7 @@ export class DSACombatantDataModel extends DSADataModel {
       const initial = foundry.utils.deepClone(field.getInitialValue({}));
       // Plain `{}` merges into TypedObjectField and leaves prior keys (e.g. broadsideShots).
       update[`system.${key}`] = field instanceof TypedObjectField
-        ? ForcedReplacement.create(initial)
+        ? _replace(initial)
         : initial;
     }
     return update;

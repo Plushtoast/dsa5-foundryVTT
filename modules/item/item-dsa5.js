@@ -485,9 +485,9 @@ export default class Itemdsa5 extends Item {
 
   /**
    * Perform a comprehensive item test (dice rolling and result calculation)
-   * @param {Object} testParams - Test parameters object
-   * @param {TestData} testParams.testData - Core test data including modifiers and difficulty
-   * @param {CardOptions} testParams.cardOptions - Chat card display options
+   * @param {Object|null} setup - Setup from setupDialog, or null if the roll was cancelled
+   * @param {TestData} setup.testData - Core test data including modifiers and difficulty
+   * @param {CardOptions} setup.cardOptions - Chat card display options
    * @param {Object} [options={}] - Additional test options
    * @param {boolean} [options.suppressMessage] - Whether to suppress chat output
    * @param {string} [options.rerenderMessage] - Message ID to re-render instead of creating new
@@ -495,12 +495,15 @@ export default class Itemdsa5 extends Item {
    *   - {Object} result - Dice roll and test calculation results
    *   - {CardOptions} cardOptions - Final chat card options used
    */
-  async itemTest({ testData, cardOptions }, options = {}) {
+  async itemTest(setup, options = {}) {
+    if (!setup?.testData) return;
+
     if (this.actor && !this.actor.canUserRoll()) {
       ui.notifications.warn('DSAError.RollPermission', { localize: true });
       return;
     }
 
+    let { testData, cardOptions } = setup;
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 
@@ -706,6 +709,7 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
     );
 
     const res = await actor.basicTest(setupData);
+    if (!res) return;
     await this.updateAggregatedTest(postFunction, res);
   }
 

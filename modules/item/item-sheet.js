@@ -1492,6 +1492,7 @@ class MagicalSignSheet extends NoEffectsSheet {
     const chatMessage = `<hr/><p><b>${this.item.name}</b></p><p>${this.item.system.description.value}</p><p>${sign}<span class="costCheck"></span></p>`;
     const setupData = await actor.setupSkill(skill, { other: [chatMessage], subtitle: ` (${_loc('TYPES.Item.magicalsign')})` }, undefined);
     const res = await actor.basicTest(setupData, { suppressMessage: true });
+    if (!res) return;
     res.result.preData.calculatedSpellModifiers = { finalcost: aspcost, costsMana: true };
     await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage);
   }

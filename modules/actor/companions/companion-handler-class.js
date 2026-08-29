@@ -727,7 +727,9 @@ export default class CompanionHandler {
         const setupData = await rollerActor.setupSkill(skillItem, rollOptions, rollerTokenId);
         const isLoyaltyRoll = isFastTalk || skillItem.name === _loc('LocalizedIDs.loyalty');
 
-        const { result } = await rollerActor.basicTest(setupData);
+        const rolled = await rollerActor.basicTest(setupData);
+        if (!rolled) return;
+        const { result } = rolled;
 
         if (isSummonedRequests && isFastTalk) {
             const remaining = await CompanionHandler.spendServiceCounter(summonedActor);

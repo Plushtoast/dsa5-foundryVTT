@@ -696,6 +696,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     const ZKModifier = this.actor.system.status.toughness.max * -1;
     const setupData = await item.setupEffect(undefined, { messageMode: DICE_CONSTANTS.CHAT_MODES.GM, manualResistance: { SKModifier, ZKModifier } });
     const result = await item.itemTest(setupData);
+    if (!result) return;
     await this.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.duration.resolved': result.result.duration }]);
   }
 

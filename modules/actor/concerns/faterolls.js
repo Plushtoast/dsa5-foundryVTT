@@ -500,9 +500,12 @@ export class FateRolls {
      * @returns {Object} Object containing newRoll, changedRolls html, changedRollsText, and changes array
      */
     static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null, cheat = false) {
+        if (!(testData.roll instanceof Roll)) testData.roll = DiceDSA5.fromRollData(testData.roll) ?? testData.roll;
+        if (!testData.roll?.terms) return null;
         const rollFormulas = diceIndices.map(index => {
             const term = testData.roll.terms[index * 2];
-            return `${term.number}d${term.faces}[${term.options.colorset}]`;
+            const colorset = term.options?.colorset;
+            return colorset ? `${term.number}d${term.faces}[${colorset}]` : `${term.number}d${term.faces}`;
         });
         let newRoll = await new Roll(rollFormulas.join('+')).evaluate();
         if (cheatResults?.length) {
@@ -514,11 +517,10 @@ export class FateRolls {
         }
         const rollOptions = cheatResults?.length ? { cheat: false } : (cheat ? { cheat: true } : {});
         newRoll = await DiceDSA5.manualRolls(newRoll, rollContext, rollOptions);
-        await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'rollMode'));
+        await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'messageMode'));
         const changedRolls = [];
         const changedRollsText = [];
         const changes = [];
-        testData.roll = Roll.fromData(testData.roll);
         diceIndices.forEach((dieIndex, rollIndex) => {
             const term = testData.roll.terms[dieIndex * 2];
             const newValue = newRoll.terms[rollIndex * 2].results[0].result;
@@ -563,10 +565,11 @@ export class FateRolls {
         const safeRemaining = Math.max(0, Number(remaining) || 0);
         let schipList = [];
         if (schipsource === this.SCHIP_SOURCES.PERSONAL) {
-            schipList = actor.schipshtml().map((x) => ({ ...x }));
+            schipList = actor.schipshtml?.() ?? [];
         } else if (schipsource === this.SCHIP_SOURCES.GROUP) {
-            schipList = RuleChaos.getGroupSchips().map((x) => ({ ...x }));
+            schipList = RuleChaos.getGroupSchips() ?? [];
         }
+        schipList = Array.isArray(schipList) ? schipList.map((x) => ({ ...x })) : [];
         if (!Array.isArray(schipList) || schipList.length === 0) {
             return `<b>${foundry.utils.escapeHTML(tooltipText)}</b>: ${safeRemaining}`;
         }
@@ -687,7 +690,7 @@ export class FateRolls {
      * @param {{ multiDie?: boolean }} [options]
      */
     static applyImprovement(testData, dieIndex, amount, { multiDie = false } = {}) {
-        if (!(testData.roll instanceof Roll)) testData.roll = Roll.fromData(testData.roll);
+        if (!(testData.roll instanceof Roll)) testData.roll = DiceDSA5.fromRollData(testData.roll) ?? testData.roll;
         const originalResult = testData.roll.terms[dieIndex * 2].results[0].result;
         const improvedResult = Math.max(1, originalResult - amount);
         testData.roll.editRollAtIndex([{ index: dieIndex, val: improvedResult }]);

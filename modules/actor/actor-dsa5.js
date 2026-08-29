@@ -1329,6 +1329,7 @@ export default class Actordsa5 extends Actor {
     };
 
     this.setupWeapon(rangeWeapon, 'attack', options, tokenId).then(async (setupData) => {
+      if (!setupData) return;
       if (!hasWeaponThrow) {
         setupData.testData.source.dmgMultipliers ||= [];
         DSA5_Utility.pushOnlyIfUnique(
@@ -1736,8 +1737,10 @@ export default class Actordsa5 extends Actor {
       },
     };
     this.setupSkill(skill, optns, tokenId).then(async (finalData) => {
+      if (!finalData) return;
       finalData.testData.opposable = false;
       const res = await this.basicTest(finalData, { suppressMessage: true });
+      if (!res) return;
       await Actordsa5.updateFallingDamage(optns.postFunction, res);
       await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage);
     });
@@ -2601,12 +2604,15 @@ export default class Actordsa5 extends Actor {
     return parent?.isOwner ?? false;
   }
 
-  async basicTest({ testData, cardOptions }, options = {}) {
+  async basicTest(setup, options = {}) {
+    if (!setup?.testData) return;
+
     if (!this.canUserRoll()) {
       ui.notifications.warn('DSAError.RollPermission', { localize: true });
       return;
     }
 
+    let { testData, cardOptions } = setup;
     testData = await DiceDSA5.rollDices(testData, cardOptions);
     const result = await DiceDSA5.rollTest(testData);
 
@@ -2772,6 +2778,7 @@ export default class Actordsa5 extends Actor {
     const skill = this.items.find((x) => x.name == _loc('LocalizedIDs.selfControl') && x.type == 'skill');
     const setupData = await this.setupSkill(skill, { subtitle: ` (${_loc('ActiveEffects.resistRoll')})` }, this.token?.id);
     const res = await this.basicTest(setupData);
+    if (!res) return;
     const ql = res.result.successLevel || 0;
 
     if (ql < 1) this.addCondition('incapacitated');

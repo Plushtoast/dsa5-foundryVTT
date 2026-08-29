@@ -75,7 +75,7 @@ export default class GroupData extends ActorDataModel {
   _resolveMembers() {
     this.actors = new Set();
     this.memberCount = 0;
-    const sorted = Object.entries(this.members)
+    const sorted = Object.entries(this.members ?? {})
       .sort(([, a], [, b]) => a.sort - b.sort);
 
     for (const [, member] of sorted) {
@@ -90,7 +90,7 @@ export default class GroupData extends ActorDataModel {
   _resolveLocations() {
     this.locationActors = new Map();
     this.resolvedLocations = [];
-    const sorted = Object.entries(this.locations)
+    const sorted = Object.entries(this.locations ?? {})
       .sort(([, a], [, b]) => a.sort - b.sort);
 
     for (const [key, loc] of sorted) {
@@ -250,14 +250,15 @@ export default class GroupData extends ActorDataModel {
       ui.notifications.warn('GROUP.noGroupInGroup', { localize: true });
       return;
     }
-    for (const member of Object.values(this.members)) {
+    const members = this.members ?? {};
+    for (const member of Object.values(members)) {
       if (member.uuid === actor.uuid) {
         ui.notifications.info('GROUP.alreadyMember', { localize: true });
         return;
       }
     }
     const id = foundry.utils.randomID();
-    const maxSort = Math.max(0, ...Object.values(this.members).map((m) => m.sort));
+    const maxSort = Math.max(0, ...Object.values(members).map((m) => m.sort ?? 0));
     await this.parent.update({
       [`system.members.${id}`]: { uuid: actor.uuid, sort: maxSort + 1 },
     });

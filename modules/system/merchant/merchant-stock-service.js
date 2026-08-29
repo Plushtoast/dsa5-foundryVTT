@@ -705,7 +705,7 @@ export default class MerchantStockService {
     if (!foundry.utils.isPlainObject(payload.filters)) payload.filters = {};
     payload.filtersEnabled = !!payload.filtersEnabled;
     await actor.update({
-      'system.merchant.shop.stockRules.lastFillConfig': foundry.data.operators.ForcedReplacement.create(payload),
+      'system.merchant.shop.stockRules.lastFillConfig': _replace(payload),
     });
   }
 }

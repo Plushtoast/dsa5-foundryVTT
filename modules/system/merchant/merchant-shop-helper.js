@@ -111,7 +111,7 @@ export default class MerchantShopHelper {
       if (preserved[key]?.each != null) entry.each = preserved[key].each;
     }
     return actor.update({
-      'system.merchant.shop.stockRules.lastFillConfig': foundry.data.operators.ForcedReplacement.create({
+      'system.merchant.shop.stockRules.lastFillConfig': _replace({
         ...current,
         categories: nextCategories,
       }),
@@ -129,7 +129,7 @@ export default class MerchantShopHelper {
     categories[category] ??= { enabled: false };
     categories[category].enabled = !!enabled;
     return actor.update({
-      'system.merchant.shop.stockRules.lastFillConfig': foundry.data.operators.ForcedReplacement.create({
+      'system.merchant.shop.stockRules.lastFillConfig': _replace({
         ...current,
         categories,
       }),
@@ -149,7 +149,7 @@ export default class MerchantShopHelper {
     categories.equipment.types[type] = !!enabled;
     categories.equipment.enabled = Object.values(categories.equipment.types).some(Boolean);
     return actor.update({
-      'system.merchant.shop.stockRules.lastFillConfig': foundry.data.operators.ForcedReplacement.create({
+      'system.merchant.shop.stockRules.lastFillConfig': _replace({
         ...current,
         categories,
       }),

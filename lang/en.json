@@ -1166,7 +1166,7 @@
     "multipleTarget": "Multiple Targets",
     "negativeRegeneration": "Negative Regeneration",
     "negativeRegenerationHint": "The regeneration result is negative. Confirming applies it as a loss of the listed points.",
-    "negativeRegenerationOverflow": "Missing AE or KP is taken from LP instead.",
+    "negativeRegenerationOverflow": "AE and KP cannot fall below 0. Only remaining points are subtracted.",
     "noCombatskills": "No matching Combat Special Abilities",
     "noExtensions": "No matching liturgy/spell extensions",
     "noLoggedinUser": "No user logged in/available.",

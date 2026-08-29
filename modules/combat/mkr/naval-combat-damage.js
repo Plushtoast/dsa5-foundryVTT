@@ -464,13 +464,13 @@ export default class NavalCombatDamage {
 
   /** Queue StP for Schadensbericht. Prefer during naval MKR attacks phase. */
   static async queueHit(vehicle, stpFormula, attackerName = '—', extras = {}) {
-    const hits = await this.queueHits(vehicle, [{ stpFormula, attackerName, ...extras }]);
+    const { combat = game.combat, ...rest } = extras;
+    const hits = await this.queueHits(vehicle, [{ stpFormula, attackerName, ...rest }], combat);
     return hits[0] ?? null;
   }
 
   /** Queue many StP hits in one combat update (Volle Breitseite). */
-  static async queueHits(vehicle, entries = []) {
-    const combat = game.combat;
+  static async queueHits(vehicle, entries = [], combat = game.combat) {
     if (!combat || !vehicle || !entries.length) return [];
 
     const pending = duplicate(combat.system.pendingHits ?? []);
@@ -488,7 +488,9 @@ export default class NavalCombatDamage {
       pending.push(hit);
       created.push(hit);
     }
-    if (created.length) await combat.update({ 'system.pendingHits': pending });
+    if (created.length) {
+      await combat.update({ 'system.pendingHits': pending });
+    }
     return created;
   }
 

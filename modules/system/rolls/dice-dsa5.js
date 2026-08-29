@@ -2076,6 +2076,24 @@ export default class DiceDSA5 {
   }
 
   /**
+   * Rebuild a Roll from chat-flag JSON or return the instance as-is.
+   * Chat round-trips can drop `terms`; Foundry's Roll.fromData then throws
+   * "Cannot read properties of undefined (reading 'map')".
+   * @param {Roll|object|null|undefined} data
+   * @returns {Roll|null}
+   */
+  static fromRollData(data) {
+    if (!data) return null;
+    if (data instanceof Roll) return data;
+    try {
+      if (Array.isArray(data.terms)) return Roll.fromData(data);
+    } catch (error) {
+      console.warn('DiceDSA5.fromRollData failed', error);
+    }
+    return null;
+  }
+
+  /**
    * Show dice animation using Dice So Nice module
    * @param {Roll} roll - Roll to animate
    * @param {string} messageMode - Roll mode for visibility
@@ -2310,6 +2328,7 @@ export default class DiceDSA5 {
         }
 
         item.setupEffect().then(async (setupData) => {
+          if (!setupData) return;
           await item.itemTest(setupData);
           if (removeCharge)
             await source.update({

@@ -18,7 +18,7 @@ export default class CompanionHotbar {
     if (!config) return false;
 
     const setupData = await actor[config.setup](item, {}, tokenId);
-    await actor.basicTest(setupData);
+    if (setupData) await actor.basicTest(setupData);
     return true;
   }
 

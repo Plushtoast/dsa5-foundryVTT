@@ -1,4 +1,5 @@
 import { JournalListDataModel } from './journallistdatamodel.js';
+import PartialCalendarDateField from '../fields/partial-calendar-date-field.js';
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -49,11 +50,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             IntegerSortField,
         } = foundry.data.fields;
 
-        const dateField = () => new SchemaField({
-            dayOfMonth: new NumberField({ required: false, nullable: true, integer: true, min: 1, step: 1 }),
-            month: new NumberField({ required: false, nullable: true, integer: true, min: 0, step: 1 }),
-            year: new NumberField({ required: false, nullable: true, integer: true, step: 1 }),
-        });
+        const dateField = () => new PartialCalendarDateField();
 
         return {
             quests: new TypedObjectField(new SchemaField({

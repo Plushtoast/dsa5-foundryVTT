@@ -29,13 +29,29 @@ export default class RegenerationHelper {
     return Math.max(0, Number(actor?.system?.status?.[pool]?.value) || 0);
   }
 
+  /**
+   * Healing cannot exceed max. Drain subtracts from the stored current value and
+   * does not snap an over-max pool down (or up) to max.
+   */
+  static nextPoolValue(current, delta, max, min = 0) {
+    const from = Number(current) || 0;
+    const change = Number(delta) || 0;
+    const next = from + change;
+    const floor = Number(min) || 0;
+    if (change <= 0) return Math.max(floor, next);
+    const cap = Number(max);
+    if (!Number.isFinite(cap)) return Math.max(floor, next);
+    return Math.clamp(next, floor, cap);
+  }
+
+  /**
+   * AsP/KaP cannot go below 0. Excess drain is discarded, not taken from LeP.
+   */
   static resolveOverflow(actor, amounts) {
     const result = this.normalizeAmounts(amounts);
     for (const stat of ['AsP', 'KaP']) {
       if (result[stat] >= 0) continue;
-      const applied = Math.max(result[stat], -this.currentPoolValue(actor, stat));
-      result.LeP += result[stat] - applied;
-      result[stat] = applied;
+      result[stat] = Math.max(result[stat], -this.currentPoolValue(actor, stat));
     }
     return result;
   }
@@ -73,12 +89,12 @@ export default class RegenerationHelper {
     const karma = actor.system.status.karmaenergy;
     const astral = actor.system.status.astralenergy;
     const hookOptions = {
-      heal: true,
+      heal: resolved.LeP >= 0 && resolved.AsP >= 0 && resolved.KaP >= 0,
       lepAmount: resolved.LeP,
       updateData: {
-        'system.status.wounds.value': Math.clamp((Number(wounds.value) || 0) + resolved.LeP, 0, wounds.max),
-        'system.status.karmaenergy.value': Math.clamp((Number(karma.value) || 0) + resolved.KaP, 0, karma.max),
-        'system.status.astralenergy.value': Math.clamp((Number(astral.value) || 0) + resolved.AsP, 0, astral.max),
+        'system.status.wounds.value': this.nextPoolValue(wounds.value, resolved.LeP, wounds.max),
+        'system.status.karmaenergy.value': this.nextPoolValue(karma.value, resolved.KaP, karma.max),
+        'system.status.astralenergy.value': this.nextPoolValue(astral.value, resolved.AsP, astral.max),
         'system.status.temporaryLeP.value': 0,
         'system.status.temporaryLeP.max': 0,
       },

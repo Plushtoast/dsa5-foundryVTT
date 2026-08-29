@@ -78,7 +78,26 @@ export default class NavalBroadside {
   }
 
   static usedShots(combatant, weaponId) {
-    return Number(combatant?.system?.broadsideShots?.[weaponId]) || 0;
+    if (!combatant || !weaponId) return 0;
+    const shots = combatant.system?.broadsideShots;
+    return Number(shots?.[weaponId] ?? shots?.[String(weaponId)]) || 0;
+  }
+
+  /**
+   * Persist shots already fired this MKR for one weapon.
+   * Merge one TypedObjectField key; ForcedReplacement is not persisted on Combatant updates.
+   * @param {Combatant} combatant
+   * @param {string} weaponId
+   * @param {number} count
+   * @returns {Promise<Combatant>}
+   */
+  static async setUsedShots(combatant, weaponId, count) {
+    if (!combatant || !weaponId) return combatant;
+    const n = Math.max(0, Math.floor(Number(count) || 0));
+    await combatant.update({
+      system: { broadsideShots: { [weaponId]: n } },
+    }, { render: false });
+    return combatant.parent?.combatants.get(combatant.id) ?? combatant;
   }
 
   static remainingShots(weapon, combatant, combat = game.combat) {
@@ -131,7 +150,7 @@ export default class NavalBroadside {
 
     const shots = [];
     const weaponRolls = {};
-    const budgetUpdates = {};
+    const budgetShots = foundry.utils.duplicate(combatant?.toObject().system?.broadsideShots ?? {});
     const reloadResets = [];
 
     const sourceToken = tokenId
@@ -178,10 +197,7 @@ export default class NavalBroadside {
       }
 
       if (fired > 0) {
-        if (combatant) {
-          const already = this.usedShots(combatant, item.id);
-          budgetUpdates[`system.broadsideShots.${item.id}`] = already + fired;
-        }
+        if (combatant) budgetShots[item.id] = this.usedShots(combatant, item.id) + fired;
         reloadResets.push({
           _id: item.id,
           'system.reloadTime.progress': 0,
@@ -193,8 +209,8 @@ export default class NavalBroadside {
     if (reloadResets.length) {
       await vehicle.updateEmbeddedDocuments('Item', reloadResets);
     }
-    if (combatant && Object.keys(budgetUpdates).length) {
-      await combatant.update(budgetUpdates);
+    if (combatant && Object.keys(budgetShots).length) {
+      await combatant.update({ system: { broadsideShots: budgetShots } }, { render: false });
     }
 
     if (!shots.length) {
@@ -202,7 +218,7 @@ export default class NavalBroadside {
       return;
     }
 
-    await this.#postSummary(vehicle, primaryTarget, defenderVehicle, shots, weaponRolls);
+    await this.#postSummary(vehicle, primaryTarget, defenderVehicle, shots, weaponRolls, combat);
   }
 
   static async #fireOneShot(vehicle, item, { tokenId, setup, defenderVehicle, evadePenalty }) {
@@ -329,7 +345,7 @@ export default class NavalBroadside {
     await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
-  static async #postSummary(vehicle, primaryTarget, defenderVehicle, shots, weaponRolls) {
+  static async #postSummary(vehicle, primaryTarget, defenderVehicle, shots, weaponRolls, combat = game.combat) {
     const hits = shots.filter((s) => s.hit && NavalCombatDamage.hasStpValue(s.stpFormula));
 
     await Promise.all(hits.map(async (hit) => {
@@ -347,7 +363,7 @@ export default class NavalBroadside {
       crewDamageTotal += hit.crewDamage || 0;
     }
 
-    if (defenderVehicle && NavalCombat.isNavalMkrActive() && game.combat?.system?.mkrPhase === 'attacks') {
+    if (defenderVehicle && NavalCombat.isNavalMkrActive(combat) && combat?.system?.mkrPhase === 'attacks') {
       const queueEntries = hits
         .filter((h) => h.stpPreview != null)
         .map((h) => ({
@@ -357,7 +373,7 @@ export default class NavalBroadside {
           crewDamage: h.crewDamage ?? 0,
         }));
       if (queueEntries.length) {
-        await NavalCombatDamage.queueHits(defenderVehicle, queueEntries);
+        await NavalCombatDamage.queueHits(defenderVehicle, queueEntries, combat);
         for (const hit of hits) {
           if (hit.stpPreview != null) hit.queued = true;
         }

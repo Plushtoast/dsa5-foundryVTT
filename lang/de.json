@@ -1166,7 +1166,7 @@
     "multipleTarget": "Mehrere Ziele",
     "negativeRegeneration": "Negative Regeneration",
     "negativeRegenerationHint": "Das Regenerationsergebnis ist negativ. Bei Bestätigung verliert der Held die angegebenen Punkte.",
-    "negativeRegenerationOverflow": "Fehlende AsP oder KaP werden stattdessen von den LeP abgezogen.",
+    "negativeRegenerationOverflow": "AsP und KaP können nicht unter 0 fallen. Es werden nur vorhandene Punkte abgezogen.",
     "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
     "noExtensions": "Keine passenden Zauber-/Liturgieerweiterungen",
     "noLoggedinUser": "Keine User eingeloggt/auswählbar.",

@@ -5338,10 +5338,11 @@ select.noAppearance {
   &.deactivated {
     opacity: 0.5;
   }
+}
 
-  &:hover {
-    border-color: rgb(10, 89, 194);
-  }
+.bags .slot:hover,
+.dsa5 .companion-slot[data-action]:hover {
+  border-color: rgb(10, 89, 194);
 }
 
 .dsajournal h4 {
