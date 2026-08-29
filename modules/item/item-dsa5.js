@@ -27,6 +27,7 @@ import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
 import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
+import ItemDisease from './item-disease.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1246,6 +1247,7 @@ class RangeweaponItemDSA5 extends WeaponItemDSA5 {
           .join(',');
         const poison = getProperty(currentAmmo.flags, 'dsa5.poison');
         if (poison) mergeObject(_source.flags, { dsa5: { poison } });
+        ItemDisease.applyFromAmmo(currentAmmo, _source);
       }
 
       CombatSystem.prepareRangeAttack(situationalModifiers, actor, data, source, tokenId, combatSpecAbs, currentAmmo);

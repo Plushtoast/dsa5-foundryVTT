@@ -733,6 +733,8 @@
     "duplicatus": "doppelganger was hit",
     "editRoll": "Edit roll",
     "enchantmentUsed": "<b>{item}</b> used one charge of <b>{spell}</b>.",
+    "diseaseInfected": "Infection check for {name}: {roll} (1-{threshold}) — infected.",
+    "diseaseNotInfected": "Infection check for {name}: {roll} (1-{threshold}) — not infected.",
     "fadingEffect": "The effect <b>{effect}</b> has been removed from {actor}.",
     "fontsize": "Font size: {size}px",
     "gainsBloodrush": "The rage consumes {character} and he/she gains the condition bloodrush.",
@@ -1162,6 +1164,9 @@
     "firstTime": "Language settings",
     "firstTimeWarning": "Please chose your language. Compendiae of different languages are not compatible with each other. Existing characters can not be migrated to the other language. Make sure all your users use the same language to prevent problems.",
     "multipleTarget": "Multiple Targets",
+    "negativeRegeneration": "Negative Regeneration",
+    "negativeRegenerationHint": "The regeneration result is negative. Confirming applies it as a loss of the listed points.",
+    "negativeRegenerationOverflow": "Missing AE or KP is taken from LP instead.",
     "noCombatskills": "No matching Combat Special Abilities",
     "noExtensions": "No matching liturgy/spell extensions",
     "noLoggedinUser": "No user logged in/available.",
@@ -1422,6 +1427,7 @@
     "elementNotFound": "The element \"{element}\" could not be found.",
     "elementNotOwned": "You do not have permission to edit the element.",
     "enchantmentNotFound": "Referenced spell not found",
+    "diseaseNotFound": "Referenced disease could not be found",
     "horseMustBeImported": "Mount from compendium not allowed",
     "horseMustBeImportedText": "Only mounts imported into the world are possible. Do you want to import the mount now?",
     "immuneTo": "{name} is immune to \"{condition}\".",
@@ -3207,6 +3213,10 @@
   "POISON": {
     "addNow": "Add to inventory now?",
     "ql": "Quality of the tavern"
+  },
+  "DISEASE": {
+    "infectionThreshold": "Infection (1-W20)",
+    "infectionThresholdHint": "Infects on 1 through this value, like a critical. 20 always infects."
   },
   "PRACTICAL_APPLICATION": {
     "alreadyApplied": "Practical Application is already selected.",

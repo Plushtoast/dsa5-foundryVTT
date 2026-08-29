@@ -48,7 +48,7 @@
       <div class='col fourty'>
         <div class='flexrow'>
           {{#each hero.schips as |item i|}}
-          <a data-action='heroSchip' class='tiny schip {{item.cssClass}}' data-val='{{item.value}}'></a>
+          <a data-action='heroSchip' class='tiny schip flex0 {{item.cssClass}}' data-val='{{item.value}}'{{#if item.path}} data-path='{{item.path}}'{{/if}}{{#if item.tooltip}} data-tooltip='{{item.tooltip}}'{{/if}}{{#if item.tooltipClass}} data-tooltip-class='{{item.tooltipClass}}'{{/if}}{{#if item.style}} style='{{item.style}}'{{/if}}></a>
           {{/each}}
         </div>
       </div>

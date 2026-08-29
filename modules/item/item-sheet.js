@@ -19,6 +19,7 @@ import TraitData from '../data/item/trait.js';
 import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 import ItemEnchantment from './item-enchantment.js';
+import ItemDisease from './item-disease.js';
 import MerchantStallHelper from '../system/merchant/merchant-stall.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
@@ -851,6 +852,8 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
       poisonTogglePermanent: this._poisonTogglePermanent,
       poisonDelete: this._deletePoison,
       poisonShow: this._poisonShow,
+      diseaseDelete: this._deleteDisease,
+      diseaseShow: this._diseaseShow,
     },
   };
 
@@ -937,6 +940,10 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
       }
       this.item.update({ flags: { dsa5: { enchantments } } });
     });
+
+    html.find('.disease-threshold').on('change', (ev) => {
+      ItemDisease.setThreshold(this.item, ev.currentTarget.value);
+    });
   }
 
   static PARTS = {
@@ -973,7 +980,10 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
       await this._enchant([dragData]);
       await this._enchantExtension(dragData);
     }
-    if (this.isPoisonable) await this._poison(dragData);
+    if (this.isPoisonable) {
+      await this._poison(dragData);
+      await this._disease(dragData);
+    }
     await super._handleDrop(dragData);
   }
 
@@ -1083,6 +1093,21 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
     this.item.update({ 'flags.dsa5.poison': _del });
   }
 
+  async _disease(dragData) {
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (typeClass !== 'disease') return;
+    await ItemDisease.attach(this.item, item);
+  }
+
+  static _deleteDisease(ev, target) {
+    ItemDisease.remove(this.item);
+  }
+
+  static async _diseaseShow(ev, target) {
+    const item = await ItemDisease.resolveDocument(this.item.getFlag('dsa5', 'disease'), { notify: true });
+    if (item) item.sheet.render(true);
+  }
+
   deleteEnchantment(id, _enchantments) {
     return ItemEnchantment.delete(this.item, id);
   }
@@ -1112,9 +1137,11 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
   get enchantmentLabel() {
     const enchantments = this.item.getFlag('dsa5', 'enchantments') || [];
     const poison = this.item.getFlag('dsa5', 'poison');
+    const disease = ItemDisease.get(this.item);
     const enchantmentLabel = [];
 
     if (poison) enchantmentLabel.push('TYPES.Item.poison');
+    if (disease) enchantmentLabel.push('TYPES.Item.disease');
     if (enchantments.some((x) => !x.talisman)) enchantmentLabel.push('enchantment');
     if (enchantments.some((x) => x.talisman)) enchantmentLabel.push('talisman');
 
@@ -1125,7 +1152,8 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
     const data = await super._prepareContext(_options);
     data.enchantments = this.item.getFlag('dsa5', 'enchantments');
     data.poison = this.item.getFlag('dsa5', 'poison');
-    data.hasEnchantments = data.poison || (data.enchantments && data.enchantments.length > 0);
+    data.disease = ItemDisease.get(this.item);
+    data.hasEnchantments = data.poison || data.disease || (data.enchantments && data.enchantments.length > 0);
     data.isEnchantableItem = this.isEnchantable;
 
     return data;

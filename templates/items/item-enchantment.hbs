@@ -99,4 +99,34 @@
 
     </div>
   {{/if}}
+  {{#if disease}}
+    <div class='row-section wrap'>
+
+      <div class='col row-section skills table-title'>
+
+        <div class='col fourty'>
+          {{localize 'TYPES.Item.disease'}}
+        </div>
+        <div class='col fifteen center' data-tooltip='DISEASE.infectionThresholdHint'>
+          {{localize 'DISEASE.infectionThreshold'}}
+        </div>
+        <div class='col ten center'>
+
+        </div>
+      </div>
+
+      <div class='row-section col skills statusEffect'>
+        <div class='col fourty'>
+          <a data-action='diseaseShow'>{{disease.name}}</a>
+        </div>
+        <div class='col fifteen center form-group'>
+          <input type='number' class='input-text disease-threshold' min='1' max='20' step='1' value='{{disease.threshold}}' data-tooltip='DISEASE.infectionThresholdHint' />
+        </div>
+        <div class='col ten center'>
+          <a class='ench' data-action='diseaseDelete'><i class='fas fa-trash'></i></a>
+        </div>
+      </div>
+
+    </div>
+  {{/if}}
 </div>

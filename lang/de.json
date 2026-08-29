@@ -733,6 +733,8 @@
     "duplicatus": "Doppelgänger getroffen",
     "editRoll": "Wurf editieren",
     "enchantmentUsed": "<b>{item}</b> hat eine Ladung <b>{spell}</b> verbraucht.",
+    "diseaseInfected": "Ansteckungswurf für {name}: {roll} (1-{threshold}) — angesteckt.",
+    "diseaseNotInfected": "Ansteckungswurf für {name}: {roll} (1-{threshold}) — nicht angesteckt.",
     "fadingEffect": "Der Effekt <b>{effect}</b> wurde von {actor} entfernt.",
     "fontsize": "Schriftgröße: {size}px",
     "gainsBloodrush": "Der Zorn überwältigt {character} und er/sie verfällt in den Zustand Blutrausch.",
@@ -1162,6 +1164,9 @@
     "firstTime": "Spracheinstellungen",
     "firstTimeWarning": "Bitte wähle die passende Sprache. Kompendien verschiedener Sprachen sind nicht miteinander kompatibel und bestehende Charaktere können nicht in die andere Sprache migriert werden. Stelle sicher, dass alle User die gleiche Sprache verwenden, um Problemen vorzubeugen.",
     "multipleTarget": "Mehrere Ziele",
+    "negativeRegeneration": "Negative Regeneration",
+    "negativeRegenerationHint": "Das Regenerationsergebnis ist negativ. Bei Bestätigung verliert der Held die angegebenen Punkte.",
+    "negativeRegenerationOverflow": "Fehlende AsP oder KaP werden stattdessen von den LeP abgezogen.",
     "noCombatskills": "Keine passenden Kampfsonderfertigkeiten",
     "noExtensions": "Keine passenden Zauber-/Liturgieerweiterungen",
     "noLoggedinUser": "Keine User eingeloggt/auswählbar.",
@@ -1424,6 +1429,7 @@
     "elementNotFound": "Das Element \"{element}\" konnte nicht gefunden werden.",
     "elementNotOwned": "Dir fehlt die Erlaubnis, um das Element zu bearbeiten.",
     "enchantmentNotFound": "Referenzierter Zauber konnte nicht gefunden werden",
+    "diseaseNotFound": "Referenzierte Krankheit konnte nicht gefunden werden",
     "horseMustBeImported": "Reittier aus Kompendium nicht erlaubt",
     "horseMustBeImportedText": "Nur in die Welt importierte Reittiere sind möglich. Möchtest du das Reittier jetzt importieren?",
     "immuneTo": "{name} ist immun gegen \"{condition}\".",
@@ -3209,6 +3215,10 @@
   "POISON": {
     "addNow": "Jetzt dem Inventar hinzufügen?",
     "ql": "Qualität der Taverne"
+  },
+  "DISEASE": {
+    "infectionThreshold": "Ansteckung (1-W20)",
+    "infectionThresholdHint": "Ansteckung bei 1 bis zu diesem Wert, analog zu einem Krit. 20 infiziert immer."
   },
   "PRACTICAL_APPLICATION": {
     "alreadyApplied": "Praxisbezug ist bereits ausgewählt.",

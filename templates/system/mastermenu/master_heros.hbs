@@ -8,7 +8,7 @@
         <a data-action='heroLink'>{{hero.name}}</a>
         <div class='flexrow'>
           {{#each hero.schips as |item i|}}
-            <a data-action='heroschip' class='tiny button_a schip {{item.cssClass}}' data-val='{{item.value}}'></a>
+            <a data-action='heroschip' class='tiny button_a schip flex0 {{item.cssClass}}' data-val='{{item.value}}'{{#if item.path}} data-path='{{item.path}}'{{/if}}{{#if item.tooltip}} data-tooltip='{{item.tooltip}}'{{/if}}{{#if item.tooltipClass}} data-tooltip-class='{{item.tooltipClass}}'{{/if}}{{#if item.style}} style='{{item.style}}'{{/if}}></a>
           {{/each}}
         </div>
       </div>
