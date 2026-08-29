@@ -1195,9 +1195,7 @@ export const MerchantSheetMixin = (superclass) =>
           value.hasHiddenToday = value.items.some((item) => item.flags?.dsa5?.shopHiddenToday && !item.system?.tradeLocked);
           for (const item of value.items) {
             item.defaultPrice = this.getItemPrice(item);
-            item.calculatedPrice =
-              Number(parseFloat(`${item.defaultPrice * (this.actor.system.merchant.sellingFactor || 1)}`).toFixed(2)) *
-              (getProperty(this.actor.system, `merchant.factors.sellingFactor.${game.user.id}`) || 1);
+            item.calculatedPrice = MerchantStallHelper.playerFacingPrice(item, this.actor);
             item.priceTag = ` / ${item.calculatedPrice}`;
           }
         }
@@ -1222,7 +1220,7 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     getItemPrice(item) {
-      return DSA5_Utility.itemPrice(item) * MerchantStockService.dayPriceFactor(item);
+      return MerchantStallHelper.roundMoney(DSA5_Utility.itemPrice(item) * MerchantStockService.dayPriceFactor(item));
     }
 
     prepareTradeFriend(data) {
@@ -1268,7 +1266,7 @@ export const MerchantSheetMixin = (superclass) =>
     prepareSellPrices(inventory, factor) {
       for (const value of Object.values(inventory)) {
         for (const item of value.items) {
-          item.calculatedPrice = Number(parseFloat(`${this.getItemPrice(item) * factor}`).toFixed(2));
+          item.calculatedPrice = MerchantStallHelper.roundMoney(this.getItemPrice(item) * factor);
         }
       }
       return inventory;
