@@ -3,6 +3,12 @@ export default class EnhancementHelper {
   static ANCHORED_SPELL_REDUCTION_KEY = 'system.powersource.anchoredSpellReduction';
   static BREAK_POINT_RATING_KEY = 'system.structure.breakPointRating';
 
+  /**
+   * Slot types that may substitute for each other when the preferred type is full.
+   * Power sources stay exclusive because they carry artifact charge data.
+   */
+  static FALLBACK_SLOT_TYPES = ['material', 'creationTechnique', 'improvement', 'attachment'];
+
   static ARTIFACT_KEYS = new Set([
     'system.powersource.anchoredSpellReduction',
   ]);
@@ -62,6 +68,24 @@ export default class EnhancementHelper {
     const maxSlots = this.getSlotLimits(item)[enhancementType] ?? 0;
     if (maxSlots <= 0) return false;
     return this.getUsedSlots(item, enhancementType, { exclude }) + (Number(slotCost) || 1) <= maxSlots;
+  }
+
+  /**
+   * Preferred type if it still has room, otherwise the next supported fallback type.
+   * @returns {string|null}
+   */
+  static resolveAvailableSlot(item, { enhancementType, slotCost = 1, exclude } = {}) {
+    const occupancy = { enhancementType, slotCost, exclude };
+    if (this.hasAvailableSlot(item, occupancy)) return enhancementType;
+    if (!this.FALLBACK_SLOT_TYPES.includes(enhancementType)) return null;
+
+    const limits = this.getSlotLimits(item);
+    for (const candidate of this.FALLBACK_SLOT_TYPES) {
+      if (candidate === enhancementType) continue;
+      if ((limits[candidate] ?? 0) <= 0) continue;
+      if (this.hasAvailableSlot(item, { enhancementType: candidate, slotCost, exclude })) return candidate;
+    }
+    return null;
   }
 
   static formatActorChangeValue(change, item) {

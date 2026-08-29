@@ -185,10 +185,26 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       return false;
     }
 
-    if (!this.#assertSlotAvailable(item, {
-      enhancementType: this.enhancementType,
+    const requestedType = this.enhancementType;
+    const assignedType = EnhancementHelper.resolveAvailableSlot(item, {
+      enhancementType: requestedType,
       slotCost: this.slotCost,
-    })) return false;
+    });
+    if (!assignedType) {
+      ui.notifications.warn('Enhancement.slotsFull', { localize: true });
+      return false;
+    }
+    if (assignedType !== requestedType) {
+      this.updateSource({ enhancementType: assignedType });
+      effect.updateSource({ 'system.enhancementType': assignedType });
+      ui.notifications.info('Enhancement.slotFallback', {
+        localize: true,
+        format: {
+          from: game.i18n.localize(`Enhancement.types.${requestedType}`),
+          to: game.i18n.localize(`Enhancement.types.${assignedType}`),
+        },
+      });
+    }
 
     if (this.enhancementType === 'powersource' && !this.powersource) {
       this.powersource = { value: 0, max: 0 };
