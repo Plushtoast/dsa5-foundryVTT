@@ -274,7 +274,7 @@ globalThis.dsa5 = {
 DSA5.merchantStockPresets = MerchantConfig.STOCK_FILL_PRESETS;
 
 Hooks.once('init', () => {
-  globalThis.dsa5 = game.dsa5 = Object.assign(game.system, globalThis.dsa5);
+  game.dsa5 = globalThis.dsa5;
   CONFIG.statusEffects = DSA5.statusEffects;
 
   CONFIG.Actor.documentClass = Actordsa5;
