@@ -696,7 +696,8 @@
     "rerollDamage": "Schadenswurf wiederholen (1 Schip)",
     "rerollDamageGroup": "Schadenswurf wiederholen (1 Gruppenschip)",
     "showData": "Details für Spieler aufdecken",
-    "talentedReroll": "Begabung verwenden"
+    "talentedReroll": "Begabung verwenden",
+    "UseSchip": "Schip verwenden"
   },
   "CHATFATE": {
     "GroupPointsRemaining": "Verbleibende Gruppenschicksalspunkte",
@@ -710,7 +711,16 @@
     "reroll": "{character} würfelt erneut.",
     "rerollDamage": "{character} würfelt erneut.",
     "selectDice": "Wurf wiederholen",
-    "selectDieToReroll": "Wähle die zu wiederholenden Würfel"
+    "selectDieToReroll": "Wähle die zu wiederholenden Würfel",
+    "SelectSchipType": "Wähle den zu nutzenden Typ von Schip aus.",
+    "tabReroll": "Wurf wiederholen",
+    "tabRerollDamage": "Schaden wiederholen",
+    "tabImprove": "Ergebnis verbessern",
+    "tabAddQS": "Qualitätsstufe erhöhen",
+    "ImproveDesc": "Um das Würfelergebnis einer Probe um bis zu 2 zu verbessern, kann 1 Schip nach dem Wurf eingesetzt werden.",
+    "ImproveSubtitle": "Wähle den zu verbessernden Würfel",
+    "AddQSDesc": "Nutze einen Schicksalspunkt, um der Qualitätsstufe einer erfolgreichen Probe +1 (QS) hinzuzufügen.",
+    "apply": "Anwenden"
   },
   "CHATNOTIFICATION": {
     "BlindRoll": "Blinder Wurf",
@@ -1433,6 +1443,10 @@
     "noProperActor": "Dir wurde noch kein Charakter zugewiesen oder du hast keinen Token markiert.",
     "noSpellForExtension": "{category} {name} für Zauber-/Liturgieerweiterung {extension} nicht vorhanden.",
     "noTokenSelected": "Kein Token markiert",
+    "noDieSelected": "Wähle mindestens einen Würfel!",
+    "noPersonalSchips": "Keine persönlichen Schicksalspunkte übrig!",
+    "noGroupSchips": "Keine Gruppenschips übrig!",
+    "maxOneDie": "Du darfst für den normalen Schicksalspunkt maximal 1 Würfel auswählen.",
     "noVictim": "Kein Opfer anvisiert, Selbsttreffer wird ausgewertet.",
     "notFound": "{category} {name} nicht gefunden",
     "notInRangeToLoot": "Zu weit entfernt für eine Interaktion.",
@@ -4359,6 +4373,7 @@
     "initDieMod": "Fester Bonus oder Malus auf den Initiativewurf.",
     "sizeCategory": "Größe des Wesens für Reichweite, Trefferzonen und ähnliche Regeln.",
     "fatePoints": "Punkte zum Beeinflussen von Proben und Kampf (z. B. Neuwurf oder Erster handeln).",
+    "groupFatePoints": "Gemeinsamer Schip-Vorrat: üblicherweise 1 Schip pro Held vom eigenen Höchstwert.<br>Einsatz wie normale Schips, die übrigen Einzahler sollten zustimmen. Regenerieren nur am Ende eines Abenteuers vollständig.",
     "coldProtection": "Schutz gegen Kälte und Kälteschaden.",
     "heatProtection": "Schutz gegen Hitze und Hitzeschaden.",
     "attack": "AT: KTW + je 3 volle Punkte MU über 8<br>FK: KTW + je 3 volle Punkte FF über 8",

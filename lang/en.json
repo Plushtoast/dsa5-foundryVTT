@@ -696,7 +696,8 @@
     "rerollDamage": "Repeat damage roll (1 FtP)",
     "rerollDamageGroup": "Repeat damage roll (1 Group FtP)",
     "showData": "Show details to players",
-    "talentedReroll": "Use Aptitude "
+    "talentedReroll": "Use Aptitude ",
+    "UseSchip": "Use fate point"
   },
   "CHATFATE": {
     "GroupPointsRemaining": "Remaining group points",
@@ -710,7 +711,16 @@
     "reroll": "{character} rolls again.",
     "rerollDamage": "{character} rolls again.",
     "selectDice": "Repeat roll",
-    "selectDieToReroll": "Chose the dice to be rolled again"
+    "selectDieToReroll": "Chose the dice to be rolled again",
+    "SelectSchipType": "Choose which fate-point pool to use.",
+    "tabReroll": "Reroll",
+    "tabRerollDamage": "Reroll damage",
+    "tabImprove": "Improve result",
+    "tabAddQS": "Increase quality level",
+    "ImproveDesc": "Spend 1 fate point after a check to improve a die result by up to 2.",
+    "ImproveSubtitle": "Choose the die to improve",
+    "AddQSDesc": "Spend a fate point to add +1 QL to a successful check.",
+    "apply": "Apply"
   },
   "CHATNOTIFICATION": {
     "BlindRoll": "Blind roll.",
@@ -1431,6 +1441,10 @@
     "noProperActor": "No actor has been assigned to you or you did not select a token.",
     "noSpellForExtension": "{category} {name} for spell extension {extension} not found.",
     "noTokenSelected": "No token selected",
+    "noDieSelected": "Select at least one die!",
+    "noPersonalSchips": "No personal fate points remaining!",
+    "noGroupSchips": "No group fate points remaining!",
+    "maxOneDie": "A regular fate point may reroll at most 1 die.",
     "noVictim": "No targets marked. Effect is transferred to self.",
     "notFound": "{category} {name} not found",
     "notInRangeToLoot": "Too far away for an interaction.",
@@ -4350,6 +4364,7 @@
     "initDieMod": "Fixed bonus or penalty to the initiative roll.",
     "sizeCategory": "Creature size for reach, hit zones, and similar rules.",
     "fatePoints": "Points used to influence checks and combat (e.g. reroll or act first).",
+    "groupFatePoints": "Shared fate-point pool: typically 1 FtP per hero from personal maximum.<br>Used like regular FtP; other contributors should agree. Fully regenerate only at the end of an adventure.",
     "coldProtection": "Protection against cold and cold damage.",
     "heatProtection": "Protection against heat and heat damage.",
     "attack": "AT: CTR + 1 per 3 full points of COU above 8<br>RC: CTR + 1 per 3 full points of DEX above 8",

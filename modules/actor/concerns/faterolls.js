@@ -434,8 +434,13 @@ export class FateRolls {
         return Math.clamp(Number(value) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
     }
 
-    static async processSelectedReroll(diceIndices, testData, { rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null } = {}) {
-        return this.#processReroll(diceIndices, testData, rollContext, useMinimum, actor, isPhex, cheatResults);
+    static async processSelectedReroll(diceIndices, testData, { rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null, cheat = false } = {}) {
+        return this.#processReroll(diceIndices, testData, rollContext, useMinimum, actor, isPhex, cheatResults, cheat);
+    }
+
+    static buildUsageMessage(actor, type, schipsource) {
+        const { fateAvailable, schipText } = this.#getFatePointInfo(actor, schipsource);
+        return this.#buildFateInfoMessage(actor, type, fateAvailable, schipText, schipsource);
     }
 
     /**
@@ -491,9 +496,10 @@ export class FateRolls {
      * @param {Object} actor - The actor (for Phex tradition check)
      * @param {boolean} isPhex - Whether actor has Phex tradition
      * @param {number[]|null} cheatResults - Optional forced die results (same order as diceIndices)
+     * @param {boolean} cheat - Open the GM cheat dialog when no cheatResults are provided
      * @returns {Object} Object containing newRoll, changedRolls html, changedRollsText, and changes array
      */
-    static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null) {
+    static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null, cheat = false) {
         const rollFormulas = diceIndices.map(index => {
             const term = testData.roll.terms[index * 2];
             return `${term.number}d${term.faces}[${term.options.colorset}]`;
@@ -506,7 +512,8 @@ export class FateRolls {
             });
             if (typeof newRoll._evaluateTotal === 'function') newRoll._total = newRoll._evaluateTotal();
         }
-        newRoll = await DiceDSA5.manualRolls(newRoll, rollContext, cheatResults?.length ? { cheat: false } : {});
+        const rollOptions = cheatResults?.length ? { cheat: false } : (cheat ? { cheat: true } : {});
+        newRoll = await DiceDSA5.manualRolls(newRoll, rollContext, rollOptions);
         await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'rollMode'));
         const changedRolls = [];
         const changedRollsText = [];

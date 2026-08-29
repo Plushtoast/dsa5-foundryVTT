@@ -1,0 +1,56 @@
+.dsa5 .unified-fate-dialog {
+    .dsa-fate-header {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    .dsa-fate-title {
+        margin-bottom: 12px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .dsa-fate-pools {
+        justify-content: center;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .dsa-fate-pool {
+        padding: 5px 15px;
+        flex: 1;
+        align-items: center;
+        transition: background-color 0.2s;
+        background-color: transparent;
+    }
+
+    .dsa-fate-pool-border {
+        border-right: 1px solid var(--color-border-dark);
+    }
+
+    .dsa-fate-pool-active {
+        background-color: var(--oddColor);
+        border-radius: 8px;
+    }
+
+    .dsa-fate-pool-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        margin-bottom: 5px;
+        border: 1px solid var(--color-border-dark);
+        cursor: pointer;
+    }
+
+    .dsa-fate-schip-row,
+    .dsa-fate-dice {
+        justify-content: center;
+    }
+
+    .dsa-fate-pool-hint {
+        font-size: 0.95em;
+        margin-top: 12px;
+        font-style: italic;
+        color: var(--color-text-dark-secondary);
+    }
+}

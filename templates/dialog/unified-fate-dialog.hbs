@@ -1,0 +1,106 @@
+<div class="unified-fate-dialog scrollable flexcol gap10px">
+    <div class="fate-header flexcol center dsa-fate-header">
+        {{#if hasMultiplePools}}
+        <p class="center dsa-fate-title">{{localize "CHATFATE.SelectSchipType"}}</p>
+        {{/if}}
+
+        <div class="flexrow dsa-fate-pools">
+            {{#if hasPersonal}}
+            <div class="schip-pool-selector flexcol center dsa-fate-pool {{#if hasGroup}}dsa-fate-pool-border{{/if}} {{#if isPersonalPool}}dsa-fate-pool-active{{/if}}" data-pool="personal">
+                <img src="{{actorImg}}" class="pool-icon dsa-fate-pool-img" data-pool="personal" data-tooltip="{{localize 'FORMULA.fatePoints'}}">
+                <div class="row-schips flexrow flexAlignCenter stackedSchips dsa-fate-schip-row">
+                    {{#each personalSchips}}
+                        <button type="button" class="noBorder dsadesignbutton schip {{this.cssClass}} schip-btn" data-pool="personal" data-val="{{this.val}}" data-tooltip="{{this.tooltip}}"></button>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            {{#if hasGroup}}
+            <div class="schip-pool-selector flexcol center dsa-fate-pool {{#if isGroupPool}}dsa-fate-pool-active{{/if}}" data-pool="group">
+                <img src="{{groupImg}}" class="pool-icon dsa-fate-pool-img" data-pool="group" data-tooltip="{{localize 'FORMULA.groupFatePoints'}}">
+                <div class="row-schips flexrow flexAlignCenter stackedSchips dsa-fate-schip-row">
+                    {{#each groupSchips}}
+                        <button type="button" class="noBorder dsadesignbutton schip {{this.cssClass}} schip-btn" data-pool="group" data-val="{{this.val}}" data-tooltip="{{this.tooltip}}"></button>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+        </div>
+
+        {{#if poolHint}}
+            <p class="center dsa-fate-pool-hint">{{{poolHint}}}</p>
+        {{/if}}
+    </div>
+
+    {{> systems/dsa5/templates/system/dsatabs.hbs tabs=tabs}}
+
+    <section class="content">
+        {{#if tabs.reroll}}
+        <section class="tab {{tabs.reroll.cssClass}}" data-tab="reroll" data-group="sheet">
+            <div class="dialog-content standard-form">
+                <h4 class="center">{{localize "CHATFATE.selectDieToReroll"}}</h4>
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                    {{#each dice}}
+                        <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleDie" data-index="{{this.index}}">
+                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>
+                        </a>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if tabs.rerollDamage}}
+        <section class="tab {{tabs.rerollDamage.cssClass}}" data-tab="rerollDamage" data-group="sheet">
+            <div class="dialog-content standard-form">
+                <h4 class="center">{{localize "CHATFATE.tabRerollDamage"}}</h4>
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                    {{#each damageDice}}
+                        <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleDamageDie" data-index="{{this.index}}">
+                            <span data-tooltip="{{this.tooltip}}" class="display-toggle fail die-damage d{{this.faces}}">{{this.currentValue}}</span>
+                        </a>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if tabs.improve}}
+        <section class="tab {{tabs.improve.cssClass}}" data-tab="improve" data-group="sheet">
+            <div class="dialog-content standard-form">
+                <h4 class="center">{{localize "CHATFATE.ImproveSubtitle"}}</h4>
+                <div class="description flexcol gap5px center dsa-info-box">
+                    <p>{{localize "CHATFATE.ImproveDesc"}}</p>
+                </div>
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                    {{#each dice}}
+                        <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleImprove" data-index="{{this.index}}">
+                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>
+                        </a>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if tabs.addQS}}
+        <section class="tab {{tabs.addQS.cssClass}}" data-tab="addQS" data-group="sheet">
+            <div class="dialog-content standard-form">
+                <h4 class="center">{{localize "CHATFATE.tabAddQS"}}</h4>
+                <div class="description flexcol gap5px center dsa-info-box">
+                    <p>{{addQSDesc}}</p>
+                </div>
+            </div>
+        </section>
+        {{/if}}
+    </section>
+
+    <footer class="row-section gap5px margin-top">
+        <button type="button" data-action="confirm" class="col dsa5 button">{{localize "CHATFATE.apply"}}</button>
+        <button type="button" data-action="close" class="col dsa5 button">{{localize "cancel"}}</button>
+        {{#if isGM}}
+        <button type="button" data-action="cheat" class="col dsa5 button">{{localize "DIALOG.cheat"}}</button>
+        {{/if}}
+    </footer>
+</div>

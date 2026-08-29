@@ -5,6 +5,7 @@ import MaintainedEffects from '../system/maintenance/maintained-effects.js';
 import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
 import RegenerationHelper from '../system/rolls/regeneration-helper.js';
+import UnifiedFateDSA5 from '../dialog/unified-fate-app.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -224,6 +225,24 @@ class ConditionChecker {
       rollType !== 'regenerate';
   }
 
+  static canUseSchip(li) {
+    const message = getMessageFromLi(li);
+    const actor = getActorFromMessage(message);
+    if (!actor || !hasOwnership(actor) || !message.flags.data) return false;
+
+    const personal = ConditionChecker.canReroll(li)
+      || ConditionChecker.canRerollDamage(li)
+      || ConditionChecker.canIncreaseQS(li)
+      || ConditionChecker.canImproveRoll(li);
+    if (personal) return true;
+
+    if (!UnifiedFateDSA5.isPartyMember(actor)) return false;
+    return ConditionChecker.canReroll(li, true)
+      || ConditionChecker.canRerollDamage(li, true)
+      || ConditionChecker.canIncreaseQS(li, true)
+      || ConditionChecker.canImproveRoll(li, true);
+  }
+
   static canHeal(li) {
     const message = getMessageFromLi(li);
     return RegenerationHelper.canApplyMessage(message);
@@ -417,58 +436,16 @@ const createContextOptions = () => {
 
   const fateOptions = [
     {
-      label: 'CHATCONTEXT.Reroll',
-      icon: '<i class="fas fa-dice"></i>',
-      visible: ConditionChecker.canReroll,
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'reroll')),
-    },
-    {
-      label: 'CHATCONTEXT.RerollGroup',
-      icon: '<i class="fas fa-dice"></i>',
-      visible: (li) => ConditionChecker.canReroll(li, true),
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'reroll', 1)),
+      label: 'CHATCONTEXT.UseSchip',
+      icon: '<i class="fas fa-coins fa-fw"></i>',
+      visible: ConditionChecker.canUseSchip,
+      onClick: chatMessageAction((li) => UnifiedFateDSA5.openFromLi(li)),
     },
     {
       label: 'CHATCONTEXT.talentedReroll',
       icon: '<i class="fas fa-dice"></i>',
       visible: ConditionChecker.isTalented,
       onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'isTalented')),
-    },
-    {
-      label: 'CHATCONTEXT.AddQS',
-      icon: '<i class="fas fa-plus-square"></i>',
-      visible: ConditionChecker.canIncreaseQS,
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'addQS')),
-    },
-    {
-      label: 'CHATCONTEXT.AddQSGroup',
-      icon: '<i class="fas fa-plus-square"></i>',
-      visible: (li) => ConditionChecker.canIncreaseQS(li, true),
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'addQS', 1)),
-    },
-    {
-      label: 'CHATCONTEXT.rerollDamage',
-      icon: '<i class="fas fa-dice"></i>',
-      visible: ConditionChecker.canRerollDamage,
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'rerollDamage')),
-    },
-    {
-      label: 'CHATCONTEXT.rerollDamageGroup',
-      icon: '<i class="fas fa-dice"></i>',
-      visible: (li) => ConditionChecker.canRerollDamage(li, true),
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'rerollDamage', 1)),
-    },
-    {
-      label: 'CHATCONTEXT.improveFate',
-      icon: '<i class="fas fa-plus-square"></i>',
-      visible: ConditionChecker.canImproveRoll,
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'Improve')),
-    },
-    {
-      label: 'CHATCONTEXT.improveFateGroup',
-      icon: '<i class="fas fa-plus-square"></i>',
-      visible: (li) => ConditionChecker.canImproveRoll(li, true),
-      onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'Improve', 1)),
     },
   ];
   Hooks.call('dsa5.fateContextOptions', fateOptions);

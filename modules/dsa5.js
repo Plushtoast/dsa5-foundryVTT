@@ -73,6 +73,7 @@ import CareerWizard from './wizards/career_wizard.js';
 import SpeciesWizard from './wizards/species_wizard.js';
 import CultureWizard from './wizards/culture_wizard.js';
 import DialogReactDSA5, { ReactToSkillDialog, ActAttackDialog, ReactToAttackDialog } from './dialog/dialog-react.js';
+import UnifiedFateDSA5 from './dialog/unified-fate-app.js';
 import { Trade } from './actor/trade.js';
 import DSAActiveEffectConfig from './status/active_effect_config.js';
 import DSAEnhancementEffectConfig from './status/enhancement_effect_config.js';
@@ -152,6 +153,7 @@ globalThis.dsa5 = {
       DidYouKnow,
       GroupAPI,
       ActorPickerDialog,
+      UnifiedFateDSA5,
       DSARegionTemplate,
       Riding,
       CompanionHandler,
@@ -234,6 +236,7 @@ globalThis.dsa5 = {
       ReactToAttackDialog,
       RandomGoodsAddition,
       StockFillDialog,
+      UnifiedFateDSA5,
     },
     api: {
       RollDialogBurgerMenuRule,
