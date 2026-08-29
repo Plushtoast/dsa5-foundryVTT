@@ -38,6 +38,7 @@ import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import AmmoPicker from '../system/helpers/ammo-picker.js';
+import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
@@ -815,6 +816,29 @@ export default class Actordsa5 extends Actor {
     return schips;
   }
 
+  extraSchipshtml() {
+    const extraSchips = [];
+    Hooks.call('dsa5.prepareActorSchips', this, extraSchips);
+    return extraSchips;
+  }
+
+  schipsWithExtras() {
+    return this.schipshtml().concat(
+      this.extraSchipshtml().map((schip) => ({
+        ...schip,
+        value: schip.val ?? schip.value,
+      })),
+    );
+  }
+
+  async setSchipFromPip(path, clickedVal) {
+    if (!path) return;
+    let val = Number(clickedVal);
+    const current = Number(foundry.utils.getProperty(this, path)) || 0;
+    if (val === 1 && current === 1) val = 0;
+    return this.update({ [path]: val });
+  }
+
   prepareItems(sheetInfo) {
     const combatskills = [];
     const advantages = [];
@@ -857,8 +881,7 @@ export default class Actordsa5 extends Actor {
 
     const groupschips = this.hasPlayerOwner ? RuleChaos.getGroupSchips() : [];
     const schips = this.schipshtml();
-    const extraSchips = [];
-    Hooks.call('dsa5.prepareActorSchips', this, extraSchips);
+    const extraSchips = this.extraSchipshtml();
 
     const inventory = this.#initInventoryBuckets();
 
@@ -1509,23 +1532,8 @@ export default class Actordsa5 extends Actor {
     }
   }
 
-  async applyRegeneration(LeP, AsP, KaP) {
-    const LePRolled = await new Roll(`${LeP || 0}`).evaluate();
-    const KaPRolled = await new Roll(`${KaP || 0}`).evaluate();
-    const AsPRolled = await new Roll(`${AsP || 0}`).evaluate();
-    const hookOptions = {
-      heal: true,
-      lepAmount: LePRolled.total,
-      updateData: {
-        'system.status.wounds.value': Math.min(this.system.status.wounds.max, this.system.status.wounds.value + LePRolled.total),
-        'system.status.karmaenergy.value': Math.min(this.system.status.karmaenergy.max, this.system.status.karmaenergy.value + KaPRolled.total),
-        'system.status.astralenergy.value': Math.min(this.system.status.astralenergy.max, this.system.status.astralenergy.value + AsPRolled.total),
-        'system.status.temporaryLeP.value': 0,
-        'system.status.temporaryLeP.max': 0,
-      },
-    };
-    await DSA5_Utility.callAsyncHooks('preApplyDamage', [this, hookOptions]);
-    await this.update(hookOptions.updateData);
+  async applyRegeneration(LeP, AsP, KaP, options = {}) {
+    return RegenerationHelper.applyToActor(this, { LeP, AsP, KaP }, options);
   }
 
   getTotalAvailableAsP() {

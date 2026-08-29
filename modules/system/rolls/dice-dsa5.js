@@ -9,6 +9,7 @@ import TraitRulesDSA5 from '../rules/trait-rules-dsa5.js';
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import OpposedDsa5 from './opposed-dsa5.js';
+import RegenerationHelper from './regeneration-helper.js';
 import DSAActiveEffectConfig from '../../status/active_effect_config.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import EquipmentDamage from '../automation/equipment-damage.js';
@@ -28,6 +29,7 @@ import MeleeweaponData from '../../data/item/meleeweapon.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { ManualRollDialog } from './manual-roll-dialog.js';
+import ItemDisease from '../../item/item-disease.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -896,15 +898,34 @@ export default class DiceDSA5 {
           continue;
         }
 
-        const modifiedValue = (dieResult + Number(modifier) + (await this._situationalModifiers(testData, k))) * Number(testData.regenerationFactor);
-        result[k] = Math.round(Math.max(0, modifiedValue));
+        const regenerationFactor = Number(testData.regenerationFactor ?? 1);
+        const modifiedValue = (dieResult + Number(modifier) + (await this._situationalModifiers(testData, k))) * regenerationFactor;
+        result[k] = Math.round(modifiedValue);
 
         index += 2;
       }
     }
 
     result.characteristics = chars;
+    await this.#confirmNegativeRegeneration(testData, result);
     return result;
+  }
+
+  static async #confirmNegativeRegeneration(testData, result) {
+    if (testData.extra?.options?.bypass || !RegenerationHelper.hasNegative(result)) return;
+
+    const actor = this.#actorFromTestData(testData);
+    const source = RegenerationHelper.normalizeAmounts(result);
+    const resolved = RegenerationHelper.resolveOverflow(actor, source);
+    const confirmed = await RegenerationHelper.confirmNegative(actor, source, resolved);
+    if (confirmed) {
+      result.negativeRegenerationConfirmed = true;
+      return;
+    }
+
+    for (const stat of RegenerationHelper.STAT_TYPES) {
+      if (result[stat] < 0) result[stat] = 0;
+    }
   }
 
   static async rollStatus(testData) {
@@ -1700,6 +1721,8 @@ export default class DiceDSA5 {
         data-type="poison"><i class="fas fa-dice"></i>${_loc('TYPES.Item.poison')}: ${poison.name}</a>`,
       );
     }
+    const diseaseButton = ItemDisease.chatButton(ItemDisease.get(source));
+    if (diseaseButton) result.push(diseaseButton);
     return result.join(', ');
   }
 
@@ -2266,6 +2289,11 @@ export default class DiceDSA5 {
       name = ev.currentTarget.dataset.name;
 
     const actor = DSA5_Utility.getSpeaker(speaker);
+
+    if (category === 'disease' && ev.currentTarget.dataset.threshold != null) {
+      await ItemDisease.handleChatRoll({ actor, speaker, dataset: ev.currentTarget.dataset });
+      return;
+    }
 
     if (actor) {
       const source = actor.items.find((x) => x.name == name && x.type == category);

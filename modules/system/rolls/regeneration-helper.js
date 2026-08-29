@@ -5,6 +5,88 @@ export default class RegenerationHelper {
   static STAT_TYPES = ['LeP', 'AsP', 'KaP'];
   static ROLL_REQUEST_FLAG = 'rollRequest';
   static ROLL_REQUEST_QUERY_TYPE = 'dsa5.rollRequest';
+  static #POOL_BY_STAT = {
+    LeP: 'wounds',
+    AsP: 'astralenergy',
+    KaP: 'karmaenergy',
+  };
+
+  static normalizeAmounts({ LeP, AsP, KaP } = {}) {
+    return {
+      LeP: Number(LeP) || 0,
+      AsP: Number(AsP) || 0,
+      KaP: Number(KaP) || 0,
+    };
+  }
+
+  static hasNegative(amounts) {
+    const source = this.normalizeAmounts(amounts);
+    return this.STAT_TYPES.some((stat) => source[stat] < 0);
+  }
+
+  static currentPoolValue(actor, stat) {
+    const pool = this.#POOL_BY_STAT[stat];
+    return Math.max(0, Number(actor?.system?.status?.[pool]?.value) || 0);
+  }
+
+  static resolveOverflow(actor, amounts) {
+    const result = this.normalizeAmounts(amounts);
+    for (const stat of ['AsP', 'KaP']) {
+      if (result[stat] >= 0) continue;
+      const applied = Math.max(result[stat], -this.currentPoolValue(actor, stat));
+      result.LeP += result[stat] - applied;
+      result[stat] = applied;
+    }
+    return result;
+  }
+
+  static async confirmNegative(actor, source, resolved) {
+    const overflowed = this.STAT_TYPES.some((stat) => source[stat] !== resolved[stat]);
+    const rows = this.STAT_TYPES
+      .filter((stat) => source[stat] !== 0 || resolved[stat] !== 0)
+      .map((stat) => {
+        const label = _loc(`CHARAbbrev.${stat}`);
+        if (source[stat] === resolved[stat]) return `<li>${label}: ${source[stat]}</li>`;
+        return `<li>${label}: ${source[stat]} → ${resolved[stat]}</li>`;
+      })
+      .join('');
+
+    return foundry.applications.api.DialogV2.confirm({
+      id: actor?.id ? `dsa-negative-regeneration-${actor.id}` : 'dsa-negative-regeneration',
+      window: { title: 'DIALOG.negativeRegeneration' },
+      content: `<p>${_loc('DIALOG.negativeRegenerationHint')}</p>${overflowed ? `<p>${_loc('DIALOG.negativeRegenerationOverflow')}</p>` : ''}<ul>${rows}</ul>`,
+      rejectClose: false,
+    });
+  }
+
+  static async applyToActor(actor, amounts, { skipConfirm = false } = {}) {
+    if (!actor) return false;
+
+    const source = this.normalizeAmounts(amounts);
+    const resolved = this.resolveOverflow(actor, source);
+    if (!skipConfirm && this.hasNegative(source) && !amounts.negativeRegenerationConfirmed) {
+      const confirmed = await this.confirmNegative(actor, source, resolved);
+      if (!confirmed) return false;
+    }
+
+    const wounds = actor.system.status.wounds;
+    const karma = actor.system.status.karmaenergy;
+    const astral = actor.system.status.astralenergy;
+    const hookOptions = {
+      heal: true,
+      lepAmount: resolved.LeP,
+      updateData: {
+        'system.status.wounds.value': Math.clamp((Number(wounds.value) || 0) + resolved.LeP, 0, wounds.max),
+        'system.status.karmaenergy.value': Math.clamp((Number(karma.value) || 0) + resolved.KaP, 0, karma.max),
+        'system.status.astralenergy.value': Math.clamp((Number(astral.value) || 0) + resolved.AsP, 0, astral.max),
+        'system.status.temporaryLeP.value': 0,
+        'system.status.temporaryLeP.max': 0,
+      },
+    };
+    await DSA5_Utility.callAsyncHooks('preApplyDamage', [actor, hookOptions]);
+    await actor.update(hookOptions.updateData);
+    return true;
+  }
 
   static formatResultRows(data) {
     return this.STAT_TYPES
@@ -86,8 +168,10 @@ export default class RegenerationHelper {
     const postData = this.getPostData(message);
     if (!this.hasRegenStats(postData)) return false;
 
+    const applied = await this.applyToActor(actor, postData);
+    if (!applied) return false;
+
     await this.markApplied(message);
-    await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
     return true;
   }
 
@@ -127,8 +211,7 @@ export default class RegenerationHelper {
 
     const actor = game.actors.get(entry.actorId);
     const postData = entry.resultDetails;
-    await actor.applyRegeneration(postData.LeP, postData.AsP, postData.KaP);
-    return true;
+    return this.applyToActor(actor, postData);
   }
 
   static canApplyAllFromRollRequest(message) {

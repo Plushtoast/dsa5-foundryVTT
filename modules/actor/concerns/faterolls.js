@@ -573,10 +573,37 @@ export class FateRolls {
         for (let i = 0; i < schipList.length; i++) {
             schipList[i].cssClass = i + 1 <= safeRemaining ? 'fullSchip' : 'emptySchip';
         }
-        const icons = schipList
-            .map((x) => `<span class="schip tiny ${x.cssClass}"></span>`)
+        return this.renderSchipIcons(schipList, { tooltip: tooltipText });
+    }
+
+    /**
+     * Renders the remaining-schip icon row used on fate chat cards.
+     * @param {Array<{ cssClass?: string, style?: string }>} schipList
+     * @param {{ remaining?: number, tooltip?: string }} [options]
+     * @returns {string}
+     */
+    static renderSchipIcons(schipList, { remaining = null, tooltip = '' } = {}) {
+        const list = Array.isArray(schipList) ? schipList.map((x) => ({ ...x })) : [];
+        if (remaining !== null) {
+            const safeRemaining = Math.max(0, Number(remaining) || 0);
+            for (let i = 0; i < list.length; i++) {
+                const extra = String(list[i].cssClass || '').replace(/\b(fullSchip|emptySchip)\b/g, '').trim();
+                const fill = i + 1 <= safeRemaining ? 'fullSchip' : 'emptySchip';
+                list[i].cssClass = extra ? `${fill} ${extra}` : fill;
+            }
+        }
+        if (!list.length) {
+            if (remaining === null) return '';
+            return `<b>${foundry.utils.escapeHTML(tooltip)}</b>: ${Math.max(0, Number(remaining) || 0)}`;
+        }
+        const icons = list
+            .map((x) => {
+                const style = x.style ? ` style="${foundry.utils.escapeHTML(x.style)}"` : '';
+                return `<span class="schip tiny ${x.cssClass || ''}"${style}></span>`;
+            })
             .join('');
-        return `<div class="row-schips flexrow flex0 flexAlignCenter stackedSchips dsaflex-no-wrap" data-tooltip="${foundry.utils.escapeHTML(tooltipText)}">${icons}</div>`;
+        const tip = tooltip ? ` data-tooltip="${foundry.utils.escapeHTML(tooltip)}"` : '';
+        return `<div class="row-schips flexrow flex0 flexAlignCenter stackedSchips dsaflex-no-wrap"${tip}>${icons}</div>`;
     }
     /**
      * Builds formatted info message for fate point usage

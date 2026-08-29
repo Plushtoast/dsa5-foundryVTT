@@ -1,14 +1,14 @@
 <div class="unified-fate-dialog scrollable flexcol gap10px">
-    <div class="fate-header flexcol center dsa-fate-header">
+    <div class="fate-header flexcol center dsa-fate-header dsamb-4">
         {{#if hasMultiplePools}}
-        <p class="center dsa-fate-title">{{localize "CHATFATE.SelectSchipType"}}</p>
+        <p class="center dsa-fate-title dsamb-3">{{localize "CHATFATE.SelectSchipType"}}</p>
         {{/if}}
 
         <div class="flexrow dsa-fate-pools">
             {{#if hasPersonal}}
             <div class="schip-pool-selector flexcol center dsa-fate-pool {{#if hasGroup}}dsa-fate-pool-border{{/if}} {{#if isPersonalPool}}dsa-fate-pool-active{{/if}}" data-pool="personal">
                 <img src="{{actorImg}}" class="pool-icon dsa-fate-pool-img" data-pool="personal" data-tooltip="{{localize 'FORMULA.fatePoints'}}">
-                <div class="row-schips flexrow flexAlignCenter stackedSchips dsa-fate-schip-row">
+                <div class="row-schips flexrow flexAlignCenter stackedSchips">
                     {{#each personalSchips}}
                         <button type="button" class="noBorder dsadesignbutton schip {{this.cssClass}} schip-btn" data-pool="personal" data-val="{{this.val}}" data-tooltip="{{this.tooltip}}"></button>
                     {{/each}}
@@ -19,7 +19,7 @@
             {{#if hasGroup}}
             <div class="schip-pool-selector flexcol center dsa-fate-pool {{#if isGroupPool}}dsa-fate-pool-active{{/if}}" data-pool="group">
                 <img src="{{groupImg}}" class="pool-icon dsa-fate-pool-img" data-pool="group" data-tooltip="{{localize 'FORMULA.groupFatePoints'}}">
-                <div class="row-schips flexrow flexAlignCenter stackedSchips dsa-fate-schip-row">
+                <div class="row-schips flexrow flexAlignCenter stackedSchips">
                     {{#each groupSchips}}
                         <button type="button" class="noBorder dsadesignbutton schip {{this.cssClass}} schip-btn" data-pool="group" data-val="{{this.val}}" data-tooltip="{{this.tooltip}}"></button>
                     {{/each}}
@@ -29,7 +29,7 @@
         </div>
 
         {{#if poolHint}}
-            <p class="center dsa-fate-pool-hint">{{{poolHint}}}</p>
+            <p class="center dsa-fate-pool-hint dsamt-3">{{{poolHint}}}</p>
         {{/if}}
     </div>
 
@@ -40,7 +40,7 @@
         <section class="tab {{tabs.reroll.cssClass}}" data-tab="reroll" data-group="sheet">
             <div class="dialog-content standard-form">
                 <h4 class="center">{{localize "CHATFATE.selectDieToReroll"}}</h4>
-                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
                     {{#each dice}}
                         <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleDie" data-index="{{this.index}}">
                             <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>
@@ -55,7 +55,7 @@
         <section class="tab {{tabs.rerollDamage.cssClass}}" data-tab="rerollDamage" data-group="sheet">
             <div class="dialog-content standard-form">
                 <h4 class="center">{{localize "CHATFATE.tabRerollDamage"}}</h4>
-                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
                     {{#each damageDice}}
                         <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleDamageDie" data-index="{{this.index}}">
                             <span data-tooltip="{{this.tooltip}}" class="display-toggle fail die-damage d{{this.faces}}">{{this.currentValue}}</span>
@@ -73,7 +73,7 @@
                 <div class="description flexcol gap5px center dsa-info-box">
                     <p>{{localize "CHATFATE.ImproveDesc"}}</p>
                 </div>
-                <div class="card-content hide-option roll-result center flexrow flexAlignCenter dsa-fate-dice">
+                <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
                     {{#each dice}}
                         <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleImprove" data-index="{{this.index}}">
                             <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>

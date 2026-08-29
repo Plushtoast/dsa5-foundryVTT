@@ -166,10 +166,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   static async _heroschip(ev, target) {
     ev.stopPropagation();
     ev.preventDefault();
-    let val = Number(target.dataset.val);
-    if (val == 1 && $(target).closest('.hero').find('.fullSchip').length == 1) val = 0;
-
-    game.actors.get(this.getID(target)).update({ 'system.status.fatePoints.value': val });
+    const actor = game.actors.get(this.getID(target));
+    if (!actor) return;
+    const path = target.dataset.path || 'system.status.fatePoints.value';
+    await actor.setSchipFromPip(path, target.dataset.val);
   }
 
   static async _groupCheck(ev, target) {
@@ -955,7 +955,7 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
         id: hero.id,
         uuid: hero.uuid,
         selected: selected[hero.id],
-        schips: hero.schipshtml(),
+        schips: hero.schipsWithExtras(),
         type: hero.type,
         purse: purse
           .sort((a, b) => b.system.price.value - a.system.price.value)

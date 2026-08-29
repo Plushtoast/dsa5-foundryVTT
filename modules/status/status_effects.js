@@ -274,7 +274,7 @@ export default class DSA5StatusEffects {
         conditionData.auto = 0;
       }
 
-      conditionData.value = Math.min(4, Number(conditionData.manual || 0) + Number(conditionData.auto || 0));
+      conditionData.value = Math.min(max, Number(conditionData.manual || 0) + Number(conditionData.auto || 0));
     }
 
     if (effect.id) effect.statuses = [effect.id];

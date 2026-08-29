@@ -556,7 +556,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         ownerName: owner?.name ?? null,
         ownerColor: owner?.color ?? null,
         canViewPrivateDetails,
-        schips: actor.schipshtml?.() || [],
+        schips: actor.schipsWithExtras?.() || actor.schipshtml?.() || [],
         prepare: {
           money: {
             coins: purse
@@ -1199,10 +1199,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     if (!memberEl) return;
     const actor = fromUuidSync(memberEl.dataset.uuid);
     if (!actor) return;
-    const clickedVal = Number(target.dataset.val);
-    const current = actor.system.status.fatePoints.value;
-    const newVal = clickedVal === current && clickedVal === 1 ? 0 : clickedVal;
-    actor.update({ 'system.status.fatePoints.value': newVal });
+    const path = target.dataset.path || 'system.status.fatePoints.value';
+    actor.setSchipFromPip(path, target.dataset.val);
   }
 
   static async #heroContextMenu(event, target) {

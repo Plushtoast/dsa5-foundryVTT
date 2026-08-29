@@ -879,20 +879,11 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _schipUdate(ev, target) {
-    let val = Number(target.dataset.val);
-    if (val == 1 && $(this.element).find('.fullSchip.ownSchips').length == 1) val = 0;
-
-    this.actor.update({ 'system.status.fatePoints.value': val });
+    this.actor.setSchipFromPip('system.status.fatePoints.value', target.dataset.val);
   }
 
   static async _extraSchipUpdate(ev, target) {
-    const path = target.dataset.path;
-    if (!path) return;
-
-    let val = Number(target.dataset.val);
-    const current = Number(getProperty(this.actor, path)) || 0;
-    if (val === 1 && current === 1) val = 0;
-    await this.actor.update({ [path]: val });
+    await this.actor.setSchipFromPip(target.dataset.path, target.dataset.val);
   }
 
   static _defenseToggle(ev, target) {

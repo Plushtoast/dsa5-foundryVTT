@@ -333,6 +333,36 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
         return false;
     }
 
+    _warnNoDieSelected() {
+        ui.notifications.warn(_loc('DSAError.noDieSelected'));
+        return false;
+    }
+
+    _validateDieSelection() {
+        switch (this.tabGroups.sheet) {
+            case 'reroll':
+                if (this.selectedForReroll.size === 0) return this._warnNoDieSelected();
+                return true;
+            case 'rerollDamage':
+                if (this.selectedForDamageReroll.size === 0) return this._warnNoDieSelected();
+                if (this.selectedForDamageReroll.size > 1) {
+                    ui.notifications.warn(_loc('DSAError.maxOneDie'));
+                    return false;
+                }
+                return true;
+            case 'improve':
+                return this._validateImproveDieSelection();
+            default:
+                return true;
+        }
+    }
+
+    _validateImproveDieSelection() {
+        const multiDie = (this.message.flags.data.postData.characteristics?.length ?? 0) > 1;
+        if (multiDie && this.selectedForImprove < 0) return this._warnNoDieSelected();
+        return true;
+    }
+
     _schipSource() {
         return this.selectedPool === 'group' ? FateRolls.SCHIP_SOURCES.GROUP : FateRolls.SCHIP_SOURCES.PERSONAL;
     }
@@ -481,7 +511,9 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
     }
 
     async _onConfirm(event, target, isCheat = false) {
+        event?.preventDefault?.();
         if (!this._validateSelectedPool()) return;
+        if (!this._validateDieSelection()) return;
 
         const data = this.message.flags.data;
         const newTestData = data.preData;
