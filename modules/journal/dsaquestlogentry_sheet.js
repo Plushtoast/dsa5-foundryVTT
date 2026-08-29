@@ -253,6 +253,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             selected: quest.playerOwners.includes(player.id),
         }));
         const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+        const currentWorldYear = game.time.calendar.timeToComponents(game.time.worldTime).year;
         const objectiveEntries = DSAQuestLogEntry.sortedTypedObjectEntries(quest.objectives)
             .filter(([, objective]) => objective && (objective.visible || game.user.isGM))
             .map(([objectiveKey, objective]) => ({
@@ -276,6 +277,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             objectiveEntries,
             linkedDocumentEntries,
             yearSuffix,
+            currentWorldYear,
         });
     }
 

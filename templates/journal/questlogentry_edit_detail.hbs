@@ -18,9 +18,9 @@
       <label>{{localize 'DSAQUESTLOG.startDate'}}</label>
       <div class="form-fields">
         {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.dayOfMonth value=elem.startDate.dayOfMonth name=(concat 'system.quests.' key '.startDate.dayOfMonth')}}
-        {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.month value=elem.startDate.month name=(concat 'system.quests.' key '.startDate.month') choices=availableMonths}}
+        {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.month value=elem.startDate.month name=(concat 'system.quests.' key '.startDate.month') choices=availableMonths blank='-'}}
         <div class="flexrow">
-          {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.year value=elem.startDate.year name=(concat 'system.quests.' key '.startDate.year')}}
+          {{formInput document.system.schema.fields.quests.element.fields.startDate.fields.year value=elem.startDate.year name=(concat 'system.quests.' key '.startDate.year') placeholder=currentWorldYear}}
           <div class='flex0'>{{yearSuffix}}</div>
         </div>
       </div>
@@ -29,9 +29,9 @@
       <label>{{localize 'DSAQUESTLOG.targetDate'}}</label>
       <div class="form-fields">
         {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.dayOfMonth value=elem.targetDate.dayOfMonth name=(concat 'system.quests.' key '.targetDate.dayOfMonth')}}
-        {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.month value=elem.targetDate.month name=(concat 'system.quests.' key '.targetDate.month') choices=availableMonths}}
+        {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.month value=elem.targetDate.month name=(concat 'system.quests.' key '.targetDate.month') choices=availableMonths blank='-'}}
         <div class="flexrow">
-          {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.year value=elem.targetDate.year name=(concat 'system.quests.' key '.targetDate.year')}}
+          {{formInput document.system.schema.fields.quests.element.fields.targetDate.fields.year value=elem.targetDate.year name=(concat 'system.quests.' key '.targetDate.year') placeholder=currentWorldYear}}
           <div class='flex0'>{{yearSuffix}}</div>
         </div>
       </div>
@@ -40,9 +40,9 @@
       <label>{{localize 'DSAQUESTLOG.completionDate'}}</label>
       <div class="form-fields">
         {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.dayOfMonth value=elem.completionDate.dayOfMonth name=(concat 'system.quests.' key '.completionDate.dayOfMonth')}}
-        {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.month value=elem.completionDate.month name=(concat 'system.quests.' key '.completionDate.month') choices=availableMonths}}
+        {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.month value=elem.completionDate.month name=(concat 'system.quests.' key '.completionDate.month') choices=availableMonths blank='-'}}
         <div class="flexrow">
-          {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.year value=elem.completionDate.year name=(concat 'system.quests.' key '.completionDate.year')}}
+          {{formInput document.system.schema.fields.quests.element.fields.completionDate.fields.year value=elem.completionDate.year name=(concat 'system.quests.' key '.completionDate.year') placeholder=currentWorldYear}}
           <div class='flex0'>{{yearSuffix}}</div>
         </div>
       </div>

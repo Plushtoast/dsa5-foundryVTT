@@ -50,9 +50,9 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         } = foundry.data.fields;
 
         const dateField = () => new SchemaField({
-            dayOfMonth: new NumberField({ required: false, min: 1, step: 1 }),
-            month: new NumberField({ required: false, min: 0, step: 1 }),
-            year: new NumberField({ required: false, step: 1 }),
+            dayOfMonth: new NumberField({ required: false, nullable: true, integer: true, min: 1, step: 1 }),
+            month: new NumberField({ required: false, nullable: true, integer: true, min: 0, step: 1 }),
+            year: new NumberField({ required: false, nullable: true, integer: true, step: 1 }),
         });
 
         return {
@@ -320,12 +320,30 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     }
 
     static formatDate(date) {
-        if (!date?.dayOfMonth || Number.isNaN(Number(date.month)) || Number.isNaN(Number(date.year))) return '';
+        if (!date) return '';
+
         const calendar = game.time.calendar;
-        const month = calendar.months.values?.[date.month];
-        const monthName = month ? calendar.translate(month.name) : date.month;
-        const suffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
-        return `${date.dayOfMonth}. ${monthName} ${date.year} ${suffix}`;
+        const monthIndex = date.month;
+        const hasMonth = Number.isInteger(monthIndex) && monthIndex >= 0;
+        const month = hasMonth ? calendar.months.values?.[monthIndex] : null;
+        const monthName = month ? calendar.translate(month.name) : null;
+
+        const day = Number(date.dayOfMonth);
+        const hasDay = Number.isInteger(day) && day >= 1 && !!monthName;
+
+        const year = date.year;
+        const hasYear = Number.isInteger(year) && !(year === 0 && !hasDay);
+        if (year === 0 && monthIndex === 0 && !hasDay) return '';
+        if (!hasDay && !monthName && !hasYear) return '';
+
+        const parts = [];
+        if (hasDay) parts.push(`${day}.`);
+        if (monthName) parts.push(monthName);
+        if (hasYear) {
+            const suffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+            parts.push(`${year} ${suffix}`);
+        }
+        return parts.join(' ');
     }
 
     static #numericValue(value, fallback) {
