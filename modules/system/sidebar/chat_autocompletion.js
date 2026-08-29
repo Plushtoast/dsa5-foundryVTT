@@ -395,27 +395,7 @@ export default class DSA5ChatAutoCompletion {
   }
 
   static _getActor() {
-    const speaker = ChatMessage.getSpeaker();
-    let actor = null;
-
-    //todo sth odd here
-    if (speaker.token) {
-      actor = game.actors.tokens[speaker.token];
-    }
-
-    if (!actor) {
-      actor = game.actors.get(speaker.actor);
-    }
-
-    if (!actor) {
-      ui.notifications.error('DSAError.noProperActor', { localize: true });
-      return {};
-    }
-
-    return {
-      actor,
-      tokenId: speaker.token,
-    };
+    return DSA5_Utility.resolveChatSpeakerActor();
   }
 
   _quickSelect(target) {

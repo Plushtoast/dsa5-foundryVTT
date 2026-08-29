@@ -1,15 +1,13 @@
 import DSA5ChatListeners from '../sidebar/chat_listeners.js';
 import GroupCheck from '../rolls/group-check.js';
 import RollRequestService from '../queries/roll-request.js';
+import DSA5_Utility from './utility-dsa5.js';
 
 export default class MacroDSA5 {
   static weaponLessMacro(char) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
-
-    this.runWeaponless(actor, char, speaker.token);
+    const { actor, tokenId } = DSA5_Utility.resolveChatSpeakerActor();
+    if (!actor) return;
+    this.runWeaponless(actor, char, tokenId);
   }
 
   static weaponLessMacroId(char, actorId) {
@@ -36,13 +34,10 @@ export default class MacroDSA5 {
   }
 
   static itemMacro(itemName, itemType, bypassData) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
-
-    const item = actor ? actor.items.find((i) => i.name === itemName && i.type == itemType) : null;
-    this.runItem(actor, item, itemName, bypassData, speaker.token);
+    const { actor, tokenId } = DSA5_Utility.resolveChatSpeakerActor();
+    if (!actor) return;
+    const item = actor.items.find((i) => i.name === itemName && i.type == itemType) || null;
+    this.runItem(actor, item, itemName, bypassData, tokenId);
   }
 
   static charMacroById(char, actorId) {
@@ -51,12 +46,9 @@ export default class MacroDSA5 {
   }
 
   static charMacro(char) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor;
-    if (speaker.token) actor = game.actors.tokens[speaker.token];
-    if (!actor) actor = game.actors.get(speaker.actor);
-
-    this.runChar(actor, char, speaker.token);
+    const { actor, tokenId } = DSA5_Utility.resolveChatSpeakerActor();
+    if (!actor) return;
+    this.runChar(actor, char, tokenId);
   }
 
   static runWeaponless(actor, char, tokenId) {

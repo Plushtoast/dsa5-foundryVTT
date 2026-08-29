@@ -364,6 +364,48 @@ export default class DSA5_Utility {
     return actor;
   }
 
+  /** Group tokens are not a stand-in for PC skill / ability rolls. */
+  static isChatRollActor(actor) {
+    return !!actor && actor.type !== 'group';
+  }
+
+  static #actorFromChatSpeaker(speaker) {
+    if (!speaker) return null;
+    let actor = speaker.token ? game.actors.tokens[speaker.token] : null;
+    if (!actor) actor = game.actors.get(speaker.actor);
+    return actor;
+  }
+
+  /**
+   * Resolve who should roll from chat (/sk, group check, macros).
+   * Prefers the assigned character over a selected group token; GMs keep a selected non-group token.
+   * @param {{ notify?: boolean }} [options]
+   * @returns {{ actor?: Actor, tokenId?: string }}
+   */
+  static resolveChatSpeakerActor({ notify = true } = {}) {
+    const assigned = game.user.character;
+    const controlled = canvas.ready
+      ? canvas.tokens.controlled.filter((token) => token.actor?.isOwner && this.isChatRollActor(token.actor))
+      : [];
+
+    const assignedToken = assigned ? controlled.find((token) => token.actor.id === assigned.id) : null;
+    if (assignedToken) return { actor: assignedToken.actor, tokenId: assignedToken.id };
+
+    if (!game.user.isGM && assigned) {
+      if (controlled.length === 1) return { actor: controlled[0].actor, tokenId: controlled[0].id };
+      if (controlled.length > 1) return { actor: assigned, tokenId: null };
+    }
+
+    const speaker = ChatMessage.getSpeaker();
+    const speakerActor = this.#actorFromChatSpeaker(speaker);
+    if (this.isChatRollActor(speakerActor)) return { actor: speakerActor, tokenId: speaker.token };
+
+    if (this.isChatRollActor(assigned)) return { actor: assigned, tokenId: null };
+
+    if (notify) ui.notifications.error('DSAError.noProperActor', { localize: true });
+    return {};
+  }
+
   static itemPrice(item) {
     return (
       Number(getProperty(item, 'flags.dsa5.customPriceTag')) ||

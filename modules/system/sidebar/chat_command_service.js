@@ -2,6 +2,7 @@ import PaymentRequestService from '../queries/payment-requests.js';
 import GroupCheck from '../rolls/group-check.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
 
 /**
@@ -97,15 +98,19 @@ export default class ChatCommandService {
   }
 
   static executeAbilityRoll(actor, name, type, tokenId, options = {}) {
+    const missing = () => ui.notifications.error('DSAError.elementNotFound', { format: { element: name }, localize: true });
+
     switch (type) {
       case 'skill': {
         const skill = actor.items.find((i) => i.name === name && i.type === 'skill');
-        if (skill) actor.setupSkill(skill, options, tokenId).then((s) => actor.basicTest(s));
+        if (!skill) return missing();
+        actor.setupSkill(skill, options, tokenId).then((s) => actor.basicTest(s));
         break;
       }
       case 'attribute': {
         const characteristic = Object.keys(game.dsa5.config.characteristics).find((key) => _loc(game.dsa5.config.characteristics[key]) === name);
-        if (characteristic) actor.setupCharacteristic(characteristic, options, tokenId).then((s) => actor.basicTest(s));
+        if (!characteristic) return missing();
+        actor.setupCharacteristic(characteristic, options, tokenId).then((s) => actor.basicTest(s));
         break;
       }
       case 'regeneration':
@@ -176,11 +181,9 @@ export default class ChatCommandService {
   }
 
   static speakerAbilityRoll(name, type, options = {}) {
-    const speaker = ChatMessage.getSpeaker();
-    let actor = speaker.token ? game.actors.tokens[speaker.token] : null;
-    if (!actor) actor = game.actors.get(speaker.actor);
-    if (!actor) return ui.notifications.error('DSAError.noProperActor', { localize: true });
+    const { actor, tokenId } = DSA5_Utility.resolveChatSpeakerActor();
+    if (!actor) return;
 
-    ChatCommandService.executeAbilityRoll(actor, name, type, speaker.token, options);
+    ChatCommandService.executeAbilityRoll(actor, name, type, tokenId, options);
   }
 }

@@ -183,16 +183,9 @@ export default class GroupCheck {
     }
   }
 
-  /** Prefer the player's assigned character when no owned token is controlled. */
+  /** Prefer the player's assigned character when no owned (non-group) token is controlled. */
   static #resolveRollingActor() {
-    if (!game.user.isGM && game.user.character) {
-      const controlled = canvas.tokens?.controlled?.filter((token) => token.actor?.isOwner) ?? [];
-      const assigned = controlled.find((token) => token.actor.id === game.user.character.id);
-      if (assigned) return { actor: assigned.actor, tokenId: assigned.id };
-      if (controlled.length === 1) return { actor: controlled[0].actor, tokenId: controlled[0].id };
-      return { actor: game.user.character, tokenId: null };
-    }
-    return DSA5ChatAutoCompletion._getActor();
+    return DSA5_Utility.resolveChatSpeakerActor();
   }
 
   static #resolveRollType(category, skillName, messageId) {
