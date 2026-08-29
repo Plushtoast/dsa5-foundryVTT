@@ -136,36 +136,60 @@ export default class Riding {
     });
   }
 
+  /**
+   * Rider elevation is derived from the mount, not from the previous riding mode.
+   * Mounted or driving: horse + 1. Dismounted: same as the horse.
+   * @param {TokenDocument|undefined} horseToken
+   * @param {boolean} mounted
+   * @param {TokenDocument} [riderToken] fallback when the horse is not on the scene
+   * @param {boolean} [alreadyMounted]
+   * @returns {number}
+   */
+  static elevationForRidingState(horseToken, mounted, riderToken, alreadyMounted = false) {
+    if (horseToken) {
+      const horseElevation = horseToken.elevation ?? 0;
+      return mounted ? horseElevation + 1 : horseElevation;
+    }
+    const current = riderToken?.elevation ?? 0;
+    if (mounted && alreadyMounted) return current;
+    return mounted ? Math.max(0, current + 1) : Math.max(0, current - 1);
+  }
+
   static async toggleIsRiding(actor, value) {
     value = Number(value);
+    const wasMounted = this.isRiding(actor);
     await actor.update({
       'system.horse.isRiding': value,
     });
 
+    const nowMounted = value > 0;
+    const horse = this.getHorse(actor);
+    const horseTokens = horse?.getActiveTokens?.(false, true) ?? [];
+    const horseToken = horseTokens[0];
     const tokenUpdates = [];
-    if (value == 0) {
+
+    if (!nowMounted) {
       for (const token of actor.getActiveTokens(false, true)) {
         tokenUpdates.push({
           _id: token.id,
           'flags.dsa5.horseTokenId': _del,
-          elevation: Math.max(0, (token.elevation ?? 0) - 1),
+          elevation: this.elevationForRidingState(horseToken, false, token, wasMounted),
         });
       }
       await this.removeRidingCondition(actor);
     } else {
-      const horse = this.getHorse(actor);
       let horseTokenId;
-      for (const horseToken of horse.getActiveTokens(false, true)) {
+      for (const ht of horseTokens) {
         tokenUpdates.push({
-          _id: horseToken.id,
+          _id: ht.id,
           'flags.dsa5.horseTokenId': _del,
         });
-        horseTokenId = horseToken.id;
+        horseTokenId = ht.id;
       }
       for (const token of actor.getActiveTokens(false, true)) {
         tokenUpdates.push({
           _id: token.id,
-          elevation: Math.max(0, (token.elevation ?? 0) + 1),
+          elevation: this.elevationForRidingState(horseToken, true, token, wasMounted),
           'flags.dsa5.horseTokenId': horseTokenId,
         });
       }
@@ -173,7 +197,7 @@ export default class Riding {
       //TODO might need to create or search token?
       await this.addRidingCondition(actor, horse);
     }
-    if (tokenUpdates.length) {
+    if (tokenUpdates.length && canvas.scene) {
       await canvas.scene.updateEmbeddedDocuments('Token', tokenUpdates);
     }
   }
@@ -212,6 +236,9 @@ export default class Riding {
   }
 
   static async unmountHorse(actor, token) {
+    const horse = this.getHorse(actor);
+    const horseToken = horse?.getActiveTokens?.(false, true)?.[0]
+      ?? canvas.scene?.tokens.get(token?.getFlag?.('dsa5', 'horseTokenId'));
     await this.clearMount(actor);
     if (!token) return;
 
@@ -219,7 +246,7 @@ export default class Riding {
     if (token.getFlag?.('dsa5', 'horseTokenId') || token.getFlag?.('dsa5', 'horseResized')) {
       const tokenUpdate = {
         'flags.dsa5.horseTokenId': _del,
-        elevation: Math.max(0, (token.elevation ?? 0) - 1),
+        elevation: this.elevationForRidingState(horseToken, false, token),
       };
       const tokenResized = token.getFlag('dsa5', 'horseResized');
       if (tokenResized) {
@@ -233,12 +260,14 @@ export default class Riding {
   }
 
   static async clearMount(actor) {
+    const horse = this.getHorse(actor);
+    const horseToken = horse?.getActiveTokens?.(false, true)?.[0];
     const tokenUpdates = [];
     for (const doc of actor.getActiveTokens(false, true)) {
       const update = {
         _id: doc.id,
         'flags.dsa5.horseTokenId': _del,
-        elevation: Math.max(0, (doc.elevation ?? 0) - 1),
+        elevation: this.elevationForRidingState(horseToken, false, doc),
       };
       const tokenResized = doc.getFlag('dsa5', 'horseResized');
       if (tokenResized) {
