@@ -1012,11 +1012,13 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       folders,
       abilities: this.abilities,
       groupschips,
+      extraSchipRows: [],
       masterSettings,
       lastSkill: this.lastSkill,
       randomCreation: this.randomCreation.map((x) => x.template),
       lightButton: game.dsa5.apps.LightDialog ? await game.dsa5.apps.LightDialog.getButtonHTML() : '',
     });
+    Hooks.call('dsa5.prepareMasterMenu', data, this);
     return data;
   }
 
@@ -1024,6 +1026,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.randomCreation.push(elem);
   }
 }
+
+Hooks.once('setup', () => {
+  Hooks.call('dsa5.registerMasterMenuActions', GameMasterMenu.DEFAULT_OPTIONS.actions);
+});
 
 class GlobalModAddition extends FormAppv2 {
   constructor(id) {

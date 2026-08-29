@@ -857,6 +857,8 @@ export default class Actordsa5 extends Actor {
 
     const groupschips = this.hasPlayerOwner ? RuleChaos.getGroupSchips() : [];
     const schips = this.schipshtml();
+    const extraSchips = [];
+    Hooks.call('dsa5.prepareActorSchips', this, extraSchips);
 
     const inventory = this.#initInventoryBuckets();
 
@@ -1131,6 +1133,7 @@ export default class Actordsa5 extends Actor {
         : '',
       schips,
       groupschips,
+      extraSchips,
       magic,
       traits,
       combatskills,

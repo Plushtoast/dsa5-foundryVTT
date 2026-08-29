@@ -118,9 +118,7 @@ import DetailSelect from './system/helpers/detail-select.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
 
-Hooks.once('init', () => {
-  CONFIG.statusEffects = DSA5.statusEffects;
-  game.dsa5 = {
+globalThis.dsa5 = {
     apps: {
       DSA5_Utility,
       DetailSelect,
@@ -272,8 +270,12 @@ Hooks.once('init', () => {
     TestSuite,
     memory: new RollMemory(),
     dsa5HookRegistry: new Set(),
-  };
-  DSA5.merchantStockPresets = MerchantConfig.STOCK_FILL_PRESETS;
+};
+DSA5.merchantStockPresets = MerchantConfig.STOCK_FILL_PRESETS;
+
+Hooks.once('init', () => {
+  globalThis.dsa5 = game.dsa5 = Object.assign(game.system, globalThis.dsa5);
+  CONFIG.statusEffects = DSA5.statusEffects;
 
   CONFIG.Actor.documentClass = Actordsa5;
   CONFIG.Actor.dataModels = ActorDataModels;

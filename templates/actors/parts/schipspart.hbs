@@ -1,9 +1,14 @@
-{{#if (and prepare.schips.length prepare.groupschips.length)}}
+{{#if (and (or prepare.schips.length prepare.extraSchips.length) prepare.groupschips.length)}}
 <div class='row-schips center flexrow'>
   <div class='flexrow stackedSchips'>
     {{#each prepare.schips as |item i|}}
     <button type="button" data-action='schipUpdate' data-tooltip='fatePoints'
       class='ownSchips noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.value}}'></button>
+    {{/each}}
+    {{#each prepare.extraSchips as |item i|}}
+    <button type="button" data-action='extraSchipUpdate' data-tooltip='{{item.tooltip}}'
+      class='noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.val}}' data-path='{{item.path}}'
+      style='{{item.style}}'></button>
     {{/each}}
   </div>
 
@@ -14,11 +19,16 @@
     {{/each}}
   </div>
 </div>
-{{else if prepare.schips.length}}
+{{else if (or prepare.schips.length prepare.extraSchips.length)}}
 <div class='row-schips flexrow flexAlignCenter stackedSchips' data-tooltip='fatePoints'>
   {{#each prepare.schips as |item i|}}
   <button type="button" data-action='schipUpdate' class='ownSchips noBorder dsadesignbutton schip {{item.cssClass}}'
     data-val='{{item.value}}'></button>
+  {{/each}}
+  {{#each prepare.extraSchips as |item i|}}
+  <button type="button" data-action='extraSchipUpdate' data-tooltip='{{item.tooltip}}'
+    class='noBorder dsadesignbutton schip {{item.cssClass}}' data-val='{{item.val}}' data-path='{{item.path}}'
+    style='{{item.style}}'></button>
   {{/each}}
 </div>
 {{else if prepare.groupschips.length}}

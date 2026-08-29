@@ -238,6 +238,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     ownerActions: {
       schipUpdate: this._schipUdate,
+      extraSchipUpdate: this._extraSchipUpdate,
       startCharacterBuilder: this._startCharacterBuilder,
       deleteItem: this._deleteItemAction,
       defenseToggle: this._defenseToggle,
@@ -882,6 +883,16 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     if (val == 1 && $(this.element).find('.fullSchip.ownSchips').length == 1) val = 0;
 
     this.actor.update({ 'system.status.fatePoints.value': val });
+  }
+
+  static async _extraSchipUpdate(ev, target) {
+    const path = target.dataset.path;
+    if (!path) return;
+
+    let val = Number(target.dataset.val);
+    const current = Number(getProperty(this.actor, path)) || 0;
+    if (val === 1 && current === 1) val = 0;
+    await this.actor.update({ [path]: val });
   }
 
   static _defenseToggle(ev, target) {

@@ -18,6 +18,29 @@
             <button type="button" class="icon fas fa-users dsadesignbutton noBorder" data-action="openPartySheet" data-tooltip="GROUP.members"></button>
         </div>
     </div>
+    {{#each extraSchipRows as |row|}}
+    <div class="row-section">
+        <div class="col third lineheight center" data-tooltip="{{row.tooltip}}">
+            <b>{{{localize row.label}}}</b>
+        </div>
+        <div class="col sixty center" data-tooltip="{{row.tooltip}}">
+            {{#each row.schips as |item i|}}
+            <a class="schip {{../schipCssClass}} {{item.cssClass}}" {{#if item.img}}style="background-image: url('{{item.img}}');"{{/if}} data-action="{{../schipAction}}" data-val="{{item.value}}"></a>
+            {{/each}}
+        </div>
+        <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-minus dsadesignbutton noBorder" data-action="{{row.addAction}}" data-value="-1"></button>
+        </div>
+        <div class="col zerofive flexrow">
+            <button type="button" class="icon fas fa-plus dsadesignbutton noBorder" data-action="{{row.addAction}}" data-value="1"></button>
+        </div>
+        <div class="col zerofive flexrow">
+            {{#if row.partyAction}}
+            <button type="button" class="icon fas fa-users dsadesignbutton noBorder" data-action="{{row.partyAction}}" data-tooltip="GROUP.members"></button>
+            {{/if}}
+        </div>
+    </div>
+    {{/each}}
     <div class="row-section">
         <div class="col third lineheight center">
             <b>{{localize "TYPES.Item.skill"}}</b>

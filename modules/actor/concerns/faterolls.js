@@ -49,7 +49,7 @@ export class FateRolls {
         newTestData.damageRoll = foundry.utils.duplicate(newRoll);
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_DAMAGE_REROLL}`]: true });
-        await this.#reduceSchips(actor, schipsource);
+        await this.reduceSchips(actor, schipsource);
     }
     /**
      * Handles talented rerolls where players can reroll dice and take the better result
@@ -239,7 +239,7 @@ export class FateRolls {
                         }
                         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                         await message.update({ [`flags.data.${this.FLAGS.FATE_REROLL}`]: true });
-                        await this.#reduceSchips(actor, schipsource);
+                        await this.reduceSchips(actor, schipsource);
                     },
                 },
                 {
@@ -268,7 +268,7 @@ export class FateRolls {
         newTestData.qualityStep = 1;
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_ADD_QS}`]: true });
-        await this.#reduceSchips(actor, schipsource);
+        await this.reduceSchips(actor, schipsource);
     }
     /**
      * Improves a roll by reducing dice results using fate points
@@ -301,7 +301,7 @@ export class FateRolls {
         const isGroupSource = schipsource === this.SCHIP_SOURCES.GROUP;
         if (type === 'isTalented' || DSA5_Utility.fateAvailable(actor, isGroupSource)) {
             const { data } = message.flags;
-            const cardOptions = this.#preparePostRollAction(message);
+            const cardOptions = this.preparePostRollAction(message);
             const { fateAvailable, schipText } = this.#getFatePointInfo(actor, schipsource);
             const infoMsg = this.#buildFateInfoMessage(actor, type, fateAvailable, schipText, schipsource);
             const newTestData = data.preData;
@@ -360,17 +360,18 @@ export class FateRolls {
      * Reduces fate points (schips) from the appropriate source
      * @param {Object} actor - The actor spending fate points
      * @param {number} schipsource - Source of fate points (0=personal, 1=group)
+     * @param {{ tossCoin?: boolean }} [options]
      */
-    static async #reduceSchips(actor, schipsource) {
+    static async reduceSchips(actor, schipsource, { tossCoin = true } = {}) {
         if (schipsource === this.SCHIP_SOURCES.PERSONAL) {
             const currentPoints = actor.system.status.fatePoints.value;
             await actor.update({
-                'system.status.fatePoints.value': currentPoints - 1,
+                'system.status.fatePoints.value': Math.max(0, currentPoints - 1),
             });
         } else {
             await this.reduceGroupSchip();
         }
-        this.#throwCoin();
+        if (tossCoin) await this.throwCoin();
     }
     /**
      * Reduces group fate points (schips)
@@ -396,7 +397,7 @@ export class FateRolls {
      * @param {Object} message - The chat message containing roll data
      * @returns {Object} Card options object
      */
-    static #preparePostRollAction(message) {
+    static preparePostRollAction(message) {
         const { data } = message.flags;
         const { img } = message.flags;
         const { messageMode, template, title } = data;
@@ -433,8 +434,8 @@ export class FateRolls {
         return Math.clamp(Number(value) || 1, 1, MAX_POST_ROLL_REROLL_DICE);
     }
 
-    static async processSelectedReroll(diceIndices, testData, { rollContext, useMinimum = false, actor = null, isPhex = false } = {}) {
-        return this.#processReroll(diceIndices, testData, rollContext, useMinimum, actor, isPhex);
+    static async processSelectedReroll(diceIndices, testData, { rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null } = {}) {
+        return this.#processReroll(diceIndices, testData, rollContext, useMinimum, actor, isPhex, cheatResults);
     }
 
     /**
@@ -489,18 +490,23 @@ export class FateRolls {
      * @param {boolean} useMinimum - Whether to use minimum of old/new values (talented rule)
      * @param {Object} actor - The actor (for Phex tradition check)
      * @param {boolean} isPhex - Whether actor has Phex tradition
+     * @param {number[]|null} cheatResults - Optional forced die results (same order as diceIndices)
      * @returns {Object} Object containing newRoll, changedRolls html, changedRollsText, and changes array
      */
-    static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false) {
+    static async #processReroll(diceIndices, testData, rollContext, useMinimum = false, actor = null, isPhex = false, cheatResults = null) {
         const rollFormulas = diceIndices.map(index => {
             const term = testData.roll.terms[index * 2];
             return `${term.number}d${term.faces}[${term.options.colorset}]`;
         });
-        // Execute the reroll
-        const newRoll = await DiceDSA5.manualRolls(
-            await new Roll(rollFormulas.join('+')).evaluate(),
-            rollContext
-        );
+        let newRoll = await new Roll(rollFormulas.join('+')).evaluate();
+        if (cheatResults?.length) {
+            diceIndices.forEach((_dieIndex, rollIndex) => {
+                const term = newRoll.terms[rollIndex * 2];
+                if (term?.results?.[0]) term.results[0].result = cheatResults[rollIndex];
+            });
+            if (typeof newRoll._evaluateTotal === 'function') newRoll._total = newRoll._evaluateTotal();
+        }
+        newRoll = await DiceDSA5.manualRolls(newRoll, rollContext, cheatResults?.length ? { cheat: false } : {});
         await DiceDSA5.showDiceSoNice(newRoll, testData.messageMode || game.settings.get('core', 'rollMode'));
         const changedRolls = [];
         const changedRollsText = [];
@@ -607,22 +613,10 @@ export class FateRolls {
                     callback: async (event, button, dialog) => {
                         const diesToUpgrade = this.#getSelectedDiceIndices($(button.form));
                         if (diesToUpgrade.length === 1) {
-                            const dieIndex = diesToUpgrade[0];
-                            const fws = [0, 0, 0];
-                            fws[dieIndex] = this.IMPROVEMENT_VALUE;
-                            const modifier = {
-                                name: _loc('CHATCONTEXT.improveFate'),
-                                value: fws.join('|'),
-                                type: 'roll',
-                            };
-                            newTestData.roll = Roll.fromData(newTestData.roll);
-                            const originalResult = newTestData.roll.terms[dieIndex * 2].results[0].result;
-                            const improvedResult = Math.max(1, originalResult - this.IMPROVEMENT_VALUE);
-                            newTestData.roll.editRollAtIndex([{ index: dieIndex, val: improvedResult }]);
-                            newTestData.situationalModifiers.push(modifier);
+                            this.applyImprovement(newTestData, diesToUpgrade[0], this.IMPROVEMENT_VALUE, { multiDie: true });
                             await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
                             await message.update({ [`flags.data.${this.FLAGS.FATE_IMPROVED}`]: true });
-                            await this.#reduceSchips(actor, schipsource);
+                            await this.reduceSchips(actor, schipsource);
                         }
                     },
                 },
@@ -645,34 +639,43 @@ export class FateRolls {
      * @param {number} schipsource - Fate point source
      */
     static async #handleSingleDieImprovement(actor, newTestData, message, data, cardOptions, schipsource) {
-        const modifier = {
-            name: _loc('CHATCONTEXT.improveFate'),
-            value: this.IMPROVEMENT_VALUE,
-            type: 'roll',
-        };
-        newTestData.situationalModifiers.push(modifier);
-        newTestData.roll = Roll.fromData(newTestData.roll);
-        const originalResult = newTestData.roll.terms[0].results[0].result;
-        const improvedResult = Math.max(1, originalResult - this.IMPROVEMENT_VALUE);
-        newTestData.roll.editRollAtIndex([{ index: 0, val: improvedResult }]);
+        this.applyImprovement(newTestData, 0, this.IMPROVEMENT_VALUE, { multiDie: false });
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_IMPROVED}`]: true });
-        await this.#reduceSchips(actor, schipsource);
+        await this.reduceSchips(actor, schipsource);
     }
+
+    /**
+     * Lowers one die of a roll by `amount` (min 1) and records an improveFate modifier.
+     * @param {Object} testData
+     * @param {number} dieIndex
+     * @param {number} amount
+     * @param {{ multiDie?: boolean }} [options]
+     */
+    static applyImprovement(testData, dieIndex, amount, { multiDie = false } = {}) {
+        if (!(testData.roll instanceof Roll)) testData.roll = Roll.fromData(testData.roll);
+        const originalResult = testData.roll.terms[dieIndex * 2].results[0].result;
+        const improvedResult = Math.max(1, originalResult - amount);
+        testData.roll.editRollAtIndex([{ index: dieIndex, val: improvedResult }]);
+        const fws = [0, 0, 0];
+        fws[dieIndex] = amount;
+        const modifier = {
+            name: _loc('CHATCONTEXT.improveFate'),
+            value: multiDie ? fws.join('|') : amount,
+            type: 'roll',
+        };
+        testData.situationalModifiers ??= [];
+        testData.situationalModifiers.push(modifier);
+        return { originalResult, improvedResult, modifier };
+    }
+
     /**
      * Perform a coin toss by rolling a single "1DC" die and display the result with Dice So Nice.
-     *
-     * This private static async helper evaluates a Roll created from the "1DC" notation,
-     * then forwards the evaluated Roll to DiceDSA5.showDiceSoNice using the current core roll mode.
-     *
-     * @private
-     * @static
-     * @async
-     * @returns {Promise<void>} Resolves after the roll is evaluated and the visualization is requested.
-     * @throws {Error} If the roll evaluation fails.
+     * @returns {Promise<Roll>}
      */
-    static async #throwCoin() {
+    static async throwCoin() {
         const coinRoll = await new Roll('1DC').evaluate();
-        DiceDSA5.showDiceSoNice(coinRoll, game.settings.get("core", "messageMode"));
+        await DiceDSA5.showDiceSoNice(coinRoll, game.settings.get('core', 'messageMode'));
+        return coinRoll;
     }
 }

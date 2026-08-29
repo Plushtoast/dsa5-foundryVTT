@@ -63,19 +63,26 @@ export default class RuleChaos {
     target.val(val.val);
   }
 
-  static getGroupSchips() {
+  static schipsFromSetting(settingKey, { imgFull, imgEmpty, namespace = 'dsa5' } = {}) {
     const schipSetting = game.settings
-      .get('dsa5', 'groupschips')
+      .get(namespace, settingKey)
       .split('/')
       .map((x) => Number(x));
-    const groupschips = [];
+    const schips = [];
     for (let i = 1; i <= schipSetting[1]; i++) {
-      groupschips.push({
+      const full = i <= schipSetting[0];
+      const schip = {
         value: i,
-        cssClass: i <= schipSetting[0] ? 'fullSchip' : 'emptySchip',
-      });
+        cssClass: full ? 'fullSchip' : 'emptySchip',
+      };
+      if (imgFull || imgEmpty) schip.img = full ? imgFull : imgEmpty;
+      schips.push(schip);
     }
-    return groupschips;
+    return schips;
+  }
+
+  static getGroupSchips() {
+    return this.schipsFromSetting('groupschips');
   }
 
   //todo this should not be necessary

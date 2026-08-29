@@ -413,6 +413,9 @@ const createContextOptions = () => {
       visible: ConditionChecker.canApplyDefaultRolls,
       onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'sp')),
     },
+  ];
+
+  const fateOptions = [
     {
       label: 'CHATCONTEXT.Reroll',
       icon: '<i class="fas fa-dice"></i>',
@@ -467,13 +470,16 @@ const createContextOptions = () => {
       visible: (li) => ConditionChecker.canImproveRoll(li, true),
       onClick: chatMessageAction((li) => ActionHandler.useFate(li, 'Improve', 1)),
     },
-    {
-      label: 'CHATCONTEXT.applyDepletableBuffs',
-      icon: '<i class="fas fa-wand-magic-sparkles"></i>',
-      visible: ConditionChecker.canApplyDepletableBuffs,
-      onClick: chatMessageAction(ActionHandler.applyDepletableBuffs),
-    },
   ];
+  Hooks.call('dsa5.fateContextOptions', fateOptions);
+  baseOptions.push(...fateOptions);
+
+  baseOptions.push({
+    label: 'CHATCONTEXT.applyDepletableBuffs',
+    icon: '<i class="fas fa-wand-magic-sparkles"></i>',
+    visible: ConditionChecker.canApplyDepletableBuffs,
+    onClick: chatMessageAction(ActionHandler.applyDepletableBuffs),
+  });
 
   if (game.settings.get('dsa5', 'doubleDamageOptions')) {
     baseOptions.push(
