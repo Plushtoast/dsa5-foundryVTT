@@ -25,6 +25,10 @@ hr {
       }
     }
 
+    img:not(.nopopout) {
+      cursor: var(--cursor-pointer);
+    }
+
     button.toggle {
       opacity: 0;
       position: absolute;

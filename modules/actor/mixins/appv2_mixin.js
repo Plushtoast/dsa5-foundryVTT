@@ -1,4 +1,5 @@
 import { pushInitiatingApp, popInitiatingApp } from '../../mixins/detached-window-mixin.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -128,11 +129,33 @@ export const AppV2Mixin = (superclass) =>
       this._detachedResizeHandler = null;
     }
 
+    _onEnrichedImageMouseDown(event) {
+      if (event.button !== 2) return;
+      if (!event.target.closest?.('img')) return;
+
+      const doc = this.document;
+      DSA5_Utility.popoutEnrichedImage(event, {
+        name: doc?.name ?? '',
+        uuid: doc?.uuid ?? '',
+      });
+    }
+
+    _bindEnrichedImagePopout() {
+      this._enrichedImageAbort?.abort();
+      this._enrichedImageAbort = new AbortController();
+      const { signal } = this._enrichedImageAbort;
+      const onMouseDown = (event) => this._onEnrichedImageMouseDown(event);
+      for (const editor of this.element.querySelectorAll('.editor')) {
+        editor.addEventListener('mousedown', onMouseDown, { passive: true, signal });
+      }
+    }
+
     async _onRender(context, options) {
       this.constructor.ensureDragHighlightCleanup();
       this.constructor.clearDragHighlights();
       await super._onRender(context, options);
       this._updateDetachedTabLayout();
+      this._bindEnrichedImagePopout();
     }
 
     /**
@@ -147,7 +170,21 @@ export const AppV2Mixin = (superclass) =>
       this.changeTab(tab, button.dataset.group, { event, navElement: button.closest('.tabs') });
     }
 
+    /**
+     * Foundry disables every form control when the sheet is not editable, including
+     * vertical tab `<button>`s. Observers still need to switch tabs (issue #2485).
+     */
+    _toggleDisabled(disabled) {
+      super._toggleDisabled?.(disabled);
+      if (!disabled) return;
+      this.element?.querySelectorAll('[data-action="tab"]').forEach((el) => {
+        el.disabled = false;
+      });
+    }
+
     _tearDown(options) {
+      this._enrichedImageAbort?.abort();
+      this._enrichedImageAbort = null;
       this.element?.ownerDocument?.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
       this._detachedResizeHandler = null;
       this.constructor.clearDragHighlights();

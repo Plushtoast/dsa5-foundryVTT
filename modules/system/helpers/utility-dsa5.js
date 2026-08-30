@@ -469,6 +469,25 @@ export default class DSA5_Utility {
     }).render(true);
   }
 
+  static enrichedImageFromEvent(target) {
+    const img = target?.closest?.('img:not(.nopopout)');
+    if (!img?.closest('.editor')) return null;
+    if (img.closest('prose-mirror.active, prose-mirror[open]')) return null;
+    if (!img.getAttribute('src')) return null;
+    return img;
+  }
+
+  static popoutEnrichedImage(event, { name = '', uuid = '' } = {}) {
+    if (event.button !== 2) return null;
+    const img = this.enrichedImageFromEvent(event.target);
+    if (!img) return null;
+    return this.showArtwork({
+      name: img.title || img.alt || name,
+      uuid,
+      img: img.getAttribute('src'),
+    });
+  }
+
   static async findAnyItem(lookup) {
     const results = [];
     const names = lookup.map((x) => x.name);
