@@ -12,6 +12,9 @@ class OptionalDatePartField extends NumberField {
 /**
  * Quest-style calendar date: each of day, month, and year may be omitted.
  * Assigning `{ month: 0 }` must persist as Praios with `year: null`, not year 0.
+ *
+ * Do not fill omitted keys during `_cast`/`_cleanType`. Document updates are
+ * partial: writing `{ year: 1040 }` must keep an already-set day/month.
  */
 export default class PartialCalendarDateField extends SchemaField {
   static emptyValue() {
@@ -32,16 +35,6 @@ export default class PartialCalendarDateField extends SchemaField {
       month: part({ min: 0, step: 1 }),
       year: part({ step: 1 }),
     }, { initial: PartialCalendarDateField.emptyValue, ...options }, context);
-  }
-
-  /** @override */
-  _cast(value) {
-    return this.#withOmittedPartsNull(super._cast(value));
-  }
-
-  /** @override */
-  _cleanType(data, options, _state) {
-    return this.#withOmittedPartsNull(super._cleanType(data, options, _state));
   }
 
   /** @override */
