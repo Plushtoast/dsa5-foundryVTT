@@ -38,6 +38,7 @@ import DSA5Hotbar from './system/guiapps/hotbar.js';
 import RollMemory from './system/rolls/roll_memory.js';
 import SpecialabilityRulesDSA5 from './system/rules/specialability-rules-dsa5.js';
 import AdvantageRulesDSA5 from './system/rules/advantage-rules-dsa5.js';
+import WitchEmotionRule from './system/rules/witch-emotion-rule.js';
 import Migrakel from './system/maintenance/migrakel.js';
 import DSA5Dialog from './dialog/dialog-dsa5.js';
 import DialogShared from './dialog/dialog-shared.js';
@@ -130,6 +131,7 @@ globalThis.dsa5 = {
       DSA5Payment,
       SpecialabilityRulesDSA5,
       AdvantageRulesDSA5,
+      WitchEmotionRule,
       Migrakel,
       DSA5Dialog,
       DSA5StatusEffects,

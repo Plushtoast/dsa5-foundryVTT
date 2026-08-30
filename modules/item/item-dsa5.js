@@ -27,6 +27,7 @@ import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
 import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
+import WitchEmotionRule from '../system/rules/witch-emotion-rule.js';
 import ItemDisease from './item-disease.js';
 
 const { getProperty, mergeObject, duplicate, setProperty, randomID } = foundry.utils;
@@ -806,6 +807,7 @@ class SpellItemDSA5 extends Itemdsa5 {
       qls: formData.qs,
     };
     Itemdsa5.updateCharacteristics(testData.source, ...[0, 1, 2].map((x) => formData[`characteristics${x}`]));
+    WitchEmotionRule.applyFromForm(testData, html);
     await this.applyExtensions(testData.source, testData.extensions, actor);
   }
 
@@ -966,6 +968,7 @@ class SpellItemDSA5 extends Itemdsa5 {
     Object.assign(data, {
       visionOptions: DSA5.skillVision,
     });
+    WitchEmotionRule.prepareDialogData(data, actor, source);
   }
 
   static setupDialog(ev, options, spell, actor, tokenId) {

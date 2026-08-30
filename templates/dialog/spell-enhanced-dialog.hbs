@@ -8,6 +8,16 @@
                 <label class="col seventy">{{localize "maintainedSpells"}}</label>
                 <input class="col five center quantity-click" data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" type="number" name="maintainedSpells" value="0" />
             </div>
+            {{#if showWitchEmotion}}
+            <div class="form-group" data-tooltip="WITCHEMOTION.hint">
+                <label>{{localize "WITCHEMOTION.label"}}</label>
+                <div class="form-fields">
+                    <select name="witchEmotion">
+                        {{selectOptions witchEmotionModifiers selected=witchEmotion localize=true}}
+                    </select>
+                </div>
+            </div>
+            {{/if}}
             {{#if hasSKModifier}}
             <div class="form-group" data-tooltip="TT.zkModifer">
                 <label>{{localize "skModifier"}}</label>

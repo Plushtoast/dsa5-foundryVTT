@@ -860,6 +860,14 @@ DSA5.ritualLocationModifiers = {
   '-3': 'RITUALMODIFIER.wrongsite',
 };
 
+DSA5.witchEmotionModifiers = {
+  2: 'WITCHEMOTION.matchingStrong',
+  1: 'WITCHEMOTION.matching',
+  0: 'WITCHEMOTION.neutral',
+  '-1': 'WITCHEMOTION.against',
+  '-2': 'WITCHEMOTION.dampened',
+};
+
 DSA5.ritualTimeModifiers = {
   0: '-',
   1: 'RITUALMODIFIER.matchingConstellation',

@@ -25,6 +25,7 @@ export default class RollMemory {
       'removeGesture',
       'removeFormula',
       'waterOptions',
+      'witchEmotion',
     ];
     if (!DPS.isEnabled) wantedKeys.push('distance');
     return wantedKeys;
@@ -46,7 +47,7 @@ export default class RollMemory {
   }
 
   formDataSerialize(html) {
-    const form = html.find('form');
+    const form = html[0]?.tagName === 'FORM' ? html : html.find('form');
     const object = {};
     form.find('select').each(function () {
       const key = $(this).attr('name');

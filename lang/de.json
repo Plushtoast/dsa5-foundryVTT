@@ -4416,7 +4416,6 @@
     "featureMagical": "Bevorzugtes Merkmal der Tradition (z. B. Elementar, Hellsicht).",
     "featureClerical": "Aspekte der Gottheit bzw. Kirche.",
     "energyfactor": "Anteil der Leiteigenschaft am AsP-/KaP-Grundwert (meist 1, bei manchen Traditionen 0,5).",
-    "witchEmotion": "Gefühlslage der Hexe für Zauberproben: passende Gefühle bis +2, gedämpfte oder entgegenstehende Gefühle bis -2.",
     "happyTalents": "Talente, die der Gottheit wohlgefällig sind und für die ein Mirakel eingesetzt werden kann.",
     "aggregatedTests": "Längerfristige Tätigkeiten: QS aus mehreren Proben ansammeln (Ziel 10 QS, Teilerfolg bei 6).<br>Intervall und maximale Versuche legt der Meister fest.",
     "attr": {

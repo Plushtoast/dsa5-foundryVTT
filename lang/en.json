@@ -4407,7 +4407,6 @@
     "featureMagical": "Preferred tradition property (e.g. Elemental, Clairvoyance).",
     "featureClerical": "Aspects of the deity or church.",
     "energyfactor": "Share of the primary attribute in the AE/KP base value (usually 1, 0.5 for some traditions).",
-    "witchEmotion": "The witch's emotional state for spell checks: matching emotions up to +2, dampened or opposing emotions up to -2.",
     "happyTalents": "Skills favored by the deity and can be used for a miracle.",
     "aggregatedTests": "Long-term tasks: accumulate QL from several checks (goal 10 QL, partial success at 6).<br>The GM sets the interval and maximum number of attempts.",
     "attr": {
