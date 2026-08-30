@@ -174,6 +174,8 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         await this._prepareContacts(entry);
         const actor = await fromUuid(entry.actor_uuid);
         entry.garadan = DSAPersonaEntry.resolveGaradan(entry);
+        entry.canLinkActorNotes = DSAPersonaEntry.isActorNotesLinkable(actor);
+        entry.linkActorNotesActive = DSAPersonaEntry.shouldLinkActorNotes(entry, actor);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
             elem: entry,
             document: this.document,

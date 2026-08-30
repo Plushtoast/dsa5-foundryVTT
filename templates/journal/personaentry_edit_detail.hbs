@@ -65,6 +65,17 @@
     <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.showActorDescription.hint}}</span>
   </div>
 
+  <div class='form-group'>
+    <label>{{localize document.system.schema.fields.personae.element.fields.linkActorNotes.label}}</label>
+    {{formInput
+      document.system.schema.fields.personae.element.fields.linkActorNotes
+      value=elem.linkActorNotesActive
+      name=(concat 'system.personae.' key '.linkActorNotes')
+      disabled=(not elem.canLinkActorNotes)
+    }}
+    <span class='hint'>{{localize document.system.schema.fields.personae.element.fields.linkActorNotes.hint}}</span>
+  </div>
+
   {{#unless elem.showActorDescription}}
     <div class="form-group stacked full-height">
       <div class="flexrow">
@@ -86,7 +97,9 @@
     
   {{/unless}}
 
+  {{#unless elem.linkActorNotesActive}}
   {{formGroup document.system.schema.fields.personae.element.fields.notes value=elem.notes localize=true classes='full-height' name=(concat 'system.personae.' key '.notes')}}
+  {{/unless}}
 
   {{#if (eq elem.type 0)}}
     {{#if isGM}}

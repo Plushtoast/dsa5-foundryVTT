@@ -3058,6 +3058,10 @@
           "hint": "The actor's description will be displayed in the Bestiary. If disabled, a custom text can be created in this entry instead.",
           "label": "Show actor description"
         },
+        "linkActorNotes": {
+          "hint": "Use the actor's notes field instead of a separate text in this entry. Only available for world actors that the GM can edit, not actors from a compendium.",
+          "label": "Link actor notes"
+        },
         "showCulture": {
           "label": "Show Culture"
         },
@@ -3416,6 +3420,15 @@
     "rightEquipment": "Proper tools (+1)",
     "wrongConstellation": "Improper constellation (-1)",
     "wrongsite": "Unsuitable ritual space (-3)"
+  },
+  "WITCHEMOTION": {
+    "against": "Against her feelings (-1)",
+    "dampened": "Dampened feelings (-2)",
+    "hint": "Matching emotions ease the spell check by up to +2. Dampened or opposing emotions hinder it by up to -2.",
+    "label": "Emotional state",
+    "matching": "Matching emotions (+1)",
+    "matchingStrong": "Matching emotions, intensified (+2)",
+    "neutral": "Neutral (0)"
   },
   "ROLL": {
     "Targeting": "versus",
@@ -4394,6 +4407,7 @@
     "featureMagical": "Preferred tradition property (e.g. Elemental, Clairvoyance).",
     "featureClerical": "Aspects of the deity or church.",
     "energyfactor": "Share of the primary attribute in the AE/KP base value (usually 1, 0.5 for some traditions).",
+    "witchEmotion": "The witch's emotional state for spell checks: matching emotions up to +2, dampened or opposing emotions up to -2.",
     "happyTalents": "Skills favored by the deity and can be used for a miracle.",
     "aggregatedTests": "Long-term tasks: accumulate QL from several checks (goal 10 QL, partial success at 6).<br>The GM sets the interval and maximum number of attempts.",
     "attr": {

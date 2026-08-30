@@ -3,6 +3,7 @@ import { JournalListDataModel } from './journallistdatamodel.js';
 const { TextEditor } = foundry.applications.ux;
 export class DSAPersonaEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarActors';
+    static ACTOR_NOTES_FIELD = 'system.details.notes.value';
     static CREATION_CONFIG = {
         pageType: 'dsapersonaedramatis',
         entryCollection: 'personae',
@@ -59,6 +60,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
                 showCulture: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showCulture.label" }),
                 showProfession: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showProfession.label" }),
                 showActorDescription: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.showActorDescription.label", hint: "PERSONAE.FIELDS.personae.showActorDescription.hint" }),
+                linkActorNotes: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.linkActorNotes.label", hint: "PERSONAE.FIELDS.personae.linkActorNotes.hint" }),
                 faction: new StringField({ label: "PERSONAE.FIELDS.personae.faction.label", hint: "PERSONAE.FIELDS.personae.faction.hint" }),
                 tags: new StringField({ label: "PERSONAE.FIELDS.personae.tags.label", hint: "PERSONAE.FIELDS.personae.tags.hint" }),
                 img: new FilePathField({ categories: ["IMAGE"], label: "PERSONAE.FIELDS.personae.img.label" }),
@@ -87,6 +89,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.name = actor.name;
             entry.type = actor.type === 'creature' ? 1 : 0;
             entry.actor_uuid = actor.uuid;
+            if (overrides.linkActorNotes === undefined) entry.linkActorNotes = this.isActorNotesLinkable(actor);
             if (this.supportsGaradan(entry)) entry.garadan = this.resolveGaradan(entry, actor);
         }
         return entry;
@@ -132,6 +135,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.name = actor.name;
             entry.type = isCreature ? 1 : 0;
             entry.garadan = DSAPersonaEntry.resolveGaradan(entry, actor);
+            entry.linkActorNotes = DSAPersonaEntry.isActorNotesLinkable(actor);
             if (isCreature) {
                 const creatureData = DSAPersonaEntry.splitOutsideCommas(actor.system.creatureClass?.value || "");
                 entry.faction = creatureData[0] || "";
@@ -230,7 +234,15 @@ export class DSAPersonaEntry extends JournalListDataModel {
             entry.preparedTags.push(...entry.tags?.split(',').map(t => t.trim()).filter(t => t) || []);
             entry.preparedDescription = await TextEditor.enrichHTML(entry.description || "", { secrets: game.user.isGM });
         }
-        entry.preparedNotes = await TextEditor.enrichHTML(entry.notes || "", { secrets: game.user.isGM });
+        const linkNotes = this.shouldLinkActorNotes(entry, entry.actor);
+        const notesSource = linkNotes
+            ? (entry.actor.system.details?.notes?.value || "")
+            : (entry.notes || "");
+        entry.linkActorNotesActive = linkNotes;
+        entry.notesValue = notesSource;
+        entry.notesDocumentUuid = linkNotes ? entry.actor.uuid : document.uuid;
+        entry.notesFieldName = linkNotes ? this.ACTOR_NOTES_FIELD : `system.personae.${key}.notes`;
+        entry.preparedNotes = await TextEditor.enrichHTML(notesSource, { secrets: game.user.isGM });
         const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
         entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
         entry.preparedFactionDisplay = entry.preparedFactions.join(", ");
@@ -282,6 +294,27 @@ export class DSAPersonaEntry extends JournalListDataModel {
         if (!this.supportsGaradan(entry)) return false;
         if (!this.resolveGaradan(entry)) return false;
         if (!isGM && entry.showGaradanGMOnly !== false) return false;
+        return true;
+    }
+
+    static isActorNotesLinkable(actor) {
+        return !!actor && !actor.pack && !actor.inCompendium;
+    }
+
+    static shouldLinkActorNotes(entry = {}, actor = null) {
+        return !!entry.linkActorNotes && this.isActorNotesLinkable(actor);
+    }
+
+    static async applyNotesUpdate({ documentUuid, name, newValue } = {}) {
+        const document = await fromUuid(documentUuid);
+        if (!document || !name) return false;
+
+        if (document.documentName === 'Actor') {
+            if (name !== this.ACTOR_NOTES_FIELD) return false;
+            if (!this.isActorNotesLinkable(document)) return false;
+        }
+
+        await document.update({ [name]: newValue });
         return true;
     }
 }

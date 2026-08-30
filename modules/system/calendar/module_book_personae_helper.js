@@ -134,6 +134,7 @@ export class ModuleBookPersonaeHelper {
       actor,
       visible: false,
       showActorDescription: true,
+      linkActorNotes: false,
       faction,
       img: actor.img,
     });

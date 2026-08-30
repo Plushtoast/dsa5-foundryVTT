@@ -3060,6 +3060,10 @@
           "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden.",
           "label": "Akteurbeschreibung anzeigen"
         },
+        "linkActorNotes": {
+          "hint": "Das Notizfeld des Akteurs wird verwendet statt eines eigenen Texts in diesem Eintrag. Nur für Welt-Akteure verfügbar, die die Spielleitung bearbeiten kann, nicht für Akteure aus einem Kompendium.",
+          "label": "Akteurnotizen verknüpfen"
+        },
         "showCulture": {
           "label": "Kultur anzeigen"
         },
@@ -3418,6 +3422,15 @@
     "rightEquipment": "Passende Gerätschaften (+1)",
     "wrongConstellation": "Unpassende Konstellation (-1)",
     "wrongsite": "Falscher Ritualplatz (-3)"
+  },
+  "WITCHEMOTION": {
+    "against": "Entgegen den Gefühlen (-1)",
+    "dampened": "Gedämpfte Gefühle (-2)",
+    "hint": "Passende Gefühle erleichtern die Zauberprobe um bis zu +2. Gedämpfte oder entgegenstehende Gefühle erschweren sie um bis zu -2.",
+    "label": "Gefühlslage",
+    "matching": "Passende Gefühle (+1)",
+    "matchingStrong": "Passende Gefühle, gesteigert (+2)",
+    "neutral": "Neutral (0)"
   },
   "ROLL": {
     "Targeting": "gegen",
@@ -4403,6 +4416,7 @@
     "featureMagical": "Bevorzugtes Merkmal der Tradition (z. B. Elementar, Hellsicht).",
     "featureClerical": "Aspekte der Gottheit bzw. Kirche.",
     "energyfactor": "Anteil der Leiteigenschaft am AsP-/KaP-Grundwert (meist 1, bei manchen Traditionen 0,5).",
+    "witchEmotion": "Gefühlslage der Hexe für Zauberproben: passende Gefühle bis +2, gedämpfte oder entgegenstehende Gefühle bis -2.",
     "happyTalents": "Talente, die der Gottheit wohlgefällig sind und für die ein Mirakel eingesetzt werden kann.",
     "aggregatedTests": "Längerfristige Tätigkeiten: QS aus mehreren Proben ansammeln (Ziel 10 QS, Teilerfolg bei 6).<br>Intervall und maximale Versuche legt der Meister fest.",
     "attr": {

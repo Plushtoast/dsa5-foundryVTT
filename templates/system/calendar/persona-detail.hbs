@@ -81,7 +81,7 @@
                         {{#if noTabs}}
                             {{{preparedNotes}}}
                         {{else}}
-                            <prose-mirror toggled class="notes-edit" value="{{notes}}" collaborate name="system.personae.{{dramatisKey}}.notes" data-document-uuid="{{uuid}}">
+                            <prose-mirror toggled class="notes-edit" value="{{notesValue}}" collaborate name="{{notesFieldName}}" data-document-uuid="{{notesDocumentUuid}}">
                                 {{{preparedNotes}}}
                             </prose-mirror>
                         {{/if}}

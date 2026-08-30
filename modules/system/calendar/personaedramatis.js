@@ -305,10 +305,7 @@ export class PersonaeDramatis {
     }
 
     static async updateNotes(data) {
-        const document = await fromUuid(data.documentUuid);
-        if (!document) return;
-
-        await document.update({ [data.name]: data.newValue });
+        await DSAPersonaEntry.applyNotesUpdate(data);
     }
 
     static async updateContactRelationshipLevel(event) {
