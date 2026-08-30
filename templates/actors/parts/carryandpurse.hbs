@@ -5,7 +5,7 @@
         {{#if prepare.carryEffectConfig}}
         <a class="row-section gap2px"
             data-action="configureActorEffect"
-            data-tooltip="{{prepare.encumbranceTooltip}}"
+            data-tooltip-html="{{prepare.encumbranceTooltip}}"
             {{> systems/dsa5/templates/actors/parts/actor-effect-config-attrs.hbs
                 config=prepare.carryEffectConfig
                 effectName=prepare.carryEffectName
@@ -21,7 +21,7 @@
             <span>({{prepare.encumbrance}})</span>
         </a>
         {{else}}
-        <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
+        <div data-tooltip-html="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
             <span><i class="fas fa-weight-hanging"></i></span>
             <span>{{prepare.totalWeight}}</span>
             <span>/</span>
@@ -30,7 +30,7 @@
         </div>
         {{/if}}
         {{else}}
-        <div data-tooltip="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
+        <div data-tooltip-html="{{prepare.encumbranceTooltip}}" class="row-section gap2px">
             <span><i class="fas fa-weight-hanging"></i></span>
             <span>{{prepare.totalWeight}}</span>
             <span>/</span>
