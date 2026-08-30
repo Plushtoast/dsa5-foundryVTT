@@ -320,6 +320,12 @@ Hooks.once('ready', () => {
           type: 'select',
           options: { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4' },
         },
+        {
+          label: 'COMBATSKILLCATEGORY.subcategory',
+          attr: 'subcategory',
+          type: 'select',
+          options: DSA5.armorSubcategoryLabels,
+        },
         { label: 'PLANT.region', attr: 'region', type: 'text' },
       ],
       plant: [

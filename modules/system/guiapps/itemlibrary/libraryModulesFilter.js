@@ -5,23 +5,51 @@ const { mergeObject } = foundry.utils;
 
 export default class LibraryModulsFilter extends DefaultAppv2 {
   static DEFAULT_OPTIONS = {
-    id: "LibraryModulsFilter",
+    id: 'LibraryModulsFilter',
+    settingNamespace: 'dsa5',
+    settingKey: 'libraryModulsFilter',
     position: {
       width: 600
     },
     window: {
-      title: "DSASETTINGS.libraryModulsFilter",
-      icon: "fa-regular fa-globe",
+      title: 'DSASETTINGS.libraryModulsFilter',
+      icon: 'fa-regular fa-globe',
       minimizable: true,
       resizable: true,
     },
-    classes: ["dsa5"],
+    classes: ['dsa5'],
   };
 
   static PARTS = {
     modules: {
-      template: "systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs"
+      template: 'systems/dsa5/templates/system/itemlibrary/librarymodulesfilter.hbs'
     }
+  }
+
+  static open(options = {}) {
+    const id = options.id || this.DEFAULT_OPTIONS.id;
+    const existing = foundry.applications.instances.get(id);
+    if (existing) {
+      existing.bringToTop();
+      return existing;
+    }
+    return new this(options).render(true);
+  }
+
+  get settingNamespace() {
+    return this.options.settingNamespace || 'dsa5';
+  }
+
+  get settingKey() {
+    return this.options.settingKey || 'libraryModulsFilter';
+  }
+
+  getRejectedModules() {
+    return foundry.utils.duplicate(game.settings.get(this.settingNamespace, this.settingKey) || {});
+  }
+
+  async setRejectedModules(data) {
+    await game.settings.set(this.settingNamespace, this.settingKey, data);
   }
 
   async _prepareContext(_options) {
@@ -29,7 +57,7 @@ export default class LibraryModulsFilter extends DefaultAppv2 {
 
     mergeObject(data, {
       moduleOptions: ItemLibraryModuleOptions.collect(),
-      rejectedModules: game.settings.get('dsa5', 'libraryModulsFilter'),
+      rejectedModules: this.getRejectedModules(),
     });
     return data;
   }
@@ -43,13 +71,13 @@ export default class LibraryModulsFilter extends DefaultAppv2 {
   async moduleFilterChanged(ev) {
     const module = ev.currentTarget.id;
 
-    const data = game.settings.get('dsa5', 'libraryModulsFilter');
+    const data = this.getRejectedModules();
     if (ev.currentTarget.checked) {
       delete data[module];
     } else {
       data[module] = true;
     }
 
-    game.settings.set('dsa5', 'libraryModulsFilter', data);
+    await this.setRejectedModules(data);
   }
 }

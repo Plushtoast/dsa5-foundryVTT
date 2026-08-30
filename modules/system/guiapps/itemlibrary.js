@@ -210,7 +210,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   static _showCompendiumFilter(_event, _target) {
-    new LibraryModulsFilter().render(true);
+    LibraryModulsFilter.open();
   }
 
   _selectLibraryView(ev, target) {
@@ -1699,4 +1699,5 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 }
 
+export { LibraryModulsFilter };
 export default class DSA5ItemLibrary extends ItemLibraryBase {}

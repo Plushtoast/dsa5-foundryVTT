@@ -276,6 +276,11 @@ DSA5.armorSubcategories = {
   8: 10,
 };
 
+DSA5.armorSubcategoryLabels = Object.keys(DSA5.armorSubcategories).reduce((acc, key) => {
+  acc[key] = `ARMORSUBCATEGORIES.${key}`;
+  return acc;
+}, {});
+
 DSA5.weaponStabilities = {
   Blowpipes: 10,
   Bows: 4,
@@ -1220,6 +1225,7 @@ DSA5.enhancementTypes = {
     improvement: 'Enhancement.types.improvement',
     attachment: 'Enhancement.types.attachment',
     powersource: 'Enhancement.types.powersource',
+    treatment: 'Enhancement.types.treatment',
 };
 
 DSA5.SKILL = SKILL;

@@ -19,6 +19,7 @@ import { registerMagicalActionHooks } from '../item/magical-actions/magical-acti
 import { MagicalAlchemistDSA5 } from '../item/concerns/alchimist-dsa5.js';
 import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
+import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -43,7 +44,7 @@ import DSA5 from '../config/config-dsa5.js';
 import DSA5SoundEffect from '../system/helpers/dsa-soundeffect.js';
 import DSA5Skin from '../system/helpers/skin-dsa5.js';
 import { setActorDelta } from './actordelta.js';
-import DSA5ItemLibrary from '../system/guiapps/itemlibrary.js';
+import DSA5ItemLibrary, { LibraryModulsFilter } from '../system/guiapps/itemlibrary.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 
 import { DSACalendarEntrySheet } from '../journal/dsacalendarentry_sheet.js';
@@ -75,6 +76,7 @@ export default function () {
   MagicalAlchemistDSA5.registerHooks();
   SavantDSA5.registerHooks();
   ActiveEffectLifecycle.registerHooks();
+  TreatmentHelper.registerHooks();
 }
 
 Hooks.once('init', () => {
@@ -215,6 +217,7 @@ Hooks.once('i18nInit', async () => {
   setupKnownEquipmentModifiers();
 
   game.dsa5.itemLibrary = new DSA5ItemLibrary();
+  game.dsa5.apps.LibraryModulsFilter = LibraryModulsFilter;
   const { default: ItemLibraryEmbed } = await import('../system/guiapps/itemlibrary-embed.js');
   game.dsa5.apps.ItemLibraryEmbed = ItemLibraryEmbed;
 

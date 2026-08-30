@@ -130,6 +130,7 @@
     "columns": [
       { "attr": "protection.value", "label": "protection" },
       { "attr": "encumbrance.value", "label": "encumbrance" },
+      { "attr": "subcategory", "label": "COMBATSKILLCATEGORY.subcategory", "optionsKey": "armorSubcategoryLabels" },
       { "attr": "effect.value", "label": "effect" }
     ]
   },
