@@ -4353,7 +4353,7 @@
   "effectwrapper": "Effektcontainer",
   "enchantment": "Verzauberung",
   "encumbrance": "Belastung",
-  "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Gewicht</b></div>Traglast: {carrycapacity}<br>Aktuell: {totalWeight}<br/>Belastung: {encumbrance}{moneyWeight}",
+  "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Gewicht</b></div>Traglast: {carrycapacity}<br>Aktuell: {totalWeight}<br/>Belastung: {encumbrance}{moneyWeight}<p>Ein Held kann ohne Schwierigkeiten KK × 2 Stein tragen. Für jeweils 4 volle weitere Stein, die er mit sich herumträgt, erleidet er eine Stufe Belastung. Kurzfristig kann ein Mensch (oder Elf oder Zwerg) KK × 10 Stein stemmen. Gelingt ihm eine Probe auf <i>Kraftakt (Heben &amp; Stemmen)</i>, kann er zusätzlich QS × 5 Stein hochheben.</p>",
   "energyfactor": "Leiteig. Faktor",
   "entityAbility": "Wesensfähigkeit",
   "entry": "Eintrag",

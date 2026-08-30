@@ -4344,7 +4344,7 @@
   "effectwrapper": "Effect container",
   "enchantment": "Enchantment",
   "encumbrance": "Encumbrance",
-  "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Weight</b></div>Carrying capacity: {carrycapacity}<br>Current: {totalWeight}<br/>Encumbrance: {encumbrance}{moneyWeight}",
+  "encumbranceTooltip": "<div class=\"center\"><i class=\"fas fa-weight-hanging\"></i> <b>Weight</b></div>Carrying capacity: {carrycapacity}<br>Current: {totalWeight}<br/>Encumbrance: {encumbrance}{moneyWeight}<p>A hero can carry STR × 2 stones without difficulty. For every additional 4 full stones carried, the hero suffers one level of Encumbrance. A human (or elf or dwarf) can briefly lift STR × 10 stones. With a successful check on <i>Feat of Strength (Lifting)</i>, the hero can lift an additional QL × 5 stones.</p>",
   "energyfactor": "Primary Attr. Factor",
   "entityAbility": "Entity Ability",
   "entry": "Entry",
