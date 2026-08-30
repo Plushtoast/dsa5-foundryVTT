@@ -15,6 +15,8 @@
     </div>
     {{#if (eq document.system.enhancementType 'powersource')}}
     {{> systems/dsa5/templates/status/parts/enhancement-effect-powersource-fields.hbs}}
+    {{else if (eq document.system.enhancementType 'treatment')}}
+    {{> systems/dsa5/templates/status/parts/enhancement-effect-treatment-fields.hbs}}
     {{else}}
     {{> systems/dsa5/templates/status/parts/enhancement-effect-crafting-fields.hbs}}
     {{/if}}

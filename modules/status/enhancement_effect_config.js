@@ -29,8 +29,10 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
       templates: [
         'systems/dsa5/templates/status/parts/enhancement-effect-powersource-fields.hbs',
         'systems/dsa5/templates/status/parts/enhancement-effect-crafting-fields.hbs',
+        'systems/dsa5/templates/status/parts/enhancement-effect-treatment-fields.hbs',
       ],
     },
+    duration: foundry.applications.sheets.ActiveEffectConfig.PARTS.duration,
     changes: super.PARTS.changes,
     actions: super.PARTS.actions,
   };
@@ -40,6 +42,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
       tabs: [
         { id: 'description', label: 'Description' },
         { id: 'details', label: 'Details' },
+        { id: 'duration', icon: 'fa-solid fa-clock', label: 'EFFECT.TABS.duration' },
         { id: 'changes', label: 'EFFECT.TABS.changes' },
         { id: 'actions', label: 'EFFECT.TABS.actions' },
       ],

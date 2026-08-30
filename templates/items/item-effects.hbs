@@ -73,7 +73,7 @@
                 <img src="{{item.img}}" />
             </div>
             <div class="col seventy">
-                <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}</a>
+                <a data-action="conditionShow" class="condition-show" data-id="{{item._id}}">{{localize item.name}}{{#if item.treatmentStatus}} ({{item.treatmentStatus}}){{/if}}</a>
             </div>
             <div class="col five right">
                 <a data-action="conditionEdit" class="condition-edit" data-tooltip="SHEET.EditItem" data-id="{{item._id}}"><i class="fa fa-edit"></i></a>

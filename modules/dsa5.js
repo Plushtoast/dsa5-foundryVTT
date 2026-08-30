@@ -117,6 +117,7 @@ import AspPaymentDialog from './dialog/asp-payment-dialog.js';
 import { ModuleBookPersonaeHelper } from './system/calendar/module_book_personae_helper.js';
 import { ModuleBookPersonaeApp } from './system/calendar/module_book_personae_app.js';
 import EnhancementHelper from './system/enhancement/enhancement-helper.js';
+import TreatmentHelper from './system/enhancement/treatment-helper.js';
 import DetailSelect from './system/helpers/detail-select.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
@@ -137,6 +138,7 @@ globalThis.dsa5 = {
       DSA5StatusEffects,
       DPS,
       DSATables,
+      TreatmentHelper,
       TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,

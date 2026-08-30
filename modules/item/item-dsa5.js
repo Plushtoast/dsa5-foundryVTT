@@ -24,6 +24,7 @@ import { ItemCreateDialog } from './item-create-dialog.js';
 import { ItemDialogBuilder } from './item-dialog-builder.js';
 import { SpellModifiers } from './concerns/spell-modifiers.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
+import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import { PersonaeSocialContactService } from '../system/helpers/personae-social-contact.js';
 import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
@@ -546,6 +547,7 @@ export default class Itemdsa5 extends Item {
 
     for (const effect of this.effects) {
       if (effect.type !== 'enhancement' || effect.disabled) continue;
+      if (!TreatmentHelper.isActive(effect)) continue;
       changes.push(...EnhancementHelper.getEffectChanges(effect)
         .filter((change) => EnhancementHelper.isItemChange(change))
         .map((change) => ({ ...change, effect })));

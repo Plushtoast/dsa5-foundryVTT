@@ -8,6 +8,8 @@ import InformableTemplate from './templates/informable.js';
 const { SchemaField, StringField, NumberField } = foundry.data.fields;
 
 export default class AmmunitionData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate, InformableTemplate) {
+  static ENHANCEMENT_SLOT_LIMITS = { treatment: 1 };
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       ammunitiongroup: new SchemaField({

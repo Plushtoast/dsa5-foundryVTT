@@ -2004,16 +2004,6 @@
     "craftingRollMod": "Probenmodifikator",
     "craftingTimeMod": "Zeitfaktor",
     "enhancementType": "Verbesserungstyp",
-    "hints": {
-      "craftSkill": "Benötigtes Handwerkstalent für die Herstellung.",
-      "craftingRollMod": "Modifikator auf die Herstellungsprobe.",
-      "craftingTimeMod": "Multiplikator auf die Herstellungszeit.",
-      "enhancementType": "Bestimmt, welche Platzkategorie diese Verbesserung belegt.",
-      "materialCost": "Materialkosten in Silbertalern pro Einheit.",
-      "slotCost": "Anzahl der Plätze, die diese Verbesserung in ihrer Kategorie benötigt.",
-      "specialAttributes": "Kommagetrennte Attribut-Flags (z.B. magic, rustResistant), die dem Gegenstand hinzugefügt werden.",
-      "targetType": "Auf welchen Gegenstandstyp diese Verbesserung angewendet werden kann."
-    },
     "invalidKeys": "Verbesserungseffekte dürfen nur Systemattribute (system.*-Schlüssel) oder @actor.system.* für Trägeränderungen verwenden.",
     "useActorNamespace": "Änderungen am Trägerakteur benötigen das Präfix @actor. (z. B. @actor.system.status.regeneration.AsPConditional).",
     "materialCost": "Materialkosten (S)",
@@ -2024,12 +2014,56 @@
     "slotsFull": "Keine freien Verbesserungsplätze dieses Typs verfügbar.",
     "specialAttributesLabel": "Besondere Eigenschaften",
     "targetType": "Ziel-Gegenstandstyp",
+    "treatmentId": "Behandlungs-ID",
+    "treatmentExists": "Diese Behandlung ist auf dem Gegenstand bereits vorhanden.",
+    "treatmentExpired": "abgelaufen",
+    "treatmentCharges": "{value}/{max} Angriffe",
+    "applyMode": "Anwendung",
+    "applyModes": {
+      "craft": "Handwerksprobe",
+      "instant": "Sofort"
+    },
+    "consumeOnLabel": "Ladungen verbrauchen",
+    "consumeOn": {
+      "none": "Nicht",
+      "attack": "Bei Attacke"
+    },
+    "chargeMultiplierAbility": "Ladungs-Sonderfertigkeit",
+    "chargeMultiplier": "Ladungsfaktor",
+    "treatmentQuantity": "Anzahl (Munition)",
+    "qualityCharges": {
+      "label": "Ladungen nach QS",
+      "qs1": "QS 1",
+      "qs2": "QS 2",
+      "qs3": "QS 3",
+      "qs4": "QS 4",
+      "qs5": "QS 5",
+      "qs6": "QS 6"
+    },
+    "hints": {
+      "craftSkill": "Benötigtes Handwerkstalent für die Herstellung.",
+      "craftingRollMod": "Modifikator auf die Herstellungsprobe.",
+      "craftingTimeMod": "Multiplikator auf die Herstellungszeit.",
+      "enhancementType": "Bestimmt, welche Platzkategorie diese Verbesserung belegt.",
+      "materialCost": "Materialkosten in Silbertalern pro Einheit.",
+      "slotCost": "Anzahl der Plätze, die diese Verbesserung in ihrer Kategorie benötigt.",
+      "specialAttributes": "Kommagetrennte Attribut-Flags (z.B. magic, rustResistant), die dem Gegenstand hinzugefügt werden.",
+      "targetType": "Auf welchen Gegenstandstyp diese Verbesserung angewendet werden kann.",
+      "treatmentId": "Eindeutiger Schlüssel. Dieselbe Behandlung kann auf einer Waffe nur einmal existieren.",
+      "applyMode": "Probe in der Schmiede oder sofortige Anwendung.",
+      "consumeOn": "Wann Angriffs-Ladungen verbraucht werden.",
+      "chargeMultiplierAbility": "LocalizedIDs-Schlüssel einer Sonderfertigkeit, die die Ladungen vervielfacht.",
+      "chargeMultiplier": "Faktor, wenn die Sonderfertigkeit vorhanden ist.",
+      "treatmentQuantity": "Bei Munition: so viele Geschosse werden versilbert.",
+      "qualityCharges": "Würfelformel je Qualitätsstufe der Handwerksprobe."
+    },
     "types": {
       "attachment": "Waffenausrüstung",
       "creationTechnique": "Herstellungstechnik",
       "improvement": "Verbesserung",
       "powersource": "Kraftspeicher",
-      "material": "Material"
+      "material": "Material",
+      "treatment": "Behandlung"
     },
     "unsupportedItemType": "Dieser Gegenstandstyp unterstützt keine Verbesserungen.",
     "wizardCategories": {
@@ -2506,6 +2540,7 @@
     "sharpshooter": "Scharfschütze",
     "sightOnHeshinjasWork": "Sicht auf Heshinjas Werk",
     "singing": "Singen",
+    "silverCasting": "Silberguss",
     "skillSpecialization": "Fertigkeitsspezialisierung",
     "smallEnergyControl": "Kleine Kraftkontrolle",
     "sphereLore": "Sphärenkunde",

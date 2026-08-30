@@ -1,3 +1,5 @@
+import TreatmentHelper from './treatment-helper.js';
+
 export default class EnhancementHelper {
   static ACTOR_CHANGE_REGEX = /^@actor\./;
   static ANCHORED_SPELL_REDUCTION_KEY = 'system.powersource.anchoredSpellReduction';
@@ -5,7 +7,7 @@ export default class EnhancementHelper {
 
   /**
    * Slot types that may substitute for each other when the preferred type is full.
-   * Power sources stay exclusive because they carry artifact charge data.
+   * Power sources and treatments stay exclusive.
    */
   static FALLBACK_SLOT_TYPES = ['material', 'creationTechnique', 'improvement', 'attachment'];
 
@@ -104,6 +106,7 @@ export default class EnhancementHelper {
     for (const item of actor.items) {
       for (const effect of item.effects) {
         if (effect.type !== 'enhancement' || effect.disabled) continue;
+        if (!TreatmentHelper.isActive(effect)) continue;
         if (shouldApply && !shouldApply(item, effect)) continue;
 
         const actorChanges = this.getEffectChanges(effect).filter((change) => this.isActorChange(change));

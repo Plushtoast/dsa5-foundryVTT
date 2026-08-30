@@ -2002,16 +2002,6 @@
     "craftingRollMod": "Crafting Roll Modifier",
     "craftingTimeMod": "Time Multiplier",
     "enhancementType": "Enhancement Type",
-    "hints": {
-      "craftSkill": "Required craft skill for production.",
-      "craftingRollMod": "Modifier applied to the crafting check.",
-      "craftingTimeMod": "Multiplier applied to the crafting time.",
-      "enhancementType": "Determines which slot category this enhancement occupies.",
-      "materialCost": "Material cost in silver thalers per unit.",
-      "slotCost": "Number of slots this enhancement requires in its category.",
-      "specialAttributes": "Comma-separated attribute flags (e.g. magic, rustResistant) added to the item.",
-      "targetType": "Which item type this enhancement can be applied to."
-    },
     "invalidKeys": "Enhancement effects may only use system attributes (system.* keys) or @actor.system.* for wearer changes.",
     "useActorNamespace": "Wearer changes require the @actor. prefix (e.g. @actor.system.status.regeneration.AsPConditional).",
     "materialCost": "Material Cost (S)",
@@ -2022,12 +2012,56 @@
     "slotsFull": "No free enhancement slots of this type available.",
     "specialAttributesLabel": "Special Attributes",
     "targetType": "Target Item Type",
+    "treatmentId": "Treatment ID",
+    "treatmentExists": "This treatment is already present on the item.",
+    "treatmentExpired": "expired",
+    "treatmentCharges": "{value}/{max} attacks",
+    "applyMode": "Application",
+    "applyModes": {
+      "craft": "Craft check",
+      "instant": "Instant"
+    },
+    "consumeOnLabel": "Consume charges",
+    "consumeOn": {
+      "none": "Never",
+      "attack": "On attack"
+    },
+    "chargeMultiplierAbility": "Charge multiplier ability",
+    "chargeMultiplier": "Charge multiplier",
+    "treatmentQuantity": "Quantity (ammunition)",
+    "qualityCharges": {
+      "label": "Charges by QS",
+      "qs1": "QS 1",
+      "qs2": "QS 2",
+      "qs3": "QS 3",
+      "qs4": "QS 4",
+      "qs5": "QS 5",
+      "qs6": "QS 6"
+    },
+    "hints": {
+      "craftSkill": "Required craft skill for production.",
+      "craftingRollMod": "Modifier applied to the crafting check.",
+      "craftingTimeMod": "Multiplier applied to the crafting time.",
+      "enhancementType": "Determines which slot category this enhancement occupies.",
+      "materialCost": "Material cost in silver thalers per unit.",
+      "slotCost": "Number of slots this enhancement requires in its category.",
+      "specialAttributes": "Comma-separated attribute flags (e.g. magic, rustResistant) added to the item.",
+      "targetType": "Which item type this enhancement can be applied to.",
+      "treatmentId": "Unique key. The same treatment can exist only once on a weapon.",
+      "applyMode": "Smithy check or instant application.",
+      "consumeOn": "When attack charges are consumed.",
+      "chargeMultiplierAbility": "LocalizedIDs key of a special ability that multiplies charges.",
+      "chargeMultiplier": "Factor applied when the special ability is present.",
+      "treatmentQuantity": "For ammunition: how many projectiles are silvered.",
+      "qualityCharges": "Dice formula per quality step of the craft check."
+    },
     "types": {
       "attachment": "Attachment",
       "creationTechnique": "Creation Technique",
       "improvement": "Improvement",
       "powersource": "Power Source",
-      "material": "Material"
+      "material": "Material",
+      "treatment": "Treatment"
     },
     "unsupportedItemType": "This item type does not support enhancements.",
     "wizardCategories": {
@@ -2505,6 +2539,7 @@
     "sharpshooter": "Sharpshooter",
     "sightOnHeshinjasWork": "tbd",
     "singing": "Singing",
+    "silverCasting": "Silver Casting",
     "skillSpecialization": "Skill Specialization",
     "smallEnergyControl": "Small Energy Control",
     "sphereLore": "Sphere Lore",

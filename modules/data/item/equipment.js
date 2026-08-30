@@ -11,7 +11,7 @@ import InformableTemplate from './templates/informable.js';
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, InformableTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1, powersource: 1 };
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 0, improvement: 1, powersource: 1, treatment: 1 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {

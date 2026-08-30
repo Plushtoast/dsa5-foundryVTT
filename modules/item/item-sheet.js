@@ -20,6 +20,7 @@ import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 import ItemEnchantment from './item-enchantment.js';
 import ItemDisease from './item-disease.js';
+import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import MerchantStallHelper from '../system/merchant/merchant-stall.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
@@ -231,6 +232,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
     const disabledBySetting = this.isEffectDisabledBySetting(effect);
     effect.disabledBySetting = disabledBySetting;
     effect.sheetDisabled = effect.disabled || disabledBySetting;
+    effect.treatmentStatus = TreatmentHelper.statusLabel(effect);
     return effect;
   }
 

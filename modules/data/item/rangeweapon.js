@@ -24,7 +24,7 @@ const { getProperty, setProperty } = foundry.utils;
 const { SchemaField, StringField, BooleanField } = foundry.data.fields;
 
 export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ObfuscableTemplate, ArtifactTemplate, CeremonialItemTemplate, EquipmentTemplate, StructureTemplate, InformableTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2, attachment: 2 };
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2, attachment: 2, treatment: 1 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {

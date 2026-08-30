@@ -2,7 +2,9 @@ import DSA5 from '../../config/config-dsa5.js';
 import { onUseActionsField, OnUseActionMixin } from '../shared/onuse-action-schema.js';
 import DSANumberField from '../fields/dsa_number_field.js';
 import DSAStringField from '../fields/dsa_string_field.js';
+import DSABooleanField from '../fields/dsa_boolean_field.js';
 import EnhancementHelper from '../../system/enhancement/enhancement-helper.js';
+import TreatmentHelper from '../../system/enhancement/treatment-helper.js';
 
 const { SchemaField, NumberField } = foundry.data.fields;
 
@@ -15,6 +17,7 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
     meleeweapon: 'TYPES.Item.meleeweapon',
     rangeweapon: 'TYPES.Item.rangeweapon',
     armor: 'TYPES.Item.armor',
+    ammunition: 'TYPES.Item.ammunition',
   };
 
   static CRAFT_SKILLS = {
@@ -26,72 +29,116 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
   };
 
   static defineSchema() {
-    const schema = super.defineSchema();
-
-    schema.targetType = new DSAStringField({
-      required: true,
-      initial: 'equipment',
-      choices: DSAEnhancementEffectDataModel.TARGET_TYPES,
-      label: 'Enhancement.targetType',
-      tooltip: 'Enhancement.hints.targetType',
+    return Object.assign(super.defineSchema(), {
+      targetType: new DSAStringField({
+        required: true,
+        initial: 'equipment',
+        choices: DSAEnhancementEffectDataModel.TARGET_TYPES,
+        label: 'Enhancement.targetType',
+        tooltip: 'Enhancement.hints.targetType',
+      }),
+      enhancementType: new DSAStringField({
+        required: true,
+        initial: 'material',
+        choices: DSA5.enhancementTypes,
+        label: 'Enhancement.enhancementType',
+        tooltip: 'Enhancement.hints.enhancementType',
+      }),
+      slotCost: new DSANumberField({
+        required: true, initial: 1, integer: true, min: 1,
+        label: 'Enhancement.slotCost',
+        tooltip: 'Enhancement.hints.slotCost',
+      }),
+      craftingRollMod: new DSANumberField({
+        required: true, initial: 0, integer: true,
+        label: 'Enhancement.craftingRollMod',
+        tooltip: 'Enhancement.hints.craftingRollMod',
+      }),
+      craftingTimeMod: new DSANumberField({
+        required: true, initial: 0,
+        label: 'Enhancement.craftingTimeMod',
+        tooltip: 'Enhancement.hints.craftingTimeMod',
+      }),
+      craftSkill: new DSAStringField({
+        required: false,
+        initial: '',
+        blank: true,
+        choices: DSAEnhancementEffectDataModel.CRAFT_SKILLS,
+        label: 'Enhancement.craftSkill',
+        tooltip: 'Enhancement.hints.craftSkill',
+      }),
+      materialCost: new DSANumberField({
+        required: true, initial: 0, integer: true, min: 0,
+        label: 'Enhancement.materialCost',
+        tooltip: 'Enhancement.hints.materialCost',
+      }),
+      specialAttributes: new DSAStringField({
+        required: false,
+        initial: '',
+        label: 'Enhancement.specialAttributesLabel',
+        tooltip: 'Enhancement.hints.specialAttributes',
+      }),
+      powersource: new SchemaField({
+        value: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.current' }),
+        max: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.max' }),
+      }, { required: false, nullable: true }),
+      treatmentId: new DSAStringField({
+        required: false,
+        initial: '',
+        blank: true,
+        label: 'Enhancement.treatmentId',
+        tooltip: 'Enhancement.hints.treatmentId',
+      }),
+      applyMode: new DSAStringField({
+        required: false,
+        initial: 'craft',
+        choices: TreatmentHelper.APPLY_MODES,
+        label: 'Enhancement.applyMode',
+        tooltip: 'Enhancement.hints.applyMode',
+      }),
+      consumeOn: new DSAStringField({
+        required: false,
+        initial: 'none',
+        choices: TreatmentHelper.CONSUME_ON,
+        label: 'Enhancement.consumeOnLabel',
+        tooltip: 'Enhancement.hints.consumeOn',
+      }),
+      charges: new SchemaField({
+        value: new NumberField({ nullable: true, initial: null, label: 'charges' }),
+        max: new NumberField({ nullable: true, initial: null, label: 'max' }),
+      }, { required: false, nullable: true }),
+      qualityCharges: new SchemaField({
+        qs1: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs1' }),
+        qs2: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs2' }),
+        qs3: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs3' }),
+        qs4: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs4' }),
+        qs5: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs5' }),
+        qs6: new DSAStringField({ required: false, initial: '', blank: true, label: 'Enhancement.qualityCharges.qs6' }),
+      }, { required: false }),
+      chargeMultiplierAbility: new DSAStringField({
+        required: false,
+        initial: '',
+        blank: true,
+        label: 'Enhancement.chargeMultiplierAbility',
+        tooltip: 'Enhancement.hints.chargeMultiplierAbility',
+      }),
+      chargeMultiplier: new DSANumberField({
+        required: true, initial: 3, integer: true, min: 1,
+        label: 'Enhancement.chargeMultiplier',
+        tooltip: 'Enhancement.hints.chargeMultiplier',
+      }),
+      treatmentQuantity: new DSANumberField({
+        required: true, initial: 1, integer: true, min: 1,
+        label: 'Enhancement.treatmentQuantity',
+        tooltip: 'Enhancement.hints.treatmentQuantity',
+      }),
+      applyToOwner: new DSABooleanField({
+        initial: false,
+        label: 'ActiveEffects.applyToOwner',
+        tooltip: 'ActiveEffects.applyToOwnerHint',
+      }),
+      onUseActions: onUseActionsField(),
     });
-
-    schema.enhancementType = new DSAStringField({
-      required: true,
-      initial: 'material',
-      choices: DSA5.enhancementTypes,
-      label: 'Enhancement.enhancementType',
-      tooltip: 'Enhancement.hints.enhancementType',
-    });
-
-    schema.slotCost = new DSANumberField({
-      required: true, initial: 1, integer: true, min: 1,
-      label: 'Enhancement.slotCost',
-      tooltip: 'Enhancement.hints.slotCost',
-    });
-
-    schema.craftingRollMod = new DSANumberField({
-      required: true, initial: 0, integer: true,
-      label: 'Enhancement.craftingRollMod',
-      tooltip: 'Enhancement.hints.craftingRollMod',
-    });
-
-    schema.craftingTimeMod = new DSANumberField({
-      required: true, initial: 0,
-      label: 'Enhancement.craftingTimeMod',
-      tooltip: 'Enhancement.hints.craftingTimeMod',
-    });
-
-    schema.craftSkill = new DSAStringField({
-      required: false,
-      initial: '',
-      blank: true,
-      choices: DSAEnhancementEffectDataModel.CRAFT_SKILLS,
-      label: 'Enhancement.craftSkill',
-      tooltip: 'Enhancement.hints.craftSkill',
-    });
-
-    schema.materialCost = new DSANumberField({
-      required: true, initial: 0, integer: true, min: 0,
-      label: 'Enhancement.materialCost',
-      tooltip: 'Enhancement.hints.materialCost',
-    });
-
-    schema.specialAttributes = new DSAStringField({
-      required: false,
-      initial: '',
-      label: 'Enhancement.specialAttributesLabel',
-      tooltip: 'Enhancement.hints.specialAttributes',
-    });
-
-    schema.powersource = new SchemaField({
-      value: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.current' }),
-      max: new NumberField({ initial: 0, min: 0, label: 'POWERSOURCE.max' }),
-    }, { required: false, nullable: true });
-
-    schema.onUseActions = onUseActionsField();
-
-    return schema;
   }
 
   static getAvailableEnhancementTypes(targetType, { item, exclude, slotCost } = {}) {
@@ -137,6 +184,7 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       meleeweapon: 'MeleeweaponData',
       rangeweapon: 'RangeweaponData',
       armor: 'ArmorData',
+      ammunition: 'AmmunitionData',
     };
     const modelName = mapping[targetType];
     if (!modelName) return {};
@@ -183,6 +231,18 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
     if (DSAEnhancementEffectDataModel.hasMisplacedActorKeys(changes)) {
       ui.notifications.warn('Enhancement.useActorNamespace', { localize: true });
       return false;
+    }
+
+    if (this.enhancementType === 'treatment' && this.treatmentId) {
+      const duplicateTreatment = [...item.effects].find((other) =>
+        other.type === 'enhancement'
+        && other.system?.enhancementType === 'treatment'
+        && other.system?.treatmentId === this.treatmentId
+        && other.id !== effect.id);
+      if (duplicateTreatment) {
+        ui.notifications.warn('Enhancement.treatmentExists', { localize: true });
+        return false;
+      }
     }
 
     const requestedType = this.enhancementType;

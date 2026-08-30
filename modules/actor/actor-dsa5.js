@@ -32,6 +32,7 @@ import { ActorCreateDialog } from './actor-create-dialog.js';
 import MerchantModeHelper from './concerns/merchant-mode.js';
 import { FateRolls } from './concerns/faterolls.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
+import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import { getAppliedTraditionItems, prepareTraditionItems } from './tradition-items.js';
 import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
@@ -370,6 +371,9 @@ export default class Actordsa5 extends Actor {
       case 'meleeweapon':
       case 'rangeweapon':
         if (disableWeaponAdvantages && effect.system.equipmentAdvantage) return false;
+        if (effect.type === 'enhancement' && effect.system?.enhancementType === 'treatment') {
+          return !!effect.system.applyToOwner;
+        }
         return item.system.worn.value && effect.system.applyToOwner;
 
       case 'armor':
@@ -2633,6 +2637,7 @@ export default class Actordsa5 extends Actor {
       await this.consumeAmmunition(testData);
       await this.payMiracles(testData);
       await this._consumeActiveEffectChargesFromRoll(testData);
+      await TreatmentHelper.consumeFromTest(this, testData);
     }
 
     if (!options.suppressMessage) {
@@ -2691,11 +2696,17 @@ export default class Actordsa5 extends Actor {
     if (!DSA5_Utility.isActiveGM()) return;
 
     const toDelete = [];
+    let expiredItemEffects = false;
 
     for (const effect of effects) {
       const effectFinished = effect.duration?.expired || ((effect.duration?.remaining ?? Infinity) <= 0);
       if (!effectFinished) continue;
       if (!effect.isExpiryEvent(event, context)) continue;
+
+      if (effect.parent !== this) {
+        expiredItemEffects = true;
+        continue;
+      }
 
       if (RaptureTracker.isTracker(effect)) {
         await RaptureTracker.pruneTracker(this, effect);
@@ -2746,6 +2757,8 @@ export default class Actordsa5 extends Actor {
 
     if (toDelete.length) {
       await this.deleteEmbeddedDocuments('ActiveEffect', toDelete);
+    } else if (expiredItemEffects) {
+      this.reset();
     }
   }
 

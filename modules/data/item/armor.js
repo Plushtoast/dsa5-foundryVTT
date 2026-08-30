@@ -14,7 +14,7 @@ import DSABooleanField from '../fields/dsa_boolean_field.js';
 const { SchemaField, StringField, NumberField, BooleanField } = foundry.data.fields;
 
 export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, DescriptionTemplate, ArtifactTemplate, CeremonialItemTemplate, ObfuscableTemplate, EquipmentTemplate, EncumbranceTemplate, StructureTemplate, InformableTemplate) {
-  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2 };
+  static ENHANCEMENT_SLOT_LIMITS = { material: 1, creationTechnique: 1, improvement: 2, treatment: 1 };
 
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {

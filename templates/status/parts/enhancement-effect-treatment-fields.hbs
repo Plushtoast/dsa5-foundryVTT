@@ -1,0 +1,29 @@
+{{formGroup document.system.schema.fields.treatmentId value=document.system.treatmentId localize=true}}
+{{formGroup document.system.schema.fields.applyMode value=document.system.applyMode localize=true}}
+{{formGroup document.system.schema.fields.consumeOn value=document.system.consumeOn localize=true}}
+{{formGroup document.system.schema.fields.treatmentQuantity value=document.system.treatmentQuantity localize=true}}
+{{formGroup document.system.schema.fields.applyToOwner value=document.system.applyToOwner localize=true}}
+{{formGroup document.system.schema.fields.chargeMultiplierAbility value=document.system.chargeMultiplierAbility localize=true}}
+{{formGroup document.system.schema.fields.chargeMultiplier value=document.system.chargeMultiplier localize=true}}
+<div class="form-group">
+    <label>{{localize "charges"}}</label>
+    <div class="form-fields">
+        <input type="number" name="system.charges.value" value="{{source.system.charges.value}}" step="1" />
+        <span class="sep center">/</span>
+        <input type="number" name="system.charges.max" value="{{source.system.charges.max}}" step="1" />
+    </div>
+</div>
+<div class="form-group stacked">
+    <label data-tooltip="Enhancement.hints.qualityCharges">{{localize "Enhancement.qualityCharges.label"}}</label>
+    <div class="form-fields flexcol gap2px">
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs1 value=document.system.qualityCharges.qs1 localize=true}}
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs2 value=document.system.qualityCharges.qs2 localize=true}}
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs3 value=document.system.qualityCharges.qs3 localize=true}}
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs4 value=document.system.qualityCharges.qs4 localize=true}}
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs5 value=document.system.qualityCharges.qs5 localize=true}}
+        {{formGroup document.system.schema.fields.qualityCharges.fields.qs6 value=document.system.qualityCharges.qs6 localize=true}}
+    </div>
+</div>
+{{formGroup document.system.schema.fields.craftSkill value=document.system.craftSkill localize=true}}
+{{formGroup document.system.schema.fields.materialCost value=document.system.materialCost localize=true}}
+{{formGroup document.system.schema.fields.specialAttributes value=document.system.specialAttributes localize=true}}
