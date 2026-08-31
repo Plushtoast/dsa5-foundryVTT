@@ -10,7 +10,39 @@ export default class ActorSheetdsa5Character extends ActorSheetDsa5 {
       width: 784,
     },
     classes: ['character-sheet'],
+    actions: {
+      characterCalculator: this._openCharacterCalculator,
+    },
+    window: {
+      controls: [
+        {
+          action: 'characterCalculator',
+          label: 'HELP.charApp',
+          icon: 'fas fa-calculator',
+          visible: function () {
+            return this.actor.type === 'character' && !!game.dsa5.apps?.DSACharacterCalculator;
+          },
+        },
+      ],
+    },
   };
+
+  static _openCharacterCalculator() {
+    const Calculator = game.dsa5.apps?.DSACharacterCalculator;
+    if (!Calculator) return;
+
+    const dialogId = `dsa-character-calculator-${this.actor.id}`;
+    const existing = foundry.applications.instances.get(dialogId);
+    if (existing) {
+      existing.bringToTop();
+      return;
+    }
+
+    const cc = new Calculator({ id: dialogId });
+    cc.actor = this.actor;
+    cc.trackedId = this.actor.id;
+    cc.render(true);
+  }
 
   static PARTS = {
     sheet: super.PARTS.sheet,
