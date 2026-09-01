@@ -192,6 +192,13 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    tokenizer2Setup: {
+      name: 'tokenizer2Setup',
+      scope: 'world',
+      config: false,
+      default: false,
+      type: Boolean,
+    },
     diceSetup: {
       name: 'diceSetup',
       scope: 'world',
