@@ -718,6 +718,10 @@ form {
 .application .window-content select:not([multiple]) option {
   color: white;
   background: rgb(29, 28, 28);
+
+  &:disabled {
+    color: #8a8a8a;
+  }
 }
 
 select[multiple] {

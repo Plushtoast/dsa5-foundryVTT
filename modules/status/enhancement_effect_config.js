@@ -92,7 +92,12 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
           slotCost: this.document.system.slotCost,
         });
         const enhancementTypes = Object.entries(availableTypes).reduce((obj, [key, entry]) => {
-          obj[key] = { label: entry.label, disabled: entry.disabled };
+          obj[key] = {
+            label: entry.disabled
+              ? _loc('Enhancement.typeUnavailable', { type: _loc(entry.label) })
+              : entry.label,
+            disabled: entry.disabled,
+          };
           return obj;
         }, {});
         const slotLimits = DSAEnhancementEffectDataModel.getSlotLimits(this._targetType);
