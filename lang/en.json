@@ -3974,7 +3974,7 @@
     "enable": "Enable PC Quickbar",
     "enableHint": "Show a draggable overview of primary party members with LeP, AsP, and KaP. Uses logged-in assigned characters when no primary party is set.",
     "reset": "Reset PC Quickbar position",
-    "resetHint": "Reset position, layout, portrait size, and faded UI to defaults.",
+    "resetHint": "Reset position, layout, portrait size, display options, and faded UI to defaults.",
     "layout": "PC Quickbar layout",
     "layoutHint": "Arrange portraits horizontally or vertically.",
     "menuHint": "PC Quickbar options",
@@ -3997,7 +3997,13 @@
     "dragHint": "Drag to move. Scroll to resize.",
     "notOnScene": "This character has no token on the current scene.",
     "fadedUi": "Use Faded UI",
-    "fadedUiHint": "Apply Foundry's faded-ui class so the quickbar uses the interface inactive opacity."
+    "fadedUiHint": "Apply Foundry's faded-ui class so the quickbar uses the interface inactive opacity.",
+    "compactResources": "Compact resource bars",
+    "compactResourcesHint": "Show LeP, AsP, and KaP as overlay bars on the portrait, like the initiative tracker. Hover to see exact values.",
+    "showName": "Show names",
+    "showNameHint": "Show each character's name on the quickbar.",
+    "sideInfo": "Name and resources beside portrait",
+    "sideInfoHint": "In vertical layout, place the name and resource bars to the right of the portrait to use less vertical space."
   },
   "TT": {
     "addSpeedCategory": "Add speed category",

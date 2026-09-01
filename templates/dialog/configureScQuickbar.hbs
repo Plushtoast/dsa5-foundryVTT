@@ -17,26 +17,47 @@
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.resetHint'}}</p>
     </div>
-    <div class="form-group" data-setting-id="dsa5.scQuickbarSize">
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.size">
         <label>{{localize 'SCQUICKBAR.size'}}</label>
         <div class="form-fields">
-            <range-picker id="{{rootId}}-scQuickbarSize" name="dsa5.scQuickbarSize" value='{{scQuickbarSize}}' min="48" max="120" step="4"></range-picker>
+            <range-picker id="{{rootId}}-scQuickbarSize" name="config.size" value='{{config.size}}' min="48" max="120" step="4"></range-picker>
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.sizeHint'}}</p>
     </div>
-    <div class="form-group" data-setting-id="dsa5.scQuickbarLayout">
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.layout">
         <label>{{localize 'SCQUICKBAR.layout'}}</label>
         <div class="form-fields">
-            <select name="dsa5.scQuickbarLayout">
-                {{selectOptions layoutChoices selected=scQuickbarLayout localize=true}}
+            <select name="config.layout">
+                {{selectOptions layoutChoices selected=config.layout localize=true}}
             </select>
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.layoutHint'}}</p>
     </div>
-    <div class="form-group" data-setting-id="dsa5.scQuickbarFadedUi">
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showName">
+        <label>{{localize 'SCQUICKBAR.showName'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.showName" {{checked config.showName}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.showNameHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.compactResources">
+        <label>{{localize 'SCQUICKBAR.compactResources'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.compactResources" {{checked config.compactResources}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.compactResourcesHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.sideInfo">
+        <label>{{localize 'SCQUICKBAR.sideInfo'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.sideInfo" {{checked config.sideInfo}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.sideInfoHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.fadedUi">
         <label>{{localize 'SCQUICKBAR.fadedUi'}}</label>
         <div class="form-fields">
-            <input type="checkbox" name="dsa5.scQuickbarFadedUi" {{checked scQuickbarFadedUi}}>
+            <input type="checkbox" name="config.fadedUi" {{checked config.fadedUi}}>
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.fadedUiHint'}}</p>
     </div>

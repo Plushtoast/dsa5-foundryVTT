@@ -3976,7 +3976,7 @@
     "enable": "SC-Schnellleiste aktivieren",
     "enableHint": "Zeigt eine verschiebbare Übersicht der Gruppenmitglieder mit LeP, AsP und KaP. Ohne Hauptgruppe werden angemeldete Spielercharaktere verwendet.",
     "reset": "SC-Schnellleiste zurücksetzen",
-    "resetHint": "Position, Layout, Porträtgröße und verblasste UI auf Standard zurücksetzen.",
+    "resetHint": "Position, Layout, Porträtgröße, Anzeigeoptionen und verblasste UI auf Standard zurücksetzen.",
     "layout": "SC-Schnellleiste Layout",
     "layoutHint": "Portraits horizontal oder vertikal anordnen.",
     "menuHint": "SC-Leiste: Optionen",
@@ -3999,7 +3999,13 @@
     "dragHint": "Ziehen zum Verschieben. Scrollen zum Vergrößern.",
     "notOnScene": "Dieser Charakter hat keinen Token auf der aktuellen Szene.",
     "fadedUi": "Verblasste UI nutzen",
-    "fadedUiHint": "Wendet Foundrys faded-ui-Klasse an, damit die Leiste die Interface-Opacity nutzt."
+    "fadedUiHint": "Wendet Foundrys faded-ui-Klasse an, damit die Leiste die Interface-Opacity nutzt.",
+    "compactResources": "Kompakte Ressourcenleisten",
+    "compactResourcesHint": "Zeigt LeP, AsP und KaP als Overlay-Balken auf dem Porträt, wie im Initiativtracker. Die genauen Werte erscheinen im Tooltip.",
+    "showName": "Namen anzeigen",
+    "showNameHint": "Zeigt den Charakternamen an jedem Porträt.",
+    "sideInfo": "Name und Ressourcen neben dem Porträt",
+    "sideInfoHint": "Im vertikalen Layout Name und Ressourcenleisten rechts neben dem Porträt anzeigen, um Höhe zu sparen."
   },
   "TT": {
     "addSpeedCategory": "Geschwindigkeitskategorie hinzufügen",

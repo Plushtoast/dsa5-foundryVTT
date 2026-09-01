@@ -1,39 +1,59 @@
-<div class="sc-quickbar-root layout-{{layout}}{{#if collapsed}} display-collapsed{{/if}}" style="--portraitSize: {{portraitSize}}px">
+<div class="sc-quickbar-root layout-{{layout}}{{#if collapsed}} display-collapsed{{/if}}{{#if compactResources}} compact-resources{{/if}}{{#if showName}} show-name{{/if}}{{#if sideInfo}} side-info{{/if}}" style="--portraitSize: {{portraitSize}}px; --resourceRows: {{resourceRows}}">
   {{#unless collapsed}}
   <ul class="sc-quickbar-member-list">
     {{#each members}}
     <li class="sc-quickbar-member {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}} {{#unless onScene}}off-scene{{/unless}}"
         data-actor-id="{{actorId}}" data-token-id="{{tokenId}}" data-action="panToMember">
       {{#if @root.reserveResourceRow}}
-      <div class="sc-quickbar-resources flexrow">
+      <div class="sc-quickbar-resources">
         {{#if resources}}
-        <div class="flex0 LeP" data-tooltip="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
+        <div class="LeP" data-tooltip-html="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
           {{resources.LeP.value}}/{{resources.LeP.max}}
         </div>
         {{#if resources.AsP.max}}
-        <div class="flex0 AsP" data-tooltip="{{resources.AsP.label}} {{resources.AsP.value}}/{{resources.AsP.max}}">
+        <div class="AsP" data-tooltip-html="{{resources.AsP.label}} {{resources.AsP.value}}/{{resources.AsP.max}}">
           {{resources.AsP.value}}/{{resources.AsP.max}}
         </div>
         {{/if}}
         {{#if resources.KaP.max}}
-        <div class="flex0 KaP" data-tooltip="{{resources.KaP.label}} {{resources.KaP.value}}/{{resources.KaP.max}}">
+        <div class="KaP" data-tooltip-html="{{resources.KaP.label}} {{resources.KaP.value}}/{{resources.KaP.max}}">
           {{resources.KaP.value}}/{{resources.KaP.max}}
         </div>
         {{/if}}
         {{/if}}
       </div>
       {{/if}}
-      <div class="dsa-hud-portrait {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}}">
-        <div class="dsa-hud-portrait-image" style="background-image: url('{{img}}')"></div>
+      <div class="dsa-hud-portrait {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}}" style="background-image: url('{{img}}')" data-tooltip-html="{{{tooltipHtml}}}">
+        {{#if @root.compactResources}}
+        {{#if resources}}
+        <div class="dsa-hud-resource-overlay">
+          <div class="dsa-hud-resource-bar LeP" style="--a: {{resources.LeP.max}}; --b: {{resources.LeP.value}}" data-tooltip-html="{{resources.LeP.label}} {{resources.LeP.value}}/{{resources.LeP.max}}">
+            <div class="inner"></div>
+          </div>
+          {{#if resources.AsP.max}}
+          <div class="dsa-hud-resource-bar AsP" style="--a: {{resources.AsP.max}}; --b: {{resources.AsP.value}}" data-tooltip-html="{{resources.AsP.label}} {{resources.AsP.value}}/{{resources.AsP.max}}">
+            <div class="inner"></div>
+          </div>
+          {{/if}}
+          {{#if resources.KaP.max}}
+          <div class="dsa-hud-resource-bar KaP" style="--a: {{resources.KaP.max}}; --b: {{resources.KaP.value}}" data-tooltip-html="{{resources.KaP.label}} {{resources.KaP.value}}/{{resources.KaP.max}}">
+            <div class="inner"></div>
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
+        {{/if}}
         {{#if effects.hasIcons}}
-        <div class="token-effects" data-tooltip="{{effects.tooltip}}">
+        <div class="token-effects" data-tooltip-html="{{effects.tooltip}}">
           {{#each effects.icons}}
           <img class="token-effect" src="{{img}}" alt="{{name}}">
           {{/each}}
         </div>
         {{/if}}
       </div>
-      <span class="sc-quickbar-member-name ellipsis" data-tooltip="{{name}}">{{name}}</span>
+      {{#if @root.showName}}
+      <span class="sc-quickbar-member-name ellipsis" data-tooltip-text="{{name}}">{{name}}</span>
+      {{/if}}
     </li>
     {{/each}}
   </ul>

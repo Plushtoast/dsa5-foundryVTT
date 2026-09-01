@@ -5295,6 +5295,8 @@ select.noAppearance {
   &.initTracker,
   &.tokenQuickHot,
   &.sc-quickbar {
+    min-width: 0;
+    min-height: 0;
     padding: 0;
 
     &::after,

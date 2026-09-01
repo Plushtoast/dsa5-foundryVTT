@@ -310,5 +310,3 @@ The following modules are recommended for the best gaming experience:
 
 * [Dice So Nice!](https://gitlab.com/riccisi/foundryvtt-dice-so-nice) - Shows beautiful 3d dice on every roll. A must have! DSA5 fully integrates this module.
 * [VTTA Tokenizer](https://github.com/mrprimate/vtta-tokenizer) - Lets you create beautiful Tokens. DSA5 sets up token frames for the Tokenizer on the first time the module gets activated.
-* [Dice Tray](https://gitlab.com/asacolips-projects/foundry-mods/foundry-vtt-dice-calculator) - If you want to do quick die rolls without knowing foundry's chat syntax. Not needed for advanced users.
-* [times-up](https://gitlab.com/tposney/times-up) - Automatically expires buffs and debuffs on actors

@@ -151,6 +151,53 @@
       background: linear-gradient(135deg, rgba(74, 144, 226, 0.35) 0%, rgba(0, 0, 0, 0.45) 100%);
     }
   }
+
+  .dsa-hud-resource-overlay {
+    position: absolute;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    top: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 1px;
+    z-index: 3;
+    pointer-events: none;
+
+    .dsa-hud-resource-bar {
+      position: relative;
+      flex: 0 0 4px;
+      width: 100%;
+      height: 4px;
+      pointer-events: auto;
+      border: 0.5px solid rgba(14, 12, 12, 0.85);
+      background: rgba(0, 0, 0, 0.35);
+      box-sizing: border-box;
+
+      .inner {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        width: min(100%, calc(100% * var(--b) / max(1, var(--a))));
+      }
+
+      &.LeP .inner {
+        background: linear-gradient(90deg, #650707 0%, #c41e3a 100%);
+      }
+
+      &.AsP .inner {
+        background: linear-gradient(90deg, #0b0bd9 0%, #4a90e2 100%);
+      }
+
+      &.KaP .inner {
+        background: linear-gradient(90deg, #04a236 0%, #93cf0e 100%);
+      }
+    }
+  }
 }
 
 .sc-quickbar {

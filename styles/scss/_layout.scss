@@ -53,6 +53,9 @@
     &.initTracker,
     &.tokenQuickHot,
     &.sc-quickbar {
+      min-width: 0;
+      min-height: 0;
+
       &::after,
       .window-content {
         background: none;

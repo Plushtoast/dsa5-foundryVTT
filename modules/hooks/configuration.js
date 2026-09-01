@@ -5,7 +5,7 @@ import { showPatchViewer } from '../system/maintenance/migrator.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DSAWorldCalendar } from '../system/calendar/calendar.js';
 import NavalHouseRules, { NavalHouseRulesMenu } from '../combat/mkr/naval-house-rules.js';
-import { syncScQuickbar, ConfigureScQuickbar } from '../system/guiapps/sc-quickbar.js';
+import ScQuickbar, { syncScQuickbar, ConfigureScQuickbar } from '../system/guiapps/sc-quickbar.js';
 const { duplicate, mergeObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
@@ -844,51 +844,16 @@ export function setupConfiguration() {
         else game.dsa5.apps.scQuickbar?.close();
       },
     },
-    scQuickbarDisplayMode: {
-      name: 'SCQUICKBAR.displayModeSetting',
-      hint: 'SCQUICKBAR.displayModeSettingHint',
+    scQuickbarConfig: {
+      name: 'SCQUICKBAR.configure',
+      hint: 'SCQUICKBAR.configureHint',
       scope: 'client',
       config: false,
-      default: 0,
-      type: Number,
-      onChange: () => syncScQuickbar(true),
-    },
-    scQuickbarLayout: {
-      name: 'SCQUICKBAR.layout',
-      hint: 'SCQUICKBAR.layoutHint',
-      scope: 'client',
-      config: false,
-      default: 1,
-      type: Number,
-      choices: {
-        0: 'SCQUICKBAR.layoutVertical',
-        1: 'SCQUICKBAR.layoutHorizontal',
-      },
-      onChange: () => syncScQuickbar(true),
-    },
-    scQuickbarSize: {
-      name: 'SCQUICKBAR.size',
-      hint: 'SCQUICKBAR.sizeHint',
-      scope: 'client',
-      config: false,
-      default: 64,
-      type: Number,
-      range: {
-        min: 48,
-        max: 120,
-        step: 4,
-      },
-      onChange: () => syncScQuickbar(true),
-    },
-    scQuickbarFadedUi: {
-      name: 'SCQUICKBAR.fadedUi',
-      hint: 'SCQUICKBAR.fadedUiHint',
-      scope: 'client',
-      config: false,
-      default: false,
-      type: Boolean,
+      type: Object,
+      default: { ...ScQuickbar.DEFAULT_CONFIG },
       onChange: (val) => {
-        game.dsa5.apps.scQuickbar?.element?.classList.toggle('faded-ui', !!val);
+        game.dsa5.apps.scQuickbar?.element?.classList.toggle('faded-ui', !!val?.fadedUi);
+        syncScQuickbar(true);
       },
     },
     disableTokenhotbar: {
