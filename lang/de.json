@@ -2012,6 +2012,7 @@
     "slotCost": "Platzkosten",
     "slotFallback": "Der Platz für {from} ist bereits belegt. Die Aufwertung wurde stattdessen als {to} hinzugefügt.",
     "slotsFull": "Keine freien Verbesserungsplätze dieses Typs verfügbar.",
+    "typeUnavailable": "{type} (ausgeschöpft)",
     "specialAttributesLabel": "Besondere Eigenschaften",
     "targetType": "Ziel-Gegenstandstyp",
     "treatmentId": "Behandlungs-ID",

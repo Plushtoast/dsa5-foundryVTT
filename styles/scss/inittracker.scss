@@ -145,26 +145,19 @@
   .hoverbuttons {
     color: var(--dsa-hud-text-bright);
     position: absolute;
-    left: 0;
-    right: 0;
-    top: 100%;
-    bottom: auto;
-    transform: none;
+    right: 2px;
+    top: 2px;
     opacity: 0;
     transition: opacity 0.3s;
-    z-index: 6;
+    z-index: 2;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     gap: 2px;
-    padding-top: 2px;
-    pointer-events: none;
 
     .dsa-hud-icon-button {
       width: 20px;
       height: 20px;
       line-height: 20px;
-      pointer-events: auto;
     }
   }
 

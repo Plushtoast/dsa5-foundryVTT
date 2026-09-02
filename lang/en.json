@@ -2010,6 +2010,7 @@
     "slotCost": "Slot Cost",
     "slotFallback": "The {from} slot is already occupied. This enhancement was assigned to {to} instead.",
     "slotsFull": "No free enhancement slots of this type available.",
+    "typeUnavailable": "{type} (exhausted)",
     "specialAttributesLabel": "Special Attributes",
     "targetType": "Target Item Type",
     "treatmentId": "Treatment ID",
