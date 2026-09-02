@@ -97,6 +97,17 @@
             grid-template-columns: minmax(0, 1fr);
             grid-template-areas: 'budget';
         }
+
+        &--no-budget {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-areas: 'creature';
+            justify-items: center;
+
+            .summoning-summary__creature {
+                width: 100%;
+                max-width: 28rem;
+            }
+        }
     }
 
     .summoning-summary__creature {
@@ -300,6 +311,10 @@
         display: flex;
         flex-direction: column;
         gap: 2px;
+    }
+
+    .conjuration-favorites-list {
+        justify-content: center;
     }
 }
 

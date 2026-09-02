@@ -1057,6 +1057,7 @@
     },
     "nextStep": {
       "pickCreature": "Ziehe als Nächstes ein Wesen hierher, das beschworen werden soll.",
+      "pickCreatureOrFavorite": "Ziehe als Nächstes ein Wesen hierher oder wähle einen Favoriten.",
       "needRitual": "Dein Akteur braucht ein passendes Beschwörungsritual für diese Kategorie.",
       "rollSpell": "Würfle die Beschwörungsprobe, um QS zu erhalten.",
       "reroll": "Die Probe ist misslungen — würfle erneut oder passe die Modifikatoren an.",

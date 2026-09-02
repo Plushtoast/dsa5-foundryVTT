@@ -94,23 +94,7 @@ export class SummoningFlow {
       menu.conjurationData.packageModifier = 0;
     }
 
-    if (options.creature) {
-      menu.conjuration = options.creature;
-      menu.conjurationData.selectedIds = [];
-      menu.conjurationData.selectedEntityIds = [];
-      menu.conjurationData.selectedPackageIds = [];
-      menu.conjurationData.consumedQS = 0;
-      menu.conjurationData.packageModifier = 0;
-      if (options.creature.type === 'creature') {
-        const types = menu.conjurationData.conjurationTypes || {};
-        for (const [key, name] of Object.entries(types)) {
-          if (options.creature.system.creatureClass?.value?.includes(name)) {
-            menu.conjurationData.conjurationType = key;
-            break;
-          }
-        }
-      }
-    }
+    if (options.creature) menu.applyConjurationTarget(options.creature);
 
     await menu.render(true);
     await menu.changeTab('elementals', 'sheet');

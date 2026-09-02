@@ -1057,6 +1057,7 @@
     },
     "nextStep": {
       "pickCreature": "Next, drag in a creature to summon.",
+      "pickCreatureOrFavorite": "Next, drag in a creature to summon, or pick a favorite.",
       "needRitual": "Your actor needs a matching summoning ritual for this category.",
       "rollSpell": "Roll the summoning test to gain QL.",
       "reroll": "The test failed — roll again or adjust the modifiers.",

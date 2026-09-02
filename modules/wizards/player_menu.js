@@ -360,6 +360,7 @@ export default class PlayerMenu extends DefaultAppv2 {
   #applyConjurationRollResult(result = {}) {
     this.conjurationData.rollAttempted = true;
     this.conjurationData.qs = Number(result.qualityStep) || 0;
+    if (this.conjurationData.qs > 0) this.summoningPhase = 'extensions';
     this.render(true);
   }
 
@@ -641,12 +642,7 @@ export default class PlayerMenu extends DefaultAppv2 {
   }
 
   static #clearConjuration() {
-    this.conjuration = null;
-    this.conjurationData.selectedIds = [];
-    this.conjurationData.selectedEntityIds = [];
-    this.conjurationData.selectedPackageIds = [];
-    this.conjurationData.consumedQS = 0;
-    this.conjurationData.packageModifier = 0;
+    this.clearConjurationTarget();
     this.render(true);
   }
 
@@ -658,17 +654,28 @@ export default class PlayerMenu extends DefaultAppv2 {
       ui.notifications.warn('DSAError.notFound', { format: { category: 'Actor', name: uuid }, localize: true });
       return;
     }
-    PlayerMenu.#applyConjurationActor.call(this, actor);
+    this.applyConjurationTarget(actor);
+    this.render(true);
   }
 
-  /** @param {Actor} actor */
-  static #applyConjurationActor(actor) {
-    this.conjuration = actor;
+  #resetConjurationSelections() {
     this.conjurationData.selectedIds = [];
     this.conjurationData.selectedEntityIds = [];
     this.conjurationData.selectedPackageIds = [];
     this.conjurationData.consumedQS = 0;
     this.conjurationData.packageModifier = 0;
+  }
+
+  /**
+   * Bind a creature as the current summoning target. Stays on the ritual phase so the
+   * summoner can roll; extensions open after a successful roll (QS > 0).
+   * Shared by drop, favorites, and {@link SummoningFlow.open}.
+   * @param {Actor} actor
+   */
+  applyConjurationTarget(actor) {
+    this.conjuration = actor;
+    this.#resetConjurationSelections();
+    this.summoningPhase = 'ritual';
     if (actor.type === 'creature') {
       for (const key of Object.keys(this.conjurationData.conjurationTypes)) {
         if (actor.system.creatureClass?.value?.includes(this.conjurationData.conjurationTypes[key])) {
@@ -677,7 +684,13 @@ export default class PlayerMenu extends DefaultAppv2 {
         }
       }
     }
-    this.render(true);
+  }
+
+  /** Drop the summoning target and return the tab to the empty-state ritual phase. */
+  clearConjurationTarget() {
+    this.conjuration = null;
+    this.#resetConjurationSelections();
+    this.summoningPhase = 'ritual';
   }
 
   static #setSummoningPhase(ev, target) {
@@ -799,7 +812,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       const actor = data;
 
       if (actor.type == 'creature' || $(event.target).closest('.summoningArea').length > 0) {
-        PlayerMenu.#applyConjurationActor.call(this, actor);
+        this.applyConjurationTarget(actor);
+        this.render(true);
       } else {
         this.trackedId = data.id;
         this.actor = actor;
@@ -959,6 +973,7 @@ export default class PlayerMenu extends DefaultAppv2 {
         serviceMods.push({ name: _loc('CONJURATION.moreServices'), value: 1 });
       }
 
+      const favoriteCreatures = CompanionHandler.listConjurationFavorites(this.actor);
       mergeObject(data, {
         conjurationskills,
         conjurationEnchantments,
@@ -970,6 +985,7 @@ export default class PlayerMenu extends DefaultAppv2 {
         equipmentIndexLoaded,
         moreModifiers,
         hasMighty,
+        favoriteCreatures,
         summary: this.#prepareSummary({
           services,
           serviceMods,
@@ -979,6 +995,7 @@ export default class PlayerMenu extends DefaultAppv2 {
           entityAbilities,
           conjurationskills,
           conjurationEnchantments,
+          hasFavorites: favoriteCreatures.length > 0,
         }),
       });
     }
@@ -1032,7 +1049,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       availableActors: availableActors.map((a) => ({ id: a.id, name: a.name, img: a.img })),
       showActorSwitcher: availableActors.length > 1 || game.user.isGM,
       actorBadges: this.#prepareActorBadges(),
-      favoriteCreatures: CompanionHandler.listConjurationFavorites(this.actor),
+      hasSummoningTarget: !!this.conjuration,
+      favoriteCreatures: data.favoriteCreatures ?? CompanionHandler.listConjurationFavorites(this.actor),
     });
     return data;
   }
@@ -1057,7 +1075,7 @@ export default class PlayerMenu extends DefaultAppv2 {
    * Everything the summary rail needs: QS budget breakdown, difficulty, resulting services and
    * the reasons why finalizing is not possible yet. Shared shape with {@link ConjurationRequest}.
    */
-  #prepareSummary({ services, serviceMods, difficultyMods, aspMods, conjurationModifiers, entityAbilities, conjurationskills, conjurationEnchantments = [] }) {
+  #prepareSummary({ services, serviceMods, difficultyMods, aspMods, conjurationModifiers, entityAbilities, conjurationskills, conjurationEnchantments = [], hasFavorites = false }) {
     const typeId = this.conjurationData.conjurationType;
     const rawDifficulty = getProperty(this.conjuration, 'system.conjuringDifficulty.value') || 0;
     const difficultyTotal = difficultyMods.reduce((sum, m) => sum + m.value, 0);
@@ -1112,9 +1130,11 @@ export default class PlayerMenu extends DefaultAppv2 {
       editableQs: true,
       readonly: false,
       hideCreature: false,
+      hideBudget: !this.conjuration,
       rollAttempted: !!this.conjurationData.rollAttempted,
       nextStep: PlayerMenu.resolveNextStep({
         hasCreature: !!this.conjuration,
+        hasFavorites,
         hasRitual: hasUsableRitual,
         qs: Number(this.conjurationData.qs) || 0,
         rollAttempted: !!this.conjurationData.rollAttempted,
@@ -1127,11 +1147,13 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   /**
    * Contextual next-step hint for the summoning summary avatar column.
-   * @param {{hasCreature: boolean, hasRitual: boolean, qs: number, rollAttempted: boolean, overspent: boolean, remaining: number, canFinalize: boolean}} state
+   * @param {{hasCreature: boolean, hasFavorites?: boolean, hasRitual: boolean, qs: number, rollAttempted: boolean, overspent: boolean, remaining: number, canFinalize: boolean}} state
    * @returns {string|null}
    */
-  static resolveNextStep({ hasCreature, hasRitual, qs, rollAttempted, overspent, remaining, canFinalize }) {
-    if (!hasCreature) return 'CONJURATION.nextStep.pickCreature';
+  static resolveNextStep({ hasCreature, hasFavorites, hasRitual, qs, rollAttempted, overspent, remaining, canFinalize }) {
+    if (!hasCreature) {
+      return hasFavorites ? 'CONJURATION.nextStep.pickCreatureOrFavorite' : 'CONJURATION.nextStep.pickCreature';
+    }
     if (!hasRitual) return 'CONJURATION.nextStep.needRitual';
     if (qs <= 0) return rollAttempted ? 'CONJURATION.nextStep.reroll' : 'CONJURATION.nextStep.rollSpell';
     if (overspent) return 'CONJURATION.nextStep.reduceMods';
@@ -1315,6 +1337,7 @@ class ConjurationRequest extends DefaultAppv2 {
         editableQs: false,
         readonly: true,
         hideCreature: true,
+        hideBudget: false,
       },
     });
     return data;

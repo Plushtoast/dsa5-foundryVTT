@@ -1,5 +1,5 @@
 <div
-    class="dsa-card-panel dsap-3 summoning-summary {{#if summary.hideCreature}}summoning-summary--no-creature{{/if}}">
+    class="dsa-card-panel dsap-3 summoning-summary{{#if summary.hideCreature}} summoning-summary--no-creature{{/if}}{{#if summary.hideBudget}} summoning-summary--no-budget{{/if}}">
     {{#unless summary.hideCreature}}
     <div class="summoning-summary__creature">
         {{> systems/dsa5/templates/system/conjuration/parts/creature-card.hbs}}
@@ -12,6 +12,7 @@
     </div>
     {{/unless}}
 
+    {{#unless summary.hideBudget}}
     <div class="summoning-summary__budget">
         <div class="dsa-budget-bar-row">
             <div class="dsa-budget-bar-row__label">
@@ -83,4 +84,5 @@
             {{/unless}}
         </div>
     </div>
+    {{/unless}}
 </div>

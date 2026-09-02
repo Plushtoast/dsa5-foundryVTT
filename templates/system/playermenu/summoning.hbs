@@ -17,6 +17,7 @@
     {{/if}}
     {{/unless}}
 
+    {{#if hasSummoningTarget}}
     <nav class="summoning-phases" aria-label="{{localize 'PLAYER.conjuration'}}">
         {{#each summoningPhases as |phase|}}
         <button type="button" class="summoning-phases__btn {{#if phase.active}}active{{/if}}"
@@ -38,6 +39,7 @@
     <div class="summoning-phase">
         {{> systems/dsa5/templates/system/conjuration/parts/extensions.hbs}}
     </div>
+    {{/if}}
     {{/if}}
 
     {{else}}
