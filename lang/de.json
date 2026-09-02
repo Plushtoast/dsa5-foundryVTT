@@ -1911,7 +1911,7 @@
     "iniTrackerSize": "DSA Kampftracker Größe",
     "iniTrackerSizeHint": "Größe der Buttons im DSA Kampftracker",
     "iniTrackerDockToTop": "Kampftracker oben andocken",
-    "iniTrackerDockToTopHint": "Zu Kampfbeginn wird der Kalender auf einen schmalen Streifen am oberen Rand eingeklappt und der Tracker darunter zentriert. Der Streifen lässt sich per Hover wieder ausklappen. Wird bei jedem neuen Kampf zurückgesetzt und stellt den Kalender danach wieder her.",
+    "iniTrackerDockToTopHint": "Beim Anlegen und Starten eines Kampfes wird der Kalender auf einen schmalen Streifen am oberen Rand eingeklappt und der Tracker darunter zentriert. Der Streifen lässt sich per Hover wieder ausklappen. Wird bei jedem neuen Kampf zurückgesetzt und stellt den Kalender danach wieder her.",
     "iniTrackerPreferAvatar": "Heldenporträts bevorzugen",
     "iniTrackerPreferAvatarHint": "Zeigt im Kampftracker die Actor-Porträts statt der Token-Bilder.",
     "inventorySound": "Inventar Geräusche",

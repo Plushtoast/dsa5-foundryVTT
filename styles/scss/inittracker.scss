@@ -176,10 +176,36 @@
     right: 0;
     z-index: 7;
     pointer-events: none;
+    display: flex;
+    justify-content: center;
 
     .aggroButton,
     .roll {
       pointer-events: auto;
+    }
+
+    .roll {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      padding: 0;
+      margin: 0;
+      flex: 0 0 22px;
+      font-size: 12px;
+      line-height: 22px;
+      aspect-ratio: 1;
+      background: #b3241a;
+      background-image: none;
+      border-color: rgba(0, 0, 0, 0.45);
+      color: var(--dsa-hud-text-bright);
+      filter: none;
+
+      &:hover {
+        background: #d42d21;
+        border-color: var(--dsa-hud-accent);
+        color: #fff;
+      }
     }
   }
 
@@ -194,26 +220,6 @@
   .dsa-hud-portrait {
     flex: 0 0 auto;
     pointer-events: all;
-
-    .roll:before {
-      position: absolute;
-      content: '6';
-      color: var(--dsa-hud-text-bright);
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      text-align: center;
-    }
-
-    .roll {
-      position: relative;
-      display: block;
-      width: 25px;
-      height: 25px;
-      background: url('../../icons/dice/d6white.svg') no-repeat 50% 50%;
-      margin: 0 auto;
-    }
 
     &.defeated {
       background-size: 75% 75%;

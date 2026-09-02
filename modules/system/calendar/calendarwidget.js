@@ -675,10 +675,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     async _onRender(context, options) {
         await super._onRender(context, options);
 
-        if (game.combat?.started && game.settings.get('dsa5', 'iniTrackerDockToTop')) {
-            this.element.classList.add(this.constructor.COMBAT_MINIMIZED_CLASS);
-            this.#nudgeTrackerBelowCollapsed();
-        }
+        this.#syncCombatMinimized();
 
         if (!game.user.isGM) return;
 
@@ -891,15 +888,35 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             && !!game.dsa5?.apps?.CalendarWidget?.rendered;
     }
 
+    static shouldMinimizeForCombat() {
+        try {
+            return !!game.combat
+                && game.settings.get('dsa5', 'enableCombatFlow')
+                && game.settings.get('dsa5', 'iniTrackerDockToTop');
+        } catch (_err) {
+            return false;
+        }
+    }
+
     static collapseForCombat() {
         const widget = game.dsa5?.apps?.CalendarWidget;
-        if (!widget?.element) return;
-        widget.element.classList.add(this.COMBAT_MINIMIZED_CLASS);
+        widget?.#setCombatMinimized(true);
     }
 
     static restoreAfterCombat() {
         const widget = game.dsa5?.apps?.CalendarWidget;
-        widget?.element?.classList.remove(this.COMBAT_MINIMIZED_CLASS);
+        widget?.#setCombatMinimized(false);
+    }
+
+    #syncCombatMinimized() {
+        this.#setCombatMinimized(this.constructor.shouldMinimizeForCombat());
+    }
+
+    #setCombatMinimized(minimized) {
+        const el = this.element;
+        if (!el) return;
+        el.classList.toggle(this.constructor.COMBAT_MINIMIZED_CLASS, !!minimized);
+        if (minimized) this.#nudgeTrackerBelowCollapsed();
     }
 
     static collapsedDockBottom() {

@@ -1909,7 +1909,7 @@
     "iniTrackerSize": "TDE combat tracker size",
     "iniTrackerSizeHint": "Size of the buttons in the TDE combat tracker.",
     "iniTrackerDockToTop": "Dock combat tracker to top",
-    "iniTrackerDockToTopHint": "When combat starts, collapse the calendar widget to a thin top strip and center the tracker below it. Hover the strip to expand the calendar. Resets on each new combat and restores the calendar afterward.",
+    "iniTrackerDockToTopHint": "When a combat is created or started, collapse the calendar widget to a thin top strip and center the tracker below it. Hover the strip to expand the calendar. Resets on each new combat and restores the calendar afterward.",
     "iniTrackerPreferAvatar": "Prefer actor portraits",
     "iniTrackerPreferAvatarHint": "Show actor portraits in the combat tracker instead of token images.",
     "inventorySound": "Inventory sounds",

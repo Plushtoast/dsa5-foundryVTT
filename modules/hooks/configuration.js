@@ -383,7 +383,7 @@ export function setupConfiguration() {
       onChange: () => {
         const tracker = game.dsa5.apps.initTracker;
         if (!tracker || !game.combat) return;
-        if (game.settings.get('dsa5', 'iniTrackerDockToTop') && game.combat.started) {
+        if (game.settings.get('dsa5', 'iniTrackerDockToTop')) {
           tracker.dockForNewCombat();
         } else {
           tracker.onCombatEnded();

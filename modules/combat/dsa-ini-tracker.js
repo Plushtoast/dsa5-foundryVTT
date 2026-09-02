@@ -122,9 +122,9 @@ export default class DSAIniTracker extends DefaultAppv2 {
     CalendarWidget.restoreAfterCombat();
   }
 
-  #applyPosition(options, { forceDock = false, combatStarted = false, combatId = null } = {}) {
+  #applyPosition(options, { forceDock = false, combatId = null } = {}) {
     options.position ??= {};
-    const shouldDock = game.settings.get('dsa5', 'iniTrackerDockToTop') && combatStarted;
+    const shouldDock = game.settings.get('dsa5', 'iniTrackerDockToTop');
     const doDock = shouldDock && (forceDock || this.#forceDockOnce || !this.rendered || combatId !== this.#dockedCombatId);
     this.#forceDockOnce = false;
 
@@ -138,6 +138,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     }
 
     if (shouldDock && this.rendered && Number.isFinite(this.position?.left) && Number.isFinite(this.position?.top)) {
+      CalendarWidget.collapseForCombat();
       options.position.left = this.position.left;
       options.position.top = Math.max(this.position.top, CalendarWidget.getDockBottom());
       return;
@@ -273,7 +274,12 @@ export default class DSAIniTracker extends DefaultAppv2 {
     }
     turn.isVehicle = combatant.actor?.type === 'vehicle';
     turn.showNavalAggro = isNavalMkr && combatant.actor?.type !== 'vehicle';
+    turn.showOverlayButtons = this.showCombatantOverlayButtons(turn);
     turn.img = this.resolveCombatantImage(combatant, turn.img);
+  }
+
+  static showCombatantOverlayButtons(turn) {
+    return turn?.initiative != null || !!turn?.chaseRolled;
   }
 
   static dockPosition(width, dockBottom = CalendarWidget.getDockBottom()) {
@@ -381,14 +387,6 @@ export default class DSAIniTracker extends DefaultAppv2 {
         }
       }
     });
-
-    Hooks.on('updateCombat', (combat, changed) => {
-      if (!game.settings.get('dsa5', 'enableCombatFlow')) return;
-      if (!('started' in changed)) return;
-      const tracker = game.dsa5.apps.initTracker;
-      if (combat.started) tracker?.dockForNewCombat();
-      else tracker?.onCombatEnded();
-    });
   }
 
   updateTracker(data) {
@@ -485,7 +483,6 @@ export default class DSAIniTracker extends DefaultAppv2 {
     options.position.height = dimensions.height;
     this.#applyPosition(options, {
       forceDock: options.forceDock === true,
-      combatStarted: !!combatStarted,
       combatId: data.combat?.id ?? game.combat?.id ?? null,
     });
 
