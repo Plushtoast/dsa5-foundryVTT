@@ -118,6 +118,7 @@ import { ModuleBookPersonaeHelper } from './system/calendar/module_book_personae
 import { ModuleBookPersonaeApp } from './system/calendar/module_book_personae_app.js';
 import EnhancementHelper from './system/enhancement/enhancement-helper.js';
 import TreatmentHelper from './system/enhancement/treatment-helper.js';
+import EffectDuration from './status/effectDuration.js';
 import DetailSelect from './system/helpers/detail-select.js';
 import MagicAnalysisService from './system/magic-analysis/magic-analysis.js';
 import MagicAnalysisQueryService from './system/queries/magic-analysis-query.js';
@@ -139,6 +140,7 @@ globalThis.dsa5 = {
       DPS,
       DSATables,
       TreatmentHelper,
+      EffectDuration,
       TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,

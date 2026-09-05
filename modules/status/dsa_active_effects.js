@@ -1,5 +1,6 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-const { setProperty, getType, isPlainObject, hasProperty } = foundry.utils;
+import EffectDuration from './effectDuration.js';
+const { setProperty, getType, isPlainObject, hasProperty, mergeObject } = foundry.utils;
 
 export default class DSAActiveEffect extends ActiveEffect {
   static itemChangeRegex = /^@/;
@@ -368,13 +369,28 @@ export default class DSAActiveEffect extends ActiveEffect {
       update.duration = { ...(update.duration || {}), value: Number.isFinite(Number(durVal)) ? Math.round(Number(durVal)) : null };
     }
 
+    this.#mergeCombatRoundDuration(update, data.duration);
+
     if (!foundry.utils.isEmpty(update)) this.updateSource(update);
   }
 
   async _preUpdate(changed, options, user) {
     const allowed = await super._preUpdate(changed, options, user);
     if (allowed === false) return false;
-    //this._clearModifiedItems();
+
+    if (this.parent?.documentName !== 'Actor') return;
+    if (!changed.duration) return;
+    if (changed.duration.value === undefined && changed.duration.units === undefined && changed.duration.seconds === undefined) return;
+
+    this.#mergeCombatRoundDuration(changed, this._source.duration);
+  }
+
+  #mergeCombatRoundDuration(update, sourceDuration) {
+    if (!game.combat?.started) return;
+    const duration = mergeObject(sourceDuration || {}, update.duration || {}, { inplace: false });
+    const converted = EffectDuration.toCombatRounds(duration);
+    if (!converted) return;
+    update.duration = { ...(update.duration || {}), ...converted };
   }
 
   /*_clearModifiedItems() {
