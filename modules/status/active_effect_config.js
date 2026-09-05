@@ -56,7 +56,7 @@ Hooks.once('i18nInit', () => {
   DSAActiveEffectConfig.effectDurationRegexes = [
     {
       regEx: new RegExp(_loc('DSAREGEX.combatRounds'), 'i'),
-      seconds: 5,
+      seconds: CONFIG.time.roundTime,
     },
     {
       regEx: new RegExp(_loc('DSAREGEX.minutes'), 'i'),

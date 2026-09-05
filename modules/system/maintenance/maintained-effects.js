@@ -209,7 +209,7 @@ export default class MaintainedEffects {
   static #parseDurationSeconds(maintain, duration) {
     const timeUnits = [
       { key: 'DSAREGEXmaintain.seconds', seconds: 1 },
-      { key: 'DSAREGEXmaintain.combatRounds', seconds: 5 },
+      { key: 'DSAREGEXmaintain.combatRounds', seconds: CONFIG.time.roundTime },
       { key: 'DSAREGEXmaintain.minutes', seconds: 60 },
       { key: 'DSAREGEXmaintain.hours', seconds: 3600 },
       { key: 'DSAREGEXmaintain.days', seconds: 3600 * 24 },
