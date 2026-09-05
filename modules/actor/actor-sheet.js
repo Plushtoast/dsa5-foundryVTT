@@ -40,7 +40,7 @@ import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
 import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
-import { combatPartTemplates } from './template-configs.js';
+import { combatPartTemplates, magicPartTemplates } from './template-configs.js';
 import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
 import AmmoPicker from '../system/helpers/ammo-picker.js';
 
@@ -168,7 +168,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     },
     magic: {
       template: 'systems/dsa5/templates/actors/character/actor-magic.hbs',
-      templates: ['systems/dsa5/templates/actors/parts/spells.hbs', 'systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/magicalSigns.hbs'],
+      templates: [...magicPartTemplates],
       scrollable: [''],
     },
     religion: {
@@ -491,6 +491,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         'system.effect.value': '',
       });
     }
+    if (data.magicalActionKind) {
+      data['system.magicalActionKind.value'] = data.magicalActionKind;
+    }
     if (!['aggregatedTest', 'spell', 'liturgy', 'ritual', 'ceremony'].includes(data.type)) {
       data['system.weight.value'] = 0;
       data['system.quantity.value'] = 0;
@@ -501,6 +504,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     delete data.action;
     delete data.section;
     delete data.tooltip;
+    delete data.magicalActionKind;
     const items = await this.actor.createEmbeddedDocuments('Item', [data]);
     items[0].sheet.render(true);
   }

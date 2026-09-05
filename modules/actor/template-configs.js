@@ -34,6 +34,14 @@ export const merchantCommercePartTemplates = [
   'systems/dsa5/templates/actors/merchant/merchant-access.hbs',
 ];
 
+/** Nested partials for actor-magic.hbs and creature-magic.hbs. */
+export const magicPartTemplates = [
+  'systems/dsa5/templates/actors/parts/spells.hbs',
+  'systems/dsa5/templates/actors/parts/spell-section.hbs',
+  'systems/dsa5/templates/actors/parts/specblock.hbs',
+  'systems/dsa5/templates/actors/parts/magicalSigns.hbs',
+];
+
 /** Nested partials for actor-combat.hbs (ApplicationV2 combat PART). */
 export const combatPartTemplates = [
   'systems/dsa5/templates/actors/parts/combat_weapon.hbs',

@@ -1,0 +1,72 @@
+<div class="actor-spells groupbox">
+    <div class="row-section wrap inverseRowtable">
+        <div class="col">
+            <div class="row-section skills table-title lineheight">
+                <div class="title-type col four">
+                    {{localize title}}
+                </div>
+                <div class="col zerofive"></div>
+                <div class="title-test col fifteen center">{{localize "probe"}}</div>
+                <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
+                <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
+                <div class="col ten center">
+                    <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
+                </div>
+                <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
+                <div class="col ten center flexAlignCenter flexrow">
+                    <button type="button" data-action="itemCreate" class="icon fas fa-plus noBorder dsadesignbutton very-small" data-tooltip="SHEET.addItem" item-section="{{itemType}}" data-type="{{itemType}}"{{#if kind}} data-magical-action-kind="{{kind}}"{{/if}}></button>
+                </div>
+            </div>
+        </div>
+        {{#each items as |item i|}}
+        <div class="actor-spell-item-wrapper col spells item" data-item-id="{{item._id}}">
+            <div class="actor-spell-item row-section skills lineheight">
+                <div class="equipment-item-image col zerofive image">
+                    <div class="image" style="background-image: url('{{item.img}}')"></div>
+                    {{#if item.extensions}}<i class="overlayicon fas fa-angle-double-up" data-tooltip="{{item.extensions}}"></i> {{/if}}
+                </div>
+                <div class="actor-spell-name col four withContext">
+                    <a data-action="itemEdit" class="gTooltip" data-category="spellDetails" data-id="{{item._id}}">{{item.name}}</a>
+                </div>
+                <div class="actor-spell-test col fifteen flexrow flexAlignCenter">
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=item}}
+                </div>
+                <div class="actor-spell-fw col ten center flexrow advanceOntop">
+                    {{#if ../canAdvance}}
+                    <a class="advance icon fas fa-minus flex0" data-action="advanceWrapper" data-fct="_refundItemAdvance" data-attr="{{item._id}}"></a>
+                    {{/if}}
+                    <input class="skill-advances" type="number" value="{{item.system.talentValue.value}}" />
+                    {{#if ../canAdvance}}
+                    <a class="advance icon fas fa-plus flex0" data-action="advanceWrapper" data-fct="_advanceItem" data-attr="{{item._id}}"></a>
+                    {{/if}}
+                </div>
+                <div class="actor-spell-cost col ten center">
+                    {{item.system.AsPCost.value}}
+                </div>
+                <div class="actor-spell-duration col ten center">
+                    {{item.system.castingTime.value}} {{#if ../showCharge}}{{#if (gt item.LZ 1)}}
+                    <a data-action="chargeSpell" class="onlyMultiColumn" data-tooltip="{{item.title}}">
+                        <div class="progress-dsa5 blue">
+                            <span class="progress-left" style="--transformLeft:{{item.transformLeft}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <span class="progress-right" style="--transformRight:{{item.transformRight}}">
+                                    <span class="progress-bar"></span>
+                            </span>
+                            <div class="progress-value">{{item.progress}}</div>
+                        </div>
+                    </a>
+                    {{/if}}{{/if}}
+                </div>
+                <div class="actor-spell-range col ten center onlyMultiColumn">
+                    {{item.system.range.value}}
+                </div>
+
+                <div class="actor-spell-action col ten very-small flexAlignCenter flexrow">
+                    <button type="button" data-action="itemContextMenu" class="icon fas fa-ellipsis-vertical very-small noBorder dsadesignbutton" data-tooltip="SHEET.EditItem"></button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>

@@ -34,6 +34,7 @@ import { FateRolls } from './concerns/faterolls.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import { getAppliedTraditionItems, prepareTraditionItems } from './tradition-items.js';
+import MagicalActionSheetGroups from '../item/magical-actions/magical-action-sheet-groups.js';
 import AspPaymentDialog from '../dialog/asp-payment-dialog.js';
 import { RaptureTracker } from './concerns/rapture-tracker.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
@@ -874,6 +875,10 @@ export default class Actordsa5 extends Actor {
       blessing: [],
       magictrick: [],
       magicalsign: [],
+      spellList: [],
+      ritualList: [],
+      spellActions: [],
+      ritualActions: [],
     };
 
     const extensions = {
@@ -1074,6 +1079,8 @@ export default class Actordsa5 extends Actor {
         }
       }
     }
+
+    MagicalActionSheetGroups.apply(magic);
 
     if (combatskills.length) {
       for (const wep of inventory.rangeweapons.items) {
