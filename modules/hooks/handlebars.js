@@ -91,6 +91,7 @@ export default function () {
     attrName: (a) => DSA5_Utility.attributeLocalization(a),
     attrAbbr: (a) => DSA5_Utility.attributeAbbrLocalization(a),
     specCategoryHelp: (key) => SpecCategoryHelp.getText(key),
+    spellCategoryHelp: (key) => SpecCategoryHelp.getText(key, 'SpellCategoryHelp'),
     diceThingsUp: (a, b) => DSA5_Utility.replaceDies(a, false),
     clickableAbilities: (a, b) => clickableAbilities(a, b),
     traitName: (a) => _loc(DSA5.traitCategories[a]),

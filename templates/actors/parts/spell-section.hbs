@@ -8,13 +8,14 @@
                 <div class="col zerofive"></div>
                 <div class="title-test col fifteen center">{{localize "probe"}}</div>
                 <div class="title-fw col ten center" data-tooltip="Fw">{{localize "CHARAbbrev.FW"}}</div>
-                <div class="col ten center" data-tooltip="AsPCost">{{localize "cost"}}</div>
+                <div class="col ten center" data-tooltip="{{ifThen (or (eq itemType 'liturgy') (eq itemType 'ceremony')) 'KaPCost' 'AsPCost'}}">{{localize "cost"}}</div>
                 <div class="col ten center">
                     <i data-tooltip="CHARAbbrev.castingTime" class="fas fa-hourglass-half"></i>
                 </div>
                 <div class="col ten center onlyMultiColumn">{{localize "reach"}}</div>
                 <div class="col ten center flexAlignCenter flexrow">
                     <button type="button" data-action="itemCreate" class="icon fas fa-plus noBorder dsadesignbutton very-small" data-tooltip="SHEET.addItem" item-section="{{itemType}}" data-type="{{itemType}}"{{#if kind}} data-magical-action-kind="{{kind}}"{{/if}}></button>
+                    <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-circle-info flexAlignEnd" data-tooltip-html="{{spellCategoryHelp (ifThen kind kind itemType)}}"></button>
                 </div>
             </div>
         </div>

@@ -40,6 +40,14 @@ export const magicPartTemplates = [
   'systems/dsa5/templates/actors/parts/spell-section.hbs',
   'systems/dsa5/templates/actors/parts/specblock.hbs',
   'systems/dsa5/templates/actors/parts/magicalSigns.hbs',
+  'systems/dsa5/templates/actors/parts/patrons.hbs',
+];
+
+/** Nested partials for actor-religion.hbs and creature-religion.hbs. */
+export const religionPartTemplates = [
+  'systems/dsa5/templates/actors/parts/liturgies.hbs',
+  'systems/dsa5/templates/actors/parts/spell-section.hbs',
+  'systems/dsa5/templates/actors/parts/specblock.hbs',
 ];
 
 /** Nested partials for actor-combat.hbs (ApplicationV2 combat PART). */

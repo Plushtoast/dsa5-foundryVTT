@@ -3878,6 +3878,9 @@
   "SpecCategoryHelp": {
     "_fallback": "Special abilities in this category. See the rulebook for details."
   },
+  "SpellCategoryHelp": {
+    "_fallback": "This category at a glance. See the rulebook for details."
+  },
   "VantageSubcategory": {
     "general": "General",
     "tiergefährten": "Animal Companions",

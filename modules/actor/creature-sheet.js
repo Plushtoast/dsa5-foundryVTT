@@ -1,5 +1,5 @@
 import ActorSheetDsa5 from './actor-sheet.js';
-import { gearSearchPartTemplates, magicPartTemplates } from './template-configs.js';
+import { gearSearchPartTemplates, magicPartTemplates, religionPartTemplates } from './template-configs.js';
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
@@ -34,7 +34,7 @@ export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {
     },
     religion: {
       template: 'systems/dsa5/templates/actors/creature/creature-religion.hbs',
-      templates: ['systems/dsa5/templates/actors/parts/specblock.hbs', 'systems/dsa5/templates/actors/parts/liturgies.hbs'],
+      templates: [...religionPartTemplates],
       scrollable: ['']
     },
     inventory: {

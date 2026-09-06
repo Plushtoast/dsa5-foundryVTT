@@ -1,6 +1,9 @@
 {{#if prepare.magic.magicalsign}}
 <div class="groupbox">
-  <legend class="table-title lineheight">{{localize 'TYPES.Item.magicalsign'}}</legend>
+  <legend class="table-title lineheight flexrow">
+    <span>{{localize 'TYPES.Item.magicalsign'}}</span>
+    <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-circle-info flexAlignEnd" data-tooltip-html="{{spellCategoryHelp 'magicalsign'}}"></button>
+  </legend>
   <div class='row-section wrap cards'>
     {{#each prepare.magic.magicalsign as |item i|}}
     <div class='item' data-item-id='{{item._id}}'>

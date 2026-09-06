@@ -636,6 +636,7 @@ export default class Actordsa5 extends Actor {
       languagePoints: '',
       itemModifiers: this.system.itemModifiers ?? {},
       demonmarks: [],
+      patrons: [],
       diseases: [],
     };
   }
@@ -851,6 +852,7 @@ export default class Actordsa5 extends Actor {
     const aggregatedtests = [];
     const diseases = [];
     const demonmarks = [];
+    const patrons = [];
     const wornweapons = [];
     const information = [];
     const essence = [];
@@ -1043,7 +1045,7 @@ export default class Actordsa5 extends Actor {
             diseases.push(i);
             break;
           case 'patron':
-            specAbs.magical.push(i);
+            patrons.push(i);
             break;
           case 'demonmark':
             demonmarks.push(i);
@@ -1159,6 +1161,7 @@ export default class Actordsa5 extends Actor {
       inventory,
       hasTrait,
       demonmarks,
+      patrons,
       diseases,
       canBuild: this.type === 'character' && game.dsa5.sheets.DSACharBuilder && !this.system.details.species?.value,
       itemModifiers: this.system.itemModifiers,
