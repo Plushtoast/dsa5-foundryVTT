@@ -144,14 +144,18 @@ export class SelectUserDialog {
 }
 
 export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
-  static async getDialog(content) {
+  static async getDialog(content, { showMessageMode = false } = {}) {
     const users = game.users.filter((x) => x.active && !x.isGM);
 
     new UserMultipickDialog({
       window: {
         title: 'SHEET.PostItem',
       },
-      content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.hbs', { users }),
+      content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.hbs', {
+        users,
+        showMessageMode,
+        messageMode: game.settings.get('core', 'messageMode'),
+      }),
       buttons: [
         {
           action: 'done',
@@ -159,7 +163,7 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
           label: 'yes',
           default: true,
           callback: (event, button, dialog) => {
-            this.postContent(button.form.elements, content);
+            this.postContent(button.form, content, { showMessageMode });
           },
         },
         {
@@ -171,14 +175,26 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
     }).render(true);
   }
 
-  static async postContent(dlg, content) {
+  static async postContent(form, content, { showMessageMode = false } = {}) {
+    const dlg = form.elements;
     const chatOptions = DSA5_Utility.chatDataSetup(content);
     if (!dlg.sel_all.checked) {
-      const ids = [];
-      for (let key of Object.keys(dlg)) {
-        if (dlg[key].checked && key != 'sel_all') ids.push(dlg[key].value);
+      chatOptions.whisper = Array.from(form.querySelectorAll('.usersel:checked')).map((input) => input.value);
+    }
+
+    if (showMessageMode) {
+      const messageMode = form.querySelector('[name="messageMode"]:checked')?.value;
+      if (messageMode) {
+        const holder = document.createElement('div');
+        holder.innerHTML = content;
+        for (const button of holder.querySelectorAll('.informationRequestRoll')) {
+          button.dataset.messageMode = messageMode;
+        }
+        chatOptions.content = holder.innerHTML;
+        chatOptions.flags = foundry.utils.mergeObject(chatOptions.flags || {}, {
+          dsa5: { informationRequest: { messageMode } },
+        });
       }
-      chatOptions.whisper = ids;
     }
 
     ChatMessage.create(chatOptions);

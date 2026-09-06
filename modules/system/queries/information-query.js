@@ -3,6 +3,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import MagicAnalysisQueryService from './magic-analysis-query.js';
 import MagicAnalysisContentResolver from '../magic-analysis/magic-analysis-content-resolver.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 
 const { duplicate } = foundry.utils;
 
@@ -261,13 +262,42 @@ export default class InformationQueryService {
     return { status: 'rejected' };
   }
 
+  static PUBLIC_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.PUBLIC, DICE_CONSTANTS.CHAT_MODES.IC]);
+
+  static readMessageMode(form, fallback = DICE_CONSTANTS.CHAT_MODES.PUBLIC) {
+    return form?.querySelector?.('[name="messageMode"]:checked')?.value || fallback;
+  }
+
+  static async renderMessageModeHeader(messageMode = game.settings.get('core', 'messageMode')) {
+    return renderTemplate('systems/dsa5/templates/dialog/parts/message-mode-row.hbs', { messageMode });
+  }
+
   /**
-   * Recipients for information result messages based on `informationDistribution`.
+   * Recipients for information result messages.
+   * Per-request `messageMode` overrides the world `informationDistribution` setting.
    * Empty array = public (everyone). Otherwise whisper to those user ids.
    * @param {string} [playerId] Rolling / designated player user id
+   * @param {string} [messageMode] Foundry chat mode from the GM start dialog / roll
    * @returns {string[]}
    */
-  static getInformationResultRecipients(playerId) {
+  static getInformationResultRecipients(playerId, messageMode) {
+    if (messageMode) {
+      const modes = DICE_CONSTANTS.CHAT_MODES;
+      if (this.PUBLIC_MESSAGE_MODES.has(messageMode) || messageMode === modes.ROLL) return [];
+      if (messageMode === modes.BLIND) {
+        return game.users.filter((user) => user.isGM).map((x) => x.id);
+      }
+      if (messageMode === modes.SELF) {
+        const selfId = playerId || game.user.id;
+        return [selfId];
+      }
+      if (messageMode === modes.GM) {
+        const recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
+        if (playerId && !recipients.includes(playerId)) recipients.push(playerId);
+        return recipients;
+      }
+    }
+
     const mode = String(game.settings.get('dsa5', 'informationDistribution'));
     if (mode === '1') {
       const recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
@@ -284,11 +314,20 @@ export default class InformationQueryService {
    * Whether the given user may see an information / magical-analysis result.
    * @param {string} [playerId] Rolling / designated player user id
    * @param {User} [user]
+   * @param {string} [messageMode]
    */
-  static canViewInformationResult(playerId, user = game.user) {
-    const recipients = this.getInformationResultRecipients(playerId);
+  static canViewInformationResult(playerId, user = game.user, messageMode) {
+    if (user.isGM) return true;
+    const recipients = this.getInformationResultRecipients(playerId, messageMode);
     if (!recipients.length) return true;
     return recipients.includes(user.id);
+  }
+
+  static messageModeFromEvent(ev) {
+    const button = ev.currentTarget;
+    if (button.dataset.messageMode) return button.dataset.messageMode;
+    const messageId = button.closest('.message')?.dataset.messageId;
+    return game.messages.get(messageId)?.getFlag('dsa5', 'informationRequest')?.messageMode;
   }
 
   static async postApprovedResult(item, payload, selected) {
@@ -297,13 +336,13 @@ export default class InformationQueryService {
     const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    const chatData = DSA5_Utility.chatDataSetup(resultHtml);
-    const whisperTargets = this.getInformationResultRecipients(payload.playerId);
+    const chatData = DSA5_Utility.chatDataSetup(resultHtml, payload.messageMode);
+    const whisperTargets = this.getInformationResultRecipients(payload.playerId, payload.messageMode);
     if (whisperTargets.length) chatData.whisper = whisperTargets;
     await ChatMessage.create(chatData);
   }
 
-  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid } = {}) {
+  static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid, messageMode } = {}) {
     const gmUser = game.users.find((user) => user.active && user.isGM);
     if (!gmUser) {
       ui.notifications.warn(_loc('DSAQUERIES.NOTIFICATIONS.noGMOnline'));
@@ -322,6 +361,7 @@ export default class InformationQueryService {
       actorName: actor?.name || result.result.speaker?.alias || '',
       virtualInfo,
       parentUuid: parentUuid || null,
+      messageMode: messageMode || result.cardOptions?.messageMode,
     };
 
     const state = {
@@ -330,7 +370,9 @@ export default class InformationQueryService {
     };
 
     const whisperTargets = game.users.filter((user) => user.isGM).map((x) => x.id);
-    whisperTargets.push(game.user.id);
+    if (payload.messageMode !== DICE_CONSTANTS.CHAT_MODES.BLIND) {
+      whisperTargets.push(game.user.id);
+    }
 
     const message = await QueryOrchestrator.createRequest({
       queryType: this.QUERY_TYPE,
@@ -410,7 +452,11 @@ export default class InformationQueryService {
     setupData.testData.opposable = false;
     const result = await actor.basicTest(setupData);
 
-    await this.createInformationQuery(result, uuid, item, { actor, skill });
+    await this.createInformationQuery(result, uuid, item, {
+      actor,
+      skill,
+      messageMode: result.cardOptions?.messageMode,
+    });
   }
 
   static async informationRequestRoll(ev) {
@@ -419,12 +465,15 @@ export default class InformationQueryService {
     const { actor, tokenId } = DSA5ChatAutoCompletion._getActor();
     if (!actor) return;
 
+    const messageMode = this.messageModeFromEvent(ev);
     const optns = {
       modifier,
+      ...(messageMode ? { messageMode } : {}),
       postFunction: {
         functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
         uuid,
-        recipients: this.getInformationResultRecipients(game.user.id),
+        messageMode,
+        recipients: this.getInformationResultRecipients(game.user.id, messageMode),
       },
     };
     const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
@@ -455,7 +504,7 @@ export default class InformationQueryService {
     const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    const chatData = DSA5_Utility.chatDataSetup(resultHtml);
+    const chatData = DSA5_Utility.chatDataSetup(resultHtml, postFunction.messageMode);
     if (postFunction.recipients?.length) chatData.whisper = postFunction.recipients;
     await ChatMessage.create(chatData);
   }

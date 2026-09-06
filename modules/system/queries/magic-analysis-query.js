@@ -6,6 +6,7 @@ import InformationQueryService from './information-query.js';
 import RollRequestService from './roll-request.js';
 import { bindClickListener } from '../helpers/view_helper.js';
 import ItemEnchantment from '../../item/item-enchantment.js';
+import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 const { renderTemplate } = foundry.applications.handlebars;
 const { duplicate } = foundry.utils;
 
@@ -49,15 +50,19 @@ export default class MagicAnalysisQueryService {
       .filter((a) => a.isPlayerOwned || a.isActiveCharacter)
       .map((a) => ({ ...a, preselected: true }));
 
+    const header = `${await InformationQueryService.renderMessageModeHeader()}<hr/>`;
+
     ActorPickerDialog.open({
       actors,
       showSourceToggle: true,
       title: 'MAGICANALYSIS.dialogTitle',
+      header,
       entryFilter: (entry) => entry.isPlayerOwned || entry.isActiveCharacter,
-      callback: ({ actorIds }) => {
+      callback: ({ actorIds, form }) => {
+        const messageMode = InformationQueryService.readMessageMode(form, DICE_CONSTANTS.CHAT_MODES.PUBLIC);
         for (const actorId of actorIds) {
           const actor = game.actors.get(actorId);
-          if (actor) this.createRequest({ actor, analysisContext });
+          if (actor) this.createRequest({ actor, analysisContext, messageMode });
         }
       },
     });
@@ -164,7 +169,7 @@ export default class MagicAnalysisQueryService {
     return state;
   }
 
-  static async createRequest({ actor, analysisContext }) {
+  static async createRequest({ actor, analysisContext, messageMode } = {}) {
     const { informationUuid, parentUuid, infoContent } = analysisContext;
 
     const progress = this.initProgress(actor);
@@ -180,6 +185,7 @@ export default class MagicAnalysisQueryService {
       steps: this.buildSteps(actor, progress),
       finalized: false,
       notPossible: false,
+      messageMode: messageMode || undefined,
       recipients: [{
         actorId: actor.id,
         designatedUserId: designatedUser?.id || null,
@@ -276,7 +282,7 @@ export default class MagicAnalysisQueryService {
     }
 
     const resultPlayerId = state.approval?.playerId || designatedUserId;
-    if (!InformationQueryService.canViewInformationResult(resultPlayerId)) {
+    if (!InformationQueryService.canViewInformationResult(resultPlayerId, game.user, state.messageMode)) {
       html.find('.magic-analysis-result-block').remove();
     }
 
@@ -284,6 +290,7 @@ export default class MagicAnalysisQueryService {
       const row = $(element);
       const rollBtn = row.find('.magic-analysis-action[data-action="roll"]');
       const gmBtn = row.find('.magic-analysis-action[data-action="rollOnBehalf"]');
+      const step = state.steps?.find((entry) => entry.stepId === element.dataset.stepId);
 
       if (game.user.isGM) {
         // Avoid duplicate dice: GM uses roll-on-behalf; players use the owner roll button.
@@ -293,6 +300,17 @@ export default class MagicAnalysisQueryService {
       } else {
         rollBtn.remove();
         gmBtn.remove();
+      }
+
+      if (!step?.resultDetails || !state.messageMode) return;
+
+      const entry = {
+        actorId: state.actorId,
+        status: step.status,
+        resultDetails: { ...step.resultDetails, messageMode: state.messageMode },
+      };
+      if (!RollRequestService.canUserSeeResult(entry, { messageMode: state.messageMode })) {
+        RollRequestService.hidePrivateResult(row);
       }
     });
   }
@@ -320,12 +338,15 @@ export default class MagicAnalysisQueryService {
     return cap;
   }
 
-  static async #rollEnchantmentHelper(actor, step) {
+  static async #rollEnchantmentHelper(actor, step, messageMode) {
     const sourceItem = actor.items.get(step.sourceItemId);
     if (!sourceItem) return { userId: game.user.id, status: 'error' };
 
     const result = await ItemEnchantment.roll(sourceItem, step.enchantmentId, {
-      options: { subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})` },
+      options: {
+        subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
+        ...(messageMode ? { messageMode } : {}),
+      },
     });
     if (!result) return { userId: game.user.id, status: 'cancelled' };
 
@@ -378,7 +399,7 @@ export default class MagicAnalysisQueryService {
     try {
       if (step.type === 'helper') {
         if (step.source === 'enchantment') {
-          return await this.#rollEnchantmentHelper(actor, step);
+          return await this.#rollEnchantmentHelper(actor, step, state.messageMode);
         }
 
         const spell = actor.items.get(step.spellId);
@@ -387,6 +408,7 @@ export default class MagicAnalysisQueryService {
         const setupData = await actor.setupSpell(spell, {
           subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
           speaker: MagicAnalysisService._getSpeaker(actor.id),
+          ...(state.messageMode ? { messageMode: state.messageMode } : {}),
         }, undefined);
 
         const result = await actor.basicTest(setupData);
@@ -415,6 +437,7 @@ export default class MagicAnalysisQueryService {
           subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
           speaker: MagicAnalysisService._getSpeaker(actor.id),
           modifier: state.infoContent?.modifier || 0,
+          ...(state.messageMode ? { messageMode: state.messageMode } : {}),
         }, undefined);
 
         setupData.testData.opposable = false;

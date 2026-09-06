@@ -137,6 +137,6 @@ export default class InformationData extends ItemDataModel {
     }
     const { UserMultipickDialog } = await import('../../dialog/addTargetDialog.js');
     const html = await renderTemplate('systems/dsa5/templates/chat/information/request-roll.hbs', { item });
-    UserMultipickDialog.getDialog(html);
+    UserMultipickDialog.getDialog(html, { showMessageMode: true });
   }
 }

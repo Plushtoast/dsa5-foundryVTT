@@ -134,7 +134,7 @@ export default class ItemEnchantment {
         item: sourceItem.name,
         spell: spell.name,
       });
-      await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
+      await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg, options.messageMode));
     }
 
     if (consume) await this.consume(sourceItem, enchantmentId);
