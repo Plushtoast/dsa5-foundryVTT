@@ -664,6 +664,8 @@ export default class PlayerMenu extends DefaultAppv2 {
     this.conjurationData.selectedPackageIds = [];
     this.conjurationData.consumedQS = 0;
     this.conjurationData.packageModifier = 0;
+    this.conjurationData.qs = 0;
+    this.conjurationData.rollAttempted = false;
   }
 
   /**
@@ -710,13 +712,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     }
 
     this.conjurationData.conjurationType = typeId;
-    this.conjurationData.selectedIds = [];
-    this.conjurationData.selectedEntityIds = [];
-    this.conjurationData.selectedPackageIds = [];
-    this.conjurationData.consumedQS = 0;
-    this.conjurationData.packageModifier = 0;
-    this.conjurationData.rollAttempted = false;
-    this.conjurationData.qs = 0;
+    this.#resetConjurationSelections();
     this.render(true);
   }
 
@@ -1102,6 +1098,11 @@ export default class PlayerMenu extends DefaultAppv2 {
     if (budget.over) blockers.push('CONJURATION.blocker.overspent');
 
     const canFinalize = blockers.length === 0;
+    const hideBudget = PlayerMenu.shouldHideBudget({
+      hasCreature: !!this.conjuration,
+      rollAttempted: !!this.conjurationData.rollAttempted,
+      qs: Number(this.conjurationData.qs) || 0,
+    });
     return {
       typeId,
       typeName: this.conjurationData.conjurationTypes[typeId],
@@ -1130,7 +1131,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       editableQs: true,
       readonly: false,
       hideCreature: false,
-      hideBudget: !this.conjuration,
+      hideBudget,
+      showDeferredBlockers: !!this.conjuration && hideBudget,
       rollAttempted: !!this.conjurationData.rollAttempted,
       nextStep: PlayerMenu.resolveNextStep({
         hasCreature: !!this.conjuration,
@@ -1143,6 +1145,17 @@ export default class PlayerMenu extends DefaultAppv2 {
         canFinalize,
       }),
     };
+  }
+
+  /**
+   * Hide the QS-usage rail until a creature is selected and a ritual test has been rolled
+   * (or QS was entered). Keeps the pre-roll layout focused on the creature card.
+   * @param {{hasCreature: boolean, rollAttempted: boolean, qs: number}} state
+   * @returns {boolean}
+   */
+  static shouldHideBudget({ hasCreature, rollAttempted, qs }) {
+    if (!hasCreature) return true;
+    return !rollAttempted && !(Number(qs) > 0);
   }
 
   /**

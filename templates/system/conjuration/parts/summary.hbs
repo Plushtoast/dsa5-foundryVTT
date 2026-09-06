@@ -9,6 +9,15 @@
             {{localize summary.nextStep}}
         </p>
         {{/if}}
+        {{#if summary.showDeferredBlockers}}
+        {{#if summary.blockers.length}}
+        <div class="summoning-blockers">
+            {{#each summary.blockers as |blocker|}}
+            <span class="dsa-pip pip-negative">{{localize blocker}}</span>
+            {{/each}}
+        </div>
+        {{/if}}
+        {{/if}}
     </div>
     {{/unless}}
 
