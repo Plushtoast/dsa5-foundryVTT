@@ -4,6 +4,7 @@ const { TextEditor } = foundry.applications.ux;
 export class DSAPersonaEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarActors';
     static ACTOR_NOTES_FIELD = 'system.details.notes.value';
+    static ACTOR_NOTES_PATH = 'system.details.notes';
     static CREATION_CONFIG = {
         pageType: 'dsapersonaedramatis',
         entryCollection: 'personae',
@@ -303,6 +304,16 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     static shouldLinkActorNotes(entry = {}, actor = null) {
         return !!entry.linkActorNotes && this.isActorNotesLinkable(actor);
+    }
+
+    static actorNotesChanged(changed = {}) {
+        return foundry.utils.hasProperty(changed, this.ACTOR_NOTES_PATH);
+    }
+
+    static actorNotesUpdateAffectsPersona(actor, changed, entry) {
+        if (!entry?.actor_uuid || !actor?.uuid) return false;
+        if (entry.actor_uuid !== actor.uuid) return false;
+        return this.actorNotesChanged(changed);
     }
 
     static async applyNotesUpdate({ documentUuid, name, newValue } = {}) {

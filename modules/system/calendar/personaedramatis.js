@@ -7,6 +7,7 @@ export class PersonaeDramatis {
     static #lastSelectedActor = null;
     static #collapsedGroups = new Set();
     static #listFilters = { important: false, visible: false, duplicates: true };
+    static #actorUpdateHookId;
     #search;
     #keyboardNavigation;
 
@@ -267,15 +268,60 @@ export class PersonaeDramatis {
         };
     }
 
+    static #detailsRoot() {
+        return PersonaeDramatis.#parent?.element?.querySelector('.tab[data-tab="personae"] .personae-two-column');
+    }
+
     static async displayActorDetails(entry, page, key, target) {
-        const container = target.closest('.personae-two-column');
-        const detailsContainer = container.querySelector('.persona-details-container');
+        const container = target?.closest?.('.personae-two-column') ?? PersonaeDramatis.#detailsRoot();
+        const detailsContainer = container?.querySelector('.persona-details-container');
         if (!detailsContainer) return;
 
+        const scrollTop = detailsContainer.scrollTop;
         const detailData = await PersonaeDramatis.#prepareActorDetailData(entry, page, key, game.user.isGM);
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/persona-detail.hbs', detailData);
         detailsContainer.innerHTML = detailHTML;
+        detailsContainer.scrollTop = scrollTop;
         PersonaeDramatis.#setupDetailListeners(container);
+    }
+
+    static async refreshOpenDetails() {
+        const parent = PersonaeDramatis.#parent;
+        const selected = PersonaeDramatis.#lastSelectedActor;
+        if (!parent?.rendered || !selected) return false;
+
+        const page = await fromUuid(selected.pageUuid);
+        const entry = page?.system?.personae?.[selected.dramatisKey];
+        if (!entry) return false;
+
+        const container = PersonaeDramatis.#detailsRoot();
+        if (!container) return false;
+
+        await PersonaeDramatis.displayActorDetails(entry, page, selected.dramatisKey, container);
+        return true;
+    }
+
+    static #onActorUpdate(actor, changed) {
+        const parent = PersonaeDramatis.#parent;
+        const selected = PersonaeDramatis.#lastSelectedActor;
+        if (!parent?.rendered || !selected) return;
+
+        const page = fromUuidSync(selected.pageUuid);
+        const entry = page?.system?.personae?.[selected.dramatisKey];
+        if (!DSAPersonaEntry.actorNotesUpdateAffectsPersona(actor, changed, entry)) return;
+
+        void PersonaeDramatis.refreshOpenDetails();
+    }
+
+    static #bindActorUpdateListener() {
+        if (PersonaeDramatis.#actorUpdateHookId != null) return;
+        PersonaeDramatis.#actorUpdateHookId = Hooks.on('updateActor', PersonaeDramatis.#onActorUpdate);
+    }
+
+    static #unbindActorUpdateListener() {
+        if (PersonaeDramatis.#actorUpdateHookId == null) return;
+        Hooks.off('updateActor', PersonaeDramatis.#actorUpdateHookId);
+        PersonaeDramatis.#actorUpdateHookId = null;
     }
 
     static #visibleListItems() {
@@ -558,6 +604,7 @@ export class PersonaeDramatis {
             detailTabsSelector: '.tab[data-tab="personae"].active .persona-details-container nav.tabs [data-group][data-tab]',
         });
         this.#keyboardNavigation.bind(this.element);
+        PersonaeDramatis.#bindActorUpdateListener();
     }
 
     #onSearchFilter(_event, query, rgx, html) {
@@ -567,5 +614,6 @@ export class PersonaeDramatis {
     _tearDown(options) {
         this.#search?.unbind();
         this.#keyboardNavigation?.unbind();
+        PersonaeDramatis.#unbindActorUpdateListener();
     }
 }
