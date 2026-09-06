@@ -151,6 +151,9 @@ export class UserMultipickDialog extends foundry.applications.api.DialogV2 {
       window: {
         title: 'SHEET.PostItem',
       },
+      position: {
+        width: 480,
+      },
       content: await renderTemplate('systems/dsa5/templates/dialog/usermultipickdialog.hbs', {
         users,
         showMessageMode,
