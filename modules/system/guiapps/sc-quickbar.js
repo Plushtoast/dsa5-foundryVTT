@@ -477,7 +477,7 @@ export default class ScQuickbar extends DefaultAppv2 {
   _getScQuickbarContextOptions() {
     const { DISPLAY_MODE_ALL, DISPLAY_MODE_LOGGED_IN, DISPLAY_MODE_COLLAPSED } = this.constructor;
     const config = this.constructor.readConfig();
-    const { displayMode, layout, fadedUi, compactResources, showName, sideInfo } = config;
+    const { displayMode, fadedUi, compactResources, showName, sideInfo } = config;
     const icon = (active, defaultIcon) => (active ? '<i class="fas fa-check"></i>' : defaultIcon);
 
     const options = [
@@ -498,12 +498,14 @@ export default class ScQuickbar extends DefaultAppv2 {
       },
       {
         label: 'SCQUICKBAR.layoutHorizontal',
-        icon: icon(layout === 1, '<i class="fas fa-grip-horizontal"></i>'),
+        icon: '<i class="fas fa-grip-horizontal"></i>',
+        visible: () => this.constructor.readConfig().layout !== 1,
         onClick: () => this.constructor.patchConfig({ layout: 1 }),
       },
       {
         label: 'SCQUICKBAR.layoutVertical',
-        icon: icon(layout === 0, '<i class="fas fa-grip-vertical"></i>'),
+        icon: '<i class="fas fa-grip-vertical"></i>',
+        visible: () => this.constructor.readConfig().layout !== 0,
         onClick: () => this.constructor.patchConfig({ layout: 0 }),
       },
       {
@@ -516,17 +518,12 @@ export default class ScQuickbar extends DefaultAppv2 {
         icon: icon(compactResources, '<i class="fas fa-bars-progress"></i>'),
         onClick: () => this.constructor.patchConfig({ compactResources: !compactResources }),
       },
-    ];
-
-    if (layout === 0) {
-      options.push({
+      {
         label: 'SCQUICKBAR.sideInfo',
         icon: icon(sideInfo, '<i class="fas fa-table-columns"></i>'),
+        visible: () => this.constructor.readConfig().layout === 0,
         onClick: () => this.constructor.patchConfig({ sideInfo: !sideInfo }),
-      });
-    }
-
-    options.push(
+      },
       {
         label: 'SCQUICKBAR.fadedUi',
         icon: icon(fadedUi, '<i class="fas fa-circle-half-stroke"></i>'),
@@ -537,7 +534,7 @@ export default class ScQuickbar extends DefaultAppv2 {
         icon: '<i class="fa-solid fa-cog"></i>',
         onClick: () => new ConfigureScQuickbar().render(true),
       },
-    );
+    ];
 
     return options;
   }
