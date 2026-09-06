@@ -101,11 +101,14 @@
                 {{> systems/dsa5/templates/dialog/parts/targets.hbs}}
             </div>
             <div class="specAbsContainer">
+                {{> systems/dsa5/templates/dialog/parts/extra-flows.hbs}}
                 {{#unless extensions}}
+                {{#unless extraFlows.length}}
                 <div class="row-section">
                     <div class="col extImg" style="height: 120px" data-tooltip="DIALOG.noExtensions">
                     </div>
                 </div>
+                {{/unless}}
 
                 {{else}} 
                     {{#each extensions as |item i|}}

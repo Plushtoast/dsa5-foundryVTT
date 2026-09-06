@@ -1,11 +1,12 @@
 import ItemEnchantment from '../../item/item-enchantment.js';
+import { DialogExtraFlow } from '../../dialog/dialog-extra-flow.js';
 
 /**
  * Entry points into the guided summoning flow.
  *
  * The Beschwörung tab of the PlayerMenu is the only place where a summoning can actually be
- * assembled, so every entry point (companions tab, ritual roll, item context menu) funnels through
- * {@link SummoningFlow.open}.
+ * assembled, so every entry point (companions tab, ritual extra-flow, item context menu) funnels
+ * through {@link SummoningFlow.open}.
  */
 export class SummoningFlow {
   static RITUAL_TYPES = ['spell', 'ritual', 'liturgy', 'ceremony'];
@@ -100,48 +101,18 @@ export class SummoningFlow {
     await menu.changeTab('elementals', 'sheet');
   }
 
-  /**
-   * Ask whether a left-click on a summoning ritual should just roll the test or start the full
-   * summoning. Only used when the `summoningRollChooser` setting is on.
-   * @returns {Promise<'roll'|'summon'|null>} null when the dialog was dismissed.
-   */
-  static async chooseRollMode(item) {
-    return foundry.applications.api.DialogV2.wait({
-      id: 'dsa5-summoning-roll-chooser',
-      window: { title: 'CONJURATION.startSummoning' },
-      classes: ['dsa5'],
-      content: `<p>${_loc('CONJURATION.rollOrSummon', { name: item.name })}</p>`,
-      buttons: [
-        {
-          action: 'summon',
-          label: 'CONJURATION.startSummoning',
-          icon: 'fas fa-hat-wizard',
-          default: true,
-        },
-        {
-          action: 'roll',
-          label: 'CONJURATION.plainRoll',
-          icon: 'fas fa-dice-d20',
-        },
-      ],
-      rejectClose: false,
+  static registerExtraFlow() {
+    DialogExtraFlow.register({
+      id: 'summoning',
+      matches: (item) => SummoningFlow.isConjurationSkill(item),
+      label: 'CONJURATION.startSummoning',
+      tooltip: 'CONJURATION.dialogFlowTooltip',
+      dropHint: 'CONJURATION.dragConjuration',
+      icon: 'fas fa-hat-wizard',
+      canAcceptDrop: (doc) => doc?.documentName === 'Actor' && doc.type === 'creature',
+      start: async ({ actor, source, dropped }) => {
+        await SummoningFlow.open(actor, source, dropped ? { creature: dropped } : {});
+      },
     });
-  }
-
-  /**
-   * Left-click handling for a ritual on the actor sheet.
-   * @returns {Promise<boolean>} true when the summoning flow took over and no roll should happen.
-   */
-  static async interceptRoll(actor, item) {
-    if (!game.settings.get('dsa5', 'summoningRollChooser')) return false;
-    if (!SummoningFlow.isConjurationSkill(item)) return false;
-
-    const choice = await SummoningFlow.chooseRollMode(item);
-    if (choice === 'summon') {
-      await SummoningFlow.open(actor, item);
-      return true;
-    }
-    // A dismissed dialog must not silently roll either.
-    return choice !== 'roll';
   }
 }

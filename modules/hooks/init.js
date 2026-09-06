@@ -81,6 +81,7 @@ Hooks.once('init', () => {
   foundry.applications.handlebars.loadTemplates([
     'systems/dsa5/templates/dialog/default-dialog.hbs',
     'systems/dsa5/templates/dialog/parts/targets.hbs',
+    'systems/dsa5/templates/dialog/parts/extra-flows.hbs',
     'systems/dsa5/templates/dialog/enhanced-default-dialog.hbs',
     'systems/dsa5/templates/dialog/default-combat-dialog.hbs',
     'systems/dsa5/templates/chat/roll/test-card.hbs',

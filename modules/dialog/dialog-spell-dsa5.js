@@ -85,7 +85,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const mods = [];
     const rollModifierKeys = Object.keys(DSA5SpellDialog.rollModifiers).map((x) => `${x}.mod`);
     this.dialogData.renderData.rollModifiersPrepared = duplicate(this.dialogData.renderData.rollModifiers);
-    for (const k of parent.find('.specAbs.active')) {
+    for (const k of parent.find('.specAbs.active:not(.extra-flow)')) {
       const item = await fromUuid(k.dataset.uuid);
       if (!item) continue;
 
@@ -302,7 +302,7 @@ export default class DSA5SpellDialog extends DialogShared {
     const html = $(this.element)
     html.find('.reloadButton').prop('disabled', Number(html.find('.castingTime').text()) < 2);
 
-    html.find('.specAbs').on('mousedown', (ev) => {
+    html.find('.specAbs:not(.extra-flow)').on('mousedown', (ev) => {
       $(ev.currentTarget).toggleClass('active');
       this.recalcSpellModifiers(html);
     });

@@ -1,0 +1,21 @@
+{{#if extraFlows.length}}
+<div class="flexcol extra-flows">
+    {{#each extraFlows}}
+    <div class="row-section specAbs extra-flow" data-flow-id="{{id}}" data-tooltip="{{localize tooltip}}">
+        {{#if icon}}
+        <div class="col ten center"><i class="{{icon}}"></i></div>
+        {{else}}
+        <div class="extImg col ten"></div>
+        {{/if}}
+        <div class="col ninety">
+            <a>&nbsp;{{localize label}}</a>
+        </div>
+    </div>
+    {{#if dropHint}}
+    <div class="droparea droparea--compact extra-flow-drop" data-flow-id="{{id}}" data-tooltip="{{localize tooltip}}">
+        {{localize dropHint}}
+    </div>
+    {{/if}}
+    {{/each}}
+</div>
+{{/if}}

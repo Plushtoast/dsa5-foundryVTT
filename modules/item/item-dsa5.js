@@ -844,7 +844,7 @@ class SpellItemDSA5 extends Itemdsa5 {
 
   static getSpecAbModifiers(html) {
     const res = [];
-    for (const k of html.find('.specAbs.active')) {
+    for (const k of html.find('.specAbs.active:not(.extra-flow)')) {
       res.push({
         name: k.dataset.name,
         title: k.dataset.tooltip,

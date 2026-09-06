@@ -66,6 +66,7 @@ import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
 import CompanionHandler from './actor/companions/companion-handler-class.js';
 import { SummoningFlow } from './wizards/summoning/summoning_flow.js';
+import { DialogExtraFlow } from './dialog/dialog-extra-flow.js';
 import ItemEnchantment from './item/item-enchantment.js';
 import ItemDisease from './item/item-disease.js';
 import RuleChaos from './system/rules/rule_chaos.js';
@@ -165,6 +166,7 @@ globalThis.dsa5 = {
       Riding,
       CompanionHandler,
       SummoningFlow,
+      DialogExtraFlow,
       ItemEnchantment,
       ItemDisease,
       RuleChaos,

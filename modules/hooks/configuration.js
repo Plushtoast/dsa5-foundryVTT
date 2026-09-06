@@ -687,14 +687,6 @@ export function setupConfiguration() {
     },
 
     // Magic
-    summoningRollChooser: {
-      name: 'DSASETTINGS.summoningRollChooser',
-      hint: 'DSASETTINGS.summoningRollChooserHint',
-      scope: 'world',
-      config: true,
-      default: true,
-      type: Boolean,
-    },
     magischeHandlungen: {
       name: 'DSASETTINGS.magischeHandlungen',
       hint: 'DSASETTINGS.magischeHandlungenHint',

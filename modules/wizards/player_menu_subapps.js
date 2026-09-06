@@ -219,6 +219,31 @@ export class PlayerMenuSubApp {
     return false;
   }
 
+  /**
+   * Optional extra-flow descriptor auto-registered by {@link PlayerMenu.registerSubApp}.
+   * Override to show a specAbs-style button + drop zone on matching skill/spell dialogs.
+   * @returns {object|null}
+   */
+  get extraFlow() {
+    return null;
+  }
+
+  /**
+   * Open this tab from a check dialog extra flow.
+   * @param {{ actor?: Actor, source?: object, dropped?: Document }} [ctx]
+   */
+  async startFromDialog({ actor, dropped } = {}) {
+    const menu = game.dsa5.apps.playerMenu;
+    if (!menu) return;
+    if (actor) menu.actor = actor;
+    if (dropped) {
+      const accepted = await this._onDrop(dropped);
+      if (accepted === true) return;
+    }
+    await this.render();
+    await this.activateTab();
+  }
+
   get actor() {
     return game.dsa5.apps.playerMenu.actor;
   }

@@ -8,6 +8,7 @@ import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { AddTargetDialog } from './addTargetDialog.js';
 import { RollDialogExtensions } from './roll-dialog-extensions.js';
 import { DetachedWindowMixin } from '../mixins/detached-window-mixin.js';
+import { DialogExtraFlow } from './dialog-extra-flow.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DialogShared extends DetachedWindowMixin(foundry.applications.api.DialogV2) {
@@ -252,6 +253,53 @@ export default class DialogShared extends DetachedWindowMixin(foundry.applicatio
     // Ability/extension burger menu (hidden by default)
     await RollDialogExtensions.bindBurgerMenu(this);
     this.initializeTargetTracking();
+    this.#bindExtraFlows(html);
+  }
+
+  #bindExtraFlows(html) {
+    const extraFlows = this.dialogData?.renderData?.extraFlows;
+    if (!extraFlows?.length) return;
+
+    html.on('click', '.specAbs.extra-flow', (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.#launchExtraFlow(ev.currentTarget.dataset.flowId);
+    });
+
+    new foundry.applications.ux.DragDrop.implementation({
+      dropSelector: '.extra-flow-drop',
+      permissions: {
+        drop: () => true,
+      },
+      callbacks: {
+        drop: (event) => this.#onExtraFlowDrop(event),
+      },
+    }).bind(this.element);
+  }
+
+  async #launchExtraFlow(flowId, dropped = null) {
+    if (!flowId || this._extraFlowStarted) return;
+    this._extraFlowStarted = true;
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    await DialogExtraFlow.launch(flowId, {
+      actor,
+      source: this.dialogData.source,
+      dropped,
+      dialog: this,
+    });
+  }
+
+  async #onExtraFlowDrop(event) {
+    const fromTarget = event.target instanceof Element ? event.target.closest('.extra-flow-drop') : null;
+    const zone = fromTarget || event.currentTarget?.closest?.('.extra-flow-drop');
+    const flowId = zone?.dataset?.flowId;
+    if (!flowId) return;
+    const dropped = await DialogExtraFlow.fromDropEvent(event);
+    if (!dropped) return;
+    const flow = DialogExtraFlow.get(flowId);
+    const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
+    if (flow?.canAcceptDrop && !flow.canAcceptDrop(dropped, { actor, source: this.dialogData.source })) return;
+    await this.#launchExtraFlow(flowId, dropped);
   }
 
   async addTarget(ev) {

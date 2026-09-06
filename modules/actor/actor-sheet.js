@@ -788,7 +788,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         ui.notifications.warn('DSAError.RollPermission', { localize: true });
         return;
       }
-      if (await SummoningFlow.interceptRoll(this.actor, skill)) return;
 
       const setupData = await this.actor.setupSkill(skill, {}, this.getTokenId());
       this.actor.basicTest(setupData);

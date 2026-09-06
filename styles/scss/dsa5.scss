@@ -4570,7 +4570,8 @@ a {
     padding: 3px;
   }
 
-  &.active {
+  &.active,
+  &.extra-flow {
     color: inherit;
   }
 

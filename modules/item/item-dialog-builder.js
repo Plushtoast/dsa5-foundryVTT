@@ -4,6 +4,7 @@ import { ITEM_CONSTANTS } from '../config/item-constants.js';
 import { RollDialogBuilder } from '../dialog/dialog-builder.js';
 import { createMagicalAction } from './magical-actions/magical-action-registry.js';
 import SpellPreferenceRule from '../system/rules/spell-preference-rule.js';
+import { DialogExtraFlow } from '../dialog/dialog-extra-flow.js';
 const { mergeObject, getProperty } = foundry.utils;
 export class ItemDialogBuilder extends RollDialogBuilder {
     /**
@@ -59,6 +60,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         }
         const magicalAction = createMagicalAction(spell.system.magicalActionKind?.value);
         if (magicalAction) magicalAction.applyDialogRestrictions(data);
+        DialogExtraFlow.prepare(data, spell, actor);
         this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {
@@ -92,6 +94,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         if (options.situationalModifiers) {
             data.situationalModifiers.push(...options.situationalModifiers);
         }
+        DialogExtraFlow.prepare(data, skill, actor);
         this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {

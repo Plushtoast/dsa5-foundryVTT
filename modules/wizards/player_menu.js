@@ -13,6 +13,7 @@ import DetailSelect from '../system/helpers/detail-select.js';
 import { SummoningFlow } from './summoning/summoning_flow.js';
 import { SummoningExecutor } from './summoning/summoning_executor.js';
 import ItemEnchantment from '../item/item-enchantment.js';
+import { DialogExtraFlow } from '../dialog/dialog-extra-flow.js';
 
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -38,6 +39,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     this._openPickers = new Set();
 
     game.dsa5.apps.PlayerMenuSubApp = PlayerMenuSubApp;
+    SummoningFlow.registerExtraFlow();
     this.summoningModifiers = [
       {
         id: 1,
@@ -177,6 +179,23 @@ export default class PlayerMenu extends DefaultAppv2 {
 
   registerSubApp(app) {
     this.subApps.push(app);
+    this.#registerSubAppExtraFlow(app);
+  }
+
+  #registerSubAppExtraFlow(app) {
+    const flow = app.extraFlow;
+    if (!flow?.id) return;
+    DialogExtraFlow.register({
+      ...flow,
+      canAcceptDrop: (doc, ctx) => {
+        if (typeof flow.canAcceptDrop === 'function') return flow.canAcceptDrop.call(app, doc, ctx);
+        return app.canAcceptDrop(doc);
+      },
+      start: (ctx) => {
+        if (typeof flow.start === 'function') return flow.start.call(app, ctx);
+        return app.startFromDialog(ctx);
+      },
+    });
   }
 
   /**
