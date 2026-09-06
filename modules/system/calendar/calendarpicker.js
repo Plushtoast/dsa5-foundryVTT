@@ -82,6 +82,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     questlog: {
       template: 'systems/dsa5/templates/system/calendar/questlog.hbs',
+      templates: ['systems/dsa5/templates/system/calendar/questlog-detail.hbs'],
       scrollable: ['.questlog-list', '.persona-details-container']
     }
   };
@@ -596,6 +597,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     this.#personaeDramatis.onRenderListeners();
     this.#questLog.onRenderListeners();
+    DSAQuestLogEntry.hydrateQuestMedia(this.element);
 
     if (this.#getEventsViewMode() === 'calendar') {
       this.#initEventsCalendarDate();
@@ -650,11 +652,12 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
   }
 
-  async openDocumentSheet(documentOrUuid, { currentKey = null, pageId = null, close = true } = {}) {
+  async openDocumentSheet(documentOrUuid, { currentKey = null, pageId = null, close } = {}) {
     const document = typeof documentOrUuid === 'string' ? await fromUuid(documentOrUuid) : documentOrUuid;
     if (!document?.sheet?.render) return null;
 
-    if (close) await this.close();
+    const overlaySheet = document.documentName === 'Actor' || document.documentName === 'Item';
+    if (!overlaySheet && close !== false) await this.close();
 
     if (currentKey) {
       document.sheet.render({ force: true, currentKey });

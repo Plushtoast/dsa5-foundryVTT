@@ -1709,7 +1709,7 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Link any document UUID.",
+            "hint": "Link any document. Actors appear as involved persons, items as relevant items, and other documents as badges in the quest detail view.",
             "label": "Document UUID"
           },
           "visible": {
@@ -1751,6 +1751,13 @@
         "title": {
           "label": "Title"
         },
+        "image": {
+          "label": "Quest Image",
+          "hint": "Optional banner shown as a faded background in the quest detail header."
+        },
+        "imageFrame": {
+          "label": "Quest image framing"
+        },
         "updatedAtWorldTime": {
           "label": "Updated"
         },
@@ -1787,6 +1794,10 @@
     },
     "linkedDocuments": "Linked Documents",
     "linkedPages": "Linked Documents",
+    "involvedItems": "Relevant Items",
+    "involvedItemsHint": "Items linked on this quest. Players only see items they may observe.",
+    "involvedPersons": "Involved Persons",
+    "involvedPersonsHint": "Actors linked on this quest. They appear with Dramatis Personae names when the viewer may see that persona.",
     "missingLink": "Missing",
     "newEntryPlaceholder": "New Quest",
     "newObjectivePlaceholder": "New Objective",
@@ -1801,6 +1812,10 @@
     "showInQuestlog": "Show in quests",
     "showInQuestlogHint": "The quest entries will be available in the quests tab of the calendar picker according to their visibility.",
     "showQuestlogJournal": "Show quest journal",
+    "pickQuestImage": "Choose quest image",
+    "showQuestImage": "Show quest image",
+    "clearQuestImage": "Clear quest image",
+    "questImageFrameNeedImage": "Set a quest image first.",
     "startDate": "Start",
     "summary": "Summary",
     "targetDate": "Target",
@@ -2222,7 +2237,10 @@
     "descrquickAbility": "Let a token or your character roll skills (/sk), spells/rituals (/sp), liturgies/ceremonies (/li), attack (/at) and parry (/pa).",
     "descrrequest": "Request a skill roll. (tab + number = with modifier)",
     "descrtables": "Show all rollable tables.",
-    "descrthreeD20Check": "Roll a 3d20 check without actor (attributes 12)",
+    "descrthreeD20Check": "Roll a 3d20 check without an actor (attributes 12). Use the master hotbar or /ch to pick a skill and alias.",
+    "threeD20Alias": "Alias",
+    "threeD20AliasHint": "Name shown as the speaker in chat.",
+    "threeD20Generic": "3d20 (no skill)",
     "example": "Example",
     "getPaid": "Get paid",
     "groupcheck": "Group Check",

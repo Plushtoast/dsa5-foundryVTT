@@ -1,5 +1,7 @@
 import { DSAQuestLogEntry } from "../data/journal/dsaquestlog.js";
 import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
+import ImageFrameDialog from "../dialog/image-frame-dialog.js";
+import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 
 export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'quests';
@@ -18,6 +20,12 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             openLinkedDocument: this.#openLinkedDocument,
             toggleLinkedDocumentVisibility: this.#toggleLinkedDocumentVisibility,
             toggleObjectiveState: this.#toggleObjectiveState,
+            openInvolvedPerson: this.#openInvolvedPerson,
+            openInvolvedItem: this.#openInvolvedItem,
+            pickQuestImage: this.#pickQuestImage,
+            configureQuestImageFrame: this.#configureQuestImageFrame,
+            showQuestImage: this.#showQuestImage,
+            clearQuestImage: this.#clearQuestImage,
         },
         position: {
             width: 1080,
@@ -76,8 +84,14 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         this.#bindNestedSortDragDrop();
     }
 
+    async _onRender(context, options) {
+        await super._onRender(context, options);
+        DSAQuestLogEntry.hydrateQuestMedia(this.element);
+    }
+
     async _onDetailRendered(_key) {
         this.#bindNestedSortDragDrop();
+        DSAQuestLogEntry.hydrateQuestMedia(this.element);
     }
 
     #bindNestedSortDragDrop() {
@@ -266,7 +280,6 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             uuid: link?.uuid || link?.pageUuid || '',
             visible: link?.visible !== false,
         }));
-
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/questlogentry_edit_detail.hbs', {
             elem: quest,
             key,
@@ -382,5 +395,76 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         if (!reference) return;
 
         await this.document.update({ [`system.quests.${key}.linkedPages.${linkKey}.visible`]: reference.visible === false });
+    }
+
+    static async #openInvolvedPerson(event, target) {
+        const uuid = target.dataset.uuid;
+        const opened = await DSAQuestLogEntry.openInvolvedPersonJournal(uuid);
+        if (opened) return;
+        const actor = uuid ? await fromUuid(uuid) : null;
+        if (actor?.documentName === 'Actor') actor.sheet?.render(true);
+    }
+
+    static async #openInvolvedItem(event, target) {
+        await DSAQuestLogEntry.openInvolvedItem(target.dataset.uuid);
+    }
+
+    static async #pickQuestImage(event, target) {
+        const questKey = target.dataset.key;
+        const quest = this.document.system.quests[questKey];
+        if (!quest) return;
+
+        const FilePicker = foundry.applications.apps.FilePicker;
+        const current = quest.image || '';
+        const picker = new FilePicker.implementation({
+            type: 'image',
+            current,
+            callback: (path) => this.document.update(DSAQuestLogEntry.questImageUpdate(questKey, path)),
+            document: this.document,
+            position: {
+                top: this.position.top + 40,
+                left: this.position.left + 10,
+            },
+        });
+        await picker.browse();
+    }
+
+    static async #configureQuestImageFrame(event, target) {
+        const questKey = target.dataset.key;
+        const quest = this.document.system.quests[questKey];
+        const imageSrc = quest?.image;
+        if (!imageSrc) {
+            ui.notifications.warn('DSAQUESTLOG.questImageFrameNeedImage', { localize: true });
+            return;
+        }
+
+        return ImageFrameDialog.configure({
+            id: `dsa-quest-image-frame-${this.document.id}-${questKey}`,
+            title: 'DSAQUESTLOG.FIELDS.quests.imageFrame.label',
+            imageSrc,
+            preset: 'banner',
+            frame: quest.imageFrame,
+            onSave: (frame) => this.document.update(DSAQuestLogEntry.questImageFrameUpdate(questKey, frame)),
+        });
+    }
+
+    static #showQuestImage(event, target) {
+        const questKey = target.dataset.key;
+        const quest = this.document.system.quests[questKey];
+        if (!quest?.image) {
+            ui.notifications.warn('DSAQUESTLOG.questImageFrameNeedImage', { localize: true });
+            return;
+        }
+        return DSA5_Utility.showArtwork({
+            img: quest.image,
+            name: quest.title,
+            uuid: this.document.uuid,
+            isOwner: true,
+        });
+    }
+
+    static #clearQuestImage(event, target) {
+        const questKey = target.dataset.key;
+        return this.document.update(DSAQuestLogEntry.questImageUpdate(questKey, ''));
     }
 }

@@ -1,5 +1,6 @@
 import MerchantConfig from "../../config/merchant-config.js";
 import { JournalListDataModel } from './journallistdatamodel.js';
+import { JournalEntryTargetHelper } from '../../system/calendar/journalentrytargethelper.js';
 const { TextEditor } = foundry.applications.ux;
 export class DSAPersonaEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarActors';
@@ -98,6 +99,18 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     static isValidActor(actor) {
         return !!actor && actor.type !== 'group';
+    }
+
+    static findByActorUuid(actorUuid) {
+        if (!actorUuid) return null;
+
+        for (const { journal, page } of JournalEntryTargetHelper.collectTargets('dsapersonaedramatis').pages) {
+            for (const [key, entry] of Object.entries(page.system?.personae || {})) {
+                if (entry?.actor_uuid !== actorUuid) continue;
+                return { journal, page, key, entry };
+            }
+        }
+        return null;
     }
 
     async _preUpdate(changed, options, user) {

@@ -6659,11 +6659,14 @@ input[type='checkbox'].autoCheckbox {
 }
 
 .dsaMessageMode {
+  flex-wrap: nowrap;
+
   .checkbox input[type='radio'] {
     display: none;
   }
 
   .checkbox {
+    flex: 1 0 auto;
     margin-right: 4px;
     text-align: center;
   }

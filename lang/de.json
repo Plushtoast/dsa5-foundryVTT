@@ -1711,7 +1711,7 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Verknüpfe eine beliebige Dokument-UUID.",
+            "hint": "Verknüpfe ein beliebiges Dokument. Akteure erscheinen als beteiligte Personen, Gegenstände als relevante Gegenstände und andere Dokumente als Abzeichen in der Detailansicht.",
             "label": "Dokument-UUID"
           },
           "visible": {
@@ -1753,6 +1753,13 @@
         "title": {
           "label": "Titel"
         },
+        "image": {
+          "label": "Auftragsbild",
+          "hint": "Optionales Banner, das im Header der Detailansicht als verblasster Hintergrund erscheint."
+        },
+        "imageFrame": {
+          "label": "Auftragsbild-Ausschnitt"
+        },
         "updatedAtWorldTime": {
           "label": "Aktualisiert"
         },
@@ -1789,6 +1796,10 @@
     },
     "linkedDocuments": "Verknüpfte Dokumente",
     "linkedPages": "Verknüpfte Dokumente",
+    "involvedItems": "Relevante Gegenstände",
+    "involvedItemsHint": "Mit diesem Auftrag verknüpfte Gegenstände. Spieler sehen nur Gegenstände, die sie beobachten dürfen.",
+    "involvedPersons": "Beteiligte Personen",
+    "involvedPersonsHint": "Mit diesem Auftrag verknüpfte Akteure. Sie erscheinen mit Dramatis-Personae-Namen, wenn der Betrachter die Persona sehen darf.",
     "missingLink": "Fehlt",
     "newEntryPlaceholder": "Neuer Auftrag",
     "newObjectivePlaceholder": "Neues Ziel",
@@ -1803,6 +1814,10 @@
     "showInQuestlog": "In Aufträgen anzeigen",
     "showInQuestlogHint": "Die Auftrags-Einträge sind im Aufträge-Reiter des Kalender-Pickers entsprechend ihrer Sichtbarkeit verfügbar.",
     "showQuestlogJournal": "Auftrags-Journal anzeigen",
+    "pickQuestImage": "Auftragsbild wählen",
+    "showQuestImage": "Auftragsbild anzeigen",
+    "clearQuestImage": "Auftragsbild entfernen",
+    "questImageFrameNeedImage": "Lege zuerst ein Auftragsbild fest.",
     "startDate": "Beginn",
     "summary": "Zusammenfassung",
     "targetDate": "Ziel",
@@ -2224,7 +2239,10 @@
     "descrquickAbility": "Lass einen Token oder deinen Charakter über ein Chatkommando Talente (/sk), Zauber/Rituale (/sp), Liturgien/Zeremonien (/li), Attacke (/at) und Parade (/pa) würfeln.",
     "descrrequest": "Fordere einen Talentwurf an. (Tab + Zahl = mit Modifikator)",
     "descrtables": "Zeige alle würfelbaren Tabellen.",
-    "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12)",
+    "descrthreeD20Check": "Würfle eine 3W20 Probe ohne Charakter (Attribute 12). Über die Meisterleiste oder /ch kannst du Talent und Alias wählen.",
+    "threeD20Alias": "Alias",
+    "threeD20AliasHint": "Name, der im Chat als Sprecher angezeigt wird.",
+    "threeD20Generic": "3W20 (ohne Talent)",
     "example": "Beispiel",
     "getPaid": "Auszahlen",
     "groupcheck": "Gruppenprobe",

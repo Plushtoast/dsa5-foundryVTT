@@ -1,5 +1,6 @@
 /* Shared image frame picker (hotbar portrait + shop Ladenschild) */
-.dsa5 {
+.dsa5,
+.dsaCalendarPicker {
   /*
    * Cover sized from natural aspect (--img-ar), then zoomed.
    * Unlike object-fit:cover + scale, zoom-out reveals more of the source.
@@ -31,7 +32,9 @@
       user-select: none;
     }
   }
+}
 
+.dsa5 {
   .dsa-image-frame {
     display: flex;
     flex-direction: column;

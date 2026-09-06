@@ -88,6 +88,19 @@
 
   {{formGroup document.system.schema.fields.quests.element.fields.pinToTop value=elem.pinToTop localize=true name=(concat 'system.quests.' key '.pinToTop')}}
 
+  <div class='form-group' data-tooltip='{{document.system.schema.fields.quests.element.fields.image.hint}}'>
+    <label>{{localize document.system.schema.fields.quests.element.fields.image.label}}</label>
+    <div class='form-fields gap0px'>
+      {{#if elem.image}}
+        <img class='dsa-image-thumb' src='{{elem.image}}' alt='' />
+      {{/if}}
+      <button type='button' class='icon fas fa-file-import noBorder dsadesignbutton' data-action='pickQuestImage' data-key='{{key}}' data-tooltip='{{localize "DSAQUESTLOG.pickQuestImage"}}'></button>
+      <button type='button' class='icon fas fa-crop-simple noBorder dsadesignbutton' data-action='configureQuestImageFrame' data-key='{{key}}' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.imageFrame.label"}}' {{#unless elem.image}}disabled{{/unless}}></button>
+      <button type='button' class='icon fas fa-eye noBorder dsadesignbutton' data-action='showQuestImage' data-key='{{key}}' data-tooltip='{{localize "DSAQUESTLOG.showQuestImage"}}' {{#unless elem.image}}disabled{{/unless}}></button>
+      <button type='button' class='icon fas fa-times noBorder dsadesignbutton' data-action='clearQuestImage' data-key='{{key}}' data-tooltip='{{localize "DSAQUESTLOG.clearQuestImage"}}' {{#unless elem.image}}disabled{{/unless}}></button>
+    </div>
+  </div>
+
   <div class='form-group stacked'>
     <div class='flexrow'>
       <span class='label'><b>{{localize 'DSAQUESTLOG.objectives'}}</b></span>
@@ -117,6 +130,7 @@
       <span class='label'><b>{{localize 'DSAQUESTLOG.linkedDocuments'}}</b></span>
       <button type='button' data-action='addLinkedDocument' data-key='{{key}}' class='fas icon fa-plus' data-tooltip='{{localize "DSAQUESTLOG.addLinkedDocument"}}'></button>
     </div>
+    <p class='hint'>{{localize 'DSAQUESTLOG.FIELDS.quests.linkedPages.uuid.hint'}}</p>
     <div class='form-fields'>
       <div class="flexcol gap5px quest-sortable-list" data-sort-collection="linkedPages" data-quest-key="{{key}}">
       {{#each linkedDocumentEntries as |link|}}

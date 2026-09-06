@@ -1,5 +1,6 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 import ListKeyboardNavigation from './list_keyboard_navigation.js';
+import { PersonaeDramatis } from './personaedramatis.js';
 
 const OPEN_STATUS = 0;
 const FILTER_SETTING = 'questlogFilterOpenOnly';
@@ -32,6 +33,8 @@ export class QuestLogFeature {
         toggleLinkedDocumentVisibility: QuestLogFeature.toggleLinkedDocumentVisibility,
         toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
         questlogListMenu: QuestLogFeature.questlogListMenu,
+        openInvolvedPerson: QuestLogFeature.openInvolvedPerson,
+        openInvolvedItem: QuestLogFeature.openInvolvedItem,
     };
 
     async _preparePartContext(context, _options) {
@@ -215,6 +218,7 @@ export class QuestLogFeature {
 
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/questlog-detail.hbs', quest);
         container.innerHTML = detailHTML;
+        DSAQuestLogEntry.hydrateQuestMedia(container);
     }
 
     static #visibleQuestItems() {
@@ -294,17 +298,29 @@ export class QuestLogFeature {
         await page.update({ [`system.quests.${questKey}.linkedPages.${linkKey}.visible`]: reference.visible === false });
     }
 
+    static async openInvolvedPerson(event, target) {
+        const uuid = target.dataset.uuid;
+        if (!uuid) return;
+
+        const opened = await PersonaeDramatis.showPersonaInPicker(uuid);
+        if (opened) return;
+        if (await DSAQuestLogEntry.openInvolvedPersonJournal(uuid)) return;
+        await QuestLogFeature.openReference({ uuid });
+    }
+
+    static async openInvolvedItem(event, target) {
+        const uuid = target.dataset.uuid;
+        if (!uuid) return;
+        await QuestLogFeature.openReference({ uuid });
+    }
+
     static async openReference({ uuid, entryKey = null }) {
         const document = await fromUuid(uuid);
         if (!document) return;
+        if (document.documentName === 'Item' && !DSAQuestLogEntry.isItemVisibleToUser(document)) return;
 
         if (document.documentName === 'JournalEntryPage') {
             await QuestLogFeature.#parent.openDocumentSheet(document.parent, { pageId: document.id });
-            return;
-        }
-
-        if (document.documentName === 'JournalEntry') {
-            await QuestLogFeature.#parent.openDocumentSheet(document);
             return;
         }
 

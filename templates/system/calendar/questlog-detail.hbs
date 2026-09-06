@@ -1,5 +1,10 @@
 <div class='persona-detail-view'>
-    <div class='persona-detail-header'>
+    <div class='persona-detail-header{{ifThen preparedImage " has-quest-image" ""}}'>
+        {{#if preparedImage}}
+        <div class='dsa-faded-header-media dsa-media-frame' style='{{preparedImageVars}}'>
+            <img class='dsa-media-frame__img' src='{{preparedImage}}' alt='' />
+        </div>
+        {{/if}}
         <div class='persona-detail-title'>
             <h1 class='questlog-detail-name'>{{title}}</h1>
             <p class='persona-detail-subtitle'>{{statusName}}{{#if chapter}} • {{chapter}}{{/if}}{{#if location}} • {{location}}{{/if}}</p>
@@ -83,6 +88,48 @@
                     <div class='description-text'>{{{preparedGMNotes}}}</div>
                 </div>
             {{/if}}
+        {{/if}}
+
+        {{#if preparedInvolved.length}}
+            <div class='detail-section'>
+                <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>{{localize 'DSAQUESTLOG.involvedPersons'}}</h3>
+                <div class='dsa-avatar-chip-list'>
+                    {{#each preparedInvolved}}
+                        {{#if canOpen}}
+                            <button type='button' class='dsa-avatar-chip noBorder{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedPerson' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                                <img src='{{img}}' alt='{{name}}' />
+                                <span class='dsa-avatar-chip-name'>{{name}}</span>
+                            </button>
+                        {{else}}
+                            <div class='dsa-avatar-chip is-static{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen missingPersona " missing-persona" ""}}{{ifThen visible "" " invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>
+                                <img src='{{img}}' alt='{{name}}' />
+                                <span class='dsa-avatar-chip-name'>{{name}}</span>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                </div>
+            </div>
+        {{/if}}
+
+        {{#if preparedInvolvedItems.length}}
+            <div class='detail-section'>
+                <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>{{localize 'DSAQUESTLOG.involvedItems'}}</h3>
+                <div class='dsa-avatar-chip-list'>
+                    {{#each preparedInvolvedItems}}
+                        {{#if canOpen}}
+                            <button type='button' class='dsa-avatar-chip dsa-avatar-chip--item noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedItem' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                                <img src='{{img}}' alt='{{name}}' />
+                                <span class='dsa-avatar-chip-name'>{{name}}</span>
+                            </button>
+                        {{else}}
+                            <div class='dsa-avatar-chip dsa-avatar-chip--item is-static{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>
+                                <img src='{{img}}' alt='{{name}}' />
+                                <span class='dsa-avatar-chip-name'>{{name}}</span>
+                            </div>
+                        {{/if}}
+                    {{/each}}
+                </div>
+            </div>
         {{/if}}
 
         {{#if preparedLinkedDocuments.length}}

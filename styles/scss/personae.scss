@@ -417,6 +417,32 @@
     margin-bottom: 2rem;
     padding-bottom: 1rem;
     border-bottom: 2px solid var(--border-color);
+    position: relative;
+
+    &.has-quest-image {
+      min-height: 110px;
+      padding: 1rem 0.75rem 1.25rem;
+      border-radius: var(--personae-radius);
+      overflow: hidden;
+    }
+
+    .dsa-faded-header-media {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      opacity: 0.22;
+      pointer-events: none;
+      border: none;
+      border-radius: 0;
+      aspect-ratio: auto;
+      background: transparent;
+      filter: grayscale(0.15) saturate(0.8);
+    }
+
+    > :not(.dsa-faded-header-media) {
+      position: relative;
+      z-index: 1;
+    }
 
     .persona-detail-image {
       width: 100px;
@@ -711,6 +737,83 @@
 
 .quest-group .faction-header {
   font-family: var(--boldFont);
+}
+
+.dsa-image-thumb {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  flex: 0 0 auto;
+}
+
+.dsa-avatar-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dsa-avatar-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 72px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+
+  &.is-static {
+    cursor: default;
+  }
+
+  &.invisible {
+    opacity: 0.55;
+  }
+
+  height: auto;
+  min-height: 0;
+  --button-size: unset;
+  line-height: 1.2;
+
+  img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--sheet-border);
+    background: var(--bg-color);
+  }
+
+  &--item img {
+    border-radius: 8px;
+  }
+
+  &.persona-important img {
+    border-color: var(--dsadesign1);
+    box-shadow:
+      0 0 4px var(--dsadesign1),
+      0 0 10px rgba(212, 175, 55, 0.7);
+  }
+
+  &.missing img,
+  &.missing-persona img {
+    opacity: 0.7;
+  }
+
+  .dsa-avatar-chip-name {
+    max-width: 100%;
+    font-size: 0.8rem;
+    font-family: var(--boldFont);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 /* Dark Theme */

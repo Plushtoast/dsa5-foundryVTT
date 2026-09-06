@@ -1,5 +1,7 @@
 import { JournalListDataModel } from './journallistdatamodel.js';
 import PartialCalendarDateField from '../fields/partial-calendar-date-field.js';
+import { DSAPersonaEntry } from './dsapersonaedramatis.js';
+import ImageFramePicker from '../../system/helpers/image-frame-picker.js';
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -48,6 +50,8 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             HTMLField,
             DocumentUUIDField,
             IntegerSortField,
+            FilePathField,
+            ObjectField,
         } = foundry.data.fields;
 
         const dateField = () => new PartialCalendarDateField();
@@ -81,6 +85,19 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                     visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.linkedPages.visible.label' }),
                     sort: new IntegerSortField(),
                 })),
+                image: new FilePathField({
+                    categories: ['IMAGE'],
+                    required: false,
+                    nullable: true,
+                    blank: true,
+                    initial: null,
+                    label: 'DSAQUESTLOG.FIELDS.quests.image.label',
+                    hint: 'DSAQUESTLOG.FIELDS.quests.image.hint',
+                }),
+                imageFrame: new ObjectField({
+                    initial: {},
+                    label: 'DSAQUESTLOG.FIELDS.quests.imageFrame.label',
+                }),
             })),
         };
     }
@@ -94,6 +111,8 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 objective.status = objective.done ? 1 : 0;
                 delete objective.done;
             }
+            this.#adoptInvolvedLinks(quest, 'involved');
+            this.#adoptInvolvedLinks(quest, 'involvedItems');
             this.#migrateCollectionSort(quest?.objectives);
             this.#migrateCollectionSort(quest?.linkedPages);
         }
@@ -112,6 +131,26 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entries.forEach(([, value], index) => {
             value.sort = index * density;
         });
+    }
+
+    static #adoptInvolvedLinks(quest, collectionName) {
+        const source = quest?.[collectionName];
+        if (!source || typeof source !== 'object' || Array.isArray(source)) return;
+
+        quest.linkedPages ??= {};
+        const existing = new Set(Object.values(quest.linkedPages).map(reference => reference?.uuid || reference?.pageUuid).filter(Boolean));
+        for (const [key, reference] of Object.entries(source)) {
+            const uuid = reference?.uuid;
+            if (!uuid || existing.has(uuid)) continue;
+            const linkKey = key in quest.linkedPages ? foundry.utils.randomID() : key;
+            const adopted = { uuid, visible: true };
+            if (Object.hasOwn(reference, 'sort') && Number.isFinite(Number(reference.sort))) {
+                adopted.sort = Number(reference.sort);
+            }
+            quest.linkedPages[linkKey] = adopted;
+            existing.add(uuid);
+        }
+        delete quest[collectionName];
     }
 
     static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
@@ -164,12 +203,11 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             { icon: 'fa-bullseye', tooltip: 'DSAQUESTLOG.targetDate', value: entry.targetDateLabel },
             { icon: 'fa-flag-checkered', tooltip: 'DSAQUESTLOG.completionDate', value: entry.completionDateLabel },
         ].filter(x => x.value);
-        entry.preparedLinkedDocuments = (await Promise.all(this.sortedTypedObjectEntries(entry.linkedPages)
-            .filter(([, reference]) => this.#referenceUuid(reference) && (reference.visible !== false || game.user.isGM))
-            .map(([linkKey, reference]) => {
-                return this.resolveDocumentReference(linkKey, reference);
-            }))).filter(Boolean);
-        entry.preparedLinkedPages = entry.preparedLinkedDocuments;
+        this.#prepareQuestImage(entry);
+        const grouped = await this.prepareLinkedReferences(entry);
+        entry.preparedInvolved = grouped.persons;
+        entry.preparedInvolvedItems = grouped.items;
+        entry.preparedLinkedDocuments = grouped.others;
         entry.uuid = page?.uuid;
         entry.questKey = key;
         return entry;
@@ -227,6 +265,151 @@ export class DSAQuestLogEntry extends JournalListDataModel {
 
     static createDocumentReference(uuid = '') {
         return { uuid, visible: true };
+    }
+
+    static #prepareQuestImage(entry) {
+        entry.preparedImage = entry.image || '';
+        entry.preparedImageVars = entry.preparedImage
+            ? ImageFramePicker.buildBannerVars(entry.imageFrame)
+            : '';
+    }
+
+    static questImageUpdate(questKey, path) {
+        const update = { [`system.quests.${questKey}.image`]: path || null };
+        if (!path) update[`system.quests.${questKey}.imageFrame`] = {};
+        return update;
+    }
+
+    static questImageFrameUpdate(questKey, frame) {
+        const normalized = ImageFramePicker.normalizeBanner(frame);
+        if (ImageFramePicker.isDefault(normalized)) {
+            return { [`system.quests.${questKey}.imageFrame`]: {} };
+        }
+        return { [`system.quests.${questKey}.imageFrame`]: normalized };
+    }
+
+    static hydrateQuestMedia(root) {
+        ImageFramePicker.hydrateMediaFrames(root);
+    }
+
+    static isPersonaVisibleToUser(entry, user = game.user) {
+        if (user?.isGM) return true;
+        return !!entry?.visible;
+    }
+
+    static async prepareLinkedReferences(quest, { user = game.user } = {}) {
+        const isGM = !!user?.isGM;
+        const persons = [];
+        const items = [];
+        const others = [];
+
+        for (const [linkKey, reference] of this.sortedTypedObjectEntries(quest?.linkedPages)) {
+            const uuid = this.#referenceUuid(reference);
+            if (!uuid) continue;
+
+            const visible = reference.visible !== false;
+            if (!visible && !isGM) continue;
+
+            const type = foundry.utils.parseUuid(uuid)?.type || '';
+            if (type === 'Actor') {
+                const person = await this.#prepareInvolvedPerson(linkKey, uuid, { user, isGM, visible });
+                if (person) persons.push(person);
+                continue;
+            }
+            if (type === 'Item') {
+                const item = await this.#prepareInvolvedItem(linkKey, uuid, { user, isGM, visible });
+                if (item) items.push(item);
+                continue;
+            }
+
+            others.push(await this.resolveDocumentReference(linkKey, reference));
+        }
+
+        return { persons, items, others };
+    }
+
+    static async prepareInvolvedPersons(quest, { user = game.user } = {}) {
+        return (await this.prepareLinkedReferences(quest, { user })).persons;
+    }
+
+    static async prepareInvolvedItems(quest, { user = game.user } = {}) {
+        return (await this.prepareLinkedReferences(quest, { user })).items;
+    }
+
+    static async #prepareInvolvedPerson(linkKey, uuid, { user, isGM, visible }) {
+        const persona = DSAPersonaEntry.findByActorUuid(uuid);
+        const personaVisible = this.isPersonaVisibleToUser(persona?.entry, user);
+        if (!persona || !personaVisible) {
+            if (!isGM) return null;
+        }
+
+        const actor = await fromUuid(uuid);
+        return {
+            linkKey,
+            uuid,
+            name: persona?.entry?.name || actor?.name || _loc('DSAQUESTLOG.missingLink'),
+            img: persona?.entry?.img || actor?.img || 'icons/svg/mystery-man.svg',
+            subtitle: persona?.entry?.subtitle || '',
+            important: !!persona?.entry?.important,
+            personaPageUuid: persona?.page?.uuid || '',
+            personaJournalUuid: persona?.journal?.uuid || '',
+            dramatisKey: persona?.key || '',
+            canOpenPersona: !!(persona && personaVisible),
+            canOpen: !!(persona && personaVisible) || (isGM && !!actor),
+            visible,
+            missing: !actor,
+            missingPersona: !persona,
+        };
+    }
+
+    static isItemVisibleToUser(item, user = game.user) {
+        if (!item) return false;
+        if (user?.isGM) return true;
+        return item.testUserPermission(user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER);
+    }
+
+    static #itemTypeLabel(item) {
+        if (!item?.type) return '';
+        const key = `TYPES.Item.${item.type}`;
+        return game.i18n.has(key) ? _loc(key) : item.type;
+    }
+
+    static async #prepareInvolvedItem(linkKey, uuid, { user, isGM, visible }) {
+        const item = await fromUuid(uuid);
+        const canOpen = this.isItemVisibleToUser(item, user);
+        if (!canOpen && !isGM) return null;
+
+        return {
+            linkKey,
+            uuid,
+            name: item?.name || _loc('DSAQUESTLOG.missingLink'),
+            img: item?.img || 'icons/svg/item-bag.svg',
+            subtitle: this.#itemTypeLabel(item),
+            canOpen,
+            visible,
+            missing: !item,
+        };
+    }
+
+    static async openInvolvedItem(uuid) {
+        const item = uuid ? await fromUuid(uuid) : null;
+        if (!this.isItemVisibleToUser(item)) return false;
+        if (item.documentName !== 'Item') return false;
+
+        await item.sheet?.render(true);
+        return true;
+    }
+
+    static async openInvolvedPersonJournal(actorUuid) {
+        const found = DSAPersonaEntry.findByActorUuid(actorUuid);
+        if (!found) return false;
+        if (!this.isPersonaVisibleToUser(found.entry)) return false;
+
+        const journal = found.journal;
+        if (!journal?.testUserPermission(game.user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)) return false;
+
+        await journal.sheet?.render(true, { pageId: found.page.id });
+        return true;
     }
 
     static createPageReference(uuid = '') {

@@ -1,5 +1,4 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
-import { JournalEntryTargetHelper } from "./journalentrytargethelper.js";
 import ListKeyboardNavigation from "./list_keyboard_navigation.js";
 export class PersonaeDramatis {
     static #parent;
@@ -47,15 +46,36 @@ export class PersonaeDramatis {
     }
 
     static #findExistingPersona(actorUuid) {
-        if (!actorUuid) return null;
+        return DSAPersonaEntry.findByActorUuid(actorUuid);
+    }
 
-        for (const { journal, page } of JournalEntryTargetHelper.collectTargets('dsapersonaedramatis').pages) {
-            for (const [key, entry] of Object.entries(page.system?.personae || {})) {
-                if (entry?.actor_uuid !== actorUuid) continue;
-                return { journal, page, key, entry };
-            }
-        }
-        return null;
+    static #personaeTabAvailable() {
+        if (game.user.isGM) return true;
+        return !!game.settings.get('dsa5', 'calendarFeatureVisibility')?.personae;
+    }
+
+    static async showPersonaInPicker(actorUuid) {
+        const found = DSAPersonaEntry.findByActorUuid(actorUuid);
+        if (!found) return false;
+        if (!game.user.isGM && !found.entry.visible) return false;
+        if (!this.#personaeTabAvailable()) return false;
+
+        const picker = PersonaeDramatis.#parent ?? game.dsa5?.apps?.CalendarPicker;
+        if (!picker) return false;
+
+        PersonaeDramatis.#lastSelectedActor = {
+            pageUuid: found.page.uuid,
+            dramatisKey: found.key,
+        };
+        PersonaeDramatis.#lastActiveListType = String(found.entry.type ?? 0);
+
+        if (!picker.rendered) await picker.render({ force: true });
+        picker.changeTab('personae', 'sheet');
+        await picker.refreshPersonae();
+
+        const listItem = picker.element?.querySelector(`.tab[data-tab="personae"] .persona-list-item[data-actor-uuid="${actorUuid}"]`);
+        if (listItem) PersonaeDramatis.updateSelectionUI(listItem);
+        return true;
     }
 
     static async addActorToPersonae(actor) {
