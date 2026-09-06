@@ -7,9 +7,9 @@ export default class EnhancementHelper {
 
   /**
    * Slot types that may substitute for each other when the preferred type is full.
-   * Power sources and treatments stay exclusive.
+   * Walk order is the assignment priority. Power sources stay exclusive.
    */
-  static FALLBACK_SLOT_TYPES = ['material', 'creationTechnique', 'improvement', 'attachment'];
+  static FALLBACK_SLOT_TYPES = ['material', 'creationTechnique', 'improvement', 'attachment', 'treatment'];
 
   static ARTIFACT_KEYS = new Set([
     'system.powersource.anchoredSpellReduction',
