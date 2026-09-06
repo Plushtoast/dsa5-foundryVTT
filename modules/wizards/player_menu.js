@@ -11,6 +11,7 @@ import { PlayerMenuSubApp } from './player_menu_subapps.js';
 import { CONJURATION_TYPES, CONJURATION_CONTROL_MODES, controlModeForType } from '../config/conjuration-constants.js';
 import DetailSelect from '../system/helpers/detail-select.js';
 import { SummoningFlow } from './summoning/summoning_flow.js';
+import { SummoningExecutor } from './summoning/summoning_executor.js';
 import ItemEnchantment from '../item/item-enchantment.js';
 
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
@@ -1281,6 +1282,7 @@ class ConjurationRequest extends DefaultAppv2 {
     this.summoner = summoner;
     this.creationData = creationData;
     this.confirmed = false;
+    this.grantSummonerControl = true;
   }
 
   async _prepareContext(_options) {
@@ -1311,6 +1313,7 @@ class ConjurationRequest extends DefaultAppv2 {
       summoner: this.summoner,
       summonerImg: this.summoner.img,
       confirmed: this.confirmed,
+      grantSummonerControl: this.grantSummonerControl,
       creationData: this.creationData,
       conjurationModifiers: this.creationData.modifiers,
       entityModifiers,
@@ -1369,6 +1372,7 @@ class ConjurationRequest extends DefaultAppv2 {
     actions: {      
       createActor: this.createActor,
       declineConjuration: this.declineConjuration,
+      toggleSummonerControl: this.toggleSummonerControl,
       showEntity: this._onShowEntity,
       newNPC: { handler: this._onNewNPC, buttons: [0, 2] },
     }
@@ -1385,6 +1389,11 @@ class ConjurationRequest extends DefaultAppv2 {
     return uids.reduce((acc, curr) => {
       return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
     }, {});
+  }
+
+  static toggleSummonerControl() {
+    this.grantSummonerControl = !this.grantSummonerControl;
+    this.render();
   }
 
   static declineConjuration() {
@@ -1477,6 +1486,12 @@ class ConjurationRequest extends DefaultAppv2 {
       this.conjuration.system.creatureClass.value += `, ${this.creationData.typeName}`;
     }
 
+    const summonerActor = this.summoner?.uuid ? await fromUuid(this.summoner.uuid) : null;
+    const summonedOwnership = SummoningExecutor.ownershipForSummoned(summonerActor, {
+      grantControl: this.grantSummonerControl,
+    });
+    this.conjuration.ownership = summonedOwnership;
+
     this.actor = await Actordsa5.create(this.conjuration);
 
     const itemsToAdd = [...entityAbilities, ...entityPackages].filter((x) => !this.conjuration.items.find((y) => y.type == x.type && x.name == y.name));
@@ -1486,9 +1501,9 @@ class ConjurationRequest extends DefaultAppv2 {
 
     for (const item of entityAbilities) await TraitRulesDSA5.traitAdded(this.actor, item);
 
-    await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max, });
+    await this.actor.update({ 'system.status.wounds.value': this.actor.system.status.wounds.max });
+    await this.actor.update({ ownership: summonedOwnership }, { diff: false, recursive: false });
 
-    const summonerActor = this.summoner?.uuid ? await fromUuid(this.summoner.uuid) : null;
     if (summonerActor) {
       await CompanionHandler.linkSummonedCompanion(summonerActor, this.actor, {
         controlMode,

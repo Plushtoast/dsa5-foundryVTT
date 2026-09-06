@@ -2,6 +2,10 @@ import { SummoningTarget } from './summoning_target.js';
 import { SummoningExecutor } from './summoning_executor.js';
 
 export class SummoningAPI {
+  static ownershipForSummoned(summoner, options) {
+    return SummoningExecutor.ownershipForSummoned(summoner, options);
+  }
+
   /**
    * @param {object} options
    * @param {Actor}          options.summoner           – the actor performing the summon

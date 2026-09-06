@@ -11,6 +11,11 @@
                     <b>{{conjuration.name}}</b></h3>
                 <span class="dsa-pip pip-neutral">{{summary.typeName}}</span>
                 <span class="dsa-pip pip-neutral">{{localize summary.controlModeLabel}}</span>
+                {{#unless confirmed}}
+                <span class="dsa-pip {{#if grantSummonerControl}}pip-positive{{else}}pip-negative{{/if}}">
+                    {{#if grantSummonerControl}}{{localize "CONJURATION.grantControl"}}{{else}}{{localize "CONJURATION.denyControl"}}{{/if}}
+                </span>
+                {{/unless}}
             </div>
             <div class="col ten center">
                 <img class="profile" style="width:48px;height:48px" src="{{conjuration.img}}" alt=""
@@ -50,6 +55,14 @@
     {{else}}
 
     <div class="dsa-card-panel__actions dsa-card-panel__actions--end dialog-buttons">
+        <button type="button" data-action="toggleSummonerControl" class="dsadesignbutton"
+            data-tooltip="{{#if grantSummonerControl}}CONJURATION.disableControlHint{{else}}CONJURATION.enableControlHint{{/if}}">
+            {{#if grantSummonerControl}}
+            <i class="fas fa-user-slash"></i> {{localize 'CONJURATION.disableControl'}}
+            {{else}}
+            <i class="fas fa-user-check"></i> {{localize 'CONJURATION.enableControl'}}
+            {{/if}}
+        </button>
         <button type="button" data-action="declineConjuration" class="dsadesignbutton">
             <i class="fas fa-ban"></i> {{localize 'CONJURATION.decline'}}
         </button>

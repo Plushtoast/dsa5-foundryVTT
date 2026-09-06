@@ -1045,6 +1045,12 @@
       "services": "Services",
       "servicesHint": "<p><b>Services</b></p><p>A summoned demon or elemental owes at least one service, and one more for every QL of the summoning. QL spent on improvements are missing from the services.</p><ul class=\"dsalist\"><li>A service is a task such as work, guarding, combat or carrying a message</li><li>The summoner can cancel a running service with 1 free action</li><li>One remaining service is lost at every sunrise</li><li>Once all services are used up the being returns where it came from</li><li>Even without a running service the being follows the summoner within calling range</li></ul>"
     },
+    "disableControl": "Disable player control",
+    "disableControlHint": "Players can currently control the being. Click to keep token control with the GM only.",
+    "enableControl": "Grant summoner control",
+    "enableControlHint": "Players cannot control the token. Click to copy the summoner's ownership.",
+    "denyControl": "No player control",
+    "grantControl": "Summoner can control",
     "decline": "Decline",
     "declined": "The summoning of {name} was declined.",
     "dragToMap": "Drag onto the map",

@@ -9,6 +9,18 @@ const { mergeObject } = foundry.utils;
 
 export class SummoningExecutor {
   /**
+   * Ownership applied to a summoned token/actor.
+   * Defaults to copying the summoner's permissions so the player can control the being.
+   * @param {Actor|null|undefined} summoner
+   * @param {{ grantControl?: boolean }} [options]
+   * @returns {object}
+   */
+  static ownershipForSummoned(summoner, { grantControl = true } = {}) {
+    if (grantControl) return foundry.utils.duplicate(summoner?.ownership ?? {});
+    return { default: CONST.DOCUMENT_OWNERSHIP_LEVELS.NONE };
+  }
+
+  /**
    * GM-side execution: resolve creature, create tokens, scatter.
    * @param {object} payload
     * @param {string} payload.summonerUuid
@@ -187,7 +199,7 @@ export class SummoningExecutor {
         src: creature.prototypeToken.texture.src,
       },
       delta: {
-        ownership: summoner?.ownership ?? {},
+        ownership: this.ownershipForSummoned(summoner),
       },
     }, { parent: scene });
 

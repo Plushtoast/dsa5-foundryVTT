@@ -1045,6 +1045,12 @@
       "services": "Dienste",
       "servicesHint": "<p><b>Dienste</b></p><p>Ein beschworener Dämon oder Elementar muss mindestens einen Dienst leisten, für jede QS der Beschwörung kommt ein weiterer hinzu. QS, die in Verbesserungen fließen, fehlen bei den Diensten.</p><ul class=\"dsalist\"><li>Ein Dienst ist ein Auftrag wie Arbeit, Wache, Kampf oder Botschaft</li><li>Der Beschwörer kann einen laufenden Dienst mit 1 freien Aktion abbrechen lassen</li><li>Bei jedem Sonnenaufgang geht ein verbliebener Dienst verloren</li><li>Sind alle Dienste verbraucht, kehrt das Wesen dorthin zurück, woher es kam</li><li>Auch ohne laufenden Dienst folgt das Wesen dem Beschwörer in Rufreichweite</li></ul>"
     },
+    "disableControl": "Spielersteuerung aus",
+    "disableControlHint": "Spieler können das Wesen aktuell steuern. Klicken, um die Tokensteuerung nur beim Spielleiter zu belassen.",
+    "enableControl": "Spielersteuerung an",
+    "enableControlHint": "Spieler können den Token nicht steuern. Klicken, um die Besitzerrechte des Beschwörers zu übernehmen.",
+    "denyControl": "Keine Spielersteuerung",
+    "grantControl": "Beschwörer steuert",
     "decline": "Ablehnen",
     "declined": "Die Beschwörung von {name} wurde abgelehnt.",
     "dragToMap": "Auf die Karte ziehen",
