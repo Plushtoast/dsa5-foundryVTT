@@ -3092,11 +3092,11 @@
           "label": "Player Notes"
         },
         "showActorDescription": {
-          "hint": "The actor's description will be displayed in the Bestiary. If disabled, a custom text can be created in this entry instead.",
+          "hint": "The actor's description is shown in the Almanac. If disabled, a custom text can be created in this entry instead.",
           "label": "Show actor description"
         },
         "linkActorNotes": {
-          "hint": "Use the actor's notes field instead of a separate text in this entry. Only available for world actors that the GM can edit, not actors from a compendium.",
+          "hint": "The actor's notes field is used in the Almanac instead of a separate notes text. Only available for world actors that the GM can edit, not actors from a compendium.",
           "label": "Link actor notes"
         },
         "showCulture": {

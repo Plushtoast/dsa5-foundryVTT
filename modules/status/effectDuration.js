@@ -59,7 +59,7 @@ export default class EffectDuration {
 
   /**
    * Convert a short wall-clock duration to combat rounds for live actor effects.
-   * Returns null when no conversion should happen (already rounds/turns, empty, or longer than 30 KR).
+   * Returns null when no conversion should happen (already rounds/turns, empty, or longer than the KR cap).
    * @param {object} [duration]
    * @param {object} [options]
    * @param {number} [options.remainingSeconds]

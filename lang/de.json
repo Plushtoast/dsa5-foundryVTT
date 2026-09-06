@@ -3094,11 +3094,11 @@
           "label": "Spieler Notizen"
         },
         "showActorDescription": {
-          "hint": "Die Beschreibung des Akteurs wird im Bestiarium angezeigt. Bei deaktivieren kann statt dessen ein angepasster Text in diesem Eintrag erstellt werden.",
+          "hint": "Die Beschreibung des Akteurs wird im Almanach angezeigt. Bei Deaktivieren kann stattdessen ein angepasster Text in diesem Eintrag erstellt werden.",
           "label": "Akteurbeschreibung anzeigen"
         },
         "linkActorNotes": {
-          "hint": "Das Notizfeld des Akteurs wird verwendet statt eines eigenen Texts in diesem Eintrag. Nur für Welt-Akteure verfügbar, die die Spielleitung bearbeiten kann, nicht für Akteure aus einem Kompendium.",
+          "hint": "Das Notizfeld des Akteurs wird im Almanach anstelle eines eigenen Notiztextes verwendet. Nur für Welt-Akteure verfügbar, die die Spielleitung bearbeiten kann, nicht für Akteure aus einem Kompendium.",
           "label": "Akteurnotizen verknüpfen"
         },
         "showCulture": {
