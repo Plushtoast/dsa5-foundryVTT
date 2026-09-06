@@ -690,6 +690,10 @@ form {
   object-fit: contain;
 }
 
+img[data-action='editImage'] {
+  cursor: pointer;
+}
+
 .minimumColumnLayout .characteristics-table {
   min-width: unset;
 }

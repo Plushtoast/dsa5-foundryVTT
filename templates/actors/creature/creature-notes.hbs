@@ -45,7 +45,7 @@
     <div class="groupbox keepFieldsEnabled" data-attr="system.details.notes.value" data-name="Notes">
         <legend class="table-title lineheight flexrow">{{localize "Notes"}}
             {{#unless notesInlineEditable}}
-            <button type="button" class="icon fas fa-edit noBorder dsadesignbutton keep-field-edit" data-action="editKeepField" data-tooltip="{{localize 'Edit'}}"></button>
+            <button type="button" class="icon fas fa-edit noBorder dsadesignbutton keep-field-edit" data-action="editKeepField" data-observer-enabled data-tooltip="{{localize 'Edit'}}"></button>
             {{/unless}}
             <a data-action="chCollapse" class="ch-collapse"><i class="fas fa-angle-up"
                     data-tooltip="SHEET.collapse"></i></a></legend>

@@ -150,12 +150,27 @@ export const AppV2Mixin = (superclass) =>
       }
     }
 
+    _bindDocumentImagePopout() {
+      this._documentImageAbort?.abort();
+      if (!this.document) return;
+      this._documentImageAbort = new AbortController();
+      const { signal } = this._documentImageAbort;
+      const onMouseDown = (event) => {
+        if (event.button !== 2) return;
+        DSA5_Utility.showArtwork(this.document);
+      };
+      this.element.querySelectorAll('[data-action="editImage"], .charimg').forEach((el) => {
+        el.addEventListener('mousedown', onMouseDown, { signal });
+      });
+    }
+
     async _onRender(context, options) {
       this.constructor.ensureDragHighlightCleanup();
       this.constructor.clearDragHighlights();
       await super._onRender(context, options);
       this._updateDetachedTabLayout();
       this._bindEnrichedImagePopout();
+      this._bindDocumentImagePopout();
     }
 
     /**
@@ -172,19 +187,68 @@ export const AppV2Mixin = (superclass) =>
 
     /**
      * Foundry disables every form control when the sheet is not editable, including
-     * vertical tab `<button>`s. Observers still need to switch tabs (issue #2485).
+     * vertical tab `<button>`s. Observers still need a small set of read-only controls
+     * (issue #2485). Called from `_toggleDisabled(true)` after that pass.
      */
     _toggleDisabled(disabled) {
       super._toggleDisabled?.(disabled);
-      if (!disabled) return;
-      this.element?.querySelectorAll('[data-action="tab"]').forEach((el) => {
-        el.disabled = false;
+      if (disabled) this._onRenderForObserver();
+    }
+
+    /**
+     * CSS selectors for controls OBSERVER / LIMITED viewers may still use.
+     * Override and spread `super._observerEnabledSelectors()` to add more.
+     * Mark one-off buttons in templates with `data-observer-enabled`.
+     */
+    _observerEnabledSelectors() {
+      return ['[data-action="tab"]', '[data-observer-enabled]', 'input[type="search"]'];
+    }
+
+    /**
+     * Re-enable observer-safe controls after Foundry's disable pass.
+     * Override for extra observer-only bind work; call `super._onRenderForObserver()` first.
+     */
+    _onRenderForObserver() {
+      const root = this.element;
+      if (!root) return;
+      const selector = this._observerEnabledSelectors().filter(Boolean).join(',');
+      if (selector) {
+        root.querySelectorAll(selector).forEach((el) => {
+          el.disabled = false;
+        });
+      }
+      this._bindObserverImagePopout();
+    }
+
+    /**
+     * Foundry marks `img[data-edit]` as `.disabled` (`pointer-events: none`). Restore
+     * clicks and pop the portrait out instead of opening the file picker (issue #2685).
+     */
+    _bindObserverImagePopout() {
+      this._observerImageAbort?.abort();
+      const root = this.element;
+      const doc = this.document;
+      if (!root || !doc) return;
+
+      this._observerImageAbort = new AbortController();
+      const { signal } = this._observerImageAbort;
+      root.querySelectorAll('img[data-edit], img[data-action="editImage"], .charimg').forEach((img) => {
+        img.classList.remove('disabled');
+        img.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          DSA5_Utility.showArtwork(doc);
+        }, { capture: true, signal });
       });
     }
 
     _tearDown(options) {
       this._enrichedImageAbort?.abort();
       this._enrichedImageAbort = null;
+      this._documentImageAbort?.abort();
+      this._documentImageAbort = null;
+      this._observerImageAbort?.abort();
+      this._observerImageAbort = null;
       this.element?.ownerDocument?.defaultView?.removeEventListener('resize', this._detachedResizeHandler);
       this._detachedResizeHandler = null;
       this.constructor.clearDragHighlights();

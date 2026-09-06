@@ -259,10 +259,6 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
       $(ev.currentTarget).next('.domainToggle').show();
     });
 
-    html.find('[data-action="editImage"]').on('mousedown', (ev) => {
-      if (ev.button == 2) DSA5_Utility.showArtwork(this.item);
-    });
-
     html.find('.select2').select2();
 
     DSA5ChatAutoCompletion.bindRollCommands(html);

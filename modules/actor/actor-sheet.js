@@ -761,14 +761,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     await item.system.swapNumberWeaponHands();
   }
 
-  _toggleDisabled(disabled) {
-    super._toggleDisabled(disabled);
-    if (!disabled) return;
-    this.element?.querySelectorAll('.keep-field-edit[data-action="editKeepField"]').forEach((button) => {
-      button.disabled = false;
-    });
-  }
-
   static _editKeepField(_ev, target) {
     const groupbox = target.closest('.keepFieldsEnabled');
     if (!groupbox) return;
@@ -1113,8 +1105,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       this.actor.items.get(this._getItemId(ev.currentTarget)).postItem();
     };
 
-    html.find('.tabs button').prop('disabled', false);
-
     html.find('.gTooltip').on('pointerover', (ev) => this.#betterTooltip(ev));
 
     tabSlider(html);
@@ -1128,10 +1118,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
       const input = ev.currentTarget;
       const chars = (input.value.length || input.placeholder.length) + 1;
       input.setAttribute('style', `width: ${chars}ch;`);
-    });
-
-    html.find('[data-action="editImage"]').on('mousedown', (ev) => {
-      if (ev.button == 2) DSA5_Utility.showArtwork(this.actor);
     });
 
     html.find('.statusEffectMenu ul').on('mouseleave', (ev) => $(ev.currentTarget).fadeOut());
@@ -1176,10 +1162,6 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
         };
         ev.dataTransfer.setData('text/plain', JSON.stringify(dataTransfer));
       });
-    });
-
-    html.find('.charimg').on('mousedown', (ev) => {
-      if (ev.button == 2) DSA5_Utility.showArtwork(this.actor, true);
     });
 
     DSA5ChatAutoCompletion.bindRollCommands(html);

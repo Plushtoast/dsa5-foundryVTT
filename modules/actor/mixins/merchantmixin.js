@@ -627,10 +627,6 @@ export const MerchantSheetMixin = (superclass) =>
         input.addEventListener('blur', (ev) => ev.currentTarget.closest('.setCustomPrice')?.classList.remove('edit'), { signal });
       }
 
-      this.element.querySelectorAll('.gearSearch').forEach((el) => {
-        el.disabled = false;
-      });
-
       if (this.merchantSheetActivated()) {
         this.#bindStallItemTooltips(signal);
       } else {
