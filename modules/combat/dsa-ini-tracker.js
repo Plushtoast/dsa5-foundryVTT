@@ -5,6 +5,7 @@ import { DSA5CombatTracker } from './combat_tracker.js';
 import Chase from './chase/chase.js';
 import ChaseCombatTracker from './chase/chase-combat-tracker.js';
 import NavalCombat from './mkr/naval-combat.js';
+import { DSACombatantGroup } from './combatant_group.js';
 const { mergeObject, duplicate } = foundry.utils;
 
 export default class DSAIniTracker extends DefaultAppv2 {
@@ -60,6 +61,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
       toggleDefeated: this.#onCombatantControl,
       toggleHidden: this.#onCombatantControl,
       activateCombatant: this.#onCombatantMouseDown,
+      activateGroupMember: this.#onActivateGroupMember,
       rolledInit: this.#editCombatant,
       rollChaseDefaultSkill: this.#rollChaseDefaultSkill,
       chaseTerrainMenu: this.#chaseTerrainMenu,
@@ -194,6 +196,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
     const waitingTurns = [];
     const waitingIds = new Set();
     const filteredTurns = [];
+    const emittedGroups = new Set();
     const turnsToUse = turns ?? [];
     if (!turnsToUse.length || !combat) return { turns: filteredTurns, waitingTurns };
 
@@ -216,18 +219,24 @@ export default class DSAIniTracker extends DefaultAppv2 {
     while (!(toAdd === 0 || loops === actorCount)) {
       const turn = duplicate(turnsToUse[index]);
       const combatant = combat.combatants.get(turn.id);
-      if (!combatant) {
+      if (!combatant || turn.isChaseSection || turn.isGroupMember) {
         advance();
         continue;
       }
 
       const visible = isGM || !combatant.hidden;
       const displayedRound = combat.round + loops;
+      const groupId = turn.groupId || DSACombatantGroup.groupId(combatant);
+      const grouped = !!(groupId && DSACombatantGroup.isGrouped(combatant));
+      const waitKey = grouped ? groupId : turn.id;
       const isWaitingThisRound = combatant.getFlag?.('dsa5', 'waitInit') == displayedRound
         && !combatant.defeated
         && visible;
 
-      if (started && index === startIndex) turn.css = (turn.css || '').replace('active', '');
+      if (started && index === startIndex) {
+        turn.css = (turn.css || '').replace(/\bactive\b/g, '').trim();
+        turn.active = false;
+      }
 
       if (!combatStarted || (turn.active && !started) || (!anyActive && !started)) {
         started = true;
@@ -235,18 +244,29 @@ export default class DSAIniTracker extends DefaultAppv2 {
       }
 
       if (isWaitingThisRound) {
-        if (!waitingIds.has(turn.id)) {
-          waitingIds.add(turn.id);
+        if (!waitingIds.has(waitKey)) {
+          waitingIds.add(waitKey);
           turn.img = this.resolveCombatantImage(combatant, turn.img);
+          if (grouped) this.#decorateGroupTurn(turn, combatant, isGM);
           waitingTurns.push(turn);
         }
         advance();
         continue;
       }
 
+      if (grouped) {
+        const emitKey = `${groupId}:${displayedRound}`;
+        if (emittedGroups.has(emitKey)) {
+          advance();
+          continue;
+        }
+        emittedGroups.add(emitKey);
+      }
+
       if (started && !(skipDefeated && combatant.defeated) && visible) {
         turn.round = displayedRound;
         this.#decorateTrackerTurn(turn, combatant, isNavalMkr);
+        if (grouped) this.#decorateGroupTurn(turn, combatant, isGM);
         if (currentRound && currentRound !== turn.round) turn.newRound = 'newRound';
         currentRound = turn.round;
         filteredTurns.push(turn);
@@ -256,6 +276,26 @@ export default class DSAIniTracker extends DefaultAppv2 {
     }
 
     return { turns: filteredTurns, waitingTurns };
+  }
+
+  static #decorateGroupTurn(turn, combatant, isGM) {
+    const members = DSACombatantGroup.membersInTurnOrder(combatant);
+    const visible = members.filter((member) => isGM || !member.hidden);
+    const living = visible.filter((member) => !member.isDefeated);
+    turn.isCombatantGroup = visible.length > 1;
+    turn.groupId = DSACombatantGroup.groupId(combatant);
+    turn.groupCount = living.length;
+    turn.groupTotal = visible.length;
+    turn.groupMembers = visible.map((member) => ({
+      id: member.id,
+      name: member.name,
+      img: this.resolveCombatantImage(member, member.img),
+      hidden: member.hidden,
+      isDefeated: member.isDefeated,
+      active: member.id === combatant.combat?.combatant?.id,
+    }));
+    const currentRound = combatant.combat?.round ?? combatant.parent?.round;
+    turn.showGroupFlyout = !!(turn.active && turn.round === currentRound && turn.groupMembers.length > 1);
   }
 
   static #decorateTrackerTurn(turn, combatant, isNavalMkr) {
@@ -737,7 +777,7 @@ export default class DSAIniTracker extends DefaultAppv2 {
 
   static async waitInit(ev, target) {
     const combatant = game.combat.combatants.get(game.combat.current.combatantId);
-    await combatant.setFlag('dsa5', 'waitInit', game.combat.current.round);
+    await DSACombatantGroup.updateMembers(combatant, { 'flags.dsa5.waitInit': game.combat.current.round });
     target.dataset.action = 'nextTurn';
     this._onClickAction(ev, target);
   }
@@ -747,13 +787,25 @@ export default class DSAIniTracker extends DefaultAppv2 {
     if (ev.button == 2 && combatant.isOwner) {
       const currentTurn = game.combat.combatants.get(game.combat.current.combatantId);
       const roundInitiative = currentTurn.properInitiative;
-      await combatant.unsetFlag('dsa5', 'waitInit');
-      await combatant.update({
-        "system.roundInitiative": roundInitiative + 0.00001,
+      await DSACombatantGroup.updateMembers(combatant, {
+        'flags.dsa5.-=waitInit': null,
+        'system.roundInitiative': roundInitiative + 0.00001,
       });
       await game.combat.update({ turn: game.combat.turn - 1 })
     }
     else ui.combat._onCombatantMouseDown(ev, target);
+  }
+
+  static #onActivateGroupMember(_event, target) {
+    const combatantId = target.dataset.combatantId;
+    const combat = game.combat;
+    const combatant = combat?.combatants.get(combatantId);
+    if (!combatant) return;
+    if (game.user.isGM) {
+      const turn = combat.turns.findIndex((c) => c.id === combatant.id);
+      if (turn >= 0 && combat.turn !== turn) combat.update({ turn });
+    }
+    ui.combat._onCombatantMouseDown(_event, target);
   }
 
   _onCombatantHoverOut(ev) {

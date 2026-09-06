@@ -773,6 +773,13 @@
     "waitInit": "Zurückstellen",
     "waitInitHint": "<p>Statt die Aktion direkt auszuführen, kannst du sie hinauszögern. Sie darf dann im späteren Verlauf zu einem beliebigen Zeitpunkt nach der eigenen Initiative ausgeführt werden. Aktionen, die bis zum Ende der Kampfrunde nicht ausgeführt worden sind, verfallen.</p><p>Im Tracker hängt dein Portrait in der Warteschlange und kann jederzeit ausgelöst werden. Zurückgestellte Handlungen verfallen am Rundenende.</p>",
     "resizeHint": "Ziehen, um die Anzahl angezeigter Kämpfer zu ändern",
+    "autoGroupOff": "Identische unverbundene NSCs gruppieren",
+    "autoGroupOn": "Minion-Gruppen aktiv — klicken zum Auflösen",
+    "expandGroup": "Gruppenmitglieder anzeigen",
+    "collapseGroup": "Gruppenmitglieder verbergen",
+    "ungroup": "Aus Gruppe lösen",
+    "groupSelected": "Ausgewählte Token gruppieren",
+    "groupStanding": "{living} von {total} übrig",
     "rulesHint": {
       "standard": "<p>Innerhalb einer Kampfrunde darf jeder Beteiligte (sofern nicht anders angegeben) eine Aktion, Verteidigungen (eine oder mehrere) und eine freie Aktion ausführen.</p><p><b>Beispiele für Aktionen</b><ul class=\"dsalist\"><li>Attacke<li></li>Fernkampfangriffe<li></li>bis zu Geschwindigkeitswert in Schritt laufen<li></li>versuchen, eine Tür einzutreten<li></li>eine Waffe ziehen<li></li>einen Hebel umlegen<li></li>Schusswaffe laden, je nach Ladezeit mehrere Aktionen<li></li>Zauber sprechen, je nach Zauber mehrere Aktionen<li></li>Liturgie wirken, je nach Liturgie mehrere Aktionen</li></ul></p><p><b>Beispiele für freie Aktionen</b><ul class=\"dsalist\"><li>einen kurzen Satz rufen<li></li>einen Gegenstand fallen lassen<li></li>von einem Stuhl aufstehen<li></li>sich zu Boden werfen<li></li>sich umdrehen<li></li>bis zu Geschwindigkeitswert in Schritt laufen (nur wenn man laut Initiative an der Reihe ist)</li></ul></p>",
       "brawling": "<p><b>Prügelei</b></p><p>Waffenloser / improvisierter Kampf mit vorübergehenden Blessuren (temporäre LeP). Optional werden alle zu Beginn entwaffnet.</p><p>Beim Beenden der Prügelei können temporäre Schäden über die Prügelei-Verletzungstabelle umgerechnet werden.</p>",

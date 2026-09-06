@@ -5,6 +5,7 @@ import NavalCombatDamage from './mkr/naval-combat-damage.js';
 import NavalHouseRules from './mkr/naval-house-rules.js';
 import Chase from './chase/chase.js';
 import VehicleChase from './chase/vehicle-chase.js';
+import { DSACombatantGroup } from './combatant_group.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Combat extends Combat {
@@ -56,6 +57,9 @@ export default class DSA5Combat extends Combat {
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
     this.refreshTokenbars();
+    if (foundry.utils.hasProperty(changed, 'system.autoGroupMinions') && game.user.isGM) {
+      DSACombatantGroup.autoGroup(this);
+    }
   }
 
   /**
@@ -373,7 +377,10 @@ export default class DSA5Combat extends Combat {
     if (a.system.roundInitiative >= 0) ia = a.system.roundInitiative;
     if (b.system.roundInitiative >= 0) ib = b.system.roundInitiative;
 
-    return (ib - ia) || (a.id > b.id ? 1 : -1);
+    const ga = DSACombatantGroup.groupId(a) || '';
+    const gb = DSACombatantGroup.groupId(b) || '';
+    if (ga && ga === gb) return a.id > b.id ? 1 : -1;
+    return (ib - ia) || (ga > gb ? 1 : -1) || (a.id > b.id ? 1 : -1);
   }
 
   async previousRound() {
@@ -386,11 +393,53 @@ export default class DSA5Combat extends Combat {
     return await super.nextRound();
   }
 
+  async rollInitiative(ids, options = {}) {
+    const list = typeof ids === 'string' ? [ids] : [...ids];
+    const filtered = DSACombatantGroup.idsForInitiativeRoll(this, list);
+    const result = await super.rollInitiative(filtered, options);
+    const groupUpdates = [];
+    const seen = new Set();
+    for (const id of filtered) {
+      const combatant = this.combatants.get(id);
+      const group = combatant?.group;
+      if (!group || group.members.size < 2 || seen.has(group.id)) continue;
+      if (!Number.isFinite(combatant.initiative)) continue;
+      seen.add(group.id);
+      groupUpdates.push({ _id: group.id, initiative: combatant.initiative });
+    }
+    if (groupUpdates.length) await this.updateEmbeddedDocuments('CombatantGroup', groupUpdates);
+    return result;
+  }
+
+  async setInitiative(id, value) {
+    const combatant = this.combatants.get(id, { strict: true });
+    if (DSACombatantGroup.isGrouped(combatant)) {
+      await DSACombatantGroup.syncGroupInitiative(combatant, value);
+      return this;
+    }
+    return super.setInitiative(id, value);
+  }
+
   /**
    * Naval MKR: cycle phase-relevant combatants; at end of the loop advance the MKR phase.
    * Damage report has no active turn — End Turn finishes the MKR.
+   * Standard combat skips remaining members of the current minion group.
    */
   async nextTurn() {
+    if (!this.isNavalMkr && !this.isChase) {
+      if (this.round === 0) return this.nextRound();
+      const turn = this.turn ?? -1;
+      const nextTurn = DSACombatantGroup.nextTurnIndex(this.turns, turn, {
+        skipDefeated: this.settings.skipDefeated,
+      });
+      if (nextTurn === null) return this.nextRound();
+      const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, nextTurn);
+      const updateData = { round: this.round, turn: nextTurn };
+      const updateOptions = { direction: 1, worldTime: { delta: advanceTime } };
+      Hooks.callAll('combatTurn', this, updateData, updateOptions);
+      await this.update(updateData, updateOptions);
+      return this;
+    }
     if (!this.isNavalMkr) return super.nextTurn();
     if (this.round === 0) return this.nextRound();
 
@@ -424,7 +473,18 @@ export default class DSA5Combat extends Combat {
 
   async previousTurn() {
     if (this.isNavalMkr) await this.#clearBroadsideShots();
-    return super.previousTurn();
+    if (this.isNavalMkr || this.isChase) return super.previousTurn();
+    if (this.round === 0) return this;
+    const previousTurn = DSACombatantGroup.previousTurnIndex(this.turns, this.turn ?? 0, {
+      skipDefeated: this.settings.skipDefeated,
+    });
+    if (previousTurn === null) return this.previousRound();
+    const advanceTime = this.getTimeDelta(this.round, this.turn, this.round, previousTurn);
+    const updateData = { round: this.round, turn: previousTurn };
+    const updateOptions = { direction: -1, worldTime: { delta: advanceTime } };
+    Hooks.callAll('combatTurn', this, updateData, updateOptions);
+    await this.update(updateData, updateOptions);
+    return this;
   }
 
   async #requestAdvanceMkrPhase() {

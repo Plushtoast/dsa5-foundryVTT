@@ -2504,6 +2504,28 @@ a.img-entity-link {
   .token-name {
     text-shadow: none;
   }
+
+  &.combatant-group .combatant-group-count {
+    display: inline-block;
+    margin-left: 0.35em;
+    padding: 0 0.4em;
+    border-radius: 8px;
+    font-size: 0.85em;
+    font-weight: 700;
+    background: var(--dsa-muted-bg);
+    border: 1px solid var(--dsa-muted-border);
+  }
+
+  &.combatant-group .combatant-group-toggle {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    align-self: center;
+  }
+
+  &.combatant-group-member {
+    padding-left: 1.25rem;
+    opacity: 0.95;
+  }
 }
 
 #combat li.combatant .roll {

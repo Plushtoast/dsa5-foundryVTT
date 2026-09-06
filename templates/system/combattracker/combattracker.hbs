@@ -13,7 +13,13 @@
       {{/if}}
     </li>
     {{else}}
-    <li class="combatant {{ css }}" data-combatant-id="{{ id }}" data-chase-role="{{chaseRole}}" data-action="activateCombatant"{{#if dispositionStyle}} style="{{dispositionStyle}}"{{/if}}>
+    <li class="combatant {{ css }}{{#if isCombatantGroup}} combatant-group{{/if}}{{#if isGroupMember}} combatant-group-member{{/if}}" data-combatant-id="{{ id }}"{{#if groupId}} data-group-id="{{groupId}}"{{/if}} data-chase-role="{{chaseRole}}" data-action="activateCombatant"{{#if dispositionStyle}} style="{{dispositionStyle}}"{{/if}}>
+        {{#if isCombatantGroup}}
+        <button type="button" class="inline-control combatant-control icon fa-solid {{ifThen expanded "fa-caret-down" "fa-caret-right"}} combatant-group-toggle"
+                data-action="toggleCombatantGroup" data-group-id="{{groupId}}"
+                data-tooltip="{{localize (ifThen expanded "COMBATTRACKER.collapseGroup" "COMBATTRACKER.expandGroup")}}"
+                aria-label="{{localize (ifThen expanded "COMBATTRACKER.collapseGroup" "COMBATTRACKER.expandGroup")}}"></button>
+        {{/if}}
         <div class="aggroButton specImg{{#if @root.isChase}} chaseAction{{/if}}" data-action="aggroButton"
              data-tooltip-text="{{#if @root.isChase}}{{localize "CHASE.actionTooltip"}}{{else}}{{tooltipWithKeybinding 'attacktest' 'attacktest'}}{{/if}}"></div>
         <div class="combatant-advanced">
@@ -31,6 +37,9 @@
         </div>
         <div class="token-name">
             <strong class="name">{{ name }}</strong>
+            {{#if isCombatantGroup}}
+            <span class="combatant-group-count" data-tooltip="{{localize "COMBATTRACKER.groupStanding" living=groupCount total=groupTotal}}">×{{groupCount}}</span>
+            {{/if}}
             {{#if chaseRole}}
             <span class="chase-role-badge {{chaseRole}}{{#if chaseRolled}} rolled{{/if}}" data-tooltip="{{chaseDistanceLabel}}">
               {{#if (eq chaseRole "fleeing")}}<i class="fas fa-person-running"></i>
@@ -81,6 +90,7 @@
             {{/if}}
         </div>
         {{/if}}
+        {{#unless hideInitiative}}
         <div class="token-initiative">
             {{#if @root.isChase}}
               {{#if (eq chaseRole "fleeing")}}
@@ -110,6 +120,7 @@
                     style="--initiative-icon: url('{{ @root.initiativeIcon.icon }}'); --initiative-icon-hover: url('{{ @root.initiativeIcon.hover }}');"></button>
             {{/if}}
         </div>
+        {{/unless}}
     </li>
     {{/if}}
     {{/each}}

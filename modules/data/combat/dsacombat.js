@@ -36,6 +36,7 @@ export class DSACombatDataModel extends DSADataModel {
         chaseStartRound: new NumberField({ initial: 0, min: 0 }),
         chaseMaxRounds: new NumberField({ initial: DEFAULT_CHASE_MAX_ROUNDS, min: 1 }),
         chaseDefaultSkill: new StringField({ initial: 'bodyControl' }),
+        autoGroupMinions: new BooleanField(),
     });
   }
 }

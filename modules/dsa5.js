@@ -302,6 +302,7 @@ Hooks.once('init', () => {
   CONFIG.Combat.documentClass = DSA5Combat;
   CONFIG.Combatant.dataModels = CombatantDataModels;
   CONFIG.Combatant.documentClass = DSA5Combatant;
+  CONFIG.CombatantGroup.documentClass = DSACombatantGroup;
   CONFIG.ActiveEffect.documentClass = DSAActiveEffect;
   CONFIG.ActiveEffect.dataModels = ActiveEffectDataModels;
   CONFIG.ActiveEffect.expiryAction = null;
@@ -322,7 +323,6 @@ Hooks.once('init', () => {
   CONFIG.JournalEntryPage.dataModels.dsaaptracker = DSAAPTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.dsamoneytracker = DSAMoneyTrackerEntry;
   CONFIG.JournalEntryPage.dataModels.citydetails = DSACityDetailsEntry;
-  //CONFIG.documentClass = DSACombatantGroup;
   //CONFIG.debug.hooks = true
   ZoneAttack.registerHooks();
 

@@ -20,7 +20,10 @@
             {{#if newRound}}
             <li class="iniRoundSeparator" role="separator" data-tooltip="{{localize 'COMBATTRACKER.newRound'}}" aria-label="{{localize 'COMBATTRACKER.newRound'}}"></li>
             {{/if}}
-            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem dsa-hud-portrait {{newRound}} {{css}}" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
+            <li data-combatant-id="{{id}}" data-action="activateCombatant" data-category="actorSummary" class="combatant betterTooltip iniItem dsa-hud-portrait {{newRound}} {{css}}{{#if isCombatantGroup}} combatant-group{{/if}}" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
+                {{#if isCombatantGroup}}
+                <span class="ini-group-count" data-tooltip="{{localize "COMBATTRACKER.groupStanding" living=groupCount total=groupTotal}}">×{{groupCount}}</span>
+                {{/if}}
                 <div class="combatant-advanced">
                     {{#if defenseCount}}
                     <i class="fas def fa-shield-alt" data-defense-count="{{defenseCount}}" data-tooltip="COMBATTRACKER.noDefenses"></i>
@@ -75,13 +78,26 @@
                     {{/unless}}
                     {{/if}}
                 </div>
+                {{#if showGroupFlyout}}
+                <ul class="ini-group-flyout">
+                    {{#each groupMembers}}
+                    <li class="ini-group-member dsa-hud-portrait{{#if active}} active{{/if}}{{#if isDefeated}} defeated{{/if}}"
+                        data-combatant-id="{{id}}" data-action="activateGroupMember"
+                        style="background-image:url('{{img}}');" data-tooltip="{{name}}"></li>
+                    {{/each}}
+                </ul>
+                {{/if}}
             </li>{{/each}}
         </ul>
         {{#if waitingTurns}}
         <ul class="waitingTackerList iniTrackerList">
             <li class="waitTitle dsa-hud-portrait" data-tooltip="COMBATTRACKER.waitInit"><i class="far fa-hourglass" ></i></li>
             {{#each waitingTurns}}
-            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem dsa-hud-portrait {{css}}" data-action="restoreInit" style="background-image:url('{{img}}');{{dispositionBorderStyle}}"></li>
+            <li data-tooltip="{{localize 'waitingInfo' name=name}}" data-combatant-id="{{id}}" class="combatant iniItem dsa-hud-portrait {{css}}{{#if isCombatantGroup}} combatant-group{{/if}}" data-action="restoreInit" style="background-image:url('{{img}}');{{dispositionBorderStyle}}">
+                {{#if isCombatantGroup}}
+                <span class="ini-group-count">×{{groupCount}}</span>
+                {{/if}}
+            </li>
             {{/each}}
         </ul>
         {{/if}}

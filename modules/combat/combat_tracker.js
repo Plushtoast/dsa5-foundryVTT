@@ -6,6 +6,7 @@ import { dispositionBackgroundStyle, dispositionBorderStyle } from '../system/he
 import NavalCombat from './mkr/naval-combat.js';
 import Chase from './chase/chase.js';
 import ChaseCombatTracker from './chase/chase-combat-tracker.js';
+import { DSACombatantGroup } from './combatant_group.js';
 
 const { getProperty } = foundry.utils;
 
@@ -42,8 +43,12 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       combatRules: this._onCombatRulesButtonClicked,
       createCombatMode: this._createCombatMode,
       resetBrawlingPoints: this._resetBrawlingPoints,
+      toggleAutoGroupMinions: this._toggleAutoGroupMinions,
+      toggleCombatantGroup: this._toggleCombatantGroup,
     },
   };
+
+  static expandedGroups = new Set();
 
   static COMBAT_MODE_STARTS = [
     { id: 'standard', icon: 'fa-shield', label: 'COMBAT.MODE.standard', hint: 'COMBAT.MODE.standardHint' },
@@ -126,6 +131,19 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   static _resetBrawlingPoints() {
     game.combats.documentClass.resetSceneBrawlingPoints();
+  }
+
+  static async _toggleAutoGroupMinions() {
+    if (!game.user.isGM) return;
+    await DSACombatantGroup.toggleAutoGroup(game.combat);
+  }
+
+  static _toggleCombatantGroup(_event, target) {
+    const groupId = target.dataset.groupId || target.closest('[data-group-id]')?.dataset?.groupId;
+    if (!groupId) return;
+    if (DSA5CombatTracker.expandedGroups.has(groupId)) DSA5CombatTracker.expandedGroups.delete(groupId);
+    else DSA5CombatTracker.expandedGroups.add(groupId);
+    ui.combat?.render();
   }
 
   static async _onCombatRulesButtonClicked() {
@@ -220,6 +238,7 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     const disposition = combatant.token?.disposition ?? CONST.TOKEN_DISPOSITIONS.NEUTRAL;
     turn.dispositionStyle = dispositionBackgroundStyle(disposition);
     turn.dispositionBorderStyle = dispositionBorderStyle(disposition);
+    turn.groupId = DSACombatantGroup.groupId(combatant);
 
     if (combatant.actor?.type === 'vehicle') {
       turn.vehicleImmobile = combatant.actor.system.isImmobile;
@@ -265,6 +284,8 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       vehicleChase: 'COMBATTRACKER.rulesHint.vehicleChase',
     }[context.combatMode] ?? 'COMBATTRACKER.rulesHint.standard';
     context.combatModeStarts = this.constructor.COMBAT_MODE_STARTS;
+    context.autoGroupMinions = !!combat?.system?.autoGroupMinions;
+    context.canAutoGroupMode = !!combat && !DSACombatantGroup.isSpecialMode(combat);
 
     if (context.isNavalMkr) {
       this.#prepareNavalMkrContext(context, combat);
@@ -277,6 +298,11 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     if (game.combat && Chase.isChaseActive(game.combat)) {
       // Always inject section headers (even empty) as drop targets for roles.
       context.turns = ChaseCombatTracker.reorderTurns(context.turns ?? [], game.combat);
+    } else if (game.combat && DSACombatantGroup.shouldCollapse(game.combat)) {
+      context.turns = DSACombatantGroup.collapseTurns(context.turns ?? [], {
+        isGM: game.user.isGM,
+        expandedGroupIds: DSA5CombatTracker.expandedGroups,
+      });
     }
   }
 
@@ -400,7 +426,21 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
       };
     }
 
-    await combatant.update(update);
+    await DSACombatantGroup.updateMembers(combatant, update);
+  }
+
+  _onCombatantMouseDown(event, target) {
+    const memberRow = target?.closest?.('.combatant-group-member, .ini-group-member');
+    if (game.user.isGM && memberRow) {
+      const combatantId = memberRow.dataset.combatantId || target.dataset.combatantId;
+      const combat = this.viewed;
+      const combatant = combat?.combatants.get(combatantId);
+      if (combatant) {
+        const turn = combat.turns.findIndex((c) => c.id === combatant.id);
+        if (turn >= 0 && combat.turn !== turn) combat.update({ turn });
+      }
+    }
+    return super._onCombatantMouseDown(event, target);
   }
 
   async _onFirstRender(context, options) {
@@ -466,6 +506,30 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
 
   _getEntryContextOptions() {
     const options = super._getEntryContextOptions();
+    const getCombatant = (li) => this.viewed?.combatants.get(li.dataset.combatantId);
+    options.unshift(
+      {
+        label: 'COMBATTRACKER.ungroup',
+        icon: '<i class="fas fa-object-ungroup"></i>',
+        visible: (li) => game.user.isGM && DSACombatantGroup.isGrouped(getCombatant(li)),
+        onClick: (_event, li) => DSACombatantGroup.ungroup(getCombatant(li)),
+      },
+      {
+        label: 'COMBATTRACKER.groupSelected',
+        icon: '<i class="fas fa-object-group"></i>',
+        visible: () => game.user.isGM && canvas.tokens?.controlled?.length > 1,
+        onClick: (_event, li) => {
+          const combat = this.viewed;
+          if (!combat) return;
+          const selected = canvas.tokens.controlled
+            .map((token) => combat.getCombatantForToken(token.id))
+            .filter(Boolean);
+          const clicked = getCombatant(li);
+          if (clicked && !selected.includes(clicked)) selected.unshift(clicked);
+          return DSACombatantGroup.groupCombatants(selected);
+        },
+      },
+    );
     if (!Chase.isChaseActive(game.combat)) return options;
 
     options.unshift(
@@ -591,7 +655,14 @@ Hooks.on('preCreateCombatant', (data, options, user) => {
   }
 });
 
+Hooks.on('createCombatant', (combatant) => {
+  if (!DSA5_Utility.isActiveGM()) return;
+  DSACombatantGroup.scheduleAutoGroup(combatant.combat);
+});
+
 Hooks.on('deleteCombatant', (data, options, user) => {
+  if (DSA5_Utility.isActiveGM()) DSACombatantGroup.scheduleAutoGroup(data.combat);
+
   const actor = DSA5_Utility.getSpeaker({
     actor: data.actorId,
     scene: data.sceneId,
@@ -641,6 +712,7 @@ Hooks.on('updateCombatant', (combatant, change, user) => {
       const roll = Number(parts[0]) - Math.round(combatant.actor.system.status.initiative.value);
       combatant.setFlag('dsa5', 'baseRoll', roll);
     }
+    DSACombatantGroup.syncGroupInitiative(combatant, change.initiative);
   } else if ('initiative' in change && change.initiative == null) {
     combatant.update({ 'flags.dsa5.baseRoll': _del });
   }
