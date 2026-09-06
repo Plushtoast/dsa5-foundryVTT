@@ -7,6 +7,7 @@ import GroupCheck from '../rolls/group-check.js';
 import ChatCommandService from './chat_command_service.js';
 import RollRequestService from '../queries/roll-request.js';
 import ItempackageData from '../../data/item/itempackage.js';
+import Select2Dialog from '../../dialog/select2Dialog.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -82,7 +83,31 @@ export default class DSA5ChatListeners {
     ChatMessage.create(DSA5_Utility.chatDataSetup(msg, 'roll'));
   }
 
-  static async check3D20(target, skill, options = {}) {
+  static DIALOG_ID = 'dsa-three-d20-check';
+  static DEFAULT_THREE_D20_ALIAS = 'Alrik';
+  static lastThreeD20Alias = 'Alrik';
+
+  static genericThreeD20Skill() {
+    return {
+      name: '3d20',
+      type: 'skill',
+      system: {
+        talentValue: { value: 0 },
+        characteristic1: { value: 'mu' },
+        characteristic2: { value: 'kl' },
+        characteristic3: { value: 'in' },
+        RPr: { value: 'no' },
+        burden: { value: 'no' },
+      },
+    };
+  }
+
+  static resolveThreeD20Alias(alias) {
+    const name = String(alias ?? this.lastThreeD20Alias ?? this.DEFAULT_THREE_D20_ALIAS).trim();
+    return name || this.DEFAULT_THREE_D20_ALIAS;
+  }
+
+  static async prepareThreeD20Check(target, skill, options = {}) {
     let attrs = 12;
     let json = {};
     if (target) {
@@ -93,23 +118,12 @@ export default class DSA5ChatListeners {
       skill = await DSA5_Utility.skillByName(skill);
     }
     if (skill) skill = skill.toObject();
+    if (!skill) skill = this.genericThreeD20Skill();
 
-    if (!skill) {
-      skill = {
-        name: '3d20',
-        type: 'skill',
-        system: {
-          talentValue: { value: 0 },
-          characteristic1: { value: 'mu' },
-          characteristic2: { value: 'kl' },
-          characteristic3: { value: 'in' },
-          RPr: { value: 'no' },
-          burden: { value: 'no' },
-        },
-      };
-    }
-
-    const actor = DSA5_Utility.emptyActor(attrs);
+    const alias = this.resolveThreeD20Alias(options.alias);
+    const actor = DSA5_Utility.emptyActor(attrs, alias, {
+      prototypeToken: { name: alias },
+    });
 
     if (json.attrs) {
       const attrValues = json.attrs.split(',');
@@ -126,9 +140,70 @@ export default class DSA5ChatListeners {
     }
     skill.system.talentValue.value = Number(json.fw) || 0;
 
-    actor.setupSkill(skill, options, 'emptyActor').then((setupData) => {
-      actor.basicTest(setupData);
+    return { actor, skill, alias };
+  }
+
+  static async check3D20(target, skill, options = {}) {
+    const prepared = await this.prepareThreeD20Check(target, skill, options);
+    const setupData = await prepared.actor.setupSkill(prepared.skill, options, 'emptyActor');
+    if (!setupData) return prepared;
+
+    const rolled = await prepared.actor.basicTest(setupData, { suppressMessage: options.suppressMessage });
+    return { ...prepared, setupData, ...rolled };
+  }
+
+  static async openThreeD20Dialog({ modifier = 0, skill = '' } = {}) {
+    const existing = foundry.applications.instances.get(this.DIALOG_ID);
+    if (existing) {
+      existing.bringToTop();
+      return;
+    }
+
+    const skills = (await DSA5_Utility.allSkills())
+      .map((entry) => entry.name)
+      .sort((a, b) => a.localeCompare(b, game.i18n.lang));
+
+    const content = await renderTemplate('systems/dsa5/templates/dialog/three-d20-check-dialog.hbs', {
+      skills,
+      selectedSkill: skill,
+      alias: this.resolveThreeD20Alias(),
     });
+
+    const result = await Select2Dialog.wait({
+      id: this.DIALOG_ID,
+      classes: ['dsa5'],
+      window: { title: 'HELP.threeD20Check' },
+      position: { width: 400 },
+      content,
+      rejectClose: false,
+      buttons: [
+        {
+          action: 'confirm',
+          icon: 'fa fa-check',
+          label: 'ok',
+          default: true,
+          callback: (_event, button) => {
+            const form = button.form;
+            return {
+              skill: form.querySelector('[name="skill"]')?.value || '',
+              alias: form.querySelector('[name="alias"]')?.value || '',
+            };
+          },
+        },
+        {
+          action: 'cancel',
+          icon: 'fas fa-times',
+          label: 'cancel',
+          callback: () => null,
+        },
+      ],
+    });
+
+    if (!result || typeof result !== 'object') return;
+
+    const alias = this.resolveThreeD20Alias(result.alias);
+    this.lastThreeD20Alias = alias;
+    return this.check3D20(undefined, result.skill || undefined, { alias, modifier });
   }
 
   static async showTables() {
@@ -162,7 +237,7 @@ export default class DSA5ChatListeners {
         icon: 'fas fa-dice',
         onClick: () => RollRequestService.openRequestDialog(),
       },
-      { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.check3D20() },
+      { label: _loc('HELP.threeD20Check'), icon: 'fas fa-dice-d20', onClick: () => DSA5ChatListeners.openThreeD20Dialog() },
       {
         label: _loc('HELP.groupcheck'),
         icon: 'fas fa-users',

@@ -141,7 +141,7 @@ export default function () {
     const normalizedContent = content.replace(/<\/?p>/gi, '').replace(/<br\b[^>]*>/gi, '\n').trim();
     if (ChatCommandService.tryExecuteChatCommand(normalizedContent, msg)) return false;
 
-    let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages)(?:\s|$)/i);
+    let cmd = normalizedContent.match(/^\/(pay|getPaid|help|conditions|tables|packages|ch)(?:\s|$)/i);
     cmd = cmd ? cmd[0].trim().toLowerCase() : '';
     switch (cmd) {
       case '/pay': {
@@ -168,6 +168,12 @@ export default function () {
       case '/packages':
         ItempackageData.postPackagesChatCard();
         return false;
+      case '/ch': {
+        const args = normalizedContent.replace(/^\/ch\s*/i, '').trim();
+        if (args) DSA5ChatListeners.check3D20(undefined, args);
+        else DSA5ChatListeners.openThreeD20Dialog();
+        return false;
+      }
     }
   });
 

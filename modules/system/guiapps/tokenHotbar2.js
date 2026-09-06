@@ -101,6 +101,15 @@ export default class TokenHotbar2 extends DefaultAppv2 {
           abbrev: '',
           subfunction: 'gm',
         },
+        {
+          name: 'HELP.threeD20Check',
+          disabled: setting.threeD20Check,
+          iconClass: 'fas fa-dice-d20',
+          id: 'threeD20Check',
+          cssClass: 'gm',
+          abbrev: '',
+          subfunction: 'gm',
+        },
       ];
     }
 
@@ -463,6 +472,9 @@ export default class TokenHotbar2 extends DefaultAppv2 {
       case 'randomVictim':
         this.handleGMRandomVictim(ev);
         break;
+      case 'threeD20Check':
+        this.handleThreeD20Check(ev);
+        break;
       default:
         if (id in this.callbackFunctions) this.callbackFunctions[id](ev, actor, id, tokenId);
     }
@@ -476,6 +488,11 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     } else {
       PaymentRequestService.createRequest({ mode: 'pay', amount: money });
     }
+  }
+
+  handleThreeD20Check(ev) {
+    const mod = Math.round($(ev.currentTarget).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val()) || 0;
+    game.dsa5.apps.DSA5ChatListeners.openThreeD20Dialog({ modifier: mod });
   }
 
   async handleGMRandomVictim(ev) {
