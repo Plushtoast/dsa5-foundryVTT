@@ -23,4 +23,10 @@ export default class EquipmentTemplate extends DSADataModel {
             tradeLocked: new BooleanField({ initial: false }),
         }
     }
+
+    prepareEmbeddedItemSheet() {
+        const item = this.itemWithOverrides();
+        item.system.preparedWeight = this.parent.system.preparedWeight;
+        return item;
+    }
 }

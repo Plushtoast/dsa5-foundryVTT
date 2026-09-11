@@ -56,7 +56,6 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
 
   prepareEmbeddedItemSheet() {
     const item = super.prepareEmbeddedItemSheet();
-    item.system.preparedWeight = this.parent.system.preparedWeight;
     item.name = this.parent.system.detail_name;
     this.constructor._prepareConsumable(item);
     return item;

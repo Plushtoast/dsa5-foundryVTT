@@ -121,7 +121,6 @@ export default class RangeweaponData extends ItemDataModel.mixin(OnUseTemplate, 
     const item = super.prepareEmbeddedItemSheet();
     item.toggleValue = item.system.worn.value || false;
     item.toggle = true;
-    item.system.preparedWeight = this.parent.system.preparedWeight;
     this.constructor._prepareItemStructure(item)
     this._setOnUseEffect(item);
     return item;

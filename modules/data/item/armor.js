@@ -73,7 +73,6 @@ export default class ArmorData extends ItemDataModel.mixin(OnUseTemplate, Descri
     const item = super.prepareEmbeddedItemSheet();
     item.toggleValue = item.system.worn.value || false;
     item.toggle = true;
-    item.system.preparedWeight = this.preparedWeight;
     item.system.calculatedEncumbrance = this.calculatedEncumbrance;
     this.constructor._prepareItemStructure(item);
     this._setOnUseEffect(item);
