@@ -1159,6 +1159,8 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
 }
 
 class TrapSheet extends Enchantable {
+  isPoisonable = true;
+
   static PARTS = {
     ...Enchantable.PARTS,
     stat: {
@@ -1349,6 +1351,20 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     return elm;
   }
 
+  containedItemHoverData(itemId, dataset = {}) {
+    const nested = this.actor?.items.get(itemId);
+    if (!nested) {
+      return { name: dataset.name, weight: dataset.weight, quantity: dataset.quantity };
+    }
+    const quantity = Number(nested.system.quantity?.value) || 0;
+    const unitWeight = Number(nested.system.weight?.value) || 0;
+    return {
+      name: nested.name,
+      quantity,
+      weight: parseFloat((unitWeight * quantity).toFixed(3)),
+    };
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
     const html = $(this.element);
@@ -1356,11 +1372,7 @@ class EquipmentSheet extends ItemSheetObfuscation(Enchantable) {
     slots.on('mouseenter', async (ev) => {
       const item = $(ev.currentTarget);
       const elm = await this.breakOverflow(
-        {
-          name: ev.currentTarget.dataset.name,
-          weight: ev.currentTarget.dataset.weight,
-          quantity: ev.currentTarget.dataset.quantity,
-        },
+        this.containedItemHoverData(ev.currentTarget.dataset.itemId, ev.currentTarget.dataset),
         item,
       );
       elm.fadeIn();

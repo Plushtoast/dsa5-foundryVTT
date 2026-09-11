@@ -298,6 +298,7 @@ export default class Itemdsa5 extends Item {
    */
   static async _onCreateOperation(documents, operation, user) {
     await this._updateActorConditions(documents);
+    await this._refreshParentContainerSheets(documents);
     return super._onCreateOperation(documents, operation, user);
   }
 
@@ -313,6 +314,7 @@ export default class Itemdsa5 extends Item {
    */
   static async _onUpdateOperation(documents, operation, user) {
     await this._updateActorConditions(documents);
+    await this._refreshParentContainerSheets(documents);
     return super._onUpdateOperation(documents, operation, user);
   }
 
@@ -328,6 +330,7 @@ export default class Itemdsa5 extends Item {
    */
   static async _onDeleteOperation(documents, operation, user) {
     await this._updateActorConditions(documents);
+    await this._refreshParentContainerSheets(documents);
     return super._onDeleteOperation(documents, operation, user);
   }
 
@@ -343,6 +346,35 @@ export default class Itemdsa5 extends Item {
       if (doc.actor) {
         await Actordsa5.postUpdateConditions(doc.actor);
       }
+    }
+  }
+
+  /**
+   * Re-render open bag/container sheets when nested items change (quantity, weight, …).
+   * The bag document itself is unchanged, so its sheet would otherwise keep stale slot data.
+   * @param {Array<Itemdsa5>} documents
+   */
+  static async _refreshParentContainerSheets(documents) {
+    const renders = [];
+    const seen = new Set();
+    for (const item of documents) {
+      const parentId = item.system?.parent_id;
+      if (!parentId) continue;
+      const actor = item.actor ?? item.parent;
+      const container = actor?.items?.get(parentId);
+      if (!container?.system?.isBagWithContents || seen.has(container.id)) continue;
+      seen.add(container.id);
+      for (const app of Object.values(container.apps ?? {})) {
+        if (app?.rendered && app.constructor?.PARTS?.containerContent) {
+          renders.push(app.render({ parts: ['containerContent'] }));
+        }
+      }
+    }
+    if (!renders.length) return;
+    try {
+      await Promise.all(renders);
+    } catch (err) {
+      console.warn('Failed to refresh parent container sheets', err);
     }
   }
 
