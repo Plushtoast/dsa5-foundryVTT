@@ -3519,6 +3519,7 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 
 // Outcome accents — must beat reserved transparent gutter (same/higher specificity)
 .roll-request-card .roll-request-row,
+.trap-announce-card .roll-request-row,
 .information-query-result-roll {
   &.roll-request-row-success {
     background: rgba(0, 111, 61, 0.12);
@@ -4961,7 +4962,35 @@ select.noAppearance {
     bottom: 0;
     right: 0;
     color: #000;
+    --fa-width: 1em;
+    box-sizing: border-box;
     width: 14px;
+    height: 14px;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &.reversed {
+      transform: scaleX(-1);
+    }
+
+    &.def::after {
+      content: attr(data-defense-count);
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-bottom: 2px;
+      z-index: 1;
+      color: #fff;
+      font-family: var(--normalFont);
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      pointer-events: none;
+    }
   }
 
   .actions,
@@ -5003,23 +5032,6 @@ select.noAppearance {
     }
   }
 
-  i {
-    &.reversed {
-      transform: scaleX(-1);
-    }
-
-    &.def:after {
-      content: attr(data-defense-count);
-      position: absolute;
-      left: 0;
-      right: 0;
-      text-align: center;
-      z-index: 1;
-      color: white;
-      font-size: 10px;
-      line-height: 12px;
-    }
-  }
 }
 
 .tinyEntityLink a {

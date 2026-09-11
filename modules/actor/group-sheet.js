@@ -397,10 +397,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   #onRelatedActorUpdate(doc) {
     const actor = doc instanceof Item ? doc.parent : doc;
     if (!actor || actor === this.actor) return;
-    const system = this.actor.system;
-    const isMember = Object.values(system.members).some((m) => fromUuidSync(m.uuid)?.id === actor.id);
-    const isLocation = system.resolvedLocations.some((l) => l.actor?.id === actor.id);
-    if (isMember || isLocation) this.render();
+    if (!this.actor.system.isLinkedActor(actor)) return;
+    this.actor.reset();
+    if (this.rendered) this.render();
   }
 
   _tearDown(options) {

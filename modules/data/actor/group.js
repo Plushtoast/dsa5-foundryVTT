@@ -99,13 +99,19 @@ export default class GroupData extends ActorDataModel {
         this.locationActors.set(key, actor);
         this.resolvedLocations.push({
           key,
-          name: actor.name,
-          img: actor.img,
           type: loc.type,
           locked: loc.locked,
-          speed: actor.system.status?.speed?.max ?? 0,
           sort: loc.sort,
           actor,
+          get name() {
+            return actor.name;
+          },
+          get img() {
+            return actor.img;
+          },
+          get speed() {
+            return actor.system.status?.speed?.max ?? 0;
+          },
         });
       }
     }
@@ -282,6 +288,13 @@ export default class GroupData extends ActorDataModel {
         sort: maxSort + 1,
       },
     });
+  }
+
+  isLinkedActor(actor) {
+    if (!actor) return false;
+    const uuid = actor.uuid;
+    return Object.values(this.members ?? {}).some((member) => member.uuid === uuid)
+      || Object.values(this.locations ?? {}).some((location) => location.actorUuid === uuid);
   }
 
   static isLootDepotActor(actor) {
