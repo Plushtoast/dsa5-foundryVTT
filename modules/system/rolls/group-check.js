@@ -362,7 +362,7 @@ export default class GroupCheck {
     const existingDialog = foundry.applications.instances.get(dialogId);
     if (existingDialog) {
       existingDialog.bringToTop();
-      return;
+      return existingDialog;
     }
     let dialogData;
 
@@ -415,7 +415,7 @@ export default class GroupCheck {
     const content = await renderTemplate(this.DIALOG_TEMPLATE, dialogData);
     const postOptions = { datasetOptions, otherMessage, modeOverride, forceWhisperIDs };
 
-    new GroupCheckConfigDialog(
+    return new GroupCheckConfigDialog(
       {
         id: dialogId,
         window: { title: isEdit ? 'GROUPCHECK.editTitle' : 'GROUPCHECK.dialogTitle', resizable: true },
@@ -469,7 +469,7 @@ export default class GroupCheck {
       {
         onRender: (element) => this.#bindConfigDialog(element, skills),
       },
-    ).render(true);
+    ).render({ force: true });
   }
 
   static #buildSkillOptions() {

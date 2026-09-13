@@ -1,4 +1,5 @@
 import Select2Dialog from './select2Dialog.js';
+import RuleChaos from '../system/rules/rule_chaos.js';
 
 export default class GroupCheckConfigDialog extends Select2Dialog {
   #bindOptions;
@@ -6,6 +7,11 @@ export default class GroupCheckConfigDialog extends Select2Dialog {
   constructor(data, bindOptions = {}) {
     super(data);
     this.#bindOptions = bindOptions;
+  }
+
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+    $(this.element).on('mousedown', '.quantity-click', (ev) => RuleChaos.quantityClick(ev));
   }
 
   async _onRender(context, options) {
