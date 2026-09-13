@@ -3348,8 +3348,8 @@
         "hint": "Disarming a trap takes varying amounts of time depending on its complexity.",
         "label": "Complexity"
       },
-      "damageFormula": {
-        "hint": "How much damage does the trap deal?",
+        "damageFormula": {
+        "hint": "A valid roll formula such as 2d6+2, or blank.",
         "label": "Damage"
       },
       "description": {
@@ -3364,6 +3364,10 @@
         "hint": "The trap has already been disarmed.",
         "label": "Disarmed"
       },
+      "detected": {
+        "hint": "A perception check found this trap. Narrate the player-facing description.",
+        "label": "Detected"
+      },
       "gmdescription": {
         "hint": "A detailed description of the trap for the GM.",
         "label": "GM Description"
@@ -3373,7 +3377,7 @@
         "label": "Remaining Charges"
       },
       "removeOnExit": {
-        "hint": "Automatically remove effects applied by this trap when a token leaves the region.",
+        "hint": "Automatically remove effects applied by this trap when a figure leaves the area.",
         "label": "Remove on Exit"
       },
       "sound": {
@@ -3391,6 +3395,60 @@
       "trapType": {
         "hint": "The trap type determines how a hero can interact with the trap.",
         "label": "Trap type"
+      },
+      "attack": {
+        "weaponType": {
+          "hint": "Melee or ranged weapon used for trap attacks that can be parried or dodged. Leave on automatic to follow trap type.",
+          "label": "Attack"
+        },
+        "at": {
+          "hint": "Absolute attack value used for arrow and blade traps. Default 12.",
+          "label": "Attack value"
+        },
+        "traits": {
+          "hint": "Comma-separated weapon attributes copied onto the trap attack.",
+          "label": "Weapon attributes"
+        }
+      },
+      "attacks": {
+        "hint": "The first row is the main damage. Add further rows for extra damage types instead of labeled sums in one formula.",
+        "label": "Attacks",
+        "name": {
+          "hint": "Optional label for this strike, for example fall or spears.",
+          "label": "Name"
+        }
+      },
+      "timerRounds": {
+        "hint": "Combat rounds until the crush or suffocation timer expires. 0 disables the timer.",
+        "label": "Timer (KR)"
+      },
+      "escapeModifier": {
+        "hint": "Modifier for the Feat of Strength group check to escape a crush or suffocation trap.",
+        "label": "Escape modifier"
+      },
+      "escalateEvery": {
+        "hint": "Worsen the escape modifier every this many combat rounds. 0 means no escalation.",
+        "label": "Escalate every (KR)"
+      },
+      "escalateMax": {
+        "hint": "Most negative Feat of Strength modifier the timer will reach.",
+        "label": "Escape modifier floor"
+      },
+      "chaseGs": {
+        "hint": "Boulder speed used when this stone trap starts a chase.",
+        "label": "Chase GS"
+      },
+      "chaseFw": {
+        "hint": "Body Control talent value of the boulder in a chase.",
+        "label": "Chase FW"
+      },
+      "chaseDistanceFormula": {
+        "hint": "Valid roll formula for the starting chase distance, for example 2d6+4.",
+        "label": "Chase distance"
+      },
+      "passwordRequired": {
+        "hint": "Remind the GM that a keyword can stop this crush trap.",
+        "label": "Keyword"
       },
       "trigger": {
         "hint": "The trigger of the trap, e.g. a pressure plate, a rope, or a specific area.",
@@ -3413,6 +3471,11 @@
       "6": "Suffocation Trap",
       "7": "Magical/Blessed Trap"
     },
+    "ATTACK": {
+      "weaponType": {
+        "auto": "From trap type"
+      }
+    },
     "alreadyDisarmed": "This trap is already disarmed.",
     "confirmDisarm": "Confirm Disarm",
     "disarm": "Disarm",
@@ -3434,6 +3497,16 @@
     "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
     "trapstart": "<b>{name}</b> triggers <b>{trap}</b>.",
     "trapDetected": "{actor} detected the trap '{trap}'.",
+    "narrateDetected": "Narrate this to the players",
+    "missingDisarmAbility": "{actor} does not have {ability}.",
+    "triggered": "Triggered",
+    "escape": "Escape",
+    "timerRemaining": "{rounds} CR left (Feat of Strength {modifier})",
+    "timerTimedOut": "Timer expired",
+    "timerExpired": "The timer on '{trap}' expired after {rounds} CR. Apply the book outcome. The trap does not kill automatically.",
+    "timerNeedsCombat": "Start combat to run the KR timer on '{trap}' ({rounds} CR remaining).",
+    "timerEscalated": "'{trap}': escape modifier is now {modifier} ({rounds} CR left).",
+    "passwordRequired": "'{trap}' can be stopped with a keyword. Start or stop the timer as the book requires.",
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
   },

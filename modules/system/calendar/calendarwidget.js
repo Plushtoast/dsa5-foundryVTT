@@ -507,8 +507,8 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
                 : info.tooltip;
         }
 
-        if (weather) {
-            void game.dsa5?.atlas?.sfx?.control?.(weather);
+        if (weather && (game.dsa5?.atlas?.shouldAutoUpdateWeather?.() ?? false)) {
+            void game.dsa5.atlas.sfx?.control?.(weather);
         }
     }
 

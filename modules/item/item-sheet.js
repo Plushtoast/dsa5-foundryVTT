@@ -1161,6 +1161,13 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
 class TrapSheet extends Enchantable {
   isPoisonable = true;
 
+  static DEFAULT_OPTIONS = {
+    ownerActions: {
+      addTrapAttack: this.addTrapAttack,
+      deleteTrapAttack: this.deleteTrapAttack,
+    },
+  };
+
   static PARTS = {
     ...Enchantable.PARTS,
     stat: {
@@ -1169,9 +1176,54 @@ class TrapSheet extends Enchantable {
     details: {
       template: 'systems/dsa5/templates/items/item-trap-sheet.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/items/item-aoe.hbs']
+      templates: ['systems/dsa5/templates/items/item-aoe.hbs', 'systems/dsa5/templates/items/trap-attack-part.hbs'],
     }
   };
+
+  tabGroups = {
+    trapAttacks: 'baseAttack',
+  };
+
+  async _prepareContext(_options) {
+    const data = await super._prepareContext(_options);
+    data.trapAttacks = this.item.system.listAttacks();
+    data.hasTrapAttacks = data.trapAttacks.length > 0;
+    data.trapSheet = this.item.system.sheetVisibility();
+    if (this.tabGroups.trapAttacks !== 'baseAttack' && !data.trapAttacks.some((attack) => attack.id === this.tabGroups.trapAttacks)) {
+      this.tabGroups.trapAttacks = 'baseAttack';
+    }
+    data.trapAttackTab = this.tabGroups.trapAttacks;
+    return data;
+  }
+
+  _onClickTab(event) {
+    super._onClickTab(event);
+    if (event.target.dataset.tab == 'details') this.changeTab('baseAttack', 'trapAttacks');
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    this.#hintsToTooltips();
+  }
+
+  #hintsToTooltips() {
+    for (const hint of this.element.querySelectorAll('p.hint')) {
+      const label = hint.closest('.form-group')?.querySelector('label');
+      const text = hint.textContent.trim();
+      if (label && text) label.dataset.tooltipText = text;
+      hint.hidden = true;
+    }
+  }
+
+  static async addTrapAttack() {
+    const id = await this.item.system.addAttack({ name: _loc('CHAR.ATTACK') });
+    if (id) this.tabGroups.trapAttacks = id;
+  }
+
+  static async deleteTrapAttack(_event, target) {
+    this.tabGroups.trapAttacks = 'baseAttack';
+    await this.item.system.removeAttack(target.dataset.key);
+  }
 }
 
 class TraitSheet extends Enchantable {

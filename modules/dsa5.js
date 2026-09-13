@@ -84,6 +84,8 @@ import APTracker from './system/orwell/ap-tracker.js';
 import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
 import ZoneAttack from './system/automation/zone-attack.js';
+import TrapAutomation from './system/automation/trap.js';
+import { TrapState } from './chatmessage/trap_state.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
 import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels, ActiveEffectDataModels } from './data/models.js';
@@ -175,6 +177,8 @@ globalThis.dsa5 = {
       DSAEnhancementEffectConfig,
       OnUseEffect,
       ZoneAttack,
+      TrapAutomation,
+      TrapState,
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,

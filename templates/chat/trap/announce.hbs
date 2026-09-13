@@ -1,12 +1,25 @@
-<div>
+<div class="dsa5 trap-announce-card">
     <div class="flexrow">
         <img class="flex0" src="systems/dsa5/icons/categories/trap.webp" width="42" height="42" style="margin-right:6px"/>
         <p>{{{localize "REGIONBEHAVIOR_DSATrap.trapstart" name=tokenAnchor trap=trapName}}}</p>
-    </div>    
+    </div>
+    {{#if detected}}<span class="dsa-pip pip-positive">{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.detected.label"}}</span>{{/if}}
+    {{#if disarmed}}<span class="dsa-pip pip-positive">{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.disarmed.label"}}</span>{{/if}}
+    {{#if triggered}}<span class="dsa-pip pip-negative">{{localize "REGIONBEHAVIOR_DSATrap.triggered"}}</span>{{/if}}
+    {{#if countdown.remaining}}<span class="dsa-pip pip-negative">{{localize "REGIONBEHAVIOR_DSATrap.timerRemaining" rounds=countdown.remaining modifier=countdown.escapeModifier}}</span>{{/if}}
+    {{#if countdown.timedOut}}<span class="dsa-pip pip-negative">{{localize "REGIONBEHAVIOR_DSATrap.timerTimedOut"}}</span>{{/if}}
     {{#if behaviour.gmdescription}}
     <p>{{{behaviour.gmdescription}}}</p>
+    {{/if}}
+    {{#if showNarration}}
+    <div class="dsa-info-box">
+        <p class="dsa-info-text small"><b>{{localize "REGIONBEHAVIOR_DSATrap.narrateDetected"}}</b></p>
+        <p class="dsa-info-text">{{{behaviour.description}}}</p>
+    </div>
     {{else}}
+    {{#unless behaviour.gmdescription}}
     <p>{{{behaviour.description}}}</p>
+    {{/unless}}
     {{/if}}
     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.hint">
         <div class="col eighty"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.label"}}</b></div>
@@ -16,10 +29,14 @@
         <div class="col eighty"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.stealth.label"}}</b></div>
         <div class="col five flexAlignEnd flexrow">{{behaviour.stealth}}</div>
     </div>
-    {{#if behaviour.damageFormula}}
+    {{#if strikes.length}}
     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.hint">
         <div class="col third"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}</b></div>
-        <div class="col seventy flexAlignEnd flexrow">{{diceThingsUp behaviour.damageFormula}}</div>
+        <div class="col seventy flexAlignEnd flexrow">
+            {{#each strikes as |strike|}}
+            <span>{{#if strike.name}}{{strike.name}}: {{/if}}{{{diceThingsUp strike.damageFormula}}}</span>{{#unless @last}}, {{/unless}}
+            {{/each}}
+        </div>
     </div>
     {{/if}}
     {{#if behaviour.tools}}
@@ -36,6 +53,20 @@
         <div class="col two"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.complexity.label"}}</b></div>
         <div class="col two flexAlignEnd flexrow">{{localize (concat 'REGIONBEHAVIOR_DSATrap.COMPLEXITIES.' behaviour.complexity)}}</div>
     </div>
+    {{#if outcomes.length}}
+    <div class="roll-request-card">
+        <div class="roll-request-rows">
+            {{#each outcomes as |entry|}}
+            <div class="flexrow flexAlignCenter roll-request-row gap5px {{entry.resultRowClass}}"{{#if entry.resultTooltip}} data-tooltip="{{entry.resultTooltip}}"{{/if}}>
+                <span class="col sixty">{{entry.actorName}} — {{entry.modeLabel}}</span>
+                {{#if entry.resultSubLabel}}
+                <span class="roll-request-result-sublabel flex0">{{entry.resultSubLabel}}</span>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
     <div class="flexrow">
         <button type="button" class="trap-handling" data-action="searchTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.searchHint"><i class="fas fa-eye"></i></button>
         <button type="button" class="trap-handling" data-action="disarmTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.disarmHint"><i class="fas fa-lock-open"></i></button>

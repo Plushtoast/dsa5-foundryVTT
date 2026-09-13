@@ -60,6 +60,29 @@ export default class GroupCheck {
     return { qs, failed };
   }
 
+  /**
+   * Whether a group check has reached its QS target or used every allowed roll.
+   * @param {{ results?: Array, targetQs?: number, maxRolls?: number }} data
+   * @returns {{ complete: boolean, success: boolean, actorId: string|null }}
+   */
+  static cumulativeOutcome(data = {}) {
+    const results = data.results || [];
+    const tally = this.tallyResults(results);
+    const targetQs = Number(data.targetQs);
+    const needed = Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1;
+    const remaining = (Number(data.maxRolls) || 0) - results.length;
+    const success = tally.qs >= needed;
+    const exhausted = remaining <= 0 && results.length > 0;
+    if (!success && !exhausted) return { complete: false, success: false, actorId: null };
+
+    let actorId = results.at(-1)?.actorId || null;
+    if (success) {
+      const winner = [...results].reverse().find((entry) => Number(entry.success) > 0);
+      if (winner?.actorId) actorId = winner.actorId;
+    }
+    return { complete: true, success, actorId };
+  }
+
   static #resolveActorImg(item = {}) {
     if (item.tokenId && canvas?.ready) {
       const token = canvas.tokens?.get(item.tokenId);
@@ -275,6 +298,10 @@ export default class GroupCheck {
       }
       data.openRolls = data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
+      if (!data.trapResolved && data.datasetOptions?.message && data.datasetOptions?.mode) {
+        const { TrapState } = await import('../../chatmessage/trap_state.js');
+        if (await TrapState.applyGroupCheckResult(data)) data.trapResolved = true;
+      }
       const content = await renderTemplate(this.CHAT_TEMPLATE, this.#buildTemplateData(data));
       await message.update({ content, flags: { gc: data }, timestamp: Date.now() });
     } else {

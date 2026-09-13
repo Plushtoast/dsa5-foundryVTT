@@ -3350,8 +3350,8 @@
         "hint": "Das Entschärfen einer Falle dauert je nach Komplexität der Falle unterschiedlich lange.",
         "label": "Komplexität"
       },
-      "damageFormula": {
-        "hint": "Wieviel Schaden verursacht die Falle?",
+        "damageFormula": {
+        "hint": "Eine gültige Würfelformel wie 2d6+2, oder leer.",
         "label": "Schaden"
       },
       "description": {
@@ -3366,21 +3366,25 @@
         "hint": "Die Falle wurde bereits entschärft.",
         "label": "Entschärft"
       },
+      "detected": {
+        "hint": "Eine Probe auf Sinnesschärfe hat diese Falle entdeckt. Erzähle die spielerseitige Beschreibung.",
+        "label": "Entdeckt"
+      },
       "gmdescription": {
         "hint": "Eine detaillierte Beschreibung der Falle für den Spielleiter.",
-        "label": "GM-Beschreibung"
+        "label": "SL-Beschreibung"
       },
       "remainingCharges": {
         "hint": "Die Anzahl der verbleibenden Ladungen, die die Falle hat.",
         "label": "Verbleibende Ladungen"
       },
       "removeOnExit": {
-        "hint": "Entfernt automatisch Effekte dieser Falle, wenn ein Token die Region verlässt.",
+        "hint": "Entfernt automatisch Effekte dieser Falle, wenn eine Figur den Bereich verlässt.",
         "label": "Beim Verlassen entfernen"
       },
       "sound": {
-        "hint": "Ein Sound, der abgespielt wird, wenn die Falle ausgelöst wird.",
-        "label": "Sound"
+        "hint": "Ein Geräusch, das abgespielt wird, wenn die Falle ausgelöst wird.",
+        "label": "Geräusch"
       },
       "stealth": {
         "hint": "Ein Modifikator für eine Probe auf Sinnesschärfe, um die Falle rechtzeitig zu bemerken.",
@@ -3393,6 +3397,60 @@
       "trapType": {
         "hint": "Der Fallentyp bestimmt, wie ein Held sich gegen die Falle verhalten kann.",
         "label": "Fallentyp"
+      },
+      "attack": {
+        "weaponType": {
+          "hint": "Nah- oder Fernkampfwaffe für Fallenangriffe, die pariert oder ausgewichen werden können. Automatisch folgt dem Fallentyp.",
+          "label": "Angriff"
+        },
+        "at": {
+          "hint": "Absoluter Attackewert für Pfeil- und Klingenfallen. Standard 12.",
+          "label": "Attackewert"
+        },
+        "traits": {
+          "hint": "Kommagetrennte Waffeneigenschaften, die auf den Fallenangriff kopiert werden.",
+          "label": "Waffeneigenschaften"
+        }
+      },
+      "attacks": {
+        "hint": "Erster Eintrag ist der Hauptschaden. Weitere Zeilen für zusätzliche Schadensarten, statt beschrifteter Summen in einer Formel.",
+        "label": "Angriffe",
+        "name": {
+          "hint": "Optionale Bezeichnung dieses Treffers, z. B. Höhe oder Speere.",
+          "label": "Name"
+        }
+      },
+      "timerRounds": {
+        "hint": "Kampfrunden, bis eine Quetsch- oder Erstickungsfalle abläuft. 0 schaltet die Zeitmessung aus.",
+        "label": "Zeit (KR)"
+      },
+      "escapeModifier": {
+        "hint": "Modifikator der Kraftakt-Sammelprobe zum Entkommen aus einer Quetsch- oder Erstickungsfalle.",
+        "label": "Entkommen-Modifikator"
+      },
+      "escalateEvery": {
+        "hint": "Verschlechtert den Entkommen-Modifikator alle so vielen Kampfrunden. 0 bedeutet keine Steigerung.",
+        "label": "Erschwernis alle (KR)"
+      },
+      "escalateMax": {
+        "hint": "Niedrigster (am stärksten erschwerter) Kraftakt-Modifikator, den die Falle erreicht.",
+        "label": "Entkommen-Untergrenze"
+      },
+      "chaseGs": {
+        "hint": "GS der Kugel, wenn diese Steinfalle eine Verfolgungsjagd startet.",
+        "label": "Jagd-GS"
+      },
+      "chaseFw": {
+        "hint": "FW Körperbeherrschung der Kugel in der Verfolgungsjagd.",
+        "label": "Jagd-FW"
+      },
+      "chaseDistanceFormula": {
+        "hint": "Gültige Würfelformel für die Startentfernung, z. B. 2d6+4.",
+        "label": "Jagd-Entfernung"
+      },
+      "passwordRequired": {
+        "hint": "Erinnert den Meister daran, dass ein Schlüsselwort diese Quetschfalle stoppen kann.",
+        "label": "Schlüsselwort"
       },
       "trigger": {
         "hint": "Der Auslöser der Falle, z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich.",
@@ -3415,6 +3473,11 @@
       "6": "Erstickungsfalle",
       "7": "Magische/Karmale Falle"
     },
+    "ATTACK": {
+      "weaponType": {
+        "auto": "Nach Fallentyp"
+      }
+    },
     "alreadyDisarmed": "Diese Falle ist bereits entschärft.",
     "confirmDisarm": "Entschärfung bestätigen",
     "disarm": "Entschärfen",
@@ -3436,6 +3499,16 @@
     "showTrapHint": "Falle anzeigen: Die Falle kann für alle Spieler oder den Spielleiter sichtbar gemacht werden.",
     "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
     "trapDetected": "{actor} hat die Falle '{trap}' entdeckt.",
+    "narrateDetected": "Dies den Spielern erzählen",
+    "missingDisarmAbility": "{actor} besitzt nicht {ability}.",
+    "triggered": "Ausgelöst",
+    "escape": "Entkommen",
+    "timerRemaining": "Noch {rounds} KR (Kraftakt {modifier})",
+    "timerTimedOut": "Zeit abgelaufen",
+    "timerExpired": "Die Zeit von '{trap}' ist nach {rounds} KR abgelaufen. Wende die Buchfolge an. Die Falle tötet nicht automatisch.",
+    "timerNeedsCombat": "Starte den Kampf, um die KR-Zeit von '{trap}' laufen zu lassen (noch {rounds} KR).",
+    "timerEscalated": "'{trap}': Entkommen-Modifikator ist jetzt {modifier} (noch {rounds} KR).",
+    "passwordRequired": "'{trap}' kann mit einem Schlüsselwort gestoppt werden. Starte oder stoppe die Zeit wie im Buch beschrieben.",
     "trigger": "Auslösen",
     "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein."
   },

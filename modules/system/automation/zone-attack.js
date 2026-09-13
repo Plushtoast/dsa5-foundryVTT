@@ -24,6 +24,7 @@ export default class ZoneAttack {
     attackType = 'meleeAttack',
     defenseMalus = 0,
     traits = [],
+    reach,
     regionEvent,
     messageMode,
     consequence,
@@ -37,7 +38,7 @@ export default class ZoneAttack {
     const previousTargets = this.#setOnlyTarget(token);
 
     try {
-      const weapon = this.#buildAttackItem({ attackName, attackValue, damageFormula, attackType, traits, sourceItem });
+      const weapon = this.#buildAttackItem({ attackName, attackValue, damageFormula, attackType, traits, reach, sourceItem });
       const sourceTokenId = actor.getActiveTokens?.()[0]?.id;
       const setupData = await game.dsa5.entities.Itemdsa5.getSubClass(weapon.type).setupDialog(
         null,
@@ -84,8 +85,10 @@ export default class ZoneAttack {
     await token.actor.applyDamage(damageFormula, message ? { msg: message } : {});
   }
 
-  static #buildAttackItem({ attackName, attackValue, damageFormula, attackType, traits, sourceItem }) {
+  static #buildAttackItem({ attackName, attackValue, damageFormula, attackType, traits, reach, sourceItem }) {
     const isMelee = attackType !== 'rangeAttack';
+    const extraFlags = foundry.utils.duplicate(sourceItem?.flags?.dsa5 || {});
+    const effects = Array.isArray(sourceItem?.effects) ? foundry.utils.duplicate(sourceItem.effects) : [];
     return new game.dsa5.entities.Itemdsa5({
       name: attackName,
       type: 'trait',
@@ -95,13 +98,14 @@ export default class ZoneAttack {
         at: { value: attackValue },
         pa: 0,
         damage: { value: damageFormula },
-        reach: { value: 'short' },
+        reach: { value: reach || (isMelee ? 'short' : '5/25/40') },
         effect: { value: '', attributes: traits.join(',') },
       },
-      effects: [],
+      effects,
       flags: {
         dsa5: {
-          zoneAttackSource: sourceItem?.uuid ?? null,
+          ...extraFlags,
+          zoneAttackSource: sourceItem?.uuid ?? extraFlags.zoneAttackSource ?? null,
         },
       },
     });

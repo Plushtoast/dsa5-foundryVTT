@@ -23,6 +23,7 @@ import QueryOrchestrator from '../system/queries/query-orchestrator.js';
 import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js';
 import TransactionSummaryService from '../system/payment/transaction-summary.js';
 import MerchantShopPresence from '../system/merchant/merchant-shop-presence.js';
+import TrapData from '../data/item/trap.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
@@ -260,6 +261,9 @@ export function connectSocket() {
             dropToGround(sourceActor, item, data.payload.data, { count: { value: data.payload.amount }, isBag: { value: data.payload.isBag } });
           });
         }
+        break;
+      case TrapData.SOCKET_TYPE:
+        await TrapData.handleSocketDrop(data.payload);
         break;
       case 'summonCompanion':
         CompanionHotbar.summonCompanion(data.payload);

@@ -1,15 +1,20 @@
 import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 import { ChatMessageState } from "./chatmessage_state.js";
 
-import DiceDSA5 from "../system/rolls/dice-dsa5.js";
+import TrapAutomation from "../system/automation/trap.js";
 import GroupCheck from "../system/rolls/group-check.js";
 import RollRequestService from "../system/queries/roll-request.js";
-import { ITEM_CONSTANTS } from "../config/item-constants.js";
+import QueryOrchestrator from "../system/queries/query-orchestrator.js";
+import SpecialabilityRulesDSA5 from "../system/rules/specialability-rules-dsa5.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
+
+const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
-const { DAMAGE } = ITEM_CONSTANTS.COMBAT_MODES;
 
 export class TrapState extends ChatMessageState {
+    static ROLL_OUTCOMES = new Set(['success', 'critical', 'failure', 'botch']);
+    static TEMPLATE = 'systems/dsa5/templates/chat/trap/announce.hbs';
+
     constructor(behavior, token, region, name) {
         super();
         this.behavior = behavior;
@@ -18,13 +23,50 @@ export class TrapState extends ChatMessageState {
         this.name = name;
     }
 
-    async toMessage() {
-        const content = await renderTemplate('systems/dsa5/templates/chat/trap/announce.hbs', {
+    static canDisarm(actor) {
+        if (!actor) return false;
+        return SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.disarmTraps');
+    }
+
+    static #openSingleton(id, config) {
+        const existing = foundry.applications.instances.get(id);
+        if (existing) {
+            existing.bringToTop();
+            return;
+        }
+        new foundry.applications.api.DialogV2({ id, ...config }).render(true);
+    }
+
+    #templateData(trapData = this.message?.flags?.dsa5?.trapData) {
+        const stored = trapData || {};
+        const outcomes = (stored.outcomes || []).map((entry) => {
+            const display = QueryOrchestrator.outcomeDisplay({ status: entry.status });
+            const modeKey = `REGIONBEHAVIOR_DSATrap.${entry.mode}`;
+            return {
+                ...entry,
+                modeLabel: game.i18n.has(modeKey) ? _loc(modeKey) : entry.mode,
+                ...display,
+            };
+        });
+        const detected = Boolean(this.behavior.system.detected);
+        const countdown = stored.countdown || this.behavior.flags?.dsa5?.countdown || null;
+        return {
             behaviour: this.behavior.system,
             token: this.token,
             tokenAnchor: this.token.actor ? this.token.actor.toAnchor().outerHTML : this.token.name,
-            trapName: this.behavior.name
-        });
+            trapName: this.behavior.name,
+            strikes: TrapAutomation.strikesFrom(this.behavior.system),
+            detected,
+            disarmed: Boolean(this.behavior.system.disarmed),
+            triggered: Boolean(stored.triggered),
+            countdown,
+            outcomes,
+            showNarration: detected && Boolean(this.behavior.system.description),
+        };
+    }
+
+    async toMessage() {
+        const content = await renderTemplate(TrapState.TEMPLATE, this.#templateData({ outcomes: [], triggered: false }));
 
         const chatData = DSA5_Utility.chatDataSetup(content, DICE_CONSTANTS.CHAT_MODES.SELF, false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
 
@@ -34,12 +76,105 @@ export class TrapState extends ChatMessageState {
                     behaviour: this.behavior.uuid,
                     token: this.token.uuid,
                     region: this.region.uuid,
-                    name: this.name
+                    name: this.name,
+                    outcomes: [],
+                    triggered: false,
                 }
             }
         }
         const message = await ChatMessage.create(chatData);
         this.message = message;
+        return message;
+    }
+
+    async persistCard({ outcome, triggered = false, trapDataPatch = {} } = {}) {
+        if (!this.message) return;
+        const trapData = duplicate(this.message.flags?.dsa5?.trapData || {});
+        trapData.outcomes = Array.isArray(trapData.outcomes) ? trapData.outcomes : [];
+        if (outcome) trapData.outcomes.push(outcome);
+        if (triggered) trapData.triggered = true;
+        Object.assign(trapData, trapDataPatch);
+
+        const content = await renderTemplate(TrapState.TEMPLATE, this.#templateData(trapData));
+        await this.message.update({
+            content,
+            'flags.dsa5.trapData': trapData,
+        });
+    }
+
+    async applyRollResult({ mode, actorId, status, skipActorMatch = false } = {}) {
+        if (!TrapState.ROLL_OUTCOMES.has(status)) return;
+        const { behavior, token } = this;
+        if (!skipActorMatch && actorId && token.actor?.id !== actorId) return;
+
+        const success = ['success', 'critical'].includes(status);
+        const actor = game.actors.get(actorId) || (token.actor?.id === actorId ? token.actor : null);
+        const actorName = actor?.name || token?.name || actorId || '';
+        const updates = {};
+
+        switch (mode) {
+            case 'disarm':
+                if (success && !behavior.system.disarmed) {
+                    updates['system.disarmed'] = true;
+                    await TrapAutomation.clearCountdown(behavior, this.message);
+                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.disarmedSuccess', {
+                        format: { trap: behavior.name, actor: actorName },
+                        localize: true,
+                    });
+                }
+                break;
+            case 'search':
+            case 'notice':
+                if (success && !behavior.system.detected) {
+                    updates['system.detected'] = true;
+                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.trapDetected', {
+                        format: { trap: behavior.name, actor: actorName },
+                        localize: true,
+                    });
+                }
+                break;
+            case 'escape':
+                if (success) {
+                    await TrapAutomation.clearCountdown(behavior, this.message);
+                } else {
+                    const pending = this.message.flags?.dsa5?.trapData?.pendingEscapeEffects || [];
+                    if (pending.length && token.actor) {
+                        await TrapAutomation.applyPayloadEffects(token.actor, pending, {
+                            origin: behavior.uuid,
+                            sourceName: behavior.name,
+                            skipResistRolls: true,
+                        });
+                    }
+                }
+                break;
+        }
+
+        if (Object.keys(updates).length) await behavior.update(updates);
+        await this.persistCard({
+            outcome: { mode, status, actorName },
+            trapDataPatch: mode === 'escape' ? { pendingEscapeEffects: [] } : {},
+        });
+    }
+
+    static async applyGroupCheckResult(data) {
+        const options = data?.datasetOptions;
+        if (!options?.message || !options?.mode) return false;
+
+        const verdict = GroupCheck.cumulativeOutcome(data);
+        if (!verdict.complete) return false;
+
+        const trapMessage = await fromUuid(options.message);
+        if (!trapMessage) return false;
+
+        const trapState = await TrapState.fromMessage(trapMessage);
+        if (!trapState) return false;
+        await trapState.applyRollResult({
+            mode: options.mode,
+            actorId: verdict.actorId,
+            status: verdict.success ? 'success' : 'failure',
+            skipActorMatch: true,
+        });
+        return true;
     }
 
     static chatListeners(html) {
@@ -47,10 +182,12 @@ export class TrapState extends ChatMessageState {
     }
 
     static async fromMessage(message) {
-        const trapData = message.flags.dsa5.trapData;
+        const trapData = message?.flags?.dsa5?.trapData;
+        if (!trapData?.behaviour) return null;
         const behavior = await fromUuid(trapData.behaviour);
         const token = await fromUuid(trapData.token);
-        const region = await fromUuid(trapData.region);
+        if (!behavior || !token) return null;
+        const region = trapData.region ? await fromUuid(trapData.region) : null;
         const name = trapData.name;
 
         const trapState = new TrapState(behavior, token, region, name);
@@ -63,6 +200,7 @@ export class TrapState extends ChatMessageState {
         const messageId = event.currentTarget.closest('.message').dataset.messageId;
         const message = game.messages.get(messageId);
         const trapState = await TrapState.fromMessage(message);
+        if (!trapState) return;
 
         switch (action) {
             case 'searchTrap':
@@ -94,7 +232,7 @@ export class TrapState extends ChatMessageState {
         const skill = _loc('LocalizedIDs.perception');
         const rollOptions = this.#requestRollOptions(message, token);
 
-        new foundry.applications.api.DialogV2({
+        TrapState.#openSingleton(`dsa-trap-search-${message.id}`, {
             window: {
                 title: 'REGIONBEHAVIOR_DSATrap.search'
             },
@@ -131,14 +269,14 @@ export class TrapState extends ChatMessageState {
                     },
                 }
             ]
-        }).render(true)
+        });
     }
 
     async _handleShow(event) {
         const { token, region, message, behavior } = this;
         const state = Object.keys(CONST.REGION_VISIBILITY)[behavior.parent.visibility];
 
-        new foundry.applications.api.DialogV2({
+        TrapState.#openSingleton(`dsa-trap-show-${message.id}`, {
             window: {
                 title: 'REGIONBEHAVIOR_DSATrap.showTrap'
             },
@@ -175,11 +313,26 @@ export class TrapState extends ChatMessageState {
                     },
                 }
             ]
-        }).render(true)
+        });
     }
 
     async _handleDisarm(event) {
         const { token, region, message, behavior } = this;
+        if (behavior.system.disarmed) {
+            ui.notifications.warn(_loc("REGIONBEHAVIOR_DSATrap.alreadyDisarmed"));
+            return;
+        }
+        if (!TrapState.canDisarm(token.actor)) {
+            ui.notifications.warn('REGIONBEHAVIOR_DSATrap.missingDisarmAbility', {
+                format: {
+                    actor: token.actor?.name || token.name,
+                    ability: _loc('LocalizedIDs.disarmTraps'),
+                },
+                localize: true,
+            });
+            return;
+        }
+
         const skill = _loc('LocalizedIDs.lockpick');
         const rollOptions = this.#requestRollOptions(message, token);
         const duration = [1, 5, 5][behavior.system.complexity];
@@ -191,6 +344,7 @@ export class TrapState extends ChatMessageState {
             GroupCheck.openDialog({
                 name: skill,
                 modifier: behavior.system.difficulty,
+                configuration: { targetQs: 1 },
                 otherMessage: headerHtml,
                 forceWhisperIDs: RollRequestService.buildTokenWhisper(token),
                 datasetOptions: {
@@ -218,7 +372,7 @@ export class TrapState extends ChatMessageState {
             return;
         }
 
-        new foundry.applications.api.DialogV2({
+        TrapState.#openSingleton(`dsa-trap-manual-disarm-${message.id}`, {
             window: {
                 title: 'REGIONBEHAVIOR_DSATrap.manualDisarm'
             },
@@ -234,7 +388,15 @@ export class TrapState extends ChatMessageState {
                     default: true,
                     callback: async (event, button, dialog) => {
                         await behavior.update({ "system.disarmed": true });
-                        ui.notifications.info("REGIONBEHAVIOR_DSATrap.manuallyDisarmed", { format: { trap: behavior.name, gm: game.user.name } });                        
+                        await TrapAutomation.clearCountdown(behavior, this.message);
+                        await this.persistCard({
+                            outcome: {
+                                mode: 'manualDisarm',
+                                status: 'success',
+                                actorName: game.user.name,
+                            },
+                        });
+                        ui.notifications.info("REGIONBEHAVIOR_DSATrap.manuallyDisarmed", { format: { trap: behavior.name, gm: game.user.name } });
                     },
                 },
                 {
@@ -243,35 +405,33 @@ export class TrapState extends ChatMessageState {
                     label: 'Cancel'
                 }
             ]
-        }).render(true);
+        });
     }
 
     async _handleTrigger(event) {
-        const { behavior, token, region, message } = this;
+        const { behavior, token, region } = this;
+        const result = await TrapAutomation.trigger({ behavior, token, region, trapMessage: this.message });
+        if (!result) return;
+
         behavior.system.playSound();
 
-        const description = behavior.system.description || behavior.system.gmdescription || '';
-        const damageFormula = behavior.system.damageFormula?.trim();
-
-        let rollString = '';
-        let roll;
-        if (damageFormula && Roll.validate(damageFormula)) {
-            roll = await new Roll(damageFormula).evaluate();
-            rollString = await roll.render();
-        }
-
-        const msg = `
+        const description = behavior.system.description || '';
+        const tokenName = foundry.utils.escapeHTML(token.name);
+        const trapName = foundry.utils.escapeHTML(behavior.name);
+        ChatMessage.create(DSA5_Utility.chatDataSetup(`
             <div>
-            <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: token.name, trap: behavior.name })}</p>
+            <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: tokenName, trap: trapName })}</p>
             <p>${description}</p>
-            ${rollString}
             </div>
-        `
-        ChatMessage.create(DSA5_Utility.chatDataSetup(msg));
-        if (roll) {
-            DiceDSA5._addRollDiceSoNice({ messageMode: game.settings.get("core", "messageMode") }, roll, game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(DAMAGE));
-        }
+        `));
 
-        if (behavior.system.charges > 0) behavior.update({ 'system.remainingCharges': behavior.system.remainingCharges - 1 });
+        await this.persistCard({
+            outcome: {
+                mode: 'trigger',
+                status: 'success',
+                actorName: token.name,
+            },
+            triggered: true,
+        });
     }
 }

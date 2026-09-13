@@ -52,6 +52,7 @@ import { DSAQuestLogEntrySheet } from '../journal/dsaquestlogentry_sheet.js';
 import { DSAAPTrackerEntrySheet } from '../journal/dsaaptrackerentry_sheet.js';
 import { DSAMoneyTrackerEntrySheet } from '../journal/dsamoneytrackerentry_sheet.js';
 import { DSACityDetailsEntrySheet } from '../journal/dsacitydetailsentry_sheet.js';
+import DSATrapRegionBehaviorConfig from '../data/regionbehaviors/trap-config.js';
 const { mergeObject } = foundry.utils;
 const { DocumentSheetConfig } = foundry.applications.apps;
 
@@ -171,6 +172,7 @@ Hooks.once('init', () => {
   DocumentSheetConfig.unregisterSheet(ActiveEffect, "core", foundry.applications.sheets.ActiveEffectConfig)
   DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAActiveEffectConfig, { types: ['base'], makeDefault: true });
   DocumentSheetConfig.registerSheet(ActiveEffect, 'dsa5', DSAEnhancementEffectConfig, { types: ['enhancement'], makeDefault: true });
+  DocumentSheetConfig.registerSheet(foundry.documents.RegionBehavior, 'dsa5', DSATrapRegionBehaviorConfig, { types: ['DSATrap'], makeDefault: true });
 
   foundry.documents.collections.Journal.registerSheet('dsa5', DSAJournalSheet, { makeDefault: true });
 

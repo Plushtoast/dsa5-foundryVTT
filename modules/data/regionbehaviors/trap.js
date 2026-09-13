@@ -1,8 +1,10 @@
 import { TrapState } from "../../chatmessage/trap_state.js";
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
 import QueryOrchestrator from "../../system/queries/query-orchestrator.js";
+import TrapAutomation from "../../system/automation/trap.js";
+import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
 import { DSARegionBehaviorBase } from './base.js';
-const { BooleanField, FilePathField, NumberField, HTMLField, StringField } = foundry.data.fields;
+const { BooleanField, FilePathField, NumberField, HTMLField, StringField, SchemaField, TypedObjectField } = foundry.data.fields;
 
 export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static REGION_TYPE = 'DSATrap'
@@ -10,6 +12,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
 
     static events = {
         [CONST.REGION_EVENTS.TOKEN_EXIT]: this.#onTokenExit,
+        [CONST.REGION_EVENTS.TOKEN_ROUND_START]: this.#onTokenRoundStart,
     };
 
     static PRIMITIV_TRAP = 0;
@@ -30,6 +33,30 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static TRAPTYPE_SUFFOCATE = 6;
     static TRAPTYPE_MAGICAL = 7;
 
+    static weaponFields() {
+        return {
+            weaponType: new StringField({
+                initial: '',
+                blank: true,
+                choices: {
+                    meleeweapon: 'TYPES.Item.meleeweapon',
+                    rangeweapon: 'TYPES.Item.rangeweapon',
+                },
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.weaponType.label',
+            }),
+            at: new NumberField({
+                initial: 12,
+                integer: true,
+                min: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.at.label',
+            }),
+            traits: new StringField({
+                initial: '',
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.traits.label',
+            }),
+        };
+    }
+
     static sharedSchema() {
         return {
             difficulty: new NumberField({ required: true, initial: 0 }),
@@ -46,6 +73,19 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                     [DSATrapRegionBehavior.TRAPTYPE_MAGICAL]: "REGIONBEHAVIOR_DSATrap.TYPES.7",
                 }
             }),
+            attack: new SchemaField(this.weaponFields()),
+            attacks: new TypedObjectField(new SchemaField({
+                name: new StringField({
+                    initial: '',
+                    label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attacks.name.label',
+                }),
+                damageFormula: new TrapDamageFormulaField({
+                    initial: '',
+                    blank: true,
+                    label: 'REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label',
+                }),
+                ...this.weaponFields(),
+            }), { initial: {}, label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attacks.label' }),
             complexity: new NumberField({
                 initial: 0,
                 choices: {
@@ -54,7 +94,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                     [DSATrapRegionBehavior.KOMPLEX_TRAP]: "REGIONBEHAVIOR_DSATrap.COMPLEXITIES.2",
                 }
             }),
-            damageFormula: new StringField({ initial: "" }),
+            damageFormula: new TrapDamageFormulaField({ initial: '', blank: true }),
             tools: new StringField({ initial: "" }),
             trigger: new NumberField({
                 initial: 0,
@@ -67,6 +107,56 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
             }),
             autoPause: new BooleanField({ required: true, initial: true }),
             sound: new FilePathField({ categories: ["AUDIO"] }),
+            timerRounds: new NumberField({
+                required: true,
+                integer: true,
+                min: 0,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.timerRounds.label',
+            }),
+            escapeModifier: new NumberField({
+                required: true,
+                integer: true,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escapeModifier.label',
+            }),
+            escalateEvery: new NumberField({
+                required: true,
+                integer: true,
+                min: 0,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escalateEvery.label',
+            }),
+            escalateMax: new NumberField({
+                required: true,
+                integer: true,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escalateMax.label',
+            }),
+            chaseGs: new NumberField({
+                required: true,
+                integer: true,
+                min: 0,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseGs.label',
+            }),
+            chaseFw: new NumberField({
+                required: true,
+                integer: true,
+                min: 0,
+                initial: 0,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseFw.label',
+            }),
+            chaseDistanceFormula: new TrapDamageFormulaField({
+                initial: '',
+                blank: true,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseDistanceFormula.label',
+            }),
+            passwordRequired: new BooleanField({
+                required: true,
+                initial: false,
+                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.passwordRequired.label',
+            }),
             events: foundry.data.regionBehaviors.RegionBehaviorType._createEventsField({
                 events: [
                     CONST.REGION_EVENTS.TOKEN_ENTER,
@@ -91,6 +181,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
             description: new HTMLField({ initial: "" }),
             ...this.sharedSchema(),
             disarmed: new BooleanField({ required: true, initial: false }),
+            detected: new BooleanField({ required: true, initial: false }),
             charges: new NumberField({ required: true, initial: 0 }),
             remainingCharges: new NumberField({ required: true, initial: 0 }),
             removeOnExit: new BooleanField({ initial: false }),
@@ -103,11 +194,18 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         if (this.removeOnExit) await this.removeEffects(token);
     }
 
+    static async #onTokenRoundStart(event) {
+        if (!event.user.isSelf) return;
+        if (!DSA5_Utility.isActiveGM()) return;
+        await TrapAutomation.onRegionRound(this.parent);
+    }
+
     async _handleRegionEvent(regionEvent) {
         if (this.disarmed) return;
         if (this.remainingCharges < 1 && this.charges > 0) return;
 
         const { name, data, region } = regionEvent;
+        if (name === CONST.REGION_EVENTS.TOKEN_ROUND_START || name === CONST.REGION_EVENTS.TOKEN_ROUND_END) return;
         const token = data.token;
 
         if (!token) return;
@@ -142,7 +240,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         return data;
     }
 
-    static async handleTrapRollResult({ trapMessageUuid, mode, actorId, status, resultDetails }) {
+    static async handleTrapRollResult({ trapMessageUuid, mode, actorId, status, resultDetails, skipActorMatch = false }) {
         if (!game.user.isGM) return;
         if (!QueryOrchestrator.TERMINAL_STATES.has(status)) return;
 
@@ -150,31 +248,12 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         if (!trapMessage) return;
 
         const trapState = await TrapState.fromMessage(trapMessage);
-        const { behavior, token } = trapState;
-        if (token.actor?.id !== actorId) return;
+        if (!trapState) return;
+        await trapState.applyRollResult({ mode, actorId, status, skipActorMatch });
+    }
 
-        const success = ['success', 'critical'].includes(status);
-        const actorName = game.actors.get(actorId)?.name || actorId;
-
-        switch (mode) {
-            case 'disarm':
-                if (success && !behavior.system.disarmed) {
-                    await behavior.update({ 'system.disarmed': true });
-                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.disarmedSuccess', {
-                        format: { trap: behavior.name, actor: actorName },
-                        localize: true,
-                    });
-                }
-                break;
-            case 'search':
-            case 'notice':
-                if (success) {
-                    ui.notifications.info('REGIONBEHAVIOR_DSATrap.trapDetected', {
-                        format: { trap: behavior.name, actor: actorName },
-                        localize: true,
-                    });
-                }
-                break;
-        }
+    static migrateData(source, options) {
+        TrapAutomation.migrateSource(source);
+        return super.migrateData(source, options);
     }
 }
