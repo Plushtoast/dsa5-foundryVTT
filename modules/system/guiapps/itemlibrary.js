@@ -1461,17 +1461,30 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     return template;
   }
 
+  static buildItemDragData(fromElement) {
+    const el = fromElement instanceof Element ? fromElement : fromElement?.parentElement;
+    const target = el?.closest?.('[data-uuid]') ?? el;
+    const uuid = target?.dataset?.uuid;
+    if (!uuid) return null;
+
+    const parsed = foundry.utils.parseUuid(uuid);
+    const type = parsed?.type;
+    if (!type) return null;
+
+    const data = { type, uuid, dragSource: 'itemlibrary' };
+    if (target.dataset.pay) data.pay = true;
+    return data;
+  }
+
   itemDragStart(ev) {
-    ev.stopPropagation()
-    const target = ev.target.closest('.library-item') ?? ev.target;
-    if (!target?.dataset?.uuid) return;
+    ev.stopPropagation();
+    const data = this.constructor.buildItemDragData(ev.target);
+    if (!data) return;
     $(this.element).animate({ opacity: 0.2 }, 100);
-    const uuid = target.dataset.uuid
-    const pay = target.dataset.pay
-    const { type } = foundry.utils.parseUuid(uuid);
-    ev.dataTransfer.setData("text/plain", JSON.stringify({ type, uuid, dragSource: "itemlibrary", pay }));
-    target.addEventListener("dragend", () => {
-      window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: "" })))
+    ev.dataTransfer.setData('text/plain', JSON.stringify(data));
+    const row = ev.target.closest('.library-item') ?? ev.target;
+    row.addEventListener('dragend', () => {
+      window.setTimeout(() => $(this.element).animate({ opacity: 1 }, 300, () => $(this.element).css({ pointerEvents: '' })));
     }, { once: true });
   }
 
