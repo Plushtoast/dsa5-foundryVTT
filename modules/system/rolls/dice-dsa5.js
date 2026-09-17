@@ -2179,6 +2179,29 @@ export default class DiceDSA5 {
     return false;
   }
 
+  /**
+   * Re-run a stored postFunction when a roll card is edited (fate, GM die edit).
+   * Looks up the expression the same way eval did (`game.modules.get('id').api.fn`), without local-scope eval.
+   */
+  static async invokeRerenderPostFunction(postFunction, testData, chatData, source) {
+    if (!postFunction?.functionName) return;
+    const fn = this.#resolvePostFunction(postFunction.functionName);
+    if (typeof fn !== 'function') {
+      console.error(`Unknown postFunction ${postFunction.functionName}`);
+      return;
+    }
+    await fn(postFunction, { result: testData, chatData }, source);
+  }
+
+  static #resolvePostFunction(functionName) {
+    if (!/^[A-Za-z_$][\w.$'"()[\],\s-]*$/.test(functionName)) return null;
+    try {
+      return new Function(`return (${functionName});`)();
+    } catch {
+      return null;
+    }
+  }
+
   static async renderRollCard(chatOptions, testData, rerenderMessage) {
     const previousOther = rerenderMessage ? getProperty(rerenderMessage, 'flags.data.postData.other') : undefined;
     const previousData = rerenderMessage ? getProperty(rerenderMessage, 'flags.data') || {} : {};
@@ -2264,7 +2287,7 @@ export default class DiceDSA5 {
       const postFunction = getProperty(rerenderMessage, 'flags.data.preData.extra.options.postFunction');
       if (postFunction) {
         testData.messageId = rerenderMessage.id;
-        await eval(postFunction.functionName)(postFunction, { result: testData, chatData }, preData.source);
+        await this.invokeRerenderPostFunction(postFunction, testData, chatData, preData.source);
       }
 
       // Keep additional info blocks (testData.other) stable across rerenders.

@@ -227,12 +227,12 @@ export default class RollRequestService {
     };
   }
 
-  static async #submitResult(messageId, actorId, result) {
+  static async #submitResult(messageId, actorId, result, { refresh = false } = {}) {
     await QueryOrchestrator.handleResult({ messageId, actorId, result });
-    if (!game.user.isGM) return;
+    if (!game.user.isGM || refresh) return;
 
     const message = game.messages.get(messageId);
-    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    const state = duplicate(message?.getFlag('dsa5', RollRequestService.FLAG_KEY) || {});
 
     if (QueryOrchestrator.TERMINAL_STATES.has(result.status)) {
       Hooks.callAll('dsa5.rollRequestResult', { messageId, actorId, result, state });
@@ -445,9 +445,9 @@ export default class RollRequestService {
     if (!postFunction?.requestMessageId) return;
 
     const message = game.messages.get(postFunction.requestMessageId);
-    const state = message?.getFlag('dsa5', this.FLAG_KEY);
+    const state = message?.getFlag('dsa5', RollRequestService.FLAG_KEY);
     const entry = state?.recipients?.find((recipient) => recipient.actorId === postFunction.actorId);
-    if (!message || !entry || state.finalized || QueryOrchestrator.TERMINAL_STATES.has(entry.status)) {
+    if (!message || !entry) {
       QueryOrchestrator.notifyRequestExpired();
       return;
     }
@@ -455,7 +455,13 @@ export default class RollRequestService {
     const result = RollRequestService.buildResultPayload(postFunction.category, payload, postFunction.messageMode);
     if (postFunction.byGM) result.resultDetails = { ...result.resultDetails, byGM: true };
 
-    await RollRequestService.#submitResult(postFunction.requestMessageId, postFunction.actorId, result);
+    const isRefresh = QueryOrchestrator.isLinkedRollRefresh(entry, result);
+    if (!isRefresh && (state.finalized || QueryOrchestrator.TERMINAL_STATES.has(entry.status))) {
+      QueryOrchestrator.notifyRequestExpired();
+      return;
+    }
+
+    await RollRequestService.#submitResult(postFunction.requestMessageId, postFunction.actorId, result, { refresh: isRefresh });
   }
 
   static async resendToActor(messageId, actorId) {

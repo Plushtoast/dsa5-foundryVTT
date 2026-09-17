@@ -364,6 +364,16 @@ export default class QueryOrchestrator {
     return recipients;
   }
 
+  /**
+   * Fate / GM edits rerender the same roll message. Matching messageId must update
+   * the request card even when that recipient is already terminal.
+   */
+  static isLinkedRollRefresh(recipient, result) {
+    const linkedRollId = result?.resultDetails?.messageId;
+    const previousId = recipient?.resultDetails?.messageId;
+    return Boolean(linkedRollId && previousId && previousId === linkedRollId);
+  }
+
   static async handleResult({ messageId, actorId, result }) {
     if (!game.user.isGM) {
       game.socket.emit('system.dsa5', {
@@ -377,10 +387,7 @@ export default class QueryOrchestrator {
       const recipient = state.recipients.find((entry) => entry.actorId === actorId);
       if (!recipient) return state;
 
-      const linkedRollId = result.resultDetails?.messageId;
-      const isLinkedRollRefresh = state.finalized
-        && linkedRollId
-        && recipient.resultDetails?.messageId === linkedRollId;
+      const isLinkedRollRefresh = this.isLinkedRollRefresh(recipient, result);
 
       if (state.finalized && !isLinkedRollRefresh) return state;
       if (this.TERMINAL_STATES.has(recipient.status) && !isLinkedRollRefresh) return state;
