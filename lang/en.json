@@ -1217,7 +1217,15 @@
     "sizeCategory": "Every creature is assigned a size category: tiny, small, medium, large, or huge. Depending on the opponent’s size, heroes gain attack modifiers or face restrictions on defense choices. Tiny: -4 AT. Large: only shield parry or dodge. Huge: only dodge.",
     "sizeCategoryRanged": "Target size also affects ranged combat. Tiny: -8 RC. Small: -4 RC. Medium: +/-0. Large: +4 RC. Huge: +8 RC. These modifiers can also apply when shooting at targets in cover or partial cover.",
     "twoWeaponCombat": "Attack with two weapons.",
-    "wrongHand": "The weapon in the wrong hand suffers an additional penalty of -4 to attack and parry. The advantage Ambidextrous removes this penalty. This penalty does not apply when defending with a shield, but does apply when attacking with one."
+    "wrongHand": "The weapon in the wrong hand suffers an additional penalty of -4 to attack and parry. The advantage Ambidextrous removes this penalty. This penalty does not apply when defending with a shield, but does apply when attacking with one.",
+    "force": "Raises cost by one category (usually doubled, including maintain cost). Check +1. Not allowed for some spells and liturgies.",
+    "reduceCost": "Lowers cost by one category (usually halved, including maintain cost, minimum 1 AE/KP). Check -1. Not allowed for some spells and liturgies.",
+    "increaseRange": "Raises range by one category (usually doubled; Touch becomes 4 yards). Check -1. Not possible with range Self.",
+    "increaseCastingTime": "Raises spell or liturgy duration by one category (usually doubled). Check +1.",
+    "decreaseCastingTime": "Lowers spell or liturgy duration by one category (usually halved). Check -1.",
+    "removeGesture": "Omits the required gesture, for example when bound or hiding. Check -2.",
+    "removeFormula": "Omits the required formula or prayer, for example when bound or hiding. Check -2.",
+    "maxSpellMods": "One modification per full 4 SR. Different modifications can be combined; the same one cannot be chosen twice."
   },
   "DSA5": {
     "patchViewer": {

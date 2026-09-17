@@ -1217,7 +1217,15 @@
     "sizeCategory": "Jedes Wesen wird in eine Größenkategorie eingeordnet: winzig, klein, mittel, groß, riesig. Je nach Größe des Gegners gelten Modifikatoren auf Attacke oder Einschränkungen auf die Wahl der Verteidigung. Winzig: -4 AT. Groß: nur Parade mit dem Schild oder Ausweichen. Riesig: nur Ausweichen.",
     "sizeCategoryRanged": "Die Größe des Ziels beeinflusst den Fernkampf. Winzig: -8 FK. Klein: -4 FK. Mittel: +/-0. Groß: +4 FK. Riesig: +8 FK. Diese Modifikationen können auch angewendet werden, wenn Ziele in Deckung oder teilweiser Deckung beschossen werden.",
     "twoWeaponCombat": "Angriff mit zwei Waffen.",
-    "wrongHand": "Für die Waffe in der falschen Hand gilt eine zusätzliche Erschwernis von -4 auf Attacke und Parade. Durch den Vorteil Beidhändig kann diese Erschwernis aufgehoben werden. Diese Erschwernis gilt nicht bei der Verteidigung mit einem Schild, sehr wohl aber beim Angriff mit diesem."
+    "wrongHand": "Für die Waffe in der falschen Hand gilt eine zusätzliche Erschwernis von -4 auf Attacke und Parade. Durch den Vorteil Beidhändig kann diese Erschwernis aufgehoben werden. Diese Erschwernis gilt nicht bei der Verteidigung mit einem Schild, sehr wohl aber beim Angriff mit diesem.",
+    "force": "Kosten um eine Kategorie erhöht (in der Regel verdoppelt, auch beim Aufrechterhalten). Probe +1 erleichtert. Bei manchen Zaubern und Liturgien nicht erlaubt.",
+    "reduceCost": "Kosten um eine Kategorie gesenkt (in der Regel halbiert, auch beim Aufrechterhalten, mindestens 1 AsP/KaP). Probe -1 erschwert. Bei manchen Zaubern und Liturgien nicht erlaubt.",
+    "increaseRange": "Reichweite um eine Kategorie erhöht (in der Regel verdoppelt; Berühren wird zu 4 Schritt). Probe -1 erschwert. Nicht möglich bei Reichweite selbst.",
+    "increaseCastingTime": "Zauber- bzw. Liturgiedauer um eine Kategorie erhöht (in der Regel verdoppelt). Probe +1 erleichtert.",
+    "decreaseCastingTime": "Zauber- bzw. Liturgiedauer um eine Kategorie gesenkt (in der Regel halbiert). Probe -1 erschwert.",
+    "removeGesture": "Die erforderliche Geste entfällt, etwa bei Fesseln oder Heimlichkeit. Probe -2 erschwert.",
+    "removeFormula": "Die erforderliche Formel bzw. das Gebet entfällt, etwa bei Fesseln oder Heimlichkeit. Probe -2 erschwert.",
+    "maxSpellMods": "Eine Modifikation pro volle 4 FW. Verschiedene Modifikationen kombinierbar, dieselbe nicht mehrfach."
   },
   "DSA5": {
     "patchViewer": {
