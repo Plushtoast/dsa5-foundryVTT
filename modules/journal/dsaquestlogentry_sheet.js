@@ -326,14 +326,14 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         if (!objective) return;
 
         const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await DSAQuestLogEntry.updateQuestCollectionEntry(this.document, key, 'objectives', objectiveKey, { status: nextState });
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
     }
 
     static async #toggleObjectiveVisibility(event, target) {
         const { key, objectiveKey } = target.dataset;
         const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
         if (!objective) return;
-        await DSAQuestLogEntry.updateQuestCollectionEntry(this.document, key, 'objectives', objectiveKey, { visible: !objective.visible });
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.visible`]: !objective.visible });
     }
 
     static async #toggleObjectiveState(event, target) {
@@ -342,7 +342,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         if (!objective) return;
 
         const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await DSAQuestLogEntry.updateQuestCollectionEntry(this.document, key, 'objectives', objectiveKey, { status: nextState });
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
     }
 
     static async #togglePlayerOwner(event, target) {
