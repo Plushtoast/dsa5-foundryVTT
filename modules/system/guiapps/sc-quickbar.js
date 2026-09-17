@@ -231,23 +231,7 @@ export default class ScQuickbar extends DefaultAppv2 {
   }
 
   static #memberResources(actor) {
-    return {
-      LeP: {
-        value: actor.system.status.wounds.value,
-        max: actor.system.status.wounds.max,
-        label: _loc('CHAR.LEP'),
-      },
-      AsP: {
-        value: actor.system.status.astralenergy.value,
-        max: actor.system.status.astralenergy.max,
-        label: _loc('CHAR.ASP'),
-      },
-      KaP: {
-        value: actor.system.status.karmaenergy.value,
-        max: actor.system.status.karmaenergy.max,
-        label: _loc('CHAR.KAP'),
-      },
-    };
+    return actor.system.hudResources();
   }
 
   static #visibleResourceCount(resources) {

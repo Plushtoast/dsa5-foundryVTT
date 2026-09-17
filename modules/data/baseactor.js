@@ -244,6 +244,36 @@ export class ActorDataModel extends DSADataModel {
     }
   }
 
+  /**
+   * LeP / AsP / KaP bars for the actor hotbar and PC quickbar.
+   * AsP and KaP stay hidden unless the actor is a mage or priest.
+   * Token rings only have two Foundry bars, so mage-priests still get KaP from the Token HUD third bar.
+   */
+  hudResources() {
+    const status = this.status;
+    return {
+      LeP: { value: status.wounds.value, max: status.wounds.max, label: _loc('CHAR.LEP') },
+      AsP: {
+        value: status.astralenergy.value,
+        max: this.isMage ? status.astralenergy.max : 0,
+        label: _loc('CHAR.ASP'),
+      },
+      KaP: {
+        value: status.karmaenergy.value,
+        max: this.isPriest ? status.karmaenergy.max : 0,
+        label: _loc('CHAR.KAP'),
+      },
+    };
+  }
+
+  /** Foundry token bar1 / bar2 attribute paths. Bar2 is AsP, else KaP, else hidden. */
+  tokenBarAttributes() {
+    return {
+      bar1: 'status.wounds',
+      bar2: this.isMage ? 'status.astralenergy' : this.isPriest ? 'status.karmaenergy' : 'tbd',
+    };
+  }
+
   _updateCharacteristics(data) {
     for (const ch of Object.values(data.characteristics)) {
       ch.value = ch.initial + ch.advances + (ch.modifier || 0) + ch.gearmodifier;

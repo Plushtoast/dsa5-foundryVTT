@@ -205,6 +205,30 @@ export default class VehicleData extends ActorDataModel.mixin(MerchantTemplate, 
     }
   }
 
+  hudResources() {
+    const { structurePoints, crew } = this.status;
+    return {
+      LeP: {
+        value: structurePoints.value,
+        max: structurePoints.max,
+        label: _loc('VEHICLE.structurePoints'),
+      },
+      AsP: {
+        value: this.availableCrew,
+        max: crew.max,
+        label: _loc('VEHICLE.crew'),
+      },
+      KaP: { value: 0, max: 0, label: _loc('CHAR.KAP') },
+    };
+  }
+
+  tokenBarAttributes() {
+    return {
+      bar1: 'status.structurePoints',
+      bar2: 'status.crew',
+    };
+  }
+
   _resolveCrewMembers() {
     this.crewActors = new Set();
     this.crewMemberCount = 0;

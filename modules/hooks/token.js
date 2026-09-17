@@ -3,7 +3,7 @@ import DPS from '../system/automation/derepositioningsystem.js';
 import Riding from '../system/automation/riding.js';
 import NavalCombat from '../combat/mkr/naval-combat.js';
 import VehicleCombatJoinPrompt from '../combat/mkr/vehicle-combat-join.js';
-const { getProperty } = foundry.utils;
+import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 const { Token } = foundry.canvas.placeables;
 
 export class DSAToken extends Token {
@@ -169,6 +169,33 @@ export class DSATokenDocument extends TokenDocument {
     const combat = await VehicleCombatJoinPrompt.ensureVehicleCombatMode([...tokens], options);
     if (tokens.some((t) => t.actor?.type === 'vehicle') && !combat) return [];
     return super.createCombatants(tokens, { ...options, combat });
+  }
+
+  async _preCreate(data, options, user) {
+    if ((await super._preCreate(data, options, user)) === false) return false;
+    this.#applyActorResourceBarsAndSize();
+  }
+
+  #applyActorResourceBarsAndSize() {
+    const actor = this.actor;
+    if (!actor) return;
+
+    const modify = {};
+    const isLoot = actor.system.merchant?.merchantType === 'loot';
+
+    if (isLoot && actor.type !== 'vehicle') {
+      modify.displayBars = 0;
+    } else if (actor.system.config?.autoBar) {
+      const { bar1, bar2 } = actor.system.tokenBarAttributes();
+      modify.bar1 = { attribute: bar1 };
+      modify.bar2 = { attribute: bar2 };
+    }
+
+    if (actor.system.config?.autoSize) {
+      DSA5_Utility.calcTokenSize(actor, modify);
+    }
+
+    if (Object.keys(modify).length) this.updateSource(modify);
   }
 
   _inferMovementAction() {

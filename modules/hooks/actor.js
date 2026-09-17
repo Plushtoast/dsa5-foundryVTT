@@ -8,7 +8,7 @@ import { DSAAura } from '../system/automation/aura.js';
 import CompanionHandler from '../actor/companions/companion-handler-class.js';
 import { CONJURATION_CONTROL_MODES } from '../config/conjuration-constants.js';
 
-const { getProperty, hasProperty, mergeObject } = foundry.utils;
+const { getProperty, hasProperty } = foundry.utils;
 
 export default function () {
   Hooks.on('preDeleteActiveEffect', (effect, options, user_id) => {
@@ -343,42 +343,9 @@ export default function () {
   });
 
   Hooks.on('preCreateToken', (token, data, options, userId) => {
-    const actor = token.actor;
-    if (!actor) return;
-
     const modify = {};
-    const isVehicle = actor.type === 'vehicle';
-    const isLoot = getProperty(actor, 'system.merchant.merchantType') == 'loot';
-
-    // Vehicles use loot merchant for cargo, but still show StP / crew bars.
-    if (isLoot && !isVehicle) {
-      mergeObject(modify, { displayBars: 0 });
-    } else if (getProperty(actor, 'system.config.autoBar')) {
-      if (isVehicle) {
-        // Same Foundry bar1/bar2 color slots as LeP / AsP.
-        mergeObject(modify, {
-          bar1: { attribute: 'status.structurePoints' },
-          bar2: { attribute: 'status.crew' },
-        });
-      } else {
-        mergeObject(modify, { bar1: { attribute: 'status.wounds' } });
-
-        if (actor.system.isMage) {
-          mergeObject(modify, { bar2: { attribute: 'status.astralenergy' } });
-        } else if (actor.system.isPriest) {
-          mergeObject(modify, { bar2: { attribute: 'status.karmaenergy' } });
-        } else {
-          mergeObject(modify, { bar2: { attribute: 'tbd' } });
-        }
-      }
-    }
-
-    if (getProperty(actor, 'system.config.autoSize')) {
-      DSA5_Utility.calcTokenSize(actor, modify);
-    }
-
     obfuscateName(token, modify);
-    token.updateSource(modify);
+    if (Object.keys(modify).length) token.updateSource(modify);
   });
 
   Hooks.on('createToken', (token, options, id) => {

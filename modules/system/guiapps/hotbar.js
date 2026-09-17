@@ -1053,7 +1053,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       context.avatarStyle = '';
     }
 
-    context.resources = this.actor.hasTokenHotbar ? this.#prepareResources(context) : undefined;
+    context.resources = this.actor.hasTokenHotbar ? this.#prepareResources() : undefined;
     context.weapons = this.actor.hasTokenHotbar ? this.#weaponPositions(context) : [];
     const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
@@ -1069,42 +1069,8 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     return ImageFramePicker.buildStyle(config);
   }
 
-  #prepareResources(context) {
-    if (this.actor.type === 'vehicle') {
-      const stp = this.actor.system.status.structurePoints ?? {};
-      const crew = this.actor.system.status.crew ?? {};
-      return {
-        LeP: {
-          value: Number(stp.value) || 0,
-          max: Number(stp.max) || Number(stp.initial) || 0,
-          label: _loc('VEHICLE.structurePoints'),
-        },
-        AsP: {
-          value: Number(this.actor.system.availableCrew ?? crew.value) || 0,
-          max: Number(crew.max) || Number(crew.initial) || 0,
-          label: _loc('VEHICLE.crew'),
-        },
-        KaP: { value: 0, max: 0, label: _loc('CHAR.KAP') },
-      };
-    }
-
-    return {
-      LeP: {
-        value: this.actor.system.status.wounds.value,
-        max: this.actor.system.status.wounds.max,
-        label: _loc('CHAR.LEP'),
-      },
-      AsP: {
-        value: this.actor.system.status.astralenergy.value,
-        max: this.actor.system.status.astralenergy.max,
-        label: _loc('CHAR.ASP'),
-      },
-      KaP: {
-        value: this.actor.system.status.karmaenergy.value,
-        max: this.actor.system.status.karmaenergy.max,
-        label: _loc('CHAR.KAP'),
-      },
-    }
+  #prepareResources() {
+    return this.actor.system.hudResources();
   }
 
   #prepareActionPips(combatant, token) {
