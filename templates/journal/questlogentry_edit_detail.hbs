@@ -110,7 +110,6 @@
       <div class="flexcol gap5px quest-sortable-list" data-sort-collection="objectives" data-quest-key="{{key}}">
       {{#each objectiveEntries as |objective|}}
         <div class='flexrow dsa-sortable-item quest-sortable-item' data-sort-key='{{objective.objectiveKey}}'>
-          <input type="hidden" name="{{concat 'system.quests.' ../key '.objectives.' objective.objectiveKey '.sort'}}" value="{{objective.sort}}">
           <button type='button' class='fas icon fa-grip-vertical dsa-sortable-handle quest-sortable-handle' data-tooltip='{{localize "DSAQUESTLOG.dragToReorder"}}' tabindex='-1'></button>
           <button type='button' data-action='toggleObjectiveDone' data-key='{{../key}}' data-objective-key='{{objective.objectiveKey}}' class='fas icon {{stateIcon}}' data-tooltip='{{localize stateTooltip}}'></button>
           {{#if ../isGM}}

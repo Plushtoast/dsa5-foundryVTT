@@ -15,6 +15,10 @@
     width: 100%;
     min-height: 110px;
     flex: 0 0 auto;
+
+    &.dsa-shop-hero--player.dsa-shop-hero--has-banner {
+      min-height: 0;
+    }
   }
 
   .dsa-shop-hero__content .sheet-header {

@@ -1,42 +1,44 @@
 <div class='scrollable standard-form'>
   {{#each sortedEntries as |quest|}}
     <div class='persona-detail-view detailbox margin-top'>
-      <div class='persona-detail-header flexrow gap10px{{ifThen quest.preparedImage " has-quest-image" ""}}'>
+      <div class='persona-detail-header{{ifThen quest.preparedImage " has-quest-image" ""}}'>
         {{#if quest.preparedImage}}
         <div class='dsa-faded-header-media dsa-media-frame' style='{{quest.preparedImageVars}}'>
           <img class='dsa-media-frame__img' src='{{quest.preparedImage}}' alt='' />
         </div>
         {{/if}}
-        <div class='persona-detail-title'>
-          <h1 class='questlog-detail-name'>{{quest.title}}</h1>
-          <p class='persona-detail-subtitle'>{{quest.statusName}}{{#if quest.chapter}} • {{quest.chapter}}{{/if}}{{#if quest.location}} • {{quest.location}}{{/if}}</p>
-          <div class='questlog-badge-row'>
-            {{#each quest.preparedAudienceBadges}}
-              <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
-            {{/each}}
-          </div>
-          {{#each quest.preparedTags}}
-            <span class='persona-detail-type'>{{this}}</span>
-          {{/each}}
-        </div>
-        <div class='flexrow gap5px questlog-detail-aside flex0'>
-          {{#if quest.timelineBadges.length}}
-            <div class='flexcol questlog-timeline-column'>
-              {{#each quest.timelineBadges}}
-                <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
-                  <i class='fas {{icon}}'></i>
-                  <span>{{value}}</span>
-                </span>
+        <div class='persona-detail-header-overlay'>
+          <div class='persona-detail-title'>
+            <h1 class='questlog-detail-name'>{{quest.title}}</h1>
+            <p class='persona-detail-subtitle'>{{quest.statusName}}{{#if quest.chapter}} • {{quest.chapter}}{{/if}}{{#if quest.location}} • {{quest.location}}{{/if}}</p>
+            <div class='questlog-badge-row'>
+              {{#each quest.preparedAudienceBadges}}
+                <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
               {{/each}}
             </div>
-          {{/if}}
-          {{#if @root.isGM}}
-            <div class='persona-detail-actions flex0'>
-              <button type='button' class='detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'>
-                <i class='fas fa-eye{{ifThen quest.visible "" "-slash"}}'></i>
-              </button>
-            </div>
-          {{/if}}
+            {{#each quest.preparedTags}}
+              <span class='persona-detail-type'>{{this}}</span>
+            {{/each}}
+          </div>
+          <div class='flexrow gap5px questlog-detail-aside flex0'>
+            {{#if quest.timelineBadges.length}}
+              <div class='flexcol questlog-timeline-column'>
+                {{#each quest.timelineBadges}}
+                  <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
+                    <i class='fas {{icon}}'></i>
+                    <span>{{value}}</span>
+                  </span>
+                {{/each}}
+              </div>
+            {{/if}}
+            {{#if @root.isGM}}
+              <div class='persona-detail-actions flex0'>
+                <button type='button' class='detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'>
+                  <i class='fas fa-eye{{ifThen quest.visible "" "-slash"}}'></i>
+                </button>
+              </div>
+            {{/if}}
+          </div>
         </div>
       </div>
       <div class='persona-detail-content'>

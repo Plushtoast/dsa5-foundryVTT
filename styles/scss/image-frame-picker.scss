@@ -10,11 +10,11 @@
     --frame-y: 0%;
     --frame-zoom: 1;
     --img-ar: 1;
-    --frame-ar: calc(480 / 110);
+    --frame-aspect: var(--dsa-banner-aspect, 480 / 110);
     position: relative;
     overflow: hidden;
     container-type: size;
-    aspect-ratio: var(--frame-aspect, 480 / 110);
+    aspect-ratio: var(--frame-aspect);
     background: #111;
 
     &__img {

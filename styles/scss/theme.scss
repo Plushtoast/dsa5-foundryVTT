@@ -1036,9 +1036,9 @@
         /* Player: same 480:110 window as Ausschnitt → WYSIWYG crop */
         &.dsa-shop-hero--player.dsa-shop-hero--has-banner {
             width: 100%;
-            aspect-ratio: 480 / 110;
+            aspect-ratio: var(--dsa-banner-aspect);
             height: auto;
-            min-height: 110px;
+            min-height: 0;
 
             .dsa-shop-hero__media {
                 position: absolute;

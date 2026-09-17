@@ -419,11 +419,23 @@
     border-bottom: 2px solid var(--border-color);
     position: relative;
 
+    .persona-detail-header-overlay {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
     &.has-quest-image {
-      min-height: 110px;
-      padding: 1rem 0.75rem 1.25rem;
+      display: block;
+      width: 100%;
+      aspect-ratio: var(--dsa-banner-aspect);
+      height: auto;
+      min-height: 0;
+      padding: 0;
       border-radius: var(--personae-radius);
-      overflow: hidden;
+      overflow: visible;
     }
 
     .dsa-faded-header-media {
@@ -433,15 +445,31 @@
       opacity: 0.22;
       pointer-events: none;
       border: none;
-      border-radius: 0;
+      border-radius: var(--personae-radius);
       aspect-ratio: auto;
+      container-type: size;
       background: transparent;
       filter: grayscale(0.15) saturate(0.8);
     }
 
-    > :not(.dsa-faded-header-media) {
-      position: relative;
+    &.has-quest-image .persona-detail-header-overlay {
+      position: absolute;
+      inset: 0;
       z-index: 1;
+      flex: none;
+      padding: 1rem 0.75rem 1.25rem;
+      pointer-events: none;
+
+      .persona-detail-title,
+      .questlog-detail-aside,
+      .persona-detail-actions,
+      button {
+        pointer-events: auto;
+      }
+
+      .questlog-badge-row {
+        margin-bottom: 0.35rem;
+      }
     }
 
     .persona-detail-image {
@@ -490,7 +518,8 @@
     .persona-detail-title {
       flex: 1;
 
-      .persona-detail-name {
+      .persona-detail-name,
+      .questlog-detail-name {
         margin: 0 0 0.5rem 0;
         font-family: var(--boldFont);
         font-size: 2rem;
@@ -849,7 +878,8 @@ body.theme-dark {
     border-color: rgba(255, 255, 255, 0.2);
   }
 
-  .persona-detail-name {
+  .persona-detail-name,
+  .questlog-detail-name {
     color: rgba(255, 255, 255, 0.9);
   }
 
