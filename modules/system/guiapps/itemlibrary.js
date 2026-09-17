@@ -637,14 +637,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       items = items.filter(x => x.compendium);
     }
 
-    items.sort((a, b) => {
-      const aIsCore = a.compendium?.startsWith('dsa5-core') || false;
-      const bIsCore = b.compendium?.startsWith('dsa5-core') || false;
-
-      if (aIsCore && !bIsCore) return 1;
-      if (!aIsCore && bIsCore) return -1;
-      return 0;
-    });
+    items.sort((a, b) => this.constructor.compareCoreLast(a, b));
 
     return Promise.all(items.map(x => fromUuid(x.uuid)));
   }
@@ -787,11 +780,28 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     return await Promise.all(result.map((x) => fromUuid(x.uuid)));
   }
 
-  filterDuplications(filteredItems) {
-    if (game.settings.get('dsa5', 'filterDuplicateItems'))
-      filteredItems = [...new Map(filteredItems.map((item) => [`${item.name}_${item.type}`, item])).values()];
+  static isCoreCompendium(compendium) {
+    return String(compendium || '').startsWith('dsa5-core');
+  }
 
-    return filteredItems;
+  /** Specialized packs first; dsa5-core is last resort among duplicates. */
+  static compareCoreLast(a, b) {
+    const aCore = this.isCoreCompendium(a?.compendium);
+    const bCore = this.isCoreCompendium(b?.compendium);
+    if (aCore === bCore) return 0;
+    return aCore ? 1 : -1;
+  }
+
+  filterDuplications(filteredItems) {
+    if (!game.settings.get('dsa5', 'filterDuplicateItems')) return filteredItems;
+
+    const unique = new Map();
+    for (const item of filteredItems) {
+      const key = `${item.name}_${item.type}`;
+      const current = unique.get(key);
+      unique.set(key, !current || this.constructor.compareCoreLast(current, item) > 0 ? item : current);
+    }
+    return [...unique.values()];
   }
 
   async _openItem(ev) {
