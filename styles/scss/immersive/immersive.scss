@@ -269,6 +269,11 @@
       content: '';
     }
 
+    &.image-popout figure img,
+    &.image-popout figure video {
+      margin-bottom: 12px;
+    }
+
     &.creature-sheet:after {
       background-image: url('../../icons/backgrounds/blackcreaturebot.webp');
     }

@@ -118,19 +118,28 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         }
     }
 
-    /** Assign IntegerSortField values from current key order when missing or all zero-colliding. */
     static #migrateCollectionSort(collection) {
-        if (!collection || typeof collection !== 'object') return;
+        if (!this.collectionSortCollides(collection)) return;
         const entries = Object.entries(collection).filter(([, value]) => value && typeof value === 'object');
-        if (!entries.length) return;
-
-        const hasExplicitSort = entries.some(([, value]) => Object.hasOwn(value, 'sort') && Number.isFinite(Number(value.sort)));
-        if (hasExplicitSort) return;
-
         const density = CONST.SORT_INTEGER_DENSITY;
         entries.forEach(([, value], index) => {
             value.sort = index * density;
         });
+    }
+
+    static collectionSortCollides(collection) {
+        if (!collection || typeof collection !== 'object') return false;
+        const entries = Object.entries(collection).filter(([, value]) => value && typeof value === 'object');
+        if (!entries.length) return false;
+
+        const sorts = [];
+        for (const [, value] of entries) {
+            if (!Object.hasOwn(value, 'sort')) return true;
+            const sort = Number(value.sort);
+            if (!Number.isFinite(sort)) return true;
+            sorts.push(sort);
+        }
+        return new Set(sorts).size !== entries.length;
     }
 
     static #adoptInvolvedLinks(quest, collectionName) {
@@ -477,6 +486,38 @@ export class DSAQuestLogEntry extends JournalListDataModel {
             update[`${basePath}.${key}.sort`] = index * density;
         });
         return update;
+    }
+
+    /**
+     * Nested TypedObjectField updates can reshuffle keys when IntegerSortField values collide
+     * (Foundry's default 0). Persist a unique sort order in the same payload so status/visibility
+     * changes do not rewrite the GM's manual order.
+     * @param {string} questKey
+     * @param {string} collectionName
+     * @param {string} entryKey
+     * @param {Record<string, unknown>} changes
+     * @param {Record<string, unknown>} collection
+     * @returns {Record<string, unknown>}
+     */
+    static buildCollectionEntryUpdate(questKey, collectionName, entryKey, changes, collection) {
+        const basePath = `system.quests.${questKey}.${collectionName}`;
+        const update = {};
+        for (const [field, value] of Object.entries(changes)) {
+            update[`${basePath}.${entryKey}.${field}`] = value;
+        }
+        if (!this.collectionSortCollides(collection)) return update;
+
+        const orderedKeys = this.sortedTypedObjectEntries(collection).map(([key]) => key);
+        Object.assign(update, this.buildTypedObjectSortUpdate(basePath, collection, orderedKeys));
+        return update;
+    }
+
+    static async updateQuestCollectionEntry(page, questKey, collectionName, entryKey, changes) {
+        const collection = page?.system?.quests?.[questKey]?.[collectionName];
+        if (!collection?.[entryKey]) return;
+        const update = this.buildCollectionEntryUpdate(questKey, collectionName, entryKey, changes, collection);
+        if (foundry.utils.isEmpty(update)) return;
+        return page.update(update);
     }
 
     static async resolveDocumentReference(linkKey, reference) {

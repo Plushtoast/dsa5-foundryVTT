@@ -1769,9 +1769,13 @@ export default class Actordsa5 extends Actor {
   }
 
   static async updateFallingDamage(postFunction, result, source) {
-    const availableQs = (result.result.qualityStep || 0) * 2;
-    mergeObject(postFunction.options, { availableQs });
     const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
+    const qlMultiplier = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.tumbling') ? 3 : 2;
+    mergeObject(postFunction.options, {
+      availableQs: (result.result.qualityStep || 0) * qlMultiplier,
+      qlMultiplier,
+      tumbling: qlMultiplier > 2,
+    });
     const setupData = await actor._setupFallingHeight(postFunction.options, postFunction.tokenId);
     const fallingDamage = await actor.basicTest(setupData, {
       suppressMessage: true,
@@ -1811,6 +1815,9 @@ export default class Actordsa5 extends Actor {
         situationalModifiers,
         fallingFloorOptions: DSA5.fallingConditions,
         modifier: options.modifier || 0,
+        tumbling: options.tumbling,
+        qlMultiplier: options.qlMultiplier || 2,
+        availableQs: options.availableQs || 0,
       },
       callback: (html, options = {}) => {
         testData.situationalModifiers = [

@@ -258,7 +258,7 @@ export class QuestLogFeature {
         if (!page || !objective) return;
 
         const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+        await DSAQuestLogEntry.updateQuestCollectionEntry(page, questKey, 'objectives', objectiveKey, { status: nextState });
     }
 
     static async toggleQuestObjectiveState(event, target) {
@@ -269,7 +269,7 @@ export class QuestLogFeature {
         if (!page || !objective) return;
 
         const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+        await DSAQuestLogEntry.updateQuestCollectionEntry(page, questKey, 'objectives', objectiveKey, { status: nextState });
     }
 
     static async toggleObjectiveVisibility(event, target) {
@@ -279,7 +279,7 @@ export class QuestLogFeature {
         const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
         if (!page || !objective) return;
 
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.visible`]: !objective.visible });
+        await DSAQuestLogEntry.updateQuestCollectionEntry(page, questKey, 'objectives', objectiveKey, { visible: !objective.visible });
     }
 
     static async openQuestReference(event, target) {
