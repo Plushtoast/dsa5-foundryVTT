@@ -138,6 +138,8 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     static async getSpeciesDataWithImages() {
         if (this.speciesImageCache) return this.speciesImageCache;
 
+        await CompanionConfig.ensureLoaded();
+
         const imageMap = new Map();
         const speciesImages = await DSA5_Utility.collectIndexedCompendiumEntries({
             documentName: 'Actor',
@@ -167,7 +169,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
                     trickModClass: pipClass(speciesInfo.trickMod),
                     trainingModClass: pipClass(speciesInfo.trainingMod),
                     trainingModules: speciesInfo.trainingModules || [],
-                    img: imageMap.get(speciesName) || 'icons/svg/mystery-man-black.svg'
+                    img: CompanionConfig.resolveSpeciesImage(speciesName, imageMap)
                 });
             }
         }

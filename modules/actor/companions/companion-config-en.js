@@ -108,6 +108,14 @@ export default {
             'Woolly Rhinoceros': { trickMod: '-3', trainingMod: '-4', trainingModules: ['Combat Animal', 'Mount', 'Pack Animal', 'Guard Animal', 'Draft Animal'] },
         },
     },
+    speciesImageFallbacks: {
+        Hinny: ['Hinny and Mule'],
+        Mule: ['Hinny and Mule'],
+        Monkey: ['Monkey (Moss Monkey)', 'Little Monkey', 'Moss Monkey'],
+        Bear: ['Cave Bear', 'Polar Bear'],
+        Crocodile: ['Alligator'],
+        Turtle: ['Diamond Turtle'],
+    },
     trainingTricks: {
         'Herding Animal': ['Drop', 'Come', 'Speak', 'Sit', 'Herd'],
         'Hunting Animal': ['Fetch', 'Attack 1', 'Speak', 'Quiet', 'Search'],

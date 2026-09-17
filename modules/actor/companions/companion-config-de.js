@@ -88,7 +88,7 @@ export default {
             Greifkatze: { trickMod: '-3', trainingMod: '-3', trainingModules: ['Zirkustier'] },
             Hippogriff: { trickMod: '-3', trainingMod: '-3', trainingModules: ['Kampftier', 'Reittier'] },
             Hornechse: { trickMod: '-4', trainingMod: '-5', trainingModules: ['Kampftier', 'Reittier', 'Tragetier', 'Zugtier'] },
-            'Ikanaria-Schmetterling': { trickMod: '-7', trainingMod: '*', trainingModules: [] },
+            'Ikanaria Schmetterling': { trickMod: '-7', trainingMod: '*', trainingModules: [] },
             Kamel: { trickMod: '-1', trainingMod: '1', trainingModules: ['Kampftier', 'Reittier', 'Renntier', 'Tragetier', 'Zugtier'] },
             Karen: { trickMod: '-1', trainingMod: '-1', trainingModules: ['Tragetier', 'Zirkustier', 'Zugtier'] },
             Krokodil: { trickMod: '-3', trainingMod: '-5', trainingModules: ['Kampftier', 'Reittier', 'Tragetier', 'Zirkustier', 'Zugtier'] },
@@ -107,6 +107,14 @@ export default {
             Wolf: { trickMod: '-2', trainingMod: '-2', trainingModules: ['Jagdtier', 'Kampftier', 'Tragetier', 'Wachtier', 'Suchtier'] },
             Wollnashorn: { trickMod: '-3', trainingMod: '-4', trainingModules: ['Kampftier', 'Reittier', 'Tragetier', 'Wachtier', 'Zugtier'] },
         },
+    },
+    speciesImageFallbacks: {
+        Maulesel: ['Maulesel und Maultier'],
+        Maultier: ['Maulesel und Maultier'],
+        Affe: ['Affe (Moosäffchen)', 'Äffchen', 'Moosaffe'],
+        Bär: ['Höhlenbär', 'Eisbär'],
+        Krokodil: ['Alligator'],
+        Schildkröte: ['Diamantschildkröte'],
     },
     trainingTricks: {
         'Hütetier': ['Ablegen', 'Komm', 'Laut', 'Sitz', 'Treiben'],

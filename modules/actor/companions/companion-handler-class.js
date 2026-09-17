@@ -242,6 +242,11 @@ export default class CompanionHandler {
         return CompanionConfig.companionSpeciesData;
     }
 
+    static async resolveSpeciesImage(speciesName, imageMap, placeholder) {
+        await CompanionConfig.ensureLoaded();
+        return CompanionConfig.resolveSpeciesImage(speciesName, imageMap, placeholder);
+    }
+
     static async setCompanion(sheet, uuid) {
         await CompanionConfig.ensureLoaded();
         const droppedActor = await fromUuid(uuid);
