@@ -40,12 +40,12 @@ import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
 import PowersourceBar from '../system/enhancement/powersource-bar.js';
 import PowersourceChargeDialog from '../dialog/powersource-charge-dialog.js';
+import DeleteConfirmationDialog from '../dialog/delete-confirmation-dialog.js';
 import { combatPartTemplates, magicPartTemplates, religionPartTemplates } from './template-configs.js';
 import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
 import AmmoPicker from '../system/helpers/ammo-picker.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
-const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor, ContextMenu, SearchFilter, DragDrop } = foundry.applications.ux;
 
 export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
@@ -1423,17 +1423,10 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _confirmBulkInventoryAction(messageKey, formatData = {}) {
-    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', {
+    return DeleteConfirmationDialog.confirm({
+      id: `dsa-bulk-inventory-${this.actor.id}`,
+      title: 'INVENTORYBULK.title',
       message: game.i18n.format(messageKey, formatData),
-    });
-
-    return await foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: 'INVENTORYBULK.title',
-      },
-      content,
-      rejectClose: false,
-      modal: true,
     });
   }
 
@@ -1747,15 +1740,9 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   async _itemDeleteDialog(item) {
-    const message = _loc('DIALOG.DeleteItemDetail', { item: item.name, });
-    const content = await renderTemplate('systems/dsa5/templates/dialog/delete-item-dialog.hbs', { message });
-    const proceed = await foundry.applications.api.DialogV2.confirm({
-      window: {
-        title: 'DIALOG.deleteConfirmation',
-      },
-      content,
-      rejectClose: false,
-      modal: true,
+    const proceed = await DeleteConfirmationDialog.confirm({
+      id: `dsa-delete-item-${item.uuid}`,
+      message: _loc('DIALOG.DeleteItemDetail', { item: item.name }),
     });
     if (proceed) {
       await this._cleverDeleteItem(item.id);

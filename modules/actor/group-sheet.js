@@ -12,6 +12,7 @@ import RollRequestService from '../system/queries/roll-request.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import MerchantSheetDSA5 from './merchant-sheet.js';
 import MerchantModeHelper from './concerns/merchant-mode.js';
+import DeleteConfirmationDialog from '../dialog/delete-confirmation-dialog.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { escapeHTML } = foundry.utils;
@@ -753,10 +754,20 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     });
   }
 
-  static #removeLocation(event, target) {
+  static async #removeLocation(event, target) {
     if (!game.user.isGM) return;
     const key = target.closest('[data-location-key]')?.dataset.locationKey;
-    if (key) this.actor.system.removeLocation(key);
+    if (!key) return;
+
+    const locationActor = this.actor.system.locationActors.get(key);
+    const name = escapeHTML(locationActor?.name ?? '');
+    const proceed = await DeleteConfirmationDialog.confirm({
+      id: `dsa-delete-location-${this.actor.id}-${key}`,
+      message: game.i18n.format('GROUP.removeLocationConfirm', { name }),
+    });
+    if (!proceed) return;
+
+    await this.actor.system.removeLocation(key);
   }
 
   static #openLocationSheet(event, target) {
