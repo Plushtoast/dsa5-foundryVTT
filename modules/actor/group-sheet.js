@@ -342,6 +342,14 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       });
     }
 
+    if (game.user.isGM) {
+      options.push({
+        label: _loc('SHEET.DeleteItem'),
+        icon: '<i class="fas fa-trash"></i>',
+        onClick: () => GroupActorSheet.deleteLocationItem(groupActor, uuid),
+      });
+    }
+
     return options;
   }
 
@@ -1114,6 +1122,17 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     }
 
     this.transferLootItem(locActor, character, item, true);
+  }
+
+  static async deleteLocationItem(groupActor, itemUuid) {
+    if (!game.user.isGM) return;
+
+    const item = fromUuidSync(itemUuid);
+    const locActor = item?.parent;
+    if (!item || !locActor) return;
+    if (!GroupActorSheet.#findResolvedLocation(groupActor, locActor)) return;
+
+    await locActor.sheet._itemDeleteDialog(item);
   }
 
   static async passItemToGroup(actor, item) {

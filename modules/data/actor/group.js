@@ -358,6 +358,19 @@ export default class GroupData extends ActorDataModel {
     return created ?? null;
   }
 
+  async deleteLocationItem(fromKey, itemId) {
+    if (!fromKey || !itemId) return null;
+
+    const loc = this.resolvedLocations.find((location) => location.key === fromKey);
+    if (!loc?.actor) return null;
+
+    const item = loc.actor.items.get(itemId);
+    if (!item) return null;
+
+    await loc.actor.deleteEmbeddedDocuments('Item', [item.id]);
+    return true;
+  }
+
   async setLocationType(key, type) {
     const updates = { [`system.locations.${key}.type`]: type };
     if (type) {
