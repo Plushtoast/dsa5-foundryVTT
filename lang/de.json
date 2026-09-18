@@ -1417,10 +1417,13 @@
     "tabSkills": "Talente"
   },
   "IMAGEFRAME": {
+    "centerX": "X zentrieren",
+    "centerY": "Y zentrieren",
     "flipHorizontal": "Spiegeln",
     "flipHorizontalHint": "Bild horizontal spiegeln",
     "hint": "Ziehen zum Verschieben, Scrollen zum Zoomen. Der Rahmen entspricht dem späteren Anzeigebereich.",
     "noImage": "Kein Bild zum Einrahmen vorhanden.",
+    "resetZoom": "Zoom zurücksetzen",
     "title": "Bildausschnitt"
   },
   "DSA5Wiki": "DSA5 Foundry VTT - Wiki",
@@ -1731,7 +1734,7 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Verknüpfe ein beliebiges Dokument. Akteure erscheinen als beteiligte Personen, Gegenstände als relevante Gegenstände und andere Dokumente als Abzeichen in der Detailansicht.",
+            "hint": "Verknüpfe ein beliebiges Dokument. Akteure erscheinen als beteiligte Personen, Gegenstände als relevante Gegenstände, Journale und Journalseiten als relevante Notizen und andere Dokumente als Abzeichen in der Detailansicht.",
             "label": "Dokument-UUID"
           },
           "visible": {
@@ -1818,6 +1821,8 @@
     "linkedPages": "Verknüpfte Dokumente",
     "involvedItems": "Relevante Gegenstände",
     "involvedItemsHint": "Mit diesem Auftrag verknüpfte Gegenstände. Spieler sehen nur Gegenstände, die sie beobachten dürfen.",
+    "involvedNotes": "Relevante Notizen",
+    "involvedNotesHint": "Mit diesem Auftrag verknüpfte Journale und Journalseiten. Spieler sehen nur Notizen, die sie beobachten dürfen.",
     "involvedPersons": "Beteiligte Personen",
     "involvedPersonsHint": "Mit diesem Auftrag verknüpfte Akteure. Sie erscheinen mit Dramatis-Personae-Namen, wenn der Betrachter die Persona sehen darf.",
     "missingLink": "Fehlt",
@@ -4169,6 +4174,7 @@
     "tokenhotbarMod": "Modifikator/Wert",
     "tokenhotbarMoney": "Links-<i class=\"fas fa-computer-mouse\"></i>: bezahlen<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: auszahlen",
     "tokenhotbarSkill": "Links-<i class=\"fas fa-computer-mouse\"></i>: Probe anfordern<br>Rechts-<i class=\"fas fa-computer-mouse\"></i>: Gruppensammelprobe<br>Strg + <i class=\"fas fa-computer-mouse\"></i>: 3W20 Probe",
+    "tokenhotbarRegeneration": "{name}<br>Links-<i class=\"fas fa-computer-mouse\"></i>: Regeneration anfordern",
     "zkModifer": "Die Zähigkeit/Seelenkraft des Ziels muss als Malus eingerechnet werden (Vorzeichen beachten)"
   },
   "TYPES.ActiveEffect.base": "Effekt",

@@ -22,6 +22,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             toggleObjectiveState: this.#toggleObjectiveState,
             openInvolvedPerson: this.#openInvolvedPerson,
             openInvolvedItem: this.#openInvolvedItem,
+            openInvolvedNote: this.#openInvolvedNote,
             pickQuestImage: this.#pickQuestImage,
             configureQuestImageFrame: this.#configureQuestImageFrame,
             showQuestImage: this.#showQuestImage,
@@ -407,6 +408,10 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
 
     static async #openInvolvedItem(event, target) {
         await DSAQuestLogEntry.openInvolvedItem(target.dataset.uuid);
+    }
+
+    static async #openInvolvedNote(event, target) {
+        await DSAQuestLogEntry.openInvolvedNote(target.dataset.uuid);
     }
 
     static async #pickQuestImage(event, target) {

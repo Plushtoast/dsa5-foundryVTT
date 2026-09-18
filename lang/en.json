@@ -1415,10 +1415,13 @@
     "tabSkills": "Skills"
   },
   "IMAGEFRAME": {
+    "centerX": "Center X",
+    "centerY": "Center Y",
     "flipHorizontal": "Mirror",
     "flipHorizontalHint": "Flip image horizontally",
     "hint": "Drag to pan, scroll to zoom. The frame matches the final display area.",
     "noImage": "No image available to frame.",
+    "resetZoom": "Reset zoom",
     "title": "Image framing"
   },
   "DSA5Wiki": "TDE5 Foundry VTT - Wiki",
@@ -1729,7 +1732,7 @@
         },
         "linkedPages": {
           "uuid": {
-            "hint": "Link any document. Actors appear as involved persons, items as relevant items, and other documents as badges in the quest detail view.",
+            "hint": "Link any document. Actors appear as involved persons, items as relevant items, journals and journal pages as relevant notes, and other documents as badges in the quest detail view.",
             "label": "Document UUID"
           },
           "visible": {
@@ -1816,6 +1819,8 @@
     "linkedPages": "Linked Documents",
     "involvedItems": "Relevant Items",
     "involvedItemsHint": "Items linked on this quest. Players only see items they may observe.",
+    "involvedNotes": "Relevant Notes",
+    "involvedNotesHint": "Journals and journal pages linked on this quest. Players only see notes they may observe.",
     "involvedPersons": "Involved Persons",
     "involvedPersonsHint": "Actors linked on this quest. They appear with Dramatis Personae names when the viewer may see that persona.",
     "missingLink": "Missing",
@@ -4167,6 +4172,7 @@
     "tokenhotbarMod": "Modifier/Value",
     "tokenhotbarMoney": "Left-<i class=\"fas fa-computer-mouse\"></i>: pay<br>Right-<i class=\"fas fa-computer-mouse\"></i>: get paid",
     "tokenhotbarSkill": "Left-<i class=\"fas fa-computer-mouse\"></i>: request roll<br>Right-<i class=\"fas fa-computer-mouse\"></i>: request group check<br>Ctrl + <i class=\"fas fa-computer-mouse\"></i>: 3d20 check",
+    "tokenhotbarRegeneration": "{name}<br>Left-<i class=\"fas fa-computer-mouse\"></i>: Request regeneration",
     "zkModifer": "The target's soulpower/toughness has to be included as handicap (mind the sign)"
   },
   "TYPES.ActiveEffect.base": "Effect",

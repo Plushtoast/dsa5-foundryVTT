@@ -129,6 +129,27 @@
           </div>
         {{/if}}
 
+        {{#if quest.preparedInvolvedNotes.length}}
+          <div class='detail-section'>
+            <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>{{localize 'DSAQUESTLOG.involvedNotes'}}</h3>
+            <div class='dsa-avatar-chip-list'>
+              {{#each quest.preparedInvolvedNotes}}
+                {{#if canOpen}}
+                  <button type='button' class='dsa-avatar-chip dsa-avatar-chip--note noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedNote' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                    <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
+                    <span class='dsa-avatar-chip-name'>{{name}}</span>
+                  </button>
+                {{else}}
+                  <div class='dsa-avatar-chip dsa-avatar-chip--note is-static{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>
+                    <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
+                    <span class='dsa-avatar-chip-name'>{{name}}</span>
+                  </div>
+                {{/if}}
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+
         {{#if quest.preparedLinkedDocuments.length}}
           <div class='questlog-document-badges'>
             {{#each quest.preparedLinkedDocuments}}

@@ -34,6 +34,8 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         2: 'DSAQUESTLOG.PRIORITY.2',
     };
 
+    static NOTE_PLACEHOLDER_IMG = 'systems/dsa5/icons/backgrounds/library.webp';
+
     static STATUS_SORT_ORDER = {
         0: 1,
         1: 2,
@@ -190,6 +192,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         const grouped = await this.prepareLinkedReferences(entry);
         entry.preparedInvolved = grouped.persons;
         entry.preparedInvolvedItems = grouped.items;
+        entry.preparedInvolvedNotes = grouped.notes;
         entry.preparedLinkedDocuments = grouped.others;
         entry.uuid = page?.uuid;
         entry.questKey = key;
@@ -284,6 +287,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         const isGM = !!user?.isGM;
         const persons = [];
         const items = [];
+        const notes = [];
         const others = [];
 
         for (const [linkKey, reference] of this.sortedTypedObjectEntries(quest?.linkedPages)) {
@@ -304,11 +308,16 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 if (item) items.push(item);
                 continue;
             }
+            if (this.#isJournalNoteType(type)) {
+                const note = await this.#prepareInvolvedNote(linkKey, uuid, { user, isGM, visible });
+                if (note) notes.push(note);
+                continue;
+            }
 
             others.push(await this.resolveDocumentReference(linkKey, reference));
         }
 
-        return { persons, items, others };
+        return { persons, items, notes, others };
     }
 
     static async prepareInvolvedPersons(quest, { user = game.user } = {}) {
@@ -317,6 +326,10 @@ export class DSAQuestLogEntry extends JournalListDataModel {
 
     static async prepareInvolvedItems(quest, { user = game.user } = {}) {
         return (await this.prepareLinkedReferences(quest, { user })).items;
+    }
+
+    static async prepareInvolvedNotes(quest, { user = game.user } = {}) {
+        return (await this.prepareLinkedReferences(quest, { user })).notes;
     }
 
     static async #prepareInvolvedPerson(linkKey, uuid, { user, isGM, visible }) {
@@ -381,6 +394,59 @@ export class DSAQuestLogEntry extends JournalListDataModel {
 
         await item.sheet?.render(true);
         return true;
+    }
+
+    static #isJournalNoteType(type) {
+        return type === 'JournalEntry' || type === 'JournalEntryPage';
+    }
+
+    static isNoteVisibleToUser(document, user = game.user) {
+        if (!document) return false;
+        if (user?.isGM) return true;
+        if (document.testUserPermission(user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER)) return true;
+        if (document.documentName === 'JournalEntryPage') {
+            return document.parent?.testUserPermission(user, CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER) ?? false;
+        }
+        return false;
+    }
+
+    static async #prepareInvolvedNote(linkKey, uuid, { user, isGM, visible }) {
+        const document = uuid ? await fromUuid(uuid) : null;
+        const canOpen = this.isNoteVisibleToUser(document, user);
+        if (!canOpen && !isGM) return null;
+
+        const documentType = document?.documentName || foundry.utils.parseUuid(uuid)?.type || '';
+        const parentName = document?.parent?.name || '';
+        const subtitle = documentType === 'JournalEntryPage'
+            ? parentName
+            : this.#documentTypeLabel(documentType);
+
+        return {
+            linkKey,
+            uuid,
+            name: document?.name || _loc('DSAQUESTLOG.missingLink'),
+            img: this.NOTE_PLACEHOLDER_IMG,
+            subtitle,
+            canOpen,
+            visible,
+            missing: !document,
+            documentType,
+        };
+    }
+
+    static async openInvolvedNote(uuid) {
+        const document = uuid ? await fromUuid(uuid) : null;
+        if (!this.isNoteVisibleToUser(document)) return false;
+
+        if (document.documentName === 'JournalEntryPage') {
+            await document.parent?.sheet?.render(true, { pageId: document.id });
+            return true;
+        }
+        if (document.documentName === 'JournalEntry') {
+            await document.sheet?.render(true);
+            return true;
+        }
+        return false;
     }
 
     static async openInvolvedPersonJournal(actorUuid) {

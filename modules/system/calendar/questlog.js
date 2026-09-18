@@ -35,6 +35,7 @@ export class QuestLogFeature {
         questlogListMenu: QuestLogFeature.questlogListMenu,
         openInvolvedPerson: QuestLogFeature.openInvolvedPerson,
         openInvolvedItem: QuestLogFeature.openInvolvedItem,
+        openInvolvedNote: QuestLogFeature.openInvolvedNote,
     };
 
     async _preparePartContext(context, _options) {
@@ -314,10 +315,18 @@ export class QuestLogFeature {
         await QuestLogFeature.openReference({ uuid });
     }
 
+    static async openInvolvedNote(event, target) {
+        const uuid = target.dataset.uuid;
+        if (!uuid) return;
+        await QuestLogFeature.openReference({ uuid });
+    }
+
     static async openReference({ uuid, entryKey = null }) {
         const document = await fromUuid(uuid);
         if (!document) return;
         if (document.documentName === 'Item' && !DSAQuestLogEntry.isItemVisibleToUser(document)) return;
+        if ((document.documentName === 'JournalEntry' || document.documentName === 'JournalEntryPage')
+            && !DSAQuestLogEntry.isNoteVisibleToUser(document)) return;
 
         if (document.documentName === 'JournalEntryPage') {
             await QuestLogFeature.#parent.openDocumentSheet(document.parent, { pageId: document.id });

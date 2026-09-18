@@ -822,6 +822,20 @@
     border-radius: 8px;
   }
 
+  &--note .dsa-avatar-chip-media {
+    display: block;
+    flex: 0 0 auto;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    border: 2px solid var(--sheet-border);
+    background-color: var(--dsa-library-card-bg);
+    background-image: url('../../icons/backgrounds/library.webp');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 78%;
+  }
+
   &.persona-important img {
     border-color: var(--dsadesign1);
     box-shadow:
@@ -830,7 +844,8 @@
   }
 
   &.missing img,
-  &.missing-persona img {
+  &.missing-persona img,
+  &.missing .dsa-avatar-chip-media {
     opacity: 0.7;
   }
 
