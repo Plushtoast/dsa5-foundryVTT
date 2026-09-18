@@ -1,4 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
+import MeleeweaponData from '../data/item/meleeweapon.js';
 import EffectDuration from './effectDuration.js';
 const { setProperty, getType, isPlainObject, hasProperty, mergeObject } = foundry.utils;
 
@@ -308,6 +309,7 @@ export default class DSAActiveEffect extends ActiveEffect {
   }
 
   // key: "@meleeweapon.Rondrakamm (2H).system.attack.value"
+  // key: "@meleeweapon.(i).system.damage.value" — (i) matches improvised weapon names
   // key: "@actor.system.status.regeneration.AsPConditional" (item enhancement → parent actor)
   static resolveActorChangeKey(key) {
     return key.replace(this.actorChangeRegex, '');
@@ -327,9 +329,11 @@ export default class DSAActiveEffect extends ActiveEffect {
     }
 
     const normalizedType = type.toLowerCase();
+    const matchImprovised = itemName === '(i)';
     const items = actor.items.filter((item) => {
       if (item.type !== normalizedType) return false;
       if (item.id === itemName) return true;
+      if (matchImprovised) return MeleeweaponData.isImprovisedWeapon(item);
 
       try {
         const rgx = new RegExp(itemName, 'i');

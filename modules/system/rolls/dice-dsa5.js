@@ -733,45 +733,41 @@ export default class DiceDSA5 {
 
     const { source } = testData;
     const confirmChange = getProperty(source, `system.${isCrit ? 'critConfirm' : 'botchConfirm'}`) || 0;
-    let confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
-    let additionalDescription = '';
-    
-    let oldRolls = [];
-    let usedWeaponAptitude = false;
-    let usedPhexcaer = false;
+    const recalc = (roll) => adjustedRes - Math.clamp(roll.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
+    let confirmResult = recalc(rollConfirm);
+
+    const used = [];
+    const tryReroll = async (label, keepBetter) => {
+      const previous = rollConfirm;
+      used.push({ label, total: previous.total });
+      rollConfirm = await DiceDSA5.manualRolls(
+        await DiceDSA5._rollConfirm(),
+        label,
+        testData.extra.options
+      );
+      const nextResult = recalc(rollConfirm);
+      if (keepBetter && nextResult < confirmResult) {
+        rollConfirm = previous;
+      } else {
+        confirmResult = nextResult;
+      }
+    };
 
     if (this.#shouldUseWeaponAptitude(actor, combatskill, confirmResult)) {
-      const oldRoll = rollConfirm.total;
-      oldRolls.push(rollConfirm.total);
-      usedWeaponAptitude = true;
-      rollConfirm = await DiceDSA5.manualRolls(
-        await DiceDSA5._rollConfirm(),
-        'LocalizedIDs.weaponAptitude',
-        testData.extra.options
-      );
-      confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
-      additionalDescription = `, ${_loc('usedWeaponExpertise', { a: oldRoll, b: rollConfirm.total })}`;
+      await tryReroll('LocalizedIDs.weaponAptitude', false);
+    }
+    if (this.#shouldUsePhexcaerStyle(actor, testData, confirmResult)) {
+      await tryReroll('LocalizedIDs.phexcaerStyle', true);
     }
 
-    if (this.#shouldUsePhexcaerStyle(actor, combatskill, confirmResult, testData)) {
-      oldRolls.push(rollConfirm.total);
-      usedPhexcaer = true;
-      rollConfirm = await DiceDSA5.manualRolls(
-        await DiceDSA5._rollConfirm(),
-        'LocalizedIDs.phexcaerStyle',
-        testData.extra.options
-      );
-      confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
-    }
-
-    if (oldRolls.length > 0) {
-      let locKey = 'usedWeaponExpertise';
-      if (usedWeaponAptitude && usedPhexcaer) {
-        locKey = 'usedWeaponAndPhexcaer';
-      } else if (usedPhexcaer) {
-        locKey = 'usedPhexcaerStyle';
-      }
-      additionalDescription = `, ${_loc(locKey, { a: oldRolls.join('/'), b: rollConfirm.total })}`;
+    let additionalDescription = '';
+    if (used.length) {
+      const locKey = used.length > 1
+        ? 'usedWeaponAndPhexcaer'
+        : used[0].label === 'LocalizedIDs.phexcaerStyle'
+          ? 'usedPhexcaerStyle'
+          : 'usedWeaponExpertise';
+      additionalDescription = `, ${_loc(locKey, { a: used.map((entry) => entry.total).join('/'), b: rollConfirm.total })}`;
     }
 
     const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id);
@@ -808,19 +804,14 @@ export default class DiceDSA5 {
   /**
    * Check if Phexcaer style should be used
    * @param {Object} actor 
-   * @param {string} combatskill 
-   * @param {number} confirmResult 
    * @param {Object} testData 
+   * @param {number} confirmResult 
    * @returns {boolean}
    */
-  static #shouldUsePhexcaerStyle(actor, combatskill, confirmResult, testData) {
+  static #shouldUsePhexcaerStyle(actor, testData, confirmResult) {
     if (confirmResult >= 0) return false;
-    
-    const isWeaponRoll = ['meleeweapon', 'rangeweapon'].includes(testData.source?.type);
-    return isWeaponRoll && combatskill !== "" && SpecialabilityRulesDSA5.hasAbility(
-      actor, 
-      _loc("LocalizedIDs.phexcaerStyle")
-    );
+    if (![ROLL_TYPES.MELEEWEAPON, ROLL_TYPES.RANGEWEAPON].includes(testData.source?.type)) return false;
+    return SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.phexcaerStyle');
   }
 
   /**
