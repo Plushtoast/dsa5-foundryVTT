@@ -256,4 +256,14 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         TrapAutomation.migrateSource(source);
         return super.migrateData(source, options);
     }
+
+    async _preCreate(data, options, user) {
+        TrapAutomation.applyAttackWeaponPrefillOnCreate(data);
+        return super._preCreate(data, options, user);
+    }
+
+    async _preUpdate(changed, options, user) {
+        TrapAutomation.applyAttackWeaponPrefill(this, changed);
+        return super._preUpdate(changed, options, user);
+    }
 }

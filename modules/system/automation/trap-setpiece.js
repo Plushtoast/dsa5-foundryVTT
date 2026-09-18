@@ -11,6 +11,8 @@ const { duplicate } = foundry.utils;
  */
 export default class TrapSetpiece {
   static TRAPTYPE_STONE = 1;
+  static TRAPTYPE_ARROW = 2;
+  static TRAPTYPE_BLADE = 3;
   static TRAPTYPE_CRUSH = 4;
   static TRAPTYPE_SLIDE = 5;
   static TRAPTYPE_SUFFOCATE = 6;

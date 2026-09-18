@@ -11,10 +11,6 @@ import { applyDamage } from '../../hooks/chat_context.js';
 const { duplicate, getProperty, mergeObject, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
 
-/** Matches DSATrapRegionBehavior.TRAPTYPE_ARROW / TRAPTYPE_BLADE */
-const OPPOSED_TRAP_TYPES = new Set([2, 3]);
-const TRAPTYPE_ARROW = 2;
-
 /**
  * Trap payload copy and trigger execution.
  * Formulas must already be valid Foundry rolls; the data model rejects anything else.
@@ -108,7 +104,47 @@ export default class TrapAutomation extends TrapSetpiece {
   }
 
   static isOpposedTrapType(trapType) {
-    return OPPOSED_TRAP_TYPES.has(Number(trapType));
+    const type = Number(trapType);
+    return type === this.TRAPTYPE_ARROW || type === this.TRAPTYPE_BLADE;
+  }
+
+  static defaultWeaponType(trapType) {
+    const type = Number(trapType);
+    if (type === this.TRAPTYPE_ARROW) return 'rangeweapon';
+    if (type === this.TRAPTYPE_BLADE) return 'meleeweapon';
+    return '';
+  }
+
+  static applyAttackWeaponPrefillOnCreate(data = {}) {
+    if (!data.system) data.system = {};
+    if (data.system.attack?.weaponType) return;
+    const weaponType = this.defaultWeaponType(data.system.trapType);
+    if (!weaponType) return;
+    foundry.utils.setProperty(data, 'system.attack.weaponType', weaponType);
+  }
+
+  static applyAttackWeaponPrefill(system = {}, changes = {}) {
+    const delta = changes.system;
+    if (!delta || !Object.hasOwn(delta, 'trapType')) return;
+    if (Number(delta.trapType) === Number(system.trapType)) return;
+
+    const previousDefault = this.defaultWeaponType(system.trapType);
+    const nextDefault = this.defaultWeaponType(delta.trapType);
+    const incoming = Object.hasOwn(delta.attack ?? {}, 'weaponType')
+      ? delta.attack.weaponType
+      : (system.attack?.weaponType ?? '');
+    if (!incoming || incoming === previousDefault) {
+      foundry.utils.setProperty(changes, 'system.attack.weaponType', nextDefault);
+    }
+
+    for (const [id, attack] of Object.entries(system.attacks ?? {})) {
+      const extraDelta = delta.attacks?.[id];
+      const extraIncoming = extraDelta && Object.hasOwn(extraDelta, 'weaponType')
+        ? extraDelta.weaponType
+        : (attack?.weaponType ?? '');
+      if (extraIncoming && extraIncoming !== previousDefault) continue;
+      foundry.utils.setProperty(changes, `system.attacks.${id}.weaponType`, nextDefault);
+    }
   }
 
   static isCrushTrapType(trapType) {
@@ -162,9 +198,9 @@ export default class TrapAutomation extends TrapSetpiece {
   }
 
   static attackTypeForTrap(trapType, weaponType) {
-    if (weaponType === 'rangeweapon') return 'rangeAttack';
-    if (weaponType === 'meleeweapon') return 'meleeAttack';
-    return Number(trapType) === TRAPTYPE_ARROW ? 'rangeAttack' : 'meleeAttack';
+    const resolved = weaponType || this.defaultWeaponType(trapType);
+    if (resolved === 'rangeweapon') return 'rangeAttack';
+    return 'meleeAttack';
   }
 
   static isOpposedHit(result) {

@@ -193,10 +193,21 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
 
   async addAttack(attack = {}) {
     const id = foundry.utils.randomID();
+    const weaponType = attack.weaponType || TrapAutomation.defaultWeaponType(this.trapType);
     await this.parent.update({
-      [`system.attacks.${id}`]: { name: '', damageFormula: '', ...attack },
+      [`system.attacks.${id}`]: { name: '', damageFormula: '', ...attack, weaponType },
     });
     return id;
+  }
+
+  async _preCreate(data, options, user) {
+    TrapAutomation.applyAttackWeaponPrefillOnCreate(data);
+    return super._preCreate(data, options, user);
+  }
+
+  async _preUpdate(changed, options, user) {
+    TrapAutomation.applyAttackWeaponPrefill(this, changed);
+    return super._preUpdate(changed, options, user);
   }
 
   async removeAttack(id) {
