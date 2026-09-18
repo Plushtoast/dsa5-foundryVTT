@@ -19,18 +19,21 @@
 
   <div class="allLocations">
     {{#each locations as |loc|}}
-      <div class="groupbox group-location" data-location-key="{{loc.key}}">
-        <legend class="table-title lineheight flexrow">
-          <div class="flexrow gap10px">
+      <div class="groupbox group-location dsa-sortable-item" data-location-key="{{loc.key}}">
+        <legend class="table-title lineheight flexrow dsaflex-no-wrap">
+          <div class="flexrow gap10px dsaflex-no-wrap">
+            {{#if @root.isGM}}
+              <button type="button" class="icon fas fa-grip-vertical noBorder dsadesignbutton dsa-sortable-handle group-location-sort-handle flex0" data-tooltip="GROUP.dragToReorder" tabindex="-1"></button>
+            {{/if}}
             <img src="{{loc.img}}" class="flex0" width="24" height="24" />
-            <a class="flexgrow" data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>
-            <div data-tooltip-html="{{loc.encumbranceTooltip}}" class="hint">
+            <a class="ellipsis" data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>
+          </div>
+          
+          <div class="flexrow flexAlignEnd noflex gap5px dsaflex-no-wrap nobr">
+            <div data-tooltip-html="{{loc.encumbranceTooltip}}" class="hint noflex nobr">
               <span><i class="fas fa-weight-hanging"></i></span>
               <span>({{loc.totalWeight}} / {{loc.carrycapacity}})</span>
             </div>
-          </div>
-          
-          <div class="flexrow flexAlignEnd">
             {{#unless loc.locked}}
               <button class="icon fas fa-exchange-alt noBorder dsadesignbutton" type="button"
                 data-action="tradeWithDepot" data-location-key="{{loc.key}}"

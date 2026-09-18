@@ -22,6 +22,7 @@ const { TextEditor } = foundry.applications.ux;
 export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.sheets.ActorSheetV2)) {
   static PRIMARY_PARTY_DIALOG_TEMPLATE = 'systems/dsa5/templates/dialog/group-primary-party-dialog.hbs';
   static DEPOT_PERMISSIONS_TEMPLATE = 'systems/dsa5/templates/dialog/group-depot-permissions.hbs';
+  static #LOCATION_SORT_DRAG_TYPE = 'GroupLocationSort';
 
   static TRAVEL_ICONS = {
     foot: 'fa-person-walking',
@@ -294,6 +295,23 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         drop: this.#onLocationItemDrop.bind(this),
       },
     }).bind(this.element);
+
+    if (game.user.isGM) {
+      new foundry.applications.ux.DragDrop.implementation({
+        dragSelector: '.group-location-sort-handle',
+        dropSelector: '.allLocations',
+        permissions: {
+          dragstart: () => true,
+          drop: () => true,
+        },
+        callbacks: {
+          dragstart: this.#onLocationSortDragStart.bind(this),
+          dragover: this.#onLocationSortDragOver.bind(this),
+          drop: this.#onLocationSortDrop.bind(this),
+          dragend: this.#clearLocationSortIndicators.bind(this),
+        },
+      }).bind(this.element);
+    }
   }
 
   static #findResolvedLocation(groupActor, depotActor) {
@@ -389,6 +407,73 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
     const itemId = fromUuidSync(data.uuid)?.id ?? data.uuid?.split('.').pop();
     await this.actor.system.moveLocationItem(data.fromLocationKey, targetKey, itemId);
+  }
+
+  #onLocationSortDragStart(event) {
+    const location = event.currentTarget.closest('.group-location');
+    const key = location?.dataset.locationKey;
+    if (!key) return;
+
+    event.dataTransfer.setData('text/plain', JSON.stringify({
+      type: GroupActorSheet.#LOCATION_SORT_DRAG_TYPE,
+      key,
+    }));
+    event.dataTransfer.effectAllowed = 'move';
+    location.classList.add('dragging');
+  }
+
+  #locationFromDragEvent(event) {
+    const from = event.target instanceof HTMLElement ? event.target : event.target?.parentElement;
+    return from?.closest?.('.group-location') ?? null;
+  }
+
+  #onLocationSortDragOver(event) {
+    const dragging = this.element?.querySelector('.group-location.dragging');
+    const target = this.#locationFromDragEvent(event);
+    if (!dragging || !target || target === dragging) return;
+
+    this.#clearLocationSortIndicators({ keepDragging: true });
+    const rect = target.getBoundingClientRect();
+    const midY = rect.top + (rect.height / 2);
+    target.classList.add(event.clientY < midY ? 'drag-over-before' : 'drag-over-after');
+  }
+
+  #clearLocationSortIndicators({ keepDragging = false } = {}) {
+    this.element?.querySelectorAll('.group-location').forEach((el) => {
+      el.classList.remove('drag-over-before', 'drag-over-after');
+      if (!keepDragging) el.classList.remove('dragging');
+    });
+  }
+
+  async #onLocationSortDrop(event) {
+    this.#clearLocationSortIndicators();
+
+    let dragData;
+    try {
+      dragData = JSON.parse(event.dataTransfer.getData('text/plain'));
+    } catch {
+      return;
+    }
+    if (dragData?.type !== GroupActorSheet.#LOCATION_SORT_DRAG_TYPE || !dragData.key) return;
+
+    event.stopPropagation();
+
+    const target = this.#locationFromDragEvent(event);
+    const list = this.element?.querySelector('.allLocations');
+    if (!target || !list) return;
+
+    const keys = [...list.querySelectorAll('.group-location')].map((el) => el.dataset.locationKey);
+    const fromIndex = keys.indexOf(dragData.key);
+    const toIndex = keys.indexOf(target.dataset.locationKey);
+    if (fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
+
+    const rect = target.getBoundingClientRect();
+    const midY = rect.top + (rect.height / 2);
+    const [movedKey] = keys.splice(fromIndex, 1);
+    const adjustedToIndex = keys.indexOf(target.dataset.locationKey);
+    keys.splice(event.clientY < midY ? adjustedToIndex : adjustedToIndex + 1, 0, movedKey);
+
+    await this.actor.system.setLocationOrder(keys);
   }
 
   #onRelatedActorUpdate(doc) {

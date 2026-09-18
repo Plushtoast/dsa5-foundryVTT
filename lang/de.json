@@ -2207,6 +2207,7 @@
     "locationKindDepot": "Lagerdepot (Truhe, Basis, …)",
     "locationKindVehicle": "Fahrzeug (Schiff, Wagen, …)",
     "locationKindHint": "Fahrzeuge unterstützen Reisegeschwindigkeit, Strukturpunkte und Bordwaffen. Ein einfaches Depot ist nur gemeinsamer Lagerraum.",
+    "dragToReorder": "Zum Umsortieren der Depots ziehen",
     "dropLocationsHint": "Einen Fahrzeug-, Händler- oder Schatzakteur hierher ziehen um ihn als Depot hinzuzufügen.",
     "dropMemberHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",
     "dropMembersHint": "Einen Charakter, NSC oder Kreatur hierher ziehen um ihn zur Gruppe hinzuzufügen.",

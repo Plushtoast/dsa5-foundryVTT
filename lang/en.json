@@ -2205,6 +2205,7 @@
     "locationKindDepot": "Storage depot (chest, base, …)",
     "locationKindVehicle": "Vehicle (ship, wagon, …)",
     "locationKindHint": "Vehicles support travel speeds, structure points, and board weapons. A plain depot is only shared storage.",
+    "dragToReorder": "Drag to reorder depots",
     "dropLocationsHint": "Drop a vehicle, merchant, or loot actor here to add it as a depot.",
     "dropMemberHint": "Drop a character, NPC or creature here to add it to the group.",
     "dropMembersHint": "Drop a character, NPC or creature here to add it to the group.",

@@ -280,12 +280,12 @@ export default class GroupData extends ActorDataModel {
       return;
     }
     const id = foundry.utils.randomID();
-    const maxSort = Math.max(0, ...Object.values(this.locations).map((l) => l.sort));
+    const maxSort = Math.max(0, ...Object.values(this.locations).map((l) => l.sort ?? 0));
     await this.parent.update({
       [`system.locations.${id}`]: {
         type,
         actorUuid: actor.uuid,
-        sort: maxSort + 1,
+        sort: maxSort + CONST.SORT_INTEGER_DENSITY,
       },
     });
   }
@@ -336,6 +336,50 @@ export default class GroupData extends ActorDataModel {
 
   async removeLocation(key) {
     await this.parent.update({ [`system.locations.${key}`]: _del });
+  }
+
+  /**
+   * Persist depot display order from the visible location keys.
+   * Keys not listed keep their relative slots (e.g. unresolved actors).
+   * @param {string[]} orderedVisibleKeys
+   */
+  async setLocationOrder(orderedVisibleKeys) {
+    const update = this.constructor.buildLocationSortUpdate(this.locations, orderedVisibleKeys);
+    if (foundry.utils.isEmpty(update)) return;
+    await this.parent.update(update);
+  }
+
+  /**
+   * @param {Record<string, {sort?: number}>} locations
+   * @param {string[]} orderedVisibleKeys
+   * @returns {Record<string, number>}
+   */
+  static buildLocationSortUpdate(locations, orderedVisibleKeys) {
+    const current = locations ?? {};
+    const uniqueVisible = [...new Set((orderedVisibleKeys ?? []).filter((key) => key in current))];
+    if (!uniqueVisible.length) return {};
+
+    const visibleSet = new Set(uniqueVisible);
+    const resultKeys = [];
+    let visibleIndex = 0;
+    const sorted = Object.entries(current)
+      .sort(([, a], [, b]) => (Number(a?.sort) || 0) - (Number(b?.sort) || 0));
+
+    for (const [key] of sorted) {
+      if (!visibleSet.has(key)) {
+        resultKeys.push(key);
+        continue;
+      }
+      const nextKey = uniqueVisible[visibleIndex++];
+      if (nextKey) resultKeys.push(nextKey);
+    }
+
+    const density = CONST.SORT_INTEGER_DENSITY;
+    const update = {};
+    resultKeys.forEach((key, index) => {
+      update[`system.locations.${key}.sort`] = index * density;
+    });
+    return update;
   }
 
   async moveLocationItem(fromKey, toKey, itemId) {
