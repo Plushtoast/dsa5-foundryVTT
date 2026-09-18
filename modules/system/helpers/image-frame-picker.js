@@ -133,6 +133,18 @@ export default class ImageFramePicker {
     };
   }
 
+  /**
+   * Position of a value on a range slider, 0–1 along the track.
+   * Used to mark center (X/Y = 0) or zoom origin (100).
+   */
+  static sliderTickRatio(value, min, max) {
+    const lo = Number(min);
+    const hi = Number(max);
+    const span = hi - lo;
+    if (!(span > 0) || !Number.isFinite(span)) return 0.5;
+    return Math.max(0, Math.min(1, (Number(value) - lo) / span));
+  }
+
   static isDefault(frame, defaults = ImageFramePicker.DEFAULT) {
     const isBanner = Number(frame?.v) === ImageFramePicker.FRAME_VERSION;
     const normalized = isBanner
@@ -280,7 +292,19 @@ export default class ImageFramePicker {
       offsetStep: limits.offsetStep ?? 1,
       zoomMin: limits.zoomMin,
       zoomMax: limits.zoomMax,
+      offsetTick: ImageFramePicker.sliderTickRatio(ImageFramePicker.DEFAULT.offsetX, limits.offsetXMin, limits.offsetXMax),
+      zoomTick: ImageFramePicker.sliderTickRatio(ImageFramePicker.DEFAULT.zoom, limits.zoomMin, limits.zoomMax),
     };
+  }
+
+  /**
+   * Reset one axis to its default (center X/Y, origin zoom) without touching the others.
+   * Banner pan may still clamp if the new zoom no longer allows the current offsets.
+   */
+  resetAxis(prop, defaults = ImageFramePicker.DEFAULT) {
+    if (prop !== 'offsetX' && prop !== 'offsetY' && prop !== 'zoom') return;
+    const value = defaults[prop] ?? ImageFramePicker.DEFAULT[prop];
+    this.setFrame({ ...this.frame, [prop]: value });
   }
 
   setFrame(frame, { silent = false } = {}) {
@@ -385,6 +409,14 @@ export default class ImageFramePicker {
     };
     window.addEventListener('pointerup', this.#pointerUp);
     window.addEventListener('pointercancel', this.#pointerUp);
+
+    for (const btn of root.querySelectorAll('[data-frame-reset]')) {
+      btn.addEventListener('click', (ev) => {
+        if (!this.isInteractive()) return;
+        ev.preventDefault();
+        this.resetAxis(ev.currentTarget.dataset.frameReset);
+      });
+    }
 
     const flipBtn = root.querySelector('[data-frame-flip]');
     flipBtn?.addEventListener('click', (ev) => {

@@ -74,14 +74,50 @@
       font-style: italic;
     }
 
+    &__slider-wrap {
+      --tick: 0.5;
+      --tick-inset: 6px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: calc(var(--tick-inset) + (100% - 2 * var(--tick-inset)) * var(--tick));
+        top: 50%;
+        width: 2px;
+        height: 12px;
+        transform: translate(-50%, -50%);
+        background: var(--bg-contrast-color);
+        opacity: 0.45;
+        border-radius: 1px;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .dsa-image-frame__slider {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+      }
+    }
+
     &__controls {
       width: 100%;
       max-width: 420px;
       padding: 0 8px;
 
       label {
-        min-width: 44px;
+        flex: 0 0 auto;
+        min-width: 6.5em;
+        white-space: nowrap;
         font-weight: bold;
+      }
+
+      .dsadesignbutton {
+        flex: 0 0 auto;
       }
 
       .dsadesignbutton.active {

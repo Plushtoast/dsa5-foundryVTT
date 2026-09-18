@@ -15,22 +15,35 @@
   <div class="dsa-image-frame__controls flexcol gap4px">
     <div class="flexrow flexAlignCenter gap4px">
       <label class="flex0">X</label>
-      <input type="range" class="dsa-image-frame__slider flex1" data-prop="offsetX"
-        min="{{offsetXMin}}" max="{{offsetXMax}}" step="{{offsetStep}}" value="{{frame.offsetX}}" />
+      <div class="dsa-image-frame__slider-wrap flex1" style="--tick: {{offsetTick}};">
+        <input type="range" class="dsa-image-frame__slider" data-prop="offsetX"
+          min="{{offsetXMin}}" max="{{offsetXMax}}" step="{{offsetStep}}" value="{{frame.offsetX}}" />
+      </div>
+      <button type="button" class="dsadesignbutton noBorder icon fas fa-arrows-left-right-to-line"
+        data-frame-reset="offsetX" data-tooltip="IMAGEFRAME.centerX"></button>
     </div>
     <div class="flexrow flexAlignCenter gap4px">
       <label class="flex0">Y</label>
-      <input type="range" class="dsa-image-frame__slider flex1" data-prop="offsetY"
-        min="{{offsetYMin}}" max="{{offsetYMax}}" step="{{offsetStep}}" value="{{frame.offsetY}}" />
+      <div class="dsa-image-frame__slider-wrap flex1" style="--tick: {{offsetTick}};">
+        <input type="range" class="dsa-image-frame__slider" data-prop="offsetY"
+          min="{{offsetYMin}}" max="{{offsetYMax}}" step="{{offsetStep}}" value="{{frame.offsetY}}" />
+      </div>
+      <button type="button" class="dsadesignbutton noBorder icon fas fa-arrows-left-right-to-line"
+        data-frame-reset="offsetY" data-tooltip="IMAGEFRAME.centerY"></button>
     </div>
     <div class="flexrow flexAlignCenter gap4px">
       <label class="flex0">{{localize 'DSA5HOTBARCONFIG.avatarZoom'}}</label>
-      <input type="range" class="dsa-image-frame__slider flex1" data-prop="zoom"
-        min="{{zoomMin}}" max="{{zoomMax}}" value="{{frame.zoom}}" />
+      <div class="dsa-image-frame__slider-wrap flex1" style="--tick: {{zoomTick}};">
+        <input type="range" class="dsa-image-frame__slider" data-prop="zoom"
+          min="{{zoomMin}}" max="{{zoomMax}}" value="{{frame.zoom}}" />
+      </div>
+      <button type="button" class="dsadesignbutton noBorder icon fas fa-undo"
+        data-frame-reset="zoom" data-tooltip="IMAGEFRAME.resetZoom"></button>
     </div>
     {{#if layerModel}}
     <div class="flexrow flexAlignCenter gap4px">
       <label class="flex0">{{localize 'IMAGEFRAME.flipHorizontal'}}</label>
+      <div class="flex1"></div>
       <button type="button" class="dsadesignbutton noBorder icon fas fa-left-right{{#if flipX}} active{{/if}}"
         data-frame-flip="1" data-tooltip="IMAGEFRAME.flipHorizontalHint"></button>
     </div>
