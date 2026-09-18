@@ -42,6 +42,14 @@
   --dsa-shop-hero-scrim-player: linear-gradient(180deg, rgba(12, 10, 8, 0.82) 0%, rgba(12, 10, 8, 0.58) 100%);
   --dsa-shop-hero-player-fg: #f4efe6;
   --dsa-banner-aspect: 480 / 110;
+  --dsa-skill-body: #4f6d65;
+  --dsa-skill-social: #85302e;
+  --dsa-skill-knowledge: #4b6585;
+  --dsa-skill-trade: #cda25e;
+  --dsa-skill-nature: #535829;
+  --dsa-skill-regeneration: #2f6f63;
+  --dsa-hotbar-chip-bg: #f4eee6;
+  --dsa-hotbar-chip-text: #1a1510;
 }
 
 @font-face {
@@ -2294,6 +2302,21 @@ a.img-entity-link {
     margin: 0 -4px;
     padding: 3px 4px;
     border-radius: 3px;
+  }
+}
+
+.roll-request-time-advance {
+  range-picker {
+    flex: 1;
+    min-width: 0;
+
+    &[disabled] {
+      pointer-events: none;
+    }
+  }
+
+  .roll-request-night-hours {
+    white-space: nowrap;
   }
 }
 
@@ -5192,33 +5215,33 @@ select.noAppearance {
       color: var(--bg-contrast-color);
 
       &.body {
-        background: rgb(79, 109, 101);
         box-shadow: none;
-        background: linear-gradient(90deg, rgba(79, 109, 101, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(90deg, var(--dsa-skill-body) 0%, var(--dsa-hotbar-chip-bg) 100%);
       }
 
       &.social {
-        background: rgb(133, 48, 46);
         box-shadow: none;
-        background: linear-gradient(90deg, rgba(133, 48, 46, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(90deg, var(--dsa-skill-social) 0%, var(--dsa-hotbar-chip-bg) 100%);
       }
 
       &.knowledge {
-        background: rgb(75, 101, 133);
         box-shadow: none;
-        background: linear-gradient(90deg, rgba(75, 101, 133, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(90deg, var(--dsa-skill-knowledge) 0%, var(--dsa-hotbar-chip-bg) 100%);
       }
 
       &.trade {
-        background: rgb(205, 162, 94);
         box-shadow: none;
-        background: linear-gradient(90deg, rgba(205, 162, 94, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(90deg, var(--dsa-skill-trade) 0%, var(--dsa-hotbar-chip-bg) 100%);
       }
 
       &.nature {
-        background: rgb(83, 88, 41);
         box-shadow: none;
-        background: linear-gradient(90deg, rgba(83, 88, 41, 1) 0%, rgba(255, 255, 255, 1) 100%);
+        background: linear-gradient(90deg, var(--dsa-skill-nature) 0%, var(--dsa-hotbar-chip-bg) 100%);
+      }
+
+      &.regeneration {
+        box-shadow: none;
+        background: linear-gradient(90deg, var(--dsa-skill-regeneration) 0%, var(--dsa-hotbar-chip-bg) 100%);
       }
     }
 

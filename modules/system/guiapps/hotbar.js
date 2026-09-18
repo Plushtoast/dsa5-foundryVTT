@@ -5,7 +5,6 @@ import CombatskillData from '../../data/item/combatskill.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import RuleChaos from '../rules/rule_chaos.js';
 import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
-import { tinyNotification } from '../helpers/view_helper.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
@@ -88,24 +87,23 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     });
 
     const fn = (ev) => {
-      if (!html.find('.sections').is(':hover')) return;
+      if (!html.find('#action-bar').is(':hover')) return;
+      if (ev.target?.closest?.('input, textarea, [contenteditable="true"]')) return;
 
       this.filterSections(ev, html);
       return false;
     };
-    const filterOff = () => {
-      if (html.find('.sections').is(':hover')) return;
+    const filterOff = (ev) => {
+      if (ev.currentTarget.contains(ev.relatedTarget)) return;
 
       $(document).off('keydown.sectionFilter', fn);
-      this.searching = '';
-      html.find('.macro,.primary,.sections .skillItems').removeClass('dsahidden');
-      html.find('.longLayout').removeClass('longLayout');
+      this.#clearHotbarSearch(html);
     };
-    html.find('.sections').on('pointerover', () => {
+    html.find('#action-bar').on('pointerenter', () => {
       $(document).off('keydown.sectionFilter', fn).on('keydown.sectionFilter', fn);
     });
 
-    html.find('.sections').on('pointerout', filterOff);
+    html.find('#action-bar').on('pointerleave', filterOff);
     html.find('.primary,.weapon,[data-category="plain"],.hotbar-avatar').on('pointerover', (ev) => this.#betterTooltip(ev));
 
     html.find('.itdarkness input').on('change', (ev) => this.tokenHotbar.changeDarkness(ev));
@@ -536,37 +534,113 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     this.searching = this.searching || '';
 
     const key = ev.key ?? '';
+    if (key === 'Escape') {
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.#clearHotbarSearch(html);
+      return false;
+    }
     if (key === 'Backspace' || ev.which === 8) this.searching = this.searching.slice(0, -1);
     else if (key.length === 1 && /\p{L}|\p{N}/u.test(key)) this.searching += key;
     else return;
 
     ev.preventDefault();
     ev.stopPropagation();
+    this.#applyHotbarSearch(html);
+    return false;
+  }
 
-    const search = this.searching.toLowerCase();
-    tinyNotification(search);
-
+  #applyHotbarSearch(html) {
+    const search = (this.searching || '').toLowerCase();
     const $sections = html.find('.sections').toggleClass('longLayout', !!search);
+    const query = this.element?.querySelector('.hotbar-search-query');
+    const queryText = query?.querySelector('.hotbar-search-text');
+    if (query) {
+      query.classList.toggle('dsahidden', !search);
+      if (queryText) queryText.textContent = this.searching || '';
+    }
 
     $sections.find('.hSection').each((_, sec) => {
       const $primaries = $(sec).find('.primary');
-      let hidden = 0;
+      let visible = 0;
 
       $primaries.each((_, el) => {
         if (el.dataset.skipfilter) {
-          $(el).removeClass('dsahidden');
+          el.classList.remove('dsahidden');
+          this.#restoreSearchLabel(el);
+          el.style.order = '';
           return;
         }
-        const name = (el.dataset.name || '').toLowerCase().trim();
-        const isHidden = search && name.indexOf(search) === -1;
-        $(el).toggleClass('dsahidden', isHidden);
-        if (isHidden) hidden++;
+
+        const label = this.#hotbarSearchLabel(el);
+        const haystack = label.toLowerCase();
+        const isHidden = !!search && !haystack.includes(search);
+        el.classList.toggle('dsahidden', isHidden);
+        if (isHidden) {
+          this.#restoreSearchLabel(el);
+          el.style.order = '';
+          return;
+        }
+
+        visible += 1;
+        this.#paintSearchLabel(el, label, search);
+        el.style.order = search && haystack.startsWith(search) ? '0' : '1';
       });
 
-      $(sec).toggleClass('dsahidden', hidden === $primaries.length);
+      const noHits = !!search && visible === 0;
+      sec.classList.toggle('dsahidden', noHits);
+      sec.classList.toggle('searchHit', !!search && visible > 0);
     });
+  }
 
-    return false;
+  #hotbarSearchLabel(el) {
+    const nameEl = el.querySelector('.nameContent');
+    if (!el.dataset.searchLabel) {
+      el.dataset.searchLabel = (nameEl?.textContent || el.dataset.name || '').trim();
+    }
+    return el.dataset.searchLabel;
+  }
+
+  #paintSearchLabel(el, label, search) {
+    const nameEl = el.querySelector('.nameContent');
+    if (!nameEl) return;
+    if (!search) {
+      nameEl.textContent = label;
+      return;
+    }
+    const idx = label.toLowerCase().indexOf(search);
+    if (idx < 0) {
+      nameEl.textContent = label;
+      return;
+    }
+    const before = foundry.utils.escapeHTML(label.slice(0, idx));
+    const match = foundry.utils.escapeHTML(label.slice(idx, idx + search.length));
+    const after = foundry.utils.escapeHTML(label.slice(idx + search.length));
+    nameEl.innerHTML = `${before}<span class="searchMatch">${match}</span>${after}`;
+  }
+
+  #restoreSearchLabel(el) {
+    const nameEl = el.querySelector('.nameContent');
+    if (!nameEl) return;
+    if (el.dataset.searchLabel) nameEl.textContent = el.dataset.searchLabel;
+  }
+
+  #clearHotbarSearch(html) {
+    this.searching = '';
+    const root = html?.jquery ? html : $(this.element);
+    root.find('.macro, .primary, .sections .skillItems').removeClass('dsahidden searchHit');
+    root.find('.longLayout').removeClass('longLayout');
+    root.find('.hSection').removeClass('searchHit');
+    root.find('.primary').each((_, el) => {
+      this.#restoreSearchLabel(el);
+      el.style.order = '';
+    });
+    const query = this.element?.querySelector('.hotbar-search-query');
+    if (query) {
+      query.classList.add('dsahidden');
+      const queryText = query.querySelector('.hotbar-search-text');
+      if (queryText) queryText.textContent = '';
+    }
   }
 
   #prepareActorActions(actor, groups) {

@@ -45,6 +45,45 @@ export class DSAClock {
             + components.second;
     }
 
+    /** Typical overnight rest; clamped to the calendar day in {@link nightRestHours}. */
+    static NIGHT_REST_HOURS = 8;
+
+    static nightRestHours() {
+        return Math.min(this.NIGHT_REST_HOURS, this.hoursPerDay);
+    }
+
+    /**
+     * Convert a duration into world-time seconds using the active calendar day length.
+     * @param {number|{seconds?:number, minutes?:number, hours?:number, days?:number}} amount
+     * @returns {number}
+     */
+    static toSeconds(amount = 0) {
+        if (typeof amount === 'number') return Math.round(amount) || 0;
+        const seconds = Number(amount.seconds) || 0;
+        const minutes = Number(amount.minutes) || 0;
+        const hours = Number(amount.hours) || 0;
+        const days = Number(amount.days) || 0;
+        return Math.round(
+            seconds
+            + minutes * this.secondsPerMinute
+            + hours * this.secondsPerHour
+            + days * this.secondsPerDay,
+        );
+    }
+
+    /**
+     * Advance (or rewind) world time. Returns the seconds actually applied (0 if none).
+     * Callers that should stay quiet must not post chat; this only moves `game.time`.
+     * @param {number|{seconds?:number, minutes?:number, hours?:number, days?:number}} amount
+     * @returns {Promise<number>}
+     */
+    static async advance(amount) {
+        const seconds = this.toSeconds(amount);
+        if (!seconds) return 0;
+        await game.time.advance(seconds);
+        return seconds;
+    }
+
     static settings() {
         return game.settings.get('dsa5', this.SETTING) ?? {};
     }

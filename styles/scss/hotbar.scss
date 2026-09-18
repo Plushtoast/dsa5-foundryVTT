@@ -424,6 +424,44 @@
     }
   }
 
+  .hotbar-search-query {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    margin-left: auto;
+    padding: 0 8px;
+    height: 28px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--dsa-hotbar-chip-bg);
+    color: var(--dsa-hotbar-chip-text);
+    font-size: 12px;
+    font-weight: 600;
+
+    &.dsahidden {
+      display: none;
+    }
+
+    i {
+      opacity: 0.7;
+    }
+
+    .hotbar-search-text {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    kbd {
+      margin-left: 2px;
+      padding: 0 4px;
+      font-size: 10px;
+      opacity: 0.7;
+    }
+  }
+
   .hotbarv4-hotbar-inner {
     width: var(--hotbar-width);
     max-width: var(--hotbar-width);
@@ -509,21 +547,98 @@
     }
   }
 
-  .longLayout .hSection li {
-    flex: 0 0 var(--hotbar-size);
-    text-align: center;
-    max-width: var(--hotbar-size);
+  .longLayout {
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: calc(var(--base-bar-height) * 4);
 
-    div {
-      display: none;
-    }
+    .hSection {
+      height: auto;
+      max-height: none;
+      min-height: var(--base-bar-height);
 
-    .nameContent {
-      line-height: 45px;
-      display: block;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: black;
+      &.searchHit,
+      &:not(.collapsed):not(.dsahidden) {
+        width: auto;
+        flex: 1 1 100%;
+      }
+
+      > li {
+        flex: 0 1 auto;
+        width: auto;
+        min-width: 132px;
+        max-width: 220px;
+        height: var(--base-bar-height);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 8px 0 4px;
+        text-align: left;
+        background: linear-gradient(90deg, rgba(60, 50, 40, 0.88) 0%, var(--dsa-hotbar-chip-bg) 52%);
+
+        &.dsahidden {
+          display: none;
+        }
+
+        > div,
+        > img.slot-icon {
+          display: block;
+          position: relative;
+          flex: 0 0 32px;
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+        }
+
+        .key {
+          display: none;
+        }
+
+        .nameContent {
+          display: block;
+          flex: 1 1 auto;
+          min-width: 0;
+          line-height: 1.2;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: var(--dsa-hotbar-chip-text);
+          font-weight: 600;
+          font-size: 12px;
+          text-shadow: none;
+        }
+
+        .searchMatch {
+          background: rgba(255, 214, 102, 0.92);
+          color: var(--dsa-hotbar-chip-text);
+          border-radius: 2px;
+          padding: 0 1px;
+        }
+
+        &:hover {
+          background: linear-gradient(90deg, rgba(60, 50, 40, 0.88) 0%, var(--dsa-hotbar-chip-bg) 52%);
+          filter: brightness(1.08);
+        }
+      }
+
+      .skillgm,
+      .skill {
+        $search-skill-colors: (
+          body: var(--dsa-skill-body),
+          social: var(--dsa-skill-social),
+          knowledge: var(--dsa-skill-knowledge),
+          trade: var(--dsa-skill-trade),
+          nature: var(--dsa-skill-nature),
+          regeneration: var(--dsa-skill-regeneration),
+        );
+
+        @each $type, $color in $search-skill-colors {
+          &.#{$type},
+          &.#{$type}:hover {
+            background: linear-gradient(90deg, $color 0%, var(--dsa-hotbar-chip-bg) 100%);
+          }
+        }
+      }
     }
   }
 
@@ -573,26 +688,27 @@
     .skillgm,
     .skill {
       .nameContent {
-        color: black;
+        color: var(--dsa-hotbar-chip-text);
       }
 
       $skill-colors: (
-        body: #4f6d65,
-        social: #85302e,
-        knowledge: #4b6585,
-        trade: #cda25e,
-        nature: #535829,
+        body: var(--dsa-skill-body),
+        social: var(--dsa-skill-social),
+        knowledge: var(--dsa-skill-knowledge),
+        trade: var(--dsa-skill-trade),
+        nature: var(--dsa-skill-nature),
+        regeneration: var(--dsa-skill-regeneration),
       );
 
-    @each $type, $color in $skill-colors {
-      &.#{$type} {
-        background: linear-gradient(90deg, $color 0%, #fff 100%);
-        box-shadow: none;
+      @each $type, $color in $skill-colors {
+        &.#{$type} {
+          background: linear-gradient(90deg, $color 0%, var(--dsa-hotbar-chip-bg) 100%);
+          box-shadow: none;
+        }
       }
     }
-  }
 
-  >li {
+    > li {
     width: var(--base-bar-height);
     height: var(--base-bar-height);
     border: 1px solid rgba(63, 49, 40, 0.8);
