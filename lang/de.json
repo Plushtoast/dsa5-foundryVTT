@@ -569,6 +569,11 @@
         "label": "Widget-Uhrzeit",
         "use24Hour": "24-Stunden-Format"
       },
+      "rememberAutoTime": {
+        "legend": "Automatischer Zeitlauf",
+        "label": "Automatischen Zeitlauf zwischen Sitzungen merken",
+        "hint": "Stellt den Uhr-Knopf nach einem Neustart wieder her. War er aktiv, läuft die Zeit weiter, sobald die Welt nicht pausiert ist (außer im Kampf). Lass diese Option aus, wenn die Welt zwischen Sitzungen unpausiert bleibt — sonst laufen Datum, Licht und Wetter unbeaufsichtigt weiter."
+      },
       "season": "Jahreszeit",
       "second": "Sekunde",
       "weather": "Wetter",

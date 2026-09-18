@@ -569,6 +569,11 @@
         "label": "Widget Time Format",
         "use24Hour": "24-hour format"
       },
+      "rememberAutoTime": {
+        "legend": "Automatic time",
+        "label": "Remember automatic time between sessions",
+        "hint": "Restores the clock button after a reload. If it was on, time starts running again as soon as the world is not paused (except in combat). Leave this off if a hosted world stays unpaused between sessions — otherwise date, lighting, and weather keep drifting unattended."
+      },
       "season": "Season",
       "second": "Second",
       "weather": "Weather",

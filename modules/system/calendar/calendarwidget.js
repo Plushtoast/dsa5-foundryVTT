@@ -1,8 +1,9 @@
 import DSA5_Utility from "../helpers/utility-dsa5.js";
+import { DSAClock } from "./clock.js";
 
 export class CalendarWidget extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
-    static SECONDS_PER_HOUR = 3600;
-    static SECONDS_PER_DAY = 24 * this.SECONDS_PER_HOUR;
+    static get SECONDS_PER_HOUR() { return DSAClock.secondsPerHour; }
+    static get SECONDS_PER_DAY() { return DSAClock.secondsPerDay; }
     static ADVANCE_MENU_LEAVE_MS = 350;
     /** Floor for scrub length so tiny advances still read as motion */
     static ANIMATION_MS_MIN = 400;
@@ -73,8 +74,16 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     _animationToken = 0;
     _animationTime = null;
 
+    get clock() {
+        return game.dsa5.apps.Clock;
+    }
+
+    get toggleAutoTime() {
+        return this.clock.enabled;
+    }
+
     static get dayTimes() {
-        const calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+        const calendarConfig = DSAClock.settings();
         const autoTimes = calendarConfig.autoDayTimes && DSA5_Utility.moduleEnabled('dsa5-atlas');
 
         if (autoTimes) return game.dsa5.atlas.seasonsCalculator.autoDayTimes();
@@ -83,14 +92,14 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     }
 
     static dayTimeBackground(components) {
-        const maxHoursPerDay = game.time.calendar.days.hoursPerDay;
+        const maxHoursPerDay = DSAClock.hoursPerDay;
         const calendarConfig = this.dayTimes;
         const timeGradientsConfig = foundry.utils.mergeObject({
             'dayStart': 0,
             'dayEnd': maxHoursPerDay,
         }, calendarConfig);
 
-        const comparisonTime = components.hour + (components.minute / 60) + (components.second / 3600);
+        const comparisonTime = components.hour + (components.minute / DSAClock.minutesPerHour) + (components.second / DSAClock.secondsPerHour);
 
         return CalendarWidget.timeGradients.find(g => {
             const from = timeGradientsConfig[g.from] || 0;
@@ -431,7 +440,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
 
         const calendar = game.time.calendar;
         const CalendarClass = calendar.constructor;
-        const use24HourFormat = game.settings.get('dsa5', 'calendarSettings').use24HourFormat;
+        const use24HourFormat = DSAClock.settings().use24HourFormat;
         let dateString = use24HourFormat
             ? CalendarClass.format24Hour(calendar, components)
             : CalendarClass.formatPraiosGefaellig(calendar, components);
@@ -529,11 +538,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const secondsInDay = this.constructor.calculateSecondsInDay(components);
 
         data.components = components;
-        const use24HourFormat = game.settings.get('dsa5', 'calendarSettings').use24HourFormat;
+        const use24HourFormat = DSAClock.settings().use24HourFormat;
         const dateFormat = use24HourFormat ? 'format24Hour' : 'formatPraiosGefaellig';
         data.dateString = await game.time.calendar.format(game.time.worldTime, dateFormat);
         data.dateTooltip = await game.time.calendar.format(game.time.worldTime, 'formatSeason');
-        data.autoLightEnabled = game.settings.get('dsa5', 'calendarSettings').lightByDayTime;
+        data.autoLightEnabled = DSAClock.settings().lightByDayTime;
         data.isGM = game.user.isGM;
         data.dayTimeBackground = this.constructor.dayTimeBackground(components);
         data.dayTimeIcon = data.dayTimeBackground.icon || 'fas fa-sun';
@@ -551,6 +560,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             autoWeatherEnabled: data.autoWeatherEnabled,
         });
         data.dayProgress = Math.round(secondsInDay / this.constructor.SECONDS_PER_DAY * 100);
+        this.clock.ensureInitialized();
         data.toggleAutoTime = this.toggleAutoTime;
 
         if (!data.isGM) {
@@ -587,9 +597,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     }
 
     static calculateSecondsInDay(components) {
-        return components.hour * this.SECONDS_PER_HOUR +
-            components.minute * 60 +
-            components.second;
+        return DSAClock.secondsInDay(components);
     }
 
     /**
@@ -648,34 +656,45 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     static dayBack(ev) { this.timeAdvance(-this.constructor.SECONDS_PER_DAY, ev); }
     static hours6Back(ev) { this.timeAdvance(-6 * this.constructor.SECONDS_PER_HOUR, ev); }
     static hourBack(ev) { this.timeAdvance(-this.constructor.SECONDS_PER_HOUR, ev); }
-    static mins30Back(ev) { this.timeAdvance(-1800, ev); }
-    static minBack(ev) { this.timeAdvance(-60, ev); }
-    static minForward(ev) { this.timeAdvance(60, ev); }
-    static mins30Forward(ev) { this.timeAdvance(1800, ev); }
+    static mins30Back(ev) { this.timeAdvance(-30 * DSAClock.secondsPerMinute, ev); }
+    static minBack(ev) { this.timeAdvance(-DSAClock.secondsPerMinute, ev); }
+    static minForward(ev) { this.timeAdvance(DSAClock.secondsPerMinute, ev); }
+    static mins30Forward(ev) { this.timeAdvance(30 * DSAClock.secondsPerMinute, ev); }
     static hourForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_HOUR, ev); }
     static hours6Forward(ev) { this.timeAdvance(6 * this.constructor.SECONDS_PER_HOUR, ev); }
     static dayForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_DAY, ev); }
     static weekForward(ev) { this.timeAdvance(this.constructor.SECONDS_PER_DAY * 7, ev); }
 
+    static calendarSettings() {
+        return DSAClock.settings();
+    }
+
+    setAutoTime(enabled) {
+        return this.clock.setEnabled(enabled);
+    }
+
+    restoreRememberedAutoTime() {
+        return this.clock.restoreRemembered();
+    }
+
     static onToggleAutoTime(ev, target) {
         if (!DSA5_Utility.isActiveGM()) return;
 
-        this.toggleAutoTime = !this.toggleAutoTime;
+        this.setAutoTime(!this.toggleAutoTime);
 
         target.classList.toggle('fas', this.toggleAutoTime);
         target.classList.toggle('far', !this.toggleAutoTime);
         target.classList.toggle('is-active', this.toggleAutoTime);
         target.setAttribute('aria-pressed', this.toggleAutoTime ? 'true' : 'false');
 
-        this.autoInterval = this.toggleAutoTime ? setInterval(() => {
-            if (!game.paused && !game.combat) game.time.advance(15);
-        }, 15000) : clearInterval(this.autoInterval);
+        void DSAClock.persistAutoTimeEnabled(this.toggleAutoTime);
     }
 
     async _onRender(context, options) {
         await super._onRender(context, options);
 
         this.#syncCombatMinimized();
+        this.clock.resume();
 
         if (!game.user.isGM) return;
 
@@ -686,13 +705,16 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         this._restoreAdvanceMenuAfterRerender();
     }
 
-    static async toggleAutoLight(ev, target) {
-        const calendarSettings = game.settings.get('dsa5', 'calendarSettings');
-        calendarSettings.lightByDayTime = !calendarSettings.lightByDayTime;
+    _onClose(options) {
+        this.clock.stop();
+        super._onClose(options);
+    }
 
-        await game.settings.set('dsa5', 'calendarSettings', calendarSettings);
-        target.classList.toggle('fa-toggle-on', calendarSettings.lightByDayTime);
-        target.classList.toggle('fa-toggle-off', !calendarSettings.lightByDayTime);
+    static async toggleAutoLight(ev, target) {
+        const calendarSettings = DSAClock.settings();
+        const updated = await DSAClock.patchSettings({ lightByDayTime: !calendarSettings.lightByDayTime });
+        target.classList.toggle('fa-toggle-on', updated.lightByDayTime);
+        target.classList.toggle('fa-toggle-off', !updated.lightByDayTime);
     }
 
     static composeWeatherToggleTooltip(weatherTooltip, autoWeatherEnabled) {
@@ -819,11 +841,11 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     _updateTimeIndicator(container, percentage) {
         const secondsInDay = this.constructor.SECONDS_PER_DAY * percentage / 100.0;
         const hour = Math.floor(secondsInDay / this.constructor.SECONDS_PER_HOUR) || 0;
-        const minute = Math.floor((secondsInDay % this.constructor.SECONDS_PER_HOUR) / 60) || 0;
-        const second = Math.floor(secondsInDay % 60) || 0;
+        const minute = Math.floor((secondsInDay % this.constructor.SECONDS_PER_HOUR) / DSAClock.secondsPerMinute) || 0;
+        const second = Math.floor(secondsInDay % DSAClock.secondsPerMinute) || 0;
 
         const dayTimeBackground = this.constructor.dayTimeBackground({ hour, minute, second });
-        const use24HourFormat = game.settings.get('dsa5', 'calendarSettings').use24HourFormat;
+        const use24HourFormat = DSAClock.settings().use24HourFormat;
         let timeString;
         if (use24HourFormat) {
             timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:${second.toString().padStart(2, '0')}`;

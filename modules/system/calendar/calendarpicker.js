@@ -8,6 +8,7 @@ import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 import { QuestLogFeature } from './questlog.js';
 
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import { DSAClock } from './clock.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 const EVENTS_VIEW_MODES = ['timeline', 'calendar'];
@@ -311,23 +312,26 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _resetKeys(setting, keys) {
-    const settings = game.settings.get('dsa5', setting);
+    const settings = setting === DSAClock.SETTING
+      ? DSAClock.settings()
+      : game.settings.get('dsa5', setting);
     const defaultSettings = game.settings.settings.get(`dsa5.${setting}`).default;
     for (const key of keys) {
       foundry.utils.setProperty(settings, key, foundry.utils.getProperty(defaultSettings, key));
     }
-    await game.settings.set('dsa5', setting, settings);
+    if (setting === DSAClock.SETTING) await DSAClock.setSettings(settings);
+    else await game.settings.set('dsa5', setting, settings);
   }
 
   static async #onResetAutomation(ev, target) {
     const defaultKeys = ['lightByDayTime', 'moonAddsLight', 'moon', 'dayDarknessAdjust'];
-    await this._resetKeys('calendarSettings', defaultKeys);
+    await this._resetKeys(DSAClock.SETTING, defaultKeys);
     this.render({ force: true, parts: ['config'] });
   }
 
   static async #onResetDayTimes(ev, target) {
     const defaultKeys = ['dawn', 'morning', 'noon', 'afternoon', 'sunset', 'night'];
-    await this._resetKeys('calendarSettings', defaultKeys);
+    await this._resetKeys(DSAClock.SETTING, defaultKeys);
     this.render({ force: true, parts: ['config'] });
   }
 
@@ -451,7 +455,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     context.calendarSetting = game.settings.settings.get('dsa5.calendar');
     context.selectedCalendar = game.settings.get('dsa5', 'calendar');
     context.maxHoursPerDay = calendar.days.hoursPerDay;
-    context.calendarConfig = game.settings.get('dsa5', 'calendarSettings');
+    context.calendarConfig = DSAClock.settings();
     context.configTabs = this._prepareTabs('config');
 
     context.featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
@@ -926,9 +930,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const isCheckbox = ev.target.type === 'checkbox';
     const value = isCheckbox ? ev.target.checked : ev.target.value;
     const setting = ev.target.name;
-    const settingName = ev.target.dataset.settingName || 'calendarSettings';
-    const settings = game.settings.get('dsa5', settingName);
+    const settingName = ev.target.dataset.settingName || DSAClock.SETTING;
+    const settings = settingName === DSAClock.SETTING
+      ? DSAClock.settings()
+      : game.settings.get('dsa5', settingName);
     foundry.utils.setProperty(settings, setting, value);
+    if (settingName === DSAClock.SETTING && setting === 'rememberAutoTime' && value) {
+      settings.autoTimeEnabled = !!game.dsa5.apps.Clock?.enabled;
+    }
     await game.settings.set('dsa5', settingName, settings);
     game.dsa5.apps.CalendarWidget.render(true);
 

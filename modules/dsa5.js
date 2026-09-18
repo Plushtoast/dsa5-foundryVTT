@@ -92,6 +92,7 @@ import { itemModels, ActorDataModels, CombatantDataModels, CombatDataModels, Act
 import { DSAToken, DSATokenDocument, DSATokenRuler } from './hooks/token.js';
 import * as DSAPause from './hooks/pause.js';
 import { CalendarWidget } from './system/calendar/calendarwidget.js';
+import { DSAClock } from './system/calendar/clock.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
 import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
@@ -179,6 +180,7 @@ globalThis.dsa5 = {
       ZoneAttack,
       TrapAutomation,
       TrapState,
+      Clock: new DSAClock(),
       CalendarPicker: new DSACalendarPicker(),
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,

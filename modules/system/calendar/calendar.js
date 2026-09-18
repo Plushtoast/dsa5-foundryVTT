@@ -1,5 +1,6 @@
 import { DSAKalender } from './default.js';
 import { CalendarWidget } from './calendarwidget.js';
+import { DSAClock } from './clock.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 
@@ -68,7 +69,7 @@ export class DSAWorldCalendar extends foundry.data.CalendarData {
     const selectedCalendar = this.selectedCalendar();
     if (!selectedCalendar) return;
 
-    const settings = game.settings.get('dsa5', 'calendarSettings');
+    const settings = DSAClock.settings();
     if (!settings.lightByDayTime) return;
 
     const comps = components ?? game.time.calendar.timeToComponents(game.time.worldTime);

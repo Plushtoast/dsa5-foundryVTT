@@ -68,6 +68,15 @@
         </fieldset>
 
         <fieldset>
+            <legend>{{localize 'CALENDAR.DSA.rememberAutoTime.legend'}}</legend>
+            <div class="form-group">
+                <label for="{{rootId}}-rememberAutoTime">{{localize 'CALENDAR.DSA.rememberAutoTime.label'}}</label>
+                <input id="{{rootId}}-rememberAutoTime" type="checkbox" name="rememberAutoTime" class="settingChange" {{checked calendarConfig.rememberAutoTime}}>
+                <p class="hint">{{localize 'CALENDAR.DSA.rememberAutoTime.hint'}}</p>
+            </div>
+        </fieldset>
+
+        <fieldset>
             <legend>{{localize 'CALENDAR.DSA.playerDateVisibility.label'}}</legend>
             <p class="hint">{{localize 'CALENDAR.DSA.playerDateVisibility.hint'}}</p>
             <div class="form-group">
