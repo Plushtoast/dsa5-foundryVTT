@@ -2230,6 +2230,7 @@
     "primaryPartySelect": "Vorhandenes Gruppenblatt",
     "reform": "Gruppe sammeln",
     "removeLocation": "Depot entfernen",
+    "removeLocationConfirm": "Depot <b>{name}</b> einschließlich der enthaltenen Ausrüstung wirklich von der Gruppe entfernen?",
     "schritt": "Schritt",
     "selectLocation": "Depot auswählen",
     "setPrimaryParty": "Als Hauptgruppe festlegen",
@@ -3597,7 +3598,10 @@
     "rollAction": "Würfeln",
     "selectActors": "Helden auswählen",
     "applyAllRegeneration": "Regeneration für alle anwenden",
-    "regenApplied": "Regeneration angewendet"
+    "regenApplied": "Regeneration angewendet",
+    "advanceHours": "Rastdauer (Stunden)",
+    "normalNight": "Normale Nacht ({hours}h)",
+    "finalizeWithHours": "Abschließen, es verstreichen {hours} Stunden"
   },
   "GROUPCHECK": {
     "dialogTitle": "Gruppenprobe",
@@ -3719,7 +3723,7 @@
     "showToPlayers": "Allen zeigen",
     "startDraggig": "Du kannst Elemente wie Fähigkeiten, Ausrüstungsgegenstände, Waffen, Spezies, Kultur, Profession und Zustände dem Bogen durch Drag & Drop hinzufügen.",
     "swapMag": "Magazin tauschen",
-    "switchLimited": "Begrenzte Ansicht umschalten (Spieleransicht)",
+    "switchLimited": "Ansicht mit Beschränkt-Rechten anzeigen",
     "tempRegeneration": "Temporär, wird bei Regenerationswurf verbraucht.",
     "textView": "Texteintrag",
     "weightOnActor": "Wird vom Akteur getragen"

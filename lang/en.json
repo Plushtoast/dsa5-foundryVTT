@@ -2228,6 +2228,7 @@
     "primaryPartySelect": "Existing group sheet",
     "reform": "Reform Group",
     "removeLocation": "Remove Depot",
+    "removeLocationConfirm": "Remove depot <b>{name}</b> including all contained equipment from the group?",
     "schritt": "Yards",
     "selectLocation": "Select Depot",
     "setPrimaryParty": "Set as Primary Party",
@@ -3595,7 +3596,10 @@
     "rollAction": "Roll",
     "selectActors": "Select Actors",
     "applyAllRegeneration": "Apply Regeneration to All",
-    "regenApplied": "Regeneration applied"
+    "regenApplied": "Regeneration applied",
+    "advanceHours": "Rest duration (hours)",
+    "normalNight": "Normal night ({hours}h)",
+    "finalizeWithHours": "Finalize, {hours} hours pass"
   },
   "GROUPCHECK": {
     "dialogTitle": "Group Check",
