@@ -237,7 +237,11 @@ export default class ImageFramePicker {
   #root = null;
   #mouseMove = null;
   #mouseUp = null;
+  #pointerUp = null;
   #bound = false;
+  #syncing = false;
+  /** Slider `data-prop` currently being dragged, if any. */
+  #draggingProp = null;
 
   /**
    * @param {object} options
@@ -359,13 +363,28 @@ export default class ImageFramePicker {
     }
 
     for (const slider of root.querySelectorAll('.dsa-image-frame__slider')) {
-      slider.addEventListener('input', (ev) => {
+      slider.addEventListener('pointerdown', (ev) => {
         if (!this.isInteractive()) return;
-        const prop = ev.target.dataset.prop;
+        this.#draggingProp = ev.currentTarget.dataset.prop || null;
+      });
+      slider.addEventListener('input', (ev) => {
+        if (this.#syncing || !this.isInteractive()) return;
+        const prop = ev.currentTarget.dataset.prop;
         if (!prop) return;
-        this.setFrame({ ...this.frame, [prop]: Number(ev.target.value) });
+        // Chromium remaps the pointer onto sibling ranges when their min/max
+        // change mid-drag; ignore those spurious input events.
+        if (this.#draggingProp && prop !== this.#draggingProp) return;
+        this.setFrame({ ...this.frame, [prop]: Number(ev.currentTarget.value) });
       });
     }
+
+    this.#pointerUp = () => {
+      const was = this.#draggingProp;
+      if (was === 'zoom' && this.isLayerModel) this.#syncSliders({ bounds: true });
+      this.#draggingProp = null;
+    };
+    window.addEventListener('pointerup', this.#pointerUp);
+    window.addEventListener('pointercancel', this.#pointerUp);
 
     const flipBtn = root.querySelector('[data-frame-flip]');
     flipBtn?.addEventListener('click', (ev) => {
@@ -395,6 +414,13 @@ export default class ImageFramePicker {
       window.removeEventListener('mouseup', this.#mouseUp);
       this.#mouseUp = null;
     }
+    if (this.#pointerUp) {
+      window.removeEventListener('pointerup', this.#pointerUp);
+      window.removeEventListener('pointercancel', this.#pointerUp);
+      this.#pointerUp = null;
+    }
+    this.#draggingProp = null;
+    this.#syncing = false;
     this.#root = null;
     this.#bound = false;
   }
@@ -443,19 +469,47 @@ export default class ImageFramePicker {
     ImageFramePicker.applyToElement(img, this.frame);
   }
 
-  #syncSliders() {
+  #syncSliders({ bounds } = {}) {
     if (!this.#root) return;
     const pan = this.isLayerModel ? this.#livePanLimits() : this.limits;
-    for (const prop of ['offsetX', 'offsetY', 'zoom']) {
-      const slider = this.#root.querySelector(`.dsa-image-frame__slider[data-prop="${prop}"]`);
-      if (!slider) continue;
-      if (prop === 'offsetX' || prop === 'offsetY') {
-        slider.min = String(pan[`${prop}Min`]);
-        slider.max = String(pan[`${prop}Max`]);
+    // Live zoom must not rewrite X/Y min/max: browsers fire input on those
+    // ranges (often from the zoom pointer's X) and the thumbs wiggle.
+    const updateBounds = bounds ?? this.#draggingProp !== 'zoom';
+    this.#syncing = true;
+    try {
+      for (const prop of ['offsetX', 'offsetY', 'zoom']) {
+        const slider = this.#root.querySelector(`.dsa-image-frame__slider[data-prop="${prop}"]`);
+        if (!slider) continue;
+        if (updateBounds && (prop === 'offsetX' || prop === 'offsetY')) {
+          this.#writeOffsetBounds(slider, pan[`${prop}Min`], pan[`${prop}Max`]);
+        }
+        slider.value = String(this.frame[prop]);
       }
-      slider.value = String(this.frame[prop]);
+      const flipBtn = this.#root.querySelector('[data-frame-flip]');
+      if (flipBtn) flipBtn.classList.toggle('active', !!this.frame.flipX);
+    } finally {
+      this.#syncing = false;
     }
-    const flipBtn = this.#root.querySelector('[data-frame-flip]');
-    if (flipBtn) flipBtn.classList.toggle('active', !!this.frame.flipX);
+  }
+
+  /**
+   * Update a pan slider's min/max without a min>max transient or a degenerate
+   * min===max range (both make the thumb jump).
+   * @param {HTMLInputElement} slider
+   * @param {number} min
+   * @param {number} max
+   */
+  #writeOffsetBounds(slider, min, max) {
+    const step = Number(this.limits.offsetStep) || Number(slider.step) || 0.5;
+    let lo = Math.min(Number(min), Number(max));
+    let hi = Math.max(Number(min), Number(max));
+    if (!(hi > lo)) {
+      lo -= step;
+      hi += step;
+    }
+    const currentMax = Number(slider.max);
+    if (Number.isFinite(currentMax) && hi > currentMax) slider.max = String(hi);
+    slider.min = String(lo);
+    slider.max = String(hi);
   }
 }
