@@ -34,7 +34,7 @@
         <div class="col third"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}</b></div>
         <div class="col seventy flexAlignEnd flexrow">
             {{#each strikes as |strike|}}
-            <span>{{#if strike.name}}{{strike.name}}: {{/if}}{{{diceThingsUp strike.damageFormula}}}</span>{{#unless @last}}, {{/unless}}
+            <span>{{#if strike.name}}{{strike.name}}: {{/if}}{{strike.damageFormula}}</span>{{#unless @last}}, {{/unless}}
             {{/each}}
         </div>
     </div>

@@ -71,17 +71,15 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     return data;
   }
 
-  resolveDropShape() {
-    const type = this.target?.type || '';
-    const value = Number(this.target?.value) || 0;
-    const width = this.target?.width || 1;
-    if (type && value > 0) return { type, value, width };
+  static DEFAULT_DROP_SHAPE = { type: 'cube', value: 1 };
 
-    const text = `${this.description?.value || ''} ${this.gmdescription?.value || ''}`;
-    if (/2\s*x\s*2\s*Schritt/i.test(String(text).replace(/<[^>]+>/g, ' '))) {
-      return { type: 'cube', value: 2, width };
-    }
-    return { type, value: value || 1, width };
+  resolveDropShape() {
+    const fallback = this.constructor.DEFAULT_DROP_SHAPE;
+    return {
+      type: this.target?.type || fallback.type,
+      value: Number(this.target?.value) || fallback.value,
+      width: this.target?.width || 1,
+    };
   }
 
   makeShape(data, scene = canvas.scene) {
@@ -167,6 +165,22 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
 
     const [created] = await scene.createEmbeddedDocuments("Region", [region]);
     return created;
+  }
+
+  async applyToRegion(region) {
+    if (!region) return null;
+    const behavior = await this.toRegionBehavior();
+    const [created] = await region.createEmbeddedDocuments('RegionBehavior', [behavior]);
+    return created;
+  }
+
+  static async handleRegionSheetDrop(region, event) {
+    const data = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    if (data?.type !== 'Item' || !region) return false;
+    const item = await Item.implementation.fromDropData(data);
+    if (item?.type !== 'trap') return false;
+    await item.system.applyToRegion(region);
+    return true;
   }
 
   sheetVisibility() {

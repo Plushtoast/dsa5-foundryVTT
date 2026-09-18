@@ -1,0 +1,16 @@
+<div class="dsa5 chat-card trap-damage-card">
+    {{#if trapName}}
+    <div class="card-content test-data">
+        <b>{{trapName}}</b>
+    </div>
+    {{/if}}
+    <div class="card-content hide-option roll-result">
+        <b>{{localize 'Roll'}}</b>:
+        {{#each dice as |die|}}
+        <span data-tooltip="CHAR.DAMAGE" class="die-damage d{{die.faces}}">{{die.result}}</span>
+        {{/each}}
+    </div>
+    <div class="card-content" data-tooltip="{{formula}}">
+        <b>{{localize 'damage'}}</b>{{#if strikeName}} ({{strikeName}}){{/if}}: {{total}}
+    </div>
+</div>

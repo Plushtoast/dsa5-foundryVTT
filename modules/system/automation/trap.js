@@ -8,6 +8,7 @@ import RollRequestService from '../queries/roll-request.js';
 import TrapSetpiece from './trap-setpiece.js';
 
 const { duplicate, getProperty, mergeObject, expandObject } = foundry.utils;
+const { renderTemplate } = foundry.applications.handlebars;
 
 /** Matches DSATrapRegionBehavior.TRAPTYPE_ARROW / TRAPTYPE_BLADE */
 const OPPOSED_TRAP_TYPES = new Set([2, 3]);
@@ -358,7 +359,7 @@ export default class TrapAutomation extends TrapSetpiece {
               if (!applyPayload) await this.rollChargedEnchantments(behavior, payload, { token });
             }
           } else {
-            damageDealt += await this.#applyUnopposedDamage(actor, strike.damageFormula);
+            damageDealt += await this.#applyUnopposedDamage(actor, strike, behavior);
           }
         }
       }
@@ -414,7 +415,8 @@ export default class TrapAutomation extends TrapSetpiece {
     };
   }
 
-  static async #applyUnopposedDamage(actor, formula) {
+  static async #applyUnopposedDamage(actor, strike, behavior) {
+    const formula = strike?.damageFormula || '';
     const roll = await new Roll(formula).evaluate();
     try {
       game.dsa5.apps.DiceDSA5?._addRollDiceSoNice?.(
@@ -426,7 +428,36 @@ export default class TrapAutomation extends TrapSetpiece {
       console.warn(err);
     }
     await actor.applyDamage(String(roll.total));
+    await this.postDamageCard({
+      trapName: behavior?.name,
+      strikeName: strike?.name,
+      formula,
+      roll,
+    });
     return Number(roll.total) || 0;
+  }
+
+  static diceFromRoll(roll) {
+    const dice = [];
+    for (const term of roll?.dice || []) {
+      for (const result of term.results || []) {
+        if (result.discarded) continue;
+        dice.push({ faces: term.faces, result: result.result });
+      }
+    }
+    return dice;
+  }
+
+  static async postDamageCard({ trapName, strikeName, formula, roll } = {}) {
+    if (!roll) return;
+    const content = await renderTemplate('systems/dsa5/templates/chat/trap/damage.hbs', {
+      trapName: trapName || '',
+      strikeName: strikeName || '',
+      formula: formula || roll.formula,
+      total: roll.total,
+      dice: this.diceFromRoll(roll),
+    });
+    await ChatMessage.create(DSA5_Utility.chatDataSetup(content));
   }
 
   static async #resolveOpposedAttack({ behavior, token, region, strike, payload, attachPayload = true }) {
