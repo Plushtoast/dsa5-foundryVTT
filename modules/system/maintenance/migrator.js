@@ -5,6 +5,14 @@ import DSA5Skin from '../helpers/skin-dsa5.js';
 
 const INBETA = false;
 const { NEEDS_MIGRATION_VERSION } = DSA5;
+const MIGRATIONS_SETTING = 'migrations';
+const LAZY_MIGRATIONS = [
+  {
+    key: 'personaNotes',
+    url: 'systems/dsa5/modules/system/maintenance/migrations/persona-notes.js',
+    needed: hasPersonaPages,
+  },
+];
 
 async function fetchPatchNotes() {
   const notes = await fetch('systems/dsa5/lazy/updatenotes.json');
@@ -91,6 +99,37 @@ async function migrateTo33() {
   await game.settings.set('core', 'combatTrackerConfig', combatTrackerConfig);
 }
 
+function completedMigrations() {
+  return { ...(game.settings.get('dsa5', MIGRATIONS_SETTING) || {}) };
+}
+
+async function markMigrationDone(key) {
+  await game.settings.set('dsa5', MIGRATIONS_SETTING, {
+    ...completedMigrations(),
+    [key]: true,
+  });
+}
+
+function hasPersonaPages() {
+  return game.journal.contents.some((journal) => journal.pages.some((page) => page.type === 'dsapersonaedramatis'));
+}
+
+async function runLazyMigrations() {
+  const done = completedMigrations();
+  for (const migration of LAZY_MIGRATIONS) {
+    if (done[migration.key]) continue;
+    if (migration.needed && !migration.needed()) {
+      await markMigrationDone(migration.key);
+      continue;
+    }
+
+    const url = foundry.utils.getRoute(migration.url);
+    const { default: Migrator } = await import(url);
+    await Migrator.migrate();
+    await markMigrationDone(migration.key);
+  }
+}
+
 export async function showPatchViewer(json = undefined) {
   json ??= await fetchPatchNotes();
   const patchViewer = new PatchViewer(json, undefined, { initialTab: 'newcontent' });
@@ -131,9 +170,7 @@ export default function migrateWorld() {
       betaWarning(version, msg);
     }
 
-    if (!needsMigration) return;
-
-    migrateDSA(currentVersion, NEEDS_MIGRATION_VERSION);
+    if (needsMigration) migrateDSA(currentVersion, NEEDS_MIGRATION_VERSION);
+    await runLazyMigrations();
   });
 }
-

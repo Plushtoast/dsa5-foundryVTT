@@ -1012,6 +1012,13 @@ export function setupConfiguration() {
       default: NEEDS_MIGRATION_VERSION - 1,
       type: Number,
     },
+    migrations: {
+      name: 'migrations',
+      scope: 'world',
+      config: false,
+      default: {},
+      type: Object,
+    },
     firstTimeStart: {
       name: 'firstTimeStart',
       scope: 'world',
@@ -1110,7 +1117,7 @@ const exportSetting = (form) => {
   if (exportOnlyDSA) toExport = toExport.filter((x) => /^dsa5\./.test(x[0]));
 
   const exportData = {};
-  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|scQuickbarPosition|migrationVersion)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
+  const skipSettings = /(^dsa5\.(selectedActors|trackedActors|groupschips|tokenhotbarPosition|iniTrackerPosition|scQuickbarPosition|migrationVersion|migrations)$|^dsa5\.(breadcrumbs_|recentBooks_))/;
 
   for (const key of toExport) {
     if (skipSettings.test(key[0])) continue;
