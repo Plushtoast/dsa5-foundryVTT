@@ -1,4 +1,7 @@
 <div class='tab standard-form scrollable {{tabs.details.cssClass}} gap5px' data-tab='details' data-group='{{tabs.details.group}}'>
+  <div class="flexrow flexAlignEnd">
+    <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-circle-info" data-tooltip-html="{{{localize 'REGIONBEHAVIOR_DSATrap.sheetHelpTooltip'}}}"></button>
+  </div>
 
   {{formGroup systemFields.trapType value=document.system.trapType localize=true}}
   {{formGroup systemFields.complexity value=document.system.complexity localize=true}}

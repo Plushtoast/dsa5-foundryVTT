@@ -3522,7 +3522,8 @@
     "timerEscalated": "'{trap}': escape modifier is now {modifier} ({rounds} CR left).",
     "passwordRequired": "'{trap}' can be stopped with a keyword. Start or stop the timer as the book requires.",
     "trigger": "Trigger",
-    "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area."
+    "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area.",
+    "sheetHelpTooltip": "<p>Drop the trap onto the map to create a region, then reshape it. To fill a room, use the region's wall restriction so the shape is constrained by walls. You can also drop a trap onto an existing region sheet to add the trap behavior there.</p><p>When a figure enters the area, the GM receives a trap card to search, disarm, or trigger. Triggering can deal damage, start an opposed attack, apply effects, run a crush or suffocation timer, or start a boulder chase, depending on the trap type. Apply resulting damage from the chat cards.</p>"
   },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {
@@ -4224,6 +4225,7 @@
   "TYPES.JournalEntryPage.citydetails": "City Details",
   "TYPES.RegionBehavior.DSAAura": "Aura (TDE)",
   "TYPES.RegionBehavior.DSATrap": "Trap (TDE)",
+  "TYPES.HINTS.RegionBehavior.DSATrap": "Drop a trap item onto the map or onto a region sheet. Figures that enter can search, disarm, or trigger it.",
   "TYPES.RegionBehavior.DSAZone": "Zone (TDE)",
   "Test": "Test",
   "Total": "Total",

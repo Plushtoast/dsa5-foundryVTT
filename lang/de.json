@@ -3524,7 +3524,8 @@
     "timerEscalated": "'{trap}': Entkommen-Modifikator ist jetzt {modifier} (noch {rounds} KR).",
     "passwordRequired": "'{trap}' kann mit einem Schlüsselwort gestoppt werden. Starte oder stoppe die Zeit wie im Buch beschrieben.",
     "trigger": "Auslösen",
-    "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein."
+    "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein.",
+    "sheetHelpTooltip": "<p>Ziehe die Falle auf die Karte, um eine Region zu erzeugen, und passe danach die Form an. Um einen Raum auszufüllen, nutze die Wandbegrenzung der Region. Alternativ kannst du die Falle auf ein bestehendes Regionenblatt ziehen, um das Fallenverhalten dort hinzuzufügen.</p><p>Betritt eine Figur den Bereich, erhält der Spielleiter eine Fallenkarte zum Suchen, Entschärfen oder Auslösen. Je nach Fallentyp kann das Auslösen Schaden verursachen, einen Gegenangriff starten, Effekte anwenden, eine Quetsch- oder Erstickungszeit laufen lassen oder eine Steinjagd beginnen. Schaden wird über die Chatkarten zugewiesen.</p>"
   },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {
@@ -4226,6 +4227,7 @@
   "TYPES.JournalEntryPage.citydetails": "Stadtbeschreibung",
   "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
   "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
+  "TYPES.HINTS.RegionBehavior.DSATrap": "Ziehe eine Falle auf die Karte oder auf ein Regionenblatt. Figuren, die eintreten, können suchen, entschärfen oder auslösen.",
   "TYPES.RegionBehavior.DSAZone": "Zone (DSA)",
   "Test": "Probe",
   "Total": "Gesamt",
