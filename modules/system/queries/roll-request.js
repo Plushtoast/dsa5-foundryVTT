@@ -3,6 +3,7 @@ import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
 import RegenerationHelper from '../rolls/regeneration-helper.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
+import { DSAClock } from '../calendar/clock.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -52,19 +53,26 @@ export default class RollRequestService {
       skills: skillOptions,
       modifier,
       messageMode: game.settings.get('core', 'messageMode'),
+      showRestDuration: category === 'regeneration',
+      advanceHours: 0,
+      maxHours: DSAClock.hoursPerDay,
+      nightHours: DSAClock.nightRestHours(),
     });
 
     ActorPickerDialog.open({
+      id: 'dsa-roll-request',
       actors: actorData,
       title: 'ROLLREQUEST.dialogTitle',
       header,
       showSourceToggle: true,
+      onRender: (app) => this.#bindRequestDialog(app),
       callback: ({ actorIds, form }) => {
         const $form = $(form);
         const skillValue = $form.find('[name="skill"]').val();
         const [selectedName, selectedType] = skillValue.split('|');
         const selectedModifier = Number($form.find('[name="modifier"]').val()) || 0;
         const messageMode = $form.find('[name="messageMode"]:checked').val() || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
+        const advanceHours = selectedType === 'regeneration' ? this.#hoursFromPicker(form.querySelector('range-picker[name="advanceHours"]')) : undefined;
 
         const actors = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
         this.createRequest({
@@ -74,6 +82,7 @@ export default class RollRequestService {
           messageMode,
           actors,
           label: selectedName !== name ? undefined : label,
+          advanceHours,
         });
       },
     });
@@ -121,8 +130,12 @@ export default class RollRequestService {
     subtitle = undefined,
     opposable = undefined,
     flowContext = undefined,
+    advanceHours = undefined,
   }) {
     const recipients = await QueryOrchestrator.buildRecipients(actors);
+    const restHours = category === 'regeneration'
+      ? Math.clamp(Number(advanceHours) || 0, 0, DSAClock.hoursPerDay)
+      : undefined;
 
     const state = {
       category,
@@ -132,6 +145,7 @@ export default class RollRequestService {
       messageMode,
       finalized: false,
       recipients,
+      ...(category === 'regeneration' ? { autoFinalize: false, advanceHours: restHours } : {}),
       ...(trapContext ? { trapContext } : {}),
       ...(situationalModifiers ? { situationalModifiers } : {}),
       ...(subtitle ? { subtitle } : {}),
@@ -180,6 +194,8 @@ export default class RollRequestService {
     const skillIcon = this.getRequestedIcon(state.category, state.name);
 
     const isRegeneration = state.category === 'regeneration';
+    const maxHours = DSAClock.hoursPerDay;
+    const advanceHours = isRegeneration ? Math.clamp(Number(state.advanceHours) || 0, 0, maxHours) : 0;
 
     const recipients = state.recipients.map((entry) => {
       const outcome = isRegeneration
@@ -224,7 +240,42 @@ export default class RollRequestService {
       modifierLabel,
       headerHtml: state.trapContext?.headerHtml,
       recipients,
+      ...(isRegeneration ? {
+        advanceHours,
+        finalizeTooltip: this.finalizeTooltip(advanceHours),
+      } : {}),
     };
+  }
+
+  static finalizeTooltip(hours) {
+    const value = Number(hours) || 0;
+    if (value <= 0) return _loc('DSAQUERIES.COMMANDS.finalize');
+    return _loc('ROLLREQUEST.finalizeWithHours', { hours: value });
+  }
+
+  static #hoursFromPicker(picker) {
+    if (!picker) return 0;
+    return Number(picker.valueAsNumber ?? picker.value) || 0;
+  }
+
+  static #bindRequestDialog(app) {
+    const root = app.element;
+    const skill = root.querySelector('[name="skill"]');
+    const restRow = root.querySelector('.roll-request-rest-duration');
+    const picker = root.querySelector('range-picker[name="advanceHours"]');
+    const nightBtn = root.querySelector('.roll-request-night-hours');
+    const syncVisibility = () => {
+      const type = String(skill?.value || '').split('|')[1];
+      restRow?.classList.toggle('dsahidden', type !== 'regeneration');
+    };
+
+    $(skill).on('change select2:select', syncVisibility);
+    nightBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (picker) picker.value = DSAClock.nightRestHours();
+    });
+    syncVisibility();
   }
 
   static async #submitResult(messageId, actorId, result, { refresh = false } = {}) {
@@ -519,7 +570,12 @@ export default class RollRequestService {
   }
 
   static async finalizeRequest(messageId) {
+    const message = game.messages.get(messageId);
+    const state = message?.getFlag('dsa5', this.FLAG_KEY);
+    const alreadyFinalized = !!state?.finalized;
+    const hours = Math.clamp(Number(state?.advanceHours) || 0, 0, DSAClock.hoursPerDay);
     await QueryOrchestrator.finalizeRequest(messageId);
+    if (!alreadyFinalized && hours > 0) await DSAClock.advance({ hours });
   }
 
   static async triggerRollFromCard(messageId, actorId) {

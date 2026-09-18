@@ -661,7 +661,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const document = typeof documentOrUuid === 'string' ? await fromUuid(documentOrUuid) : documentOrUuid;
     if (!document?.sheet?.render) return null;
 
-    const overlaySheet = document.documentName === 'Actor' || document.documentName === 'Item';
+    const overlaySheet = ['Actor', 'Item', 'JournalEntry', 'JournalEntryPage'].includes(document.documentName);
     if (!overlaySheet && close !== false) await this.close();
 
     if (currentKey) {

@@ -44,7 +44,7 @@
 
   {{#unless finalized}}
     <div class="roll-request-gm flexrow gap5px margin-top">
-      <button type="button" class="roll-request-action" data-action="finalize" data-tooltip="{{localize "DSAQUERIES.COMMANDS.finalize"}}" aria-label="{{localize "DSAQUERIES.COMMANDS.finalize"}}"><i class="fas fa-check"></i></button>
+      <button type="button" class="roll-request-action" data-action="finalize" data-tooltip="{{finalizeTooltip}}" aria-label="{{finalizeTooltip}}"><i class="fas fa-check"></i>{{#if advanceHours}} ({{advanceHours}}h){{/if}}</button>
     </div>
   {{/unless}}
 </div>

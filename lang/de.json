@@ -3606,7 +3606,7 @@
     "regenApplied": "Regeneration angewendet",
     "advanceHours": "Rastdauer (Stunden)",
     "normalNight": "Normale Nacht ({hours}h)",
-    "finalizeWithHours": "Abschließen, es verstreichen {hours} Stunden"
+    "finalizeWithHours": "Abschließen ({hours}h)"
   },
   "GROUPCHECK": {
     "dialogTitle": "Gruppenprobe",
@@ -4147,6 +4147,7 @@
     "attributeLocked": "Dieses Attribut ist durch Active Effects modifiziert und kann nicht bearbeitet werden.",
     "careerSkills": "Komma separierte Talentliste, z.b. (Betören 2,Etikette 4)",
     "collapseBar": "Leiste einklappen",
+    "hotbarSearch": "Tippen filtert Aktionen. Esc setzt zurück. Treffer am Wortanfang stehen vorn.",
     "collapseHeader": "Kopfzeile einklappen",
     "commaSeparated": "Komma separierte Liste",
     "conjuringSpells": "Mögliche Zaubersprüche für die Beschwörung",

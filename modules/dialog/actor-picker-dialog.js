@@ -182,6 +182,10 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     const form = this.element.querySelector('form');
     form.style.overflowY = 'hidden';
     form.querySelector('.dialog-content').classList.add('scrollable');
+    if (this._onPickerRender && !this._pickerRenderBound) {
+      this._pickerRenderBound = true;
+      this._onPickerRender(this);
+    }
   }
 
   static #onActorSearchFilter(_event, query, rgx, html) {
@@ -302,6 +306,8 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     callback,
     selectionMode = 'multiple',
     showSourceToggle = false,
+    id = undefined,
+    onRender = null,
   } = {}) {
     if (requireGroupMembers && groupActor && !groupActor.system?.actors?.size) {
       ui.notifications.warn('GROUP.noMembers', { localize: true });
@@ -359,9 +365,12 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       ],
     };
 
+    if (id) dialogConfig.id = id;
+
     if (callback) {
       const dialog = new this(dialogConfig);
       dialog._entryFilter = entryFilter;
+      dialog._onPickerRender = onRender;
       dialog.render(true);
       return;
     }

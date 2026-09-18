@@ -402,6 +402,7 @@ export default class QueryOrchestrator {
   }
 
   static canAutoFinalize(state) {
+    if (state?.autoFinalize === false) return false;
     return state.recipients.every((entry) => this.TERMINAL_STATES.has(entry.status));
   }
 

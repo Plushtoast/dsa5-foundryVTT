@@ -12,6 +12,13 @@
   <div class='col fourty table-title'><label>{{localize 'Modifier'}}</label></div>
   <div class='col sixty'><input name='modifier' class='quantity-click' type='Number' value='{{modifier}}' /></div>
 </div>
+<div class="row-section lineheight roll-request-rest-duration{{#unless showRestDuration}} dsahidden{{/unless}}">
+  <div class="col fourty table-title"><label>{{localize 'ROLLREQUEST.advanceHours'}}</label></div>
+  <div class="col sixty flexrow flexAlignCenter gap5px roll-request-time-advance">
+    <range-picker class="roll-request-advance-hours" name="advanceHours" value="{{advanceHours}}" min="0" max="{{maxHours}}" step="1"></range-picker>
+    <button type="button" class="roll-request-night-hours flex0" data-tooltip="{{localize 'ROLLREQUEST.normalNight' hours=nightHours}}" aria-label="{{localize 'ROLLREQUEST.normalNight' hours=nightHours}}">{{nightHours}}h</button>
+  </div>
+</div>
 {{> systems/dsa5/templates/dialog/parts/message-mode-row.hbs messageMode=messageMode}}
 <hr/>
 <label><b>{{localize 'ROLLREQUEST.selectActors'}}</b></label>

@@ -3604,7 +3604,7 @@
     "regenApplied": "Regeneration applied",
     "advanceHours": "Rest duration (hours)",
     "normalNight": "Normal night ({hours}h)",
-    "finalizeWithHours": "Finalize, {hours} hours pass"
+    "finalizeWithHours": "Finalize ({hours}h)"
   },
   "GROUPCHECK": {
     "dialogTitle": "Group Check",
@@ -4145,6 +4145,7 @@
     "attributeLocked": "This attribute is modified by Active Effects and cannot be edited.",
     "careerSkills": "Comma separated talent list, e.g. (Alchemy 2,Carousing 4)",
     "collapseBar": "Collapse bar",
+    "hotbarSearch": "Type to filter actions. Esc clears. Prefix matches stay first.",
     "collapseHeader": "Collapse header",
     "commaSeparated": "Comma separated list",
     "conjuringSpells": "Possible spells for the conjuring",
