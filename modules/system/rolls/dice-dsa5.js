@@ -735,9 +735,15 @@ export default class DiceDSA5 {
     const confirmChange = getProperty(source, `system.${isCrit ? 'critConfirm' : 'botchConfirm'}`) || 0;
     let confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
     let additionalDescription = '';
+    
+    let oldRolls = [];
+    let usedWeaponAptitude = false;
+    let usedPhexcaer = false;
 
     if (this.#shouldUseWeaponAptitude(actor, combatskill, confirmResult)) {
       const oldRoll = rollConfirm.total;
+      oldRolls.push(rollConfirm.total);
+      usedWeaponAptitude = true;
       rollConfirm = await DiceDSA5.manualRolls(
         await DiceDSA5._rollConfirm(),
         'LocalizedIDs.weaponAptitude',
@@ -745,6 +751,27 @@ export default class DiceDSA5 {
       );
       confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
       additionalDescription = `, ${_loc('usedWeaponExpertise', { a: oldRoll, b: rollConfirm.total })}`;
+    }
+
+    if (this.#shouldUsePhexcaerStyle(actor, combatskill, confirmResult, testData)) {
+      oldRolls.push(rollConfirm.total);
+      usedPhexcaer = true;
+      rollConfirm = await DiceDSA5.manualRolls(
+        await DiceDSA5._rollConfirm(),
+        'LocalizedIDs.phexcaerStyle',
+        testData.extra.options
+      );
+      confirmResult = adjustedRes - Math.clamp(rollConfirm.total + confirmChange, 1, DICE_CONSTANTS.DICE.D20_FACES);
+    }
+
+    if (oldRolls.length > 0) {
+      let locKey = 'usedWeaponExpertise';
+      if (usedWeaponAptitude && usedPhexcaer) {
+        locKey = 'usedWeaponAndPhexcaer';
+      } else if (usedPhexcaer) {
+        locKey = 'usedPhexcaerStyle';
+      }
+      additionalDescription = `, ${_loc(locKey, { a: oldRolls.join('/'), b: rollConfirm.total })}`;
     }
 
     const color = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration(id);
@@ -776,6 +803,24 @@ export default class DiceDSA5 {
       `${_loc('LocalizedIDs.weaponAptitude')} (${combatskill})`,
       false
     ) && confirmResult < 0;
+  }
+
+  /**
+   * Check if Phexcaer style should be used
+   * @param {Object} actor 
+   * @param {string} combatskill 
+   * @param {number} confirmResult 
+   * @param {Object} testData 
+   * @returns {boolean}
+   */
+  static #shouldUsePhexcaerStyle(actor, combatskill, confirmResult, testData) {
+    if (confirmResult >= 0) return false;
+    
+    const isWeaponRoll = ['meleeweapon', 'rangeweapon'].includes(testData.source?.type);
+    return isWeaponRoll && combatskill !== "" && SpecialabilityRulesDSA5.hasAbility(
+      actor, 
+      _loc("LocalizedIDs.phexcaerStyle")
+    );
   }
 
   /**
