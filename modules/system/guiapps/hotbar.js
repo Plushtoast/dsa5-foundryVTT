@@ -691,6 +691,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     }
 
     this.#applySavedOrdering(groups);
+    this.#pinSpecialSkills(groups.skills.skillgm);
+  }
+
+  #pinSpecialSkills(list) {
+    if (!list?.length) return;
+    list.sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned));
   }
 
   #applyHotbarFilters(groups) {

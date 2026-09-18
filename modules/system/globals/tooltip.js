@@ -73,6 +73,11 @@ export class GlobalToolTipHandler {
     }
 
     static async _handleSkillGmTooltip(data) {
+        if (data.id === _loc('regenerate') || data.name === _loc('regenerate')) {
+            return {
+                tooltip: _loc('TT.tokenhotbarRegeneration', { name: data.name })
+            };
+        }
         return {
             tooltip: _loc('TT.skillgm', { name: data.name })
         };

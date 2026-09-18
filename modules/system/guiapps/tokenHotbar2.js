@@ -206,7 +206,22 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     this.skills = this.skills.sort((a, b) => {
       return a.addClass.localeCompare(b.addClass) || a.name.localeCompare(b.name);
     });
+    this.skills.unshift(this._regenerationSkillEntry());
     return this.skills;
+  }
+
+  _regenerationSkillEntry() {
+    const name = _loc('regenerate');
+    return {
+      name,
+      icon: 'icons/svg/regen.svg',
+      id: name,
+      cssClass: 'skillgm',
+      addClass: 'regeneration',
+      abbrev: name[0],
+      subfunction: 'skillgm',
+      pinned: true,
+    };
   }
 
   static hookUpdate(changeId) {
@@ -336,6 +351,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
     const elem = target || ev.currentTarget;
     const skill = elem.dataset.id;
     const mod = Math.round($(elem).closest('.tokenHotbarInner,#hotbar').find('.modifierVal').val());
+    if (skill === _loc('regenerate')) {
+      game.dsa5.macro.requestRoll(skill, mod);
+      return;
+    }
     if (ev.ctrlKey) {
       game.dsa5.apps.DSA5ChatListeners.check3D20(undefined, skill, {
         modifier: mod,
