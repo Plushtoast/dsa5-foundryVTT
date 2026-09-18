@@ -59,7 +59,9 @@ export default class CultureWizard extends WizardDSA5 {
         : await this.parseToItem(
             this.culture.system.language.value
               .split(',')
-              .map((x) => `${_loc('LocalizedIDs.language')} (${x.trim()}) 3`)
+              .map((x) => x.trim())
+              .filter(Boolean)
+              .map((x) => `${_loc('LocalizedIDs.language')} (${x}) 3`)
               .join(', '),
             ['specialability'],
           );
@@ -96,17 +98,9 @@ export default class CultureWizard extends WizardDSA5 {
 
   _validateInput(parent, app = this) {
     const choice = parent.find('.localKnowledge');
-    if (choice.val() == '') {
+    if (choice.val()?.trim() == '') {
       this._showInputValidation(choice, parent, app);
       return false;
-    }
-    const selectOnlyOne = parent.find('.selectOnlyOne');
-    if (selectOnlyOne.length) {
-      const options = selectOnlyOne.find('.optional:checked');
-      if (options.length != 1) {
-        this._showInputValidation(selectOnlyOne, parent, app);
-        return false;
-      }
     }
     return super._validateInput(parent, app);
   }
@@ -125,7 +119,7 @@ export default class CultureWizard extends WizardDSA5 {
     let localKnowledge = await this.findCompendiumItem(`${_loc('LocalizedIDs.localKnowledge')} ()`, ['specialability']);
     if (localKnowledge) {
       localKnowledge = duplicate(localKnowledge);
-      localKnowledge.name = `${_loc('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val()})`;
+      localKnowledge.name = `${_loc('LocalizedIDs.localKnowledge')} (${parent.find('.localKnowledge').val().trim()})`;
       localKnowledge.system.APValue.value = 0;
       await this.actor.createEmbeddedDocuments('Item', [localKnowledge], {
         render: false,

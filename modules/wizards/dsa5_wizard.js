@@ -35,11 +35,18 @@ export default class WizardDSA5 extends DefaultAppv2 {
     clickableAbility(target);
   }
 
+  static normalizeItemName(name) {
+    return String(name ?? '').replace(/\s+/g, ' ').trim();
+  }
+
   async findCompendiumItem(name, types) {
+    const wanted = WizardDSA5.normalizeItemName(name);
+    if (!wanted) return undefined;
+
     for (const type of types) {
       //todo make sure this loads the right thing e.g. armory instead of core
-      let result = await game.dsa5.itemLibrary.findCompendiumItem(name, type);
-      result = result.find((x) => x.name == name && x.type == type && x.system);
+      let result = await game.dsa5.itemLibrary.findCompendiumItem(wanted, type);
+      result = result.find((x) => WizardDSA5.normalizeItemName(x.name) == wanted && x.type == type && x.system);
 
       if (result) return result;
     }
@@ -282,7 +289,8 @@ export default class WizardDSA5 extends DefaultAppv2 {
       const tb = $(tab);
       const exclusives = new Set();
       for (const k of tb.find('.exclusive')) {
-        exclusives.add(k.className.split(/\s+/).filter((x) => regex.test(x))[0]);
+        const cls = k.className.split(/\s+/).find((x) => regex.test(x));
+        if (cls) exclusives.add(cls);
       }
       for (const k of exclusives) {
         const choice = tb.find('.allowedCount_' + k.split('_')[1]);
@@ -297,11 +305,22 @@ export default class WizardDSA5 extends DefaultAppv2 {
   }
 
   _showInputValidation(choice, parent, app) {
-    ui.notifications.error('DSAError.MissingChoices', { localize: true });
-    const tabElem = choice.closest('.tab')[0].dataset;
-    app.changeTab(tabElem.tab, tabElem.group);
-    WizardDSA5.flashElem(parent.find(`.tabs a[data-tab='${tabElem.tab}']`));
+    const tab = choice.closest('.tab');
+    const tabElem = tab[0].dataset;
+    try {
+      app.changeTab(tabElem.tab, tabElem.group);
+    } catch {
+      /* chargen passes itself as app; wizard tabs live in nested HTML */
+    }
+    const nav = tab.parent().find(`.tabs a[data-tab='${tabElem.tab}']`);
+    nav.addClass('active').siblings(`[data-group="${tabElem.group}"]`).removeClass('active');
+    tab.addClass('active').siblings(`.tab[data-group="${tabElem.group}"]`).removeClass('active');
+    WizardDSA5.flashElem(nav);
     WizardDSA5.flashElem(choice.closest('div'));
+    tab.find('.dsa-wizard-choice-hint').remove();
+    const hint = $(`<p class="dsa-info-text darkred small dsa-wizard-choice-hint">${_loc('DSAError.MissingChoices')}</p>`);
+    choice.after(hint);
+    setTimeout(() => hint.remove(), 4000);
   }
 
   _getAPCostContainer(target) {

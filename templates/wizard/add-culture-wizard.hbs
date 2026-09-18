@@ -54,7 +54,7 @@
                 <div class="row-section wrap">
                     {{#each languages as |item i|}}
                     <div class="col two flexrow">
-                        <input type="checkbox" id="language_{{i}}" class="flex0 optional exclusive exclusive_1" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#unless ../languagesToSelect}}disabled checked{{/unless}}>
+                        <input type="checkbox" id="language_{{i}}" class="flex0 optional exclusive exclusive_1" data-sel="1" data-cost="0" data-free="true" name="{{item.replaceName}}" data-step="{{item.step}}" value="{{item.uuid}}" {{#unless ../languagesToSelect}}disabled checked{{/unless}} {{#if item.disabled}}disabled{{/if}}>
                         <label for="language_{{i}}">{{item.replaceName}} {{roman item.step}}</label>
                         <button type="button" class="icon fas fa-info noBorder dsadesignbutton show-item" data-uuid="{{item.uuid}}" data-tooltip="{{item.tooltip}}"></button>
                     </div>
