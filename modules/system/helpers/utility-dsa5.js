@@ -342,20 +342,40 @@ export default class DSA5_Utility {
     return chatData;
   }
 
+  /**
+   * Actor for a Token or TokenDocument, forcing Foundry v14 lazy ActorDelta when `token.actor` is null.
+   * @param {Token|TokenDocument|{actor?: Actor}|null} token
+   * @returns {Actor|null}
+   */
+  static actorFromToken(token) {
+    if (!token) return null;
+    const doc = token.document ?? (token.documentName === 'Token' ? token : null);
+    const source = doc || token;
+    if (source.actor) return source.actor;
+    if (source.isLazyDelta && typeof source._forceDeltaActor === 'function') {
+      return source._forceDeltaActor() || source.baseActor || null;
+    }
+    return source.baseActor || null;
+  }
+
   static getSpeaker(speaker) {
     if (!speaker) return null;
 
     let actor = ChatMessage.getSpeakerActor(speaker);
     if (speaker.emptyActor) return this.emptyActor(12, 'Alrik', speaker.emptyActor);
 
+    if (!actor && speaker.scene && speaker.token) {
+      const scene = game.scenes.get(speaker.scene);
+      actor = this.actorFromToken(scene?.tokens.get(speaker.token));
+    }
     if (!actor && canvas.tokens) {
       const token = canvas.tokens.get(speaker.token);
-      if (token) actor = token.actor;
+      actor = this.actorFromToken(token?.document ?? token);
     }
     if (!actor) {
       const scene = game.scenes.get(speaker.scene);
       try {
-        if (scene) actor = new foundry.canvas.placeables.Token(scene.getEmbeddedDocument('Token', speaker.token))?.actor;
+        if (scene) actor = this.actorFromToken(scene.getEmbeddedDocument('Token', speaker.token));
       } catch (error) {
         /* empty */
       }

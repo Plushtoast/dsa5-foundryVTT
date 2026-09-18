@@ -24,6 +24,13 @@ export class TrapState extends ChatMessageState {
         this.name = name;
     }
 
+    /**
+     * Scene token actor, forcing Foundry's lazy ActorDelta when `token.actor` is null.
+     */
+    static actorFromToken(token) {
+        return DSA5_Utility.actorFromToken(token);
+    }
+
     static canDisarm(actor) {
         if (!actor) return false;
         return SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.disarmTraps');
@@ -112,10 +119,11 @@ export class TrapState extends ChatMessageState {
     async applyRollResult({ mode, actorId, status, skipActorMatch = false } = {}) {
         if (!TrapState.ROLL_OUTCOMES.has(status)) return;
         const { behavior, token } = this;
-        if (!skipActorMatch && actorId && token.actor?.id !== actorId) return;
+        const tokenActor = TrapState.actorFromToken(token);
+        if (!skipActorMatch && actorId && tokenActor?.id !== actorId) return;
 
         const success = ['success', 'critical'].includes(status);
-        const actor = game.actors.get(actorId) || (token.actor?.id === actorId ? token.actor : null);
+        const actor = game.actors.get(actorId) || (tokenActor?.id === actorId ? tokenActor : null);
         const actorName = actor?.name || token?.name || actorId || '';
         const updates = {};
 
@@ -144,9 +152,11 @@ export class TrapState extends ChatMessageState {
                 if (success) {
                     await TrapAutomation.clearCountdown(behavior, this.message);
                 } else {
-                    const pending = this.message.flags?.dsa5?.trapData?.pendingEscapeEffects || [];
-                    if (pending.length && token.actor) {
-                        await TrapAutomation.applyPayloadEffects(token.actor, pending, {
+                    const live = this.message?.id ? game.messages.get(this.message.id) : this.message;
+                    const pending = live?.flags?.dsa5?.trapData?.pendingEscapeEffects || [];
+                    const victim = tokenActor || actor;
+                    if (pending.length && victim) {
+                        await TrapAutomation.applyPayloadEffects(victim, pending, {
                             origin: behavior.uuid,
                             sourceName: behavior.name,
                             skipResistRolls: true,

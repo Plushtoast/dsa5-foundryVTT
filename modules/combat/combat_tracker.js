@@ -455,8 +455,21 @@ export class DSA5CombatTracker extends foundry.applications.sidebar.tabs.CombatT
     }
   }
 
+  /**
+   * Foundry CombatTracker uses `"turn" in data` after `renderData.find(...)`.
+   * Updating a combat that is not currently viewed makes `find` return undefined.
+   */
+  #safeCombatRenderOptions(options = {}) {
+    const { renderData } = options;
+    if (!Array.isArray(renderData)) return options;
+    const viewedId = this.viewed?.id;
+    if (renderData.some((entry) => entry?._id === viewedId)) return options;
+    return { ...options, renderData: {} };
+  }
+
   async _onRender(context, options) {
-    await super._onRender(context, options);
+    await super._onRender(context, this.#safeCombatRenderOptions(options));
+    if (!this.element) return;
 
     new foundry.applications.ux.DragDrop.implementation({
       dragSelector: ".combatant",

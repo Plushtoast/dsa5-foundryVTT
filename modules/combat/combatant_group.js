@@ -6,14 +6,30 @@ import NavalCombat from './mkr/naval-combat.js';
  * Combatants stay separate documents; the group is a display-and-turn collapse.
  */
 export class DSACombatantGroup extends CombatantGroup {
-  static #running = false;
-  static #timers = new WeakMap();
+  static #queue = Promise.resolve();
+  static #timers = new Map();
 
   static groupId(combatant) {
     if (!combatant) return null;
     const group = combatant.group;
     if (group && typeof group === 'object') return group.id ?? null;
     return group || combatant._source?.group || null;
+  }
+
+  /**
+   * Combatants assigned to a group. Prefer combatant `group` ids over the
+   * derived `group.members` set — Foundry clears that set in prepareBaseData and
+   * it can still be empty immediately after creating the group.
+   */
+  static assignedMembers(group, combat = group?.parent) {
+    if (!group?.id) return [];
+    const parent = combat ?? group.parent;
+    const combatants = parent?.combatants;
+    if (typeof combatants?.[Symbol.iterator] === 'function') {
+      return [...combatants].filter((combatant) => this.groupId(combatant) === group.id);
+    }
+    if (typeof group.members?.[Symbol.iterator] === 'function') return [...group.members];
+    return [];
   }
 
   static isSpecialMode(combat) {
@@ -40,10 +56,16 @@ export class DSACombatantGroup extends CombatantGroup {
   static membersOf(combatant) {
     if (!combatant) return [];
     const group = combatant.group;
-    if (group?.members?.size) return [...group.members];
+    if (group?.members?.size && typeof group.members[Symbol.iterator] === 'function') {
+      return [...group.members];
+    }
+    const assigned = this.assignedMembers(group, combatant.parent ?? combatant.combat);
+    if (assigned.length) return assigned;
     const gid = this.groupId(combatant);
     if (!gid || !combatant.parent) return [combatant];
-    return [...combatant.parent.combatants].filter((c) => this.groupId(c) === gid);
+    const combatants = combatant.parent.combatants;
+    if (typeof combatants?.[Symbol.iterator] !== 'function') return [combatant];
+    return [...combatants].filter((c) => this.groupId(c) === gid);
   }
 
   /** Group members in combat turn order, so the flyout starts at the first minion. */
@@ -177,29 +199,51 @@ export class DSACombatantGroup extends CombatantGroup {
     await combat.update({ 'system.autoGroupMinions': !combat.system.autoGroupMinions });
   }
 
-  static scheduleAutoGroup(combat) {
-    if (!combat) return;
-    const previous = this.#timers.get(combat);
-    if (previous) clearTimeout(previous);
-    const timer = setTimeout(() => {
-      this.#timers.delete(combat);
-      this.autoGroup(combat);
-    }, 50);
-    this.#timers.set(combat, timer);
+  static #isLive(combat) {
+    const id = typeof combat === 'string' ? combat : combat?.id;
+    return !!(id && game.combats?.has(id));
   }
 
-  static async autoGroup(combat) {
-    if (!game.user.isGM || !combat || this.#running) return;
-    this.#running = true;
+  static cancelAutoGroup(combat) {
+    const id = typeof combat === 'string' ? combat : combat?.id;
+    if (!id) return;
+    const previous = this.#timers.get(id);
+    if (previous) clearTimeout(previous);
+    this.#timers.delete(id);
+  }
+
+  static scheduleAutoGroup(combat) {
+    if (!this.#isLive(combat)) return;
+    this.cancelAutoGroup(combat);
+    const id = combat.id;
+    const timer = setTimeout(() => {
+      this.#timers.delete(id);
+      const live = game.combats.get(id);
+      if (live) this.autoGroup(live);
+    }, 50);
+    this.#timers.set(id, timer);
+  }
+
+  static autoGroup(combat) {
+    const next = this.#queue.then(() => this.#runAutoGroup(combat));
+    this.#queue = next.catch(() => {});
+    return next;
+  }
+
+  static async #runAutoGroup(combat) {
+    if (!game.user.isGM || !this.#isLive(combat)) return;
     try {
-      if (!combat.system?.autoGroupMinions) {
-        await this.#dissolveAutoGroups(combat);
+      const live = game.combats.get(combat.id);
+      if (!live) return;
+      if (!live.system?.autoGroupMinions) {
+        await this.#dissolveAutoGroups(live);
         return;
       }
-      if (this.isSpecialMode(combat)) return;
-      await this.#applyAutoGroups(combat);
-    } finally {
-      this.#running = false;
+      if (this.isSpecialMode(live)) return;
+      await this.#applyAutoGroups(live);
+    } catch (err) {
+      if (!this.#isLive(combat)) return;
+      throw err;
     }
   }
 
@@ -208,7 +252,7 @@ export class DSACombatantGroup extends CombatantGroup {
     if (!auto.length) return;
     const updates = [];
     for (const group of auto) {
-      for (const member of group.members) updates.push({ _id: member.id, group: null });
+      for (const member of this.assignedMembers(group, combat)) updates.push({ _id: member.id, group: null });
     }
     if (updates.length) await combat.updateEmbeddedDocuments('Combatant', updates);
     await combat.deleteEmbeddedDocuments('CombatantGroup', auto.map((group) => group.id));
@@ -282,13 +326,14 @@ export class DSACombatantGroup extends CombatantGroup {
 
     const empty = [...combat.groups].filter((group) => {
       if (!group.getFlag?.('dsa5', 'autoGroup')) return false;
-      return group.members.size < 2;
+      if (usedGroupIds.has(group.id)) return false;
+      return this.assignedMembers(group, combat).length < 2;
     });
     if (!empty.length) return;
 
     const leftovers = [];
     for (const group of empty) {
-      for (const member of group.members) leftovers.push({ _id: member.id, group: null });
+      for (const member of this.assignedMembers(group, combat)) leftovers.push({ _id: member.id, group: null });
     }
     if (leftovers.length) await combat.updateEmbeddedDocuments('Combatant', leftovers);
     await combat.deleteEmbeddedDocuments('CombatantGroup', empty.map((group) => group.id));
@@ -305,7 +350,7 @@ export class DSACombatantGroup extends CombatantGroup {
 
   static async syncGroupInitiative(combatant, value) {
     const group = combatant?.group;
-    if (!group || group.members?.size < 2) return;
+    if (!group || this.assignedMembers(group, combatant.parent ?? combatant.combat).length < 2) return;
     if (group.initiative === value) return;
     await group.update({ initiative: value });
   }
@@ -339,7 +384,7 @@ export class DSACombatantGroup extends CombatantGroup {
     for (const id of ids) {
       const combatant = combat.combatants.get(id);
       const gid = this.groupId(combatant);
-      if (gid && (combatant.group?.members?.size ?? 0) > 1) {
+      if (gid && this.isGrouped(combatant)) {
         if (seenGroups.has(gid)) continue;
         seenGroups.add(gid);
       }

@@ -543,7 +543,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     div.innerHTML = refreshedTimePart;
     this.element.querySelector('.calendarDateChange').innerHTML = div.querySelector('.calendarDateChange').innerHTML;
     this.#dateFormListeners();
-    this._drawCalendar();
+    await this._drawCalendar();
 
     const parts = game.user.isGM ? ['events', 'config'] : ['events'];
     await this.refreshParts(parts);
@@ -583,7 +583,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     });
     this.element.querySelector('[name="dsa5.calendar"]')?.addEventListener('change', this._onChangeCalendar.bind(this));
 
-    this._drawCalendar();
+    await this._drawCalendar();
 
     this.#search ??= new foundry.applications.ux.SearchFilter({
       inputSelector: "input.calendarSearch[type=search]",
@@ -688,15 +688,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _drawCalendar() {
-    const appContainer = this.element.querySelector('.circular-calendar');
-    //const appContainer = this.element;
+    const appContainer = this.element?.querySelector('.circular-calendar');
+    if (!appContainer) return;
     if (this.calendarRenderer) {
       this.calendarRenderer.element = appContainer;
-    }
-    else {
+    } else {
       this.calendarRenderer = new CalendarCanvas(this, appContainer, this._onCalendarCanvasCallback.bind(this), this._onCalendarCanvasHover.bind(this));
     }
-    this.calendarRenderer.render();
+    return this.calendarRenderer.render();
   }
 
   async _onCalendarCanvasHover(hoverBait) {
@@ -1143,6 +1142,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const gridData = await this.#buildMonthGrid(this.#eventsCalendarYear, this.#eventsCalendarMonth);
     const html = await renderTemplate('systems/dsa5/templates/system/calendar/events-month-grid.hbs', gridData);
+    if (!this.element) return;
     gridContainer.innerHTML = html;
 
     const titleEl = this.element.querySelector('.events-calendar-title');
@@ -1201,8 +1201,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   _setupInfiniteScroll() {
     if (this.#getEventsViewMode() === 'calendar') return;
 
-    const container = this.element.querySelector('.eventscontainer');
-    const root = this.element.querySelector('[data-tab="events"].tab');
+    const container = this.element?.querySelector('.eventscontainer');
+    const root = this.element?.querySelector('[data-tab="events"].tab');
     if (!container || !root) return;
 
     if (container.dataset.vscrollInit === '1') {
@@ -1255,17 +1255,17 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const opts = { root, rootMargin: '200px', threshold: 0 };
     const topObserver = new IntersectionObserver(async (entries) => {
       for (const e of entries) {
-        if (e.isIntersecting && !this._evtState.isLoadingTop) {
+        if (e.isIntersecting && this._evtState && !this._evtState.isLoadingTop) {
           this._evtState.isLoadingTop = true;
-          try { await this._prependPrevYear(); } finally { this._evtState.isLoadingTop = false; }
+          try { await this._prependPrevYear(); } finally { if (this._evtState) this._evtState.isLoadingTop = false; }
         }
       }
     }, opts);
     const bottomObserver = new IntersectionObserver(async (entries) => {
       for (const e of entries) {
-        if (e.isIntersecting && !this._evtState.isLoadingBottom) {
+        if (e.isIntersecting && this._evtState && !this._evtState.isLoadingBottom) {
           this._evtState.isLoadingBottom = true;
-          try { await this._appendNextYear(); } finally { this._evtState.isLoadingBottom = false; }
+          try { await this._appendNextYear(); } finally { if (this._evtState) this._evtState.isLoadingBottom = false; }
         }
       }
     }, opts);
@@ -1284,22 +1284,26 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _appendNextYear() {
+    if (!this.element || !this._evtState) return;
     const nextYear = this._evtState.latestYear + 1;
     if (this._evtState.loadedYears.has(nextYear)) return;
     const entries = await this.constructor.fromYearCache(nextYear);
     const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
     await this._insertYearChunk(nextYear, sorted, 'after');
+    if (!this._evtState) return;
     this._evtState.latestYear = nextYear;
     this._pruneYearsIfNeeded();
   }
 
   async _prependPrevYear() {
+    if (!this.element || !this._evtState) return;
     const prevYear = this._evtState.earliestYear - 1;
     if (this._evtState.loadedYears.has(prevYear)) return;
     const entries = await this.constructor.fromYearCache(prevYear);
     const sorted = entries.slice().sort((a, b) => this.#getChronologicalSortKey(a) - this.#getChronologicalSortKey(b));
     const prevHeight = this._evtState.root.scrollHeight;
     await this._insertYearChunk(prevYear, sorted, 'before');
+    if (!this._evtState) return;
     const newHeight = this._evtState.root.scrollHeight;
     const delta = newHeight - prevHeight;
     this._evtState.root.scrollTop += delta;
@@ -1308,6 +1312,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _insertYearChunk(year, entries, position, initialChunk = false) {
+    if (!this.element || !this._evtState) return;
     const { container, topSentinel, bottomSentinel, loadedYears } = this._evtState;
     if (loadedYears.has(year)) return;
     if (container.querySelector(`.year-chunk[data-year="${year}"]`)) {
@@ -1330,6 +1335,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const shouldAddTodayMarker = year === currentYear && initialChunk;
     await this._renderEntriesWithMonthDividers(entries, wrapper, tpl, yearSuffix, year, initialChunk, shouldAddTodayMarker ? components : null);
+    if (!this.element || !this._evtState) return;
 
     if (position === 'before') container.insertBefore(frag, topSentinel.nextSibling);
     else container.insertBefore(frag, bottomSentinel);
@@ -1402,6 +1408,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _applyActiveFiltersToNewContent(scopeElement) {
+    if (!this.element || !scopeElement) return;
     const toggles = Array.from(this.element.querySelectorAll('.searchOptions .toggleOn'));
     if (!toggles.length) return;
     const searchOptions = { category: new Set(), uuid: new Set() };
@@ -1421,6 +1428,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _applyActiveSearchToNewContent(scopeElement) {
+    if (!this.element || !scopeElement) return;
     const input = this.element.querySelector('input.calendarSearch[type=search]');
     const query = input?.value?.trim() || '';
     if (!query) return;
@@ -1438,7 +1446,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   _pruneYearsIfNeeded() {
-    const { loadedYears, container, topSentinel, bottomSentinel, keepYears } = this._evtState;
+    if (!this._evtState) return;
+    const { loadedYears, container, keepYears } = this._evtState;
     if (loadedYears.size <= keepYears) return;
     const years = Array.from(loadedYears).sort((a, b) => a - b);
     while (years.length > keepYears) {

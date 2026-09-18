@@ -4,6 +4,7 @@
  */
 export class CalendarCanvas {
     static DEFAULT_SIZE = 700;
+    #renderGeneration = 0;
 
     /**
      * @param {HTMLElement} parentElement - Element to attach the canvas to
@@ -180,62 +181,92 @@ export class CalendarCanvas {
      * @async
      */
     async render() {
+        const generation = ++this.#renderGeneration;
+        this.isDestroyed = false;
         try {
             this._setupPixiApp();
+            if (!this._isAppUsable()) return;
             await this._prepareData();
+            if (!this.#isCurrentRender(generation)) return;
             this._precalculateValues();
             await this._loadTextures();
+            if (!this.#isCurrentRender(generation)) return;
+            this._setupPixiApp();
+            if (!this._isAppUsable()) return;
             this._createContainers();
             this._renderStaticElements();
             this._setupEventListeners();
             this.initialized = true;
         } catch (error) {
+            if (!this.#isCurrentRender(generation)) return;
             console.error('Error rendering calendar:', error);
             throw error;
         }
+    }
+
+    #isCurrentRender(generation) {
+        return generation === this.#renderGeneration && !this.isDestroyed;
     }
 
     /**
      * Clean up resources
      */
     destroy() {
+        this.#renderGeneration += 1;
         this.isDestroyed = true;
-        this.initialized = false;
+        this._teardownPixiApp();
+    }
 
+    _isAppUsable() {
+        return !!(this.app?.renderer && this.element && this.app.view && this.element.contains(this.app.view));
+    }
+
+    _teardownPixiApp() {
         this._removeEventListeners();
-
-        // Clear texture cache
         this.textureCache.forEach(texture => texture.destroy(true));
         this.textureCache.clear();
-
         if (this.app) {
-            this.app.destroy(true, {
-                children: true,
-            });
+            this.app.destroy(true, { children: true });
             this.app = null;
         }
+        this.stage = null;
+        this.initialized = false;
+        this.containers = {
+            background: null,
+            seasons: null,
+            months: null,
+            monthSprites: null,
+            days: null,
+            weekdays: null,
+            moonPhase: null,
+            highlights: null
+        };
     }
 
     _setupPixiApp() {
-        if (this.app) return;
+        if (this._isAppUsable()) return;
+        this._teardownPixiApp();
+        if (!this.element) return;
 
-        const dpr = 1; //window.devicePixelRatio || 1;
-        const options = {
-            width: Number(this.element.getAttribute('width')) * dpr,
-            height: Number(this.element.getAttribute('height')) * dpr,
+        this._initializeConstants();
+
+        const dpr = 1;
+        const width = Number(this.element.getAttribute('width')) || CalendarCanvas.DEFAULT_SIZE;
+        const height = Number(this.element.getAttribute('height')) || CalendarCanvas.DEFAULT_SIZE;
+        this.app = new PIXI.Application({
+            width: width * dpr,
+            height: height * dpr,
             backgroundColor: this.COLORS.BACKGROUND_OUTER,
             antialias: true,
             resolution: dpr,
             autoDensity: true,
             powerPreference: "high-performance",
             autoStart: true
-        };
-
-        this.app = new PIXI.Application(options);
+        });
         this.element.appendChild(this.app.view);
         this.stage = this.app.stage;
-        this.centerX = this.app.screen.width / 2;
-        this.centerY = this.app.screen.height / 2;
+        this.centerX = width / 2;
+        this.centerY = height / 2;
     }
 
     _removeEventListeners() {
@@ -515,7 +546,8 @@ export class CalendarCanvas {
     }
 
     _createContainers() {
-        if (this.containers.background) return;
+        if (!this.stage) return;
+        if (this.containers.background?.parent === this.stage) return;
 
         // Create container hierarchy with appropriate z-index
         const containerOrder = [
@@ -539,6 +571,7 @@ export class CalendarCanvas {
     }
 
     _renderStaticElements() {
+        if (!this.stage || !this.containers?.days) return;
         if (!this.initialized) {
             this._drawBackground();
             this._drawBorders();
@@ -950,6 +983,7 @@ export class CalendarCanvas {
     }
 
     _drawDays() {
+        if (!this.containers?.days) return;
         const daysContainer = new PIXI.Container();
         const { currentDay } = this.calendarData;
         this.containers.days.removeChildren();
@@ -985,8 +1019,8 @@ export class CalendarCanvas {
         daysContainer.addChild(highlightedDotsGraphics);
 
         const interactiveLayer = new PIXI.Sprite(PIXI.Texture.WHITE);
-        interactiveLayer.width = this.app.screen.width;
-        interactiveLayer.height = this.app.screen.height;
+        interactiveLayer.width = this.centerX * 2;
+        interactiveLayer.height = this.centerY * 2;
         interactiveLayer.alpha = 0.001; // Almost invisible
         interactiveLayer.interactive = true;
 
@@ -995,7 +1029,7 @@ export class CalendarCanvas {
     }
 
     _setupEventListeners() {
-        if (this.initialized) return;
+        if (this.initialized || !this.app?.view) return;
 
         this.app.view.addEventListener('mousemove', this.throttledMouseMove);
         this.app.view.addEventListener('mouseleave', this._boundMouseLeave);

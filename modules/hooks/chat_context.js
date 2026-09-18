@@ -31,7 +31,9 @@ const getChatCardDamage = (message) => getProperty(message, 'flags.data.postData
 const hasChatCardDamage = (message) => Number.isNumeric(getChatCardDamage(message));
 
 const getChatCardDamageTargets = (message) => {
-  const controlledActors = (canvas.tokens?.controlled || []).map(token => token.actor).filter(Boolean);
+  const controlledActors = (canvas.tokens?.controlled || [])
+    .map((token) => DSA5_Utility.actorFromToken(token.document ?? token))
+    .filter(Boolean);
   if (controlledActors.length > 0) return controlledActors;
 
   const actor = getActorFromRollMessage(message);

@@ -201,7 +201,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
   }
 
   async _preCreate(data, options, user) {
-    TrapAutomation.applyAttackWeaponPrefillOnCreate(data);
+    TrapAutomation.applyAttackWeaponPrefillOnCreate(data, this);
     return super._preCreate(data, options, user);
   }
 

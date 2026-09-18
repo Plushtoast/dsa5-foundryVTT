@@ -48,8 +48,27 @@ export default class DSA5Combat extends Combat {
     this.refreshTokenbars();
   }
 
+  async activate(options) {
+    if (!this.collection?.has(this.id)) return this;
+    return super.activate(options);
+  }
+
   _onDelete(options, userId) {
+    DSACombatantGroup.cancelAutoGroup(this);
+    // Foundry then calls `collection.viewed?.activate()` before tracker render
+    // finishes, so drop the stale pointer first.
+    const wasView = this.isView;
+    if (wasView && ui.combat) ui.combat.viewed = null;
     super._onDelete(options, userId);
+    if (wasView) {
+      const rendered = ui.combat?.render({ combat: null });
+      if (userId === game.userId) {
+        Promise.resolve(rendered).then(() => {
+          const next = ui.combat?.viewed;
+          if (next && game.combats.has(next.id) && !next.active) return next.activate({ render: false });
+        }).catch(() => {});
+      }
+    }
     this.refreshTokenbars();
   }
 
@@ -402,7 +421,7 @@ export default class DSA5Combat extends Combat {
     for (const id of filtered) {
       const combatant = this.combatants.get(id);
       const group = combatant?.group;
-      if (!group || group.members.size < 2 || seen.has(group.id)) continue;
+      if (!group || DSACombatantGroup.assignedMembers(group, this).length < 2 || seen.has(group.id)) continue;
       if (!Number.isFinite(combatant.initiative)) continue;
       seen.add(group.id);
       groupUpdates.push({ _id: group.id, initiative: combatant.initiative });

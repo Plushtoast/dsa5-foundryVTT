@@ -87,6 +87,22 @@ export default class Itemdsa5 extends Item {
     return !!CONFIG.Item.dataModels?.[type]?.implementsOnUseEffect;
   }
 
+  /**
+   * Type-specific default artwork for Foundry v14 schema initials and createDocuments.
+   * @param {object} [itemData]
+   * @returns {{img: string}}
+   */
+  static getDefaultArtwork(itemData = {}) {
+    const type = itemData?.type;
+    if (type && type in ITEM_CONSTANTS.DEFAULT_IMAGES) {
+      return { img: ITEM_CONSTANTS.DEFAULT_IMAGES[type] };
+    }
+    if (typeof type === 'string' && type.startsWith('ability')) {
+      return { img: ITEM_CONSTANTS.DEFAULT_IMAGES.specialability };
+    }
+    return { img: this.DEFAULT_ICON };
+  }
+
   static migrateData(source) {
     const migrated = super.migrateData(source);
     const legacyOnUseEffect = getProperty(migrated, 'flags.dsa5.onUseEffect');
@@ -118,14 +134,8 @@ export default class Itemdsa5 extends Item {
    * @returns {void}
    */
   static defaultIcon(data) {
-    if (!data.img || data.img === '') {
-      if (data.type in ITEM_CONSTANTS.DEFAULT_IMAGES) {
-        data.img = ITEM_CONSTANTS.DEFAULT_IMAGES[data.type];
-      } else if (data.type.startsWith('ability')) {
-        data.img = ITEM_CONSTANTS.DEFAULT_IMAGES.specialability;
-      } else {
-        data.img = this.DEFAULT_ICON;
-      }
+    if (!data.img || data.img === '' || data.img === this.DEFAULT_ICON || data.img === ITEM_CONSTANTS.DEFAULT_ICON_PATH) {
+      data.img = this.getDefaultArtwork(data).img;
     }
   }
 

@@ -115,12 +115,17 @@ export default class TrapAutomation extends TrapSetpiece {
     return '';
   }
 
-  static applyAttackWeaponPrefillOnCreate(data = {}) {
-    if (!data.system) data.system = {};
-    if (data.system.attack?.weaponType) return;
-    const weaponType = this.defaultWeaponType(data.system.trapType);
+  static applyAttackWeaponPrefillOnCreate(data = {}, model = null) {
+    const system = data.system ?? data;
+    if (system.attack?.weaponType || model?.attack?.weaponType) return;
+    const weaponType = this.defaultWeaponType(system.trapType ?? model?.trapType);
     if (!weaponType) return;
-    foundry.utils.setProperty(data, 'system.attack.weaponType', weaponType);
+    if (data.system || Object.hasOwn(data, 'system')) {
+      foundry.utils.setProperty(data, 'system.attack.weaponType', weaponType);
+    } else {
+      foundry.utils.setProperty(data, 'attack.weaponType', weaponType);
+    }
+    model?.updateSource?.({ 'attack.weaponType': weaponType });
   }
 
   static applyAttackWeaponPrefill(system = {}, changes = {}) {
@@ -375,7 +380,7 @@ export default class TrapAutomation extends TrapSetpiece {
   }
 
   static async trigger({ behavior, token, region, trapMessage, skipDialog = false } = {}) {
-    const actor = token?.actor;
+    const actor = DSA5_Utility.actorFromToken(token);
     if (!behavior || !actor) return null;
 
     const system = behavior.system || {};
@@ -510,6 +515,7 @@ export default class TrapAutomation extends TrapSetpiece {
     const tokenDoc = token?.document ?? (token?.documentName === 'Token' ? token : null);
     const chatData = DSA5_Utility.chatDataSetup(content);
     chatData.speaker = ChatMessage.getSpeaker({ actor, token: tokenDoc || undefined });
+    if (!chatData.speaker.actor && actor?.id) chatData.speaker.actor = actor.id;
     chatData.rolls = [roll];
     chatData.flags = mergeObject(chatData.flags || {}, {
       data: { postData: { chatCardDamage: Number(roll.total) } },
