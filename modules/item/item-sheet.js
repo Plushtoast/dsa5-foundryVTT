@@ -20,6 +20,7 @@ import MagicAnalysisService from '../system/magic-analysis/magic-analysis.js';
 import MagicAnalysisContentResolver from '../system/magic-analysis/magic-analysis-content-resolver.js';
 import ItemEnchantment from './item-enchantment.js';
 import ItemDisease from './item-disease.js';
+import ItemPoison from './item-poison.js';
 import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import MerchantStallHelper from '../system/merchant/merchant-stall.js';
 
@@ -914,7 +915,7 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
   static async _poisonShow(ev, target) {
     let item;
     if (this.actor) item = this.actor.items.find((x) => x.type == 'poison' && x.name == this.item.flags.dsa5.poison.name);
-    if (!item) item = await this.getSpell(this.item.flags.dsa5.poison);
+    if (!item) item = await ItemPoison.resolveDocument(this.item.flags.dsa5.poison, { notify: true });
 
     if (item) {
       item.sheet.render(true);
@@ -1048,35 +1049,9 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
   }
 
   async _poison(dragData) {
-    const { item, typeClass, _selfTarget } = await itemFromDrop(dragData, undefined, false);
-    if (typeClass == 'poison') {
-      const poison = {
-        name: item.name,
-        pack: item.pack,
-        itemId: item._id,
-        permanent: false,
-        actorId: dragData.actorId,
-      };
-      const update = { flags: { dsa5: { poison } } };
-      if (this.item.actor) {
-        if (this.item.actor.uuid != item.actor?.uuid) {
-          const proceed = await foundry.applications.api.DialogV2.confirm({
-            window: {
-              title: _loc('WIZARD.addItem', { item: item.name }),
-            },
-            content: `<p>${_loc('DSAError.poisonNeedsToBeInActor')}</p><p>${_loc('POISON.addNow')}</p>`,
-            rejectClose: false,
-            modal: true,
-          });
-          if (proceed) {
-            await this.item.actor.createEmbeddedDocuments('Item', [item.toObject()]);
-          }
-        }
-      } else {
-        ui.notifications.info('DSAError.poisonNeedsToBeInActor', { localize: true });
-      }
-      await this.item.update(update);
-    }
+    const { item, typeClass } = await itemFromDrop(dragData, undefined, false);
+    if (typeClass !== 'poison') return;
+    await ItemPoison.attach(this.item, item, { actorId: dragData.actorId });
   }
 
   toggleChargedState(id, _enchantments) {
@@ -1088,7 +1063,7 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
   }
 
   static _deletePoison(ev, target) {
-    this.item.update({ 'flags.dsa5.poison': _del });
+    ItemPoison.remove(this.item);
   }
 
   async _disease(dragData) {

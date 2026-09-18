@@ -234,6 +234,7 @@ export default class TrapAutomation extends TrapSetpiece {
       payloadEffects: payload.effects,
       payloadFlags: payload.flags,
       payloadRefs: payload.refs,
+      img: item.img || this.DEFAULT_IMG,
     });
     return behaviorData;
   }
@@ -253,7 +254,7 @@ export default class TrapAutomation extends TrapSetpiece {
     return {
       name: behavior.name,
       uuid: behavior.uuid,
-      img: behavior.img,
+      img: this.trapImg(behavior),
       flags,
       getFlag(scope, key) {
         return getProperty(this.flags, `${scope}.${key}`);
@@ -333,12 +334,22 @@ export default class TrapAutomation extends TrapSetpiece {
     });
   }
 
-  static async announceHitExtras(behavior, payload) {
+  static async announceHitExtras(behavior, payload, { actor, token } = {}) {
     const parsed = this.hitExtrasMarkup(payload);
     if (!parsed) return;
-    await ChatMessage.create(DSA5_Utility.chatDataSetup(
+    const chatData = DSA5_Utility.chatDataSetup(
       `<div><b>${behavior.name}</b>: ${parsed}</div>`,
-    ));
+    );
+    if (actor) {
+      const tokenDoc = token?.document ?? (token?.documentName === 'Token' ? token : null);
+      chatData.speaker = ChatMessage.getSpeaker({ actor, token: tokenDoc || undefined });
+    }
+    if (token?.uuid) {
+      chatData.flags = mergeObject(chatData.flags || {}, {
+        dsa5: { zoneAttack: { targetTokenUuid: token.uuid } },
+      });
+    }
+    await ChatMessage.create(chatData);
   }
 
   static async rollChargedEnchantments(behavior, payload, { token } = {}) {
@@ -413,7 +424,7 @@ export default class TrapAutomation extends TrapSetpiece {
         token,
       });
       if (!skipDamage) {
-        await this.announceHitExtras(behavior, payload);
+        await this.announceHitExtras(behavior, payload, { actor, token });
         await this.rollChargedEnchantments(behavior, payload, { token });
       }
     }
@@ -422,7 +433,7 @@ export default class TrapAutomation extends TrapSetpiece {
       countdown = await this.startTimer({ behavior, token, trapMessage, openEscape: !skipDialog });
     }
     if (this.isStoneTrapType(system.trapType)) {
-      chase = await this.startBoulderChase({ behavior, token });
+      chase = await this.startBoulderChase({ behavior, token, region });
     }
 
     if (Number(system.charges) > 0) {
@@ -520,7 +531,7 @@ export default class TrapAutomation extends TrapSetpiece {
 
     const sourceItem = {
       name: attackName,
-      img: behavior.img,
+      img: this.trapImg(behavior),
       uuid: behavior.uuid,
       flags: { dsa5: attachPayload ? (payload.flags || {}) : {} },
       effects: attachPayload ? (payload.effects || []) : [],

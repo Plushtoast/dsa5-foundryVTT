@@ -10,6 +10,7 @@ import { DICE_CONSTANTS } from "../config/dice-constants.js";
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 export class TrapState extends ChatMessageState {
     static ROLL_OUTCOMES = new Set(['success', 'critical', 'failure', 'botch']);
@@ -37,7 +38,7 @@ export class TrapState extends ChatMessageState {
         new foundry.applications.api.DialogV2({ id, ...config }).render(true);
     }
 
-    #templateData(trapData = this.message?.flags?.dsa5?.trapData) {
+    async #templateData(trapData = this.message?.flags?.dsa5?.trapData) {
         const stored = trapData || {};
         const outcomes = (stored.outcomes || []).map((entry) => {
             const display = QueryOrchestrator.outcomeDisplay({ status: entry.status });
@@ -50,11 +51,15 @@ export class TrapState extends ChatMessageState {
         });
         const detected = Boolean(this.behavior.system.detected);
         const countdown = stored.countdown || this.behavior.flags?.dsa5?.countdown || null;
+        const secrets = game.user.isGM;
+        const enrichedGmdescription = await TextEditor.enrichHTML(this.behavior.system.gmdescription || '', { secrets });
+        const enrichedDescription = await TextEditor.enrichHTML(this.behavior.system.description || '', { secrets: true });
         return {
             behaviour: this.behavior.system,
             token: this.token,
             tokenAnchor: this.token.actor ? this.token.actor.toAnchor().outerHTML : this.token.name,
             trapName: this.behavior.name,
+            trapImg: TrapAutomation.trapImg(this.behavior),
             strikes: TrapAutomation.strikesFrom(this.behavior.system),
             detected,
             disarmed: Boolean(this.behavior.system.disarmed),
@@ -62,11 +67,13 @@ export class TrapState extends ChatMessageState {
             countdown,
             outcomes,
             showNarration: detected && Boolean(this.behavior.system.description),
+            enrichedGmdescription,
+            enrichedDescription,
         };
     }
 
     async toMessage() {
-        const content = await renderTemplate(TrapState.TEMPLATE, this.#templateData({ outcomes: [], triggered: false }));
+        const content = await renderTemplate(TrapState.TEMPLATE, await this.#templateData({ outcomes: [], triggered: false }));
 
         const chatData = DSA5_Utility.chatDataSetup(content, DICE_CONSTANTS.CHAT_MODES.SELF, false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
 
@@ -95,7 +102,7 @@ export class TrapState extends ChatMessageState {
         if (triggered) trapData.triggered = true;
         Object.assign(trapData, trapDataPatch);
 
-        const content = await renderTemplate(TrapState.TEMPLATE, this.#templateData(trapData));
+        const content = await renderTemplate(TrapState.TEMPLATE, await this.#templateData(trapData));
         await this.message.update({
             content,
             'flags.dsa5.trapData': trapData,
@@ -415,7 +422,7 @@ export class TrapState extends ChatMessageState {
 
         behavior.system.playSound();
 
-        const description = behavior.system.description || '';
+        const description = await TextEditor.enrichHTML(behavior.system.description || '', { secrets: true });
         const tokenName = foundry.utils.escapeHTML(token.name);
         const trapName = foundry.utils.escapeHTML(behavior.name);
         ChatMessage.create(DSA5_Utility.chatDataSetup(`

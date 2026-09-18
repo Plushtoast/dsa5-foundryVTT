@@ -69,6 +69,7 @@ import { SummoningFlow } from './wizards/summoning/summoning_flow.js';
 import { DialogExtraFlow } from './dialog/dialog-extra-flow.js';
 import ItemEnchantment from './item/item-enchantment.js';
 import ItemDisease from './item/item-disease.js';
+import ItemPoison from './item/item-poison.js';
 import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
 import { clickableAbility, resizeListener, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
@@ -172,6 +173,7 @@ globalThis.dsa5 = {
       DialogExtraFlow,
       ItemEnchantment,
       ItemDisease,
+      ItemPoison,
       RuleChaos,
       Trade,
       DSAActiveEffectConfig,

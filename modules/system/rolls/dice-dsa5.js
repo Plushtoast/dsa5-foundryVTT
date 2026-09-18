@@ -30,6 +30,7 @@ import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { ITEM_CONSTANTS } from '../../config/item-constants.js';
 import { ManualRollDialog } from './manual-roll-dialog.js';
 import ItemDisease from '../../item/item-disease.js';
+import ItemPoison from '../../item/item-poison.js';
 
 const { mergeObject, deepClone, duplicate, getProperty } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1752,13 +1753,8 @@ export default class DiceDSA5 {
         }
       }
     }
-    const poison = getProperty(source, 'flags.dsa5.poison');
-    if (poison) {
-      result.push(
-        `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${poison.name}"
-        data-type="poison"><i class="fas fa-dice"></i>${_loc('TYPES.Item.poison')}: ${poison.name}</a>`,
-      );
-    }
+    const poisonButton = ItemPoison.chatButton(ItemPoison.get(source));
+    if (poisonButton) result.push(poisonButton);
     const diseaseButton = ItemDisease.chatButton(ItemDisease.get(source));
     if (diseaseButton) result.push(diseaseButton);
     return result.join(', ');
@@ -2371,6 +2367,11 @@ export default class DiceDSA5 {
 
     if (category === 'disease' && ev.currentTarget.dataset.threshold != null) {
       await ItemDisease.handleChatRoll({ actor, speaker, dataset: ev.currentTarget.dataset });
+      return;
+    }
+
+    if (category === 'poison') {
+      await ItemPoison.handleChatRoll({ actor, speaker, dataset: ev.currentTarget.dataset, message });
       return;
     }
 

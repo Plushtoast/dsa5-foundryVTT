@@ -1,6 +1,6 @@
 <div class="dsa5 trap-announce-card">
     <div class="flexrow">
-        <img class="flex0" src="systems/dsa5/icons/categories/trap.webp" width="42" height="42" style="margin-right:6px"/>
+        <img class="flex0" src="{{trapImg}}" width="42" height="42" style="margin-right:6px"/>
         <p>{{{localize "REGIONBEHAVIOR_DSATrap.trapstart" name=tokenAnchor trap=trapName}}}</p>
     </div>
     {{#if detected}}<span class="dsa-pip pip-positive">{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.detected.label"}}</span>{{/if}}
@@ -9,16 +9,16 @@
     {{#if countdown.remaining}}<span class="dsa-pip pip-negative">{{localize "REGIONBEHAVIOR_DSATrap.timerRemaining" rounds=countdown.remaining modifier=countdown.escapeModifier}}</span>{{/if}}
     {{#if countdown.timedOut}}<span class="dsa-pip pip-negative">{{localize "REGIONBEHAVIOR_DSATrap.timerTimedOut"}}</span>{{/if}}
     {{#if behaviour.gmdescription}}
-    <p>{{{behaviour.gmdescription}}}</p>
+    <p>{{{enrichedGmdescription}}}</p>
     {{/if}}
     {{#if showNarration}}
     <div class="dsa-info-box">
         <p class="dsa-info-text small"><b>{{localize "REGIONBEHAVIOR_DSATrap.narrateDetected"}}</b></p>
-        <p class="dsa-info-text">{{{behaviour.description}}}</p>
+        <p class="dsa-info-text">{{{enrichedDescription}}}</p>
     </div>
     {{else}}
     {{#unless behaviour.gmdescription}}
-    <p>{{{behaviour.description}}}</p>
+    <p>{{{enrichedDescription}}}</p>
     {{/unless}}
     {{/if}}
     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.hint">

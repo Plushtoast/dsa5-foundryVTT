@@ -39,6 +39,12 @@ export default class TrapSetpiece {
     return this.isTimerTrapType(trapType) || this.isStoneTrapType(trapType) || this.isSlideTrapType(trapType);
   }
 
+  static DEFAULT_IMG = 'systems/dsa5/icons/categories/trap.webp';
+
+  static trapImg(source) {
+    return source?.flags?.dsa5?.img || source?.img || this.DEFAULT_IMG;
+  }
+
   static skipsTriggerDamage(trapType) {
     return this.isTimerTrapType(trapType) || this.isStoneTrapType(trapType);
   }
@@ -244,7 +250,7 @@ export default class TrapSetpiece {
     return Math.max(0, Number(roll.total) || 0);
   }
 
-  static async startBoulderChase({ behavior, token, combat } = {}) {
+  static async startBoulderChase({ behavior, token, region, combat } = {}) {
     const system = behavior?.system || {};
     if (!this.isStoneTrapType(system.trapType)) return null;
     if (!token?.actor) return null;
@@ -259,8 +265,18 @@ export default class TrapSetpiece {
     const boulder = await Actor.create({
       name: behavior.name,
       type: 'npc',
-      img: behavior.img || 'systems/dsa5/icons/categories/trap.webp',
+      img: this.trapImg(behavior),
       system: {
+        characteristics: {
+          mu: { initial: 14 },
+          kl: { initial: 14 },
+          in: { initial: 14 },
+          ch: { initial: 14 },
+          ff: { initial: 14 },
+          ge: { initial: 14 },
+          ko: { initial: 14 },
+          kk: { initial: 14 },
+        },
         status: {
           speed: { initial: gs },
           wounds: { value: 50 },
@@ -271,18 +287,25 @@ export default class TrapSetpiece {
 
     const skillName = _loc('LocalizedIDs.bodyControl');
     try {
-      const skill = await DSA5_Utility.skillByName(skillName);
-      if (skill) {
-        const data = skill.toObject();
-        data.system.talentValue.value = fw;
-        await boulder.createEmbeddedDocuments('Item', [data]);
+      const existing = boulder.items.find((entry) => entry.type === 'skill' && entry.name === skillName);
+      if (existing) {
+        await existing.update({ 'system.talentValue.value': fw });
+      } else {
+        const skill = await DSA5_Utility.skillByName(skillName);
+        if (skill) {
+          const data = skill.toObject();
+          data.system.talentValue.value = fw;
+          await boulder.createEmbeddedDocuments('Item', [data]);
+        }
       }
     } catch (err) {
       console.warn(err);
     }
 
+    const boulderToken = await TrapSetpiece.#placeBoulderToken(boulder, { behavior, token, region });
     const [chaser] = await combat.createEmbeddedDocuments('Combatant', [{
       actorId: boulder.id,
+      tokenId: boulderToken?.id,
       name: boulder.name,
       img: boulder.img,
       system: { chaseRole: 'chasing', chaseDistance: distance },
@@ -299,12 +322,66 @@ export default class TrapSetpiece {
     return {
       combat,
       boulder,
+      boulderToken,
       chaser: combat.combatants.get(chaser.id) ?? chaser,
       victim: combat.combatants.get(victim.id) ?? victim,
       distance,
       gs,
       fw,
     };
+  }
+
+  static #trapLocation(region, token) {
+    try {
+      const bounds = region?.bounds;
+      if (bounds && Number.isFinite(bounds.x) && Number.isFinite(bounds.width)) {
+        return { x: bounds.x + (bounds.width / 2), y: bounds.y + (bounds.height / 2) };
+      }
+    } catch {
+      /* region polygon tree may not be ready off-canvas */
+    }
+    const objectCenter = region?.object?.center;
+    if (objectCenter && Number.isFinite(objectCenter.x)) {
+      return { x: objectCenter.x, y: objectCenter.y };
+    }
+    const shape = region?.shapes?.[0];
+    if (shape && Number.isFinite(Number(shape.x))) {
+      const width = Number(shape.width) || (Number(shape.radiusX) * 2) || 0;
+      const height = Number(shape.height) || (Number(shape.radiusY) * 2) || 0;
+      return { x: Number(shape.x) + (width / 2), y: Number(shape.y) + (height / 2) };
+    }
+    const tokenDoc = token?.documentName === 'Token' ? token : token?.document;
+    if (tokenDoc && Number.isFinite(Number(tokenDoc.x))) {
+      return { x: Number(tokenDoc.x), y: Number(tokenDoc.y) };
+    }
+    if (Number.isFinite(Number(token?.x))) return { x: Number(token.x), y: Number(token.y) };
+    return null;
+  }
+
+  static async #placeBoulderToken(boulder, { behavior, token, region } = {}) {
+    const scene = token?.parent || token?.document?.parent || canvas.scene;
+    if (!scene || !boulder) return null;
+
+    const point = this.#trapLocation(region || behavior?.parent, token);
+    if (!point) return null;
+
+    try {
+      const preview = await boulder.getTokenDocument({}, { parent: scene });
+      const gridSize = scene.grid?.size || canvas.grid?.size || 100;
+      const width = (preview.width || 1) * gridSize;
+      const height = (preview.height || 1) * gridSize;
+      const tokenData = await boulder.getTokenDocument({
+        x: point.x - (width / 2),
+        y: point.y - (height / 2),
+        hidden: false,
+        actorLink: true,
+      }, { parent: scene });
+      const [created] = await scene.createEmbeddedDocuments('Token', [tokenData]);
+      return created ?? null;
+    } catch (err) {
+      console.warn(err);
+      return null;
+    }
   }
 
   static #gmChatData(content) {
