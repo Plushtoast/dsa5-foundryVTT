@@ -6,6 +6,7 @@ import ItemEnchantment from '../../item/item-enchantment.js';
 import DiceDSA5 from '../rolls/dice-dsa5.js';
 import RollRequestService from '../queries/roll-request.js';
 import TrapSetpiece from './trap-setpiece.js';
+import { applyDamage } from '../../hooks/chat_context.js';
 
 const { duplicate, getProperty, mergeObject, expandObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -359,7 +360,7 @@ export default class TrapAutomation extends TrapSetpiece {
               if (!applyPayload) await this.rollChargedEnchantments(behavior, payload, { token });
             }
           } else {
-            damageDealt += await this.#applyUnopposedDamage(actor, strike, behavior);
+            damageDealt += await this.#applyUnopposedDamage(actor, strike, behavior, token);
           }
         }
       }
@@ -415,7 +416,7 @@ export default class TrapAutomation extends TrapSetpiece {
     };
   }
 
-  static async #applyUnopposedDamage(actor, strike, behavior) {
+  static async #applyUnopposedDamage(actor, strike, behavior, token) {
     const formula = strike?.damageFormula || '';
     const roll = await new Roll(formula).evaluate();
     try {
@@ -427,12 +428,13 @@ export default class TrapAutomation extends TrapSetpiece {
     } catch (err) {
       console.warn(err);
     }
-    await actor.applyDamage(String(roll.total));
     await this.postDamageCard({
       trapName: behavior?.name,
       strikeName: strike?.name,
       formula,
       roll,
+      actor,
+      token,
     });
     return Number(roll.total) || 0;
   }
@@ -448,7 +450,7 @@ export default class TrapAutomation extends TrapSetpiece {
     return dice;
   }
 
-  static async postDamageCard({ trapName, strikeName, formula, roll } = {}) {
+  static async postDamageCard({ trapName, strikeName, formula, roll, actor, token } = {}) {
     if (!roll) return;
     const content = await renderTemplate('systems/dsa5/templates/chat/trap/damage.hbs', {
       trapName: trapName || '',
@@ -456,8 +458,21 @@ export default class TrapAutomation extends TrapSetpiece {
       formula: formula || roll.formula,
       total: roll.total,
       dice: this.diceFromRoll(roll),
+      applyDamageInChat: game.settings.get('dsa5', 'applyDamageInChat'),
     });
-    await ChatMessage.create(DSA5_Utility.chatDataSetup(content));
+    const tokenDoc = token?.document ?? (token?.documentName === 'Token' ? token : null);
+    const chatData = DSA5_Utility.chatDataSetup(content);
+    chatData.speaker = ChatMessage.getSpeaker({ actor, token: tokenDoc || undefined });
+    chatData.rolls = [roll];
+    chatData.flags = mergeObject(chatData.flags || {}, {
+      data: { postData: { chatCardDamage: Number(roll.total) } },
+    });
+    return ChatMessage.create(chatData);
+  }
+
+  static applyPostedDamage(message, mode = 'value') {
+    if (!message?.id) return;
+    return applyDamage({ dataset: { messageId: message.id } }, mode);
   }
 
   static async #resolveOpposedAttack({ behavior, token, region, strike, payload, attachPayload = true }) {

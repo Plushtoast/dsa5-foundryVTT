@@ -13,4 +13,14 @@
     <div class="card-content" data-tooltip="{{formula}}">
         <b>{{localize 'damage'}}</b>{{#if strikeName}} ({{strikeName}}){{/if}}: {{total}}
     </div>
+    {{#if applyDamageInChat}}
+    <div class="row-section center" style="margin-top:10px">
+        <div class="col two center">
+            <button type="button" class="applyDamage selfButton smallChatButton" data-mode="value" data-tooltip="CHATCONTEXT.ApplyDamage"><i class="fas fa-shield-alt"></i>{{localize 'CHARAbbrev.damage'}}</button>
+        </div>
+        <div class="col two center">
+            <button type="button" class="applyDamage selfButton smallChatButton" data-mode="sp" data-tooltip="CHATCONTEXT.ApplyDamageSP"><i class="fas fa-hand-fist"></i>{{localize 'CHARAbbrev.damageSP'}}</button>
+        </div>
+    </div>
+    {{/if}}
 </div>
