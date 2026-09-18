@@ -376,22 +376,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     if (data.type !== 'Item' || !data.fromLocationKey) return;
     if (data.fromLocationKey === targetKey) return;
 
-    const system = this.actor.system;
-    const sourceLoc = system.resolvedLocations.find((l) => l.key === data.fromLocationKey);
-    const targetLoc = system.resolvedLocations.find((l) => l.key === targetKey);
-    if (!sourceLoc?.actor || !targetLoc?.actor) return;
+    event.stopPropagation();
 
-    if (sourceLoc.locked || targetLoc.locked) {
-      ui.notifications.warn('GROUP.locationLocked', { localize: true });
-      return;
-    }
-
-    const item = sourceLoc.actor.items.get(data.uuid.split('.').pop());
-    if (!item) return;
-
-    const itemData = item.toObject();
-    await targetLoc.actor.createEmbeddedDocuments('Item', [itemData]);
-    await sourceLoc.actor.deleteEmbeddedDocuments('Item', [item.id]);
+    const itemId = fromUuidSync(data.uuid)?.id ?? data.uuid?.split('.').pop();
+    await this.actor.system.moveLocationItem(data.fromLocationKey, targetKey, itemId);
   }
 
   #onRelatedActorUpdate(doc) {
@@ -682,8 +670,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     }
   }
 
-  async _onDropItem(event, data) {
-    if (data.fromLocationKey) return;
+  async _onDropItem(event, item) {
+    const dragData = TextEditor.implementation.getDragEventData(event);
+    if (dragData.fromLocationKey) return;
 
     const system = this.actor.system;
     if (system.resolvedLocations.length === 0) {
@@ -705,7 +694,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     }
 
     if (targetLoc?.actor) {
-      await targetLoc.actor.sheet._onDropItem(event, data);
+      await targetLoc.actor.sheet._onDropItem(event, item);
     }
   }
 

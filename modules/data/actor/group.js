@@ -338,6 +338,26 @@ export default class GroupData extends ActorDataModel {
     await this.parent.update({ [`system.locations.${key}`]: _del });
   }
 
+  async moveLocationItem(fromKey, toKey, itemId) {
+    if (!fromKey || !toKey || fromKey === toKey || !itemId) return null;
+
+    const sourceLoc = this.resolvedLocations.find((location) => location.key === fromKey);
+    const targetLoc = this.resolvedLocations.find((location) => location.key === toKey);
+    if (!sourceLoc?.actor || !targetLoc?.actor) return null;
+
+    if (sourceLoc.locked || targetLoc.locked) {
+      ui.notifications.warn('GROUP.locationLocked', { localize: true });
+      return null;
+    }
+
+    const item = sourceLoc.actor.items.get(itemId);
+    if (!item) return null;
+
+    const [created] = await targetLoc.actor.createEmbeddedDocuments('Item', [item.toObject()]);
+    await sourceLoc.actor.deleteEmbeddedDocuments('Item', [item.id]);
+    return created ?? null;
+  }
+
   async setLocationType(key, type) {
     const updates = { [`system.locations.${key}.type`]: type };
     if (type) {
