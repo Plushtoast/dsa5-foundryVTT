@@ -6,6 +6,7 @@ import DSAActiveEffectDataModel from '../data/activeeffect/dsaeffect.js';
 import DSABaseEffectConfig from './base_effect_config.js';
 import ActiveEffectScopedRules from './active_effect_scoped_rules.js';
 import { tabSlider } from '../system/helpers/view_helper.js';
+import PoisonData from '../data/item/poison.js';
 
 const { mergeObject, getProperty, duplicate, isPlainObject } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -448,6 +449,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
           });
         } else {
           effectApplied = true;
+          if (PoisonData.isSource(source)) PoisonData.applyStatus(ef);
           if (!effectNames.has(ef.name)) effectNames.add(ef.name);
 
           const onDelayed = effectSystem.macroArgs.onDelayed;
@@ -465,7 +467,7 @@ export default class DSAActiveEffectConfig extends DSABaseEffectConfig {
             },
           };
 
-          let isEffectWithChange = effectSystem.changes.length > 0 || (isAura && !customEf);
+          let isEffectWithChange = effectSystem.changes.length > 0 || (isAura && !customEf) || PoisonData.isSource(source);
 
           if (customEf) {
             switch (customEf) {

@@ -3,6 +3,7 @@ import QueryOrchestrator from '../queries/query-orchestrator.js';
 
 export default class RegenerationHelper {
   static STAT_TYPES = ['LeP', 'AsP', 'KaP'];
+  static PHASE_BLOCKING_STATUSES = ['sick', 'poisoned'];
   static ROLL_REQUEST_FLAG = 'rollRequest';
   static ROLL_REQUEST_QUERY_TYPE = 'dsa5.rollRequest';
   static #POOL_BY_STAT = {
@@ -17,6 +18,18 @@ export default class RegenerationHelper {
       AsP: Number(AsP) || 0,
       KaP: Number(KaP) || 0,
     };
+  }
+
+  static isActiveCondition(effect, statusId) {
+    if (!effect || effect.disabled || effect.system?.delayed?.enabled) return false;
+    return !!effect.statuses?.has?.(statusId);
+  }
+
+  static regenerationPhaseBlocks(actor) {
+    if (!actor?.effects) return [];
+    return this.PHASE_BLOCKING_STATUSES.filter((statusId) =>
+      actor.effects.some((effect) => this.isActiveCondition(effect, statusId)),
+    ).map((statusId) => _loc(`CONDITION.${statusId}`));
   }
 
   static hasNegative(amounts) {

@@ -8,6 +8,21 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 const { NumberField, StringField, SchemaField } = foundry.data.fields;
 
 export default class PoisonData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
+  static STATUS_ID = 'poisoned';
+
+  static isSource(source) {
+    return source?.type === 'poison';
+  }
+
+  static applyStatus(effect) {
+    if (!effect) return effect;
+    const current = effect.statuses;
+    const statuses = current instanceof Set ? [...current] : Array.isArray(current) ? [...current] : [];
+    if (!statuses.includes(this.STATUS_ID)) statuses.push(this.STATUS_ID);
+    effect.statuses = statuses;
+    return effect;
+  }
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       step: new SchemaField({

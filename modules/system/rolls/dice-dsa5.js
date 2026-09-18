@@ -850,9 +850,11 @@ export default class DiceDSA5 {
     if (actor.system.isPriest && testData.regenerateKaP) attrs.push('KaP');
     let index = 0;
 
-    const isSick = actor.effects.some((x) => x.statuses.has('sick'));
-    if (isSick) {
-      this._appendSituationalModifiers(testData, _loc('CONDITION.sick'), '*0');
+    const regenBlocks = RegenerationHelper.regenerationPhaseBlocks(actor);
+    if (regenBlocks.length) {
+      for (const name of regenBlocks) {
+        this._appendSituationalModifiers(testData, name, '*0');
+      }
       for (const k of attrs) {
         chars.push({ char: k, res: 0, die: 'd6' });
         result[k] = 0;
