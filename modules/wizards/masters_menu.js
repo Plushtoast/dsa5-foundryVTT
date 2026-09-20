@@ -10,6 +10,7 @@ import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
 import GroupCheck from '../system/rolls/group-check.js';
 import GroupActorSheet from '../actor/group-sheet.js';
+import DSA5Payment from '../system/payment/payment.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import { FormAppv2 } from '../actor/formapp.js';
 import { DragMixin } from '../actor/mixins/drag_mixin.js';
@@ -613,10 +614,10 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
         const description = form.querySelector('[name="description"]')?.value;
-        if (!isNaN(number)) {
-          const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
-          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
-        }
+        if (!DSA5Payment.isValidPaymentFormula(number)) return;
+
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+        PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
       },
     });
   }

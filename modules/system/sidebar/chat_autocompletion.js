@@ -583,13 +583,13 @@ export default class DSA5ChatAutoCompletion {
     html.on('click', '.request-Pay', (ev) => {
       if (!game.user.isGM) return;
       const master = game.dsa5.apps.gameMasterMenu;
-      master.doPayment(master.selectedIDs(), true, ev.currentTarget.dataset.modifier);
+      master.doPayment(master.selectedIDs(), true, game.dsa5.apps.DSA5Payment.paymentAmountFromDataset(ev.currentTarget));
     });
 
     html.on('click', '.request-GetPaid', (ev) => {
       if (!game.user.isGM) return;
       const master = game.dsa5.apps.gameMasterMenu;
-      master.doPayment(master.selectedIDs(), false, ev.currentTarget.dataset.modifier);
+      master.doPayment(master.selectedIDs(), false, game.dsa5.apps.DSA5Payment.paymentAmountFromDataset(ev.currentTarget));
     });
 
     html.on('click', '.request-AP', (ev) => {

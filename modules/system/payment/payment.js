@@ -1,10 +1,11 @@
 import MoneyTracker from '../orwell/money-tracker.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import DiceDSA5 from '../rolls/dice-dsa5.js';
 
 export default class DSA5Payment {
   static async executePayment(actor, mode, moneyString, options = {}) {
-    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent, track = !silent, description = '' } = options;
+    const { silent = false, render = true, showChatMessage = !silent, notifyOnFailure = silent, track = !silent, description = '', showDice = true } = options;
 
     if (!actor) {
       return {
@@ -14,8 +15,18 @@ export default class DSA5Payment {
       };
     }
 
+    const evaluated = await this.evaluatePaymentAmount(moneyString, { showDice });
+    if (!evaluated) {
+      if (showChatMessage) this.parsePaymentAmount(moneyString, mode, true);
+      return {
+        success: false,
+        msg: _loc('PAYMENT.error'),
+        money: 0,
+      };
+    }
+
     if (mode === 'pay') {
-      const canPay = await DSA5Payment.canPay(actor, moneyString, notifyOnFailure);
+      const canPay = await DSA5Payment.canPay(actor, evaluated.money, notifyOnFailure);
       if (canPay.success) await DSA5Payment._updateMoney(actor, canPay.actorsMoney.money, canPay.actorsMoney.sum - canPay.money, render, track, description);
 
       if (showChatMessage && canPay.msg != '') ChatMessage.create(DSA5_Utility.chatDataSetup(`<p>${canPay.msg}</p>`, 'roll'));
@@ -23,14 +34,7 @@ export default class DSA5Payment {
       return canPay;
     }
 
-    const money = this._getPaidmoney(moneyString, showChatMessage);
-    if (!money) {
-      return {
-        success: false,
-        msg: _loc('PAYMENT.error'),
-        money: 0,
-      };
-    }
+    const money = evaluated.money;
 
     const actorsMoney = this._actorsMoney(actor);
     await DSA5Payment._updateMoney(actor, actorsMoney.money, actorsMoney.sum + money, render, track, description);
@@ -59,8 +63,8 @@ export default class DSA5Payment {
   }
 
   static async canPay(actor, moneyString, silent) {
-    const money = this._getPaymoney(moneyString);
-    const result = { success: false, msg: '', money: money };
+    const money = (await this.evaluatePaymentAmount(moneyString, { showDice: false }))?.money;
+    const result = { success: false, msg: '', money: money || 0 };
 
     if (money) {
       result.actorsMoney = this._actorsMoney(actor);
@@ -96,6 +100,63 @@ export default class DSA5Payment {
 
   static parsePaymentAmount(moneyString, mode = 'pay', announceError = true) {
     return mode === 'pay' ? this._getPaymoney(moneyString, announceError) : this._getPaidmoney(moneyString, announceError);
+  }
+
+  static paymentAmountFromDataset(element) {
+    const raw = element?.dataset?.modifier ?? '';
+    try {
+      return decodeURIComponent(raw);
+    } catch {
+      return raw;
+    }
+  }
+
+  static #isNumericRoll(roll) {
+    return roll?.terms.length === 1 && roll.terms[0] instanceof foundry.dice.terms.NumericTerm;
+  }
+
+  /**
+   * Parse a payment amount as a Foundry Roll (plain number or formula).
+   * @returns {Roll|null}
+   */
+  static paymentRoll(amount) {
+    if (amount instanceof Roll) return amount.clone();
+    if (typeof amount === 'number') {
+      return Number.isFinite(amount) ? new Roll(String(amount)) : null;
+    }
+
+    const formula = DiceDSA5.replaceDieLocalization(String(amount ?? '').trim().replaceAll(',', '.'));
+    if (!formula || !Roll.validate(formula)) return null;
+
+    try {
+      return new Roll(formula);
+    } catch {
+      return null;
+    }
+  }
+
+  static isValidPaymentFormula(amount) {
+    const roll = this.paymentRoll(amount);
+    if (!roll) return false;
+    return !this.#isNumericRoll(roll) || roll.terms[0].number > 0;
+  }
+
+  /**
+   * Resolve a silverthaler amount from a number or Foundry roll formula.
+   * Non-numeric formulas are rounded to 2 decimals; dice rolls can show Dice So Nice.
+   * @returns {Promise<{money: number, roll: Roll}|false>}
+   */
+  static async evaluatePaymentAmount(amount, { showDice = true } = {}) {
+    const source = this.paymentRoll(amount);
+    if (!source) return false;
+
+    const roll = source._evaluated ? source : await source.evaluate();
+    if (showDice && !roll.isDeterministic) {
+      await DiceDSA5.showDiceSoNice(roll, game.settings.get('core', 'messageMode'));
+    }
+
+    const total = this.#isNumericRoll(roll) ? roll.total : Math.round((roll.total + Number.EPSILON) * 100) / 100;
+    return total > 0 ? { money: total, roll } : false;
   }
 
   static async createGetPaidChatMessage(moneyString, whisper = undefined) {
@@ -226,6 +287,9 @@ export default class DSA5Payment {
 
     const normalizedMoneyString = String(moneyString).trim();
     if (!normalizedMoneyString) return false;
+
+    const roll = this.paymentRoll(normalizedMoneyString);
+    if (roll) return this.#isNumericRoll(roll) && roll.terms[0].number > 0 ? roll.terms[0].number : false;
 
     const match = normalizedMoneyString.replace(',', '.').match(/\d{1,}(\.\d{1,3}|,\d{1,3})?/);
     if (match) {

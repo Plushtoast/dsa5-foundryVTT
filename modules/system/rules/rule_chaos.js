@@ -58,7 +58,10 @@ export default class RuleChaos {
       });
       return;
     }
-    const val = { val: Number(target.val()) };
+    const numeric = Number(target.val());
+    if (!Number.isFinite(numeric)) return;
+
+    const val = { val: numeric };
     RuleChaos.increment(ev, val, 'val');
     target.val(val.val);
   }

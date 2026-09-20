@@ -18,15 +18,46 @@ export default class PaymentRequestService {
     });
   }
 
-  static async createRequest({ mode, amount, description = '', actors = QueryOrchestrator.activeCharacterActors() }) {
-    const normalizedAmount = DSA5Payment.parsePaymentAmount(amount, mode, true);
-    if (!normalizedAmount) return;
+  static recipientAmount(state, actorId) {
+    const recipient = state?.recipients?.find((entry) => entry.actorId === actorId);
+    return recipient?.amount ?? state?.amount;
+  }
 
+  static async #assignRecipientAmounts(recipients, amount, { showDice = true } = {}) {
+    const roll = DSA5Payment.paymentRoll(amount);
+    if (!roll) return null;
+
+    if (roll.isDeterministic) {
+      return (await DSA5Payment.evaluatePaymentAmount(roll, { showDice: false }))?.money ?? null;
+    }
+
+    for (const recipient of recipients) {
+      const evaluated = await DSA5Payment.evaluatePaymentAmount(roll, { showDice });
+      if (evaluated) recipient.amount = evaluated.money;
+    }
+
+    return null;
+  }
+
+  static async createRequest({ mode, amount, description = '', actors = QueryOrchestrator.activeCharacterActors(), showDice = true }) {
+    const roll = DSA5Payment.paymentRoll(amount);
+    if (!DSA5Payment.isValidPaymentFormula(roll || amount)) {
+      DSA5Payment.parsePaymentAmount(amount, mode, true);
+      return;
+    }
+
+    const perActor = !roll.isDeterministic;
     const recipients = await QueryOrchestrator.buildRecipients(actors);
+    const sharedAmount = await this.#assignRecipientAmounts(recipients, roll, { showDice });
+    if (!perActor && !sharedAmount) {
+      DSA5Payment.parsePaymentAmount(amount, mode, true);
+      return;
+    }
 
     const state = {
       mode,
-      amount: normalizedAmount,
+      amount: sharedAmount,
+      formula: perActor ? String(amount).trim() : undefined,
       description,
       finalized: false,
       recipients,
@@ -46,23 +77,25 @@ export default class PaymentRequestService {
   }
 
   static async getTemplateData(state) {
-    const amountString = await DSA5Payment._moneyToString(state.amount);
+    const amountString = state.formula ? state.formula : await DSA5Payment._moneyToString(state.amount);
     const finalized = !!state.finalized;
-    const recipients = state.recipients.map((entry) => {
+    const recipients = await Promise.all((state.recipients || []).map(async (entry) => {
       return {
         ...entry,
         actorName: game.actors.get(entry.actorId)?.name || entry.actorId,
         designatedUserName: game.users.get(entry.designatedUserId)?.name || '',
+        amountHtml: entry.amount != null ? await DSA5Payment._moneyToString(entry.amount) : '',
         ...QueryOrchestrator.statusStyle(entry.status),
         canGMExecute: !finalized && !QueryOrchestrator.TERMINAL_STATES.has(entry.status) && !entry.designatedUserId,
       };
-    });
+    }));
 
     return {
       isGM: game.user.isGM,
       finalized,
       title: _loc(state.mode === 'pay' ? 'PAYMENT.requestTitlePay' : 'PAYMENT.requestTitleGetPaid'),
       amount: amountString,
+      formula: state.formula || '',
       description: state.description,
       recipients,
     };
@@ -88,7 +121,7 @@ export default class PaymentRequestService {
         messageId,
         actorId,
         mode: state.mode,
-        amount: state.amount,
+        amount: this.recipientAmount(state, actorId),
         description: state.description,
       },
       label: `payment recipient ${actorId}`,
@@ -139,6 +172,7 @@ export default class PaymentRequestService {
       notifyOnFailure: payload.mode === 'pay',
       track: true,
       description: payload.description,
+      showDice: false,
     });
 
     return {
@@ -188,13 +222,14 @@ export default class PaymentRequestService {
     const actor = game.actors.get(actorId);
     if (!actor || !state?.mode) return;
 
-    const result = await DSA5Payment.executePayment(actor, state.mode, state.amount, {
+    const result = await DSA5Payment.executePayment(actor, state.mode, this.recipientAmount(state, actorId), {
       silent: true,
       render: true,
       showChatMessage: false,
       notifyOnFailure: false,
       track: true,
       description: state.description,
+      showDice: false,
     });
 
     await QueryOrchestrator.handleResult({
@@ -248,19 +283,26 @@ export default class PaymentRequestService {
     const actors = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
     if (!actors.length) return;
 
-    const newRecipients = await QueryOrchestrator.buildRecipients(actors);
+    const message = game.messages.get(messageId);
+    const currentState = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    const existingIds = new Set((currentState.recipients || []).map((entry) => entry.actorId));
+    const newRecipients = (await QueryOrchestrator.buildRecipients(actors)).filter((entry) => !existingIds.has(entry.actorId));
+    if (!newRecipients.length) return;
+
+    if (currentState.formula) await this.#assignRecipientAmounts(newRecipients, currentState.formula, { showDice: true });
+
     await QueryOrchestrator.enqueueMessageUpdate(messageId, async (state) => {
       if (!state.recipients) state.recipients = [];
-      const existingIds = new Set(state.recipients.map((entry) => entry.actorId));
+      const alreadyPresent = new Set(state.recipients.map((entry) => entry.actorId));
       for (const recipient of newRecipients) {
-        if (!existingIds.has(recipient.actorId)) state.recipients.push(recipient);
+        if (!alreadyPresent.has(recipient.actorId)) state.recipients.push(recipient);
       }
       state.finalized = false;
       return state;
     });
 
-    const message = game.messages.get(messageId);
-    const updatedState = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+    const updatedMessage = game.messages.get(messageId);
+    const updatedState = duplicate(updatedMessage?.getFlag('dsa5', this.FLAG_KEY) || {});
     await Promise.all(updatedState.recipients.filter((entry) => actorIds.includes(entry.actorId) && entry.designatedUserId && entry.status === 'pending').map(async (recipient) => {
       await this.dispatchRecipientQuery(messageId, recipient.actorId, recipient.designatedUserId, updatedState);
     }));

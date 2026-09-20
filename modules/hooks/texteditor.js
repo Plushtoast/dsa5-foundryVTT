@@ -124,14 +124,27 @@ export function setEnrichers() {
       },
     },
     {
-      pattern: /@(Pay|GetPaid|AP)\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
+      pattern: /@(Pay|GetPaid)\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
       enricher: async (match) => {
-        const [str, type, , , customTextMatch] = match;
-        const mod = Number(str.match(payRegex)[0]);
+        const [, type, amountRaw, customTextMatch] = match;
+        const amount = amountRaw.trim();
         const customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : payStrings[type];
-        const amountLabel = type === 'AP' ? mod : await DSA5Payment._moneyToString(mod);
+        const roll = DSA5Payment.paymentRoll(amount);
+        const numeric = roll?.terms.length === 1 && roll.terms[0] instanceof foundry.dice.terms.NumericTerm;
+        const amountLabel = numeric ? await DSA5Payment._moneyToString(roll.terms[0].number) : foundry.utils.escapeHTML(amount);
         return $(
-          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${amountLabel})</a>`,
+          `<a class="roll-button request-${type}" data-tooltip="${tooltips[type]}" data-type="skill" data-modifier="${encodeURIComponent(amount)}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText} (${amountLabel})</a>`,
+        )[0];
+      },
+    },
+    {
+      pattern: /@AP\[(-|\+)?\d+(\.\d+)?\]({[a-zA-ZöüäÖÜÄß()&; -0-9]+})?/g,
+      enricher: async (match) => {
+        const [str, , , customTextMatch] = match;
+        const mod = Number(str.match(payRegex)[0]);
+        const customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : payStrings.AP;
+        return $(
+          `<a class="roll-button request-AP" data-tooltip="${tooltips.AP}" data-type="skill" data-modifier="${mod}" data-label="${customText}"><em class="fas fa-${icons.AP}"></em>${titles.AP}${customText} (${mod})</a>`,
         )[0];
       },
     },

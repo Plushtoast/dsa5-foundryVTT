@@ -168,7 +168,7 @@ export default class ChatCommandService {
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
         const description = form.querySelector('[name="description"]')?.value;
-        if (!number) return;
+        if (!game.dsa5.apps.DSA5Payment.isValidPaymentFormula(number)) return;
 
         const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
         PaymentRequestService.createRequest({ mode, amount: number, description, actors: selected });
