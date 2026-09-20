@@ -471,15 +471,6 @@ export default class TrapAutomation extends TrapSetpiece {
   static async #applyUnopposedDamage(actor, strike, behavior, token) {
     const formula = strike?.damageFormula || '';
     const roll = await new Roll(formula).evaluate();
-    try {
-      game.dsa5.apps.DiceDSA5?._addRollDiceSoNice?.(
-        { messageMode: game.settings.get('core', 'messageMode') },
-        roll,
-        game.dsa5.apps.DiceSoNiceCustomization?.getAttributeConfiguration?.('damage'),
-      );
-    } catch (err) {
-      console.warn(err);
-    }
     await this.postDamageCard({
       trapName: behavior?.name,
       strikeName: strike?.name,
@@ -489,6 +480,12 @@ export default class TrapAutomation extends TrapSetpiece {
       token,
     });
     return Number(roll.total) || 0;
+  }
+
+  static #applyDamageDiceAppearance(roll) {
+    const color = game.dsa5.apps.DiceSoNiceCustomization?.getAttributeConfiguration?.('damage');
+    if (!color) return;
+    for (const die of roll?.dice || []) mergeObject(die.options, color);
   }
 
   static diceFromRoll(roll) {
@@ -504,6 +501,7 @@ export default class TrapAutomation extends TrapSetpiece {
 
   static async postDamageCard({ trapName, strikeName, formula, roll, actor, token } = {}) {
     if (!roll) return;
+    this.#applyDamageDiceAppearance(roll);
     const content = await renderTemplate('systems/dsa5/templates/chat/trap/damage.hbs', {
       trapName: trapName || '',
       strikeName: strikeName || '',
