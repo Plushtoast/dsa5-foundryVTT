@@ -162,8 +162,8 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.playerOwners = Array.isArray(entry.playerOwners) ? entry.playerOwners : [];
         entry.preparedTags = entry.tags?.split(',').map(tag => tag.trim()).filter(Boolean) || [];
         entry.preparedSummary = entry.summary?.trim();
-        entry.preparedDetails = await TextEditor.enrichHTML(entry.details || '', { secrets: game.user.isGM });
-        entry.preparedGMNotes = await TextEditor.enrichHTML(entry.gmNotes || '', { secrets: game.user.isGM });
+        entry.preparedDetails = await this.#enrichHtml(entry.details);
+        entry.preparedGMNotes = await this.#enrichHtml(entry.gmNotes);
         entry.groupLabel = entry.chapter?.trim() || _loc('DSAQUESTLOG.ungrouped');
         entry.audienceLabel = _loc(this.AUDIENCE_CHOICES[entry.audience] || this.AUDIENCE_CHOICES[0]);
         entry.playerOwnerNames = this.resolvePlayerNames(entry.playerOwners);
@@ -197,6 +197,21 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.uuid = page?.uuid;
         entry.questKey = key;
         return entry;
+    }
+
+    static async #enrichHtml(html) {
+        if (!this.#htmlHasVisibleContent(html)) return '';
+        return TextEditor.enrichHTML(html, { secrets: game.user.isGM });
+    }
+
+    static #htmlHasVisibleContent(html) {
+        if (!html || !String(html).trim()) return false;
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        return Boolean(
+            container.textContent?.replace(/\u00a0/g, ' ').trim()
+            || container.querySelector('img, table, iframe, video, audio, hr, svg, canvas'),
+        );
     }
 
     static getAssignablePlayers() {

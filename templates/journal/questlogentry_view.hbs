@@ -73,10 +73,12 @@
           </div>
         {{/if}}
 
-        <div class='detail-section'>
-          <h3 class='section-title'>{{localize 'Description'}}</h3>
-          <div class='description-text'>{{{quest.preparedDetails}}}</div>
-        </div>
+        {{#if quest.preparedDetails}}
+          <div class='detail-section'>
+            <h3 class='section-title'>{{localize 'Description'}}</h3>
+            <div class='description-text'>{{{quest.preparedDetails}}}</div>
+          </div>
+        {{/if}}
 
         {{#if @root.isGM}}
           {{#if quest.preparedGMNotes}}

@@ -78,10 +78,12 @@
             </div>
         {{/if}}
 
-        <div class='detail-section'>
-            <h3 class='section-title'>{{localize 'Description'}}</h3>
-            <div class='description-text'>{{{preparedDetails}}}</div>
-        </div>
+        {{#if preparedDetails}}
+            <div class='detail-section'>
+                <h3 class='section-title'>{{localize 'Description'}}</h3>
+                <div class='description-text'>{{{preparedDetails}}}</div>
+            </div>
+        {{/if}}
 
         {{#if isGM}}
             {{#if preparedGMNotes}}
