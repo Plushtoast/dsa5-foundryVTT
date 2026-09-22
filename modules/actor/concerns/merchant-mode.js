@@ -237,25 +237,4 @@ export default class MerchantModeHelper {
       foundry.utils.setProperty(changed, 'flags.core.sheetClass', desired);
     }
   }
-
-  static reopenSheetIfNeeded(actor, changed) {
-    if (!foundry.utils.getProperty(changed, 'system.merchant.merchantType')) return;
-    const sheetClass = foundry.utils.getProperty(changed, 'flags.core.sheetClass');
-    if (!sheetClass) return;
-
-    const sheet = actor.sheet;
-    if (!sheet?.rendered) return;
-
-    const desiredName = sheetClass.split('.').pop();
-    if (sheet.constructor.name === desiredName) return;
-
-    this.#reopenSheet(actor, sheet);
-  }
-
-  static async #reopenSheet(actor, sheet) {
-    await sheet.close();
-    actor._sheet = null;
-    if (sheet.appId) delete actor.apps[sheet.appId];
-    actor.sheet.render(true);
-  }
 }
