@@ -6,6 +6,7 @@ import { DSACalendarEntry } from '../data/journal/dsacalendar.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import DSA5Payment from '../system/payment/payment.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import ChatCommandService from '../system/sidebar/chat_command_service.js';
 import RollRequestService from '../system/queries/roll-request.js';
@@ -962,10 +963,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       callback: ({ actorIds, form }) => {
         const number = form.querySelector('.input-text')?.value;
         const description = form.querySelector('[name="description"]')?.value;
-        if (!isNaN(number)) {
-          const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
-          PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
-        }
+        if (!DSA5Payment.isValidPaymentFormula(number)) return;
+
+        const selected = actorIds.map((id) => game.actors.get(id)).filter(Boolean);
+        PaymentRequestService.createRequest({ mode: pay ? 'pay' : 'getPaid', amount: number, description, actors: selected });
       },
     });
   }

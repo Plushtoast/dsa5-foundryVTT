@@ -62,9 +62,9 @@ export default class MerchantStallHelper {
     return item?.type === 'equipment' && getProperty(item, 'system.equipmentType.value') === 'service';
   }
 
-  static isShoppable(item, { allowTradeLocked = false } = {}) {
+  static isShoppable(item, { allowTradeLocked = false, isLoot = false } = {}) {
     if (!item) return false;
-    if (item.type === 'money') return false;
+    if (item.type === 'money' && !isLoot) return false;
     if ((Number(item.system?.quantity?.value) || 0) <= 0) return false;
     if (getProperty(item.system, 'worn.value')) return false;
     if (item.flags?.dsa5?.shopHiddenToday) return false;
@@ -210,13 +210,18 @@ export default class MerchantStallHelper {
     const tiles = [];
     for (const [sectionKey, section] of Object.entries(inventory)) {
       if (!section || typeof section !== 'object' || !Array.isArray(section.items)) continue;
-      if (SKIP_CHIP_KEYS.has(sectionKey) || SKIP_CHIP_KEYS.has(section.dataType)) continue;
+      if (this.#skipStallSection(sectionKey, section.dataType, options)) continue;
       for (const item of section.items) {
         if (!this.isShoppable(item, options)) continue;
         tiles.push(this.#toTile(item, sectionKey, section.dataType || sectionKey, options));
       }
     }
     return tiles;
+  }
+
+  static #skipStallSection(sectionKey, dataType, { isLoot = false } = {}) {
+    if (sectionKey === 'money' || dataType === 'money') return !isLoot;
+    return SKIP_CHIP_KEYS.has(sectionKey) || SKIP_CHIP_KEYS.has(dataType);
   }
 
   static flattenServices(inventory = {}, options = {}) {
@@ -394,7 +399,7 @@ export default class MerchantStallHelper {
     const dayFactor = MerchantStockService.dayPriceFactor(item);
     const merchantPrice = this.roundMoney(listPrice * dayFactor * sellingFactor * userFactor);
     const customPriceTag = Number(getProperty(item, 'flags.dsa5.customPriceTag')) || 0;
-    const price = this.roundMoney(item.calculatedPrice ?? DSA5_Utility.itemPrice(item));
+    const price = item.type === 'money' ? 0 : this.roundMoney(item.calculatedPrice ?? DSA5_Utility.itemPrice(item));
     return {
       id: item._id,
       name: item.name,

@@ -1,22 +1,6 @@
-{{!-- Two-column ledger (buyer | shop), driven by filtered stall tiles. --}}
+{{!-- Two-column ledger (shop | buyer), matching the player-view heading. --}}
 <div class="dsa-shop-list">
   <div class="row-section">
-    <div class="col two">
-      {{#if stall.hasBuyer}}
-      {{#grouped_each 4 tradeFriend.money.coins}}
-      <div class="row-section table-title">
-        {{#each this}}
-        <div class="col four center">{{localize name}}</div>
-        {{/each}}
-      </div>
-      <div class="row-section">
-        {{#each this}}
-        <div class="col four center">{{system.quantity.value}}</div>
-        {{/each}}
-      </div>
-      {{/grouped_each}}
-      {{/if}}
-    </div>
     <div class="col two">
       {{#unless stall.merchantPurse.hidden}}
       {{#grouped_each 4 prepare.money.coins}}
@@ -40,9 +24,61 @@
       </div>
       {{/unless}}
     </div>
+    <div class="col two">
+      {{#if stall.hasBuyer}}
+      {{#grouped_each 4 tradeFriend.money.coins}}
+      <div class="row-section table-title">
+        {{#each this}}
+        <div class="col four center">{{localize name}}</div>
+        {{/each}}
+      </div>
+      <div class="row-section">
+        {{#each this}}
+        <div class="col four center">{{system.quantity.value}}</div>
+        {{/each}}
+      </div>
+      {{/grouped_each}}
+      {{/if}}
+    </div>
   </div>
 
   <div class="row-section">
+    <div class="col two">
+      <div class="groupbox">
+        <div class="row-section table-title">
+          <div class="col eight"></div>
+          <div class="col"><b>{{localize 'MERCHANT.shopName'}}</b></div>
+          <div class="col four center"><span data-tooltip="UNITS.money"><i class="fas fa-coins"></i></span></div>
+          <div class="col eight center"><span data-tooltip="quantity">#</span></div>
+          <div class="col eight center"></div>
+        </div>
+        <div class="row-section wrap rowtable inventory">
+          {{#each stall.tiles as |tile|}}
+          <div class="col item dsa-shop-hover" data-item-id="{{tile.id}}" data-price-label="{{tile.priceLabel}}">
+            <div class="row-section">
+              <div class="col eight image {{tile.enchantClass}}">
+                <div class="image" style="background-image: url('{{tile.img}}')"></div>
+              </div>
+              <div class="equipment-item-name col">
+                {{#if ../stall.allowItemDetails}}
+                <a data-action="itemEdit">{{tile.name}}</a>
+                {{else}}
+                <span>{{tile.name}}</span>
+                {{/if}}
+              </div>
+              <div class="col four center">{{#unless ../stall.isLoot}}{{tile.priceLabel}}{{/unless}}</div>
+              <div class="col eight center">{{tile.qty}}</div>
+              <div class="col eight center">
+                <a class="button icon noBorder dsadesignbutton {{../stall.buyActionIcon}}" data-action="tradeWrapper" data-fct="buyItem" data-price="{{tile.price}}" data-tooltip="{{../stall.buyActionTooltip}}"></a>
+              </div>
+            </div>
+          </div>
+          {{else}}
+          <p class="hint">{{localize 'MERCHANT.stall.empty'}}</p>
+          {{/each}}
+        </div>
+      </div>
+    </div>
     <div class="col two">
       {{#unless stall.hasBuyer}}
       <div class="row-section">
@@ -82,42 +118,6 @@
         </div>
       </div>
       {{/unless}}
-    </div>
-    <div class="col two">
-      <div class="groupbox">
-        <div class="row-section table-title">
-          <div class="col eight"></div>
-          <div class="col"><b>{{localize 'MERCHANT.shopName'}}</b></div>
-          <div class="col four center"><span data-tooltip="UNITS.money"><i class="fas fa-coins"></i></span></div>
-          <div class="col eight center"><span data-tooltip="quantity">#</span></div>
-          <div class="col eight center"></div>
-        </div>
-        <div class="row-section wrap rowtable inventory">
-          {{#each stall.tiles as |tile|}}
-          <div class="col item dsa-shop-hover" data-item-id="{{tile.id}}" data-price-label="{{tile.priceLabel}}">
-            <div class="row-section">
-              <div class="col eight image {{tile.enchantClass}}">
-                <div class="image" style="background-image: url('{{tile.img}}')"></div>
-              </div>
-              <div class="equipment-item-name col">
-                {{#if ../stall.allowItemDetails}}
-                <a data-action="itemEdit">{{tile.name}}</a>
-                {{else}}
-                <span>{{tile.name}}</span>
-                {{/if}}
-              </div>
-              <div class="col four center">{{#unless ../stall.isLoot}}{{tile.priceLabel}}{{/unless}}</div>
-              <div class="col eight center">{{tile.qty}}</div>
-              <div class="col eight center">
-                <a class="button icon noBorder dsadesignbutton {{../stall.buyActionIcon}}" data-action="tradeWrapper" data-fct="buyItem" data-price="{{tile.price}}" data-tooltip="{{../stall.buyActionTooltip}}"></a>
-              </div>
-            </div>
-          </div>
-          {{else}}
-          <p class="hint">{{localize 'MERCHANT.stall.empty'}}</p>
-          {{/each}}
-        </div>
-      </div>
     </div>
   </div>
 </div>
