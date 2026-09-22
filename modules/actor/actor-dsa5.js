@@ -765,7 +765,6 @@ export default class Actordsa5 extends Actor {
   _onUpdate(changed, options, userId) {
     super._onUpdate(changed, options, userId);
     this.#renderCompanionOwnerSheets();
-    if (userId === game.user.id) MerchantModeHelper.reopenSheetIfNeeded(this, changed);
   }
 
   #renderCompanionOwnerSheets() {
@@ -1818,7 +1817,7 @@ export default class Actordsa5 extends Actor {
         messageMode: options.messageMode,
         situationalModifiers,
         fallingFloorOptions: DSA5.fallingConditions,
-        modifier: options.modifier || 0,
+        modifier: options.modifier || 1,
         tumbling: options.tumbling,
         qlMultiplier,
         availableQs,
@@ -1832,7 +1831,7 @@ export default class Actordsa5 extends Actor {
           },
         ];
         cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
-        testData.fallingHeight = html.find('[name="testModifier"]').val();
+        testData.fallingHeight = Math.max(1, Number(html.find('[name="testModifier"]').val()) || 1);
         mergeObject(testData.extra.options, options);
         return { testData, cardOptions };
       },

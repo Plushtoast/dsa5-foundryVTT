@@ -292,8 +292,9 @@ export default class DiceDSA5 {
     const baseMod = await this._situationalModifiers(testData);
     const { fallingHeight, extra } = testData;
     const availableQs = extra?.options?.availableQs || 0;
+    const height = Math.max(1, Number(fallingHeight) || 1);
 
-    const formula = `${fallingHeight}d6+${baseMod}-${availableQs}`;
+    const formula = `${height}d6+${baseMod}-${availableQs}`;
     return new Roll(formula).evaluate();
   }
 

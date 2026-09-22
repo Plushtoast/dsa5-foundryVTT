@@ -209,6 +209,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       depotPermissions: this.#depotPermissions,
       setLocationType: this.#setLocationType,
       resetTravelMode: this.#resetTravelMode,
+      quantityClick: { handler: this.#quantityClick, buttons: [0, 2] },
     },
     form: {
       submitOnChange: true,
@@ -1079,6 +1080,21 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     if (!uuid) return;
     const item = await fromUuid(uuid);
     item?.sheet?.render(true);
+  }
+
+  static #quantityClick(event, target) {
+    if (!game.user.isGM) return;
+
+    const row = target.closest('[data-item-id][data-location-key]');
+    const locKey = row?.dataset.locationKey;
+    const itemId = row?.dataset.itemId;
+    const locActor = this.actor.system.locationActors.get(locKey);
+    const item = locActor?.items.get(itemId);
+    if (!item) return;
+
+    const update = { system: { quantity: { value: item.system.quantity.value } } };
+    RuleChaos.increment(event, update, 'system.quantity.value', 0);
+    this.actor.system.setLocationItemQuantity(locKey, itemId, update.system.quantity.value);
   }
 
   static async _locationItemContextMenu(event, target) {

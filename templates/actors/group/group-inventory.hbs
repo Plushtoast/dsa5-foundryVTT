@@ -91,7 +91,12 @@
                   </div>
                   <div class="col ten flexrow flexAlignCenter">
                     {{#if item.system.quantity}}
-                      {{item.system.quantity.value}}
+                      {{#if @root.isGM}}
+                        <button type="button" class="noBorder dsadesignbutton" data-action="quantityClick" data-tooltip="TT.strgx10"
+                          data-tooltip-direction="RIGHT">{{item.system.quantity.value}}</button>
+                      {{else}}
+                        {{item.system.quantity.value}}
+                      {{/if}}
                     {{/if}}
                   </div>
                   <div class="col ten flexrow">

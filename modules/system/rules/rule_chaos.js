@@ -63,6 +63,16 @@ export default class RuleChaos {
 
     const val = { val: numeric };
     RuleChaos.increment(ev, val, 'val');
+    const min = target.attr('min');
+    const max = target.attr('max');
+    if (min !== undefined && min !== '') {
+      const n = Number(min);
+      if (Number.isFinite(n)) val.val = Math.max(n, val.val);
+    }
+    if (max !== undefined && max !== '') {
+      const n = Number(max);
+      if (Number.isFinite(n)) val.val = Math.min(n, val.val);
+    }
     target.val(val.val);
   }
 
