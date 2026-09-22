@@ -49,12 +49,8 @@ function parseGcRollOptions(inner) {
 }
 
 export function formatGcEnricherLabel(skill, mod, options = {}) {
-  const extended = Boolean(
-    options.applications || options.interval || options.maxRolls != null || options.targetQs != null,
-  );
-  let label = skill || '';
-  if (options.applications) label += ` (${options.applications})`;
-  label += formatEnricherMod(mod);
+  const extended = Boolean(options.interval || options.maxRolls != null || options.targetQs != null);
+  let label = `${skill || ''}${formatEnricherMod(mod)}`;
 
   const extras = [];
   if (options.interval) extras.push(options.interval);

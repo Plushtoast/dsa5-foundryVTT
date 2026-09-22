@@ -386,7 +386,6 @@ export default class GroupCheck {
         maxRolls: data.maxRolls,
         targetQs: data.targetQs,
         interval: data.interval ?? '',
-        applications: data.applications ?? '',
         failed: data.failed,
         results: data.results,
         partsuccess: configuration.partsuccess ?? '',
@@ -412,7 +411,6 @@ export default class GroupCheck {
         maxRolls: configuration.maxRolls ?? 7,
         targetQs: configuration.targetQs ?? 10,
         interval: configuration.interval ?? '',
-        applications: configuration.applications ?? '',
         failed: 0,
         results: [],
         partsuccess: configuration.partsuccess ?? '',
@@ -456,7 +454,6 @@ export default class GroupCheck {
                   maxRolls: parsed.maxRolls,
                   targetQs: parsed.targetQs,
                   interval: parsed.interval,
-                  applications: parsed.applications,
                   results: parsed.results,
                 };
                 if (parsed.partsuccess) {
@@ -547,7 +544,6 @@ export default class GroupCheck {
     const maxRolls = Number.isFinite(maxRollsInput) ? Math.max(0, maxRollsInput) : 7;
     const targetQs = Number(form.querySelector('[name="targetQs"]')?.value) || 10;
     const interval = form.querySelector('[name="interval"]')?.value?.trim() || '';
-    const applications = form.querySelector('[name="applications"]')?.value?.trim() || '';
 
     const skillKeys = new Set(rollOptions.map((o) => `${o.type}|${o.target}`));
     let results = [];
@@ -581,7 +577,6 @@ export default class GroupCheck {
       maxRolls,
       targetQs,
       interval,
-      applications,
       results,
       partsuccess,
       success,
@@ -606,7 +601,6 @@ export default class GroupCheck {
       doneRolls: 0,
       targetQs: parsed.targetQs,
       interval: parsed.interval,
-      applications: parsed.applications,
       rollOptions,
     };
 
@@ -648,7 +642,6 @@ export default class GroupCheck {
       doneRolls: 0,
       targetQs: configuration.targetQs ?? 10,
       interval: configuration.interval || '',
-      applications: configuration.applications || '',
       rollOptions: configuration.rollOptions?.length
         ? configuration.rollOptions.map((optn) => ({ ...optn, calculatedModifier: optn.modifier }))
         : [{ type, modifier, calculatedModifier: modifier, target }],

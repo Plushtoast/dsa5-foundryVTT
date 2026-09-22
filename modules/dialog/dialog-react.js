@@ -147,14 +147,15 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = this.actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), this.actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
-    data.items = [
-      {
+    data.items = [];
+    if (brawl) {
+      data.items.push({
         name: _loc('attackWeaponless'),
         id: 'attackWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.attack.value,
-      },
-    ];
+      });
+    }
 
     const types = ['meleeweapon', 'rangeweapon'];
     const traitTypes = ['meleeAttack', 'rangeAttack'];
@@ -392,13 +393,15 @@ export class ReactToAttackDialog extends ActAttackDialog {
         img: 'systems/dsa5/icons/categories/Dodge.webp',
         value: actor.system.status.dodge.max,
       },
-      {
+    ];
+    if (brawl) {
+      items.push({
         name: _loc('parryWeaponless'),
         id: 'parryWeaponless',
         img: 'systems/dsa5/icons/categories/attack_weaponless.webp',
         value: brawl.system.parry.value,
-      },
-    ];
+      });
+    }
 
     let defenses = 0;
     let sizeNotification = '';
