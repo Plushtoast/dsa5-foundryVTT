@@ -6586,6 +6586,44 @@ input[type='checkbox'].autoCheckbox {
     border: none;
     background: rgba(0, 0, 0, 0.3);
   }
+
+  .region-tooltip {
+    min-width: 180px;
+
+    .region-tooltip-block + .region-tooltip-block {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--dsa-tooltip-border-color);
+    }
+
+    .region-tooltip-type {
+      margin: 0.15rem 0 0.25rem;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .region-tooltip-status {
+      margin: 0 0 0.35rem;
+      font-size: 12px;
+      font-weight: 700;
+
+      &.is-active {
+        color: #6cbe6c;
+      }
+
+      &.is-disabled,
+      &.is-disarmed,
+      &.is-empty {
+        color: var(--dsa-danger);
+      }
+    }
+
+    ul.plain {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
 }
 
 .itemTooltip {

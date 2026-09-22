@@ -72,4 +72,69 @@ export class DSARegionBehaviorBase extends foundry.data.regionBehaviors.RegionBe
     if (!sound) return;
     foundry.audio.AudioHelper.play({ src: sound, loop: false }, true);
   }
+
+  /**
+   * Compact hover tooltip for the owning region, shown to GMs while moving tokens.
+   * @param {{ isGM?: boolean }} [options]
+   * @returns {{ name: string, typeLabel: string, icon: string, status: object|null, lines: object[], description?: string }}
+   */
+  getHoverTooltip({ isGM = game.user.isGM } = {}) {
+    return this.buildHoverTooltip({ isGM });
+  }
+
+  /**
+   * @param {{ isGM?: boolean }} [options]
+   * @returns {{ name: string, typeLabel: string, icon: string, status: object|null, lines: object[], description?: string }}
+   */
+  buildHoverTooltip({ isGM = game.user.isGM } = {}) {
+    const behavior = this.parent;
+    const region = behavior?.parent;
+    const type = behavior?.type ?? this.constructor.REGION_TYPE;
+    return {
+      name: region?.name || behavior?.name || '',
+      typeLabel: isGM ? game.i18n.localize(`TYPES.RegionBehavior.${type}`) : '',
+      icon: CONFIG.RegionBehavior.typeIcons?.[type] || 'fas fa-map-location-dot',
+      status: isGM ? this.hoverTooltipStatus() : null,
+      lines: isGM ? this.hoverTooltipLines() : [],
+    };
+  }
+
+  hoverTooltipStatus() {
+    if (this.parent?.disabled) {
+      return { key: 'disabled', label: _loc('DSAREGION.TOOLTIP.disabled') };
+    }
+    return { key: 'active', label: _loc('DSAREGION.TOOLTIP.active') };
+  }
+
+  hoverTooltipLines() {
+    return [];
+  }
+
+  localizedChoice(fieldName, value) {
+    const field = this.schema?.fields?.[fieldName] ?? this.schema?.getField?.(fieldName);
+    const choices = field?.choices;
+    const key = choices?.[value] ?? choices?.[String(value)];
+    return key ? _loc(key) : String(value ?? '');
+  }
+
+  static tooltipLine(label, value) {
+    if (value === undefined || value === null || value === '') return null;
+    return { label, value: String(value) };
+  }
+
+  static signedValue(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return value;
+    if (number > 0) return `+${number}`;
+    return String(number);
+  }
+
+  static plainText(html, limit = 160) {
+    if (!html) return '';
+    const text = (foundry.utils.stripHTML?.(String(html)) || String(html).replace(/<[^>]*>/g, ' '))
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!text) return '';
+    return text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
+  }
 }

@@ -62,6 +62,7 @@ import EquipmentDamage from './system/automation/equipment-damage.js';
 import DidYouKnow from './system/helpers/didyouknow.js';
 import MerchantSheetDSA5 from './actor/merchant-sheet.js';
 import { DSARegionTemplate } from './system/automation/measuretemplate.js';
+import RegionTooltipHandler from './system/automation/region-tooltip.js';
 import GroupCheck from './system/rolls/group-check.js';
 import Riding from './system/automation/riding.js';
 import CompanionHandler from './actor/companions/companion-handler-class.js';
@@ -167,6 +168,7 @@ globalThis.dsa5 = {
       ActorPickerDialog,
       UnifiedFateDSA5,
       DSARegionTemplate,
+      RegionTooltipHandler,
       Riding,
       CompanionHandler,
       SummoningFlow,
@@ -325,6 +327,7 @@ Hooks.once('init', () => {
   CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSAZone = 'fas fa-bullseye';
   DSAZoneRegionBehavior.registerHooks();
+  RegionTooltipHandler.registerHooks();
   CONFIG.JournalEntryPage.dataModels.dsacalendar = DSACalendarEntry;
   CONFIG.JournalEntryPage.dataModels.dsapersonaedramatis = DSAPersonaEntry;
   CONFIG.JournalEntryPage.dataModels.dsaquestlog = DSAQuestLogEntry;

@@ -266,4 +266,113 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         TrapAutomation.applyAttackWeaponPrefill(this, changed);
         return super._preUpdate(changed, options, user);
     }
+
+    buildHoverTooltip({ isGM = game.user.isGM } = {}) {
+        const tooltip = super.buildHoverTooltip({ isGM });
+        if (isGM) return tooltip;
+        if (this.detected) {
+            tooltip.description = this.constructor.plainText(this.description);
+        }
+        tooltip.status = null;
+        return tooltip;
+    }
+
+    hoverTooltipStatus() {
+        if (this.parent?.disabled) {
+            return { key: 'disabled', label: _loc('DSAREGION.TOOLTIP.disabled') };
+        }
+        if (this.disarmed) {
+            return { key: 'disarmed', label: _loc('REGIONBEHAVIOR_DSATrap.FIELDS.disarmed.label') };
+        }
+        if (Number(this.charges) > 0 && Number(this.remainingCharges) < 1) {
+            return { key: 'empty', label: _loc('DSAREGION.TOOLTIP.empty') };
+        }
+        return { key: 'active', label: _loc('DSAREGION.TOOLTIP.active') };
+    }
+
+    hoverTooltipLines() {
+        const vis = TrapAutomation.sheetVisibility(this.trapType);
+        const lines = [
+            this.constructor.tooltipLine(
+                _loc('REGIONBEHAVIOR_DSATrap.FIELDS.trapType.label'),
+                this.localizedChoice('trapType', this.trapType),
+            ),
+        ];
+
+        if (vis.showDamage) {
+            const damage = TrapAutomation.strikesFrom(this)
+                .map((strike) => (strike.name ? `${strike.name} ${strike.damageFormula}` : strike.damageFormula))
+                .filter(Boolean)
+                .join(', ');
+            lines.push(this.constructor.tooltipLine(_loc('damage'), damage));
+        }
+
+        if (vis.showAttack) {
+            lines.push(this.constructor.tooltipLine(_loc('CHARAbbrev.AT'), this.attack?.at));
+        }
+
+        if (Number(this.charges) > 0) {
+            lines.push(this.constructor.tooltipLine(
+                _loc('charges'),
+                `${Math.max(0, Number(this.remainingCharges) || 0)}/${this.charges}`,
+            ));
+        } else {
+            lines.push(this.constructor.tooltipLine(_loc('charges'), _loc('infinite')));
+        }
+
+        lines.push(this.constructor.tooltipLine(
+            _loc('REGIONBEHAVIOR_DSATrap.FIELDS.stealth.label'),
+            this.constructor.signedValue(this.stealth),
+        ));
+        lines.push(this.constructor.tooltipLine(
+            _loc('REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.label'),
+            this.constructor.signedValue(this.difficulty),
+        ));
+        lines.push(this.constructor.tooltipLine(
+            _loc('REGIONBEHAVIOR_DSATrap.FIELDS.trigger.label'),
+            this.localizedChoice('trigger', this.trigger),
+        ));
+
+        if (this.detected) {
+            lines.push(this.constructor.tooltipLine(
+                _loc('REGIONBEHAVIOR_DSATrap.FIELDS.detected.label'),
+                _loc('yes'),
+            ));
+        }
+
+        if (vis.showTimer && Number(this.timerRounds) > 0) {
+            lines.push(this.constructor.tooltipLine(
+                _loc('REGIONBEHAVIOR_DSATrap.FIELDS.timerRounds.label'),
+                this.timerRounds,
+            ));
+            lines.push(this.constructor.tooltipLine(
+                _loc('REGIONBEHAVIOR_DSATrap.FIELDS.escapeModifier.label'),
+                this.constructor.signedValue(this.escapeModifier),
+            ));
+        }
+
+        if (vis.showChase) {
+            if (Number(this.chaseGs) > 0) {
+                lines.push(this.constructor.tooltipLine(
+                    _loc('REGIONBEHAVIOR_DSATrap.FIELDS.chaseGs.label'),
+                    this.chaseGs,
+                ));
+            }
+            if (this.chaseDistanceFormula) {
+                lines.push(this.constructor.tooltipLine(
+                    _loc('REGIONBEHAVIOR_DSATrap.FIELDS.chaseDistanceFormula.label'),
+                    this.chaseDistanceFormula,
+                ));
+            }
+        }
+
+        if (vis.showPassword && this.passwordRequired) {
+            lines.push(this.constructor.tooltipLine(
+                _loc('REGIONBEHAVIOR_DSATrap.FIELDS.passwordRequired.label'),
+                _loc('yes'),
+            ));
+        }
+
+        return lines.filter(Boolean);
+    }
 }

@@ -4239,6 +4239,14 @@
   "TYPES.JournalEntryPage.dsapersonaedramatis": "Dramatis Personae",
   "TYPES.JournalEntryPage.dsaquestlog": "Auftrag",
   "TYPES.JournalEntryPage.citydetails": "Stadtbeschreibung",
+  "DSAREGION": {
+    "TOOLTIP": {
+      "active": "Aktiv",
+      "disabled": "Deaktiviert",
+      "empty": "Verbraucht",
+      "status": "Status"
+    }
+  },
   "TYPES.RegionBehavior.DSAAura": "Aura (DSA)",
   "TYPES.RegionBehavior.DSATrap": "Falle (DSA)",
   "TYPES.HINTS.RegionBehavior.DSATrap": "Ziehe eine Falle auf die Karte oder auf ein Regionenblatt. Figuren, die eintreten, können suchen, entschärfen oder auslösen.",

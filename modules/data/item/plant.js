@@ -34,6 +34,7 @@ export default class PlantData extends ItemDataModel.mixin(OnUseTemplate, Descri
         identify: new NumberField({ initial: 0, label: 'PLANT.identify' }),
       }),
       usages: new StringField({ initial: '0/0/0/0/0/0', label: 'PLANT.usages' }),
+      identified: new BooleanField({ initial: false, label: 'PLANT.identified' }),
       effect: new HTMLField({ initial: '', label: 'effect' }),
       recipes: new HTMLField({ initial: '' }),
       planttype: new SchemaField({

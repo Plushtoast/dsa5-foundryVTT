@@ -1,0 +1,23 @@
+<div class="itemTooltip region-tooltip">
+    {{#each regions}}
+        <section class="region-tooltip-block">
+            <h1>{{name}}</h1>
+            {{#if typeLabel}}
+                <p class="region-tooltip-type"><i class="{{icon}}"></i> {{typeLabel}}</p>
+            {{/if}}
+            {{#if status}}
+                <p class="region-tooltip-status is-{{status.key}}">{{status.label}}</p>
+            {{/if}}
+            {{#if lines.length}}
+                <ul class="plain">
+                    {{#each lines}}
+                        <li><b>{{label}}</b>: {{value}}</li>
+                    {{/each}}
+                </ul>
+            {{/if}}
+            {{#if description}}
+                <p>{{description}}</p>
+            {{/if}}
+        </section>
+    {{/each}}
+</div>
