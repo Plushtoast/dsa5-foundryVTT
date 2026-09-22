@@ -3520,6 +3520,7 @@
     "showTrap": "Falle anzeigen",
     "showTrapAll": "Falle den Spielern zeigen",
     "showTrapHint": "Falle anzeigen: Die Falle kann für alle Spieler oder den Spielleiter sichtbar gemacht werden.",
+    "currentVisibility": "Aktuelle Sichtbarkeitseinstellung",
     "trapstart": "<b>{name}</b> löst <b>{trap}</b> aus.",
     "trapDetected": "{actor} hat die Falle '{trap}' entdeckt.",
     "narrateDetected": "Dies den Spielern erzählen",
@@ -3623,7 +3624,12 @@
     "success": "Erfolg",
     "noResults": "Noch keine Würfe.",
     "noSkills": "Mindestens ein Talent hinzufügen.",
-    "minOneSkill": "Mindestens ein Talent erforderlich."
+    "minOneSkill": "Mindestens ein Talent erforderlich.",
+    "applications": "Anwendungen",
+    "attempts": "{count} Versuche",
+    "unlimitedAttempts": "beliebig viele Versuche",
+    "unlimited": "unbegrenzt",
+    "maxRollsHint": "0 bedeutet beliebig viele Versuche."
   },
   "RPr": "Routineprobe",
   "Racedescr": {

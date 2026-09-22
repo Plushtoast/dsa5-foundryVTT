@@ -3518,6 +3518,7 @@
     "showTrap": "Show Trap",
     "showTrapAll": "Show Trap to All Players",
     "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
+    "currentVisibility": "Current visibility setting",
     "trapstart": "<b>{name}</b> triggers <b>{trap}</b>.",
     "trapDetected": "{actor} detected the trap '{trap}'.",
     "narrateDetected": "Narrate this to the players",
@@ -3621,7 +3622,12 @@
     "success": "Success",
     "noResults": "No rolls yet.",
     "noSkills": "Add at least one skill.",
-    "minOneSkill": "At least one skill is required."
+    "minOneSkill": "At least one skill is required.",
+    "applications": "Applications",
+    "attempts": "{count} attempts",
+    "unlimitedAttempts": "any number of attempts",
+    "unlimited": "unlimited",
+    "maxRollsHint": "0 means unlimited attempts."
   },
   "RPr": "Routine check",
   "Racedescr": {

@@ -70,7 +70,10 @@ export default class GroupCheck {
     const tally = this.tallyResults(results);
     const targetQs = Number(data.targetQs);
     const needed = Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1;
-    const remaining = (Number(data.maxRolls) || 0) - results.length;
+    const maxRolls = Number(data.maxRolls);
+    const unlimited = maxRolls === 0;
+    const cap = unlimited ? Infinity : (Number.isFinite(maxRolls) ? maxRolls : 0);
+    const remaining = cap - results.length;
     const success = tally.qs >= needed;
     const exhausted = remaining <= 0 && results.length > 0;
     if (!success && !exhausted) return { complete: false, success: false, actorId: null };
@@ -163,8 +166,11 @@ export default class GroupCheck {
   }
 
   static #buildTemplateData(data) {
+    const unlimited = Number(data.maxRolls) === 0;
     return {
       ...data,
+      unlimited,
+      openRolls: unlimited ? 1 : data.openRolls,
       rollOptions: this.#enrichRollOptions(data.rollOptions),
       resultSections: this.#buildResultSections(data.results, data.rollOptions),
     };
@@ -296,7 +302,7 @@ export default class GroupCheck {
         optn.calculatedModifier = optn.modifier - data.failed;
         delete optn.skillIcon;
       }
-      data.openRolls = data.maxRolls - data.results.length;
+      data.openRolls = Number(data.maxRolls) === 0 ? 1 : data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
       if (!data.trapResolved && data.datasetOptions?.message && data.datasetOptions?.mode) {
         const { TrapState } = await import('../../chatmessage/trap_state.js');
@@ -379,6 +385,8 @@ export default class GroupCheck {
         })),
         maxRolls: data.maxRolls,
         targetQs: data.targetQs,
+        interval: data.interval ?? '',
+        applications: data.applications ?? '',
         failed: data.failed,
         results: data.results,
         partsuccess: configuration.partsuccess ?? '',
@@ -403,6 +411,8 @@ export default class GroupCheck {
         })),
         maxRolls: configuration.maxRolls ?? 7,
         targetQs: configuration.targetQs ?? 10,
+        interval: configuration.interval ?? '',
+        applications: configuration.applications ?? '',
         failed: 0,
         results: [],
         partsuccess: configuration.partsuccess ?? '',
@@ -445,6 +455,8 @@ export default class GroupCheck {
                   rollOptions: parsed.rollOptions,
                   maxRolls: parsed.maxRolls,
                   targetQs: parsed.targetQs,
+                  interval: parsed.interval,
+                  applications: parsed.applications,
                   results: parsed.results,
                 };
                 if (parsed.partsuccess) {
@@ -531,8 +543,11 @@ export default class GroupCheck {
       });
     }
 
-    const maxRolls = Number(form.querySelector('[name="maxRolls"]')?.value) || 7;
+    const maxRollsInput = Number(form.querySelector('[name="maxRolls"]')?.value);
+    const maxRolls = Number.isFinite(maxRollsInput) ? Math.max(0, maxRollsInput) : 7;
     const targetQs = Number(form.querySelector('[name="targetQs"]')?.value) || 10;
+    const interval = form.querySelector('[name="interval"]')?.value?.trim() || '';
+    const applications = form.querySelector('[name="applications"]')?.value?.trim() || '';
 
     const skillKeys = new Set(rollOptions.map((o) => `${o.type}|${o.target}`));
     let results = [];
@@ -565,6 +580,8 @@ export default class GroupCheck {
       rollOptions,
       maxRolls,
       targetQs,
+      interval,
+      applications,
       results,
       partsuccess,
       success,
@@ -578,15 +595,18 @@ export default class GroupCheck {
       calculatedModifier: optn.modifier,
     }));
 
+    const unlimited = Number(parsed.maxRolls) === 0;
     const data = {
       results: [],
       qs: 0,
       failed: 0,
       name: game.user.name,
       maxRolls: parsed.maxRolls,
-      openRolls: parsed.maxRolls,
+      openRolls: unlimited ? 1 : parsed.maxRolls,
       doneRolls: 0,
       targetQs: parsed.targetQs,
+      interval: parsed.interval,
+      applications: parsed.applications,
       rollOptions,
     };
 
@@ -615,16 +635,20 @@ export default class GroupCheck {
   static async #createDirectGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
     await DSA5ChatAutoCompletion.ensureSkills();
     const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)?.type || 'skill';
+    const maxRolls = configuration.maxRolls ?? 7;
+    const unlimited = Number(maxRolls) === 0;
     const data = {
       results: [],
       qs: 0,
       failed: 0,
       modifier,
       name: game.user.name,
-      maxRolls: configuration.maxRolls ?? 7,
-      openRolls: configuration.maxRolls ?? 7,
+      maxRolls,
+      openRolls: unlimited ? 1 : maxRolls,
       doneRolls: 0,
       targetQs: configuration.targetQs ?? 10,
+      interval: configuration.interval || '',
+      applications: configuration.applications || '',
       rollOptions: configuration.rollOptions?.length
         ? configuration.rollOptions.map((optn) => ({ ...optn, calculatedModifier: optn.modifier }))
         : [{ type, modifier, calculatedModifier: modifier, target }],

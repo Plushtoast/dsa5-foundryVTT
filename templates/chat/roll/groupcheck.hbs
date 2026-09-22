@@ -88,11 +88,23 @@
     <b>{{localize 'failedTests'}}</b>:
     {{failed}}
   </div>
+  {{#if applications}}
+    <div>
+      <b>{{localize 'GROUPCHECK.applications'}}</b>:
+      {{applications}}
+    </div>
+  {{/if}}
+  {{#if interval}}
+    <div>
+      <b>{{localize 'interval'}}</b>:
+      {{interval}}
+    </div>
+  {{/if}}
   <div>
     <b>{{localize 'probes'}}</b>:
     {{doneRolls}}
     /
-    {{maxRolls}}
+    {{#if unlimited}}{{localize 'GROUPCHECK.unlimited'}}{{else}}{{maxRolls}}{{/if}}
   </div>
   <div>
     <b>{{localize 'cummulatedQS'}}</b>:

@@ -565,7 +565,10 @@ export default class DSA5ChatAutoCompletion {
       const target = ev.currentTarget;
       let configuration = {};
       if (target.dataset.rollOptions) {
-        configuration = { rollOptions: JSON.parse(decodeURIComponent(target.dataset.rollOptions)) };
+        configuration.rollOptions = JSON.parse(decodeURIComponent(target.dataset.rollOptions));
+      }
+      if (target.dataset.json) {
+        Object.assign(configuration, JSON.parse(decodeURIComponent(target.dataset.json)));
       }
       GroupCheck.showGCMessage(target.dataset.name, Number(target.dataset.modifier) || 0, configuration);
       ev.stopPropagation();

@@ -29,11 +29,22 @@
   <section class='tab gc-tab-panel' data-tab='settings'>
     <div class='row-section lineheight'>
       <div class='col fourty table-title'><label>{{localize 'probes'}}</label></div>
-      <div class='col sixty'><input name='maxRolls' class='quantity-click' type='number' min='0' value='{{maxRolls}}' /></div>
+      <div class='col sixty'>
+        <input name='maxRolls' class='quantity-click' type='number' min='0' value='{{maxRolls}}' />
+        <p class='hint'>{{localize 'GROUPCHECK.maxRollsHint'}}</p>
+      </div>
     </div>
     <div class='row-section lineheight'>
       <div class='col fourty table-title'><label>{{localize 'cummulatedQS'}}</label></div>
       <div class='col sixty'><input name='targetQs' class='quantity-click' type='number' min='0' value='{{targetQs}}' /></div>
+    </div>
+    <div class='row-section lineheight'>
+      <div class='col fourty table-title'><label>{{localize 'interval'}}</label></div>
+      <div class='col sixty'><input name='interval' type='text' value='{{interval}}' /></div>
+    </div>
+    <div class='row-section lineheight'>
+      <div class='col fourty table-title'><label>{{localize 'GROUPCHECK.applications'}}</label></div>
+      <div class='col sixty'><input name='applications' type='text' value='{{applications}}' /></div>
     </div>
     {{#unless isEdit}}
       <div class='row-section lineheight'>

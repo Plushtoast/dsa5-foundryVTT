@@ -6,7 +6,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
 const modRegex = /(-|\+)?\d+/;
-const optionRegex = /options={[0-9a-zA-Z: ",]+}/;
+const optionRegex = /options=\{[0-9a-zA-ZöüäÖÜÄß: ",&;()+.\-]+\}/;
 const innerRegex = /(?:\[)(.*?)(?=\])/;
 
 function formatEnricherMod(modifier) {
@@ -22,6 +22,23 @@ function parseSkillModSegment(segment) {
   return { skill, mod };
 }
 
+export function parseEnricherOptions(text) {
+  const match = String(text ?? '').match(optionRegex);
+  if (!match) return {};
+  return JSON.parse(match[0].replace(/options=/, ''));
+}
+
+function parseEnricherInner(inner) {
+  const options = parseEnricherOptions(inner);
+  const { skill, mod } = parseSkillModSegment(inner.replace(optionRegex, '').trim());
+  return { skill, mod, options };
+}
+
+function appendAttrsLabel(label, options = {}) {
+  if (!options.attrs) return label;
+  return `${label} (${options.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${options.fw || 0})`;
+}
+
 function parseGcRollOptions(inner) {
   if (optionRegex.test(inner) || !inner.includes(',')) return null;
 
@@ -29,6 +46,31 @@ function parseGcRollOptions(inner) {
     const { skill, mod } = parseSkillModSegment(segment.trim());
     return { target: skill, modifier: mod, type: 'skill' };
   });
+}
+
+export function formatGcEnricherLabel(skill, mod, options = {}) {
+  const extended = Boolean(
+    options.applications || options.interval || options.maxRolls != null || options.targetQs != null,
+  );
+  let label = skill || '';
+  if (options.applications) label += ` (${options.applications})`;
+  label += formatEnricherMod(mod);
+
+  const extras = [];
+  if (options.interval) extras.push(options.interval);
+  if (options.maxRolls === 0) extras.push(_loc('GROUPCHECK.unlimitedAttempts'));
+  else if (options.maxRolls != null) extras.push(_loc('GROUPCHECK.attempts', { count: options.maxRolls }));
+  if (extras.length) label += `, ${extras.join(', ')}`;
+
+  return { label, extended };
+}
+
+export function parseGcEnricher(inner) {
+  const rollOptions = parseGcRollOptions(inner);
+  if (rollOptions?.length) return { rollOptions };
+
+  const parsed = parseEnricherInner(inner);
+  return { ...parsed, ...formatGcEnricherLabel(parsed.skill, parsed.mod, parsed.options) };
 }
 
 export function setEnrichers() {
@@ -77,49 +119,42 @@ export function setEnrichers() {
     {
       pattern: /@Gc\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match) => {
-        const [str, inner, customTextMatch] = match;
+        const [, inner, customTextMatch] = match;
         const customTextOverride = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : null;
-        const rollOptions = parseGcRollOptions(inner);
+        const parsed = parseGcEnricher(inner);
+        const { escapeHTML } = foundry.utils;
 
-        if (rollOptions?.length) {
+        if (parsed.rollOptions?.length) {
           const label =
-            customTextOverride || rollOptions.map((optn) => `${optn.target}${formatEnricherMod(optn.modifier)}`).join(', ');
-          const rollOptionsData = encodeURIComponent(JSON.stringify(rollOptions));
+            customTextOverride || parsed.rollOptions.map((optn) => `${optn.target}${formatEnricherMod(optn.modifier)}`).join(', ');
+          const rollOptionsData = encodeURIComponent(JSON.stringify(parsed.rollOptions));
           return $(
-            `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-roll-options='${rollOptionsData}' data-label="${label}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${label}</a>`,
+            `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-roll-options="${rollOptionsData}" data-label="${escapeHTML(label)}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${escapeHTML(label)}</a>`,
           )[0];
         }
 
-        const mod = Number(str.match(modRegex)[0]);
-        const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
-        const data = encodeURIComponent(JSON.stringify(json));
-        const skill = inner.replace(modRegex, '').replace(optionRegex, '').trim();
-        let customText = customTextOverride || skill;
-
-        if (json.attrs) {
-          customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
-        }
+        const { skill, mod, options } = parsed;
+        let label = customTextOverride || parsed.label;
+        if (!customTextOverride) label = appendAttrsLabel(label, options);
+        const title = !customTextOverride && parsed.extended ? '' : titles.Gc;
+        const data = encodeURIComponent(JSON.stringify(options || {}));
 
         return $(
-          `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons.Gc}"></em>${titles.Gc}${customText}${formatEnricherMod(mod)}</a>`,
+          `<a class="roll-button request-${rolls.Gc}" data-tooltip="${tooltips.Gc}" data-type="skill" data-json="${data}" data-modifier="${mod}" data-name="${escapeHTML(skill)}" data-label="${escapeHTML(label)}"><em class="fas fa-${icons.Gc}"></em>${title}${escapeHTML(label)}</a>`,
         )[0];
       },
     },
     {
-      pattern: /@(Rq|Ch)\[[a-zA-ZöüäÖÜÄ&; -]+ (-|\+)?\d+( options={[0-9a-zA-Z: ",]+})?\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
+      pattern: /@(Rq|Ch)\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match) => {
-        const [str, type, , , customTextMatch] = match;
-        const json = str.match(optionRegex) ? JSON.parse(str.match(optionRegex)[0].replace(/options=/, '')) : {};
-        const data = encodeURIComponent(JSON.stringify(json));
-        const { skill, mod } = parseSkillModSegment(str.match(innerRegex)[1].replace(optionRegex, '').trim());
+        const [, type, inner, customTextMatch] = match;
+        const { skill, mod, options } = parseEnricherInner(inner);
+        const data = encodeURIComponent(JSON.stringify(options));
         let customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : skill;
-
-        if (json.attrs) {
-          customText += ` (${json.attrs.split(',').join('/')}, ${_loc('CHARAbbrev.FW')} ${json.fw || 0})`;
-        }
+        if (!customTextMatch) customText = appendAttrsLabel(customText, options);
 
         return $(
-          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json='${data}' data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText}${formatEnricherMod(mod)}</a>`,
+          `<a class="roll-button request-${rolls[type]}" data-tooltip="${tooltips[type]}" data-type="skill" data-json="${data}" data-modifier="${mod}" data-name="${skill}" data-label="${customText}"><em class="fas fa-${icons[type]}"></em>${titles[type]}${customText}${formatEnricherMod(mod)}</a>`,
         )[0];
       },
     },
