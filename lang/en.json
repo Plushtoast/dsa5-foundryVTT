@@ -4543,6 +4543,8 @@
     "soft4": "Soft ground (-4)"
   },
   "fallingDamage": "Falling Damage",
+  "fallingDamageReduction": "Damage reduction",
+  "fallingDamageReductionHint": "Body Control QL × 2 reduce falling damage (with Tumbling 3).",
   "fallingFloor": "Ground condition",
   "fallingHeight": "Falling height",
   "fallingHorses": "Fall from horse as 2 yards height<br>Fall from galloping horse as 3 yards height",

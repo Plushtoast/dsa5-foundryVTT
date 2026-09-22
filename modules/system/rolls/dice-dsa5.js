@@ -279,6 +279,10 @@ export default class DiceDSA5 {
     return roll;
   }
 
+  static fallingDamageReductionFormula(qlMultiplier, availableQs) {
+    return `${_loc('CHARAbbrev.QS')} × ${qlMultiplier} = −${availableQs}`;
+  }
+
   /**
    * Create falling damage roll
    * @param {Object} testData 

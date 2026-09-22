@@ -4552,6 +4552,8 @@
     "soft4": "Weicher Boden (-4)"
   },
   "fallingDamage": "Sturzschaden",
+  "fallingDamageReduction": "Schadensreduktion",
+  "fallingDamageReductionHint": "QS der Körperbeherrschung × 2 reduzieren den Sturzschaden (mit Abrollen 3).",
   "fallingFloor": "Bodenbeschaffenheit",
   "fallingHeight": "Fallhöhe",
   "fallingHorses": "Sturz von einem Pferd wie 2 Schritt Höhe<br>Sturz von einem galoppierendem Pferd wie 3 Schritt Höhe",

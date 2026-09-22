@@ -29,12 +29,10 @@
     </select>
   </div>
 
-  {{#if tumbling}}
-  <div class='form-group'>
-    <label>{{localize 'LocalizedIDs.tumbling'}}</label>
-    <span class='lineheight'>{{localize 'CHARAbbrev.QS'}} × {{qlMultiplier}} (−{{availableQs}})</span>
+  <div class='form-group' data-tooltip="fallingDamageReductionHint">
+    <label>{{localize 'fallingDamageReduction'}}</label>
+    <span class='lineheight'>{{reductionFormula}}{{#if tumbling}} ({{localize 'LocalizedIDs.tumbling'}}){{/if}}</span>
   </div>
-  {{/if}}
 
   {{> systems/dsa5/templates/dialog/parts/situational-modifiers-widget.hbs}}
 </form>
