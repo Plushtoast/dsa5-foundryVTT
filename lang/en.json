@@ -3516,6 +3516,7 @@
     "search": "Search",
     "searchHint": "Perception: Spot is unmodified (stealth value); Search is additionally eased by 1.",
     "showTrap": "Show Trap",
+    "showTraps": "Show Traps",
     "showTrapAll": "Show Trap to All Players",
     "showTrapHint": "Show Trap: The trap can be made visible to all players or the GM.",
     "currentVisibility": "Current visibility setting",
