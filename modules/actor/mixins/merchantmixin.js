@@ -224,10 +224,16 @@ export const MerchantSheetMixin = (superclass) =>
     /**
      * Player/limited shop views stay interactive (buy, search, filters) even when the
      * document is not editable (LIMITED permission or a locked pack). Edit view still
-     * honors Foundry's disabled state.
+     * honors Foundry's disabled state. Portrait pop-out still has to bind because
+     * skipping the disable pass also skips `_onRenderForObserver` (issue #2715).
      */
     _toggleDisabled(disabled) {
-      super._toggleDisabled(this.merchantSheetActivated() ? false : disabled);
+      if (this.merchantSheetActivated()) {
+        super._toggleDisabled(false);
+        this._bindObserverImagePopout();
+        return;
+      }
+      super._toggleDisabled(disabled);
     }
 
     tracksShopPresence() {
@@ -629,6 +635,7 @@ export const MerchantSheetMixin = (superclass) =>
 
       if (this.merchantSheetActivated()) {
         this.#bindStallItemTooltips(signal);
+        this._bindObserverImagePopout();
       } else {
         this.#clearStallTooltipChrome();
       }
