@@ -36,6 +36,12 @@ export class TrapState extends ChatMessageState {
         return SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.disarmTraps');
     }
 
+    /** Stealth value, plus +1 ease for the Search application. */
+    static perceptionModifier(stealth, mode) {
+        const value = Number(stealth) || 0;
+        return mode === 'search' ? value + 1 : value;
+    }
+
     static #openSingleton(id, config) {
         const existing = foundry.applications.instances.get(id);
         if (existing) {
@@ -251,7 +257,7 @@ export class TrapState extends ChatMessageState {
 
         TrapState.#openSingleton(`dsa-trap-search-${message.id}`, {
             window: {
-                title: 'REGIONBEHAVIOR_DSATrap.search'
+                title: 'LocalizedIDs.perception'
             },
             position: {
                 width: 400
@@ -259,29 +265,29 @@ export class TrapState extends ChatMessageState {
             content: await renderTemplate('systems/dsa5/templates/chat/trap/search.hbs', { token, region, message }),
             buttons: [
                 {
-                    action: 'search',
-                    icon: 'fa fa-magnifying-glass',
-                    label: 'REGIONBEHAVIOR_DSATrap.search',
+                    action: 'notice',
+                    icon: 'fa fa-eye',
+                    label: 'REGIONBEHAVIOR_DSATrap.notice',
                     default: true,
                     callback: () => {
                         RollRequestService.createTrapRequest({
                             ...rollOptions,
                             name: skill,
-                            modifier: behavior.system.stealth + 1,
-                            mode: 'search',
+                            modifier: TrapState.perceptionModifier(behavior.system.stealth, 'notice'),
+                            mode: 'notice',
                         });
                     },
                 },
                 {
-                    action: 'notice',
-                    icon: 'fa fa-eye',
-                    label: 'REGIONBEHAVIOR_DSATrap.notice',
+                    action: 'search',
+                    icon: 'fa fa-magnifying-glass',
+                    label: 'REGIONBEHAVIOR_DSATrap.search',
                     callback: () => {
                         RollRequestService.createTrapRequest({
                             ...rollOptions,
                             name: skill,
-                            modifier: behavior.system.stealth,
-                            mode: 'notice',
+                            modifier: TrapState.perceptionModifier(behavior.system.stealth, 'search'),
+                            mode: 'search',
                         });
                     },
                 }
