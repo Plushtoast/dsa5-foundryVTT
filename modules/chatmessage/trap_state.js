@@ -42,13 +42,15 @@ export class TrapState extends ChatMessageState {
         return mode === 'search' ? value + 1 : value;
     }
 
-    static #openSingleton(id, config) {
+    static regionVisibilityKey(visibility) {
+        const value = Number(visibility);
+        return Object.entries(CONST.REGION_VISIBILITY).find(([, v]) => v === value)?.[0];
+    }
+
+    static async #openSingleton(id, config) {
         const existing = foundry.applications.instances.get(id);
-        if (existing) {
-            existing.bringToTop();
-            return;
-        }
-        new foundry.applications.api.DialogV2({ id, ...config }).render(true);
+        if (existing) await existing.close({ animate: false });
+        return new foundry.applications.api.DialogV2({ id, ...config }).render(true);
     }
 
     async #templateData(trapData = this.message?.flags?.dsa5?.trapData) {
@@ -255,7 +257,7 @@ export class TrapState extends ChatMessageState {
         const skill = _loc('LocalizedIDs.perception');
         const rollOptions = this.#requestRollOptions(message, token);
 
-        TrapState.#openSingleton(`dsa-trap-search-${message.id}`, {
+        await TrapState.#openSingleton(`dsa-trap-search-${message.id}`, {
             window: {
                 title: 'LocalizedIDs.perception'
             },
@@ -297,9 +299,10 @@ export class TrapState extends ChatMessageState {
 
     async _handleShow(event) {
         const { token, region, message, behavior } = this;
-        const state = Object.keys(CONST.REGION_VISIBILITY)[behavior.parent.visibility];
+        const visibility = Number(behavior.parent.visibility);
+        const state = TrapState.regionVisibilityKey(visibility) || 'LAYER_UNLOCKED';
 
-        TrapState.#openSingleton(`dsa-trap-show-${message.id}`, {
+        await TrapState.#openSingleton(`dsa-trap-show-${message.id}`, {
             window: {
                 title: 'REGIONBEHAVIOR_DSATrap.showTrap'
             },
@@ -312,27 +315,27 @@ export class TrapState extends ChatMessageState {
                     action: 'showTrap',
                     icon: 'fa fa-mask',
                     label: 'REGIONBEHAVIOR_DSATrap.showTrap',
-                    default: behavior.parent.visibility === 1,
-                    callback: (event, button, dialog) => {
-                        behavior.parent.update({ visibility: 1 })
+                    default: visibility === CONST.REGION_VISIBILITY.GAMEMASTER,
+                    callback: () => {
+                        behavior.parent.update({ visibility: CONST.REGION_VISIBILITY.GAMEMASTER });
                     },
                 },
                 {
                     action: 'showTrapAll',
                     icon: 'fa fa-users',
                     label: 'REGIONBEHAVIOR_DSATrap.showTrapAll',
-                    default: behavior.parent.visibility === 2,
-                    callback: (event, button, dialog) => {
-                        behavior.parent.update({ visibility: 2 })
+                    default: visibility === CONST.REGION_VISIBILITY.ALWAYS,
+                    callback: () => {
+                        behavior.parent.update({ visibility: CONST.REGION_VISIBILITY.ALWAYS });
                     },
                 },
                 {
                     action: 'hideTrapAll',
                     icon: 'fa fa-eye-slash',
                     label: 'REGIONBEHAVIOR_DSATrap.hideTrapAll',
-                    default: behavior.parent.visibility === 0,
-                    callback: (event, button, dialog) => {
-                        behavior.parent.update({ visibility: 0 })
+                    default: visibility === CONST.REGION_VISIBILITY.LAYER,
+                    callback: () => {
+                        behavior.parent.update({ visibility: CONST.REGION_VISIBILITY.LAYER });
                     },
                 }
             ]
@@ -395,7 +398,7 @@ export class TrapState extends ChatMessageState {
             return;
         }
 
-        TrapState.#openSingleton(`dsa-trap-manual-disarm-${message.id}`, {
+        await TrapState.#openSingleton(`dsa-trap-manual-disarm-${message.id}`, {
             window: {
                 title: 'REGIONBEHAVIOR_DSATrap.manualDisarm'
             },
