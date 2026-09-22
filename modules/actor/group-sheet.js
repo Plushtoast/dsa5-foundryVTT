@@ -340,6 +340,21 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     };
   }
 
+  static #prepareDepotItems(loc) {
+    return loc.actor.items
+      .filter((i) => DSA5.equipmentCategories.has(i.type))
+      .sort((a, b) => a.name.localeCompare(b.name, game.i18n.lang))
+      .map((i) => {
+        const item = i.system.prepareEmbeddedItemSheet();
+        item._id = i.id;
+        item.id = i.id;
+        item.uuid = i.uuid;
+        item.locationKey = loc.key;
+        item.calculatedPrice = DSA5_Utility.itemPrice(i);
+        return item;
+      });
+  }
+
   static #getLocationItemContextOptions(groupActor, uuid) {
     const item = fromUuidSync(uuid);
     const locActor = item?.parent;
@@ -552,17 +567,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       ...loc,
       permissionWarning: GroupData.playersMissingDepotPermission(loc.actor),
       ...GroupActorSheet.#prepareDepotWeight(loc.actor),
-      items: loc.actor.items
-        .filter((i) => DSA5.equipmentCategories.has(i.type))
-        .map((i) => {
-          const item = i.system.prepareEmbeddedItemSheet();
-          item._id = i.id;
-          item.id = i.id;
-          item.uuid = i.uuid;
-          item.locationKey = loc.key;
-          item.calculatedPrice = DSA5_Utility.itemPrice(i);
-          return item;
-        }),
+      items: GroupActorSheet.#prepareDepotItems(loc),
       coins: loc.actor.items
         .filter((i) => i.type === 'money')
         .sort((a, b) => b.system.price.value - a.system.price.value)

@@ -415,6 +415,20 @@ export default class GroupData extends ActorDataModel {
     return true;
   }
 
+  async setLocationItemQuantity(fromKey, itemId, value) {
+    if (!fromKey || !itemId) return null;
+
+    const loc = this.resolvedLocations.find((location) => location.key === fromKey);
+    if (!loc?.actor) return null;
+
+    const item = loc.actor.items.get(itemId);
+    if (!item || item.system.quantity?.value === undefined) return null;
+
+    const quantity = Math.max(0, Math.round(Number(value) || 0));
+    await loc.actor.updateEmbeddedDocuments('Item', [{ _id: item.id, 'system.quantity.value': quantity }]);
+    return quantity;
+  }
+
   async setLocationType(key, type) {
     const updates = { [`system.locations.${key}.type`]: type };
     if (type) {
