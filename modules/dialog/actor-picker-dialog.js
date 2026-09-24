@@ -1,4 +1,5 @@
 import QueryOrchestrator from '../system/queries/query-orchestrator.js';
+import RuleChaos from '../system/rules/rule_chaos.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -177,6 +178,7 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
 
     ActorPickerDialog.#bindSearchFilter(this.element);
     ActorPickerDialog.#bindActorRowEvents(this.element);
+    RuleChaos.bindQuantityClicks(this.element);
     this.#bindDropEvents();
 
     const form = this.element.querySelector('form');
