@@ -135,7 +135,9 @@ export default class PlayerMenu extends DefaultAppv2 {
       },
       conjurationType: CONJURATION_TYPES.DEMON,
       skills: {
-        [CONJURATION_TYPES.DEMON]: ['invocatioMinima', 'invocatioMinor', 'invocatioMaior'].map((x) => _loc(`LocalizedIDs.${x}`)),
+        [CONJURATION_TYPES.DEMON]: ['invocatioMinima', 'invocatioMinor', 'invocatioMaior', 'invocatioMaxima'].map((x) =>
+          _loc(`LocalizedIDs.${x}`),
+        ),
         [CONJURATION_TYPES.ELEMENTAL]: [
           'manifesto',
           'elementalServant',
