@@ -91,6 +91,7 @@ export default class QueryOrchestrator {
         render: (event, app) => {
           dialog = app;
           this.#activeQueryDialogs.add(app);
+          app.element?.querySelector('.dialog-content')?.classList.add('scrollable');
           config.render?.(event, app);
         },
         close: (event, app) => {
