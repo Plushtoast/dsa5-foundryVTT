@@ -4792,11 +4792,6 @@ input[type='checkbox'].smallBox {
   top: 3px;
 }
 
-/* double button on render bugfix*/
-.obfuscationBtn:nth-of-type(2) {
-  display: none;
-}
-
 .chatpaperfield {
   border-image: url('../../icons/backgrounds/chatpaper_v45.webp');
   clear: both;

@@ -19,12 +19,12 @@ export const ItemSheetObfuscation = (superclass) =>
       await super._onRender(context, options);
 
       const html = $(this.element);
-      html.on('click', '.obfuscateSection', (ev) => this.obfuscateItem(ev));
+      html.off('click.dsaObfuscate').on('click.dsaObfuscate', '.obfuscateSection', (ev) => this.obfuscateItem(ev));
       this.obfuscateTabs(options);
     }
 
     obfuscationCss(section) {
-      return this.isObfuscated(section) ? '' : ' pale';
+      return this.isObfuscated(section) ? '' : 'pale';
     }
 
     markPriceObfuscation(html, hidden) {
@@ -66,14 +66,11 @@ export const ItemSheetObfuscation = (superclass) =>
         const invisible = options.tabsinvisible || this.isObfuscated(tab);
         const tooltip = _loc(`SHEET.${invisible ? 'deobfuscateItem' : 'obfuscateItem'}`);
         if (game.user.isGM) {
-          const sectionName = `obfuscateSection${this.obfuscationCss(tab)}`;
-          const existingElem = ele.find(`.${sectionName}`);
-          const btn = `<a data-tooltip="${tooltip}" class="obfuscationBtn ${sectionName}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`;
-          if (existingElem.length) {
-            existingElem.replaceWith(btn);
-          } else {
-            ele.append(` ${btn}`);
-          }
+          const pale = this.obfuscationCss(tab);
+          const btn = `<a data-tooltip="${tooltip}" class="obfuscationBtn obfuscateSection${pale ? ` ${pale}` : ''}" data-obfuscate="${tab}"><i class="fas fa-mask"></i></a>`;
+          const existing = ele[0].querySelectorAll(`.obfuscationBtn[data-obfuscate="${tab}"]`);
+          for (const extra of existing) extra.remove();
+          ele[0].insertAdjacentHTML('beforeend', btn);
           if (tab == 'details') this.markPriceObfuscation(html, invisible);
         } else if (invisible) {
           if (ele.hasClass('active')) swaptab = true;
