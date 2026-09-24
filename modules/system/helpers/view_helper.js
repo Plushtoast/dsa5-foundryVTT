@@ -1,21 +1,22 @@
 export function svgAutoFit(elem, width = 320, height = 40) {
+  const text = elem.find('text')[0];
+  if (!text || !(width > 0) || !(height > 0)) return false;
+
+  text.removeAttribute('transform');
+  const bbox = text.getBBox();
+  if (!(bbox.width > 0) || !(bbox.height > 0)) return false;
+
   elem.attr({
     width,
     viewBox: `0 0 ${width} ${height}`,
   });
-  const text = elem.find('text')[0];
-  if (!text) return;
-  const bbox = text.getBBox();
-  const textWidth = bbox.width;
-  const textHeight = bbox.height;
-  const scaleX = width / textWidth;
-  const scaleY = height / textHeight;
-  const scale = Math.min(scaleX, scaleY);
-  const centerX = width / 2 - (textWidth * scale) / 2 - bbox.x * scale;
-  const centerY = height / 2 - (textHeight * scale) / 2 - bbox.y * scale;
-  if (isFinite(scale)) {
-    text.setAttribute("transform", `matrix(${scale}, 0, 0, ${scale}, ${centerX}, ${centerY})`);
-  }
+  const scale = Math.min(width / bbox.width, height / bbox.height);
+  if (!isFinite(scale) || scale <= 0) return false;
+
+  const centerX = width / 2 - (bbox.width * scale) / 2 - bbox.x * scale;
+  const centerY = height / 2 - (bbox.height * scale) / 2 - bbox.y * scale;
+  text.setAttribute('transform', `matrix(${scale}, 0, 0, ${scale}, ${centerX}, ${centerY})`);
+  return true;
 }
 
 const itemHeaderTitleControllers = new WeakMap();
@@ -27,17 +28,25 @@ export function bindItemHeaderTitle(html) {
     const h1 = $(h1El);
     const svg = h1.find('svg');
     const input = h1.find('input.item-name');
-    if (!svg.length || !input.length || input.prop('disabled')) return;
+    if (!svg.length || !input.length) return;
 
     const controller = new AbortController();
     itemHeaderTitleControllers.set(h1El, controller);
     const { signal } = controller;
 
-    const fitSvg = () => svgAutoFit(svg, h1El.getBoundingClientRect().width);
+    const fitSvg = () => {
+      if (signal.aborted) return;
+      svgAutoFit(svg, h1El.getBoundingClientRect().width);
+    };
 
     const observer = new ResizeObserver(() => fitSvg());
     observer.observe(h1El);
+    signal.addEventListener('abort', () => observer.disconnect(), { once: true });
     fitSvg();
+    requestAnimationFrame(() => fitSvg());
+    document.fonts?.ready.then(() => fitSvg());
+
+    if (input.prop('disabled')) return;
 
     svg[0].addEventListener(
       'click',

@@ -59,10 +59,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     const html = $(this.element);
     tabSlider(html);
 
-    const renderedParts = options.parts;
-    if (!renderedParts || renderedParts.includes('header')) {
-      bindItemHeaderTitle(html);
-    }
+    bindItemHeaderTitle(html);
   }
 
   _ensureValidWizardMode() {

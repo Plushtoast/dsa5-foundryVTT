@@ -267,10 +267,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
     this.#lockOverrides(html);
 
-    const renderedParts = options.parts;
-    if (!renderedParts || renderedParts.includes('header')) {
-      bindItemHeaderTitle(html);
-    }
+    bindItemHeaderTitle(html);
 
   }
 
