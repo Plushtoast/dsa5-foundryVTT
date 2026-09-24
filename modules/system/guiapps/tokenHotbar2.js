@@ -1131,7 +1131,7 @@ export class AddEffectDialog extends DefaultAppv2 {
   }
 
   static async modifyEffectDialog(id, callback) {
-    new foundry.applications.api.DialogV2({
+    const dialog = new foundry.applications.api.DialogV2({
       //classes: ["dsa5", "dialog"],
       window: {
         title: 'CONDITION.' + id,
@@ -1160,7 +1160,9 @@ export class AddEffectDialog extends DefaultAppv2 {
           },
         },
       ],
-    }).render(true);
+    });
+    await dialog.render(true);
+    RuleChaos.bindQuantityClicks(dialog.element);
   }
 
   static async #configureEffect(ev, target) {

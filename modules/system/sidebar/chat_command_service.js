@@ -129,7 +129,7 @@ export default class ChatCommandService {
       </div>
       <div class='row-section lineheight'>
         <div class='col fourty table-title'><label>${_loc('Modifier')}</label></div>
-        <div class='col sixty'><input name='modifier' class='quantity-click' type='Number' value='0' /></div>
+        <div class='col sixty'><input name='modifier' class='quantity-click' data-tooltip='TT.strgx10' data-tooltip-direction='RIGHT' type='number' value='0' /></div>
       </div>`;
 
     const actorEntries = actors || ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));

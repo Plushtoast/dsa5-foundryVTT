@@ -49,6 +49,20 @@ export default class RuleChaos {
     };
   }
 
+  /** Left click +1, right click −1, Ctrl ×10. Call on a dialog root that contains `input.quantity-click`. */
+  static bindQuantityClicks(root) {
+    if (!root) return;
+    for (const input of root.querySelectorAll('input.quantity-click')) {
+      if (input.dataset.quantityBound) continue;
+      input.dataset.quantityBound = '1';
+      input.addEventListener('mousedown', (ev) => {
+        if (input.disabled || (ev.button !== 0 && ev.button !== 2)) return;
+        this.quantityClick(ev);
+      });
+      input.addEventListener('contextmenu', (ev) => ev.preventDefault());
+    }
+  }
+
   static quantityClick(ev) {
     const quantityFocus = ev.currentTarget.dataset.quantityfocus;
     const target = $(ev.currentTarget);
