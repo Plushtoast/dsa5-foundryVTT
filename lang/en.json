@@ -3715,6 +3715,7 @@
     "import": "Import",
     "increaseFontSize": "Increase/Decrease font size",
     "obfuscateItem": "Obfuscate section",
+    "priceHiddenFromPlayers": "Price is hidden from players while details are hidden",
     "onUseActionImage": "Image",
     "onUseActionMacro": "Macro",
     "onUseActionName": "Name",

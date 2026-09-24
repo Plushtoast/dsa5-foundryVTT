@@ -3717,6 +3717,7 @@
     "import": "Importieren",
     "increaseFontSize": "Schriftgröße vergrößern/verkleinern",
     "obfuscateItem": "Abschnitt verschleiern",
+    "priceHiddenFromPlayers": "Preis ist verborgen für Spieler, solange die Details ausgeblendet sind",
     "onUseActionImage": "Bild",
     "onUseActionMacro": "Makro",
     "onUseActionName": "Name",

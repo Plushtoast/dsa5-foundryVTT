@@ -27,6 +27,33 @@ export const ItemSheetObfuscation = (superclass) =>
       return this.isObfuscated(section) ? '' : ' pale';
     }
 
+    markPriceObfuscation(html, hidden) {
+      html.find('.priceObfuscationMark').remove();
+      if (!hidden) return;
+
+      const tooltip = foundry.utils.escapeHTML(_loc('SHEET.priceHiddenFromPlayers'));
+      const mark = `<i class="priceObfuscationMark fas fa-mask" data-tooltip="${tooltip}"></i>`;
+      const labels = new Set();
+      html.find('[name="system.price.value"], [name="system.price.raw"]').each((_, input) => {
+        const label = this.priceLabelFor(input);
+        if (label) labels.add(label);
+      });
+      for (const label of labels) label.insertAdjacentHTML('beforeend', mark);
+    }
+
+    priceLabelFor(input) {
+      const groupLabel = input.closest('.form-group')?.querySelector(':scope > label');
+      if (groupLabel) return groupLabel;
+
+      let sibling = input.closest('.col')?.previousElementSibling;
+      while (sibling) {
+        const label = sibling.querySelector('label');
+        if (label) return label;
+        sibling = sibling.previousElementSibling;
+      }
+      return null;
+    }
+
     async obfuscateTabs(options) {
       const tabs = ['details', 'effects', 'description', 'enchantment'];
       const html = $(this.element);
@@ -46,6 +73,7 @@ export const ItemSheetObfuscation = (superclass) =>
           } else {
             ele.append(` ${btn}`);
           }
+          if (tab == 'details') this.markPriceObfuscation(html, invisible);
         } else if (invisible) {
           if (ele.hasClass('active')) swaptab = true;
           ele.remove();
