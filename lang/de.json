@@ -1993,7 +1993,7 @@
     "obfuscateTokenNames": "Verberge Token Namen",
     "obfuscateTokenNamesHint": "Beim Platzieren von NSC- und Kreatur-Tokens den angezeigten Namen ersetzen (z. B. „Unbekannt“ oder nachfragen), damit Spieler den echten Namen nicht sehen.",
     "playerCanEditSpellMacro": "Effekt Makros durch Spieler editierbar",
-    "playerCanEditSpellMacroHint": "Spieler dürfen On-Use-Effekt-Skripte auf Gegenständen und Zaubern bearbeiten. Das kann Spielbalance und Sicherheit beeinträchtigen.",
+    "playerCanEditSpellMacroHint": "Spieler dürfen On-Use-Effekt-Skripte und die Kategorie Aktionen unter Statuseffekten auf Gegenständen und Zaubern bearbeiten. Das kann Spielbalance und Sicherheit beeinträchtigen.",
     "randomWeaponSelection": "Zufällige Waffenwahl (Token)",
     "randomWeaponSelectionHint": "Beim Platzieren von NSC- oder Kreatur-Tokens zufällig eine getragene Nah- und Fernkampfwaffe behalten und die übrigen ablegen. Betrifft keine Spielercharaktere.",
     "rangeBotchTableEnabled": "Fernkampf-Patzertabelle",

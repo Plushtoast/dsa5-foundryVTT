@@ -57,6 +57,7 @@ export const ItemSheetObfuscation = (superclass) =>
     async obfuscateTabs(options) {
       const tabs = ['details', 'effects', 'description', 'enchantment'];
       const html = $(this.element);
+      html.find('.qOverlay').remove();
       let swaptab = false;
       for (const tab of tabs) {
         const ele = html.find(`nav [data-tab="${tab}"]`);
@@ -77,19 +78,18 @@ export const ItemSheetObfuscation = (superclass) =>
         } else if (invisible) {
           if (ele.hasClass('active')) swaptab = true;
           ele.remove();
+          html.find(`.tab[data-tab="${tab}"]`).removeClass('active');
 
           if (tab == 'details') {
             html.find('[name="system.price.value"],[name="system.price.raw"]').replaceWith('<label>?</label>');
           }
         }
       }
-      if (swaptab) {
-        let tabs = html.find('nav .item:first-child');
-        if (!tabs.length) tabs = html.find('nav .tabelement:first-child');
-        if (tabs.length) {
-          this.changeTab(tabs[0].dataset.tab, tabs[0].dataset.group);
-        } else {
-          html.find('.tab.active').removeClass('active');
+      if (swaptab || !html.find('.tab.active').length) {
+        const visible = html.find('nav .tabelement').first();
+        if (visible.length) {
+          this.changeTab(visible[0].dataset.tab, visible[0].dataset.group, { force: true });
+        } else if (!game.user.isGM) {
           const templ = await renderTemplate('systems/dsa5/templates/items/obfuscatedItem.hbs', { item: this.item });
           html.find('.window-content').append(templ);
         }

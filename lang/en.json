@@ -1991,7 +1991,7 @@
     "obfuscateTokenNames": "Obfuscate token names",
     "obfuscateTokenNamesHint": "When placing NPC or creature tokens, replace the displayed name (for example “Unknown” or a prompt) so players do not see the real name.",
     "playerCanEditSpellMacro": "Effect Macro editably by players",
-    "playerCanEditSpellMacroHint": "Allow players to edit on-use effect scripts on items and spells. This can affect game balance and security.",
+    "playerCanEditSpellMacroHint": "Allow players to edit on-use effect scripts and the Actions category under status effects on items and spells. This can affect game balance and security.",
     "randomWeaponSelection": "Random weapon (token)",
     "randomWeaponSelectionHint": "When placing NPC or creature tokens, randomly keep one worn melee and ranged weapon and unequip the rest. Does not affect player characters.",
     "rangeBotchTableEnabled": "Ranged Combat-Botch Table",
