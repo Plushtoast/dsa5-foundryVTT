@@ -226,9 +226,13 @@ export default class MerchantModeHelper {
     if (!actor || !MerchantConfig.SYNC_ACTOR_TYPES.has(actor.type)) return;
 
     const nextType = foundry.utils.getProperty(changed, 'system.merchant.merchantType');
-    if (nextType === undefined) return;
-
     const pendingClass = foundry.utils.getProperty(changed, 'flags.core.sheetClass');
+
+    if (nextType === undefined) {
+      this.#clearMerchantModeOnDefaultSheet(actor, changed, pendingClass);
+      return;
+    }
+
     const currentClass = pendingClass || actor.getFlag('core', 'sheetClass') || '';
     if (!this.isManagedSheetClass(actor.type, currentClass)) return;
 
@@ -236,5 +240,12 @@ export default class MerchantModeHelper {
     if (desired && currentClass !== desired) {
       foundry.utils.setProperty(changed, 'flags.core.sheetClass', desired);
     }
+  }
+
+  /** Sheet config back to the normal sheet leaves merchant mode, which keeps the hotbar hidden. */
+  static #clearMerchantModeOnDefaultSheet(actor, changed, pendingClass) {
+    if (!pendingClass || pendingClass !== this.defaultSheetClass(actor.type)) return;
+    if (!MerchantConfig.isMerchantMode(actor.system.merchant?.merchantType)) return;
+    foundry.utils.setProperty(changed, 'system.merchant.merchantType', 'none');
   }
 }

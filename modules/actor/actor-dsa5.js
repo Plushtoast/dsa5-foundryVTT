@@ -30,6 +30,7 @@ import { ActorDialogBuilder } from './actor-dialog-builder.js';
 import { CombatSpecialAbilities } from '../item/concerns/combat-special-abilities.js';
 import { ActorCreateDialog } from './actor-create-dialog.js';
 import MerchantModeHelper from './concerns/merchant-mode.js';
+import MerchantConfig from '../config/merchant-config.js';
 import { FateRolls } from './concerns/faterolls.js';
 import EnhancementHelper from '../system/enhancement/enhancement-helper.js';
 import TreatmentHelper from '../system/enhancement/treatment-helper.js';
@@ -1214,7 +1215,8 @@ export default class Actordsa5 extends Actor {
   get hasTokenHotbar() {
     // Vehicles use loot merchantType for cargo, but still need combat hotbar actions.
     if (this.type === 'vehicle') return true;
-    return this.type !== 'group' && !['epic', 'loot'].includes(this.system.merchant?.merchantType);
+    if (this.type === 'group') return false;
+    return !MerchantConfig.isMerchantMode(this.system.merchant?.merchantType);
   }
 
   _itemPreparationError(item, error) {
