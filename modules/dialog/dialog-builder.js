@@ -1,3 +1,5 @@
+import { resolveActorTokenImage } from '../system/helpers/hotbar_actor.js';
+
 /**
  * Factory for creating item test dialogs
  */
@@ -40,6 +42,7 @@ export class RollDialogBuilder {
 
     static _setupCardOptions(template, title, tokenId, actor) {
         const token = game.canvas?.tokens?.get(tokenId);
+        const tokenDoc = token?.document ?? actor.token ?? null;
         const cardOptions = {
             speaker: {
                 alias: token ? token.name : actor.prototypeToken.name,
@@ -48,15 +51,19 @@ export class RollDialogBuilder {
             title,
             template,
             flags: {
-                img: { src: actor.prototypeToken.randomImg ? actor.img : actor.prototypeToken.texture.src },
+                img: { src: resolveActorTokenImage(actor, tokenDoc) },
             },
         };
+        if (token?.document) {
+            cardOptions.speaker.token = token.id;
+            cardOptions.speaker.scene = canvas.scene?.id;
+        }
         if (actor.token) {
             cardOptions.speaker.alias = actor.token.name;
             cardOptions.speaker.token = actor.token.id;
             cardOptions.speaker.scene = canvas.scene.id;
             cardOptions.flags.img.src = actor.token.texture.src;
-        } else {
+        } else if (!token?.document) {
             const speaker = ChatMessage.getSpeaker();
             if (speaker.actor == actor.id) {
                 cardOptions.speaker.alias = speaker.alias;

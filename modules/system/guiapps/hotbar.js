@@ -8,7 +8,7 @@ import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
-import { resolveHotbarActorContext } from '../helpers/hotbar_actor.js';
+import { resolveActorTokenImage, resolveHotbarActorContext, sceneTokenDocument } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 import GroupActorSheet from '../../actor/group-sheet.js';
@@ -403,12 +403,12 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     await canvas.animatePan(token.center);
   }
 
-  #hotbarTokenObject() {
-    if (!this.actor) return null;
-    if (this.actor.isToken) return this.actor.token?.object ?? null;
+  #hotbarTokenDocument() {
+    return sceneTokenDocument(this.actor, this.tokenId);
+  }
 
-    const token = this.actor.getActiveTokens()[0];
-    return token?.object ?? token ?? null;
+  #hotbarTokenObject() {
+    return this.#hotbarTokenDocument()?.object ?? null;
   }
 
   #addContextColor() {
@@ -475,7 +475,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
   static #onToggleFreeAction(ev, target) {
     if (!game.combat || !this.actor) return;
 
-    const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
+    const token = this.#hotbarTokenDocument();
     const speaker = { token: token?.id, actor: this.actor.id };
     game.combat.toggleFreeAction(speaker);
   }
@@ -484,7 +484,7 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     const { id, subweapon, mode } = target.dataset;
 
     const options = {};
-    const activeTokenID = this.actor?.token?.id ?? this.actor?.getActiveTokens()[0]?.id;
+    const activeTokenID = this.tokenId ?? this.#hotbarTokenDocument()?.id;
 
     if (this.actor?.type === 'vehicle') {
       if (id === 'navalBroadside' || mode === 'navalBroadside') {
@@ -1124,18 +1124,18 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
     context.actor = this.actor;
 
+    const token = this.#hotbarTokenDocument();
     const avatarConfig = this.actor.prototypeToken.getFlag('dsa5', 'hotbarAvatar');
     if (avatarConfig?.source === 'portrait') {
       context.actorImg = this.actor.img;
       context.avatarStyle = this.#buildAvatarStyle(avatarConfig);
     } else {
-      context.actorImg = this.actor.token?.img || this.actor.prototypeToken.texture.src || this.actor.img;
+      context.actorImg = resolveActorTokenImage(this.actor, token);
       context.avatarStyle = '';
     }
 
     context.resources = this.actor.hasTokenHotbar ? this.#prepareResources() : undefined;
     context.weapons = this.actor.hasTokenHotbar ? this.#weaponPositions(context) : [];
-    const token = this.actor?.isToken ? this.actor.token : this.actor?.getActiveTokens()[0];
     context.inCombat = game.combat;
     context.turnClass = context.inCombat && game.combat?.current?.combatantId === token?.combatant?.id ? 'myRound' : '';
 
@@ -1364,13 +1364,14 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
 
   #setActor() {
     const controlled = canvas?.tokens?.controlled || [];
-    const { actor: newActor } = resolveHotbarActorContext();
+    const { actor: newActor, tokenId } = resolveHotbarActorContext();
 
     if (this.actor !== newActor && this.editMode) {
       this.editMode = false;
     }
 
     this.actor = newActor || null;
+    this.tokenId = tokenId ?? null;
     this.showEffects = controlled.length >= 1;
   }
 

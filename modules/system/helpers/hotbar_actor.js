@@ -26,3 +26,36 @@ export function resolveHotbarActorContext() {
     tokenId: undefined,
   };
 }
+
+/** Token document for this actor: explicit id, else the controlled token, else the first token on the scene. */
+export function sceneTokenDocument(actor, tokenId = null) {
+  if (!actor) return null;
+  if (actor.isToken) return actor.token ?? null;
+
+  if (tokenId) {
+    return canvas.scene?.tokens?.get(tokenId) ?? canvas.tokens?.get(tokenId)?.document ?? null;
+  }
+
+  const controlled = canvas.tokens?.controlled?.find((token) => token.actor?.id === actor.id);
+  if (controlled?.document) return controlled.document;
+  return actor.getActiveTokens?.()[0]?.document ?? null;
+}
+
+/**
+ * Image for the actor as it appears on the canvas.
+ * Pass a token document to use that token. Pass null when you already know there is no scene token.
+ * Omit the argument to resolve a scene token automatically.
+ * @param {Actor|null} actor
+ * @param {TokenDocument|null} [tokenDoc]
+ */
+export function resolveActorTokenImage(actor, tokenDoc = undefined) {
+  if (!actor) return '';
+
+  let sceneSrc = '';
+  if (tokenDoc) sceneSrc = tokenDoc.texture?.src || '';
+  else if (tokenDoc === undefined) sceneSrc = sceneTokenDocument(actor)?.texture?.src || '';
+
+  if (sceneSrc) return sceneSrc;
+  if (actor.prototypeToken?.randomImg) return actor.img || '';
+  return actor.prototypeToken?.texture?.src || actor.img || '';
+}

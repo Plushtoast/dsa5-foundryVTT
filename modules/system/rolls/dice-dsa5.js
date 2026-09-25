@@ -3,6 +3,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import DSA5Dialog from '../../dialog/dialog-dsa5.js';
 import { resolveDetachedParent, renderApplication } from '../../mixins/detached-window-mixin.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import { resolveActorTokenImage } from '../helpers/hotbar_actor.js';
 import AdvantageRulesDSA5 from '../rules/advantage-rules-dsa5.js';
 import SpecialabilityRulesDSA5 from '../rules/specialability-rules-dsa5.js';
 import TraitRulesDSA5 from '../rules/trait-rules-dsa5.js';
@@ -2495,9 +2496,11 @@ export default class DiceDSA5 {
     } else {
       i18nkey = 'TT.applyEffectCaster';
       const message = game.messages.get($(ev.currentTarget).parents('.message').attr('data-message-id'));
-      let actor = DSA5_Utility.getSpeaker(message.flags.data.preData.extra.speaker);
+      const speaker = message.flags.data.preData.extra.speaker;
+      let actor = DSA5_Utility.getSpeaker(speaker);
       if (actor?.emptyActor?.parent_source_uuid) actor = await fromUuid(actor.emptyActor.parent_source_uuid);
-      if (actor) targets.push(actor.token ? actor.token.texture.src : actor.prototypeToken.texture.src);
+      const tokenDoc = speaker?.token ? canvas.tokens?.get(speaker.token)?.document ?? actor?.token : actor?.token;
+      if (actor) targets.push(resolveActorTokenImage(actor, tokenDoc ?? null));
     }
     const msg = targets.length
       ? targets.map((x) => `<img style="display:inline;width:25px;height:25px;" src="${x}"/>`).join('')

@@ -1,6 +1,7 @@
 import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { FormAppv2 } from '../../actor/formapp.js';
 import QueryOrchestrator from '../queries/query-orchestrator.js';
+import { resolveActorTokenImage } from '../helpers/hotbar_actor.js';
 
 const { mergeObject, fromUuidSync } = foundry.utils;
 
@@ -178,7 +179,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     for (const actor of actors) {
       const { tokenId, onScene } = this.#sceneTokenRef(actor);
       const tokenDoc = onScene ? canvas.scene.tokens.get(tokenId) : null;
-      const img = tokenDoc?.texture?.src ?? actor.prototypeToken?.texture?.src ?? actor.img;
+      const img = resolveActorTokenImage(actor, tokenDoc);
       const entry = {
         actorId: actor.id,
         tokenId,

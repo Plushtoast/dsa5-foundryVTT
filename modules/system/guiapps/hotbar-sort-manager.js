@@ -2,6 +2,7 @@ import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { tabSlider } from '../helpers/view_helper.js';
 import DSA5 from '../../config/config-dsa5.js';
 import ImageFramePicker from '../helpers/image-frame-picker.js';
+import { resolveActorTokenImage, sceneTokenDocument } from '../helpers/hotbar_actor.js';
 
 const { mergeObject } = foundry.utils;
 
@@ -238,7 +239,7 @@ export default class HotbarSortManager extends DefaultAppv2 {
       avatar: this._draft.avatar,
       previewImg: this._draft.avatar.source === 'portrait'
         ? this.actor.img
-        : this.actor.prototypeToken.texture.src,
+        : resolveActorTokenImage(this.actor, sceneTokenDocument(this.actor)),
       ...picker.templateContext,
       frame: ImageFramePicker.normalize(this._draft.avatar),
       interactive: this._draft.avatar.source === 'portrait',

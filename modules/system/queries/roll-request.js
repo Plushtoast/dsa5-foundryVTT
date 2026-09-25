@@ -185,7 +185,7 @@ export default class RollRequestService {
 
   static getActorPortrait(actor) {
     if (!actor) return 'icons/svg/mystery-man.svg';
-    return actor.prototypeToken?.texture?.src || actor.img || 'icons/svg/mystery-man.svg';
+    return actor.img || 'icons/svg/mystery-man.svg';
   }
 
   static getTemplateData(state) {
