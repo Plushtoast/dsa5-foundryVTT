@@ -8,14 +8,13 @@ import { isTwoHandedWeapon } from '../helpers/weapon_hands.js';
 import { VerticalSlider } from '../helpers/vslider.js';
 import { GlobalToolTipHandler } from '../globals/tooltip.js';
 import Actordsa5 from '../../actor/actor-dsa5.js';
-import { resolveActorTokenImage, resolveHotbarActorContext, sceneTokenDocument } from '../helpers/hotbar_actor.js';
+import { ActorAvatar, resolveHotbarActorContext, sceneTokenDocument } from '../helpers/hotbar_actor.js';
 import HotbarSortManager from './hotbar-sort-manager.js';
 import CompanionHotbar from '../../actor/companions/companion-hotbar.js';
 import GroupActorSheet from '../../actor/group-sheet.js';
 import { TokenDispositionDialog } from '../../dialog/token-disposition-dialog.js';
 import NavalBoardWeapons from '../../combat/mkr/naval-board-weapons.js';
 import NavalBroadside from '../../combat/mkr/naval-broadside.js';
-import ImageFramePicker from '../helpers/image-frame-picker.js';
 import ItemEnchantment from '../../item/item-enchantment.js';
 const { mergeObject } = foundry.utils;
 
@@ -1125,14 +1124,9 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
     context.actor = this.actor;
 
     const token = this.#hotbarTokenDocument();
-    const avatarConfig = this.actor.prototypeToken.getFlag('dsa5', 'hotbarAvatar');
-    if (avatarConfig?.source === 'portrait') {
-      context.actorImg = this.actor.img;
-      context.avatarStyle = this.#buildAvatarStyle(avatarConfig);
-    } else {
-      context.actorImg = resolveActorTokenImage(this.actor, token);
-      context.avatarStyle = '';
-    }
+    const avatar = ActorAvatar.resolve(this.actor, token);
+    context.actorImg = avatar.src;
+    context.avatarStyle = avatar.style;
 
     context.resources = this.actor.hasTokenHotbar ? this.#prepareResources() : undefined;
     context.weapons = this.actor.hasTokenHotbar ? this.#weaponPositions(context) : [];
@@ -1143,10 +1137,6 @@ export default class DSA5Hotbar extends foundry.applications.ui.Hotbar {
       const combatant = token?.combatant;
       context.actionPips = this.#prepareActionPips(combatant, token);
     }
-  }
-
-  #buildAvatarStyle(config) {
-    return ImageFramePicker.buildStyle(config);
   }
 
   #prepareResources() {

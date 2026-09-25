@@ -1,9 +1,9 @@
-<div class="sc-quickbar-root layout-{{layout}}{{#if collapsed}} display-collapsed{{/if}}{{#if compactResources}} compact-resources{{/if}}{{#if showName}} show-name{{/if}}{{#if sideInfo}} side-info{{/if}}" style="--portraitSize: {{portraitSize}}px; --resourceRows: {{resourceRows}}">
+<div class="sc-quickbar-root layout-{{layout}}{{#if collapsed}} display-collapsed{{/if}}{{#if compactResources}} compact-resources{{/if}}{{#if showName}} show-name{{/if}}{{#if sideInfo}} side-info{{/if}}{{#if companionBeside}} companion-beside{{/if}}{{#if companionHover}} companion-hover{{/if}}" style="--portraitSize: {{portraitSize}}px; --resourceRows: {{resourceRows}}; --companionSize: {{companionSize}}px; --companionCount: {{companionCount}}; --companionClearance: {{companionClearance}}px;">
   {{#unless collapsed}}
   <ul class="sc-quickbar-member-list">
     {{#each members}}
-    <li class="sc-quickbar-member {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}} {{#unless onScene}}off-scene{{/unless}}"
-        data-actor-id="{{actorId}}" data-token-id="{{tokenId}}" data-action="panToMember">
+    <li class="sc-quickbar-member {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}} {{#unless onScene}}off-scene{{/unless}} {{#if idle}}idle{{/if}} {{#if (eq @root.playerColorMode 2)}}{{#if playerColor}}has-player{{/if}}{{/if}}"
+        data-actor-id="{{actorId}}" data-token-id="{{tokenId}}" {{#if userId}}data-user-id="{{userId}}"{{/if}} data-action="panToMember" {{#if playerColor}}{{#if @root.playerColorMode}}style="--player-color: {{playerColor}}"{{/if}}{{/if}}>
       {{#if @root.reserveResourceRow}}
       <div class="sc-quickbar-resources">
         {{#if resources}}
@@ -23,7 +23,9 @@
         {{/if}}
       </div>
       {{/if}}
+      <div class="sc-quickbar-portrait-row">
       <div class="dsa-hud-portrait {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}}" style="background-image: url('{{img}}')" data-tooltip-html="{{{tooltipHtml}}}">
+        {{#if (eq @root.playerColorMode 1)}}{{#if playerColor}}<span class="sc-quickbar-player-pip"></span>{{/if}}{{/if}}
         {{#if @root.compactResources}}
         {{#if resources}}
         <div class="dsa-hud-resource-overlay">
@@ -51,13 +53,31 @@
         </div>
         {{/if}}
       </div>
+      {{#if companions.length}}
+      <ul class="sc-quickbar-companions">
+        {{#each companions}}
+        <li class="sc-quickbar-companion {{#if active}}active{{/if}} {{#if dimmed}}dimmed{{/if}} {{#unless onScene}}off-scene{{/unless}}"
+            data-actor-id="{{actorId}}" data-token-id="{{tokenId}}" data-action="panToMember"
+            data-tooltip-html="{{{tooltipHtml}}}">
+          <img class="sc-quickbar-companion-img" src="{{companionImg}}" style="{{companionImgStyle}}" alt="">
+          <span class="sc-quickbar-companion-lep" style="--missing: {{lepMissing}}"></span>
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+      </div>
       {{#if @root.showName}}
-      <span class="sc-quickbar-member-name ellipsis" data-tooltip-text="{{name}}">{{name}}</span>
+      <span class="sc-quickbar-member-name ellipsis" data-tooltip-text="{{name}}">{{name}}{{#if @root.showPlayerName}}{{#if playerName}} <span class="sc-quickbar-player-name">{{playerName}}</span>{{/if}}{{/if}}</span>
+      {{else}}
+      {{#if @root.showPlayerName}}{{#if playerName}}
+      <span class="sc-quickbar-member-name ellipsis" data-tooltip-text="{{playerName}}">{{playerName}}</span>
+      {{/if}}{{/if}}
       {{/if}}
     </li>
     {{/each}}
   </ul>
   {{/unless}}
+  <div class="sc-quickbar-chrome">
   <div class="sc-quickbar-controls">
     <button type="button" class="sc-quickbar-menu icon plain fa-solid fa-ellipsis-vertical"
       data-action="configMenu"
@@ -66,5 +86,16 @@
     <section class="dragHandler" data-tooltip="SCQUICKBAR.dragHint">
       <i class="fas fa-grip-vertical"></i>
     </section>
+  </div>
+  {{#if showLatency}}
+  <div class="sc-quickbar-performance">
+    <div class="sc-quickbar-latency" data-tooltip="PLAYERS.LATENCY"><i class="fa-solid fa-signal"></i><span class="average">--</span></div>
+    {{#if showFps}}<div class="sc-quickbar-fps" data-tooltip="PLAYERS.FPS"><i class="fa-solid fa-gauge-high"></i><span class="average">--</span></div>{{/if}}
+  </div>
+  {{else if showFps}}
+  <div class="sc-quickbar-performance">
+    <div class="sc-quickbar-fps" data-tooltip="PLAYERS.FPS"><i class="fa-solid fa-gauge-high"></i><span class="average">--</span></div>
+  </div>
+  {{/if}}
   </div>
 </div>

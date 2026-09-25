@@ -1,0 +1,39 @@
+<div class="tab scrollable standard-form {{tabs.players.cssClass}}" data-tab="players" data-group="{{tabs.players.group}}">
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showPlayerColor">
+        <label>{{localize 'SCQUICKBAR.showPlayerColor'}}</label>
+        <div class="form-fields">
+            <select name="config.showPlayerColor">
+                {{selectOptions playerColorChoices selected=config.showPlayerColor localize=true}}
+            </select>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.showPlayerColorHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showPlayerName">
+        <label>{{localize 'SCQUICKBAR.showPlayerName'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.showPlayerName" {{checked config.showPlayerName}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.showPlayerNameHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showLatency">
+        <label>{{localize 'SCQUICKBAR.showLatency'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.showLatency" {{checked config.showLatency}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.showLatencyHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showFps">
+        <label>{{localize 'SCQUICKBAR.showFps'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.showFps" {{checked config.showFps}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.showFpsHint'}}</p>
+    </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.hidePlayers">
+        <label>{{localize 'SCQUICKBAR.hidePlayers'}}</label>
+        <div class="form-fields">
+            <input type="checkbox" name="config.hidePlayers" {{checked config.hidePlayers}}>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.hidePlayersHint'}}</p>
+    </div>
+</div>

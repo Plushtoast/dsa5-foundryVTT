@@ -1,3 +1,29 @@
+import ImageFramePicker from './image-frame-picker.js';
+
+/**
+ * Portrait or token image, including the hotbar avatar crop.
+ * `preferImg` uses the actor image when one exists; the hotbar portrait source still applies its frame.
+ */
+export class ActorAvatar {
+  static resolve(actor, tokenDoc = undefined, { preferImg = false } = {}) {
+    if (!actor) return { src: '', style: '' };
+
+    const config = actor.prototypeToken?.getFlag?.('dsa5', 'hotbarAvatar');
+    const portrait = config?.source === 'portrait';
+    if ((portrait || preferImg) && actor.img) {
+      return {
+        src: actor.img,
+        style: portrait ? ImageFramePicker.buildStyle(config) : '',
+      };
+    }
+
+    return {
+      src: resolveActorTokenImage(actor, tokenDoc),
+      style: '',
+    };
+  }
+}
+
 export function resolveHotbarActorContext() {
   const controlled = canvas?.tokens?.controlled || [];
 

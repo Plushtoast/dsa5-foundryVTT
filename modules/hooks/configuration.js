@@ -72,10 +72,7 @@ export function setupConfiguration() {
       config: true,
       default: true,
       type: Boolean,
-      onChange: (val) => {
-        if (val) syncScQuickbar(true);
-        else game.dsa5.apps.scQuickbar?.close();
-      },
+      onChange: () => syncScQuickbar(true),
     },
     scQuickbarConfig: {
       name: 'SCQUICKBAR.configure',
