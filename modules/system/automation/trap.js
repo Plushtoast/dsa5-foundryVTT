@@ -6,6 +6,7 @@ import ItemEnchantment from '../../item/item-enchantment.js';
 import DiceDSA5 from '../rolls/dice-dsa5.js';
 import RollRequestService from '../queries/roll-request.js';
 import TrapSetpiece from './trap-setpiece.js';
+import TrapFlow from './trap-flow.js';
 import { applyDamage } from '../../hooks/chat_context.js';
 
 const { duplicate, getProperty, mergeObject, expandObject } = foundry.utils;
@@ -379,7 +380,62 @@ export default class TrapAutomation extends TrapSetpiece {
     }
   }
 
-  static async trigger({ behavior, token, region, trapMessage, skipDialog = false } = {}) {
+  static async beginDefense({ behavior, token, trapMessage } = {}) {
+    const system = behavior?.system;
+    if (!system) return null;
+    const flow = TrapFlow.initialFlow(system);
+    if (typeof behavior.update === 'function' && Object.keys(system.defenses || {}).length) {
+      try {
+        await behavior.update({ 'system.defenses': system.defenses, 'system.damages': system.damages });
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+    if (this.isTimerTrapType(system.trapType)) {
+      await this.startTimer({ behavior, token, trapMessage, openEscape: false });
+    }
+    return { awaiting: true, flow, formula: '', damageDealt: 0, strikes: TrapAutomation.strikesFrom(system) };
+  }
+
+  static async resolveDefense({ behavior, flow, id, status, qs = 0, reaction = '', token, trapMessage } = {}) {
+    const system = behavior?.system || {};
+    const step = TrapFlow.advance(system, flow || TrapFlow.initialFlow(system), { id, status, qs, reaction });
+    const lines = [];
+    for (const line of step.lines) {
+      if (line.kind === 'falling') {
+        lines.push(line);
+        continue;
+      }
+      lines.push(await TrapFlow.rollLine(line));
+    }
+    step.flow.lines = [...(flow?.lines || []).filter((entry) => !lines.some((line) => line.id === entry.id)), ...lines];
+    const damageDealt = lines.reduce((sum, line) => sum + (Number(line.total) || 0), 0);
+    const actor = DSA5_Utility.actorFromToken(token);
+    if (actor && lines.length && !flow?.payloadApplied) {
+      step.flow.payloadApplied = true;
+      const payload = this.payloadFromBehavior(behavior);
+      await this.applyPayloadEffects(actor, payload.effects, {
+        origin: behavior.uuid,
+        sourceName: behavior.name,
+        trapMessage,
+        token,
+      });
+    }
+    if (trapMessage && lines.length) {
+      const total = (step.flow.lines || []).reduce((sum, line) => sum + (Number(line.total) || 0), 0);
+      await trapMessage.update({
+        'flags.data.postData.chatCardDamage': total,
+      });
+    }
+    return { ...step, lines, damageDealt, actor };
+  }
+
+  static async trigger({ behavior, token, region, trapMessage, skipDialog = false, awaitDefense = false } = {}) {
+    if (awaitDefense && !this.isMagicalTrapType(behavior?.system?.trapType)) {
+      if (Object.keys(behavior.system.defenses || {}).length) {
+        return this.beginDefense({ behavior, token, trapMessage });
+      }
+    }
     const actor = DSA5_Utility.actorFromToken(token);
     if (!behavior || !actor) return null;
 

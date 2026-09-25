@@ -80,11 +80,30 @@ export class TrapState extends ChatMessageState {
             disarmed: Boolean(this.behavior.system.disarmed),
             triggered: Boolean(stored.triggered),
             countdown,
+            offers: this.#offers(stored),
+            damageLines: stored.flow?.lines || [],
             outcomes,
             showNarration: detected && Boolean(this.behavior.system.description),
             enrichedGmdescription,
             enrichedDescription,
         };
+    }
+
+    #offers(stored = {}) {
+        const flow = stored.flow;
+        const defenses = Object.keys(stored.defenses || {}).length ? stored.defenses : (this.behavior?.system?.defenses || {});
+        if (!flow?.pending?.length) return [];
+        return flow.pending.map((id) => {
+            const entry = defenses[id] || {};
+            const reactions = entry.type === 'combat'
+                ? String(entry.reactions || 'nothing,dodge,parry').split(',').map((reaction) => {
+                    const key = reaction.trim();
+                    const labelKey = key === 'nothing' ? 'doNothing' : key === 'dodge' ? 'dodge' : 'CHAR.PARRY';
+                    return { id: key, label: game.i18n.localize(labelKey) };
+                }).filter((reaction) => reaction.id)
+                : [];
+            return { id, label: entry.label || id, type: entry.type, reactions };
+        });
     }
 
     async toMessage() {
@@ -124,7 +143,12 @@ export class TrapState extends ChatMessageState {
         });
     }
 
-    async applyRollResult({ mode, actorId, status, skipActorMatch = false } = {}) {
+    async applyRollResult({ mode, actorId, status, skipActorMatch = false, qs = 0 } = {}) {
+        if (String(mode || '').startsWith('defense:')) {
+            if (!TrapState.ROLL_OUTCOMES.has(status)) return;
+            await this.#commitDefense({ id: mode.slice('defense:'.length), status, qs });
+            return;
+        }
         if (!TrapState.ROLL_OUTCOMES.has(status)) return;
         const { behavior, token } = this;
         const tokenActor = TrapState.actorFromToken(token);
@@ -239,6 +263,12 @@ export class TrapState extends ChatMessageState {
                 break;
             case 'triggerTrap':
                 await trapState._handleTrigger(event);
+                break;
+            case 'defendTrap':
+                await trapState._handleDefense(event);
+                break;
+            case 'fallTrap':
+                await trapState._handleFall(event);
                 break;
             case 'showTrap':
                 await trapState._handleShow(event);
@@ -436,7 +466,7 @@ export class TrapState extends ChatMessageState {
 
     async _handleTrigger(event) {
         const { behavior, token, region } = this;
-        const result = await TrapAutomation.trigger({ behavior, token, region, trapMessage: this.message });
+        const result = await TrapAutomation.trigger({ behavior, token, region, trapMessage: this.message, awaitDefense: true });
         if (!result) return;
 
         behavior.system.playSound();
@@ -451,6 +481,11 @@ export class TrapState extends ChatMessageState {
             </div>
         `));
 
+        const whisper = [...new Set([
+            ...(this.message.whisper || []),
+            ...RollRequestService.buildTokenWhisper(token),
+        ])];
+        await this.message.update({ whisper });
         await this.persistCard({
             outcome: {
                 mode: 'trigger',
@@ -458,6 +493,91 @@ export class TrapState extends ChatMessageState {
                 actorName: token.name,
             },
             triggered: true,
+            trapDataPatch: {
+                flow: result.flow,
+                defenses: behavior.system.defenses,
+                damages: behavior.system.damages,
+            },
+        });
+    }
+
+    async _handleFall(event) {
+        const actor = TrapState.actorFromToken(this.token);
+        if (!actor?.setupFallingDamage) return;
+        const height = Number(event.currentTarget.dataset.height) || 1;
+        actor.setupFallingDamage({ fallingHeight: height }, this.token?.id);
+    }
+
+    async _handleDefense(event) {
+        const id = event.currentTarget.dataset.defense;
+        const reaction = event.currentTarget.dataset.reaction || '';
+        const { behavior, token } = this;
+        const defenses = behavior.system.defenses || this.message.flags?.dsa5?.trapData?.defenses || {};
+        const entry = defenses[id];
+        if (!entry) return;
+        const actor = TrapState.actorFromToken(token);
+        if (reaction === 'nothing') {
+            await this.#commitDefense({ id, status: 'failure', reaction: 'nothing' });
+            return;
+        }
+        if (entry.type === 'group') {
+            const resist = TrapAutomation.timerEscapeResist({
+                ...behavior.system,
+                escapeModifier: entry.modifier,
+                name: entry.label,
+            });
+            await TrapAutomation.openEscapeCheck({ trapMessage: this.message, token, resist });
+            return;
+        }
+        if (entry.type === 'chase') {
+            behavior.system.chaseGs = entry.gs;
+            behavior.system.chaseFw = entry.fw;
+            behavior.system.chaseDistanceFormula = entry.distanceFormula;
+            await TrapAutomation.startBoulderChase({ behavior, token, region: this.region });
+            await this.#commitDefense({ id, status: 'success', reaction: 'chase' });
+            return;
+        }
+        if (reaction === 'dodge' && actor?.setupDodge) {
+            actor.setupDodge({ modifier: this.#defenseModifier(entry) }, token.id);
+            return;
+        }
+        const skill = entry.skill || entry.label;
+        await RollRequestService.createTrapRequest({
+            trapMessage: this.message,
+            token,
+            name: skill,
+            modifier: this.#defenseModifier(entry),
+            mode: `defense:${id}`,
+            label: entry.label,
+        });
+    }
+
+    #defenseModifier(entry) {
+        let modifier = Number(entry.modifier) || 0;
+        if (!this.behavior.system.detected) modifier += Number(entry.undetectedMod) || 0;
+        const from = entry.modifierFromDamage;
+        if (from) {
+            const line = (this.message.flags?.dsa5?.trapData?.flow?.lines || []).find((item) => item.id === from);
+            modifier -= Number(line?.total) || 0;
+        }
+        return modifier;
+    }
+
+    async #commitDefense({ id, status, qs = 0, reaction = '' } = {}) {
+        const stored = this.message.flags?.dsa5?.trapData || {};
+        const result = await TrapAutomation.resolveDefense({
+            behavior: this.behavior,
+            token: this.token,
+            trapMessage: this.message,
+            flow: stored.flow,
+            id,
+            status,
+            qs,
+            reaction,
+        });
+        await this.persistCard({
+            outcome: { mode: id, status, actorName: this.token?.name || '' },
+            trapDataPatch: { flow: result.flow },
         });
     }
 }

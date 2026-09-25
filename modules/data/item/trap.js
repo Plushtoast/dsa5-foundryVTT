@@ -4,6 +4,7 @@ import { DSATrapRegionBehavior } from '../regionbehaviors/trap.js';
 import AoeTemplate from './templates/aoe.js';
 import InformableTemplate from './templates/informable.js';
 import TrapAutomation from '../../system/automation/trap.js';
+import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
 
 const { StringField } = foundry.data.fields;
 
@@ -218,5 +219,6 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
   static _migrateData(source) {
     super._migrateData(source);
     TrapAutomation.migrateSource(source);
+    TrapLegacyMigration.materialize(source);
   }
 }

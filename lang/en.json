@@ -3525,6 +3525,7 @@
     "narrateDetected": "Narrate this to the players",
     "missingDisarmAbility": "{actor} does not have {ability}.",
     "triggered": "Triggered",
+    "responses": "Responses",
     "escape": "Escape",
     "timerRemaining": "{rounds} CR left (Feat of Strength {modifier})",
     "timerTimedOut": "Timer expired",

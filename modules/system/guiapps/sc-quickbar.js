@@ -518,7 +518,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     let html = foundry.utils.escapeHTML(parts.filter(Boolean).join('\n')).replaceAll('\n', '<br>');
     if (!playerName) return html;
     const safeColor = /^#[0-9a-fA-F]{3,8}$/.test(playerColor) ? playerColor : '';
-    const pip = safeColor ? `<span class="sc-quickbar-tooltip-pip" style="background:${safeColor}"></span>` : '';
+    const pip = safeColor ? `<span class='sc-quickbar-tooltip-pip' style='background:${safeColor}'></span>` : '';
     const owner = `${pip}${foundry.utils.escapeHTML(playerName)}`;
     return html.replace(foundry.utils.escapeHTML(name), `${foundry.utils.escapeHTML(name)}<br>${owner}`);
   }

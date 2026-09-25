@@ -2,9 +2,10 @@ import { TrapState } from "../../chatmessage/trap_state.js";
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
 import QueryOrchestrator from "../../system/queries/query-orchestrator.js";
 import TrapAutomation from "../../system/automation/trap.js";
+import TrapLegacyMigration from "../../system/maintenance/migrations/trap-legacy-migration.js";
 import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
 import { DSARegionBehaviorBase } from './base.js';
-const { BooleanField, FilePathField, NumberField, HTMLField, StringField, SchemaField, TypedObjectField } = foundry.data.fields;
+const { BooleanField, FilePathField, NumberField, HTMLField, StringField, SchemaField, TypedObjectField, TypedSchemaField } = foundry.data.fields;
 
 export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static REGION_TYPE = 'DSATrap'
@@ -152,6 +153,91 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                 blank: true,
                 label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseDistanceFormula.label',
             }),
+            defenses: new TypedObjectField(new TypedSchemaField({
+                skill: {
+                    label: new StringField({ initial: '' }),
+                    order: new NumberField({ initial: 0, integer: true }),
+                    gate: new StringField({ initial: 'choice' }),
+                    after: new StringField({ initial: '', blank: true }),
+                    skill: new StringField({ initial: '' }),
+                    applications: new StringField({ initial: '', blank: true }),
+                    modifier: new NumberField({ initial: 0, integer: true }),
+                    undetectedMod: new NumberField({ initial: 0, integer: true }),
+                    modifierFromDamage: new StringField({ initial: '', blank: true }),
+                },
+                combat: {
+                    label: new StringField({ initial: '' }),
+                    order: new NumberField({ initial: 0, integer: true }),
+                    gate: new StringField({ initial: 'choice' }),
+                    after: new StringField({ initial: '', blank: true }),
+                    reactions: new StringField({ initial: 'nothing,dodge,parry' }),
+                    attackValue: new NumberField({ initial: 12, integer: true }),
+                },
+                group: {
+                    label: new StringField({ initial: '' }),
+                    order: new NumberField({ initial: 0, integer: true }),
+                    gate: new StringField({ initial: 'whileTimer' }),
+                    after: new StringField({ initial: '', blank: true }),
+                    skill: new StringField({ initial: '' }),
+                    applications: new StringField({ initial: '', blank: true }),
+                    interval: new StringField({ initial: '' }),
+                    modifier: new NumberField({ initial: 0, integer: true }),
+                    targetQs: new NumberField({ initial: 1, integer: true }),
+                    maxRolls: new NumberField({ initial: 0, integer: true }),
+                    timerRounds: new NumberField({ initial: 0, integer: true }),
+                    escalateEvery: new NumberField({ initial: 0, integer: true }),
+                    escalateMax: new NumberField({ initial: 0, integer: true }),
+                },
+                chase: {
+                    label: new StringField({ initial: '' }),
+                    order: new NumberField({ initial: 0, integer: true }),
+                    gate: new StringField({ initial: 'onFail' }),
+                    after: new StringField({ initial: '', blank: true }),
+                    gs: new NumberField({ initial: 8, integer: true }),
+                    fw: new NumberField({ initial: 0, integer: true }),
+                    distanceFormula: new TrapDamageFormulaField({ initial: '', blank: true }),
+                },
+            }), { initial: {} }),
+            damages: new TypedObjectField(new TypedSchemaField({
+                formula: {
+                    label: new StringField({ initial: '' }),
+                    when: new StringField({ initial: '' }),
+                    formula: new TrapDamageFormulaField({ initial: '', blank: true }),
+                    chanceDie: new NumberField({ initial: 0, integer: true, min: 0 }),
+                    chanceMin: new NumberField({ initial: 0, integer: true }),
+                    chanceMax: new NumberField({ initial: 0, integer: true }),
+                },
+                meleeweapon: {
+                    label: new StringField({ initial: '' }),
+                    when: new StringField({ initial: '' }),
+                    formula: new TrapDamageFormulaField({ initial: '', blank: true }),
+                    traits: new StringField({ initial: '', blank: true }),
+                    chanceDie: new NumberField({ initial: 0, integer: true, min: 0 }),
+                    chanceMin: new NumberField({ initial: 0, integer: true }),
+                    chanceMax: new NumberField({ initial: 0, integer: true }),
+                },
+                rangeweapon: {
+                    label: new StringField({ initial: '' }),
+                    when: new StringField({ initial: '' }),
+                    formula: new TrapDamageFormulaField({ initial: '', blank: true }),
+                    traits: new StringField({ initial: '', blank: true }),
+                    chanceDie: new NumberField({ initial: 0, integer: true, min: 0 }),
+                    chanceMin: new NumberField({ initial: 0, integer: true }),
+                    chanceMax: new NumberField({ initial: 0, integer: true }),
+                },
+                falling: {
+                    label: new StringField({ initial: '' }),
+                    when: new StringField({ initial: '' }),
+                    height: new NumberField({ initial: 1, integer: true, min: 1 }),
+                    floorMod: new NumberField({ initial: 0, integer: true }),
+                },
+                fromQs: {
+                    label: new StringField({ initial: '' }),
+                    when: new StringField({ initial: '' }),
+                    base: new NumberField({ initial: 0 }),
+                    perQs: new NumberField({ initial: 0.5 }),
+                },
+            }), { initial: {} }),
             passwordRequired: new BooleanField({
                 required: true,
                 initial: false,
@@ -249,11 +335,13 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
 
         const trapState = await TrapState.fromMessage(trapMessage);
         if (!trapState) return;
-        await trapState.applyRollResult({ mode, actorId, status, skipActorMatch });
+        const qs = Number(resultDetails?.qualityStep ?? resultDetails?.qs) || 0;
+        await trapState.applyRollResult({ mode, actorId, status, skipActorMatch, qs });
     }
 
     static migrateData(source, options) {
         TrapAutomation.migrateSource(source);
+        TrapLegacyMigration.materialize(source);
         return super.migrateData(source, options);
     }
 

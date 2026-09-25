@@ -53,6 +53,32 @@
         <div class="col two"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.complexity.label"}}</b></div>
         <div class="col two flexAlignEnd flexrow">{{localize (concat 'REGIONBEHAVIOR_DSATrap.COMPLEXITIES.' behaviour.complexity)}}</div>
     </div>
+    {{#if damageLines.length}}
+    <div class="roll-request-card">
+        {{#each damageLines as |line|}}
+        <div class="flexrow">
+            <span class="col sixty">{{line.label}}</span>
+            <span class="flex0">{{#if line.total}}{{line.total}}{{else}}{{line.formula}}{{/if}}</span>
+            {{#if line.needsFall}}
+            <button type="button" class="trap-handling" data-action="fallTrap" data-height="{{line.height}}">{{localize "fallingDamage"}}</button>
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+    {{#if offers.length}}
+    <div class="flexrow">
+        {{#each offers as |offer|}}
+            {{#if offer.reactions.length}}
+                {{#each offer.reactions as |reaction|}}
+                <button type="button" class="trap-handling" data-action="defendTrap" data-defense="{{offer.id}}" data-reaction="{{reaction.id}}">{{reaction.label}}</button>
+                {{/each}}
+            {{else}}
+                <button type="button" class="trap-handling" data-action="defendTrap" data-defense="{{offer.id}}">{{offer.label}}</button>
+            {{/if}}
+        {{/each}}
+    </div>
+    {{/if}}
     {{#if outcomes.length}}
     <div class="roll-request-card">
         <div class="roll-request-rows">

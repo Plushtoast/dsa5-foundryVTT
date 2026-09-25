@@ -88,6 +88,7 @@ import MoneyTracker from './system/orwell/money-tracker.js';
 import OnUseEffect from './system/automation/onUseEffects.js';
 import ZoneAttack from './system/automation/zone-attack.js';
 import TrapAutomation from './system/automation/trap.js';
+import TrapFlow from './system/automation/trap-flow.js';
 import { TrapState } from './chatmessage/trap_state.js';
 import TestSuite from './system/helpers/testsuite.js';
 import { connectTokenRing } from './hooks/tokenring.js';
@@ -185,6 +186,7 @@ globalThis.dsa5 = {
       OnUseEffect,
       ZoneAttack,
       TrapAutomation,
+      TrapFlow,
       TrapState,
       Clock: new DSAClock(),
       CalendarPicker: new DSACalendarPicker(),

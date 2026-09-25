@@ -20,5 +20,16 @@
       {{formGroup systemFields.attack.fields.at name='system.attack.at' value=document.system.attack.at localize=true}}
       {{formGroup systemFields.attack.fields.traits name='system.attack.traits' value=document.system.attack.traits localize=true}}
     {{/if}}
+    {{#if trapFlow.defenses}}
+    <div class="dsa-info-box">
+      <p class="dsa-info-text small"><b>{{localize "REGIONBEHAVIOR_DSATrap.responses"}}</b></p>
+      {{#each trapFlow.defenses as |entry|}}
+      <p class="dsa-info-text">{{entry.label}} <span class="dsa-pip">{{entry.type}}</span></p>
+      {{/each}}
+      {{#each trapFlow.damages as |entry|}}
+      <p class="dsa-info-text">{{entry.label}} <span class="dsa-pip">{{entry.type}}</span>{{#if entry.formula}} {{entry.formula}}{{/if}}</p>
+      {{/each}}
+    </div>
+    {{/if}}
   {{/if}}
 </div>

@@ -1165,6 +1165,10 @@ class TrapSheet extends Enchantable {
       this.tabGroups.trapAttacks = 'baseAttack';
     }
     data.trapAttackTab = this.tabGroups.trapAttacks;
+    data.trapFlow = {
+      defenses: this.item.system.defenses,
+      damages: this.item.system.damages,
+    };
     return data;
   }
 

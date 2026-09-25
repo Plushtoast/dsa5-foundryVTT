@@ -3527,6 +3527,7 @@
     "narrateDetected": "Dies den Spielern erzählen",
     "missingDisarmAbility": "{actor} besitzt nicht {ability}.",
     "triggered": "Ausgelöst",
+    "responses": "Reaktionen",
     "escape": "Entkommen",
     "timerRemaining": "Noch {rounds} KR (Kraftakt {modifier})",
     "timerTimedOut": "Zeit abgelaufen",
