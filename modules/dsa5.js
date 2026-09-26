@@ -326,6 +326,7 @@ Hooks.once('init', () => {
   CONFIG.Token.movement.defaultSpeed = 16;
   CONFIG.RegionBehavior.dataModels.DSATrap = DSATrapRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSATrap = 'fas fa-land-mine-on';
+  CONFIG.RegionBehavior.typeLabels.DSATrap = 'REGIONBEHAVIOR_DSATrap.FIELDS.trapType.label';
   CONFIG.RegionBehavior.dataModels.DSAAura = DSAAuraRegionBehavior;
   CONFIG.RegionBehavior.typeIcons.DSAAura = 'fas fa-circle-radiation';
   CONFIG.RegionBehavior.dataModels.DSAZone = DSAZoneRegionBehavior;

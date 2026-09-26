@@ -1,24 +1,41 @@
-<fieldset class="flexcol gap5px">
+<fieldset class="flexcol gap2px">
   <legend>{{localize legend}}</legend>
   <div class="flexrow flexAlignEnd">
     <select data-trap-add="{{kind}}">
       {{selectOptions types localize=true}}
     </select>
     <button type="button" class="icon fas fa-plus noBorder dsadesignbutton" data-action="addTrapFlow" data-kind="{{kind}}" data-tooltip="{{addTooltip}}"></button>
+    <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-circle-info" data-tooltip-html="{{{localize addHelp}}}"></button>
   </div>
-  {{#each rows as |row|}}
-    <fieldset class="flexcol gap5px">
-      <div class="flexrow flexAlignEnd">
-        <span class="dsa-pip">{{localize (concat "REGIONBEHAVIOR_DSATrap.FLOW.types." row.entry.type)}}</span>
-        <button type="button" class="icon fa fa-minus noBorder dsadesignbutton" data-action="deleteTrapFlow" data-kind="{{../kind}}" data-key="{{row.id}}" data-tooltip="SHEET.DeleteItem"></button>
+  {{#if rows.length}}
+    <div class="navWrapper">
+      <div class="left-btn"><i class="fas fa-angle-left"></i></div>
+      <div class="right-btn"><i class="fas fa-angle-right"></i></div>
+      <nav class="sheet-tabs tabs" data-group="trap-{{kind}}" aria-roledescription="Form Tab Navigation">
+        {{#each rows as |row|}}
+          <a class="tabelement {{row.cssClass}}" data-action="tab" data-group="trap-{{../kind}}" data-tab="{{row.id}}">
+            <label>{{row.tabLabel}}</label>
+          </a>
+        {{/each}}
+      </nav>
+    </div>
+    {{#each rows as |row|}}
+      <div class="tab flexcol gap2px {{row.cssClass}}" data-group="trap-{{../kind}}" data-tab="{{row.id}}">
+        <div class="flexrow flexAlignEnd table-title lineheight">
+          <label>{{localize row.typeLabel}}</label>
+          <button type="button" class="icon noBorder dsadesignbutton flex0 fas fa-circle-info" data-tooltip-html="{{{localize row.typeHelp}}}"></button>
+          <button type="button" class="icon fa fa-minus noBorder dsadesignbutton" data-action="deleteTrapFlow" data-kind="{{../kind}}" data-key="{{row.id}}" data-tooltip="SHEET.DeleteItem"></button>
+        </div>
+        {{#each row.fields as |part|}}
+          {{#if (eq part.key "skill")}}
+            {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) choices=(selfObj ../../allSkills) blank="-" localize=true label=part.label hint=part.hint}}
+          {{else if (eq part.key "when")}}
+            {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) choices=../../whenChoices blank=../../whenBlank localize=true label=part.label hint=part.hint}}
+          {{else}}
+            {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) localize=true label=part.label hint=part.hint}}
+          {{/if}}
+        {{/each}}
       </div>
-      {{#each row.fields as |part|}}
-        {{#if (eq part.key "when")}}
-          {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) choices=../../whenChoices blank=../../whenBlank localize=true label=(concat "REGIONBEHAVIOR_DSATrap.FLOW." part.key) hint=(concat "REGIONBEHAVIOR_DSATrap.FLOW.hints." part.key)}}
-        {{else}}
-          {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) localize=true label=(concat "REGIONBEHAVIOR_DSATrap.FLOW." part.key) hint=(concat "REGIONBEHAVIOR_DSATrap.FLOW.hints." part.key)}}
-        {{/if}}
-      {{/each}}
-    </fieldset>
-  {{/each}}
+    {{/each}}
+  {{/if}}
 </fieldset>

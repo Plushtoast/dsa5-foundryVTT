@@ -3539,11 +3539,11 @@
       "addDefense": "Abwehr hinzufügen",
       "addDamage": "Schaden hinzufügen",
       "whenImmediate": "Sofort",
-      "onCatch": "Beim Fangen",
+      "onCatch": "Beim Einholen",
       "timeout": "Bei Zeitablauf",
       "label": "Bezeichnung",
       "order": "Reihenfolge",
-      "gate": "Angebot",
+      "gate": "Auslöser",
       "after": "Nach",
       "skill": "Fertigkeit",
       "applications": "Anwendung",
@@ -3562,7 +3562,8 @@
       "fw": "Verfolgung FW",
       "distanceFormula": "Distanz",
       "when": "Auslöser",
-      "formula": "Formel",
+      "formula": "Würfelformel",
+      "invalidFormula": "Muss eine gültige Würfelformel sein",
       "chanceDie": "Zufallswurf",
       "chanceMin": "Zufall minimum",
       "chanceMax": "Zufall maximum",
@@ -3574,9 +3575,9 @@
       "hints": {
         "label": "Name, der auf der Fallenkarte für diese Reaktion oder diesen Schaden steht.",
         "order": "Kleinere Zahlen werden zuerst angeboten, wenn mehrere Reaktionen gleichzeitig möglich sind.",
-        "gate": "Wann die Reaktion angeboten wird. Wahl steht am Anfang bereit. Bei Misslingen folgt auf die Reaktion unter Nach. Während der Zeit gilt, solange der Countdown läuft. Nach Schaden folgt auf den Schaden unter Nach. Wenn unentdeckt gilt nur, solange die Falle nicht entdeckt wurde.",
+        "gate": "Wann diese Abwehr bereitsteht. Beim Auslösen gilt sofort. Bei Misslingen folgt auf Nach. Während der Zeit gilt im Countdown. Nach Schaden folgt auf Nach. Wenn unentdeckt gilt nur, solange die Falle unentdeckt ist.",
         "after": "Kennung der Reaktion oder des Schadens, auf die dieser Eintrag wartet. Bei Misslingen und Nach Schaden nutzen dieses Feld.",
-        "skill": "Fertigkeit, die der Held würfelt, mit demselben Namen wie auf dem Charakterbogen.",
+        "skill": "Fertigkeit für diese Probe.",
         "applications": "Optionales Anwendungsgebiet, zum Beispiel Akrobatik oder Drücken & Verbiegen.",
         "modifier": "Modifikator der Fertigkeits- oder Gruppenprobe. Negative Werte erschweren die Probe.",
         "undetectedMod": "Zusätzlicher Modifikator, solange die Falle nicht entdeckt wurde.",
@@ -3592,8 +3593,8 @@
         "gs": "Geschwindigkeitsstufe der Kugel in der Verfolgungsjagd.",
         "fw": "Fertigkeitswert Körperbeherrschung der Kugel.",
         "distanceFormula": "Würfelformel für die Startdistanz der Jagd, zum Beispiel 2d6+4.",
-        "when": "Welches Ergebnis diesen Schaden auslöst. Sofort braucht keine Abwehr. Beim Fangen gilt, wenn eine Kugel gefangen wird. Bei Zeitablauf gilt, wenn die Zeit endet. Eine gewählte Abwehr löst den Schaden aus, wenn diese Abwehr misslingt.",
-        "formula": "Foundry-Würfelformel, zum Beispiel 2d6+2. Leer lassen für einen Hinweis oder einen reinen Zufall.",
+        "when": "Welches Ergebnis diesen Schaden auslöst. Sofort braucht keine Abwehr. Beim Einholen gilt, wenn die Jagd den Helden einholt. Bei Zeitablauf gilt, wenn die Zeit endet. Eine benannte Abwehr fügt den Schaden zu, wenn sie misslingt.",
+        "formula": "Würfelformel, zum Beispiel 2W6+2. Leer lassen für einen Hinweis oder einen reinen Zufall.",
         "chanceDie": "Seitenzahl des Würfels, der entscheidet, ob dieser Schaden eintritt. 0 bedeutet, er tritt immer ein.",
         "chanceMin": "Niedrigstes Ergebnis auf diesem Würfel, das den Schaden auslöst.",
         "chanceMax": "Höchstes Ergebnis auf diesem Würfel, das den Schaden auslöst.",
@@ -3604,7 +3605,7 @@
         "perQs": "Schaden, der je Qualitätsstufe der zugehörigen Abwehr entfällt."
       },
       "gates": {
-        "choice": "Wahl",
+        "choice": "Beim Auslösen",
         "onFail": "Bei Misslingen",
         "whileTimer": "Während der Zeit",
         "onDamage": "Nach Schaden",
@@ -3620,6 +3621,21 @@
         "rangeweapon": "Fernkampfangriff",
         "falling": "Sturzschaden",
         "fromQs": "Aus QS"
+      },
+      "sectionHelp": {
+        "defenses": "<p>Was die Helden tun können, wenn die Falle auslöst. Typ wählen, dann hinzufügen.</p><p><b>Fertigkeitsprobe</b> — z. B. Körperbeherrschung (Akrobatik) −2, um eine Grube zu überspringen.</p><p><b>Kampfreaktion</b> — Ausweichen oder Parade gegen die AT der Falle, z. B. AT 12.</p><p><b>Gruppenprobe</b> — QS sammeln, oft gegen die Zeit, z. B. Kraftakt, 6 QS in 22 KR.</p><p><b>Verfolgungsjagd</b> — Steinjagd nach einer misslungenen Probe, z. B. GS 8, Distanz 2W6+4.</p>",
+        "damages": "<p>Welcher Schaden wann eintritt. Sofort gilt ohne Probe. Eine benannte Abwehr fügt den Schaden zu, wenn sie misslingt.</p><p><b>Formel</b> — z. B. 2W6+2, optional nur bei 5–6 auf 1W6.</p><p><b>Nah- / Fernkampf</b> — Waffentreffer, z. B. 1W6+4 spitz nach verfehlter Parade.</p><p><b>Sturz</b> — 1W6 je Schritt, z. B. Höhe 3 nach misslungenem Sprung.</p><p><b>Aus QS</b> — fester Schaden minus QS, z. B. 8 − 0,5 je QS.</p>"
+      },
+      "typeHelp": {
+        "skill": "<p>Der Held legt diese Fertigkeitsprobe ab. Bei Gelingen ist die Falle umgangen, bei Misslingen kann Schaden folgen.</p><p>Beispiel: Körperbeherrschung (Akrobatik) −2 gegen eine Fallgrube.</p>",
+        "combat": "<p>Der Spieler weicht aus oder pariert gegen den Attackewert der Falle.</p><p>Beispiel: AT 12, Ausweichen und Parade erlaubt.</p>",
+        "group": "<p>Die Gruppe sammelt Qualitätsstufen, oft gegen die Zeit.</p><p>Beispiel: Kraftakt alle 2 KR, 6 QS, 22 KR, um aus einer Quetschfalle zu entkommen.</p>",
+        "chase": "<p>Eine Steinjagd, nachdem eine andere Probe misslungen ist. Unter Nach diese Probe eintragen.</p><p>Beispiel: GS 8, FW 10, Distanz 2W6+4 nach misslungener Körperbeherrschung.</p>",
+        "formula": "<p>Würfelt diese Formel, wenn der Auslöser passt.</p><p>Beispiel: 2W6+2, wenn Ausweichen misslingt; Treffer nur bei 5–6 auf 1W6.</p>",
+        "meleeweapon": "<p>Ein Nahkampftreffer nach einer misslungenen Kampfreaktion.</p><p>Beispiel: 1W6+4, spitz, wenn die Klinge nicht pariert wird.</p>",
+        "rangeweapon": "<p>Ein Fernkampftreffer nach einer misslungenen Kampfreaktion.</p><p>Beispiel: 1W6+6 Pfeile, wenn das Ausweichen misslingt.</p>",
+        "falling": "<p>Sturzschaden: 1W6 je Schritt Höhe.</p><p>Beispiel: Höhe 3 nach misslungenem Grubensprung.</p>",
+        "fromQs": "<p>Fester Schaden, gemindert um die QS der verknüpften Probe, bei Gelingen und Misslingen.</p><p>Beispiel: 8 minus 0,5 je QS auf einer Rutschprobe.</p>"
       }
     },
     "escape": "Entkommen",
@@ -3631,7 +3647,11 @@
     "passwordRequired": "'{trap}' kann mit einem Schlüsselwort gestoppt werden. Starte oder stoppe die Zeit wie im Buch beschrieben.",
     "trigger": "Auslösen",
     "triggerHint": "Auslösen: Die Falle wird ausgelöst, wenn der Auslöser aktiviert wird. Der Auslöser kann z.B. eine Druckplatte, ein Seil oder ein bestimmter Bereich sein.",
-    "sheetHelpTooltip": "<p>Ziehe die Falle auf die Karte, um eine Region zu erzeugen, und passe danach die Form an. Um einen Raum auszufüllen, nutze die Wandbegrenzung der Region. Alternativ kannst du die Falle auf ein bestehendes Regionenblatt ziehen, um das Fallenverhalten dort hinzuzufügen.</p><p>Betritt eine Figur den Bereich, erhält der Spielleiter eine Fallenkarte zum Suchen, Entschärfen oder Auslösen. Je nach Fallentyp kann das Auslösen Schaden verursachen, einen Gegenangriff starten, Effekte anwenden, eine Quetsch- oder Erstickungszeit laufen lassen oder eine Steinjagd beginnen. Schaden wird über die Chatkarten zugewiesen.</p>"
+    "sheetHelpTooltip": "<p>Ziehe die Falle auf die Karte, um eine Region zu erzeugen, und passe danach die Form an. Um einen Raum auszufüllen, nutze die Wandbegrenzung der Region. Alternativ kannst du die Falle auf ein bestehendes Regionenblatt ziehen, um das Fallenverhalten dort hinzuzufügen.</p><p>Betritt eine Figur den Bereich, erhält der Spielleiter eine Fallenkarte zum Suchen, Entschärfen oder Auslösen. Je nach Fallentyp kann das Auslösen Schaden verursachen, einen Gegenangriff starten, Effekte anwenden, eine Quetsch- oder Erstickungszeit laufen lassen oder eine Steinjagd beginnen. Schaden wird über die Chatkarten zugewiesen.</p>",
+    "TABS": {
+      "form": "Einstellungen",
+      "flow": "Ablauf"
+    }
   },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {

@@ -1,2 +1,6 @@
-{{> systems/dsa5/templates/items/trap-flow-part.hbs kind="defenses" legend="REGIONBEHAVIOR_DSATrap.FIELDS.defenses.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDefense" types=defenseTypes rows=trapDefenses prefix="system.defenses."}}
-{{> systems/dsa5/templates/items/trap-flow-part.hbs kind="damages" legend="REGIONBEHAVIOR_DSATrap.FIELDS.damages.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDamage" types=damageTypes rows=trapDamages prefix="system.damages." whenChoices=damageWhenChoices whenBlank="REGIONBEHAVIOR_DSATrap.FLOW.whenImmediate"}}
+<section class="tab standard-form scrollable {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  <div class="flexcol gap2px">
+    {{> systems/dsa5/templates/items/trap-flow-part.hbs kind="defenses" legend="REGIONBEHAVIOR_DSATrap.FIELDS.defenses.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDefense" addHelp="REGIONBEHAVIOR_DSATrap.FLOW.sectionHelp.defenses" types=defenseTypes rows=trapDefenses prefix="system.defenses." allSkills=allSkills}}
+    {{> systems/dsa5/templates/items/trap-flow-part.hbs kind="damages" legend="REGIONBEHAVIOR_DSATrap.FIELDS.damages.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDamage" addHelp="REGIONBEHAVIOR_DSATrap.FLOW.sectionHelp.damages" types=damageTypes rows=trapDamages prefix="system.damages." whenChoices=damageWhenChoices whenBlank="REGIONBEHAVIOR_DSATrap.FLOW.whenImmediate" allSkills=allSkills}}
+  </div>
+</section>

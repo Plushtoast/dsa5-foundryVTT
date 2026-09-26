@@ -1,0 +1,17 @@
+<section class="tab standard-form scrollable {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  {{#if hint}}
+  <p class="hint">{{localize hint}}</p>
+  {{/if}}
+  {{#each fields as |outer|}}
+  {{#if outer.fieldset}}
+  <fieldset>
+    <legend>{{localize outer.legend}}</legend>
+    {{#each outer.fields as |f|}}
+    {{formField f.field value=f.value localize=true model=../../model}}
+    {{/each}}
+  </fieldset>
+  {{else}}
+  {{formField outer.field value=outer.value localize=true model=../model}}
+  {{/if}}
+  {{/each}}
+</section>

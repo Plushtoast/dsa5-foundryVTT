@@ -6,6 +6,20 @@
 
     [data-tab='details'] {
       gap: 3px;
+
+      &:has(> .tab[data-group='trap-sheet']) {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      > .tab[data-group='trap-sheet'] {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+      }
     }
 
     .form-group {
@@ -75,4 +89,10 @@
       box-shadow: none;
     }
   }
+}
+
+.application.dsa5.region-behavior-config .window-content > .tab {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
 }

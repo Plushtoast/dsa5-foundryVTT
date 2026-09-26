@@ -3537,11 +3537,11 @@
       "addDefense": "Add defense",
       "addDamage": "Add damage",
       "whenImmediate": "Immediate",
-      "onCatch": "On catch",
+      "onCatch": "When caught",
       "timeout": "On timeout",
       "label": "Label",
       "order": "Order",
-      "gate": "When offered",
+      "gate": "Trigger",
       "after": "After",
       "skill": "Skill",
       "applications": "Application",
@@ -3560,7 +3560,8 @@
       "fw": "Chase FW",
       "distanceFormula": "Distance",
       "when": "Trigger",
-      "formula": "Formula",
+      "formula": "Roll formula",
+      "invalidFormula": "Must be a valid roll formula",
       "chanceDie": "Chance die",
       "chanceMin": "Chance minimum",
       "chanceMax": "Chance maximum",
@@ -3572,9 +3573,9 @@
       "hints": {
         "label": "Name shown on the trap card for this reaction or this damage.",
         "order": "Lower numbers are offered first when several reactions are available at once.",
-        "gate": "When the player may take this reaction. Choice is available at the start. On failure follows the reaction named in After. While the timer runs is available during the countdown. After damage follows the damage named in After. If undetected is available only while the trap has not been found.",
+        "gate": "When this reaction becomes available. On trigger is at the start. On failure follows After. While the timer runs is during the countdown. After damage follows After. If undetected only while the trap is unseen.",
         "after": "Id of the reaction or damage this entry waits for. On failure and After damage use this.",
-        "skill": "Skill the hero rolls, using the same name as on the character sheet.",
+        "skill": "Talent used for this check.",
         "applications": "Optional skill application, for example Acrobatics or Push & Bend.",
         "modifier": "Modifier for the skill or group check. Negative numbers make the roll harder.",
         "undetectedMod": "Extra modifier while the trap has not been detected.",
@@ -3590,8 +3591,8 @@
         "gs": "Speed rating of the boulder in the chase.",
         "fw": "Body Control skill rating of the boulder.",
         "distanceFormula": "Roll formula for the distance when the chase starts, for example 2d6+4.",
-        "when": "Which result causes this damage. Immediate needs no defense. On catch applies when a boulder is caught. On timeout applies when the timer ends. Choosing a defense applies the damage when that defense fails.",
-        "formula": "Foundry roll formula, for example 2d6+2. Leave empty for a note or a pure chance.",
+        "when": "Which result causes this damage. Immediate needs no reaction. When caught applies if the chase catches the hero. On timeout applies when the timer ends. A named reaction deals this if it fails.",
+        "formula": "Roll formula, for example 2d6+2. Leave empty for a note or a pure chance.",
         "chanceDie": "Sides of the die that decides whether this damage occurs. 0 means it always occurs.",
         "chanceMin": "Lowest result on that die which causes the damage.",
         "chanceMax": "Highest result on that die which causes the damage.",
@@ -3602,7 +3603,7 @@
         "perQs": "Damage removed for each quality level of the linked defense."
       },
       "gates": {
-        "choice": "Choice",
+        "choice": "On trigger",
         "onFail": "On failure",
         "whileTimer": "While the timer runs",
         "onDamage": "After damage",
@@ -3618,6 +3619,21 @@
         "rangeweapon": "Ranged attack",
         "falling": "Falling damage",
         "fromQs": "From QS"
+      },
+      "sectionHelp": {
+        "defenses": "<p>What the hero can do when the trap goes off. Pick a type and add it.</p><p><b>Skill check</b> — roll a talent, e.g. Body Control (Acrobatics) −2 to jump a pit.</p><p><b>Combat reaction</b> — dodge or parry against the trap’s AT, e.g. AT 12.</p><p><b>Group check</b> — collect QS, often against a timer, e.g. Feat of Strength, 6 QS in 22 CR.</p><p><b>Chase</b> — a boulder chase after another reaction fails, e.g. GS 8, distance 2d6+4.</p>",
+        "damages": "<p>What harm happens, and when. Immediate needs no reaction. A named reaction deals this if it fails.</p><p><b>Formula</b> — e.g. 2d6+2, optionally only on 5–6 on 1d6.</p><p><b>Melee / ranged</b> — a weapon hit, e.g. 1d6+4 pointed after a missed parry.</p><p><b>Falling</b> — 1d6 per yard, e.g. height 3 after a failed jump.</p><p><b>From QS</b> — a fixed amount reduced by QL, e.g. 8 − 0.5 per QL.</p>"
+      },
+      "typeHelp": {
+        "skill": "<p>The hero rolls this talent. Success avoids the trap; failure can deal linked damage.</p><p>Example: Body Control (Acrobatics) −2 to jump a pit.</p>",
+        "combat": "<p>The player dodges or parries against the trap’s attack value.</p><p>Example: AT 12, allow dodge and parry.</p>",
+        "group": "<p>The group collects quality levels, often against a countdown.</p><p>Example: Feat of Strength every 2 CR, 6 QS, 22 CR to escape a crush trap.</p>",
+        "chase": "<p>A boulder chase after another reaction fails. Point After at that reaction.</p><p>Example: GS 8, FW 10, distance 2d6+4 after failed Body Control.</p>",
+        "formula": "<p>Rolls this formula when the trigger matches.</p><p>Example: 2d6+2 if Avoid fails; 5–6 on 1d6 to actually hit.</p>",
+        "meleeweapon": "<p>A melee hit after a failed combat reaction.</p><p>Example: 1d6+4, pointed, if the blade is not parried.</p>",
+        "rangeweapon": "<p>A ranged hit after a failed combat reaction.</p><p>Example: 1d6+6 arrows if the dodge fails.</p>",
+        "falling": "<p>Falling damage: 1d6 per yard of height.</p><p>Example: height 3 after a failed pit jump.</p>",
+        "fromQs": "<p>Fixed damage reduced by the linked check’s quality levels, success or fail.</p><p>Example: 8 minus 0.5 per QL on a slide.</p>"
       }
     },
     "escape": "Escape",
@@ -3629,7 +3645,11 @@
     "passwordRequired": "'{trap}' can be stopped with a keyword. Start or stop the timer as the book requires.",
     "trigger": "Trigger",
     "triggerHint": "Trigger: The trap is triggered when the trigger is activated. The trigger can be, for example, a pressure plate, a rope, or a specific area.",
-    "sheetHelpTooltip": "<p>Drop the trap onto the map to create a region, then reshape it. To fill a room, use the region's wall restriction so the shape is constrained by walls. You can also drop a trap onto an existing region sheet to add the trap behavior there.</p><p>When a figure enters the area, the GM receives a trap card to search, disarm, or trigger. Triggering can deal damage, start an opposed attack, apply effects, run a crush or suffocation timer, or start a boulder chase, depending on the trap type. Apply resulting damage from the chat cards.</p>"
+    "sheetHelpTooltip": "<p>Drop the trap onto the map to create a region, then reshape it. To fill a room, use the region's wall restriction so the shape is constrained by walls. You can also drop a trap onto an existing region sheet to add the trap behavior there.</p><p>When a figure enters the area, the GM receives a trap card to search, disarm, or trigger. Triggering can deal damage, start an opposed attack, apply effects, run a crush or suffocation timer, or start a boulder chase, depending on the trap type. Apply resulting damage from the chat cards.</p>",
+    "TABS": {
+      "form": "Setup",
+      "flow": "Flow"
+    }
   },
   "REGIONBEHAVIOR_DSAZone": {
     "FIELDS": {

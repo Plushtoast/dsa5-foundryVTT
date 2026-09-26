@@ -171,7 +171,7 @@ export default class ItemSheetdsa5 extends AppV2Mixin(foundry.applications.api.H
 
   _configureRenderParts(options) {
     const parts = super._configureRenderParts(options);
-    if (!parts.details) parts.details = { template: this.dsaItemTemplate, scrollable: [''] };
+    if (!parts.details) parts.details = { template: this.dsaItemTemplate, classes: ['scrollable'], scrollable: [''] };
     return parts;
   }
 
@@ -392,10 +392,12 @@ class WithEffectsSheet extends ItemSheetdsa5 {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
+      classes: ['scrollable'],
       scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
+      classes: ['scrollable'],
       scrollable: [''],
     },
   };
@@ -955,14 +957,17 @@ class Enchantable extends InformableSheet(ItemSheetdsa5) {
     },
     description: {
       template: 'systems/dsa5/templates/items/item-description.hbs',
+      classes: ['scrollable'],
       scrollable: [''],
     },
     enchantment: {
       template: 'systems/dsa5/templates/items/item-enchantment.hbs',
+      classes: ['scrollable'],
       scrollable: [''],
     },
     effects: {
       template: 'systems/dsa5/templates/items/item-effects.hbs',
+      classes: ['scrollable'],
       scrollable: [''],
     },
   };
@@ -1135,6 +1140,10 @@ class TrapSheet extends Enchantable {
   isPoisonable = true;
 
   static DEFAULT_OPTIONS = {
+    position: {
+      width: 640,
+      height: 720,
+    },
     ownerActions: {
       addTrapFlow: this.addTrapFlow,
       deleteTrapFlow: this.deleteTrapFlow,
@@ -1148,14 +1157,21 @@ class TrapSheet extends Enchantable {
     },
     details: {
       template: 'systems/dsa5/templates/items/item-trap-sheet.hbs',
-      scrollable: [''],
+      classes: ['scrollable'],
+      scrollable: ['.tab[data-group="trap-sheet"]'],
       templates: ['systems/dsa5/templates/items/item-aoe.hbs', 'systems/dsa5/templates/items/trap-flow-part.hbs'],
     }
   };
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    Object.assign(data, TrapFlow.sheetContext(this.item.system));
+    Object.assign(data, await TrapFlow.sheetContext(this.item.system, this.tabGroups));
+    const trapSheetTab = this.tabGroups['trap-sheet'] === 'flow' ? 'flow' : 'setup';
+    this.tabGroups['trap-sheet'] = trapSheetTab;
+    data.trapSheet = {
+      setupCss: trapSheetTab === 'setup' ? 'active' : '',
+      flowCss: trapSheetTab === 'flow' ? 'active' : '',
+    };
     return data;
   }
 
@@ -1173,15 +1189,36 @@ class TrapSheet extends Enchantable {
     }
   }
 
+  _onChangeForm(formConfig, event) {
+    if (TrapFlow.isTransientControl(event)) return;
+    return super._onChangeForm(formConfig, event);
+  }
+
+  _onClickTab(event) {
+    const button = event.target.closest?.('[data-action="tab"]');
+    if (!button) return;
+    const tab = button.dataset.tab;
+    if (!tab || button.classList.contains('active') || event.button !== 0) return;
+    const group = button.dataset.group;
+    this.changeTab(tab, group, {
+      event,
+      navElement: button.closest('.tabs'),
+      updatePosition: !group?.startsWith('trap-'),
+    });
+  }
+
   static async addTrapFlow(_event, target) {
     const kind = target.dataset.kind;
     const type = target.closest('fieldset')?.querySelector('[data-trap-add]')?.value;
     if (!kind || !type) return;
-    await this.item.system.addFlowEntry(kind, type);
+    const id = await this.item.system.addFlowEntry(kind, type);
+    if (id) this.tabGroups[TrapFlow.tabGroup(kind)] = id;
   }
 
   static async deleteTrapFlow(_event, target) {
     const { kind, key } = target.dataset;
+    const group = TrapFlow.tabGroup(kind);
+    if (this.tabGroups[group] === key) this.tabGroups[group] = '';
     await this.item.system.removeFlowEntry(kind, key);
   }
 }

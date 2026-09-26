@@ -1,3 +1,5 @@
+import DSA5_Utility from '../helpers/utility-dsa5.js';
+
 /**
  * Player-started trap defenses and typed damage already stored on the trap.
  */
@@ -10,15 +12,33 @@ export default class TrapFlow {
     return Object.fromEntries(this.types(schema, kind).map((type) => [type, `REGIONBEHAVIOR_DSATrap.FLOW.types.${type}`]));
   }
 
-  static rows(model, kind) {
+  static tabGroup(kind) {
+    return `trap-${kind}`;
+  }
+
+  static rows(model, kind, tabGroups = {}) {
     const types = model.schema.fields[kind].element.types;
-    return Object.entries(model[kind] || {}).map(([id, entry]) => ({
+    const rows = Object.entries(model[kind] || {}).map(([id, entry]) => ({
       id,
       entry,
+      typeLabel: `REGIONBEHAVIOR_DSATrap.FLOW.types.${entry.type}`,
+      typeHelp: `REGIONBEHAVIOR_DSATrap.FLOW.typeHelp.${entry.type}`,
+      tabLabel: entry.label || game.i18n.localize(`REGIONBEHAVIOR_DSATrap.FLOW.types.${entry.type}`),
       fields: Object.entries(types[entry.type]?.fields || {})
         .filter(([key]) => key !== 'type')
-        .map(([key, field]) => ({ key, field })),
+        .map(([key, field]) => ({
+          key,
+          field,
+          label: `REGIONBEHAVIOR_DSATrap.FLOW.${key}`,
+          hint: `REGIONBEHAVIOR_DSATrap.FLOW.hints.${key}`,
+        })),
     }));
+    const activeId = rows.some((row) => row.id === tabGroups[this.tabGroup(kind)])
+      ? tabGroups[this.tabGroup(kind)]
+      : rows[0]?.id || '';
+    tabGroups[this.tabGroup(kind)] = activeId;
+    for (const row of rows) row.cssClass = row.id === activeId ? 'active' : '';
+    return rows;
   }
 
   static whenChoices(defenses = []) {
@@ -26,19 +46,29 @@ export default class TrapFlow {
       onCatch: 'REGIONBEHAVIOR_DSATrap.FLOW.onCatch',
       timeout: 'REGIONBEHAVIOR_DSATrap.FLOW.timeout',
     };
-    for (const row of defenses) choices[row.id] = row.entry.label || row.id;
+    for (const row of defenses) choices[row.id] = row.tabLabel;
     return choices;
   }
 
-  static sheetContext(model) {
-    const trapDefenses = this.rows(model, 'defenses');
+  static async sheetContext(model, tabGroups = {}) {
+    const trapDefenses = this.rows(model, 'defenses', tabGroups);
+    const allSkills = [...(await DSA5_Utility.allSkillsList())];
+    for (const entry of Object.values(model.defenses || {})) {
+      if (entry?.skill && !allSkills.includes(entry.skill)) allSkills.push(entry.skill);
+    }
+    allSkills.sort((a, b) => a.localeCompare(b, game.i18n.lang));
     return {
       trapDefenses,
-      trapDamages: this.rows(model, 'damages'),
+      trapDamages: this.rows(model, 'damages', tabGroups),
       defenseTypes: this.typeChoices(model.schema, 'defenses'),
       damageTypes: this.typeChoices(model.schema, 'damages'),
       damageWhenChoices: this.whenChoices(trapDefenses),
+      allSkills,
     };
+  }
+
+  static isTransientControl(event) {
+    return Boolean(event.target?.closest?.('[data-trap-add]'));
   }
 
   static async addEntry(document, schema, kind, type) {
