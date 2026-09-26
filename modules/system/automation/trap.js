@@ -50,8 +50,14 @@ export default class TrapAutomation extends TrapSetpiece {
     if (!source) return source;
     this.#sanitizeFormula(source, 'damageFormula');
     this.#sanitizeFormula(source, 'chaseDistanceFormula');
-    for (const attack of this.extraAttacks(source)) {
+    for (const attack of Object.values(source.attacks ?? {})) {
       this.#sanitizeFormula(attack, 'damageFormula');
+    }
+    for (const damage of Object.values(source.damages || {})) {
+      this.#sanitizeFormula(damage, 'formula');
+    }
+    for (const defense of Object.values(source.defenses || {})) {
+      this.#sanitizeFormula(defense, 'distanceFormula');
     }
     return source;
   }
@@ -62,19 +68,17 @@ export default class TrapAutomation extends TrapSetpiece {
     if (!this.isValidDamageFormula(target[key])) target[key] = '';
   }
 
-  static extraAttacks(system = {}) {
-    return Object.values(system.attacks ?? {});
-  }
-
   static strikesFrom(system = {}) {
-    const defaults = system.attack || {};
+    const combat = TrapFlow.defenseOfType(system, 'combat') || {};
     const strikes = [];
-    if (system.damageFormula) {
-      strikes.push(this.#strikeFrom(system.damageFormula, '', defaults, defaults));
-    }
-    for (const extra of this.extraAttacks(system)) {
-      if (!extra?.damageFormula) continue;
-      strikes.push(this.#strikeFrom(extra.damageFormula, extra.name, extra, defaults));
+    for (const damage of Object.values(system.damages || {})) {
+      if (damage?.type === 'falling' && damage.height) {
+        strikes.push(this.#strikeFrom(`${Number(damage.height) || 1}d6`, damage.label || '', damage, combat));
+        continue;
+      }
+      if (!damage?.formula) continue;
+      const weaponType = damage.type === 'meleeweapon' || damage.type === 'rangeweapon' ? damage.type : '';
+      strikes.push(this.#strikeFrom(damage.formula, damage.label || '', { ...damage, weaponType }, combat));
     }
     return strikes;
   }
@@ -116,43 +120,6 @@ export default class TrapAutomation extends TrapSetpiece {
     return '';
   }
 
-  static applyAttackWeaponPrefillOnCreate(data = {}, model = null) {
-    const system = data.system ?? data;
-    if (system.attack?.weaponType || model?.attack?.weaponType) return;
-    const weaponType = this.defaultWeaponType(system.trapType ?? model?.trapType);
-    if (!weaponType) return;
-    if (data.system || Object.hasOwn(data, 'system')) {
-      foundry.utils.setProperty(data, 'system.attack.weaponType', weaponType);
-    } else {
-      foundry.utils.setProperty(data, 'attack.weaponType', weaponType);
-    }
-    model?.updateSource?.({ 'attack.weaponType': weaponType });
-  }
-
-  static applyAttackWeaponPrefill(system = {}, changes = {}) {
-    const delta = changes.system;
-    if (!delta || !Object.hasOwn(delta, 'trapType')) return;
-    if (Number(delta.trapType) === Number(system.trapType)) return;
-
-    const previousDefault = this.defaultWeaponType(system.trapType);
-    const nextDefault = this.defaultWeaponType(delta.trapType);
-    const incoming = Object.hasOwn(delta.attack ?? {}, 'weaponType')
-      ? delta.attack.weaponType
-      : (system.attack?.weaponType ?? '');
-    if (!incoming || incoming === previousDefault) {
-      foundry.utils.setProperty(changes, 'system.attack.weaponType', nextDefault);
-    }
-
-    for (const [id, attack] of Object.entries(system.attacks ?? {})) {
-      const extraDelta = delta.attacks?.[id];
-      const extraIncoming = extraDelta && Object.hasOwn(extraDelta, 'weaponType')
-        ? extraDelta.weaponType
-        : (attack?.weaponType ?? '');
-      if (extraIncoming && extraIncoming !== previousDefault) continue;
-      foundry.utils.setProperty(changes, `system.attacks.${id}.weaponType`, nextDefault);
-    }
-  }
-
   static isCrushTrapType(trapType) {
     return Number(trapType) === this.TRAPTYPE_CRUSH;
   }
@@ -168,26 +135,8 @@ export default class TrapAutomation extends TrapSetpiece {
   }
 
   static hiddenSystemFieldNames(trapType) {
-    const vis = this.sheetVisibility(trapType);
-    const hide = new Set();
-    if (!vis.showDamage) hide.add('damageFormula');
-    if (!vis.showAttack) {
-      hide.add('weaponType');
-      hide.add('at');
-      hide.add('traits');
-    }
-    if (!vis.showTimer) {
-      hide.add('timerRounds');
-      hide.add('escapeModifier');
-      hide.add('escalateEvery');
-      hide.add('escalateMax');
-    }
-    if (!vis.showPassword) hide.add('passwordRequired');
-    if (!vis.showChase) {
-      hide.add('chaseGs');
-      hide.add('chaseFw');
-      hide.add('chaseDistanceFormula');
-    }
+    const hide = new Set(['defenses', 'damages']);
+    if (!this.sheetVisibility(trapType).showPassword) hide.add('passwordRequired');
     return hide;
   }
 
@@ -431,18 +380,18 @@ export default class TrapAutomation extends TrapSetpiece {
   }
 
   static async trigger({ behavior, token, region, trapMessage, skipDialog = false, awaitDefense = false } = {}) {
-    if (awaitDefense && !this.isMagicalTrapType(behavior?.system?.trapType)) {
-      if (Object.keys(behavior.system.defenses || {}).length) {
+    const system = behavior?.system || {};
+    if (!behavior || system.disarmed) return null;
+    const shots = this.shotCount(system);
+    if (system.charges > 0 && shots < 1) return null;
+
+    if (awaitDefense && !this.isMagicalTrapType(system.trapType)) {
+      if (Object.keys(system.defenses || {}).length) {
         return this.beginDefense({ behavior, token, trapMessage });
       }
     }
     const actor = DSA5_Utility.actorFromToken(token);
-    if (!behavior || !actor) return null;
-
-    const system = behavior.system || {};
-    if (system.disarmed) return null;
-    const shots = this.shotCount(system);
-    if (system.charges > 0 && shots < 1) return null;
+    if (!actor) return null;
 
     const strikes = this.strikesFrom(system);
     const payload = this.payloadFromBehavior(behavior);
@@ -519,7 +468,7 @@ export default class TrapAutomation extends TrapSetpiece {
       name: name || '',
       damageFormula,
       weaponType: source.weaponType || defaults.weaponType || '',
-      at: source.at ?? defaults.at,
+      at: source.at ?? defaults.attackValue ?? defaults.at,
       traits: source.traits || defaults.traits || '',
     };
   }

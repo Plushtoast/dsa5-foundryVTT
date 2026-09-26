@@ -103,11 +103,8 @@ export default class Actordsa5 extends Actor {
     if (current == target) return;
 
     actor[attr] = true;
-    try {
-      await actor.addCondition(effect, target, true, true);
-    } finally {
-      actor[attr] = undefined;
-    }
+    await actor.addCondition(effect, target, true, true);
+    actor[attr] = undefined;
   }
 
   /**

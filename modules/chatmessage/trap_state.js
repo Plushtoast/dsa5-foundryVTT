@@ -523,16 +523,12 @@ export class TrapState extends ChatMessageState {
         if (entry.type === 'group') {
             const resist = TrapAutomation.timerEscapeResist({
                 ...behavior.system,
-                escapeModifier: entry.modifier,
                 name: entry.label,
             });
             await TrapAutomation.openEscapeCheck({ trapMessage: this.message, token, resist });
             return;
         }
         if (entry.type === 'chase') {
-            behavior.system.chaseGs = entry.gs;
-            behavior.system.chaseFw = entry.fw;
-            behavior.system.chaseDistanceFormula = entry.distanceFormula;
             await TrapAutomation.startBoulderChase({ behavior, token, region: this.region });
             await this.#commitDefense({ id, status: 'success', reaction: 'chase' });
             return;

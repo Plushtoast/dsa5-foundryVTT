@@ -14,47 +14,10 @@
   {{formGroup systemFields.charges value=document.system.charges localize=true}}
   {{> systems/dsa5/templates/items/item-aoe.hbs}}
 
-  {{#if trapSheet.showDamage}}
-    <fieldset class='flexcol gap5px'>
-      <legend data-tooltip='REGIONBEHAVIOR_DSATrap.FIELDS.attacks.hint'>{{localize 'REGIONBEHAVIOR_DSATrap.FIELDS.attacks.label'}}</legend>
-      {{#if hasTrapAttacks}}
-        <nav class='sheet-tabs tabs'>
-          <a class='tabelement lineheight {{ifThen (eq trapAttackTab "baseAttack") "active" ""}}' data-action='tab' data-tab='baseAttack' data-group='trapAttacks'>{{localize 'CHAR.ATTACK'}}</a>
-          {{#each trapAttacks as |attack|}}
-            <a class='tabelement lineheight {{ifThen (eq ../trapAttackTab attack.id) "active" ""}}' data-action='tab' data-group='trapAttacks' data-tab='{{attack.id}}'>{{ifThen attack.name attack.name (localize 'CHAR.ATTACK')}}</a>
-          {{/each}}
-        </nav>
-        <section class='content2 flexcol gap5px'>
-          <div class='tab flexcol gap5px {{ifThen (eq trapAttackTab "baseAttack") "active" ""}}' data-group='trapAttacks' data-tab='baseAttack'>
-            {{> systems/dsa5/templates/items/trap-attack-part.hbs}}
-          </div>
-          {{#each trapAttacks as |attack|}}
-            <div class='tab flexcol gap5px {{ifThen (eq ../trapAttackTab attack.id) "active" ""}}' data-tab='{{attack.id}}' data-group='trapAttacks'>
-              {{> systems/dsa5/templates/items/trap-attack-part.hbs attack=attack scopeKey=attack.id systemFields=../systemFields trapSheet=../trapSheet}}
-            </div>
-          {{/each}}
-        </section>
-      {{else}}
-        {{> systems/dsa5/templates/items/trap-attack-part.hbs}}
-      {{/if}}
-    </fieldset>
-  {{/if}}
+  {{> systems/dsa5/templates/items/trap-flow-part.hbs kind="defenses" legend="REGIONBEHAVIOR_DSATrap.FIELDS.defenses.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDefense" types=defenseTypes rows=trapDefenses prefix="system.defenses."}}
+  {{> systems/dsa5/templates/items/trap-flow-part.hbs kind="damages" legend="REGIONBEHAVIOR_DSATrap.FIELDS.damages.label" addTooltip="REGIONBEHAVIOR_DSATrap.FLOW.addDamage" types=damageTypes rows=trapDamages prefix="system.damages." whenChoices=damageWhenChoices whenBlank="REGIONBEHAVIOR_DSATrap.FLOW.whenImmediate"}}
 
-  {{#if trapSheet.showTimer}}
-    {{formGroup systemFields.timerRounds value=document.system.timerRounds localize=true}}
-    {{formGroup systemFields.escapeModifier value=document.system.escapeModifier localize=true}}
-    {{formGroup systemFields.escalateEvery value=document.system.escalateEvery localize=true}}
-    {{formGroup systemFields.escalateMax value=document.system.escalateMax localize=true}}
-    {{#if trapSheet.showPassword}}
-      {{formGroup systemFields.passwordRequired value=document.system.passwordRequired localize=true}}
-    {{/if}}
-  {{/if}}
-
-  {{#if trapSheet.showChase}}
-    {{formGroup systemFields.chaseGs value=document.system.chaseGs localize=true}}
-    {{formGroup systemFields.chaseFw value=document.system.chaseFw localize=true}}
-    {{formGroup systemFields.chaseDistanceFormula value=document.system.chaseDistanceFormula localize=true}}
-  {{/if}}
+  {{formGroup systemFields.passwordRequired value=document.system.passwordRequired localize=true}}
 
   {{formGroup systemFields.autoPause value=document.system.autoPause localize=true}}
   {{formGroup systemFields.sound value=document.system.sound localize=true}}

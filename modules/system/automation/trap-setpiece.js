@@ -1,6 +1,7 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import Chase from '../../combat/chase/chase.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
+import TrapFlow from './trap-flow.js';
 
 const { duplicate } = foundry.utils;
 
@@ -50,12 +51,13 @@ export default class TrapSetpiece {
   }
 
   static countdownFrom(system = {}, extras = {}) {
+    const escape = TrapFlow.defenseOfType(system, 'group') || {};
     return {
-      remaining: Math.max(0, Number(system.timerRounds) || 0),
+      remaining: Math.max(0, Number(escape.timerRounds) || 0),
       elapsed: 0,
-      escapeModifier: Number(system.escapeModifier) || 0,
-      escalateEvery: Math.max(0, Number(system.escalateEvery) || 0),
-      escalateMax: Number(system.escalateMax) || 0,
+      escapeModifier: Number(escape.modifier) || 0,
+      escalateEvery: Math.max(0, Number(escape.escalateEvery) || 0),
+      escalateMax: Number(escape.escalateMax) || 0,
       timedOut: false,
       trapName: extras.trapName || '',
       trapMessage: extras.trapMessage || '',
@@ -120,9 +122,10 @@ export default class TrapSetpiece {
   }
 
   static timerEscapeResist(system = {}) {
+    const escape = TrapFlow.defenseOfType(system, 'group') || {};
     return {
-      skill: _loc('LocalizedIDs.featOfStrength'),
-      mod: Number(system.escapeModifier) || 0,
+      skill: escape.skill || _loc('LocalizedIDs.featOfStrength'),
+      mod: Number(escape.modifier) || 0,
       effect: {
         name: system.name || _loc('REGIONBEHAVIOR_DSATrap.escape'),
         system: {
@@ -255,9 +258,10 @@ export default class TrapSetpiece {
     if (!this.isStoneTrapType(system.trapType)) return null;
     if (!token?.actor) return null;
 
-    const gs = Number(system.chaseGs) || 0;
-    const fw = Number(system.chaseFw) || 0;
-    const distance = await this.rollChaseDistance(system.chaseDistanceFormula);
+    const chase = TrapFlow.defenseOfType(system, 'chase') || {};
+    const gs = Number(chase.gs) || 0;
+    const fw = Number(chase.fw) || 0;
+    const distance = await this.rollChaseDistance(chase.distanceFormula);
     if (!gs && !fw && !distance) return null;
 
     combat = await TrapSetpiece.#ensureCombat(token, combat);

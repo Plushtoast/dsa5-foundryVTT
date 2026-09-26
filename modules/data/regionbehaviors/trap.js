@@ -2,10 +2,19 @@ import { TrapState } from "../../chatmessage/trap_state.js";
 import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
 import QueryOrchestrator from "../../system/queries/query-orchestrator.js";
 import TrapAutomation from "../../system/automation/trap.js";
-import TrapLegacyMigration from "../../system/maintenance/migrations/trap-legacy-migration.js";
+import TrapFlow from "../../system/automation/trap-flow.js";
+import TrapLegacyMigration from "../../system/automation/trap-legacy-migration.js";
 import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
 import { DSARegionBehaviorBase } from './base.js';
-const { BooleanField, FilePathField, NumberField, HTMLField, StringField, SchemaField, TypedObjectField, TypedSchemaField } = foundry.data.fields;
+const { BooleanField, FilePathField, NumberField, HTMLField, StringField, TypedObjectField, TypedSchemaField } = foundry.data.fields;
+
+const DEFENSE_GATES = {
+    choice: 'REGIONBEHAVIOR_DSATrap.FLOW.gates.choice',
+    onFail: 'REGIONBEHAVIOR_DSATrap.FLOW.gates.onFail',
+    whileTimer: 'REGIONBEHAVIOR_DSATrap.FLOW.gates.whileTimer',
+    onDamage: 'REGIONBEHAVIOR_DSATrap.FLOW.gates.onDamage',
+    ifUndetected: 'REGIONBEHAVIOR_DSATrap.FLOW.gates.ifUndetected',
+};
 
 export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static REGION_TYPE = 'DSATrap'
@@ -34,30 +43,6 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
     static TRAPTYPE_SUFFOCATE = 6;
     static TRAPTYPE_MAGICAL = 7;
 
-    static weaponFields() {
-        return {
-            weaponType: new StringField({
-                initial: '',
-                blank: true,
-                choices: {
-                    meleeweapon: 'TYPES.Item.meleeweapon',
-                    rangeweapon: 'TYPES.Item.rangeweapon',
-                },
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.weaponType.label',
-            }),
-            at: new NumberField({
-                initial: 12,
-                integer: true,
-                min: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.at.label',
-            }),
-            traits: new StringField({
-                initial: '',
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attack.traits.label',
-            }),
-        };
-    }
-
     static sharedSchema() {
         return {
             difficulty: new NumberField({ required: true, initial: 0 }),
@@ -74,19 +59,6 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                     [DSATrapRegionBehavior.TRAPTYPE_MAGICAL]: "REGIONBEHAVIOR_DSATrap.TYPES.7",
                 }
             }),
-            attack: new SchemaField(this.weaponFields()),
-            attacks: new TypedObjectField(new SchemaField({
-                name: new StringField({
-                    initial: '',
-                    label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attacks.name.label',
-                }),
-                damageFormula: new TrapDamageFormulaField({
-                    initial: '',
-                    blank: true,
-                    label: 'REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label',
-                }),
-                ...this.weaponFields(),
-            }), { initial: {}, label: 'REGIONBEHAVIOR_DSATrap.FIELDS.attacks.label' }),
             complexity: new NumberField({
                 initial: 0,
                 choices: {
@@ -95,7 +67,6 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                     [DSATrapRegionBehavior.KOMPLEX_TRAP]: "REGIONBEHAVIOR_DSATrap.COMPLEXITIES.2",
                 }
             }),
-            damageFormula: new TrapDamageFormulaField({ initial: '', blank: true }),
             tools: new StringField({ initial: "" }),
             trigger: new NumberField({
                 initial: 0,
@@ -108,56 +79,11 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
             }),
             autoPause: new BooleanField({ required: true, initial: true }),
             sound: new FilePathField({ categories: ["AUDIO"] }),
-            timerRounds: new NumberField({
-                required: true,
-                integer: true,
-                min: 0,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.timerRounds.label',
-            }),
-            escapeModifier: new NumberField({
-                required: true,
-                integer: true,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escapeModifier.label',
-            }),
-            escalateEvery: new NumberField({
-                required: true,
-                integer: true,
-                min: 0,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escalateEvery.label',
-            }),
-            escalateMax: new NumberField({
-                required: true,
-                integer: true,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.escalateMax.label',
-            }),
-            chaseGs: new NumberField({
-                required: true,
-                integer: true,
-                min: 0,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseGs.label',
-            }),
-            chaseFw: new NumberField({
-                required: true,
-                integer: true,
-                min: 0,
-                initial: 0,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseFw.label',
-            }),
-            chaseDistanceFormula: new TrapDamageFormulaField({
-                initial: '',
-                blank: true,
-                label: 'REGIONBEHAVIOR_DSATrap.FIELDS.chaseDistanceFormula.label',
-            }),
             defenses: new TypedObjectField(new TypedSchemaField({
                 skill: {
                     label: new StringField({ initial: '' }),
                     order: new NumberField({ initial: 0, integer: true }),
-                    gate: new StringField({ initial: 'choice' }),
+                    gate: new StringField({ initial: 'choice', choices: DEFENSE_GATES }),
                     after: new StringField({ initial: '', blank: true }),
                     skill: new StringField({ initial: '' }),
                     applications: new StringField({ initial: '', blank: true }),
@@ -168,7 +94,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                 combat: {
                     label: new StringField({ initial: '' }),
                     order: new NumberField({ initial: 0, integer: true }),
-                    gate: new StringField({ initial: 'choice' }),
+                    gate: new StringField({ initial: 'choice', choices: DEFENSE_GATES }),
                     after: new StringField({ initial: '', blank: true }),
                     reactions: new StringField({ initial: 'nothing,dodge,parry' }),
                     attackValue: new NumberField({ initial: 12, integer: true }),
@@ -176,7 +102,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                 group: {
                     label: new StringField({ initial: '' }),
                     order: new NumberField({ initial: 0, integer: true }),
-                    gate: new StringField({ initial: 'whileTimer' }),
+                    gate: new StringField({ initial: 'whileTimer', choices: DEFENSE_GATES }),
                     after: new StringField({ initial: '', blank: true }),
                     skill: new StringField({ initial: '' }),
                     applications: new StringField({ initial: '', blank: true }),
@@ -191,7 +117,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                 chase: {
                     label: new StringField({ initial: '' }),
                     order: new NumberField({ initial: 0, integer: true }),
-                    gate: new StringField({ initial: 'onFail' }),
+                    gate: new StringField({ initial: 'onFail', choices: DEFENSE_GATES }),
                     after: new StringField({ initial: '', blank: true }),
                     gs: new NumberField({ initial: 8, integer: true }),
                     fw: new NumberField({ initial: 0, integer: true }),
@@ -339,20 +265,22 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         await trapState.applyRollResult({ mode, actorId, status, skipActorMatch, qs });
     }
 
+    flowTypes(kind) {
+        return TrapFlow.types(this.schema, kind);
+    }
+
+    async addFlowEntry(kind, type) {
+        return TrapFlow.addEntry(this.parent, this.schema, kind, type);
+    }
+
+    async removeFlowEntry(kind, id) {
+        return TrapFlow.removeEntry(this.parent, this.schema, kind, id);
+    }
+
     static migrateData(source, options) {
         TrapAutomation.migrateSource(source);
         TrapLegacyMigration.materialize(source);
         return super.migrateData(source, options);
-    }
-
-    async _preCreate(data, options, user) {
-        TrapAutomation.applyAttackWeaponPrefillOnCreate(data, this);
-        return super._preCreate(data, options, user);
-    }
-
-    async _preUpdate(changed, options, user) {
-        TrapAutomation.applyAttackWeaponPrefill(this, changed);
-        return super._preUpdate(changed, options, user);
     }
 
     buildHoverTooltip({ isGM = game.user.isGM } = {}) {
@@ -396,7 +324,8 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         }
 
         if (vis.showAttack) {
-            lines.push(this.constructor.tooltipLine(_loc('CHARAbbrev.AT'), this.attack?.at));
+            const combat = TrapFlow.defenseOfType(this, 'combat');
+            lines.push(this.constructor.tooltipLine(_loc('CHARAbbrev.AT'), combat?.attackValue));
         }
 
         if (Number(this.charges) > 0) {
@@ -428,28 +357,31 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
             ));
         }
 
-        if (vis.showTimer && Number(this.timerRounds) > 0) {
+        const escape = TrapFlow.defenseOfType(this, 'group');
+        const timerRounds = Number(escape?.timerRounds) || 0;
+        if (vis.showTimer && timerRounds > 0) {
             lines.push(this.constructor.tooltipLine(
                 _loc('REGIONBEHAVIOR_DSATrap.FIELDS.timerRounds.label'),
-                this.timerRounds,
+                timerRounds,
             ));
             lines.push(this.constructor.tooltipLine(
                 _loc('REGIONBEHAVIOR_DSATrap.FIELDS.escapeModifier.label'),
-                this.constructor.signedValue(this.escapeModifier),
+                this.constructor.signedValue(escape.modifier),
             ));
         }
 
+        const chase = TrapFlow.defenseOfType(this, 'chase');
         if (vis.showChase) {
-            if (Number(this.chaseGs) > 0) {
+            if (Number(chase?.gs) > 0) {
                 lines.push(this.constructor.tooltipLine(
                     _loc('REGIONBEHAVIOR_DSATrap.FIELDS.chaseGs.label'),
-                    this.chaseGs,
+                    chase.gs,
                 ));
             }
-            if (this.chaseDistanceFormula) {
+            if (chase?.distanceFormula) {
                 lines.push(this.constructor.tooltipLine(
                     _loc('REGIONBEHAVIOR_DSATrap.FIELDS.chaseDistanceFormula.label'),
-                    this.chaseDistanceFormula,
+                    chase.distanceFormula,
                 ));
             }
         }

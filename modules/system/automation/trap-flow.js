@@ -2,6 +2,65 @@
  * Player-started trap defenses and typed damage already stored on the trap.
  */
 export default class TrapFlow {
+  static types(schema, kind) {
+    return Object.keys(schema?.fields?.[kind]?.element?.types || {});
+  }
+
+  static typeChoices(schema, kind) {
+    return Object.fromEntries(this.types(schema, kind).map((type) => [type, `REGIONBEHAVIOR_DSATrap.FLOW.types.${type}`]));
+  }
+
+  static rows(model, kind) {
+    const types = model.schema.fields[kind].element.types;
+    return Object.entries(model[kind] || {}).map(([id, entry]) => ({
+      id,
+      entry,
+      fields: Object.entries(types[entry.type]?.fields || {})
+        .filter(([key]) => key !== 'type')
+        .map(([key, field]) => ({ key, field })),
+    }));
+  }
+
+  static whenChoices(defenses = []) {
+    const choices = {
+      onCatch: 'REGIONBEHAVIOR_DSATrap.FLOW.onCatch',
+      timeout: 'REGIONBEHAVIOR_DSATrap.FLOW.timeout',
+    };
+    for (const row of defenses) choices[row.id] = row.entry.label || row.id;
+    return choices;
+  }
+
+  static sheetContext(model) {
+    const trapDefenses = this.rows(model, 'defenses');
+    return {
+      trapDefenses,
+      trapDamages: this.rows(model, 'damages'),
+      defenseTypes: this.typeChoices(model.schema, 'defenses'),
+      damageTypes: this.typeChoices(model.schema, 'damages'),
+      damageWhenChoices: this.whenChoices(trapDefenses),
+    };
+  }
+
+  static async addEntry(document, schema, kind, type) {
+    const fieldSchema = schema.fields[kind]?.element?.types?.[type];
+    if (!fieldSchema) return null;
+    const id = foundry.utils.randomID();
+    const value = fieldSchema.getInitialValue();
+    value.type = type;
+    await document.update({ [`system.${kind}.${id}`]: value });
+    return id;
+  }
+
+  static async removeEntry(document, schema, kind, id) {
+    if (!id || !schema.fields[kind]) return;
+    const { ForcedDeletion } = foundry.data.operators;
+    await document.update({ [`system.${kind}.${id}`]: new ForcedDeletion() });
+  }
+
+  static defenseOfType(system = {}, type) {
+    return Object.values(system.defenses || {}).find((entry) => entry.type === type) || null;
+  }
+
   static pendingIds(system, flow = {}) {
     const defenses = system.defenses || {};
     const resolved = new Set(flow.resolvedIds || []);

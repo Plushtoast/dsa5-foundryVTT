@@ -4,7 +4,8 @@ import { DSATrapRegionBehavior } from '../regionbehaviors/trap.js';
 import AoeTemplate from './templates/aoe.js';
 import InformableTemplate from './templates/informable.js';
 import TrapAutomation from '../../system/automation/trap.js';
-import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
+import TrapFlow from '../../system/automation/trap-flow.js';
+import TrapLegacyMigration from '../../system/automation/trap-legacy-migration.js';
 
 const { StringField } = foundry.data.fields;
 
@@ -184,36 +185,16 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     return true;
   }
 
-  sheetVisibility() {
-    return TrapAutomation.sheetVisibility(this.trapType);
+  flowTypes(kind) {
+    return TrapFlow.types(this.schema, kind);
   }
 
-  listAttacks() {
-    return Object.entries(this.attacks ?? {}).map(([id, attack]) => ({ id, ...attack }));
+  async addFlowEntry(kind, type) {
+    return TrapFlow.addEntry(this.parent, this.schema, kind, type);
   }
 
-  async addAttack(attack = {}) {
-    const id = foundry.utils.randomID();
-    const weaponType = attack.weaponType || TrapAutomation.defaultWeaponType(this.trapType);
-    await this.parent.update({
-      [`system.attacks.${id}`]: { name: '', damageFormula: '', ...attack, weaponType },
-    });
-    return id;
-  }
-
-  async _preCreate(data, options, user) {
-    TrapAutomation.applyAttackWeaponPrefillOnCreate(data, this);
-    return super._preCreate(data, options, user);
-  }
-
-  async _preUpdate(changed, options, user) {
-    TrapAutomation.applyAttackWeaponPrefill(this, changed);
-    return super._preUpdate(changed, options, user);
-  }
-
-  async removeAttack(id) {
-    if (!id) return;
-    await this.parent.update({ [`system.attacks.${id}`]: _del });
+  async removeFlowEntry(kind, id) {
+    return TrapFlow.removeEntry(this.parent, this.schema, kind, id);
   }
 
   static _migrateData(source) {

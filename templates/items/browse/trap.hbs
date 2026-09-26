@@ -75,12 +75,14 @@
                             {{document.difficulty}}
                         </div>
                         {{/if}}
-                        {{#if document.damageFormula}}
+                        {{#if document.system.damages}}
                         <div class="col table-title noBorder">
-                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}
+                            {{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damages.label"}}
                         </div>
                         <div class="col">
-                            {{document.damageFormula}}
+                            {{#each document.system.damages as |damage|}}
+                            <div>{{#if damage.label}}{{damage.label}}: {{/if}}{{#if damage.formula}}{{damage.formula}}{{else if damage.height}}{{damage.height}}d6{{/if}}</div>
+                            {{/each}}
                         </div>
                         {{/if}}  
                     

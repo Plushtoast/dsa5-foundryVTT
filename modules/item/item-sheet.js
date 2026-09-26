@@ -23,6 +23,7 @@ import ItemDisease from './item-disease.js';
 import ItemPoison from './item-poison.js';
 import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import MerchantStallHelper from '../system/merchant/merchant-stall.js';
+import TrapFlow from '../system/automation/trap-flow.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -1135,8 +1136,8 @@ class TrapSheet extends Enchantable {
 
   static DEFAULT_OPTIONS = {
     ownerActions: {
-      addTrapAttack: this.addTrapAttack,
-      deleteTrapAttack: this.deleteTrapAttack,
+      addTrapFlow: this.addTrapFlow,
+      deleteTrapFlow: this.deleteTrapFlow,
     },
   };
 
@@ -1148,33 +1149,14 @@ class TrapSheet extends Enchantable {
     details: {
       template: 'systems/dsa5/templates/items/item-trap-sheet.hbs',
       scrollable: [''],
-      templates: ['systems/dsa5/templates/items/item-aoe.hbs', 'systems/dsa5/templates/items/trap-attack-part.hbs'],
+      templates: ['systems/dsa5/templates/items/item-aoe.hbs', 'systems/dsa5/templates/items/trap-flow-part.hbs'],
     }
-  };
-
-  tabGroups = {
-    trapAttacks: 'baseAttack',
   };
 
   async _prepareContext(_options) {
     const data = await super._prepareContext(_options);
-    data.trapAttacks = this.item.system.listAttacks();
-    data.hasTrapAttacks = data.trapAttacks.length > 0;
-    data.trapSheet = this.item.system.sheetVisibility();
-    if (this.tabGroups.trapAttacks !== 'baseAttack' && !data.trapAttacks.some((attack) => attack.id === this.tabGroups.trapAttacks)) {
-      this.tabGroups.trapAttacks = 'baseAttack';
-    }
-    data.trapAttackTab = this.tabGroups.trapAttacks;
-    data.trapFlow = {
-      defenses: this.item.system.defenses,
-      damages: this.item.system.damages,
-    };
+    Object.assign(data, TrapFlow.sheetContext(this.item.system));
     return data;
-  }
-
-  _onClickTab(event) {
-    super._onClickTab(event);
-    if (event.target.dataset.tab == 'details') this.changeTab('baseAttack', 'trapAttacks');
   }
 
   async _onRender(context, options) {
@@ -1191,14 +1173,16 @@ class TrapSheet extends Enchantable {
     }
   }
 
-  static async addTrapAttack() {
-    const id = await this.item.system.addAttack({ name: _loc('CHAR.ATTACK') });
-    if (id) this.tabGroups.trapAttacks = id;
+  static async addTrapFlow(_event, target) {
+    const kind = target.dataset.kind;
+    const type = target.closest('fieldset')?.querySelector('[data-trap-add]')?.value;
+    if (!kind || !type) return;
+    await this.item.system.addFlowEntry(kind, type);
   }
 
-  static async deleteTrapAttack(_event, target) {
-    this.tabGroups.trapAttacks = 'baseAttack';
-    await this.item.system.removeAttack(target.dataset.key);
+  static async deleteTrapFlow(_event, target) {
+    const { kind, key } = target.dataset;
+    await this.item.system.removeFlowEntry(kind, key);
   }
 }
 

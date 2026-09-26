@@ -1,6 +1,7 @@
 import Actordsa5 from '../../actor/actor-dsa5.js';
 import { FormAppv2 } from '../../actor/formapp.js';
 import VehicleRamWeapon from '../../data/actor/vehicle-ram-weapon.js';
+import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import NavalCombat from './naval-combat.js';
 
 const { BooleanField, NumberField } = foundry.data.fields;
@@ -152,7 +153,7 @@ export default class NavalHouseRules {
   }
 
   static async refreshAllVehicles() {
-    if (!game.user?.isGM) return;
+    if (!DSA5_Utility.isActiveGM(true)) return;
     for (const actor of game.actors.filter((a) => a.type === 'vehicle')) {
       await Actordsa5.postUpdateConditions(actor);
       actor.reset();

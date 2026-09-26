@@ -1,0 +1,24 @@
+<fieldset class="flexcol gap5px">
+  <legend>{{localize legend}}</legend>
+  <div class="flexrow flexAlignEnd">
+    <select data-trap-add="{{kind}}">
+      {{selectOptions types localize=true}}
+    </select>
+    <button type="button" class="icon fas fa-plus noBorder dsadesignbutton" data-action="addTrapFlow" data-kind="{{kind}}" data-tooltip="{{addTooltip}}"></button>
+  </div>
+  {{#each rows as |row|}}
+    <fieldset class="flexcol gap5px">
+      <div class="flexrow flexAlignEnd">
+        <span class="dsa-pip">{{localize (concat "REGIONBEHAVIOR_DSATrap.FLOW.types." row.entry.type)}}</span>
+        <button type="button" class="icon fa fa-minus noBorder dsadesignbutton" data-action="deleteTrapFlow" data-kind="{{../kind}}" data-key="{{row.id}}" data-tooltip="SHEET.DeleteItem"></button>
+      </div>
+      {{#each row.fields as |part|}}
+        {{#if (eq part.key "when")}}
+          {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) choices=../../whenChoices blank=../../whenBlank localize=true label=(concat "REGIONBEHAVIOR_DSATrap.FLOW." part.key) hint=(concat "REGIONBEHAVIOR_DSATrap.FLOW.hints." part.key)}}
+        {{else}}
+          {{formGroup part.field name=(concat ../../prefix ../id "." part.key) value=(lookup ../entry part.key) localize=true label=(concat "REGIONBEHAVIOR_DSATrap.FLOW." part.key) hint=(concat "REGIONBEHAVIOR_DSATrap.FLOW.hints." part.key)}}
+        {{/if}}
+      {{/each}}
+    </fieldset>
+  {{/each}}
+</fieldset>

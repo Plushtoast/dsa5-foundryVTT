@@ -34,12 +34,7 @@ export default class TrapLegacyMigration {
         applications: '', modifier: difficulty, undetectedMod: -2,
       });
       this.#weaponDamages(system, damages, 'dodge', 'meleeweapon');
-      if (/brand[oö]l/i.test(name)) {
-        addDamage('ignite', {
-          type: 'formula', label: 'Brandöl', when: 'dodge', formula: '',
-          chanceDie: 6, chanceMin: 1, chanceMax: 3,
-        });
-      }
+      Object.assign(damages, this.nameDamages(name, 'blade'));
     } else if (type === 1) {
       addDefense('dodge', {
         type: 'skill', label: 'Ausweichen', order: 0, gate: 'choice', after: '',
@@ -118,16 +113,37 @@ export default class TrapLegacyMigration {
           });
         }
         this.#weaponDamages(system, damages, 'hold', 'formula', { includePrimary: false });
-        if (/splitter/i.test(name)) {
-          addDamage('splinter', { type: 'fromQs', label: 'Splitter', when: 'climb', base: 6, perQs: 0.5 });
-        }
-        if (/gas/i.test(name)) {
-          addDamage('gas', { type: 'formula', label: 'Explosion', when: 'hold', formula: '', chanceDie: 6, chanceMin: 1, chanceMax: 1 });
-        }
+        Object.assign(damages, this.nameDamages(name, 'pit'));
       }
     }
 
     return { defenses, damages };
+  }
+
+  /**
+   * Damages implied by the trap's name. kind limits them to the branch that owns that name.
+   * @param {string} name
+   * @param {'pit'|'blade'|''} [kind]
+   */
+  static nameDamages(name, kind = '') {
+    const damages = {};
+    const text = String(name || '');
+    if ((!kind || kind === 'blade') && /brand[oö]l/i.test(text)) {
+      damages.ignite = {
+        type: 'formula', label: 'Brandöl', when: 'dodge', formula: '',
+        chanceDie: 6, chanceMin: 1, chanceMax: 3,
+      };
+    }
+    if ((!kind || kind === 'pit') && /splitter/i.test(text)) {
+      damages.splinter = { type: 'fromQs', label: 'Splitter', when: 'climb', base: 6, perQs: 0.5 };
+    }
+    if ((!kind || kind === 'pit') && /gas/i.test(text)) {
+      damages.gas = {
+        type: 'formula', label: 'Explosion', when: 'hold', formula: '',
+        chanceDie: 6, chanceMin: 1, chanceMax: 1,
+      };
+    }
+    return damages;
   }
 
   /** Schritt of a fall. Each d6 in the formula is one Schritt. */
