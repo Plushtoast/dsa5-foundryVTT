@@ -30,6 +30,7 @@ const { renderTemplate } = foundry.applications.handlebars;
 export const MerchantSheetMixin = (superclass) =>
   class extends superclass {
     static merchantDefaultTypes = new Set(['merchant', 'loot', 'epic']);
+    static tradeFriendTypes = new Set(['character', 'npc', 'creature']);
     #merchantRenderAbort;
     /** @type {ReturnType<typeof MerchantStallHelper.defaultFilter>|null} */
     #stallFilter = null;
@@ -1050,7 +1051,9 @@ export const MerchantSheetMixin = (superclass) =>
 
     getTradeFriend() {
       const controlledActor = canvas?.tokens?.controlled?.length === 1 ? canvas.tokens.controlled[0].actor : undefined;
-      return this.otherTradeFriend || game.user.character || controlledActor;
+      return [this.otherTradeFriend, game.user.character, controlledActor].find((actor) =>
+        this.constructor.tradeFriendTypes.has(actor?.type),
+      );
     }
 
     async _manageDragItems(item, typeClass) {
@@ -1082,10 +1085,10 @@ export const MerchantSheetMixin = (superclass) =>
 
     setTradeFriend(otherTradeFriend) {
       const newTradeFriend = game.actors.get(otherTradeFriend._id);
-      if (newTradeFriend.isOwner) {
-        this.otherTradeFriend = newTradeFriend;
-        this.render(true);
-      }
+      if (!newTradeFriend?.isOwner) return;
+      if (!this.constructor.tradeFriendTypes.has(newTradeFriend.type)) return;
+      this.otherTradeFriend = newTradeFriend;
+      this.render(true);
     }
 
     async render(options = {}, _options = {}) {
@@ -1226,7 +1229,7 @@ export const MerchantSheetMixin = (superclass) =>
 
     prepareTradeFriend(data) {
       const friend = this.getTradeFriend();
-      if (friend) {
+      if (friend && this.constructor.tradeFriendTypes.has(friend.type)) {
         const tradeData = friend.prepareItems({ details: [] });
         const factor =
           this.actor.system.merchant.merchantType == 'loot'

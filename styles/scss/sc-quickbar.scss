@@ -39,26 +39,23 @@
   .layout-0.sc-quickbar-root {
     flex-direction: column;
     align-items: flex-start;
-    height: 100%;
+    height: auto;
 
     .sc-quickbar-chrome {
-      display: contents;
+      align-items: flex-start;
     }
 
     .sc-quickbar-performance {
-      order: 1;
-      margin-top: auto;
-      align-self: center;
+      align-self: flex-start;
     }
 
     .sc-quickbar-controls {
-      order: -1;
       flex-direction: row;
       flex-wrap: wrap;
       width: var(--portraitSize);
       max-width: 100%;
       flex: 0 0 auto;
-      justify-content: center;
+      justify-content: flex-start;
       align-content: flex-start;
 
       .dragHandler {
@@ -67,7 +64,6 @@
     }
 
     &.display-collapsed .sc-quickbar-controls {
-      order: 0;
       width: auto;
     }
   }
@@ -414,6 +410,7 @@
     --sc-quickbar-side-info-width: 80px;
     align-items: stretch;
 
+    .sc-quickbar-chrome,
     .sc-quickbar-controls {
       width: 100%;
     }
