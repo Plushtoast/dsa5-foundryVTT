@@ -308,13 +308,23 @@ class ActionHandler {
     const chatCardDamage = getChatCardDamage(message);
     const rollTotal = Number.isNumeric(chatCardDamage) ? chatCardDamage : roll?.total;
 
-    return Promise.all(
+    const applied = await Promise.all(
       getChatCardDamageTargets(message).map(actor => {
         const baseDamage = mode === 'sp' ? rollTotal : rollTotal - Actordsa5.armorValue(actor).armor;
         const damage = Math.max(0, Math.round(baseDamage * factor));
         return actor.applyDamage(damage);
       })
     );
+
+    if (!getProperty(message, 'flags.data.damageApplied') && message.content.includes('hideAnchor')) {
+      await updateMessageWithCheckmark(
+        message,
+        'damageApplied',
+        /hideAnchor">/,
+        `hideAnchor"><i class="fas fa-check" style="float:right" data-tooltip="${_loc('damageApplied')}"></i>`
+      );
+    }
+    return applied;
   }
 
   static async payMana(li) {
