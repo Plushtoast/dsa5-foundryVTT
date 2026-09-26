@@ -1,13 +1,35 @@
 /**
- * One-time conversion from formula / attack / timer / chase fields into defenses and damages.
- * Delete this module once every trap document stores those lists itself.
+ * Convert last-release formula / attack / timer / chase fields into defenses and damages,
+ * then drop those leftover keys so item and region documents only store flow.
  */
 export default class TrapLegacyMigration {
+  static LEGACY_KEYS = [
+    'damageText',
+    'damageFormula',
+    'attack',
+    'attacks',
+    'timerRounds',
+    'escapeModifier',
+    'escalateEvery',
+    'escalateMax',
+    'chaseGs',
+    'chaseFw',
+    'chaseDistanceFormula',
+  ];
+
   static materialize(system = {}) {
-    if (system.defenses && Object.keys(system.defenses).length) return system;
-    const built = this.fromLegacy(system);
-    system.defenses = built.defenses;
-    system.damages = built.damages;
+    const hasLegacy = this.LEGACY_KEYS.some((key) => key in system);
+    if (hasLegacy && (!system.defenses || !Object.keys(system.defenses).length)) {
+      const built = this.fromLegacy(system);
+      system.defenses = built.defenses;
+      system.damages = built.damages;
+    }
+    this.stripLegacy(system);
+    return system;
+  }
+
+  static stripLegacy(system = {}) {
+    for (const key of this.LEGACY_KEYS) delete system[key];
     return system;
   }
 

@@ -3,7 +3,7 @@ import DSA5_Utility from "../../system/helpers/utility-dsa5.js";
 import QueryOrchestrator from "../../system/queries/query-orchestrator.js";
 import TrapAutomation from "../../system/automation/trap.js";
 import TrapFlow from "../../system/automation/trap-flow.js";
-import TrapLegacyMigration from "../../system/automation/trap-legacy-migration.js";
+import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
 import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
 import { DSARegionBehaviorBase } from './base.js';
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField, TypedObjectField, TypedSchemaField } = foundry.data.fields;

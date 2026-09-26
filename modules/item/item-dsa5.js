@@ -103,6 +103,15 @@ export default class Itemdsa5 extends Item {
     return { img: this.DEFAULT_ICON };
   }
 
+  static async createDocuments(data, operation = {}) {
+    const prepared = (Array.isArray(data) ? data : [data]).map((entry) => {
+      const clone = foundry.utils.deepClone(entry);
+      const prepare = CONFIG.Item.dataModels[clone.type]?.prepareCreateData;
+      return typeof prepare === 'function' ? prepare(clone) : clone;
+    });
+    return super.createDocuments(prepared, operation);
+  }
+
   static migrateData(source) {
     const migrated = super.migrateData(source);
     const legacyOnUseEffect = getProperty(migrated, 'flags.dsa5.onUseEffect');

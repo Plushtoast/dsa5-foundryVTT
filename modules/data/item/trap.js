@@ -5,7 +5,7 @@ import AoeTemplate from './templates/aoe.js';
 import InformableTemplate from './templates/informable.js';
 import TrapAutomation from '../../system/automation/trap.js';
 import TrapFlow from '../../system/automation/trap-flow.js';
-import TrapLegacyMigration from '../../system/automation/trap-legacy-migration.js';
+import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
 
 const { StringField } = foundry.data.fields;
 
@@ -60,7 +60,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
       }
     }
 
-    const systemSource = this.toObject();
+    const systemSource = this.toObject(false);
     for (const key of Object.keys(DSATrapRegionBehavior.sharedSchema())) {
       if (systemSource[key] !== undefined) data.system[key] = systemSource[key];
     }
@@ -147,7 +147,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
 
     if (scene === canvas.scene && canvas.regions && !canvas.regions.active) await canvas.regions.activate();
 
-    const behavior = await this.toRegionBehavior();
+    const behavior = this.constructor.prepareCreateData(await this.toRegionBehavior());
     const shape = this.makeShape(data, scene);
     const takenNames = new Set((scene.regions ?? canvas.regions?.documentCollection ?? []).map((entry) => entry.name));
     let name = this.parent.name;
@@ -171,7 +171,7 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
 
   async applyToRegion(region) {
     if (!region) return null;
-    const behavior = await this.toRegionBehavior();
+    const behavior = this.constructor.prepareCreateData(await this.toRegionBehavior());
     const [created] = await region.createEmbeddedDocuments('RegionBehavior', [behavior]);
     return created;
   }
@@ -189,6 +189,14 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     return TrapFlow.types(this.schema, kind);
   }
 
+  static prepareCreateData(data) {
+    const system = data?.system;
+    if (!system) return data;
+    if (system.defenses && typeof system.defenses === 'object') system.defenses = _replace(foundry.utils.deepClone(system.defenses));
+    if (system.damages && typeof system.damages === 'object') system.damages = _replace(foundry.utils.deepClone(system.damages));
+    return data;
+  }
+
   async addFlowEntry(kind, type) {
     return TrapFlow.addEntry(this.parent, this.schema, kind, type);
   }
@@ -197,9 +205,10 @@ export default class TrapData extends ItemDataModel.mixin(DescriptionTemplate, A
     return TrapFlow.removeEntry(this.parent, this.schema, kind, id);
   }
 
-  static _migrateData(source) {
-    super._migrateData(source);
+  static migrateData(source, options) {
+    super.migrateData(source, options);
     TrapAutomation.migrateSource(source);
     TrapLegacyMigration.materialize(source);
+    return source;
   }
 }

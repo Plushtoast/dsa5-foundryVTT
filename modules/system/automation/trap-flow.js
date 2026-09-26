@@ -42,12 +42,15 @@ export default class TrapFlow {
   }
 
   static async addEntry(document, schema, kind, type) {
-    const fieldSchema = schema.fields[kind]?.element?.types?.[type];
+    const field = schema.fields[kind];
+    const fieldSchema = field?.element?.types?.[type];
     if (!fieldSchema) return null;
     const id = foundry.utils.randomID();
-    const value = fieldSchema.getInitialValue();
+    const value = fieldSchema.clean({ type }, { partial: false, addTypes: true, migrate: false, prune: false });
     value.type = type;
-    await document.update({ [`system.${kind}.${id}`]: value });
+    const current = field.toObject(document.system?.[kind] ?? {});
+    current[id] = _replace(value);
+    await document.update({ [`system.${kind}`]: current });
     return id;
   }
 
@@ -58,7 +61,7 @@ export default class TrapFlow {
   }
 
   static defenseOfType(system = {}, type) {
-    return Object.values(system.defenses || {}).find((entry) => entry.type === type) || null;
+    return Object.values(system.defenses || {}).find((entry) => entry?.type === type) || null;
   }
 
   static pendingIds(system, flow = {}) {
@@ -82,8 +85,8 @@ export default class TrapFlow {
     const flow = { started: false, resolvedIds: [], failedIds: [], damageIds: [], lines: [], caught: false };
     flow.pending = this.pendingIds(system, flow);
     flow.started = true;
-    const timer = Object.values(system.defenses || {}).find((entry) => entry.type === 'group' && entry.timerRounds);
-    if (timer) {
+    const timer = this.defenseOfType(system, 'group');
+    if (Number(timer?.timerRounds) > 0) {
       flow.timer = {
         remaining: Number(timer.timerRounds) || 0,
         escapeModifier: Number(timer.modifier) || 0,
@@ -103,7 +106,8 @@ export default class TrapFlow {
    */
   static advance(system, flow, { id, status, qs = 0, reaction = '' } = {}) {
     const next = foundry.utils.duplicate(flow);
-    const entry = system.defenses?.[id];
+    const defenses = system.defenses || {};
+    const entry = defenses[id];
     next.resolvedIds = [...(next.resolvedIds || []), id];
     const success = status === 'success' || status === 'critical';
     if (!success) next.failedIds = [...(next.failedIds || []), id];
@@ -112,7 +116,7 @@ export default class TrapFlow {
 
     const opened = [];
     if (entry?.type === 'chase') next.chaseStarted = true;
-    if (!success && entry?.type === 'skill' && system.defenses?.chase?.after === id) {
+    if (!success && entry?.type === 'skill' && defenses.chase?.after === id) {
       next.chaseStarted = false;
     }
 
@@ -126,7 +130,7 @@ export default class TrapFlow {
       opened.push(line);
     }
 
-    if (!success && system.defenses?.chase?.after === id) next.offerChase = true;
+    if (!success && defenses.chase?.after === id) next.offerChase = true;
     next.pending = [...new Set([...next.pending, ...this.pendingIds(system, next)])];
     return { flow: next, lines: opened };
   }
