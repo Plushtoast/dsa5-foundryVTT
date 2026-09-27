@@ -79,7 +79,7 @@
         <div class="col table-title lineheight">{{localize "CONJURATION.ritualModifiers"}}</div>
     </div>
     {{#each moreModifiers as |item|}}
-    <div class="dsa-stat-row dsapx-1">
+    <div class="dsa-stat-row dsapx-1{{#if item.disabled}} dsa-stat-row--disabled{{/if}}"{{#if item.tooltip}} data-tooltip="{{item.tooltip}}"{{/if}}>
         <span class="dsa-stat-row__label">{{item.name}}</span>
         <span class="dsa-stat-row__value">
             {{> systems/dsa5/templates/system/parts/detail-select.hbs picker=item.picker}}

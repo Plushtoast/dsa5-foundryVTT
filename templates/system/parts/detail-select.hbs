@@ -1,12 +1,13 @@
 {{!-- Shared dropdown used by summoning, production-style apps, alchemy, artifacts.
      picker: { field, owner, open, selectedId, selectedLabel, selectedBadge, selectedBadgeClass,
-               selectedIcon, selectedImg, selectedUuid, noneLabel, groups:[{label, options}] }
+               selectedIcon, selectedImg, selectedUuid, noneLabel, disabled, groups:[{label, options}] }
      option: { id, name, badge, badgeClass, icon, img, uuid, selected, tooltip }
      Uses data-dsa-select (not data-action) so ApplicationV2 does not intercept clicks.
      Field lives only on the root .dsa-detail-select — nested {{picker.field}} inside #each is empty. --}}
-<div class="dsa-detail-select" data-field="{{picker.field}}" data-owner="{{picker.owner}}">
+<div class="dsa-detail-select{{#if picker.disabled}} dsa-detail-select--disabled{{/if}}" data-field="{{picker.field}}" data-owner="{{picker.owner}}"{{#if picker.disabled}} data-disabled="true"{{/if}}>
 	<div class="dsa-detail-select__control flexrow gap5px flexAlignCenter">
 		<button type="button" class="dsa-detail-select__toggle flex1" data-dsa-select="toggle"
+			{{#if picker.disabled}}disabled aria-disabled="true"{{/if}}
 			{{#if picker.selectedTooltip}}data-tooltip="{{picker.selectedTooltip}}"{{/if}}>
 			{{#if picker.selectedImg}}
 			<img class="dsa-detail-select__icon" src="{{picker.selectedImg}}" alt="" loading="lazy" />

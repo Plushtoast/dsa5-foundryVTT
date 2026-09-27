@@ -5,6 +5,17 @@
  * their types by merging into `game.dsa5.apps.playerMenu.conjurationData`. Modules are separate
  * Foundry packages and cannot import this file, so everything here is re-exposed as
  * `game.dsa5.CONJURATION` during `init`.
+ *
+ * Conjuration type ownership:
+ *   DEMON, ELEMENTAL — core
+ *   GHOST            — dsa5-incorporealhorrors
+ *   FAIRY            — dsa5-otherworld
+ *   UNDEAD           — dsa5-necromantheum
+ *   GOLEM            — dsa5-magic-3
+ *   CHIMERA, DAIMONID — dsa5-transmutarium
+ *   GOLEMID          — dsa5-elementarium
+ *
+ * Pack summoning (`conjurationData.packSummoning`) is declared next to that type's other maps.
  */
 export const CONJURATION_TYPES = Object.freeze({
   DEMON: 1,
@@ -34,6 +45,7 @@ export const CONJURATION_TYPE_MAPS = Object.freeze([
   'postFunction',
   'typeVisuals',
   'typeHints',
+  'packSummoning',
 ]);
 
 const controlModeByType = {

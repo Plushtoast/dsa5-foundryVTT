@@ -436,6 +436,10 @@
                 background: var(--dsa-detail-select-bg);
             }
 
+            &:disabled {
+                cursor: not-allowed;
+            }
+
             > .fa-caret-up,
             > .fa-caret-down {
                 flex: 0 0 auto;
@@ -702,6 +706,10 @@
                 font-family: inherit;
                 font-weight: normal;
             }
+        }
+
+        &--disabled {
+            opacity: 0.55;
         }
     }
 

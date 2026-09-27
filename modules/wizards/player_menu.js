@@ -12,6 +12,7 @@ import { CONJURATION_TYPES, CONJURATION_CONTROL_MODES, controlModeForType } from
 import DetailSelect from '../system/helpers/detail-select.js';
 import { SummoningFlow } from './summoning/summoning_flow.js';
 import { SummoningExecutor } from './summoning/summoning_executor.js';
+import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import ItemEnchantment from '../item/item-enchantment.js';
 import { DialogExtraFlow } from '../dialog/dialog-extra-flow.js';
 
@@ -155,15 +156,10 @@ export default class PlayerMenu extends DefaultAppv2 {
         [CONJURATION_TYPES.DEMON]: this.summoningModifiers,
         [CONJURATION_TYPES.ELEMENTAL]: this.summoningModifiers,
       },
-      moreModifiers: {
-        [CONJURATION_TYPES.ELEMENTAL]: [
-          {
-            name: _loc('CONJURATION.groupSummoning'),
-            options: [1, 2, 3, 4, 5, 6, 7, 8].map((x) => {
-              return { name: x, val: x * -2 + 2 };
-            }),
-          },
-        ],
+      moreModifiers: {},
+      packSummoning: {
+        [CONJURATION_TYPES.DEMON]: { ability: 'LocalizedIDs.packSummoningDemons', penalty: 2 },
+        [CONJURATION_TYPES.ELEMENTAL]: { ability: 'LocalizedIDs.packSummoningElementals', penalty: 2 },
       },
       // Placeholder visuals: `img` stays null until creature art is available, the icon is the fallback.
       typeVisuals: {
@@ -312,6 +308,41 @@ export default class PlayerMenu extends DefaultAppv2 {
     return requiredSkills.some((skillName) => this.actor.items.find((x) => x.name === `${skillName} - ${label}`));
   }
 
+  /**
+   * moreModifiers for a conjuration type, with pack summoning injected and gated by SF.
+   * @param {number|string} [typeId]
+   * @returns {object[]|undefined}
+   */
+  resolvedMoreModifiers(typeId = this.conjurationData.conjurationType) {
+    const id = Number(typeId);
+    const spec = this.conjurationData.packSummoning?.[id];
+    const stored = this.conjurationData.moreModifiers;
+    const packName = _loc('CONJURATION.groupSummoning');
+
+    if (spec) {
+      if (!stored[id]) stored[id] = [];
+      if (!stored[id].some((mod) => mod.name === packName)) {
+        stored[id].unshift({
+          name: packName,
+          options: [1, 2, 3, 4, 5, 6, 7, 8].map((count) => ({ name: count, val: count * -spec.penalty + spec.penalty })),
+        });
+      }
+    }
+
+    const list = stored[id];
+    if (!spec && !list?.length) return undefined;
+    const mods = list?.length ? duplicate(list) : [];
+    if (!spec) return mods.length ? mods : undefined;
+
+    const entry = mods.find((mod) => mod.name === packName);
+    const available = !!(this.actor && SpecialabilityRulesDSA5.hasAbility(this.actor, spec.ability));
+    entry.requires = spec.ability;
+    entry.disabled = !available;
+    entry.tooltip = available ? '' : game.i18n.format('CONJURATION.groupSummoningRequires', { name: _loc(spec.ability) });
+    if (!available) entry.selected = 0;
+    return mods;
+  }
+
   static async rollConjuration(ev, target) {
     if (!this.conjuration)
       return ui.notifications.warn('CONJURATION.dragConjuration', {
@@ -336,15 +367,13 @@ export default class PlayerMenu extends DefaultAppv2 {
         selected: true,
       });
 
-    if (this.conjurationData.moreModifiers[this.conjurationData.conjurationType]) {
-      const mods = this.conjurationData.moreModifiers[this.conjurationData.conjurationType].filter((x) => x.selected);
-      for (const mod of mods) {
-        moreModifiers.push({
-          name: mod.name,
-          value: Number(mod.selected),
-          selected: true,
-        });
-      }
+    for (const mod of this.resolvedMoreModifiers() || []) {
+      if (mod.disabled || !mod.selected) continue;
+      moreModifiers.push({
+        name: mod.name,
+        value: Number(mod.selected),
+        selected: true,
+      });
     }
 
     const options = {
@@ -475,6 +504,7 @@ export default class PlayerMenu extends DefaultAppv2 {
    * @param {HTMLElement} select
    */
   async #handleSummoningDetailSelect(action, target, select) {
+    if (select.dataset.disabled === 'true') return;
     if (action === 'toggle') {
       const field = select.dataset.field;
       if (!field) return;
@@ -746,6 +776,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     }
     if (field.startsWith('moreMod:')) {
       const name = field.slice('moreMod:'.length);
+      if (this.resolvedMoreModifiers()?.find((mod) => mod.name == name)?.disabled) return;
       const mod = this.conjurationData.moreModifiers[this.conjurationData.conjurationType]?.find((x) => x.name == name);
       if (mod) {
         mod.selected = id;
@@ -956,10 +987,9 @@ export default class PlayerMenu extends DefaultAppv2 {
         mod.count = this.conjurationData.selectedIds.filter((x) => x == mod.id).length;
       }
 
-      let moreModifiers = this.conjurationData.moreModifiers[this.conjurationData.conjurationType];
+      let moreModifiers = this.resolvedMoreModifiers();
 
       if (moreModifiers) {
-        moreModifiers = duplicate(moreModifiers);
         for (const item of moreModifiers) {
           item.options = item.options.map((x) => {
             x.label = `${x.name} (${x.val})`;
@@ -972,6 +1002,8 @@ export default class PlayerMenu extends DefaultAppv2 {
             open: this._openPickers.has(`moreMod:${item.name}`),
             selectedId: selectedOpt?.val ?? item.selected ?? '',
             selectedLabel: selectedOpt?.label || selectedOpt?.name || '',
+            disabled: !!item.disabled,
+            selectedTooltip: item.tooltip || '',
             groups: [{
               label: '',
               options: item.options.map((opt) => ({

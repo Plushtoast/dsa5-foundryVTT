@@ -18,13 +18,15 @@ export default class DetailSelect {
    * @param {string} [opts.selectedUuid]
    * @param {string} [opts.selectedTooltip]
    * @param {string} [opts.noneLabel]
+   * @param {boolean} [opts.disabled]
    * @param {Array<{label?: string, options: object[]}>} [opts.groups]
    */
   static build(opts = {}) {
+    const disabled = !!opts.disabled;
     return {
       field: opts.field || '',
       owner: opts.owner || '',
-      open: !!opts.open,
+      open: !!opts.open && !disabled,
       selectedId: opts.selectedId == null ? '' : String(opts.selectedId),
       selectedLabel: opts.selectedLabel || '',
       selectedBadge: opts.selectedBadge || '',
@@ -34,6 +36,7 @@ export default class DetailSelect {
       selectedUuid: opts.selectedUuid || '',
       selectedTooltip: opts.selectedTooltip || '',
       noneLabel: opts.noneLabel || '',
+      disabled,
       groups: opts.groups || [],
     };
   }
