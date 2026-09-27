@@ -128,7 +128,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
         const exampleValue = data.attr('data-ph') || '';
         parent.find('.type select').val(data.attr('data-type'));
         parent.find('.phase select').val(data.attr('data-phase') || 'initial');
-        parent.find('.value input').val(exampleValue).attr('placeholder', '');
+        parent.find('.value code-mirror, .value input').val(exampleValue);
         elem.trigger('blur');
       });
     html.find('.changes .select2').each((i, el) => {
@@ -161,7 +161,7 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
           const row = $sel.closest('.row-section');
           row.find('input[name$=".type"]').val($opt.attr('data-type') || 'add');
           row.find('input[name$=".phase"]').val($opt.attr('data-phase') || 'initial');
-          row.find('.value input').val(exampleValue).attr('placeholder', '');
+          row.find('.value code-mirror, .value input').val(exampleValue);
           $sel.trigger('blur');
         });
     });

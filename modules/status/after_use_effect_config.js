@@ -166,7 +166,7 @@ export default class AfterUseEffectConfig extends HandlebarsApplicationMixin(App
         const exampleValue = data.attr('data-ph') || '';
         parent.find('.type select').val(data.attr('data-type'));
         parent.find('.phase select').val(data.attr('data-phase') || 'initial');
-        parent.find('.value input').val(exampleValue).attr('placeholder', '');
+        parent.find('.value code-mirror, .value input').val(exampleValue);
         elem.trigger('blur');
       });
     html.find('.select2').each((i, el) => {
