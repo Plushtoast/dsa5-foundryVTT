@@ -87,6 +87,26 @@ export default class GroupData extends ActorDataModel {
     }
   }
 
+  /**
+   * Travel speed of an assigned location for a group travel mode.
+   * Boats and ships store their pace on waterMax; land vehicles use max.
+   * @param {Actor} actor
+   * @param {string} type
+   * @returns {number}
+   */
+  static speedForAssignedLocation(actor, type) {
+    const spd = actor?.system?.status?.speed;
+    if (!spd) return 0;
+    if (type === 'river' || type === 'sea') {
+      const water = Number(spd.waterMax);
+      if (water > 0) return water;
+    } else if (type === 'air') {
+      const air = Number(spd.airMax);
+      if (air > 0) return air;
+    }
+    return Number(spd.max) || 0;
+  }
+
   _resolveLocations() {
     this.locationActors = new Map();
     this.resolvedLocations = [];
@@ -110,7 +130,7 @@ export default class GroupData extends ActorDataModel {
             return actor.img;
           },
           get speed() {
-            return actor.system.status?.speed?.max ?? 0;
+            return GroupData.speedForAssignedLocation(actor, loc.type);
           },
         });
       }

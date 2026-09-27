@@ -113,6 +113,16 @@ export default class DSA5StatusEffects {
         value: val,
       });
     }
+
+    DSA5StatusEffects.sortByLocalizedName(data.conditions);
+    DSA5StatusEffects.sortByLocalizedName(data.cumulativeConditions);
+    DSA5StatusEffects.sortByLocalizedName(data.transferedConditions);
+  }
+
+  static sortByLocalizedName(list) {
+    const lang = game.i18n.lang;
+    list.sort((a, b) => _loc(a.name).localeCompare(_loc(b.name), lang));
+    return list;
   }
 
   static async enrichSheetEffect(effectData, sourceEffect) {

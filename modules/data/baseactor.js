@@ -772,7 +772,8 @@ export class ActorDataModel extends DSADataModel {
   _applyModiferTransformations(itemModifiers) {
     this.itemModifiers = {};
 
-    for (const key of Object.keys(itemModifiers)) {
+    const lang = game.i18n.lang;
+    for (const key of Object.keys(itemModifiers).sort((a, b) => a.localeCompare(b, lang))) {
       const shortCut = DSA5.knownShortcuts[key.toLowerCase()];
       if (shortCut) {
         const modSum = itemModifiers[key].reduce((prev, cur) => prev + cur.value, 0);
