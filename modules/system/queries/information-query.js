@@ -290,13 +290,15 @@ export default class InformationQueryService {
     return selected;
   }
 
-  static informationPostFunction({ uuid, parentUuid, messageMode, playerId } = {}) {
+  static informationPostFunction({ uuid, parentUuid, messageMode, playerId, actor } = {}) {
+    const resultPlayerId = InformationQueryService.resolveResultPlayerId({ actor, playerId });
     return {
       functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
       uuid,
       parentUuid: parentUuid || null,
       messageMode,
-      recipients: InformationQueryService.getInformationResultRecipients(playerId || game.user.id, messageMode),
+      playerId: resultPlayerId,
+      recipients: InformationQueryService.getInformationResultRecipients(resultPlayerId, messageMode),
     };
   }
 
@@ -345,6 +347,42 @@ export default class InformationQueryService {
 
   static async renderMessageModeHeader(messageMode = game.settings.get('core', 'messageMode')) {
     return renderTemplate('systems/dsa5/templates/dialog/parts/message-mode-row.hbs', { messageMode });
+  }
+
+  /**
+   * Player who should receive "Nur Spieler" information results for this actor.
+   * Prefers the assigned / owning player over the user who physically rolled,
+   * so a GM rolling on behalf still whispers to the affected player (#2788).
+   * @param {Actor} [actor]
+   * @param {string|null} [fallbackId]
+   * @returns {string|null}
+   */
+  static resultPlayerId(actor, fallbackId = game.user.id) {
+    if (actor) {
+      const { designatedUser } = QueryOrchestrator.resolveDesignatedUser(actor);
+      if (designatedUser?.id) return designatedUser.id;
+
+      const assigned = game.users.find((user) => !user.isGM && user.character?.id === actor.id);
+      if (assigned) return assigned.id;
+
+      const owner = game.users.find((user) => !user.isGM && actor.testUserPermission(user, 'OWNER'));
+      if (owner) return owner.id;
+    }
+    return fallbackId || null;
+  }
+
+  static #actorFromPayload(payload) {
+    const speaker = payload?.result?.speaker || payload?.speaker || payload?.result?.extra?.speaker;
+    return DSA5_Utility.getSpeaker(speaker);
+  }
+
+  static resolveResultPlayerId({ actor, playerId, payload, rollMessageId } = {}) {
+    const rollActor = actor
+      || this.#actorFromPayload(payload)
+      || DSA5_Utility.getSpeaker(game.messages.get(rollMessageId)?.speaker);
+    const linked = this.resultPlayerId(rollActor, null);
+    if (linked) return linked;
+    return playerId || game.user.id;
   }
 
   static #gmIds() {
@@ -429,7 +467,10 @@ export default class InformationQueryService {
     await this.upsertResultMessage({
       resultMessageId: payload.resultMessageId,
       messageMode: payload.messageMode,
-      recipients: this.getInformationResultRecipients(payload.playerId, payload.messageMode),
+      recipients: this.getInformationResultRecipients(
+        this.resolveResultPlayerId({ playerId: payload.playerId }),
+        payload.messageMode,
+      ),
     }, resultHtml, payload.rollMessageId);
   }
 
@@ -441,14 +482,16 @@ export default class InformationQueryService {
     }
 
     const infoName = virtualInfo?.name || item?.name || '';
+    const playerId = this.resolveResultPlayerId({ actor, payload: result });
+    const playerUser = game.users.get(playerId);
     const payload = {
       itemUuid: uuid,
       itemName: infoName,
       skillName: skill?.name || virtualInfo?.skill || item?.system?.skill || '',
       rolledQS: result.result.qualityStep || 0,
       successLevel: result.result.successLevel || 0,
-      playerId: game.user.id,
-      playerName: game.user.name,
+      playerId,
+      playerName: playerUser?.name || game.user.name,
       actorName: actor?.name || result.result.speaker?.alias || '',
       virtualInfo,
       parentUuid: parentUuid || null,
@@ -479,6 +522,7 @@ export default class InformationQueryService {
         parentUuid: parentUuid || null,
         virtualInfo,
         messageMode: payload.messageMode,
+        playerId: payload.playerId,
         recipients: this.getInformationResultRecipients(payload.playerId, payload.messageMode),
       });
     }
@@ -553,7 +597,7 @@ export default class InformationQueryService {
 
     const setupData = await actor.setupSkill(skill, {
       modifier,
-      postFunction: this.informationPostFunction({ uuid }),
+      postFunction: this.informationPostFunction({ uuid, actor }),
     }, tokenId);
     if (!setupData) return;
     setupData.testData.opposable = false;
@@ -577,7 +621,7 @@ export default class InformationQueryService {
     const optns = {
       modifier,
       ...(messageMode ? { messageMode } : {}),
-      postFunction: this.informationPostFunction({ uuid, messageMode }),
+      postFunction: this.informationPostFunction({ uuid, messageMode, actor }),
     };
     const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
     actor.setupSkill(skill, optns, tokenId).then(async (setupData) => {
@@ -600,14 +644,14 @@ export default class InformationQueryService {
     const next = { ...postFunction, ...linked };
 
     if (next.queryMessageId) {
-      await Service.refreshInformationQuery(next, outcome);
+      await Service.refreshInformationQuery(next, outcome, payload);
       return;
     }
 
-    await Service.publishInformationResult(next, outcome);
+    await Service.publishInformationResult(next, outcome, payload);
   }
 
-  static async refreshInformationQuery(postFunction, outcome) {
+  static async refreshInformationQuery(postFunction, outcome, payload) {
     const queryMessage = game.messages.get(postFunction.queryMessageId);
     const state = queryMessage?.getFlag('dsa5', InformationQueryService.FLAG_KEY);
 
@@ -622,10 +666,10 @@ export default class InformationQueryService {
 
     if (state && state.status !== 'approved') return;
 
-    await InformationQueryService.publishInformationResult(postFunction, outcome);
+    await InformationQueryService.publishInformationResult(postFunction, outcome, payload);
   }
 
-  static async publishInformationResult(postFunction, outcome) {
+  static async publishInformationResult(postFunction, outcome, payload) {
     const item = postFunction.uuid ? await fromUuid(postFunction.uuid) : null;
     if (!item && !postFunction.virtualInfo) return;
 
@@ -638,7 +682,16 @@ export default class InformationQueryService {
     const resultHtml = await InformationQueryService.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    await InformationQueryService.upsertResultMessage(postFunction, resultHtml, outcome.messageId);
+    const playerId = InformationQueryService.resolveResultPlayerId({
+      playerId: postFunction.playerId,
+      payload,
+      rollMessageId: outcome.messageId,
+    });
+    await InformationQueryService.upsertResultMessage({
+      ...postFunction,
+      playerId,
+      recipients: InformationQueryService.getInformationResultRecipients(playerId, postFunction.messageMode),
+    }, resultHtml, outcome.messageId);
   }
 
   static chatListeners(html) {

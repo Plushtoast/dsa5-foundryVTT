@@ -604,7 +604,7 @@ export default class MagicAnalysisQueryService {
     const recipient = state.recipients?.[0];
     const rolledQS = rollResult.result.qualityStep || 0;
     const successLevel = rollResult.result.successLevel || 0;
-    const playerId = recipient?.designatedUserId || rollResult.userId || game.user.id;
+    const playerId = InformationQueryService.resultPlayerId(actor, recipient?.designatedUserId || rollResult.userId);
     const playerUser = game.users.get(playerId);
     const skillName = state.infoContent?.skill || MagicAnalysisService._magiekundeSkill();
 
