@@ -92,7 +92,7 @@ export class DSARegionBehaviorBase extends foundry.data.regionBehaviors.RegionBe
     const type = behavior?.type ?? this.constructor.REGION_TYPE;
     return {
       name: region?.name || behavior?.name || '',
-      typeLabel: isGM ? game.i18n.localize(`TYPES.RegionBehavior.${type}`) : '',
+      typeLabel: isGM ? _loc(`TYPES.RegionBehavior.${type}`) : '',
       icon: CONFIG.RegionBehavior.typeIcons?.[type] || 'fas fa-map-location-dot',
       status: isGM ? this.hoverTooltipStatus() : null,
       lines: isGM ? this.hoverTooltipLines() : [],

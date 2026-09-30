@@ -52,7 +52,7 @@ export default class TrapLegacyMigration {
     } else if (type === 3) {
       addDefense('dodge', {
         type: 'skill', label: 'Ausweichen', order: 0, gate: 'choice', after: '',
-        skill: game.i18n.localize('dodge'),
+        skill: _loc('dodge'),
         applications: '', modifier: difficulty, undetectedMod: -2,
       });
       this.#weaponDamages(system, damages, 'dodge', 'meleeweapon');
@@ -60,7 +60,7 @@ export default class TrapLegacyMigration {
     } else if (type === 1) {
       addDefense('dodge', {
         type: 'skill', label: 'Ausweichen', order: 0, gate: 'choice', after: '',
-        skill: game.i18n.localize('dodge'), applications: '', modifier: difficulty, undetectedMod: 0,
+        skill: _loc('dodge'), applications: '', modifier: difficulty, undetectedMod: 0,
       });
       addDefense('chase', {
         type: 'chase', label: 'Verfolgungsjagd', order: 1, gate: 'onFail', after: 'dodge',
@@ -74,7 +74,7 @@ export default class TrapLegacyMigration {
     } else if (type === 4 || type === 6) {
       addDefense('escape', {
         type: 'group', label: 'Kraftakt', order: 0, gate: 'whileTimer', after: '',
-        skill: game.i18n.localize('LocalizedIDs.featOfStrength'),
+        skill: _loc('LocalizedIDs.featOfStrength'),
         applications: type === 6 ? 'Eintreten & Zertrümmern' : 'Drücken & Verbiegen',
         interval: type === 6 ? '5 KR' : '2 KR',
         modifier: Number(system.escapeModifier) || 0,
@@ -90,21 +90,21 @@ export default class TrapLegacyMigration {
       const avoidId = 'avoid';
       addDefense(avoidId, {
         type: 'skill', label: 'Körperbeherrschung', order: 0, gate: 'choice', after: '',
-        skill: game.i18n.localize('LocalizedIDs.bodyControl'),
+        skill: _loc('LocalizedIDs.bodyControl'),
         applications: 'Akrobatik,Springen',
         modifier: difficulty,
         undetectedMod: 0,
       });
       addDefense('hold', {
         type: 'skill', label: 'Kraftakt', order: 1, gate: 'onFail', after: avoidId,
-        skill: game.i18n.localize('LocalizedIDs.featOfStrength'),
+        skill: _loc('LocalizedIDs.featOfStrength'),
         applications: 'Ziehen & Zerren',
         modifier: difficulty,
         undetectedMod: 0,
       });
       addDefense('climb', {
         type: 'skill', label: 'Klettern', order: 2, gate: 'onFail', after: 'hold',
-        skill: game.i18n.localize('LocalizedIDs.climbing'),
+        skill: _loc('LocalizedIDs.climbing'),
         applications: '',
         modifier: 0,
         undetectedMod: 0,
@@ -116,7 +116,7 @@ export default class TrapLegacyMigration {
         this.#weaponDamages(system, damages, 'hold', 'meleeweapon', { includePrimary: false });
         addDefense('stun', {
           type: 'skill', label: 'Selbstbeherrschung', order: 3, gate: 'onDamage', after: 'slide',
-          skill: game.i18n.localize('LocalizedIDs.selfControl'),
+          skill: _loc('LocalizedIDs.selfControl'),
           applications: 'Handlungsfähigkeit bewahren',
           modifier: 0,
           modifierFromDamage: 'slide',
@@ -125,10 +125,10 @@ export default class TrapLegacyMigration {
       } else {
         const height = this.d6Count(system.damageFormula);
         if (height > 0) {
-          const unit = game.i18n.localize('GROUP.schritt');
+          const unit = _loc('GROUP.schritt');
           addDamage('fall', {
             type: 'falling',
-            label: `${game.i18n.localize('fallingDamage')} (${height} ${unit})`,
+            label: `${_loc('fallingDamage')} (${height} ${unit})`,
             when: 'hold',
             height,
             floorMod: 0,

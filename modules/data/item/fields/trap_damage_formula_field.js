@@ -10,7 +10,7 @@ export default class TrapDamageFormulaField extends StringField {
     super._validateType(value, options);
     if (!value) return;
     if (!Roll.validate(value)) {
-      throw new Error(game.i18n.localize('REGIONBEHAVIOR_DSATrap.FLOW.invalidFormula'));
+      throw new Error(_loc('REGIONBEHAVIOR_DSATrap.FLOW.invalidFormula'));
     }
   }
 }

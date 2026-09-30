@@ -80,7 +80,7 @@ export class InventoryBulkActionHelper {
 
     const droppedItems = items.map((item) => this.#sanitizeItemData(item.toObject()));
     const lootItems = await DSA5_Utility.allMoneyItems();
-    const actorName = game.i18n.format('INVENTORYBULK.dropPileName', { name: actor.name });
+    const actorName = _loc('INVENTORYBULK.dropPileName', { name: actor.name });
     const actorImg = actor.img;
 
     lootItems.push(...droppedItems);
@@ -135,7 +135,7 @@ export class InventoryBulkActionHelper {
   }
 
   static async #findOrCreateStashBag(actor) {
-    const bagName = game.i18n.format('INVENTORYBULK.dropPileName', { name: actor.name });
+    const bagName = _loc('INVENTORYBULK.dropPileName', { name: actor.name });
     const existingBag = actor.items.find(
       (item) => item.type === 'equipment' && getProperty(item, 'system.equipmentType.value') === 'bags' && item.name === bagName,
     );

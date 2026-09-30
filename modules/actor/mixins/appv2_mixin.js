@@ -52,7 +52,7 @@ export const AppV2Mixin = (superclass) =>
       const item = fromUuidSync(data.uuid);
       if (!item || item.parent?.uuid === this.actor.uuid || !game.dsa5.config.equipmentCategories.has(item.type)) return '';
 
-      return game.i18n.localize('SHEET.DropMoveFromSourceHint');
+      return _loc('SHEET.DropMoveFromSourceHint');
     }
 
     async _renderFrame(options) {

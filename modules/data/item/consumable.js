@@ -173,7 +173,7 @@ export default class ConsumableData extends ItemDataModel.mixin(OnUseTemplate, A
     if (!actor) return;
 
     const source = testData.source;
-    const typeLabel = game.i18n.localize('TYPES.Item.consumable');
+    const typeLabel = _loc('TYPES.Item.consumable');
 
     for (const item of actor.items) {
       if (item.type !== 'consumable') continue;

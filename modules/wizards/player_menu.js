@@ -338,7 +338,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     const available = !!(this.actor && SpecialabilityRulesDSA5.hasAbility(this.actor, spec.ability));
     entry.requires = spec.ability;
     entry.disabled = !available;
-    entry.tooltip = available ? '' : game.i18n.format('CONJURATION.groupSummoningRequires', { name: _loc(spec.ability) });
+    entry.tooltip = available ? '' : _loc('CONJURATION.groupSummoningRequires', { name: _loc(spec.ability) });
     if (!available) entry.selected = 0;
     return mods;
   }

@@ -62,9 +62,9 @@ class VisionOfTrueFaithBurgerMenu extends RollDialogBurgerMenuRule {
 
             if (effectData.system.changes.length > 0) {
                 await actor.createEmbeddedDocuments('ActiveEffect', [effectData]);
-                ui.notifications.info(game.i18n.format('VISION_FAITH.gained', { name: actor.name, wp: bonuses.willpower, sk: bonuses.soulpower }));
+                ui.notifications.info(_loc('VISION_FAITH.gained', { name: actor.name, wp: bonuses.willpower, sk: bonuses.soulpower }));
             } else {
-                ui.notifications.info(game.i18n.format('VISION_FAITH.noBonus', { qs: qualityStep, name: actor.name }));
+                ui.notifications.info(_loc('VISION_FAITH.noBonus', { qs: qualityStep, name: actor.name }));
             }
         } else {
             ui.notifications.warn(this.#formatVisionMessage('testFailed', actor));
@@ -72,7 +72,7 @@ class VisionOfTrueFaithBurgerMenu extends RollDialogBurgerMenuRule {
     }
 
     #formatVisionMessage(key, actor) {
-        return game.i18n.format(`VISIONS.${key}`, {
+        return _loc(`VISIONS.${key}`, {
             name: actor.name,
             vision: this.abilityName,
             skill: this.#getSkillName(),

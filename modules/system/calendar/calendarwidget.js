@@ -113,7 +113,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             return {
                 icon: 'fas fa-cloud-sun',
                 available: false,
-                tooltip: game.i18n.localize('CALENDAR.DSA.weatherUnavailable'),
+                tooltip: _loc('CALENDAR.DSA.weatherUnavailable'),
             };
         }
 
@@ -135,10 +135,10 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         else if (clouds === 'CLEAR' && precip === 'NONE') icon = 'fas fa-sun';
 
         const tooltipParts = [];
-        if (clouds) tooltipParts.push(game.i18n.localize(`DSA5.WeatherGen.cloudCover.${clouds}.name`));
-        if (precip && precip !== 'NONE') tooltipParts.push(game.i18n.localize(`DSA5.WeatherGen.precipitation.${precip}.name`));
+        if (clouds) tooltipParts.push(_loc(`DSA5.WeatherGen.cloudCover.${clouds}.name`));
+        if (precip && precip !== 'NONE') tooltipParts.push(_loc(`DSA5.WeatherGen.precipitation.${precip}.name`));
         const tooltip = tooltipParts.filter(t => t && !t.startsWith('DSA5.WeatherGen.')).join(' · ')
-            || game.i18n.localize('CALENDAR.DSA.weather');
+            || _loc('CALENDAR.DSA.weather');
 
         return { icon, available: true, tooltip };
     }
@@ -450,7 +450,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             if (visibility !== 'exact') {
                 const datePart = dateString.split(', ').slice(1).join(', ');
                 if (visibility === 'rough-time') {
-                    const dayTimeLabel = game.i18n.localize(`CALENDAR.DSA.dayTimes.${dayTimeBackground.key}`);
+                    const dayTimeLabel = _loc(`CALENDAR.DSA.dayTimes.${dayTimeBackground.key}`);
                     dateString = `${dayTimeLabel}, ${datePart}`;
                 } else if (visibility === 'date-only') {
                     dateString = datePart;
@@ -468,7 +468,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         const dayTimeIcon = this.element.querySelector('.calendar-daytime-icon');
         if (dayTimeIcon && dayTimeBackground.icon) {
             dayTimeIcon.className = `${dayTimeBackground.icon} calendar-bookend calendar-daytime-icon`;
-            dayTimeIcon.dataset.tooltip = game.i18n.localize(`CALENDAR.DSA.dayTimes.${dayTimeBackground.key}`);
+            dayTimeIcon.dataset.tooltip = _loc(`CALENDAR.DSA.dayTimes.${dayTimeBackground.key}`);
         }
     }
 
@@ -546,7 +546,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         data.isGM = game.user.isGM;
         data.dayTimeBackground = this.constructor.dayTimeBackground(components);
         data.dayTimeIcon = data.dayTimeBackground.icon || 'fas fa-sun';
-        data.dayTimeTooltip = game.i18n.localize(`CALENDAR.DSA.dayTimes.${data.dayTimeBackground.key}`);
+        data.dayTimeTooltip = _loc(`CALENDAR.DSA.dayTimes.${data.dayTimeBackground.key}`);
         const weatherInfo = this.constructor.resolveWeatherIcon(this.constructor.currentWeather());
         data.weatherIcon = weatherInfo.icon;
         data.weatherAvailable = weatherInfo.available;
@@ -568,7 +568,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
             if (visibility !== 'exact') {
                 const datePart = data.dateString.split(', ').slice(1).join(', ');
                 if (visibility === 'rough-time') {
-                    const dayTimeLabel = game.i18n.localize(`CALENDAR.DSA.dayTimes.${data.dayTimeBackground.key}`);
+                    const dayTimeLabel = _loc(`CALENDAR.DSA.dayTimes.${data.dayTimeBackground.key}`);
                     data.dateString = `${dayTimeLabel}, ${datePart}`;
                     data.dateTooltip = data.dateTooltip.replace(/\d{2}:\d{2}:\d{2}/, dayTimeLabel);
                 } else if (visibility === 'date-only') {
@@ -718,10 +718,10 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
     }
 
     static composeWeatherToggleTooltip(weatherTooltip, autoWeatherEnabled) {
-        const status = game.i18n.localize(autoWeatherEnabled
+        const status = _loc(autoWeatherEnabled
             ? 'DEREATLAS.CONTROLS.AutoWeatherEnabled'
             : 'DEREATLAS.CONTROLS.AutoWeatherDisabled');
-        const action = game.i18n.localize('DEREATLAS.CONTROLS.ToggleAutoWeather');
+        const action = _loc('DEREATLAS.CONTROLS.ToggleAutoWeather');
         return [weatherTooltip, `${action} (${status})`].filter(Boolean).join(' — ');
     }
 

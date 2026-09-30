@@ -25,7 +25,7 @@ export default class MagicalActionSheetGroups {
     }
 
     const actions = [...byKind.values()].sort((a, b) =>
-      game.i18n.localize(a.label).localeCompare(game.i18n.localize(b.label), game.i18n.lang),
+      _loc(a.label).localeCompare(_loc(b.label), game.i18n.lang),
     );
 
     return { items: remainder, actions };

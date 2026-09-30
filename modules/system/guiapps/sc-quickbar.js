@@ -844,7 +844,7 @@ export default class ScQuickbar extends DefaultAppv2 {
   #tristateOption(labelKeys, state, key, icons, group) {
     const next = (state + 1) % labelKeys.length;
     return {
-      label: game.i18n.format('SCQUICKBAR.cycleState', { mode: game.i18n.localize(labelKeys[state]) }),
+      label: _loc('SCQUICKBAR.cycleState', { mode: _loc(labelKeys[state]) }),
       icon: `<i class="${icons[state]}"></i>`,
       tristate: true,
       state,

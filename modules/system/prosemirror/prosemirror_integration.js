@@ -39,7 +39,7 @@ export default class DSA5ProseMirrorIntegration {
   static _localizeMenuEntry(entry) {
     const localized = {
       ...entry,
-      title: game.i18n.localize(entry.title),
+      title: _loc(entry.title),
     };
 
     if (entry.children?.length) {

@@ -26,7 +26,7 @@ export default class ActorActiveEffectValueDialog extends DefaultAppv2 {
     super({
       id,
       window: {
-        title: game.i18n.format('ActiveEffects.valueDialog.title', { label }),
+        title: _loc('ActiveEffects.valueDialog.title', { label }),
       },
     });
     this.actor = actor;

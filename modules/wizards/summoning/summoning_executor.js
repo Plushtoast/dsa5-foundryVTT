@@ -55,7 +55,7 @@ export class SummoningExecutor {
 
     const creature = await this._resolveCreature(creatureName, creatureUuid, creatureData, config);
     if (!creature) {
-      ui.notifications.error(game.i18n.format('CONJURATION.creatureNotFound', { creature: creatureName || creatureUuid }));
+      ui.notifications.error(_loc('CONJURATION.creatureNotFound', { creature: creatureName || creatureUuid }));
       return;
     }
 
@@ -155,7 +155,7 @@ export class SummoningExecutor {
       const index = await pack.getIndex();
       const entry = index.find(e => e.name === creatureName);
       if (entry) {
-        const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+        const folder = await DSA5_Utility.getFolderForType("Actor", null, _loc(config.folderKey));
         const obj = (await pack.getDocument(entry._id)).toObject();
         obj.folder = folder.id;
         creature = await Actor.create(obj);
@@ -164,7 +164,7 @@ export class SummoningExecutor {
     }
 
     if (creatureData) {
-      const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+      const folder = await DSA5_Utility.getFolderForType("Actor", null, _loc(config.folderKey));
       const obj = mergeObject(foundry.utils.deepClone(creatureData), { folder: folder.id }, { inplace: false });
       return await Actor.create(obj);
     }
@@ -178,7 +178,7 @@ export class SummoningExecutor {
     const existing = game.actors.find(x => x.getFlag('core', 'sourceId') === actor.uuid) || game.actors.find(x => x.name === actor.name);
     if (existing) return existing;
 
-    const folder = await DSA5_Utility.getFolderForType("Actor", null, game.i18n.localize(config.folderKey));
+    const folder = await DSA5_Utility.getFolderForType("Actor", null, _loc(config.folderKey));
     const obj = actor.toObject();
     obj.folder = folder.id;
     obj.flags ??= {};
@@ -317,9 +317,9 @@ export class SummoningExecutor {
     const tokenIds = tokens.map(t => t.id);
     const sceneId = scene.id;
     let effectData = {
-      name: overrideData.name || `${game.i18n.localize("PLAYER.conjuration")}: ${creature.name}`,
+      name: overrideData.name || `${_loc("PLAYER.conjuration")}: ${creature.name}`,
       icon: overrideData.icon || creature.img || "icons/svg/pawprint.svg",
-      description: overrideData.name || `${game.i18n.localize("PLAYER.conjuration")}: ${creature.name}`,
+      description: overrideData.name || `${_loc("PLAYER.conjuration")}: ${creature.name}`,
       flags: {
         dsa5: {
           summonedTokenIds: tokenIds,

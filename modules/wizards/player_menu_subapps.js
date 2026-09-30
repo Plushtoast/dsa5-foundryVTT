@@ -59,7 +59,7 @@ export class PlayerMenuSubApp {
    * @returns {number}
    */
   static skillFw(actor, localizedIdKey) {
-    const name = game.i18n.localize(`LocalizedIDs.${localizedIdKey}`);
+    const name = _loc(`LocalizedIDs.${localizedIdKey}`);
     const skill = actor?.items?.find((x) => x.type === 'skill' && x.name === name);
     return Number(skill?.system?.talentValue?.value) || 0;
   }
@@ -90,7 +90,7 @@ export class PlayerMenuSubApp {
    */
   static canEnchantArtifacts(actor) {
     if (!actor) return false;
-    const hasArcanovi = PlayerMenuSubApp.hasAnyNamedItem(actor, [game.i18n.localize('LocalizedIDs.arcanovi')]);
+    const hasArcanovi = PlayerMenuSubApp.hasAnyNamedItem(actor, [_loc('LocalizedIDs.arcanovi')]);
     const hasSpell = actor.items.some((item) => item.type === 'spell');
     return hasArcanovi && hasSpell;
   }

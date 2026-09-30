@@ -110,18 +110,18 @@ export class DialogExtraFlow {
 
   static #matchesSkillKeys(flow, item) {
     if (!flow.skillKeys?.length || item.type !== 'skill') return false;
-    const reverse = game.i18n.localize(`LocalizedSkills.${item.name}`);
+    const reverse = _loc(`LocalizedSkills.${item.name}`);
     const englishKey = reverse.startsWith('LocalizedSkills.') ? item.name : reverse;
     for (const key of flow.skillKeys) {
       if (englishKey === key || item.name === key) return true;
       const locId = `${key.charAt(0).toLowerCase()}${key.slice(1)}`;
-      if (item.name === game.i18n.localize(`LocalizedIDs.${locId}`)) return true;
+      if (item.name === _loc(`LocalizedIDs.${locId}`)) return true;
     }
     return false;
   }
 
   static #matchesLocalizedIds(flow, item) {
     if (!flow.localizedIds?.length) return false;
-    return flow.localizedIds.some((id) => item.name === game.i18n.localize(`LocalizedIDs.${id}`));
+    return flow.localizedIds.some((id) => item.name === _loc(`LocalizedIDs.${id}`));
   }
 }

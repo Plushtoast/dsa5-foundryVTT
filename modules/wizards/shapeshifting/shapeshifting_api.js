@@ -26,12 +26,12 @@ export class ShapeshiftingAPI {
     const target = targetActor || (targetUuid ? await fromUuid(targetUuid) : null);
 
     if (!source || source.documentName !== 'Actor') {
-      ui.notifications.error(game.i18n.localize('Shapeshift.noSourceActor'));
+      ui.notifications.error(_loc('Shapeshift.noSourceActor'));
       return;
     }
 
     if (!target || target.documentName !== 'Actor') {
-      ui.notifications.error(game.i18n.localize('Shapeshift.noTargetActor'));
+      ui.notifications.error(_loc('Shapeshift.noTargetActor'));
       return;
     }
 

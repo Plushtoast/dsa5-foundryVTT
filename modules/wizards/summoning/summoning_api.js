@@ -119,7 +119,7 @@ export class SummoningAPI {
    */
   static async _createDelayedSummon(options) {
     const { summoner, creatureName, creatureUuid, creatureData, count, preset, overrides, placement, delay, linkToSummoner, linkEffectData, summonedActorUpdates, summonedItems, summonedEffects, summonedEmbeddedUpdates, summonerEffectUpdates, summonerItemDeletes, restoreSummonedWounds, summonedLight, summonerLight } = options;
-    const label = delay.label || `${game.i18n.localize("PLAYER.conjuration")}: ${creatureName || creatureUuid}`;
+    const label = delay.label || `${_loc("PLAYER.conjuration")}: ${creatureName || creatureUuid}`;
 
     const summonOpts = JSON.stringify({
       creatureName,

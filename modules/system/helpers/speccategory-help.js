@@ -13,8 +13,8 @@ export default class SpecCategoryHelp {
     const key = String(categoryKey || '').trim();
     const i18nKey = `${namespace}.${key}`;
     const fallbackKey = `${namespace}._fallback`;
-    if (game.i18n.has(i18nKey)) return game.i18n.localize(i18nKey);
-    if (game.i18n.has(fallbackKey)) return game.i18n.localize(fallbackKey);
+    if (game.i18n.has(i18nKey)) return _loc(i18nKey);
+    if (game.i18n.has(fallbackKey)) return _loc(fallbackKey);
     return '';
   }
 }

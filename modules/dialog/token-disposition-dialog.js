@@ -37,7 +37,7 @@ export class TokenDispositionDialog extends DefaultAppv2 {
       dispositions: getDispositionOptions(currentDisposition),
       currentDisposition,
       tokenCount: this.tokens.length,
-      ariaLabel: game.i18n.localize('DIALOG.tokenDispositionTitle'),
+      ariaLabel: _loc('DIALOG.tokenDispositionTitle'),
       describedBy: 'token-disposition-hint token-disposition-count',
     };
   }

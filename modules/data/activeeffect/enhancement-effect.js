@@ -260,8 +260,8 @@ export default class DSAEnhancementEffectDataModel extends OnUseActionMixin(foun
       ui.notifications.info('Enhancement.slotFallback', {
         localize: true,
         format: {
-          from: game.i18n.localize(`Enhancement.types.${requestedType}`),
-          to: game.i18n.localize(`Enhancement.types.${assignedType}`),
+          from: _loc(`Enhancement.types.${requestedType}`),
+          to: _loc(`Enhancement.types.${assignedType}`),
         },
       });
     }

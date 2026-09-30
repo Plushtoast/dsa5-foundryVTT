@@ -20,7 +20,7 @@ export class RollDialogBurgerMenuRule {
   }
 
   getMenuLabel(labelKey = 'BURGER_MENU.menuLabel') {
-    return game.i18n.format(labelKey, { abilityName: this.abilityName });
+    return _loc(labelKey, { abilityName: this.abilityName });
   }
 
   getDialogElement(dialogOrElement) {

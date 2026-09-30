@@ -113,7 +113,7 @@ export class SelectUserDialog {
     const [actorId] = await ActorPickerDialog.open({
       actors,
       title: 'DIALOG.setTargetToUser',
-      header: game.i18n.localize('DIALOG.setTargetToUserHint'),
+      header: _loc('DIALOG.setTargetToUserHint'),
       selectionMode: 'single',
     });
     if (!actorId) return;

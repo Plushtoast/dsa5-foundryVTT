@@ -253,7 +253,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   _updateListFontSizeLabel(index) {
     const label = getFontSizeLabel(index);
     for (const btn of this.element?.querySelectorAll('.itemlibrary-font-size__button') ?? []) {
-      const tooltip = `${game.i18n.localize('Library.listFontSize')} (${label})`;
+      const tooltip = `${_loc('Library.listFontSize')} (${label})`;
       btn.dataset.tooltip = tooltip;
       btn.setAttribute('aria-label', tooltip);
     }

@@ -54,16 +54,16 @@ class PracticalApplicationApp extends ApplicationV2 {
             
             const distribution = attrs.map((attr, idx) => ({
                 idx: idx,
-                label: game.i18n.localize(`CHARAbbrev.${attr.toUpperCase()}`),
+                label: _loc(`CHARAbbrev.${attr.toUpperCase()}`),
                 value: this.distributionData[idx]
             }));
 
             return {
                 rolled: true,
                 qs: this.qs,
-                instruction: game.i18n.format('PRACTICAL_APPLICATION.instruction', { qs: this.qs }),
+                instruction: _loc('PRACTICAL_APPLICATION.instruction', { qs: this.qs }),
                 limitText: _loc('PRACTICAL_APPLICATION.limit'),
-                maxText: game.i18n.format('PRACTICAL_APPLICATION.maxPoints', { qs: this.qs }),
+                maxText: _loc('PRACTICAL_APPLICATION.maxPoints', { qs: this.qs }),
                 distribution: distribution
             };
         } else {

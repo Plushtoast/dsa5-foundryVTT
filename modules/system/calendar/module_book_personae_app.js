@@ -74,7 +74,7 @@ export class ModuleBookPersonaeApp extends HandlebarsApplicationMixin(Applicatio
     context.packs = packs.map((pack) => ({ ...pack, checked: true }));
     context.actorTypes = ModuleBookPersonaeHelper.ACTOR_TYPES.map((type) => ({
       id: type,
-      label: game.i18n.localize(`TYPES.Actor.${type}`),
+      label: _loc(`TYPES.Actor.${type}`),
       checked: type === 'npc' || type === 'creature',
     }));
     context.skipExisting = true;

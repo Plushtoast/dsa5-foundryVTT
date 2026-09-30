@@ -24,8 +24,8 @@ export class RaptureTracker {
         history = [{ time: now, amount: kapSpent }];
         const [createdTracker] = await actor.createEmbeddedDocuments('ActiveEffect', [
           {
-            name: game.i18n.localize('RAPTURE.kapTracker'),
-            description: game.i18n.localize('RAPTURE.kapTrackerDescription'),
+            name: _loc('RAPTURE.kapTracker'),
+            description: _loc('RAPTURE.kapTrackerDescription'),
             img: 'icons/svg/ice-aura.svg',
             system: { visibility: { hideOnToken: true } },
             start: { time: now },

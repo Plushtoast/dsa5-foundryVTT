@@ -300,7 +300,7 @@ export default class StockFillDialog extends DefaultAppv2 {
   #syncModeHint() {
     const hint = this.element.querySelector('.stock-fill-mode-hint');
     if (!hint) return;
-    hint.textContent = game.i18n.localize(`MERCHANT.restockMode.${this.config.mode}Hint`);
+    hint.textContent = _loc(`MERCHANT.restockMode.${this.config.mode}Hint`);
   }
 
   static #collapseFilterCategory(_event, target) {

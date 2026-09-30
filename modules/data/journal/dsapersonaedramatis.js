@@ -257,7 +257,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
         entry.notesDocumentUuid = linkNotes ? entry.actor.uuid : document.uuid;
         entry.notesFieldName = linkNotes ? this.ACTOR_NOTES_FIELD : `system.personae.${key}.notes`;
         entry.preparedNotes = await TextEditor.enrichHTML(notesSource, { secrets: game.user.isGM });
-        const unknownFaction = game.i18n.localize("PERSONAE.UnknownFaction");
+        const unknownFaction = _loc("PERSONAE.UnknownFaction");
         entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
         entry.preparedFactionDisplay = entry.preparedFactions.join(", ");
         entry.uuid = document.uuid;

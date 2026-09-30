@@ -44,7 +44,7 @@ export function getAppliedTraditionItems(actor, kind) {
 export function ensureBlessedAttribute(item) {
   if (!PHYSICAL_ITEM_TYPES.has(item.type)) return {};
 
-  const blessed = game.i18n.localize('WEAPON.clerical');
+  const blessed = _loc('WEAPON.clerical');
   if (!blessed) return {};
 
   const path = 'system.effect.attributes';

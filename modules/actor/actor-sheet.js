@@ -1426,7 +1426,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     return DeleteConfirmationDialog.confirm({
       id: `dsa-bulk-inventory-${this.actor.id}`,
       title: 'INVENTORYBULK.title',
-      message: game.i18n.format(messageKey, formatData),
+      message: _loc(messageKey, formatData),
     });
   }
 

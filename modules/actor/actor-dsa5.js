@@ -2786,7 +2786,7 @@ export default class Actordsa5 extends Actor {
   _notifyConditionDecay(effect, newLevel) {
     if (!game.settings.get('dsa5', 'notifyOnFadingEffects')) return;
 
-    const msg = game.i18n.format('CHATNOTIFICATION.conditionDecay', {
+    const msg = _loc('CHATNOTIFICATION.conditionDecay', {
       effect: effect.name,
       actor: this.link,
       level: newLevel,

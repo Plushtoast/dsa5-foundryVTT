@@ -863,7 +863,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     const name = escapeHTML(locationActor?.name ?? '');
     const proceed = await DeleteConfirmationDialog.confirm({
       id: `dsa-delete-location-${this.actor.id}-${key}`,
-      message: game.i18n.format('GROUP.removeLocationConfirm', { name }),
+      message: _loc('GROUP.removeLocationConfirm', { name }),
     });
     if (!proceed) return;
 

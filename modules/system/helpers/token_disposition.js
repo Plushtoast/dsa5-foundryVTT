@@ -44,7 +44,7 @@ export function getDispositionOptions(current) {
 
   return Object.entries(CONST.TOKEN_DISPOSITIONS).map(([key, value]) => ({
     value,
-    label: game.i18n.localize(`TOKEN.DISPOSITION.${key}`),
+    label: _loc(`TOKEN.DISPOSITION.${key}`),
     icon: icons[key],
     selected: current === value,
   }));

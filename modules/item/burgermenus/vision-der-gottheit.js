@@ -60,14 +60,14 @@ class VisionOfTheDeityBurgerMenu extends RollDialogBurgerMenuRule {
             const charges = Math.ceil(qualityStep / 2);
 
             await actor.createEmbeddedDocuments('ActiveEffect', [this.#buildEffectData(actor, charges)]);
-            ui.notifications.info(game.i18n.format('VISION_DEITY.gained', { anzahl: charges }));
+            ui.notifications.info(_loc('VISION_DEITY.gained', { anzahl: charges }));
         } else {
             ui.notifications.warn(this.#formatVisionMessage('testFailed', actor));
         }
     }
 
     #formatVisionMessage(key, actor) {
-        return game.i18n.format(`VISIONS.${key}`, {
+        return _loc(`VISIONS.${key}`, {
             name: actor.name,
             vision: this.abilityName,
             skill: this.#getSkillName(),

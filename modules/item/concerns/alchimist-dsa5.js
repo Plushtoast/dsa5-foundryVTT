@@ -378,7 +378,7 @@ export class MagicalAlchemistDSA5 extends HandlebarsApplicationMixin(Application
         return [1, 2].map((bonus) => {
             const cost = bonus * 4;
             return {
-                label: game.i18n.format('MAGICAL_ALCHEMIST.analysisModifier', { bonus, cost }),
+                label: _loc('MAGICAL_ALCHEMIST.analysisModifier', { bonus, cost }),
                 icon: '<i class="fas fa-flask"></i>',
                 onClick: async () => this.applyAnalysisModifier(dialogState, bonus, cost),
             };

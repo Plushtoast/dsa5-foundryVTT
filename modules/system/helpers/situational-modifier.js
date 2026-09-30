@@ -112,7 +112,7 @@ export class SituationalModifier {
    */
   displayName(actor) {
     if (this.name) {
-      return game.i18n.has(this.name) ? game.i18n.localize(this.name) : this.name;
+      return game.i18n.has(this.name) ? _loc(this.name) : this.name;
     }
     const doc = this.resolve(actor);
     return doc?.name ?? '';
