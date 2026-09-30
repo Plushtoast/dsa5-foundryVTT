@@ -16,6 +16,10 @@ export default class TrapFlow {
     return `trap-${kind}`;
   }
 
+  static displayLabel(id, label = '') {
+    return String(label || '').trim() || _loc(`REGIONBEHAVIOR_DSATrap.modes.${id}`);
+  }
+
   static rows(model, kind, tabGroups = {}) {
     const types = model.schema.fields[kind].element.types;
     const rows = Object.entries(model[kind] || {}).map(([id, entry]) => ({
@@ -23,7 +27,7 @@ export default class TrapFlow {
       entry,
       typeLabel: `REGIONBEHAVIOR_DSATrap.FLOW.types.${entry.type}`,
       typeHelp: `REGIONBEHAVIOR_DSATrap.FLOW.typeHelp.${entry.type}`,
-      tabLabel: entry.label || game.i18n.localize(`REGIONBEHAVIOR_DSATrap.FLOW.types.${entry.type}`),
+      tabLabel: entry.label || _loc(`REGIONBEHAVIOR_DSATrap.FLOW.types.${entry.type}`),
       fields: Object.entries(types[entry.type]?.fields || {})
         .filter(([key]) => key !== 'type')
         .map(([key, field]) => ({

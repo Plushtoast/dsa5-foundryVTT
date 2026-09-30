@@ -2,6 +2,7 @@ import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 import { ChatMessageState } from "./chatmessage_state.js";
 
 import TrapAutomation from "../system/automation/trap.js";
+import TrapFlow from "../system/automation/trap-flow.js";
 import GroupCheck from "../system/rolls/group-check.js";
 import RollRequestService from "../system/queries/roll-request.js";
 import QueryOrchestrator from "../system/queries/query-orchestrator.js";
@@ -55,12 +56,13 @@ export class TrapState extends ChatMessageState {
 
     async #templateData(trapData = this.message?.flags?.dsa5?.trapData) {
         const stored = trapData || {};
+        const defenses = stored.defenses || this.behavior?.system?.defenses || {};
+        const damages = stored.damages || this.behavior?.system?.damages || {};
         const outcomes = (stored.outcomes || []).map((entry) => {
             const display = QueryOrchestrator.outcomeDisplay({ status: entry.status });
-            const modeKey = `REGIONBEHAVIOR_DSATrap.${entry.mode}`;
             return {
                 ...entry,
-                modeLabel: game.i18n.has(modeKey) ? _loc(modeKey) : entry.mode,
+                modeLabel: TrapFlow.displayLabel(entry.mode, defenses[entry.mode]?.label || damages[entry.mode]?.label),
                 ...display,
             };
         });
@@ -99,10 +101,10 @@ export class TrapState extends ChatMessageState {
                 ? String(entry.reactions || 'nothing,dodge,parry').split(',').map((reaction) => {
                     const key = reaction.trim();
                     const labelKey = key === 'nothing' ? 'doNothing' : key === 'dodge' ? 'dodge' : 'CHAR.PARRY';
-                    return { id: key, label: game.i18n.localize(labelKey) };
+                    return { id: key, label: _loc(labelKey) };
                 }).filter((reaction) => reaction.id)
                 : [];
-            return { id, label: entry.label || id, type: entry.type, reactions };
+            return { id, label: TrapFlow.displayLabel(id, entry.label), type: entry.type, reactions };
         });
     }
 
@@ -452,13 +454,16 @@ export class TrapState extends ChatMessageState {
                                 actorName: game.user.name,
                             },
                         });
-                        ui.notifications.info("REGIONBEHAVIOR_DSATrap.manuallyDisarmed", { format: { trap: behavior.name, gm: game.user.name } });
+                        ui.notifications.info("REGIONBEHAVIOR_DSATrap.manuallyDisarmed", {
+                            format: { trap: behavior.name, gm: game.user.name },
+                            localize: true,
+                        });
                     },
                 },
                 {
                     action: 'cancel',
                     icon: 'fa fa-times',
-                    label: 'Cancel'
+                    label: 'cancel'
                 }
             ]
         });
