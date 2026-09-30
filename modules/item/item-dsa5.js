@@ -721,7 +721,7 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
     const skill = actor.items.find((entry) => entry.name == attr && entry.type == 'skill');
     let infoMsg = `<h3 class="center"><b>${_loc('TYPES.Item.aggregatedTest')}</b></h3>`;
 
-    if (item.system.usedTestCount.value >= item.system.allowedTestCount.value) {
+    if (item.system.testsExhausted) {
       infoMsg += `${_loc('Aggregated.noMoreAllowed')}`;
       await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
       return;

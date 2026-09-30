@@ -3765,7 +3765,7 @@
     "minOneSkill": "At least one skill is required.",
     "attempts": "{count} attempts",
     "unlimitedAttempts": "any number of attempts",
-    "unlimited": "unlimited",
+    "unlimited": "∞",
     "maxRollsHint": "0 means unlimited attempts."
   },
   "RPr": "Routine check",

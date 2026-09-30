@@ -123,13 +123,19 @@ export default class TrapSetpiece {
 
   static timerEscapeResist(system = {}) {
     const escape = TrapFlow.defenseOfType(system, 'group') || {};
+    const maxRolls = Number(escape.maxRolls);
+    const targetQs = Number(escape.targetQs);
     return {
       skill: escape.skill || _loc('LocalizedIDs.featOfStrength'),
       mod: Number(escape.modifier) || 0,
       effect: {
         name: system.name || _loc('REGIONBEHAVIOR_DSATrap.escape'),
         system: {
-          macroArgs: { groupCheck: true, maxRolls: 99, targetQs: 1 },
+          macroArgs: {
+            groupCheck: true,
+            maxRolls: Number.isFinite(maxRolls) ? Math.max(0, maxRolls) : 0,
+            targetQs: Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1,
+          },
         },
       },
     };

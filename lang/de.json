@@ -3767,7 +3767,7 @@
     "minOneSkill": "Mindestens ein Talent erforderlich.",
     "attempts": "{count} Versuche",
     "unlimitedAttempts": "beliebig viele Versuche",
-    "unlimited": "unbegrenzt",
+    "unlimited": "∞",
     "maxRollsHint": "0 bedeutet beliebig viele Versuche."
   },
   "RPr": "Routineprobe",

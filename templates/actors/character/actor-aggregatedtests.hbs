@@ -39,7 +39,7 @@
             <div class='centerMargin'>{{item.system.interval.value}}</div>
           </div>
           <div class='actor-aggregated-tests-used col fifteen center centerCell'>
-            <div class='centerMargin'>{{item.system.usedTestCount.value}} / {{item.system.allowedTestCount.value}}</div>
+            <div class='centerMargin'>{{item.system.usedTestCount.value}} / {{infiniteIfZero item.system.allowedTestCount.value}}</div>
           </div>
           <div class='actor-aggregated-test-qs col fifteen center centerCell'>
             <div class='centerMargin'>{{item.system.cummulatedQS.value}} / 10</div>

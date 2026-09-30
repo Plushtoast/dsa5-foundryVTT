@@ -313,7 +313,7 @@ export default class TrapAutomation extends TrapSetpiece {
       modifier: resist.mod || 0,
       configuration: {
         targetQs: Number(args.targetQs) || 1,
-        maxRolls: Number(args.maxRolls) || 7,
+        maxRolls: GroupCheck.resolveMaxRolls(args.maxRolls),
       },
       forceWhisperIDs: token ? RollRequestService.buildTokenWhisper(token) : false,
       datasetOptions: {

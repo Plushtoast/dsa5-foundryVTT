@@ -1,6 +1,7 @@
 import DescriptionTemplate from './templates/description.js';
 import { ItemDataModel } from '../baseitem.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
+import GroupCheck from '../../system/rolls/group-check.js';
 
 const { SchemaField, StringField, NumberField, HTMLField } = foundry.data.fields;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -13,7 +14,7 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
         value: new StringField({ initial: '', label: 'interval' }),
       }),
       allowedTestCount: new SchemaField({
-        value: new NumberField({ initial: 7, label: 'allowedTestCount', min: 0 }),
+        value: new NumberField({ initial: 7, label: 'allowedTestCount', min: 0, hint: 'GROUPCHECK.maxRollsHint' }),
       }),
       usedTestCount: new SchemaField({
         value: new NumberField({ initial: 0, label: 'usedTestCount', min: 0 }),
@@ -47,6 +48,19 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     data.enrichedpartsuccess = await TextEditor.enrichHTML(data.document.system.partsuccess, { secrets: data.document.isOwner });
   }
 
+  get unlimited() {
+    return GroupCheck.isUnlimited(this.allowedTestCount.value);
+  }
+
+  get testsExhausted() {
+    if (this.unlimited) return false;
+    return this.usedTestCount.value >= this.allowedTestCount.value;
+  }
+
+  get probesLabel() {
+    return `${this.usedTestCount.value} / ${GroupCheck.formatMaxRolls(this.allowedTestCount.value)}`;
+  }
+
   static async _postItem(item) {
     let txt = '';
     let result = 'Ongoing';
@@ -58,13 +72,13 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     } else if (item.system.cummulatedQS.value >= 6) {
       result = 'PartSuccess';
       txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}`;
-    } else if (item.system.allowedTestCount.value - item.system.usedTestCount.value <= 0) {
+    } else if (item.system.testsExhausted) {
       result = 'Failure';
     }
     const properties = [
       this._chatLineHelper({ key: 'cummulatedQS', val: `${item.system.cummulatedQS.value} / 10` }),
       this._chatLineHelper({ key: 'interval', val: item.system.interval.value }),
-      this._chatLineHelper({ key: 'probes', val: `${item.system.usedTestCount.value} / ${item.system.allowedTestCount.value}` }),
+      this._chatLineHelper({ key: 'probes', val: item.system.probesLabel }),
       this._chatLineHelper({ key: 'result', val: result, localizeVal: true }),
       txt,
     ];
@@ -72,6 +86,6 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
 
     const html = await renderTemplate('systems/dsa5/templates/chat/aggregatedTestResult.hbs', { descriptionObfuscated, item, properties });
     const chatOptions = DSA5_Utility.chatDataSetup(html);
-    ChatMessage.create(chatOptions);
+    return ChatMessage.create(chatOptions);
   }
 }

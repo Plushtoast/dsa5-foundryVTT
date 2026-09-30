@@ -232,7 +232,7 @@
 
                         <div class="actor-aggregated-tests-used col ten flexAlignCenter flexrow">
                             {{test.item.system.usedTestCount.value}} /
-                            {{test.item.system.allowedTestCount.value}}
+                            {{infiniteIfZero test.item.system.allowedTestCount.value}}
                         </div>
 
                         <div class="actor-aggregated-test-qs col ten flexAlignCenter flexrow">

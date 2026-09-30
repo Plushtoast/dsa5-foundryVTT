@@ -43,6 +43,35 @@ export default class GroupCheck {
   }
 
   /**
+   * 0 allowed rolls means no cap (same convention as the Sammelprobe / trap GUI).
+   * @param {number|string} maxRolls
+   * @returns {boolean}
+   */
+  static isUnlimited(maxRolls) {
+    return Number(maxRolls) === 0;
+  }
+
+  /**
+   * Parse an attempt cap. 0 stays 0 (unlimited); missing values use fallback.
+   * @param {number|string} value
+   * @param {number} [fallback=7]
+   * @returns {number}
+   */
+  static resolveMaxRolls(value, fallback = 7) {
+    const maxRolls = Number(value);
+    return Number.isFinite(maxRolls) ? Math.max(0, Math.trunc(maxRolls)) : fallback;
+  }
+
+  /**
+   * Chat / sheet label for the attempt cap. Unlimited is the infinity glyph.
+   * @param {number|string} maxRolls
+   * @returns {string}
+   */
+  static formatMaxRolls(maxRolls) {
+    return this.isUnlimited(maxRolls) ? _loc('GROUPCHECK.unlimited') : String(Number(maxRolls));
+  }
+
+  /**
    * Consecutive failure penalty for cumulative checks (crit resets the streak).
    * @param {Array<{ success?: number }>} results
    * @returns {{ qs: number, failed: number }}
@@ -71,7 +100,7 @@ export default class GroupCheck {
     const targetQs = Number(data.targetQs);
     const needed = Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1;
     const maxRolls = Number(data.maxRolls);
-    const unlimited = maxRolls === 0;
+    const unlimited = this.isUnlimited(maxRolls);
     const cap = unlimited ? Infinity : (Number.isFinite(maxRolls) ? maxRolls : 0);
     const remaining = cap - results.length;
     const success = tally.qs >= needed;
@@ -166,10 +195,11 @@ export default class GroupCheck {
   }
 
   static #buildTemplateData(data) {
-    const unlimited = Number(data.maxRolls) === 0;
+    const unlimited = this.isUnlimited(data.maxRolls);
     return {
       ...data,
       unlimited,
+      maxRollsLabel: this.formatMaxRolls(data.maxRolls),
       openRolls: unlimited ? 1 : data.openRolls,
       rollOptions: this.#enrichRollOptions(data.rollOptions),
       resultSections: this.#buildResultSections(data.results, data.rollOptions),
@@ -302,7 +332,7 @@ export default class GroupCheck {
         optn.calculatedModifier = optn.modifier - data.failed;
         delete optn.skillIcon;
       }
-      data.openRolls = Number(data.maxRolls) === 0 ? 1 : data.maxRolls - data.results.length;
+      data.openRolls = this.isUnlimited(data.maxRolls) ? 1 : data.maxRolls - data.results.length;
       data.doneRolls = data.results.length;
       if (!data.trapResolved && data.datasetOptions?.message && data.datasetOptions?.mode) {
         const { TrapState } = await import('../../chatmessage/trap_state.js');
@@ -408,7 +438,7 @@ export default class GroupCheck {
           ...optn,
           selectedValue: `${optn.target}|${optn.type}`,
         })),
-        maxRolls: configuration.maxRolls ?? 7,
+        maxRolls: this.resolveMaxRolls(configuration.maxRolls),
         targetQs: configuration.targetQs ?? 10,
         interval: configuration.interval ?? '',
         failed: 0,
@@ -590,7 +620,7 @@ export default class GroupCheck {
       calculatedModifier: optn.modifier,
     }));
 
-    const unlimited = Number(parsed.maxRolls) === 0;
+    const unlimited = this.isUnlimited(parsed.maxRolls);
     const data = {
       results: [],
       qs: 0,
@@ -629,8 +659,8 @@ export default class GroupCheck {
   static async #createDirectGCMessage(target, modifier = 0, configuration = {}, { datasetOptions = {}, otherMessage = undefined, modeOverride = false, forceWhisperIDs = false } = {}) {
     await DSA5ChatAutoCompletion.ensureSkills();
     const type = DSA5ChatAutoCompletion.skills.find((x) => x.name == target)?.type || 'skill';
-    const maxRolls = configuration.maxRolls ?? 7;
-    const unlimited = Number(maxRolls) === 0;
+    const maxRolls = this.resolveMaxRolls(configuration.maxRolls);
+    const unlimited = this.isUnlimited(maxRolls);
     const data = {
       results: [],
       qs: 0,

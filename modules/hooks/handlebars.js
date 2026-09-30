@@ -165,5 +165,6 @@ export default function () {
       }, {});
     },
     tooltipWithKeybinding: (labelKey, actionId) => DSA5_Utility.tooltipWithKeybinding(labelKey, actionId),
+    infiniteIfZero: (n) => (Number(n) === 0 ? _loc('GROUPCHECK.unlimited') : n),
   });
 }
