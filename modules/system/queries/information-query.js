@@ -331,7 +331,7 @@ export default class InformationQueryService {
     }
 
     const chatData = DSA5_Utility.chatDataSetup(resultHtml, postFunction.messageMode);
-    if (postFunction.recipients?.length) chatData.whisper = postFunction.recipients;
+    if (postFunction.recipients?.length) chatData.whisper = [...postFunction.recipients];
     const created = await ChatMessage.create(chatData);
     if (rollMessageId && created?.id) {
       await InformationQueryService.persistRollLink(rollMessageId, { resultMessageId: created.id });
@@ -347,42 +347,57 @@ export default class InformationQueryService {
     return renderTemplate('systems/dsa5/templates/dialog/parts/message-mode-row.hbs', { messageMode });
   }
 
+  static #gmIds() {
+    return game.users.filter((user) => user.isGM).map((user) => user.id);
+  }
+
+  static #withPlayer(playerId, ids) {
+    if (playerId && !ids.includes(playerId)) ids.push(playerId);
+    return ids;
+  }
+
+  /**
+   * World `informationDistribution` audience.
+   * @returns {string[]|null} `null` = unrestricted (everyone)
+   */
+  static #distributionRecipients(playerId) {
+    const mode = String(game.settings.get('dsa5', 'informationDistribution'));
+    if (mode === '1') return this.#withPlayer(playerId, this.#gmIds());
+    if (mode === '2') return this.#gmIds();
+    return null;
+  }
+
+  /**
+   * Extra restriction from the roll / GM start dialog.
+   * Public / IC / roll do not widen the world setting.
+   * @returns {string[]|null} `null` = no extra restriction
+   */
+  static #messageModeRecipients(playerId, messageMode) {
+    if (!messageMode) return null;
+    const modes = DICE_CONSTANTS.CHAT_MODES;
+    if (this.PUBLIC_MESSAGE_MODES.has(messageMode) || messageMode === modes.ROLL) return null;
+    if (messageMode === modes.BLIND) return this.#gmIds();
+    if (messageMode === modes.SELF) return [playerId || game.user.id];
+    if (messageMode === modes.GM) return this.#withPlayer(playerId, this.#gmIds());
+    return null;
+  }
+
   /**
    * Recipients for information result messages.
-   * Per-request `messageMode` overrides the world `informationDistribution` setting.
+   * World `informationDistribution` is the maximum audience.
+   * Per-request `messageMode` may further restrict that audience, never expand it.
    * Empty array = public (everyone). Otherwise whisper to those user ids.
    * @param {string} [playerId] Rolling / designated player user id
    * @param {string} [messageMode] Foundry chat mode from the GM start dialog / roll
    * @returns {string[]}
    */
   static getInformationResultRecipients(playerId, messageMode) {
-    if (messageMode) {
-      const modes = DICE_CONSTANTS.CHAT_MODES;
-      if (this.PUBLIC_MESSAGE_MODES.has(messageMode) || messageMode === modes.ROLL) return [];
-      if (messageMode === modes.BLIND) {
-        return game.users.filter((user) => user.isGM).map((x) => x.id);
-      }
-      if (messageMode === modes.SELF) {
-        const selfId = playerId || game.user.id;
-        return [selfId];
-      }
-      if (messageMode === modes.GM) {
-        const recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-        if (playerId && !recipients.includes(playerId)) recipients.push(playerId);
-        return recipients;
-      }
-    }
-
-    const mode = String(game.settings.get('dsa5', 'informationDistribution'));
-    if (mode === '1') {
-      const recipients = game.users.filter((user) => user.isGM).map((x) => x.id);
-      if (playerId && !recipients.includes(playerId)) recipients.push(playerId);
-      return recipients;
-    }
-    if (mode === '2') {
-      return game.users.filter((user) => user.isGM).map((x) => x.id);
-    }
-    return [];
+    const distribution = this.#distributionRecipients(playerId);
+    const fromMode = this.#messageModeRecipients(playerId, messageMode);
+    if (fromMode == null) return distribution ?? [];
+    if (distribution == null) return fromMode;
+    const intersected = fromMode.filter((id) => distribution.includes(id));
+    return intersected.length ? intersected : distribution;
   }
 
   /**
