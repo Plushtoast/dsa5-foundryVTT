@@ -534,7 +534,10 @@ export class TrapState extends ChatMessageState {
             return;
         }
         if (reaction === 'dodge' && actor?.setupDodge) {
-            actor.setupDodge({ modifier: this.#defenseModifier(entry) }, token.id);
+            actor.setupDodge({
+                modifier: this.#defenseModifier(entry),
+                moreModifiers: TrapAutomation.rangeDefenseModifiers(behavior.system, entry),
+            }, token.id);
             return;
         }
         const skill = entry.skill || entry.label;
@@ -542,21 +545,17 @@ export class TrapState extends ChatMessageState {
             trapMessage: this.message,
             token,
             name: skill,
-            modifier: this.#defenseModifier(entry),
+            modifier: this.#defenseModifier(entry) + TrapAutomation.rangeDefenseMalus(behavior.system, entry),
             mode: `defense:${id}`,
             label: entry.label,
         });
     }
 
     #defenseModifier(entry) {
-        let modifier = Number(entry.modifier) || 0;
-        if (!this.behavior.system.detected) modifier += Number(entry.undetectedMod) || 0;
-        const from = entry.modifierFromDamage;
-        if (from) {
-            const line = (this.message.flags?.dsa5?.trapData?.flow?.lines || []).find((item) => item.id === from);
-            modifier -= Number(line?.total) || 0;
-        }
-        return modifier;
+        return TrapAutomation.defenseModifier(this.behavior.system, entry, {
+            detected: this.behavior.system.detected,
+            damageLines: this.message.flags?.dsa5?.trapData?.flow?.lines || [],
+        });
     }
 
     async #commitDefense({ id, status, qs = 0, reaction = '' } = {}) {

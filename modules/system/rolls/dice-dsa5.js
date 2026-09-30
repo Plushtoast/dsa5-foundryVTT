@@ -2222,6 +2222,7 @@ export default class DiceDSA5 {
   /**
    * Re-run a stored postFunction when a roll card is edited (fate, GM die edit).
    * Looks up the expression the same way eval did (`game.modules.get('id').api.fn`), without local-scope eval.
+   * Exposed postFunctions are unbound static methods; they must use the class name, not `this`.
    */
   static async invokeRerenderPostFunction(postFunction, testData, chatData, source) {
     if (!postFunction?.functionName) return;
@@ -2327,7 +2328,11 @@ export default class DiceDSA5 {
       const postFunction = getProperty(rerenderMessage, 'flags.data.preData.extra.options.postFunction');
       if (postFunction) {
         testData.messageId = rerenderMessage.id;
-        await this.invokeRerenderPostFunction(postFunction, testData, chatData, preData.source);
+        try {
+          await this.invokeRerenderPostFunction(postFunction, testData, chatData, preData.source);
+        } catch (error) {
+          console.error('postFunction rerender failed', error);
+        }
       }
 
       // Keep additional info blocks (testData.other) stable across rerenders.

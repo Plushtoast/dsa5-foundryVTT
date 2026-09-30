@@ -158,6 +158,40 @@ export default class TrapAutomation extends TrapSetpiece {
     return 'meleeAttack';
   }
 
+  static RANGE_DEFENSE_MALUS = ZoneAttack.RANGE_DEFENSE_MALUS;
+
+  static hasRangeStrike(system = {}) {
+    return this.strikesFrom(system).some((strike) => this.attackTypeForTrap(system.trapType, strike.weaponType) === 'rangeAttack');
+  }
+
+  static rangeDefenseMalus(system = {}, entry = {}) {
+    if (entry.type && entry.type !== 'combat') return 0;
+    if (!this.hasRangeStrike(system) && Number(system.trapType) !== this.TRAPTYPE_ARROW) return 0;
+    return this.RANGE_DEFENSE_MALUS;
+  }
+
+  static rangeDefenseModifiers(system = {}, entry = {}) {
+    const value = this.rangeDefenseMalus(system, entry);
+    if (!value) return [];
+    return [{
+      name: _loc('MODS.defenseMalus'),
+      value,
+      type: 'defenseMalus',
+      selected: true,
+    }];
+  }
+
+  static defenseModifier(system = {}, entry = {}, { detected = true, damageLines = [] } = {}) {
+    let modifier = Number(entry.modifier) || 0;
+    if (!detected) modifier += Number(entry.undetectedMod) || 0;
+    const from = entry.modifierFromDamage;
+    if (from) {
+      const line = damageLines.find((item) => item.id === from);
+      modifier -= Number(line?.total) || 0;
+    }
+    return modifier;
+  }
+
   static isOpposedHit(result) {
     const level = result?.result?.successLevel ?? result?.successLevel;
     return Number(level) > 0;
@@ -546,6 +580,7 @@ export default class TrapAutomation extends TrapSetpiece {
       effects: attachPayload ? (payload.effects || []) : [],
     };
 
+    const attackType = this.attackTypeForTrap(behavior.system.trapType, strike.weaponType);
     return ZoneAttack.resolve({
       sourceItem,
       sourceActor: DSA5_Utility.emptyActor(12, behavior.name),
@@ -555,7 +590,8 @@ export default class TrapAutomation extends TrapSetpiece {
       attackName,
       attackValue: Number(strike.at) || 12,
       damageFormula: strike.damageFormula || '0',
-      attackType: this.attackTypeForTrap(behavior.system.trapType, strike.weaponType),
+      attackType,
+      defenseMalus: ZoneAttack.rangeDefenseMalus(attackType),
       traits,
     });
   }

@@ -338,13 +338,134 @@ export default class MagicAnalysisQueryService {
     return cap;
   }
 
-  static async #rollEnchantmentHelper(actor, step, messageMode) {
+  static magiekundeStatus(successLevel) {
+    return successLevel > 1 ? 'critical' : successLevel < -1 ? 'botch' : successLevel > 0 ? 'success' : 'failure';
+  }
+
+  static #stepPostFunction(payload, step) {
+    return {
+      functionName: 'game.dsa5.queries.MagicAnalysisQueryService.postStepRoll',
+      requestMessageId: payload.messageId,
+      stepId: payload.stepId,
+      actorId: payload.actorId,
+      helperKey: step.helperKey,
+      stepType: step.type,
+    };
+  }
+
+  static #rebuildProgressFromSteps(state) {
+    const actor = game.actors.get(state.actorId);
+    if (!actor) return;
+    const progress = this.initProgress(actor);
+    for (const step of state.steps || []) {
+      if (step.type !== 'helper' || step.resultDetails == null) continue;
+      this.applyHelperResult(
+        progress,
+        step.helperKey,
+        step.resultDetails.rawQualityStep ?? step.resultDetails.qualityStep ?? 0,
+      );
+    }
+    state.progress = progress;
+  }
+
+  static async #syncApprovedMagiekunde(state) {
+    const magiekunde = state.steps?.find((entry) => entry.type === 'magiekunde' && entry.resultDetails);
+    if (!magiekunde) return;
+
+    const cap = MagicAnalysisService._computeTotalMaxQS(state.progress);
+    const raw = magiekunde.resultDetails.rawQualityStep ?? magiekunde.resultDetails.qualityStep ?? 0;
+    const qs = Math.min(raw, cap);
+    const successLevel = magiekunde.resultDetails.successLevel || 0;
+    magiekunde.resultDetails = { ...magiekunde.resultDetails, qualityStep: qs };
+    magiekunde.status = this.magiekundeStatus(successLevel);
+
+    if (state.approval?.phase !== 'approved' && state.approval?.phase !== 'pending') return;
+
+    const approvalData = await InformationQueryService.buildApprovalData(state.infoContent, {
+      rolledQS: qs,
+      successLevel,
+    });
+    Object.assign(state.approval, {
+      rolledQS: qs,
+      successLevel,
+      qsEntries: approvalData.qsEntries,
+      critText: approvalData.critText,
+      botchText: approvalData.botchText,
+      failText: approvalData.failText,
+      critIncluded: approvalData.critIncluded,
+      botchIncluded: approvalData.botchIncluded,
+      failIncluded: approvalData.failIncluded,
+    });
+
+    if (state.approval.phase !== 'approved') return;
+
+    const infoName = state.itemName || state.infoContent?.name || '';
+    state.approval.resultHtml = await InformationQueryService.buildApprovedResultHtml(
+      state.infoContent,
+      InformationQueryService.autoSelectedInfoKeys(qs, successLevel),
+      infoName,
+    );
+  }
+
+  static async postStepRoll(postFunction, payload, _source) {
+    if (!postFunction?.requestMessageId || !postFunction?.stepId) return;
+    const outcome = game.dsa5.queries.InformationQueryService.rollOutcome(payload);
+    const result = MagicAnalysisQueryService.#stepResultFromOutcome(postFunction, outcome);
+    await MagicAnalysisQueryService.#submitStepResult(postFunction.requestMessageId, postFunction.stepId, result, { refresh: true });
+  }
+
+  static #stepResultFromOutcome(postFunction, outcome) {
+    if (postFunction.stepType === 'helper' || postFunction.helperKey) {
+      const config = MagicAnalysisService.HELPER_SPELLS[postFunction.helperKey];
+      const cap = config
+        ? MagicAnalysisService._computeSpellCap(config.rule, outcome.qualityStep)
+        : outcome.qualityStep;
+      return {
+        userId: game.user.id,
+        status: 'success',
+        resultDetails: {
+          qualityStep: cap,
+          rawQualityStep: outcome.qualityStep,
+          successLevel: outcome.successLevel,
+          messageId: outcome.messageId,
+        },
+      };
+    }
+
+    const message = game.messages.get(postFunction.requestMessageId);
+    const state = message?.getFlag('dsa5', this.FLAG_KEY);
+    const totalMaxQS = MagicAnalysisService._computeTotalMaxQS(state?.progress || {});
+    const raw = outcome.qualityStep;
+    const qs = raw > totalMaxQS ? totalMaxQS : raw;
+    const successLevel = outcome.successLevel;
+    return {
+      userId: game.user.id,
+      status: this.magiekundeStatus(successLevel),
+      resultDetails: {
+        qualityStep: qs,
+        rawQualityStep: raw,
+        successLevel,
+        messageId: outcome.messageId,
+      },
+      rollResult: {
+        result: {
+          qualityStep: qs,
+          rawQualityStep: raw,
+          successLevel,
+          messageId: outcome.messageId,
+        },
+      },
+    };
+  }
+
+  static async #rollEnchantmentHelper(actor, step, messageMode, payload) {
     const sourceItem = actor.items.get(step.sourceItemId);
     if (!sourceItem) return { userId: game.user.id, status: 'error' };
 
     const result = await ItemEnchantment.roll(sourceItem, step.enchantmentId, {
       options: {
         subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
+        postFunction: this.#stepPostFunction(payload, step),
         ...(messageMode ? { messageMode } : {}),
       },
     });
@@ -359,6 +480,7 @@ export default class MagicAnalysisQueryService {
         qualityStep: cap,
         rawQualityStep: result.result.qualityStep,
         successLevel: result.result.successLevel,
+        messageId: result.result.messageId,
       },
     };
   }
@@ -399,7 +521,7 @@ export default class MagicAnalysisQueryService {
     try {
       if (step.type === 'helper') {
         if (step.source === 'enchantment') {
-          return await this.#rollEnchantmentHelper(actor, step, state.messageMode);
+          return await this.#rollEnchantmentHelper(actor, step, state.messageMode, payload);
         }
 
         const spell = actor.items.get(step.spellId);
@@ -408,6 +530,7 @@ export default class MagicAnalysisQueryService {
         const setupData = await actor.setupSpell(spell, {
           subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
           speaker: MagicAnalysisService._getSpeaker(actor.id),
+          postFunction: this.#stepPostFunction(payload, step),
           ...(state.messageMode ? { messageMode: state.messageMode } : {}),
         }, undefined);
 
@@ -423,6 +546,7 @@ export default class MagicAnalysisQueryService {
             qualityStep: cap,
             rawQualityStep: result.result.qualityStep,
             successLevel: result.result.successLevel,
+            messageId: result.result.messageId,
           },
         };
       }
@@ -437,6 +561,7 @@ export default class MagicAnalysisQueryService {
           subtitle: ` (${_loc('MAGICANALYSIS.subtitle')})`,
           speaker: MagicAnalysisService._getSpeaker(actor.id),
           modifier: state.infoContent?.modifier || 0,
+          postFunction: this.#stepPostFunction(payload, step),
           ...(state.messageMode ? { messageMode: state.messageMode } : {}),
         }, undefined);
 
@@ -444,18 +569,27 @@ export default class MagicAnalysisQueryService {
         const result = await actor.basicTest(setupData);
         if (!result) return { userId: game.user.id, status: 'cancelled' };
 
-        let qs = result.result.qualityStep || 0;
-        if (qs > totalMaxQS) qs = totalMaxQS;
-        result.result.qualityStep = qs;
-
+        const raw = result.result.qualityStep || 0;
+        const qs = raw > totalMaxQS ? totalMaxQS : raw;
         const successLevel = result.result.successLevel || 0;
-        const status = successLevel > 1 ? 'critical' : successLevel < -1 ? 'botch' : successLevel > 0 ? 'success' : 'failure';
 
         return {
           userId: game.user.id,
-          status,
-          resultDetails: { qualityStep: qs, successLevel },
-          rollResult: result,
+          status: this.magiekundeStatus(successLevel),
+          resultDetails: {
+            qualityStep: qs,
+            rawQualityStep: raw,
+            successLevel,
+            messageId: result.result.messageId,
+          },
+          rollResult: {
+            result: {
+              qualityStep: qs,
+              rawQualityStep: raw,
+              successLevel,
+              messageId: result.result.messageId,
+            },
+          },
         };
       }
 
@@ -483,8 +617,13 @@ export default class MagicAnalysisQueryService {
       currentState.finalized = true;
       const magiekunde = currentState.steps.find((entry) => entry.type === 'magiekunde');
       if (magiekunde) {
-        magiekunde.status = successLevel > 1 ? 'critical' : successLevel < -1 ? 'botch' : successLevel > 0 ? 'success' : 'failure';
-        magiekunde.resultDetails = { qualityStep: rolledQS, successLevel };
+        magiekunde.status = this.magiekundeStatus(successLevel);
+        magiekunde.resultDetails = {
+          qualityStep: rolledQS,
+          rawQualityStep: rollResult.result.rawQualityStep ?? rolledQS,
+          successLevel,
+          messageId: rollResult.result.messageId,
+        };
         magiekunde.canRoll = false;
       }
 
@@ -588,6 +727,7 @@ export default class MagicAnalysisQueryService {
       rollResult: result.rollResult ? {
         result: {
           qualityStep: result.rollResult.result?.qualityStep,
+          rawQualityStep: result.rollResult.result?.rawQualityStep,
           successLevel: result.rollResult.result?.successLevel,
           messageId: result.rollResult.result?.messageId,
         },
@@ -595,11 +735,38 @@ export default class MagicAnalysisQueryService {
     };
   }
 
-  static async #submitStepResult(messageId, stepId, result) {
+  static async #refreshMagiekunde(messageId, rollResult) {
+    const rolledQS = rollResult.result.qualityStep || 0;
+    const rawQualityStep = rollResult.result.rawQualityStep ?? rolledQS;
+    const successLevel = rollResult.result.successLevel || 0;
+
+    await QueryOrchestrator.enqueueMessageUpdate(messageId, async (currentState) => {
+      const magiekunde = currentState.steps.find((entry) => entry.type === 'magiekunde');
+      if (!magiekunde) return currentState;
+
+      const cap = MagicAnalysisService._computeTotalMaxQS(currentState.progress);
+      const qs = Math.min(rolledQS, cap);
+      magiekunde.status = this.magiekundeStatus(successLevel);
+      magiekunde.resultDetails = {
+        qualityStep: qs,
+        rawQualityStep,
+        successLevel,
+        messageId: rollResult.result.messageId,
+      };
+      magiekunde.canRoll = false;
+      currentState.finalized = true;
+
+      if (currentState.approval) await this.#syncApprovedMagiekunde(currentState);
+      this.refreshAnalysisState(currentState);
+      return currentState;
+    });
+  }
+
+  static async #submitStepResult(messageId, stepId, result, { refresh = false } = {}) {
     if (!game.user.isGM) {
       game.socket.emit('system.dsa5', {
         type: 'magicAnalysisStepResult',
-        payload: { messageId, stepId, result: this.#serializeStepResult(result) },
+        payload: { messageId, stepId, result: this.#serializeStepResult(result), refresh },
       });
       return;
     }
@@ -609,36 +776,35 @@ export default class MagicAnalysisQueryService {
     const step = state.steps?.find((entry) => entry.stepId === stepId);
 
     if (step?.type === 'magiekunde' && result.rollResult) {
-      await this.completeMagiekunde(messageId, state, result.rollResult);
+      const alreadyDone = refresh || !!step.resultDetails || state.finalized;
+      if (alreadyDone) await this.#refreshMagiekunde(messageId, result.rollResult);
+      else await this.completeMagiekunde(messageId, state, result.rollResult);
       return;
     }
 
     await QueryOrchestrator.enqueueMessageUpdate(messageId, async (currentState) => {
-      if (currentState.finalized) return currentState;
+      if (currentState.finalized && !refresh) return currentState;
 
       const currentStep = currentState.steps.find((entry) => entry.stepId === stepId);
       if (!currentStep) return currentState;
 
-      if (currentStep.type === 'helper' && result.status === 'success') {
-        this.applyHelperResult(
-          currentState.progress,
-          currentStep.helperKey,
-          result.resultDetails?.rawQualityStep ?? result.resultDetails?.qualityStep ?? 0,
-        );
-      }
-
       currentStep.status = result.status;
       currentStep.resultDetails = result.resultDetails ?? null;
       currentStep.canRoll = false;
+
+      if (currentStep.type === 'helper' && result.status === 'success') {
+        this.#rebuildProgressFromSteps(currentState);
+        await this.#syncApprovedMagiekunde(currentState);
+      }
 
       this.refreshAnalysisState(currentState);
       return currentState;
     });
   }
 
-  static async handleRemoteStepResult({ messageId, stepId, result }) {
+  static async handleRemoteStepResult({ messageId, stepId, result, refresh = false }) {
     if (!game.user.isGM) return;
-    await this.#submitStepResult(messageId, stepId, result);
+    await this.#submitStepResult(messageId, stepId, result, { refresh });
   }
 
   static async triggerRollFromCard(messageId, stepId, byGM = false) {

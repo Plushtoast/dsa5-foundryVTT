@@ -263,6 +263,81 @@ export default class InformationQueryService {
   }
 
   static PUBLIC_MESSAGE_MODES = new Set([DICE_CONSTANTS.CHAT_MODES.PUBLIC, DICE_CONSTANTS.CHAT_MODES.IC]);
+  static RESULT_MESSAGE_FLAG = 'informationResultMessageId';
+  static QUERY_MESSAGE_FLAG = 'informationQueryMessageId';
+
+  /**
+   * QS / success / roll message id from a basicTest return or a fate/edit postFunction payload.
+   * `payload.result.result` may be leftover FW (a number) and must not replace qualityStep.
+   */
+  static rollOutcome(payload) {
+    const rollResult = payload?.result && typeof payload.result === 'object' ? payload.result : (payload ?? {});
+    return {
+      messageId: rollResult.messageId || null,
+      qualityStep: Number(rollResult.qualityStep) || 0,
+      successLevel: Number(rollResult.successLevel) || 0,
+    };
+  }
+
+  static autoSelectedInfoKeys(rolledQS, successLevel) {
+    const selected = {};
+    const qs = Number(rolledQS) || 0;
+    const level = Number(successLevel) || 0;
+    for (let i = 1; i <= qs; i++) selected[`qs${i}`] = true;
+    if (level > 1) selected.crit = true;
+    else if (level < -1) selected.botch = true;
+    else if (!qs) selected.fail = true;
+    return selected;
+  }
+
+  static informationPostFunction({ uuid, parentUuid, messageMode, playerId } = {}) {
+    return {
+      functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
+      uuid,
+      parentUuid: parentUuid || null,
+      messageMode,
+      recipients: InformationQueryService.getInformationResultRecipients(playerId || game.user.id, messageMode),
+    };
+  }
+
+  static async persistRollLink(rollMessageId, patch = {}) {
+    const message = game.messages.get(rollMessageId);
+    if (!message) return;
+
+    const current = foundry.utils.getProperty(message, 'flags.data.preData.extra.options.postFunction') || {};
+    const update = {
+      'flags.data.preData.extra.options.postFunction': { ...current, ...patch },
+    };
+    if (patch.resultMessageId) update[`flags.dsa5.${InformationQueryService.RESULT_MESSAGE_FLAG}`] = patch.resultMessageId;
+    if (patch.queryMessageId) update[`flags.dsa5.${InformationQueryService.QUERY_MESSAGE_FLAG}`] = patch.queryMessageId;
+    await message.update(update);
+  }
+
+  static resolveLinkedIds(postFunction, rollMessageId) {
+    const roll = game.messages.get(rollMessageId);
+    return {
+      resultMessageId: postFunction?.resultMessageId || roll?.getFlag('dsa5', InformationQueryService.RESULT_MESSAGE_FLAG),
+      queryMessageId: postFunction?.queryMessageId || roll?.getFlag('dsa5', InformationQueryService.QUERY_MESSAGE_FLAG),
+    };
+  }
+
+  static async upsertResultMessage(postFunction, resultHtml, rollMessageId) {
+    if (!resultHtml) return null;
+
+    const existing = postFunction?.resultMessageId && game.messages.get(postFunction.resultMessageId);
+    if (existing) {
+      await existing.update({ content: resultHtml });
+      return existing;
+    }
+
+    const chatData = DSA5_Utility.chatDataSetup(resultHtml, postFunction.messageMode);
+    if (postFunction.recipients?.length) chatData.whisper = postFunction.recipients;
+    const created = await ChatMessage.create(chatData);
+    if (rollMessageId && created?.id) {
+      await InformationQueryService.persistRollLink(rollMessageId, { resultMessageId: created.id });
+    }
+    return created;
+  }
 
   static readMessageMode(form, fallback = DICE_CONSTANTS.CHAT_MODES.PUBLIC) {
     return form?.querySelector?.('[name="messageMode"]:checked')?.value || fallback;
@@ -336,10 +411,11 @@ export default class InformationQueryService {
     const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    const chatData = DSA5_Utility.chatDataSetup(resultHtml, payload.messageMode);
-    const whisperTargets = this.getInformationResultRecipients(payload.playerId, payload.messageMode);
-    if (whisperTargets.length) chatData.whisper = whisperTargets;
-    await ChatMessage.create(chatData);
+    await this.upsertResultMessage({
+      resultMessageId: payload.resultMessageId,
+      messageMode: payload.messageMode,
+      recipients: this.getInformationResultRecipients(payload.playerId, payload.messageMode),
+    }, resultHtml, payload.rollMessageId);
   }
 
   static async createInformationQuery(result, uuid, item, { actor, skill, virtualInfo, parentUuid, messageMode } = {}) {
@@ -362,6 +438,7 @@ export default class InformationQueryService {
       virtualInfo,
       parentUuid: parentUuid || null,
       messageMode: messageMode || result.cardOptions?.messageMode,
+      rollMessageId: result.result?.messageId || null,
     };
 
     const state = {
@@ -379,6 +456,17 @@ export default class InformationQueryService {
       state,
       whisper: whisperTargets,
     });
+    payload.queryMessageId = message?.id;
+    if (payload.rollMessageId && message?.id) {
+      await this.persistRollLink(payload.rollMessageId, {
+        queryMessageId: message.id,
+        uuid,
+        parentUuid: parentUuid || null,
+        virtualInfo,
+        messageMode: payload.messageMode,
+        recipients: this.getInformationResultRecipients(payload.playerId, payload.messageMode),
+      });
+    }
 
     try {
       await QueryOrchestrator.dispatchRecipientQuery({
@@ -448,9 +536,14 @@ export default class InformationQueryService {
       return;
     }
 
-    const setupData = await actor.setupSkill(skill, { modifier }, tokenId);
+    const setupData = await actor.setupSkill(skill, {
+      modifier,
+      postFunction: this.informationPostFunction({ uuid }),
+    }, tokenId);
+    if (!setupData) return;
     setupData.testData.opposable = false;
     const result = await actor.basicTest(setupData);
+    if (!result) return;
 
     await this.createInformationQuery(result, uuid, item, {
       actor,
@@ -469,44 +562,68 @@ export default class InformationQueryService {
     const optns = {
       modifier,
       ...(messageMode ? { messageMode } : {}),
-      postFunction: {
-        functionName: 'game.dsa5.queries.InformationQueryService.postInformationRoll',
-        uuid,
-        messageMode,
-        recipients: this.getInformationResultRecipients(game.user.id, messageMode),
-      },
+      postFunction: this.informationPostFunction({ uuid, messageMode }),
     };
     const skill = actor.items.find((i) => i.name == ev.currentTarget.dataset.skill && i.type == 'skill');
     actor.setupSkill(skill, optns, tokenId).then(async (setupData) => {
+      if (!setupData) return;
       setupData.testData.opposable = false;
       const res = await actor.basicTest(setupData);
-      this.postInformationRoll(optns.postFunction, res);
+      if (!res) return;
+      InformationQueryService.postInformationRoll(optns.postFunction, res);
     });
   }
 
-  static async postInformationRoll(postFunction, result, source) {
-    const item = await fromUuid(postFunction.uuid);
-    if (!item) return;
+  static async postInformationRoll(postFunction, payload, _source) {
+    if (!postFunction?.uuid && !postFunction?.virtualInfo) return;
 
-    const infoSystem = await this._resolveInfoSystem(item, {
+    // Unbound: DiceDSA5.invokeRerenderPostFunction calls this without a receiver.
+    // Resolve through the same global path as functionName so this is never required.
+    const Service = game.dsa5.queries.InformationQueryService;
+    const outcome = Service.rollOutcome(payload);
+    const linked = Service.resolveLinkedIds(postFunction, outcome.messageId);
+    const next = { ...postFunction, ...linked };
+
+    if (next.queryMessageId) {
+      await Service.refreshInformationQuery(next, outcome);
+      return;
+    }
+
+    await Service.publishInformationResult(next, outcome);
+  }
+
+  static async refreshInformationQuery(postFunction, outcome) {
+    const queryMessage = game.messages.get(postFunction.queryMessageId);
+    const state = queryMessage?.getFlag('dsa5', InformationQueryService.FLAG_KEY);
+
+    if (state?.status === 'pending') {
+      await QueryOrchestrator.enqueueMessageUpdate(postFunction.queryMessageId, async (currentState) => {
+        currentState.rolledQS = outcome.qualityStep;
+        currentState.successLevel = outcome.successLevel;
+        return currentState;
+      });
+      return;
+    }
+
+    if (state && state.status !== 'approved') return;
+
+    await InformationQueryService.publishInformationResult(postFunction, outcome);
+  }
+
+  static async publishInformationResult(postFunction, outcome) {
+    const item = postFunction.uuid ? await fromUuid(postFunction.uuid) : null;
+    if (!item && !postFunction.virtualInfo) return;
+
+    const infoSystem = await InformationQueryService._resolveInfoSystem(item, {
       parentUuid: postFunction.parentUuid,
+      virtualInfo: postFunction.virtualInfo,
     });
-    const infoName = this._getInfoName(item, { virtualInfo: infoSystem });
-
-    const availableQs = result.result.qualityStep || 0;
-    const successLevel = result.result.successLevel || 0;
-    const selected = {};
-    for (let i = 1; i <= availableQs; i++) selected[`qs${i}`] = true;
-    if (successLevel > 1) selected.crit = true;
-    else if (successLevel < -1) selected.botch = true;
-    else if (!availableQs) selected.fail = true;
-
-    const resultHtml = await this.buildApprovedResultHtml(infoSystem, selected, infoName);
+    const infoName = InformationQueryService._getInfoName(item, { virtualInfo: postFunction.virtualInfo || infoSystem });
+    const selected = InformationQueryService.autoSelectedInfoKeys(outcome.qualityStep, outcome.successLevel);
+    const resultHtml = await InformationQueryService.buildApprovedResultHtml(infoSystem, selected, infoName);
     if (!resultHtml) return;
 
-    const chatData = DSA5_Utility.chatDataSetup(resultHtml, postFunction.messageMode);
-    if (postFunction.recipients?.length) chatData.whisper = postFunction.recipients;
-    await ChatMessage.create(chatData);
+    await InformationQueryService.upsertResultMessage(postFunction, resultHtml, outcome.messageId);
   }
 
   static chatListeners(html) {

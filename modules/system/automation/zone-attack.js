@@ -4,11 +4,17 @@ import ZoneAttackConsequences from './zone-attack-consequences.js';
 
 export default class ZoneAttack {
   static #registered = false;
+  static RANGE_DEFENSE_MALUS = -4;
 
   static registerHooks() {
     if (this.#registered) return;
     this.#registered = true;
     DSA5.asyncHooks.postProcessOpposedResult.push(ZoneAttackConsequences.postProcessOpposedResult.bind(ZoneAttackConsequences));
+  }
+
+  static rangeDefenseMalus(attackType, override) {
+    if (override != null) return Number(override) || 0;
+    return attackType === 'rangeAttack' ? this.RANGE_DEFENSE_MALUS : 0;
   }
 
   static async resolve({
@@ -22,7 +28,7 @@ export default class ZoneAttack {
     attackValue,
     damageFormula,
     attackType = 'meleeAttack',
-    defenseMalus = 0,
+    defenseMalus,
     traits = [],
     reach,
     regionEvent,
@@ -50,10 +56,11 @@ export default class ZoneAttack {
       if (!setupData) return null;
 
       setupData.testData.situationalModifiers = [];
-      if (defenseMalus) {
+      const malus = this.rangeDefenseMalus(attackType, defenseMalus);
+      if (malus) {
         setupData.testData.situationalModifiers.push({
           name: _loc('MODS.defenseMalus'),
-          value: defenseMalus,
+          value: malus,
           type: 'defenseMalus',
           selected: true,
         });

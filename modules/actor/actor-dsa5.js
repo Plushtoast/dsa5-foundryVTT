@@ -1879,6 +1879,7 @@ export default class Actordsa5 extends Actor {
       combatSpecAbs: combatskills,
       showDefense: true,
       situationalModifiers,
+      modifier: options.modifier || 0,
       isRangeAttack,
       multipleDefenseValue,
       isDodge: true,
@@ -1890,7 +1891,7 @@ export default class Actordsa5 extends Actor {
       callback: (html, options = {}) => {
         DSA5CombatDialog.resolveMeleeDialog(testData, cardOptions, html, this, options, multipleDefenseValue, 'parry');
         Hooks.call('callbackDialogCombatDSA5', testData, this, html, testData.source, tokenId);
-        testData.isRangeDefense = data.isRangeDefense;
+        testData.isRangeDefense = isRangeAttack;
         return { testData, cardOptions };
       },
     };
