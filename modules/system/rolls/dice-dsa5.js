@@ -486,9 +486,9 @@ export default class DiceDSA5 {
   }
 
   static async getDefenseCount(testData) {
-    if (game.combat) return await game.combat.getDefenseCount(testData.extra.speaker);
-
-    return 0;
+    const extra = Number(testData.extra?.options?.defenseCount) || 0;
+    const combatCount = game.combat ? (await game.combat.getDefenseCount(testData.extra.speaker)) || 0 : 0;
+    return Math.max(combatCount, extra);
   }
 
   static async getDuplicatusRoll(res, testData) {

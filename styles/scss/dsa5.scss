@@ -3542,6 +3542,11 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   }
 }
 
+.trap-announce-card details.trap-announce-details summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
 // Outcome accents — must beat reserved transparent gutter (same/higher specificity)
 .roll-request-card .roll-request-row,
 .trap-announce-card .roll-request-row,

@@ -265,7 +265,7 @@ export class CombatSystem {
      * @param {boolean} wrongHandDisabled - Whether wrong hand is disabled
      */
     static prepareMeleeParry(situationalModifiers, actor, data, source, combatSpecAbs, wrongHandDisabled) {
-        const isRangeDefense = CombatSystem.getDefenseMalus(situationalModifiers, actor);
+        const isRangeDefense = Boolean(data.isRangeDefense) || CombatSystem.getDefenseMalus(situationalModifiers, actor);
         CombatSystem.addSwarmModifiers(actor, ITEM_CONSTANTS.COMBAT_MODES.PARRY, situationalModifiers);
         mergeObject(data, {
             visionOptions: DSA5.meleeRangeVision(data.mode),

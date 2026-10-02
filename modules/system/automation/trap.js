@@ -344,7 +344,9 @@ export default class TrapAutomation extends TrapSetpiece {
       configuration: {
         targetQs: Number(args.targetQs) || 1,
         maxRolls: GroupCheck.resolveMaxRolls(args.maxRolls),
+        interval: resist.interval || args.interval || '',
       },
+      otherMessage: resist.applications || args.applications || undefined,
       forceWhisperIDs: token ? RollRequestService.buildTokenWhisper(token) : false,
       datasetOptions: {
         mode: 'escape',
@@ -507,7 +509,7 @@ export default class TrapAutomation extends TrapSetpiece {
       countdown = await this.startTimer({ behavior, token, trapMessage, openEscape: !skipDialog });
     }
     if (this.isStoneTrapType(system.trapType)) {
-      chase = await this.startBoulderChase({ behavior, token, region });
+      chase = await this.startBoulderChase({ behavior, token, region, trapMessage });
     }
 
     if (Number(system.charges) > 0) {

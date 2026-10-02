@@ -578,6 +578,7 @@ export default class Chase {
       chaser: chaser.name,
       fleer,
     })));
+    await game.dsa5.apps.TrapAutomation?.applyBoulderCatch?.(combat, chaser);
   }
 
   static chaseRoundsElapsed(combat = game.combat) {

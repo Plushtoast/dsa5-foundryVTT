@@ -318,8 +318,9 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
         ];
 
         if (vis.showDamage) {
-            const damage = TrapAutomation.strikesFrom(this)
-                .map((strike) => (strike.name ? `${strike.name} ${strike.damageFormula}` : strike.damageFormula))
+            const strikes = TrapAutomation.strikesFrom(this);
+            const damage = strikes
+                .map((strike) => (strikes.length > 1 && strike.name ? `${strike.name} ${strike.damageFormula}` : strike.damageFormula))
                 .filter(Boolean)
                 .join(', ');
             lines.push(this.constructor.tooltipLine(_loc('damage'), damage));

@@ -135,6 +135,7 @@ export class ItemDialogBuilder extends RollDialogBuilder {
         if (options.situationalModifiers) {
             data.situationalModifiers.push(...options.situationalModifiers);
         }
+        if (options.isRangeDefense) data.isRangeDefense = true;
         this.#applyAdditionalOptions(data, options);
         return {
             dialogOptions: {

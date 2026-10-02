@@ -50,14 +50,23 @@ export default class TrapSetpiece {
     return this.isTimerTrapType(trapType) || this.isStoneTrapType(trapType);
   }
 
+  static parseInterval(value) {
+    const match = String(value || '').match(/-?\d+/);
+    return match ? Math.max(0, Number(match[0]) || 0) : 0;
+  }
+
   static countdownFrom(system = {}, extras = {}) {
     const escape = TrapFlow.defenseOfType(system, 'group') || {};
+    const interval = escape.interval || '';
     return {
       remaining: Math.max(0, Number(escape.timerRounds) || 0),
       elapsed: 0,
       escapeModifier: Number(escape.modifier) || 0,
       escalateEvery: Math.max(0, Number(escape.escalateEvery) || 0),
       escalateMax: Number(escape.escalateMax) || 0,
+      interval,
+      intervalRounds: this.parseInterval(interval),
+      combatSinceAttempt: 0,
       timedOut: false,
       trapName: extras.trapName || '',
       trapMessage: extras.trapMessage || '',
@@ -70,6 +79,7 @@ export default class TrapSetpiece {
       ...countdown,
       remaining: Math.max(0, (Number(countdown.remaining) || 0) - 1),
       elapsed: (Number(countdown.elapsed) || 0) + 1,
+      combatSinceAttempt: (Number(countdown.combatSinceAttempt) || 0) + 1,
       timedOut: false,
     };
     if (next.escalateEvery > 0 && next.elapsed % next.escalateEvery === 0) {
@@ -77,6 +87,20 @@ export default class TrapSetpiece {
       next.escapeModifier = Math.max(Number(next.escalateMax) || 0, stepped);
     }
     next.timedOut = next.remaining <= 0;
+    return next;
+  }
+
+  /**
+   * Spend leftover interval KR for one escape attempt.
+   * Combat ticks already counted since the last attempt are not subtracted again.
+   */
+  static spendEscapeInterval(countdown = {}) {
+    const interval = Math.max(0, Number(countdown.intervalRounds) || this.parseInterval(countdown.interval));
+    const already = Math.max(0, Number(countdown.combatSinceAttempt) || 0);
+    const extra = Math.max(0, interval - already);
+    let next = { ...countdown, combatSinceAttempt: 0 };
+    for (let i = 0; i < extra; i++) next = this.advanceCountdown(next);
+    next.combatSinceAttempt = 0;
     return next;
   }
 
@@ -128,6 +152,8 @@ export default class TrapSetpiece {
     return {
       skill: escape.skill || _loc('LocalizedIDs.featOfStrength'),
       mod: Number(escape.modifier) || 0,
+      interval: escape.interval || '',
+      applications: escape.applications || '',
       effect: {
         name: system.name || _loc('REGIONBEHAVIOR_DSATrap.escape'),
         system: {
@@ -135,6 +161,8 @@ export default class TrapSetpiece {
             groupCheck: true,
             maxRolls: Number.isFinite(maxRolls) ? Math.max(0, maxRolls) : 0,
             targetQs: Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1,
+            interval: escape.interval || '',
+            applications: escape.applications || '',
           },
         },
       },
@@ -181,23 +209,42 @@ export default class TrapSetpiece {
     return true;
   }
 
+  static cardCountdown(countdown) {
+    if (!countdown) return null;
+    return {
+      remaining: countdown.remaining,
+      escapeModifier: countdown.escapeModifier,
+      timedOut: Boolean(countdown.timedOut),
+      interval: countdown.interval || '',
+    };
+  }
+
   static async persistCountdown(behavior, countdown, trapMessage) {
     if (behavior?.update) {
       await behavior.update({ 'flags.dsa5.countdown': countdown });
     }
     if (!trapMessage?.update) return;
+    const cardCountdown = this.cardCountdown(countdown);
+    const { TrapState } = await import('../../chatmessage/trap_state.js');
+    const trapState = await TrapState.fromMessage(trapMessage);
+    if (trapState) {
+      await trapState.persistCard({ trapDataPatch: { countdown: cardCountdown } });
+      return;
+    }
     const trapData = duplicate(trapMessage.flags?.dsa5?.trapData || {});
-    trapData.countdown = {
-      remaining: countdown.remaining,
-      escapeModifier: countdown.escapeModifier,
-      timedOut: Boolean(countdown.timedOut),
-    };
+    trapData.countdown = cardCountdown;
     await trapMessage.update({ 'flags.dsa5.trapData': trapData });
   }
 
   static async clearCountdown(behavior, trapMessage) {
     if (behavior?.update) await behavior.update({ 'flags.dsa5.countdown': null });
     if (!trapMessage?.update) return;
+    const { TrapState } = await import('../../chatmessage/trap_state.js');
+    const trapState = await TrapState.fromMessage(trapMessage);
+    if (trapState) {
+      await trapState.persistCard({ trapDataPatch: { countdown: null } });
+      return;
+    }
     const trapData = duplicate(trapMessage.flags?.dsa5?.trapData || {});
     trapData.countdown = null;
     await trapMessage.update({ 'flags.dsa5.trapData': trapData });
@@ -259,7 +306,18 @@ export default class TrapSetpiece {
     return Math.max(0, Number(roll.total) || 0);
   }
 
-  static async startBoulderChase({ behavior, token, region, combat } = {}) {
+  static async applyBoulderCatch(combat, chaser) {
+    const flags = chaser?.actor?.flags?.dsa5 || {};
+    if (!flags.trapBoulder) return null;
+    const trapMessage = flags.trapMessageUuid ? await fromUuid(flags.trapMessageUuid) : null;
+    if (!trapMessage) return null;
+    const { TrapState } = await import('../../chatmessage/trap_state.js');
+    const trapState = await TrapState.fromMessage(trapMessage);
+    if (!trapState) return null;
+    return trapState.applyCatchDamage();
+  }
+
+  static async startBoulderChase({ behavior, token, region, combat, trapMessage } = {}) {
     const system = behavior?.system || {};
     if (!this.isStoneTrapType(system.trapType)) return null;
     if (!token?.actor) return null;
@@ -292,7 +350,14 @@ export default class TrapSetpiece {
           wounds: { value: 50 },
         },
       },
-      flags: { dsa5: { trapBoulder: true, chaseFw: fw } },
+      flags: {
+        dsa5: {
+          trapBoulder: true,
+          chaseFw: fw,
+          trapMessageUuid: trapMessage?.uuid || '',
+          trapBehaviorUuid: behavior?.uuid || '',
+        },
+      },
     });
 
     const skillName = _loc('LocalizedIDs.bodyControl');

@@ -1871,7 +1871,7 @@ export default class Actordsa5 extends Actor {
       ...CombatSpecialAbilities.build(this, ['animal'], undefined, 'parry', testData.source),
     ];
     const situationalModifiers = DSA5StatusEffects.getRollModifiers(this, testData.source);
-    const isRangeAttack = CombatSystem.getDefenseMalus(situationalModifiers, this);
+    const isRangeAttack = Boolean(options.isRangeDefense) || CombatSystem.getDefenseMalus(situationalModifiers, this);
     const multipleDefenseValue = RuleChaos.multipleDefenseValue(this, testData.source);
 
     const data = {
