@@ -21,6 +21,13 @@
     <p>{{{enrichedDescription}}}</p>
     {{/unless}}
     {{/if}}
+    <div class="flexrow">
+        <button type="button" class="trap-handling" data-action="searchTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.searchHint"><i class="fas fa-eye"></i></button>
+        <button type="button" class="trap-handling" data-action="disarmTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.disarmHint"><i class="fas fa-lock-open"></i></button>
+        <button type="button" class="trap-handling" data-action="manualDisarm" data-tooltip="REGIONBEHAVIOR_DSATrap.manualDisarmHint"><i class="fas fa-wrench"></i></button>
+        <button type="button" class="trap-handling" data-action="triggerTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.triggerHint"><i class="fas fa-bolt"></i></button>
+        <button type="button" class="trap-handling" data-action="showTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.showTrapHint"><i class="fas fa-mask"></i></button>
+    </div>
     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.hint">
         <div class="col eighty"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.difficulty.label"}}</b></div>
         <div class="col five flexAlignEnd flexrow">{{behaviour.difficulty}}</div>
@@ -66,19 +73,6 @@
         {{/each}}
     </div>
     {{/if}}
-    {{#if offers.length}}
-    <div class="flexrow">
-        {{#each offers as |offer|}}
-            {{#if offer.reactions.length}}
-                {{#each offer.reactions as |reaction|}}
-                <button type="button" class="trap-handling" data-action="defendTrap" data-defense="{{offer.id}}" data-reaction="{{reaction.id}}">{{reaction.label}}</button>
-                {{/each}}
-            {{else}}
-                <button type="button" class="trap-handling" data-action="defendTrap" data-defense="{{offer.id}}">{{offer.label}}</button>
-            {{/if}}
-        {{/each}}
-    </div>
-    {{/if}}
     {{#if outcomes.length}}
     <div class="roll-request-card">
         <div class="roll-request-rows">
@@ -93,11 +87,11 @@
         </div>
     </div>
     {{/if}}
-    <div class="flexrow">
-        <button type="button" class="trap-handling" data-action="searchTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.searchHint"><i class="fas fa-eye"></i></button>
-        <button type="button" class="trap-handling" data-action="disarmTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.disarmHint"><i class="fas fa-lock-open"></i></button>
-        <button type="button" class="trap-handling" data-action="manualDisarm" data-tooltip="REGIONBEHAVIOR_DSATrap.manualDisarmHint"><i class="fas fa-wrench"></i></button>
-        <button type="button" class="trap-handling" data-action="triggerTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.triggerHint"><i class="fas fa-bolt"></i></button>
-        <button type="button" class="trap-handling" data-action="showTrap" data-tooltip="REGIONBEHAVIOR_DSATrap.showTrapHint"><i class="fas fa-mask"></i></button>
+    {{#if offers.length}}
+    <div class="flexrow flexAlignEnd dsamt-2">
+        {{#each offers as |offer|}}
+        <button type="button" class="trap-handling small-button flex0" data-action="defendTrap" data-defense="{{offer.id}}">{{#if offer.usesReactionDialog}}{{localize "Unopposed"}}{{else}}{{offer.label}}{{/if}}</button>
+        {{/each}}
     </div>
+    {{/if}}
 </div>

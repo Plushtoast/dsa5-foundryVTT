@@ -92,21 +92,29 @@ export class TrapState extends ChatMessageState {
         };
     }
 
-    #offers(stored = {}) {
+    static combatReactionKeys(entry) {
+        return String(entry?.reactions || 'nothing,dodge,parry').split(',').map((reaction) => reaction.trim()).filter(Boolean);
+    }
+
+    static defenseOffers(stored = {}, behaviorDefenses = {}) {
         const flow = stored.flow;
-        const defenses = Object.keys(stored.defenses || {}).length ? stored.defenses : (this.behavior?.system?.defenses || {});
+        const defenses = Object.keys(stored.defenses || {}).length ? stored.defenses : behaviorDefenses;
         if (!flow?.pending?.length) return [];
         return flow.pending.map((id) => {
             const entry = defenses[id] || {};
-            const reactions = entry.type === 'combat'
-                ? String(entry.reactions || 'nothing,dodge,parry').split(',').map((reaction) => {
-                    const key = reaction.trim();
-                    const labelKey = key === 'nothing' ? 'doNothing' : key === 'dodge' ? 'dodge' : 'CHAR.PARRY';
-                    return { id: key, label: _loc(labelKey) };
-                }).filter((reaction) => reaction.id)
-                : [];
-            return { id, label: TrapFlow.displayLabel(id, entry.label), type: entry.type, reactions };
+            const combatReactions = entry.type === 'combat' ? TrapState.combatReactionKeys(entry) : [];
+            return {
+                id,
+                label: TrapFlow.displayLabel(id, entry.label),
+                type: entry.type,
+                usesReactionDialog: combatReactions.length > 0,
+                combatReactions,
+            };
         });
+    }
+
+    #offers(stored = {}) {
+        return TrapState.defenseOffers(stored, this.behavior?.system?.defenses || {});
     }
 
     async toMessage() {
@@ -134,8 +142,13 @@ export class TrapState extends ChatMessageState {
     async persistCard({ outcome, triggered = false, trapDataPatch = {} } = {}) {
         if (!this.message) return;
         const trapData = duplicate(this.message.flags?.dsa5?.trapData || {});
-        trapData.outcomes = Array.isArray(trapData.outcomes) ? trapData.outcomes : [];
-        if (outcome) trapData.outcomes.push(outcome);
+        const outcomes = Array.isArray(trapData.outcomes) ? trapData.outcomes : [];
+        if (outcome) {
+            const index = outcomes.findIndex((entry) => entry.mode === outcome.mode);
+            if (index >= 0) outcomes[index] = { ...outcomes[index], ...outcome };
+            else outcomes.push(outcome);
+        }
+        trapData.outcomes = outcomes;
         if (triggered) trapData.triggered = true;
         Object.assign(trapData, trapDataPatch);
 
@@ -147,10 +160,10 @@ export class TrapState extends ChatMessageState {
         });
     }
 
-    async applyRollResult({ mode, actorId, status, skipActorMatch = false, qs = 0 } = {}) {
+    async applyRollResult({ mode, actorId, status, skipActorMatch = false, qs = 0, reaction = '' } = {}) {
         if (String(mode || '').startsWith('defense:')) {
             if (!TrapState.ROLL_OUTCOMES.has(status)) return;
-            await this.#commitDefense({ id: mode.slice('defense:'.length), status, qs });
+            await this.#commitDefense({ id: mode.slice('defense:'.length), status, qs, reaction });
             return;
         }
         if (!TrapState.ROLL_OUTCOMES.has(status)) return;
@@ -523,6 +536,10 @@ export class TrapState extends ChatMessageState {
         const entry = defenses[id];
         if (!entry) return;
         const actor = TrapState.actorFromToken(token);
+        if (entry.type === 'combat' && !reaction) {
+            await this.#openCombatReactionDialog(id, entry);
+            return;
+        }
         if (reaction === 'nothing') {
             await this.#commitDefense({ id, status: 'failure', reaction: 'nothing' });
             return;
@@ -540,11 +557,8 @@ export class TrapState extends ChatMessageState {
             await this.#commitDefense({ id, status: 'success', reaction: 'chase' });
             return;
         }
-        if (reaction === 'dodge' && actor?.setupDodge) {
-            actor.setupDodge({
-                modifier: this.#defenseModifier(entry),
-                moreModifiers: TrapAutomation.rangeDefenseModifiers(behavior.system, entry),
-            }, token.id);
+        if (reaction === 'dodge' && actor) {
+            await this.#startCombatRoll(id, 'dodge', actor);
             return;
         }
         const skill = entry.skill || entry.label;
@@ -558,6 +572,90 @@ export class TrapState extends ChatMessageState {
         });
     }
 
+    async #openCombatReactionDialog(id, entry) {
+        const actor = TrapState.actorFromToken(this.token);
+        if (!actor) {
+            ui.notifications.error('DSAError.noProperActor', { localize: true });
+            return;
+        }
+        await game.dsa5.dialogs.ReactToAttackDialog.showTrapDialog({
+            actor,
+            tokenId: this.token.id,
+            trapMessage: this.message,
+            defenseId: id,
+            allowedReactions: TrapState.combatReactionKeys(entry),
+        });
+    }
+
+    static async resolveCombatReaction(trapConfig, dataset) {
+        const trapState = await TrapState.fromMessage(trapConfig.trapMessage);
+        if (!trapState) return;
+        const actor = trapConfig.actor || TrapState.actorFromToken(trapState.token);
+        const text = dataset?.value;
+        if (text === 'doNothing') {
+            await trapState.#commitDefense({ id: trapConfig.defenseId, status: 'failure', reaction: 'nothing' });
+            return;
+        }
+        if (text === 'dodge') {
+            await trapState.#startCombatRoll(trapConfig.defenseId, 'dodge', actor);
+            return;
+        }
+        await trapState.#startCombatRoll(trapConfig.defenseId, 'parry', actor, dataset);
+    }
+
+    static async postCombatReaction(postFunction, payload) {
+        const trapMessage = await fromUuid(postFunction.trapMessageUuid);
+        if (!trapMessage) return;
+        const trapState = await TrapState.fromMessage(trapMessage);
+        if (!trapState) return;
+        const rollResult = payload?.result && typeof payload.result === 'object' ? payload.result : (payload ?? {});
+        const status = QueryOrchestrator.statusFromSuccessLevel(Number(rollResult.successLevel) || 0) || 'failure';
+        await trapState.applyRollResult({
+            mode: `defense:${postFunction.defenseId}`,
+            actorId: postFunction.actorId,
+            status,
+            qs: Number(rollResult.qualityStep) || 0,
+            skipActorMatch: true,
+            reaction: postFunction.reaction || '',
+        });
+    }
+
+    async #startCombatRoll(id, reaction, actor, dataset = {}) {
+        if (!actor) return;
+        const defenses = this.behavior.system.defenses || this.message.flags?.dsa5?.trapData?.defenses || {};
+        const entry = defenses[id] || {};
+        const moreModifiers = TrapAutomation.rangeDefenseModifiers(this.behavior.system, entry);
+        const postFunction = {
+            functionName: 'game.dsa5.apps.TrapState.postCombatReaction',
+            trapMessageUuid: this.message.uuid,
+            defenseId: id,
+            actorId: actor.id,
+            reaction,
+        };
+        const options = {
+            modifier: this.#defenseModifier(entry),
+            moreModifiers,
+            situationalModifiers: moreModifiers,
+            postFunction,
+            skipDefaultOppose: true,
+        };
+        const tokenId = this.token?.id;
+        let setupPromise;
+        if (reaction === 'dodge') {
+            setupPromise = actor.setupDodge(options, tokenId);
+        } else if (dataset.value === 'parryWeaponless') {
+            setupPromise = actor.setupWeaponless('parry', options, tokenId);
+        } else {
+            const result = actor.items.find((item) => ['meleeweapon', 'trait'].includes(item.type) && item.name == dataset.value);
+            if (!result) return;
+            setupPromise = actor.setupWeapon(result, 'parry', options, tokenId);
+        }
+        const setupData = await setupPromise;
+        if (!setupData) return;
+        const rolled = await actor.basicTest(setupData);
+        await TrapState.postCombatReaction(postFunction, rolled);
+    }
+
     #defenseModifier(entry) {
         return TrapAutomation.defenseModifier(this.behavior.system, entry, {
             detected: this.behavior.system.detected,
@@ -567,11 +665,15 @@ export class TrapState extends ChatMessageState {
 
     async #commitDefense({ id, status, qs = 0, reaction = '' } = {}) {
         const stored = this.message.flags?.dsa5?.trapData || {};
+        let flow = stored.flow;
+        if (flow?.resolvedIds?.includes(id)) {
+            flow = TrapFlow.rewind(this.behavior.system, flow, id);
+        }
         const result = await TrapAutomation.resolveDefense({
             behavior: this.behavior,
             token: this.token,
             trapMessage: this.message,
-            flow: stored.flow,
+            flow,
             id,
             status,
             qs,

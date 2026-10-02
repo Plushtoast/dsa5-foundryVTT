@@ -120,8 +120,8 @@ export class ActAttackDialog extends foundry.applications.api.HandlebarsApplicat
     },
   };
 
-  constructor(actor, tokenId) {
-    super();
+  constructor(actor, tokenId, options = {}) {
+    super(options);
     this.actor = actor;
     this.tokenId = tokenId;
   }
@@ -346,9 +346,20 @@ export class ReactToAttackDialog extends ActAttackDialog {
     new ReactToAttackDialog(startMessage).render(true);
   }
 
-  constructor(startMessage) {
-    super();
+  static async showTrapDialog(trapConfig) {
+    const dialogId = `dsa-trap-react-${trapConfig.trapMessage.id}-${trapConfig.defenseId}`;
+    const existing = foundry.applications.instances.get(dialogId);
+    if (existing) {
+      existing.bringToTop();
+      return;
+    }
+    new ReactToAttackDialog(null, { ...trapConfig, id: dialogId }).render(true);
+  }
+
+  constructor(startMessage, trapConfig = null) {
+    super(trapConfig?.actor, trapConfig?.tokenId, trapConfig?.id ? { id: trapConfig.id } : {});
     this.startMessage = startMessage;
+    this.trapConfig = trapConfig;
   }
 
   static DEFAULT_OPTIONS = {
@@ -375,13 +386,25 @@ export class ReactToAttackDialog extends ActAttackDialog {
     };
   }
 
+  static filterTrapReactionItems(items, allowedReactions) {
+    const allowed = new Set(allowedReactions || []);
+    if (!allowed.size) return items;
+    return items.filter((item) => {
+      if (item.id === 'doNothing') return allowed.has('nothing');
+      if (item.id === 'dodge') return allowed.has('dodge');
+      return allowed.has('parry');
+    });
+  }
+
   async _prepareContext(_options) {
-    const { actor, tokenId } = DialogReactDSA5.getTargetActor(this.startMessage);
-    const attackActor = ReactToAttackDialog.getAttackActor(this.startMessage);
+    const { actor, tokenId } = this.trapConfig
+      ? { actor: this.actor, tokenId: this.tokenId }
+      : DialogReactDSA5.getTargetActor(this.startMessage);
+    const attackActor = this.startMessage ? ReactToAttackDialog.getAttackActor(this.startMessage) : null;
     const wrestle = _loc('LocalizedIDs.wrestle')
     const combatskills = actor.items.filter((x) => x.type == 'combatskill').map((x) => CombatskillData._calculateCombatSkillValues(x.toObject(), actor.system));
     const brawl = combatskills.find((x) => x.name == wrestle);
-    const items = [
+    let items = [
       {
         name: _loc('doNothing'),
         id: 'doNothing',
@@ -441,6 +464,8 @@ export class ReactToAttackDialog extends ActAttackDialog {
         });
     }
 
+    items = ReactToAttackDialog.filterTrapReactionItems(items, this.trapConfig?.allowedReactions);
+
     return {
       dieClass: 'die-in',
       items,
@@ -451,6 +476,11 @@ export class ReactToAttackDialog extends ActAttackDialog {
   }
 
   callbackResult(dataset, dialog) {
+    if (dialog.trapConfig) {
+      game.dsa5.apps.TrapState.resolveCombatReaction(dialog.trapConfig, dataset);
+      return;
+    }
+
     const text = dataset.value;
     const message = dialog.startMessage;
     const { actor, tokenId } = DialogReactDSA5.getTargetActor(message);

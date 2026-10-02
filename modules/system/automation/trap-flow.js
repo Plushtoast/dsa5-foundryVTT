@@ -169,6 +169,24 @@ export default class TrapFlow {
     return { flow: next, lines: opened };
   }
 
+  /**
+   * Drop a recorded defense so fate / GM edits can replace it.
+   * Choice-gate ids are not re-derived after start, so the id is put back on pending.
+   */
+  static rewind(system, flow, id) {
+    const damages = system.damages || {};
+    const damageIds = new Set(Object.entries(damages).filter(([, damage]) => damage.when === id).map(([damageId]) => damageId));
+    const next = foundry.utils.duplicate(flow);
+    next.resolvedIds = (next.resolvedIds || []).filter((entryId) => entryId !== id);
+    next.failedIds = (next.failedIds || []).filter((entryId) => entryId !== id);
+    next.lines = (next.lines || []).filter((line) => !damageIds.has(line.id));
+    next.damageIds = (next.damageIds || []).filter((damageId) => !damageIds.has(damageId));
+    if (damageIds.size) next.payloadApplied = false;
+    const rest = (next.pending || []).filter((entryId) => entryId !== id);
+    next.pending = [id, ...rest];
+    return next;
+  }
+
   static #damagesDue(system, defenseId, success, reaction) {
     return Object.entries(system.damages || {})
       .filter(([, damage]) => {

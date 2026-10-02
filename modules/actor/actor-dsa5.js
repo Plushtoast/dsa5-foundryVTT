@@ -1292,7 +1292,7 @@ export default class Actordsa5 extends Actor {
   }
 
   _withDefaultOppose(options = {}, mode) {
-    if (options.oppose || !['parry', 'dodge'].includes(mode)) return options;
+    if (options.oppose || options.skipDefaultOppose || !['parry', 'dodge'].includes(mode)) return options;
 
     const opposeFlag = this.flags.oppose;
     if (!opposeFlag?.startMessageId || !opposeFlag?.messageId) return options;
