@@ -192,6 +192,36 @@ export default class TrapAutomation extends TrapSetpiece {
     return modifier;
   }
 
+  static areaTargetFrom(system = {}, region = null) {
+    const target = system.target || {};
+    if (target.type && Number(target.value) > 0) {
+      return {
+        type: target.type,
+        value: String(target.value),
+        width: target.width,
+        angle: target.angle,
+        showZone: target.showZone !== false,
+      };
+    }
+    const shape = region?.shapes?.[0];
+    const gridSize = canvas?.scene?.grid?.size;
+    if (!shape || !gridSize) return null;
+    if (shape.type === 'rectangle' && shape.width) {
+      return { type: 'cube', value: String(Math.max(1, Math.round(shape.width / gridSize))), showZone: true };
+    }
+    if ((shape.type === 'ellipse' || shape.type === 'circle') && (shape.radiusX || shape.radius)) {
+      const radius = shape.radiusX || shape.radius;
+      return { type: 'sphere', value: String(Math.max(1, Math.round(radius / gridSize))), showZone: true };
+    }
+    return null;
+  }
+
+  static lineOffersArea(line) {
+    if (!line || line.kind === 'falling' || line.needsFall) return false;
+    if (line.chanceMiss) return false;
+    return Boolean(line.needsChance || line.chanceHit || line.kind === 'note');
+  }
+
   static isOpposedHit(result) {
     const level = result?.result?.successLevel ?? result?.successLevel;
     return Number(level) > 0;
@@ -385,7 +415,7 @@ export default class TrapAutomation extends TrapSetpiece {
     const step = TrapFlow.advance(system, flow || TrapFlow.initialFlow(system), { id, status, qs, reaction });
     const lines = [];
     for (const line of step.lines) {
-      if (line.kind === 'falling') {
+      if (line.kind === 'falling' || line.needsChance) {
         lines.push(line);
         continue;
       }

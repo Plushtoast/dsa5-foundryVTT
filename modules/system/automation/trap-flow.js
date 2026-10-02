@@ -156,7 +156,6 @@ export default class TrapFlow {
 
     const due = this.#damagesDue(system, id, success, reaction);
     for (const damage of due) {
-      if (!this.#chanceHits(damage)) continue;
       const line = this.#lineFor(damage, qs, next);
       if (!line) continue;
       next.lines.push(line);
@@ -197,30 +196,49 @@ export default class TrapFlow {
       .map(([id, damage]) => ({ id, ...damage }));
   }
 
-  static #chanceHits(damage) {
+  static #lineFor(damage, qs, flow) {
+    const chance = this.#chanceMeta(damage);
+    let line;
+    if (damage.type === 'falling') {
+      const height = Math.max(1, Number(damage.height) || 1);
+      line = { id: damage.id, label: damage.label, formula: `${height}d6`, kind: 'falling', height, needsFall: true };
+    } else if (damage.type === 'fromQs') {
+      const total = Math.max(0, Math.floor((Number(damage.base) || 0) - (Number(qs) || 0) * (Number(damage.perQs) || 0)));
+      line = { id: damage.id, label: damage.label, formula: String(total), total, kind: 'flat' };
+    } else if (!damage.formula) {
+      line = { id: damage.id, label: damage.label, formula: '', total: 0, kind: 'note' };
+    } else {
+      line = { id: damage.id, label: damage.label, formula: damage.formula, kind: damage.type || 'formula' };
+    }
+    return chance ? { ...line, ...chance } : line;
+  }
+
+  static #chanceMeta(damage) {
     const die = Number(damage.chanceDie) || 0;
-    if (!die) return true;
-    const roll = Math.floor(Math.random() * die) + 1;
+    if (!die) return null;
     const min = Number(damage.chanceMin) || 1;
     const max = Number(damage.chanceMax) || min;
+    const range = min === max ? String(min) : `${min}–${max}`;
+    return {
+      needsChance: true,
+      chanceDie: die,
+      chanceMin: min,
+      chanceMax: max,
+      chanceLabel: _loc('REGIONBEHAVIOR_DSATrap.chanceOnDie', { range, die }),
+    };
+  }
+
+  static chanceHits(damage, total) {
+    const sides = Number(damage?.chanceDie) || 0;
+    if (!sides) return true;
+    const min = Number(damage.chanceMin) || 1;
+    const max = Number(damage.chanceMax) || min;
+    const roll = total ?? (Math.floor(Math.random() * sides) + 1);
     return roll >= min && roll <= max;
   }
 
-  static #lineFor(damage, qs, flow) {
-    if (damage.type === 'falling') {
-      const height = Math.max(1, Number(damage.height) || 1);
-      return { id: damage.id, label: damage.label, formula: `${height}d6`, kind: 'falling', height, needsFall: true };
-    }
-    if (damage.type === 'fromQs') {
-      const total = Math.max(0, Math.floor((Number(damage.base) || 0) - (Number(qs) || 0) * (Number(damage.perQs) || 0)));
-      return { id: damage.id, label: damage.label, formula: String(total), total, kind: 'flat' };
-    }
-    if (!damage.formula) return { id: damage.id, label: damage.label, formula: '', total: 0, kind: 'note' };
-    return { id: damage.id, label: damage.label, formula: damage.formula, kind: damage.type || 'formula' };
-  }
-
   static async rollLine(line) {
-    if (!line?.formula || line.kind === 'flat' || line.kind === 'note') return line;
+    if (!line?.formula || line.kind === 'flat' || line.kind === 'note' || line.needsChance) return line;
     if (!Roll.validate(line.formula)) return line;
     const roll = await new Roll(line.formula).evaluate();
     return { ...line, total: Number(roll.total) || 0, roll };

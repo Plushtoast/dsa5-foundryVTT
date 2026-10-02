@@ -3567,6 +3567,9 @@
     "missingDisarmAbility": "{actor} does not have {ability}.",
     "triggered": "Triggered",
     "responses": "Responses",
+    "chanceOnDie": "{range} on 1d{die}",
+    "chanceHit": "occurred",
+    "chanceMiss": "did not occur",
     "modes": {
       "avoid": "Avoid",
       "hold": "Hold",

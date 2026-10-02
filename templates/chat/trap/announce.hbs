@@ -65,9 +65,15 @@
         {{#each damageLines as |line|}}
         <div class="flexrow">
             <span class="col sixty">{{line.label}}</span>
-            <span class="flex0">{{#if line.total}}{{line.total}}{{else}}{{line.formula}}{{/if}}</span>
+            <span class="flex0">{{#if line.total}}{{line.total}}{{else if line.chanceLabel}}{{line.chanceLabel}}{{else}}{{line.formula}}{{/if}}</span>
             {{#if line.needsFall}}
             <button type="button" class="trap-handling" data-action="fallTrap" data-height="{{line.height}}">{{localize "fallingDamage"}}</button>
+            {{/if}}
+            {{#if line.needsChance}}
+            <button type="button" class="trap-handling" data-action="applyTrapChance" data-line="{{line.id}}" data-tooltip="{{line.chanceLabel}}">{{line.label}}</button>
+            {{/if}}
+            {{#if line.hasAreaTemplate}}
+            <button type="button" class="trap-handling" data-action="placeTrapTemplate" data-label="{{line.label}}" data-tooltip="TT.placeTemplate">{{localize "AoE"}}</button>
             {{/if}}
         </div>
         {{/each}}

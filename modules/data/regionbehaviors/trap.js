@@ -6,6 +6,7 @@ import TrapFlow from "../../system/automation/trap-flow.js";
 import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
 import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
 import { DSARegionBehaviorBase } from './base.js';
+import AoeTemplate from '../item/templates/aoe.js';
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField, TypedObjectField, TypedSchemaField } = foundry.data.fields;
 
 const DEFENSE_GATES = {
@@ -192,6 +193,7 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
             gmdescription: new HTMLField({ initial: "" }),
             description: new HTMLField({ initial: "" }),
             ...this.sharedSchema(),
+            ...AoeTemplate.defineSchema(),
             disarmed: new BooleanField({ required: true, initial: false }),
             detected: new BooleanField({ required: true, initial: false }),
             charges: new NumberField({ required: true, initial: 0 }),

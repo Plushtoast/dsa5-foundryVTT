@@ -103,7 +103,16 @@ export class DSARegionTemplate {
   }
 
   static buildRegionData(item, qs, messageId) {
-    const target = item.system.target || {};
+    return this.buildRegionDataFromTarget({
+      name: item?.name,
+      target: item?.system?.target || {},
+      qs,
+      messageId,
+      originUuid: item?.uuid,
+    });
+  }
+
+  static buildRegionDataFromTarget({ name, target = {}, qs = 1, messageId, originUuid, color } = {}) {
     const templateShape = game.dsa5.config.areaTargetTypes[target.type];
     if (!templateShape || !target.value) return null;
 
@@ -152,8 +161,8 @@ export class DSARegionTemplate {
     }
 
     return {
-      name: item.name,
-      color: game.user.color,
+      name: name || game.i18n.localize('AoE'),
+      color: color || game.user.color,
       levels: [canvas.level.id],
       visibility: target.showZone !== false ? CONST.REGION_VISIBILITY.ALWAYS : CONST.REGION_VISIBILITY.NONE,
       restriction: { enabled: true },
@@ -164,11 +173,33 @@ export class DSARegionTemplate {
       }],
       flags: {
         dsa5: {
-          origin: item.uuid,
+          origin: originUuid,
           messageId,
         },
       },
     };
+  }
+
+  static async placeFromTarget({ name, target, origin, messageId, originUuid } = {}) {
+    const regionData = this.buildRegionDataFromTarget({ name, target, qs: 1, messageId, originUuid });
+    if (!regionData) return null;
+
+    const center = origin?.center || origin;
+    if (Number.isFinite(center?.x) && Number.isFinite(center?.y)) {
+      const shape = regionData.shapes[0];
+      shape.x = center.x;
+      shape.y = center.y;
+    }
+
+    const region = await canvas.regions.placeRegion(regionData, { create: false });
+    if (!region) return null;
+
+    const targets = this.acquireTargetsFromRegion(region);
+    if (targets.length) {
+      const ids = targets.map((actor) => actor.getActiveTokens?.()[0]?.id).filter(Boolean);
+      if (ids.length) game.user.updateTokenTargets(ids);
+    }
+    return region;
   }
 
   static acquireTargetsFromRegion(region) {
