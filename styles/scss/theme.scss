@@ -393,11 +393,20 @@
         min-width: 0;
     }
 
+    // Short hosts (e.g. ammo smith) clip the absolute .dsa-detail-select menu
+    // because .tab.scrollable sizes to in-flow content. Reserve menu height.
+    .dsa-detail-select-host {
+        --dsa-detail-select-menu-max-height: 220px;
+        min-height: calc(2.5rem + var(--dsa-detail-select-menu-max-height));
+        overflow: visible;
+    }
+
     .dsa-detail-select {
         // Match select2 dropdown colors (light: --bg-color, dark: --select2bg)
         --dsa-detail-select-bg: var(--select2bg, var(--bg-color));
         --dsa-detail-select-fg: var(--bg-contrast-color);
         --dsa-detail-select-hover: var(--oddColor);
+        --dsa-detail-select-menu-max-height: 220px;
 
         position: relative;
         width: 100%;
@@ -510,7 +519,7 @@
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
-            max-height: 220px;
+            max-height: var(--dsa-detail-select-menu-max-height, 220px);
             overflow: auto;
             margin-top: 2px;
             border: 1px solid var(--border-color);

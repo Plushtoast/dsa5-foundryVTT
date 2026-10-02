@@ -60,7 +60,6 @@ export const DICE_CONSTANTS = {
     BLIND: 'blind',
     SELF: 'self',
     IC: 'ic',
-    ROLL: 'public'
   },
 
   TEMPLATES: {

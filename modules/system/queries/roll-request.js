@@ -106,7 +106,7 @@ export default class RollRequestService {
       name,
       modifier,
       label,
-      messageMode: DICE_CONSTANTS.CHAT_MODES.ROLL,
+      messageMode: DICE_CONSTANTS.CHAT_MODES.PUBLIC,
       actors: [actor],
       whisper: this.buildTokenWhisper(token),
       trapContext: {
@@ -306,13 +306,18 @@ export default class RollRequestService {
     return entry.resultDetails?.messageMode || state.messageMode || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
   }
 
-  static canUserSeeResult(entry, state = {}) {
+  static canUserSeeResult(entry, state = {}, user = game.user) {
     if (!entry.resultDetails) return false;
-    if (game.user.isGM) return true;
+    if (user?.isGM) return true;
 
     const messageMode = this.resultMessageMode(entry, state);
     if (this.PUBLIC_MESSAGE_MODES.has(messageMode)) return true;
-    if ([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.SELF].includes(messageMode)) return game.actors.get(entry.actorId)?.isOwner;
+    // Blind rolls are GM-only: even the actor owner must not see success vs failure.
+    if (messageMode === DICE_CONSTANTS.CHAT_MODES.BLIND) return false;
+    if ([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.SELF].includes(messageMode)) {
+      const actor = game.actors.get(entry.actorId);
+      return !!actor?.testUserPermission(user, 'OWNER');
+    }
     return false;
   }
 
@@ -638,7 +643,12 @@ export default class RollRequestService {
   }
 
   static hidePrivateResult(row, category) {
+    row.removeClass(QueryOrchestrator.allResultRowClasses());
+    const hiddenTooltip = _loc('DSAQUERIES.STATUS.accepted');
+    row.attr('data-tooltip', hiddenTooltip).attr('aria-label', hiddenTooltip);
+
     if (category === 'regeneration') {
+      row.find('.roll-request-result-stack, .roll-request-result-label').remove();
       let stats = row.find('.roll-request-regen-stats');
       if (!stats.length) {
         stats = $('<div class="roll-request-regen-stats"></div>');
@@ -648,15 +658,17 @@ export default class RollRequestService {
       return;
     }
 
-    row.removeClass('roll-request-row-success roll-request-row-failure');
+    this.#applyHiddenResultLabel(row);
+  }
 
-    let label = row.find('.roll-request-result-label');
-    if (!label.length) {
-      label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>');
-      row.find('.roll-request-row-side').before(label);
-    }
-    label.text('?');
-    row.attr('data-tooltip', _loc('DSAQUERIES.STATUS.accepted')).attr('aria-label', _loc('DSAQUERIES.STATUS.accepted'));
+  /**
+   * Neutral "?" chip: same markup for success, failure, crit, and botch.
+   * Reusing a failure icon span would keep `icon-red` and leak the outcome.
+   */
+  static #applyHiddenResultLabel(row) {
+    row.find('.roll-request-result-stack, .roll-request-result-label').remove();
+    const label = $('<b class="roll-request-result-label flexrow flex0 flexAlignRight"></b>').text('?');
+    row.find('.roll-request-row-side').before(label);
   }
 
   static revealPrivateResult(row, entry, category) {

@@ -407,13 +407,13 @@ export default class InformationQueryService {
 
   /**
    * Extra restriction from the roll / GM start dialog.
-   * Public / IC / roll do not widen the world setting.
+   * Public / IC do not widen the world setting.
    * @returns {string[]|null} `null` = no extra restriction
    */
   static #messageModeRecipients(playerId, messageMode) {
     if (!messageMode) return null;
     const modes = DICE_CONSTANTS.CHAT_MODES;
-    if (this.PUBLIC_MESSAGE_MODES.has(messageMode) || messageMode === modes.ROLL) return null;
+    if (this.PUBLIC_MESSAGE_MODES.has(messageMode)) return null;
     if (messageMode === modes.BLIND) return this.#gmIds();
     if (messageMode === modes.SELF) return [playerId || game.user.id];
     if (messageMode === modes.GM) return this.#withPlayer(playerId, this.#gmIds());
