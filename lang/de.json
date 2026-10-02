@@ -572,7 +572,7 @@
       "rememberAutoTime": {
         "legend": "Automatischer Zeitlauf",
         "label": "Automatischen Zeitlauf zwischen Sitzungen merken",
-        "hint": "Stellt den Uhr-Knopf nach einem Neustart wieder her. War er aktiv, läuft die Zeit weiter, sobald die Welt nicht pausiert ist (außer im Kampf). Lass diese Option aus, wenn die Welt zwischen Sitzungen unpausiert bleibt — sonst laufen Datum, Licht und Wetter unbeaufsichtigt weiter."
+        "hint": "Stellt den automatischen Zeitvorlauf zwischen Sitzungen wieder her. Die Zeit läuft automatisch weiter oder nicht je nachdem, ob diese Funktion am Kalender-Widget aktiviert war. Vorsicht - das kann zu Verwirrung führen."
       },
       "season": "Jahreszeit",
       "second": "Sekunde",
