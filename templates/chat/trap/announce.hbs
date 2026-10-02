@@ -39,9 +39,13 @@
     {{#if strikes.length}}
     <div class="row-section flexrow" data-tooltip="REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.hint">
         <div class="col third"><b>{{localize "REGIONBEHAVIOR_DSATrap.FIELDS.damageFormula.label"}}</b></div>
-        <div class="col seventy flexAlignEnd flexrow">
+        <div class="col seventy flexrow flexAlignEnd gap5px">
             {{#each strikes as |strike|}}
-            <span>{{#if strike.name}}{{strike.name}}: {{/if}}{{strike.damageFormula}}</span>{{#unless @last}}, {{/unless}}
+            <span class="flexcol flex0 right">
+                {{#if strike.name}}<span>{{strike.name}}</span>{{/if}}
+                <span>{{strike.damageFormula}}</span>
+            </span>
+            {{#unless @last}}<span class="flex0">,</span>{{/unless}}
             {{/each}}
         </div>
     </div>
@@ -63,14 +67,15 @@
     {{#if damageLines.length}}
     <div class="roll-request-card">
         {{#each damageLines as |line|}}
-        <div class="flexrow">
+        <div class="flexrow gap5px">
+            {{#if line.needsFall}}
+            <button type="button" class="trap-handling" data-action="fallTrap" data-height="{{line.height}}" data-tooltip="{{line.formula}}">{{line.label}}</button>
+            {{else}}
             <span class="col sixty">{{line.label}}</span>
             <span class="flex0">{{#if line.total}}{{line.total}}{{else if line.chanceLabel}}{{line.chanceLabel}}{{else}}{{line.formula}}{{/if}}</span>
-            {{#if line.needsFall}}
-            <button type="button" class="trap-handling" data-action="fallTrap" data-height="{{line.height}}">{{localize "fallingDamage"}}</button>
-            {{/if}}
             {{#if line.needsChance}}
             <button type="button" class="trap-handling" data-action="applyTrapChance" data-line="{{line.id}}" data-tooltip="{{line.chanceLabel}}">{{line.label}}</button>
+            {{/if}}
             {{/if}}
             {{#if line.hasAreaTemplate}}
             <button type="button" class="trap-handling" data-action="placeTrapTemplate" data-label="{{line.label}}" data-tooltip="TT.placeTemplate">{{localize "AoE"}}</button>

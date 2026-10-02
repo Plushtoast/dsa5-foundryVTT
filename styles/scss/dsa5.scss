@@ -6324,6 +6324,11 @@ input[type='checkbox'].autoCheckbox {
   align-items: center;
 }
 
+.flexrow.flexAlignEnd,
+.flexrow.flexAlignRight {
+  justify-content: flex-end;
+}
+
 .flexAlignStart {
   justify-content: flex-start;
   align-items: center;
