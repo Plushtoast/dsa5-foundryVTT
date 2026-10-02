@@ -1,6 +1,7 @@
 import DSA5 from '../config/config-dsa5.js';
 import GroupAPI from './group-api.js';
 import GroupData from '../data/actor/group.js';
+import RandomVictim from '../system/helpers/random-victim.js';
 import { AppV2Mixin } from './mixins/appv2_mixin.js';
 import { DSACalendarEntry } from '../data/journal/dsacalendar.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
@@ -1039,19 +1040,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     this.render();
   }
 
-  static async #randomMember(event, target) {
-    const actors = [...this.actor.system.actors];
-    const resultId = await GroupData.pickRandomMember(actors, { withMisfortune: event.button === 2 });
-    if (!resultId) return;
-
-    const icon = target.querySelector('i') || target;
-    icon.classList.add('fa-spin');
-    this.element.querySelectorAll('.hero').forEach((el) => el.classList.remove('victim'));
-
-    setTimeout(() => {
-      this.element.querySelector(`.hero[data-id="${resultId}"]`)?.classList.add('victim');
-      icon.classList.remove('fa-spin');
-    }, 500);
+  static async #randomMember(event) {
+    await RandomVictim.pickAndShow(this.actor.system.actors, { withMisfortune: event.button === 2 });
   }
 
   static #chCollapse(event, target) {

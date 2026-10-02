@@ -515,15 +515,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async handleGMRandomVictim(ev) {
-    const randomPlayer = await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button == 2);
-    const actor = game.actors.get(randomPlayer);
-    if (actor) {
-      const k = await DSA5_Utility.showArtwork(actor);
-      if (!ev.ctrlKey)
-        setTimeout(() => {
-          k.close();
-        }, 2000);
-    }
+    await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button == 2);
   }
 
   async handleSharedEffect(ev) {

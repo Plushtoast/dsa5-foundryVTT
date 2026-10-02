@@ -1,7 +1,7 @@
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import PaymentRequestService from '../system/queries/payment-requests.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
-import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
+import RandomVictim from '../system/helpers/random-victim.js';
 import { slist, tabSlider } from '../system/helpers/view_helper.js';
 import PlayerMenu from './player_menu.js';
 import DialogShared from '../dialog/dialog-shared.js';
@@ -554,47 +554,17 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
     this.render();
   }
 
-  static async _randomPlayer(ev, target) {
-    const result = await this.rollRandomPlayer(ev.button == 2);
-
-    const icon = target.querySelector('i') || target;
-    icon.classList.add('fa-spin');
-    this.element.querySelectorAll('.hero').forEach((el) => el.classList.remove('victim'));
-
-    setTimeout(() => {
-      this.element.querySelector(`.hero[data-id="${result}"]`)?.classList.add('victim');
-      icon.classList.remove('fa-spin');
-    }, 500);
+  static async _randomPlayer(ev) {
+    await this.rollRandomPlayer(ev.button == 2);
   }
 
   async rollRandomPlayer(withMisfortune) {
-    const probabilities = {};
-    let counter = 1;
     const selected = this.getSelectedActors();
     const anythingselected = Object.values(selected).filter((x) => x).length != 0;
-
     const heros = this.heros.length ? this.heros : await this.getTrackedHeros();
-    if (heros.length == 0) {
-      ui.notifications.warn('DIALOG.noTarget', { localize: true });
-      return;
-    }
-    for (const hero of heros) {
-      if (!selected[hero.id] && anythingselected) continue;
-
-      probabilities[counter] = hero.id;
-      counter++;
-      if (withMisfortune && AdvantageRulesDSA5.hasVantage(hero, 'LocalizedIDs.misfortune')) {
-        probabilities[counter] = hero.id;
-        counter++;
-      }
-      if (withMisfortune && hero.hasCondition('badluck')) {
-        probabilities[counter] = hero.id;
-        counter++;
-      }
-    }
-
-    const roll = (await new Roll(`1d${counter - 1}`).evaluate()).total;
-    return probabilities[roll];
+    const pool = heros.filter((hero) => !anythingselected || selected[hero.id]);
+    const actor = await RandomVictim.pickAndShow(pool, { withMisfortune });
+    return actor?.id;
   }
 
   async doPayment(ids, pay, amount = 0) {

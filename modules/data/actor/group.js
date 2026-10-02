@@ -1,5 +1,4 @@
 import { ActorDataModel } from '../baseactor.js';
-import AdvantageRulesDSA5 from '../../system/rules/advantage-rules-dsa5.js';
 
 const { SchemaField, StringField, NumberField, BooleanField, HTMLField, TypedObjectField } = foundry.data.fields;
 
@@ -511,28 +510,5 @@ export default class GroupData extends ActorDataModel {
     const actor = await this.createLocationActor(name, { merchantType, asVehicle, travelMode: type });
     await this.addLocation(actor, type);
     return actor;
-  }
-
-  static async pickRandomMember(actors, { withMisfortune = false } = {}) {
-    if (actors.length === 0) {
-      ui.notifications.warn('DIALOG.noTarget', { localize: true });
-      return null;
-    }
-    const probabilities = {};
-    let counter = 1;
-    for (const actor of actors) {
-      probabilities[counter] = actor.id;
-      counter++;
-      if (withMisfortune && AdvantageRulesDSA5.hasVantage(actor, 'LocalizedIDs.misfortune')) {
-        probabilities[counter] = actor.id;
-        counter++;
-      }
-      if (withMisfortune && actor.hasCondition('badluck')) {
-        probabilities[counter] = actor.id;
-        counter++;
-      }
-    }
-    const roll = (await new Roll(`1d${counter - 1}`).evaluate()).total;
-    return probabilities[roll];
   }
 }

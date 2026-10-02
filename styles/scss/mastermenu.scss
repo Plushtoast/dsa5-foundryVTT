@@ -6,10 +6,6 @@
   .hero {
     cursor: pointer;
 
-    &.victim {
-      box-shadow: inset 0 0 10px #8a0202;
-    }
-
     .actorItem {
       display: inline-block;
       padding: 2px;
