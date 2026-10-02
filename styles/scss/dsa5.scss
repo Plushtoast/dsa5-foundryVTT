@@ -5360,13 +5360,15 @@ select.noAppearance {
 
   &.initTracker .window-header,
   &.tokenQuickHot .window-header,
-  &.sc-quickbar .window-header {
+  &.sc-quickbar .window-header,
+  &.dsa-watch-widget .window-header {
     display: none;
   }
 
   &.initTracker,
   &.tokenQuickHot,
-  &.sc-quickbar {
+  &.sc-quickbar,
+  &.dsa-watch-widget {
     min-width: 0;
     min-height: 0;
     padding: 0;
@@ -5382,7 +5384,8 @@ select.noAppearance {
 
   &.initTracker::after,
   &.tokenQuickHot::after,
-  &.sc-quickbar::after {
+  &.sc-quickbar::after,
+  &.dsa-watch-widget::after {
     content: none;
   }
 }

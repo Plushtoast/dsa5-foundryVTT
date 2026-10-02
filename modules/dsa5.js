@@ -78,6 +78,7 @@ import RuleChaos from './system/rules/rule_chaos.js';
 import DSA5SoundEffect from './system/helpers/dsa-soundeffect.js';
 import { clickableAbility, resizeListener, tabSlider, tinyNotification } from './system/helpers/view_helper.js';
 import RandomVictim from './system/helpers/random-victim.js';
+import AlmanacNotification from './system/helpers/almanac-notification.js';
 import CareerWizard from './wizards/career_wizard.js';
 import SpeciesWizard from './wizards/species_wizard.js';
 import CultureWizard from './wizards/culture_wizard.js';
@@ -172,6 +173,7 @@ globalThis.dsa5 = {
       DidYouKnow,
       GroupAPI,
       RandomVictim,
+      AlmanacNotification,
       ActorPickerDialog,
       UnifiedFateDSA5,
       DSARegionTemplate,
