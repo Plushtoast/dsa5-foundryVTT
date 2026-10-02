@@ -22,37 +22,37 @@ export default class EffectDropdownBuilder {
      */
     static _cacheInvalidated = true;
 
-    /**
-     * Builds a grouped dropdown menu HTML with optgroups for wizard mode
-     * @param {ActiveEffect} [document] - The active effect document for context-specific options
-     * @returns {string} HTML string containing the grouped dropdown
-     */
-    static buildGroupedDropdownMenu(document = null, categoryFilter = null) {
-        const groups = this._getGroupDefinitions(document);
+    static _optionHtml(option) {
+        return `<option value="${option.val}" data-type="${option.type}" data-phase="${option.phase || 'initial'}" data-ph="${option.ph}">${option.name}</option>`;
+    }
 
+    static _groupedSelectHtml(groups, categoryFilter = null, selectClass = 'wizardMenu') {
         const filtered = categoryFilter ? groups.filter((g) => g.key === categoryFilter) : groups;
-
         const optgroupStrings = filtered
             .filter((g) => g.subgroups.some((s) => s.options.length))
             .flatMap((g) => {
                 if (categoryFilter) {
                     return g.subgroups.filter((s) => s.options.length).map((s) => {
-                        const sorted = s.options.sort((a, b) => a.name.localeCompare(b.name));
-                        const opts = sorted
-                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
-                            .join('\n');
-                        return `<optgroup label="${s.sub}">${opts}</optgroup>`;
+                        const sorted = [...s.options].sort((a, b) => a.name.localeCompare(b.name));
+                        return `<optgroup label="${s.sub}">${sorted.map((o) => this._optionHtml(o)).join('\n')}</optgroup>`;
                     });
                 }
                 const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
-                const opts = allOpts
-                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
-                    .join('\n');
-                return [`<optgroup label="${g.label}">${opts}</optgroup>`];
+                return [`<optgroup label="${g.label}">${allOpts.map((o) => this._optionHtml(o)).join('\n')}</optgroup>`];
             })
             .join('\n');
 
-        return `<select class="wizardMenu"><option value="">-</option>${optgroupStrings}</select>`;
+        return `<select class="${selectClass}"><option value="">-</option>${optgroupStrings}</select>`;
+    }
+
+    /**
+     * Builds a grouped dropdown menu HTML with optgroups.
+     * @param {ActiveEffect} [document]
+     * @param {string|null} [categoryFilter]
+     * @param {string} [selectClass]
+     */
+    static buildGroupedDropdownMenu(document = null, categoryFilter = null, selectClass = 'wizardMenu') {
+        return this._groupedSelectHtml(this._getGroupDefinitions(document), categoryFilter, selectClass);
     }
 
     static _getGroupDefinitions(document = null) {
@@ -93,15 +93,12 @@ export default class EffectDropdownBuilder {
      * @returns {string} HTML string containing the dropdown options
      */
     static buildDropdownMenu(document = null) {
-        // Use cache if available and not invalidated
         if (!this._cacheInvalidated && this._cachedDropdownOptions && !document) {
             return this._cachedDropdownOptions;
         }
 
-        const options = this._buildDropdownOptions(document);
-        const html = this._generateDropdownHTML(options);
+        const html = this.buildGroupedDropdownMenu(document, null, 'selMenu');
 
-        // Cache the result if no document-specific context
         if (!document) {
             this._cachedDropdownOptions = html;
             this._cacheInvalidated = false;
@@ -548,27 +545,6 @@ export default class EffectDropdownBuilder {
         return subgroups;
     }
 
-    /**
-     * Generates the HTML string for the dropdown
-     * @param {Array} options - Array of option objects
-     * @returns {string} HTML string
-     * @private
-     */
-    static _generateDropdownHTML(options) {
-        // Validate options
-        for (const option of options) {
-            if (!option.ph || option.type === undefined) {
-                console.warn('Invalid dropdown option:', option);
-            }
-        }
-
-        const optionStrings = options.map(
-            (option) => `<option value="${option.val}" data-type="${option.type}" data-phase="${option.phase || 'initial'}" data-ph="${option.ph}">${option.name}</option>`
-        );
-
-        return `<select class="selMenu"><option value="">-</option>${optionStrings.join('\n')}</select>`;
-    }
-
     // --- Enhancement-specific methods ---
 
     static _getEnhancementGroupDefinitions(targetType) {
@@ -738,37 +714,11 @@ export default class EffectDropdownBuilder {
     }
 
     static buildEnhancementDropdownMenu(targetType) {
-        const groups = this._getEnhancementGroupDefinitions(targetType);
-        const options = groups.flatMap((g) => g.subgroups.flatMap((s) => s.options));
-        options.sort((a, b) => a.name.localeCompare(b.name));
-        return this._generateDropdownHTML(options);
+        return this.buildEnhancementGroupedDropdownMenu(targetType, null, 'selMenu');
     }
 
-    static buildEnhancementGroupedDropdownMenu(targetType, categoryFilter = null) {
-        const groups = this._getEnhancementGroupDefinitions(targetType);
-        const filtered = categoryFilter ? groups.filter((g) => g.key === categoryFilter) : groups;
-
-        const optgroupStrings = filtered
-            .filter((g) => g.subgroups.some((s) => s.options.length))
-            .flatMap((g) => {
-                if (categoryFilter) {
-                    return g.subgroups.filter((s) => s.options.length).map((s) => {
-                        const sorted = s.options.sort((a, b) => a.name.localeCompare(b.name));
-                        const opts = sorted
-                            .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
-                            .join('\n');
-                        return `<optgroup label="${s.sub}">${opts}</optgroup>`;
-                    });
-                }
-                const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
-                const opts = allOpts
-                    .map((o) => `<option value="${o.val}" data-type="${o.type}" data-phase="${o.phase || 'initial'}" data-ph="${o.ph}">${o.name}</option>`)
-                    .join('\n');
-                return [`<optgroup label="${g.label}">${opts}</optgroup>`];
-            })
-            .join('\n');
-
-        return `<select class="wizardMenu"><option value="">-</option>${optgroupStrings}</select>`;
+    static buildEnhancementGroupedDropdownMenu(targetType, categoryFilter = null, selectClass = 'wizardMenu') {
+        return this._groupedSelectHtml(this._getEnhancementGroupDefinitions(targetType), categoryFilter, selectClass);
     }
 
     static getEnhancementWizardCategories(targetType) {
@@ -782,6 +732,23 @@ export default class EffectDropdownBuilder {
         const groups = this._getEnhancementGroupDefinitions(targetType);
         const supportedKeys = new Set(groups.flatMap((g) => g.subgroups.flatMap((s) => s.options.map((o) => o.val))));
         return changes.every((change) => !change?.key || supportedKeys.has(change.key));
+    }
+
+    static applyExamplePlaceholder($row, $option) {
+        $row.find('.value input').attr('placeholder', $option?.attr?.('data-ph') || '');
+    }
+
+    /**
+     * Apply example placeholders for every change row from the current key's dropdown option.
+     * @param {JQuery} $html
+     */
+    static applyExamplePlaceholders($html) {
+        $html.find('.changes .ol .row-section').each((_, el) => {
+            const $row = $(el);
+            const key = $row.find('input[name$=".key"]').val();
+            const $option = $row.find('select.selMenu, select.wizardMenu').find('option').filter((_, o) => o.value === key);
+            this.applyExamplePlaceholder($row, $option);
+        });
     }
 
     /**

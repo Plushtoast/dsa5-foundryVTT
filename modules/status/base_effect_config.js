@@ -13,7 +13,7 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
       resizable: true,
     },
     position: {
-      width: 600,
+      width: 720,
     },
     actions: {
       toggleWizardMode: this.#toggleWizardMode,
@@ -213,15 +213,15 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
         elem.siblings('input').val(elem.val());
         const parent = elem.closest('.row-section');
         const data = elem.find('option:selected');
-        const exampleValue = data.attr('data-ph') || '';
         parent.find('.type select').val(data.attr('data-type'));
         parent.find('.phase select').val(data.attr('data-phase') || 'initial');
-        parent.find('.value code-mirror, .value input').val(exampleValue);
+        parent.find('.value input').attr('placeholder', data.attr('data-ph') || '');
         elem.trigger('blur');
       });
     html.find('.select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
+    EffectDropdownBuilder.applyExamplePlaceholders(html);
   }
 
   _initWizardDropdowns(html) {
@@ -245,13 +245,13 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
           const val = $sel.val();
           hiddenInput.val(val);
           const $opt = $sel.find('option:selected');
-          const exampleValue = $opt.attr('data-ph') || '';
           const row = $sel.closest('.row-section');
           row.find('input[name$=".type"]').val($opt.attr('data-type') || 'add');
           row.find('input[name$=".phase"]').val($opt.attr('data-phase') || 'initial');
-          row.find('.value code-mirror, .value input').val(exampleValue);
+          row.find('.value input').attr('placeholder', $opt.attr('data-ph') || '');
           $sel.trigger('blur');
         });
     });
+    EffectDropdownBuilder.applyExamplePlaceholders(html);
   }
 }

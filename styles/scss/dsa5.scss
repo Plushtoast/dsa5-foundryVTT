@@ -252,10 +252,6 @@ label .priceObfuscationMark {
   }
 }
 
-.inlineCodeMirror {
-  min-height: unset;
-}
-
 .hovermenu {
   display: inline-block;
   position: absolute;
@@ -4897,6 +4893,10 @@ select.noAppearance {
 .changes {
   .key input {
     width: 90%;
+  }
+
+  .value input {
+    width: 100%;
   }
 
   .selMenu {

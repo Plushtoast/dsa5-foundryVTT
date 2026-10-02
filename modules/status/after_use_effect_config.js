@@ -163,14 +163,14 @@ export default class AfterUseEffectConfig extends HandlebarsApplicationMixin(App
         elem.siblings('input').val(elem.val());
         const parent = elem.closest('.row-section');
         const data = elem.find('option:selected');
-        const exampleValue = data.attr('data-ph') || '';
         parent.find('.type select').val(data.attr('data-type'));
         parent.find('.phase select').val(data.attr('data-phase') || 'initial');
-        parent.find('.value code-mirror, .value input').val(exampleValue);
+        parent.find('.value input').attr('placeholder', data.attr('data-ph') || '');
         elem.trigger('blur');
       });
     html.find('.select2').each((i, el) => {
       $(el)[0].style.removeProperty('width');
     });
+    EffectDropdownBuilder.applyExamplePlaceholders(html);
   }
 }

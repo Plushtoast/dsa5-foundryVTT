@@ -1,19 +1,19 @@
 <section class="tab scrollable changes{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
     {{#if wizardMode}}
-    <nav class="wizardCategoryBar flexrow wrap split-button">
-        <button type="button" class="ui-control icon fa-solid fa-border-all" data-action="filterWizardCategory" {{{ifThen (not wizardCategory) 'aria-pressed="true"' ''}}} data-category="" data-tooltip="ActiveEffects.wizardAllCategories"></button>
-        {{#each wizardCategories}}
-        <button type="button" class="ui-control icon {{this.icon}}" data-action="filterWizardCategory" {{{ifThen (eq this.key @root.wizardCategory) 'aria-pressed="true"' ''}}} data-category="{{this.key}}" data-tooltip="{{this.label}}"></button>
-        {{/each}}
+    <nav class="wizardCategoryBar flexrow wrap">
+        <div class="split-button flexrow wrap">
+            <button type="button" class="ui-control icon fa-solid fa-border-all" data-action="filterWizardCategory" {{{ifThen (not wizardCategory) 'aria-pressed="true"' ''}}} data-category="" data-tooltip="ActiveEffects.wizardAllCategories"></button>
+            {{#each wizardCategories}}
+            <button type="button" class="ui-control icon {{this.icon}}" data-action="filterWizardCategory" {{{ifThen (eq this.key @root.wizardCategory) 'aria-pressed="true"' ''}}} data-category="{{this.key}}" data-tooltip="{{this.label}}"></button>
+            {{/each}}
+        </div>
+        <button type="button" class="icon fas fa-code noBorder dsadesignbutton" data-action="toggleWizardMode" data-tooltip="ActiveEffects.wizardExpertMode"></button>
     </nav>
     <header class="row-section">
-        <div class="col seventy">{{localize "ActiveEffects.wizardEffect"}}</div>
-        <div class="col third center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
-        <div class="col ten center">
-            <a data-action="toggleWizardMode" data-tooltip="{{#if wizardMode}}ActiveEffects.wizardExpertMode{{else}}ActiveEffects.wizardSimpleMode{{/if}}">
-                <i class="fa-solid {{#if wizardMode}}fa-code{{else}}fa-wand-magic-sparkles{{/if}}"></i>
-            </a>
-            <a data-action="addChange"><i class="fa-regular fa-square-plus"></i></a>
+        <div class="col sixty">{{localize "ActiveEffects.wizardEffect"}}</div>
+        <div class="col thirtyfive center">{{localize "EFFECT.FIELDS.changes.element.value.label"}}</div>
+        <div class="col zerofive flexrow center">
+            <button type="button" class="icon fa-regular fa-square-plus noBorder dsadesignbutton" data-action="addChange"></button>
         </div>
     </header>
     
@@ -21,38 +21,18 @@
         {{#each source.system.changes as |change i|}}
         {{#with @root.changeFields as |changeFields|}}
         <li class="row-section" data-index="{{i}}">
-            {{#if @root.wizardMode}}
-            <div class="col seventy key wizardKey">
+            <div class="col sixty key wizardKey">
                 <input type="hidden" name="system.changes.{{i}}.key" value="{{change.key}}">
             </div>
-            <div class="col third center value">
-                {{formInput changeFields.value name=(concat "system.changes." i ".value") value=change.value classes="inlineCodeMirror"}}
+            <div class="col thirtyfive center value">
+                {{formInput changeFields.value name=(concat "system.changes." i ".value") value=change.value elementType="input"}}
             </div>
-            <div class="col ten flexrow center controls">
+            <div class="col zerofive flexrow center controls">
                 <input type="hidden" name="system.changes.{{i}}.type" value="{{change.type}}">
                 <input type="hidden" name="system.changes.{{i}}.phase" value="{{change.phase}}">
                 <input type="hidden" name="system.changes.{{i}}.priority" value="{{change.priority}}">
-                <a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a>
+                <button type="button" class="icon fas fa-trash noBorder dsadesignbutton" data-action="deleteChange"></button>
             </div>
-            {{else}}
-            <div class="col fourty key">
-                {{formInput changeFields.key name=(concat "system.changes." i ".key") value=change.key}}
-            </div>
-            <div class="col five center type">
-                {{formInput changeFields.type name=(concat "system.changes." i ".type") value=change.type choices=@root.changeTypes}}
-            </div>
-            <div class="col third center value">
-                {{formInput changeFields.value name=(concat "system.changes." i ".value") value=change.value classes="inlineCodeMirror"}}
-            </div>
-            <div class="col ten center phase">
-                {{formInput changeFields.phase name=(concat "system.changes." i ".phase") value=change.phase choices=@root.changePhases}}
-            </div>
-            <div class="col ten center priority">
-                {{formInput changeFields.priority name=(concat "system.changes." i ".priority") value=change.priority
-                    placeholder=(lookup @root.changePriorities change.type)}}
-            </div>
-            <div class="col ten flexrow center controls"><a data-action="deleteChange"><i class="fa-solid fa-trash"></i></a></div>
-            {{/if}}
         </li>
         {{/with}}
         {{/each}}
