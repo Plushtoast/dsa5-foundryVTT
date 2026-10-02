@@ -1,4 +1,5 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import ChatCardBump from '../sidebar/chat-card-bump.js';
 
 const { duplicate } = foundry.utils;
 
@@ -305,14 +306,14 @@ export default class QueryOrchestrator {
     const chatData = DSA5_Utility.chatDataSetup(content, 'roll');
     if (whisper) chatData.whisper = whisper;
 
-    chatData.flags = {
+    chatData.flags = ChatCardBump.apply({
       dsa5: {
         queryRequest: {
           type: queryType,
         },
         [query.flagKey]: state,
       },
-    };
+    });
 
     return await ChatMessage.create(chatData);
   }

@@ -15,6 +15,7 @@ import DialogReactDSA5 from '../dialog/dialog-react.js';
 
 import { TrapState } from '../chatmessage/trap_state.js';
 import ItempackageData from '../data/item/itempackage.js';
+import ChatCardBump from '../system/sidebar/chat-card-bump.js';
 const { getProperty } = foundry.utils;
 
 export default function () {
@@ -66,23 +67,15 @@ export default function () {
     return game.dsa5.autoComplete._navigateQuickFind(event);
   })
 
+  Hooks.on('preUpdateChatMessage', (message, changed) => {
+    ChatCardBump.onPreUpdate(message, changed);
+  });
+
   Hooks.on('updateChatMessage', (message, changed) => {
     if (getProperty(changed, 'flags.data.healApplied')) {
       RegenerationHelper.refreshLinkedRequestCards(message.id);
     }
-
-    const isBumpableCard = getProperty(message, 'flags.dsa5.queryRequest') || getProperty(message, 'flags.gc');
-    if (!isBumpableCard) return;
-    if (!('timestamp' in changed)) return;
-
-    const log = ui.chat?.element?.querySelector('.chat-log');
-    if (!log) return;
-
-    const li = log.querySelector(`.message[data-message-id="${message.id}"]`);
-    if (!li || li === log.lastElementChild) return;
-
-    log.append(li);
-    if (ui.chat.isAtBottom) ui.chat.scrollBottom();
+    ChatCardBump.onUpdate(message, changed);
   });
 
   Hooks.on('renderChatMessageHTML', (app, html, msg) => {

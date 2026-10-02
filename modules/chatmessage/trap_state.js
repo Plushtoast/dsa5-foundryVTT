@@ -7,6 +7,7 @@ import GroupCheck from "../system/rolls/group-check.js";
 import RollRequestService from "../system/queries/roll-request.js";
 import QueryOrchestrator from "../system/queries/query-orchestrator.js";
 import SpecialabilityRulesDSA5 from "../system/rules/specialability-rules-dsa5.js";
+import ChatCardBump from "../system/sidebar/chat-card-bump.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
 
 const { duplicate } = foundry.utils;
@@ -113,7 +114,7 @@ export class TrapState extends ChatMessageState {
 
         const chatData = DSA5_Utility.chatDataSetup(content, DICE_CONSTANTS.CHAT_MODES.SELF, false, game.users.filter(x => x.isGM && x.active).map(x => x.id));
 
-        chatData.flags = {
+        chatData.flags = ChatCardBump.apply({
             dsa5: {
                 trapData: {
                     behaviour: this.behavior.uuid,
@@ -124,7 +125,7 @@ export class TrapState extends ChatMessageState {
                     triggered: false,
                 }
             }
-        }
+        })
         const message = await ChatMessage.create(chatData);
         this.message = message;
         return message;
@@ -142,6 +143,7 @@ export class TrapState extends ChatMessageState {
         await this.message.update({
             content,
             'flags.dsa5.trapData': trapData,
+            'flags.dsa5.bumpCard': true,
         });
     }
 

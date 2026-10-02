@@ -4,6 +4,7 @@ import GroupCheckConfigDialog from '../../dialog/group-check-dialog.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import QueryOrchestrator from '../queries/query-orchestrator.js';
 import RollRequestService from '../queries/roll-request.js';
+import ChatCardBump from '../sidebar/chat-card-bump.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -648,7 +649,7 @@ export default class GroupCheck {
       parsed.messageMode || game.settings.get('core', 'messageMode'),
       postOptions.forceWhisperIDs,
     );
-    chatData.flags = { gc: data };
+    chatData.flags = ChatCardBump.apply({ gc: data });
     if (postOptions.datasetOptions) chatData.flags.gc.datasetOptions = postOptions.datasetOptions;
     if (postOptions.otherMessage) {
       chatData.content = `<div>${postOptions.otherMessage}</div><div>${chatData.content}</div>`;
@@ -680,7 +681,7 @@ export default class GroupCheck {
     if (configuration.enrichedpartsuccess) data.enrichedpartsuccess = configuration.enrichedpartsuccess;
     const content = await renderTemplate(this.CHAT_TEMPLATE, this.#buildTemplateData(data));
     const chatData = DSA5_Utility.chatDataSetup(content, modeOverride, undefined, forceWhisperIDs);
-    chatData.flags = { gc: data };
+    chatData.flags = ChatCardBump.apply({ gc: data });
     if (datasetOptions) chatData.flags.gc.datasetOptions = datasetOptions;
     if (otherMessage) chatData.content = `<div>${otherMessage}</div><div>${chatData.content}</div>`;
     ChatMessage.create(chatData);
