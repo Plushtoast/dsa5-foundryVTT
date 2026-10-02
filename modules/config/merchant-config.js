@@ -181,6 +181,12 @@ export default class MerchantConfig {
     replaceAll: 'MERCHANT.restockMode.replaceAll',
   };
 
+  static QTY_MODES = {
+    each: 'MERCHANT.fill.qtyMode.each',
+    total: 'MERCHANT.fill.qtyMode.total',
+    draws: 'MERCHANT.fill.qtyMode.draws',
+  };
+
   /** Root keys that belonged on merchant in the short-lived fat Phase 0 schema. */
   static SHOP_SOURCE_KEYS = Object.freeze([
     'shopName',
@@ -283,6 +289,12 @@ export default class MerchantConfig {
       icon: 'fas fa-leaf',
       tooltip: 'MERCHANT.fill.preset.herbalistHint',
       categories: ['plant', 'poison', 'consumable'],
+      qtyMode: 'total',
+      counts: {
+        plant: { each: 24 },
+        poison: { each: 8 },
+        consumable: { each: 12 },
+      },
     },
     livestock: {
       id: 'livestock',

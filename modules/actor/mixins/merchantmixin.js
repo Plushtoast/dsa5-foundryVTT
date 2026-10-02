@@ -533,6 +533,10 @@ export const MerchantSheetMixin = (superclass) =>
       }
     }
 
+    static async _randomizeSectionQuantities(ev, target) {
+      await MerchantStockService.randomizeSectionQuantities(this.actor, target.dataset.type);
+    }
+
     static async _clearSection(ev, target) {
       const proceed = await foundry.applications.api.DialogV2.confirm({
         window: { title: 'MERCHANT.fill.clearSection' },
@@ -562,6 +566,11 @@ export const MerchantSheetMixin = (superclass) =>
           label: 'MERCHANT.fill.restockSection',
           icon: '<i class="fas fa-rotate fa-fw"></i>',
           onClick: () => this.constructor._restockSection.call(app, ev, target),
+        },
+        {
+          label: 'MERCHANT.fill.randomizeSection',
+          icon: '<i class="fas fa-dice fa-fw"></i>',
+          onClick: () => this.constructor._randomizeSectionQuantities.call(app, ev, target),
         },
         {
           label: 'MERCHANT.fill.clearSection',

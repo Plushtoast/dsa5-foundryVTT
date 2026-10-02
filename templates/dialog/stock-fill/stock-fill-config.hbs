@@ -9,14 +9,24 @@
     {{/each}}
   </div>
 
+  <div class="row-section table-title flex0">
+    {{#each qtyModes}}
+    <label class="col three center">
+      <input type="radio" name="qtyMode" value="{{value}}" {{checked active}} data-tooltip="{{hint}}">
+      <span data-tooltip="{{hint}}">{{localize label}}</span>
+    </label>
+    {{/each}}
+  </div>
+  <p class="hint stock-fill-qty-hint flex0">{{localize qtyModeHint}}</p>
+
   <div class="row-section table-title lineheight flexAlignCenter flex0">
     <div class="col eight"></div>
     <div class="col"><b>{{localize 'MERCHANT.fill.category'}}</b></div>
-    <div class="col five center" data-tooltip="MERCHANT.fill.numberHint">
-      <b>{{localize 'MERCHANT.fill.numberLabel'}}</b>
+    <div class="col five center" data-qty-header="number" data-tooltip="{{numberHint}}">
+      <b>{{localize numberLabel}}</b>
     </div>
-    <div class="col five center" data-tooltip="MERCHANT.fill.eachHint">
-      <b>{{localize 'MERCHANT.fill.eachLabel'}}</b>
+    <div class="col five center" data-qty-header="each" data-tooltip="{{eachHint}}">
+      <b>{{localize eachLabel}}</b>
     </div>
   </div>
 
@@ -29,11 +39,11 @@
       <div class="col">
         <label>{{localize label}}</label>
       </div>
-      <div class="col five" data-tooltip="MERCHANT.fill.numberHint">
+      <div class="col five" data-tooltip="{{numberHint}}">
         <input type="number" class="quantity-click" name="cat.{{key}}.number" value="{{number}}" min="0" step="1"
           data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" {{disabled disabled}}>
       </div>
-      <div class="col five" data-tooltip="MERCHANT.fill.eachHint">
+      <div class="col five" data-tooltip="{{eachHint}}">
         <input type="number" class="quantity-click" name="cat.{{key}}.each" value="{{qtyEach}}" min="1" step="1"
           data-tooltip="TT.strgx10" data-tooltip-direction="RIGHT" {{disabled disabled}}>
       </div>

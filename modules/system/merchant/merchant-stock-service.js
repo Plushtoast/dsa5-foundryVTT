@@ -8,6 +8,7 @@
  *   filters: { [category]: { selects, inputs, booleans } } — item-library detailFilter payload (plain object),
  *   region, maxPrice, allowDuplicates, allowQlVariants,
  *   tradeableOnly, enhanceChance, qlBand, poisonStepBand, ammoStack,
+ *   qtyMode ('each' | 'total' | 'draws'),
  *   serviceSubcategories (string[] | null) — when set, equipment services must match,
  *   mode, sectionType,
  *   hygiene: { excludePriceZero, excludeIllegalBooks, excludeArtifacts, excludeMagical, excludeSiege, excludeUniq }
@@ -58,6 +59,7 @@ export default class MerchantStockService {
       qlBand: MerchantConfig.DEFAULT_QL_BAND,
       poisonStepBand: MerchantConfig.DEFAULT_POISON_STEP_BAND,
       ammoStack: 20,
+      qtyMode: 'each',
       serviceSubcategories: null,
       mode: 'merge',
       sectionType: null,
@@ -79,6 +81,7 @@ export default class MerchantStockService {
     merged.allowQlVariants = raw.allowQlVariants !== false;
     merged.serviceSubcategories = this.#normalizeServiceSubcategories(raw.serviceSubcategories);
     merged.mode = MerchantConfig.RESTOCK_MODES[merged.mode] ? merged.mode : 'merge';
+    merged.qtyMode = MerchantConfig.QTY_MODES[merged.qtyMode] ? merged.qtyMode : 'each';
     merged.qlBand = MerchantConfig.normalizeBand(raw.qlBand ?? merged.qlBand);
     merged.poisonStepBand = MerchantConfig.normalizeBand(
       raw.poisonStepBand ?? merged.poisonStepBand,
@@ -178,8 +181,13 @@ export default class MerchantStockService {
 
     const enabled = new Set(preset.categories || []);
     const equipmentTypes = preset.equipmentTypes ? new Set(preset.equipmentTypes) : null;
+    const defaults = MerchantConfig.DEFAULT_FILL_COUNTS;
     for (const [key, entry] of Object.entries(config.categories)) {
       entry.enabled = enabled.has(key);
+      const base = defaults[key] || { number: 4, each: 1 };
+      const override = preset.counts?.[key];
+      entry.number = Math.max(0, Number(override?.number ?? base.number) || 0);
+      entry.each = Math.max(1, Number(override?.each ?? base.each) || 1);
       if (key === 'equipment' && entry.types && equipmentTypes) {
         for (const type of Object.keys(entry.types)) {
           entry.types[type] = equipmentTypes.has(type);
@@ -187,6 +195,7 @@ export default class MerchantStockService {
         entry.enabled = [...equipmentTypes].some((type) => entry.types[type]);
       }
     }
+    config.qtyMode = MerchantConfig.QTY_MODES[preset.qtyMode] ? preset.qtyMode : 'each';
     config.serviceSubcategories = preset.serviceSubcategories
       ? [...preset.serviceSubcategories]
       : null;
@@ -311,12 +320,17 @@ export default class MerchantStockService {
     const category = config.categories?.[item.type];
     const each = Number(category?.each);
     const hasEach = Number.isFinite(each) && each > 0;
+    const skipQty = config.qtyMode === 'total' || config.qtyMode === 'draws';
 
     if (item.type === 'ammunition') {
-      const stack = Number(config.ammoStack) || (hasEach ? each : item.system.quantity?.value) || 1;
-      item.system.quantity.value = Math.max(1, stack);
+      if (!skipQty) {
+        const stack = Number(config.ammoStack) || (hasEach ? each : item.system.quantity?.value) || 1;
+        item.system.quantity.value = Math.max(1, stack);
+      } else if (!item.system.quantity?.value) {
+        item.system.quantity.value = 1;
+      }
       if (item.system.mag?.max) item.system.mag.value = item.system.mag.max;
-    } else if (hasEach) {
+    } else if (!skipQty && hasEach) {
       item.system.quantity.value = each;
     } else if (!item.system.quantity?.value) {
       item.system.quantity.value = 1;
@@ -403,9 +417,110 @@ export default class MerchantStockService {
         delete item._id;
         return item;
       });
+
+    const qtyMode = config.qtyMode || 'each';
+    if (qtyMode === 'draws' || qtyMode === 'total') {
+      const unique = this.#uniqueByIdentity(this.applyPoolHygiene(documents, config), config);
+      const shuffled = library.shuffle(unique);
+      if (qtyMode === 'draws') {
+        const each = Number(config.categories?.[category]?.each) || 1;
+        return this.accumulateDraws(shuffled, requested, each, config);
+      }
+      return shuffled.slice(0, requested);
+    }
+
     const filtered = this.filterSeen(documents, actor, config);
     const shuffled = library.shuffle(filtered);
     return shuffled.slice(0, requested);
+  }
+
+  static #uniqueByIdentity(items, config = {}) {
+    const seen = new Set();
+    const unique = [];
+    for (const item of items) {
+      const key = this.identityKey(item, config);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push(item);
+    }
+    return unique;
+  }
+
+  /**
+   * Sample `draws` times with replacement from `pool` and stack quantity on identity.
+   * Each draw adds `each` to that line.
+   */
+  static accumulateDraws(pool, draws, each = 1, config = {}) {
+    if (!pool?.length) return [];
+    const requested = Math.max(0, Math.floor(Number(draws) || 0));
+    if (!requested) return [];
+    const qty = Math.max(1, Math.floor(Number(each) || 1));
+    const byKey = new Map();
+    for (let index = 0; index < requested; index += 1) {
+      const source = pool[Math.floor(Math.random() * pool.length)];
+      const pick = duplicate(source);
+      delete pick._id;
+      this.#ensureQuantity(pick);
+      const key = this.identityKey(pick, config);
+      const existing = byKey.get(key);
+      if (existing) {
+        existing.system.quantity.value += qty;
+      } else {
+        pick.system.quantity.value = qty;
+        byKey.set(key, pick);
+      }
+    }
+    return [...byKey.values()];
+  }
+
+  static #ensureQuantity(item) {
+    if (!item.system) item.system = {};
+    if (!item.system.quantity) item.system.quantity = {};
+    if (!Number.isFinite(Number(item.system.quantity.value))) item.system.quantity.value = 0;
+  }
+
+  /**
+   * Split `total` units across `items`. When total >= n, every line gets at least 1
+   * and the remainder is assigned one-by-one at random. When total < n and
+   * `dropEmpty`, only `total` lines remain at qty 1.
+   */
+  static distributeQuantities(items, total, { random = Math.random, dropEmpty = true } = {}) {
+    if (!items?.length) return items || [];
+    const T = Math.max(0, Math.floor(Number(total) || 0));
+    const working = [...items];
+    for (const item of working) this.#ensureQuantity(item);
+
+    if (T <= 0) {
+      if (dropEmpty) return [];
+      for (const item of working) item.system.quantity.value = 0;
+      return working;
+    }
+
+    if (T < working.length) {
+      this.#shuffleInPlace(working, random);
+      const chosen = working.slice(0, T);
+      for (const item of chosen) item.system.quantity.value = 1;
+      if (dropEmpty) return chosen;
+      for (const item of working.slice(T)) item.system.quantity.value = 0;
+      return working;
+    }
+
+    for (const item of working) item.system.quantity.value = 1;
+    let rest = T - working.length;
+    while (rest > 0) {
+      const index = Math.floor(random() * working.length);
+      working[index].system.quantity.value += 1;
+      rest -= 1;
+    }
+    return working;
+  }
+
+  static #shuffleInPlace(array, random = Math.random) {
+    for (let i = array.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 
   static #preferRegion(pool, region) {
@@ -425,7 +540,7 @@ export default class MerchantStockService {
     const items = [];
     for (const type of this.enabledCategoryKeys(normalized)) {
       const category = normalized.categories[type];
-      const picked = await this.pickRandomItems({
+      let picked = await this.pickRandomItems({
         category: type,
         number: category.number,
         config: normalized,
@@ -434,8 +549,11 @@ export default class MerchantStockService {
       for (const item of picked) {
         this.applyTypeDefaults(item, normalized);
         this.maybeEnhance(item, { chance: normalized.enhanceChance });
-        items.push(item);
       }
+      if (normalized.qtyMode === 'total') {
+        picked = this.distributeQuantities(picked, category.each);
+      }
+      items.push(...picked);
     }
     this.#ensureNotAllQlOne(items, normalized);
     return items;
@@ -466,7 +584,7 @@ export default class MerchantStockService {
     if (notify && created.length) {
       ui.notifications.info(_loc('MERCHANT.fill.done', { count: created.length }));
     }
-    if (notify && items.length < requested) {
+    if (notify && normalized.qtyMode !== 'draws' && items.length < requested) {
       ui.notifications.warn(_loc('MERCHANT.fill.shortfall', { got: items.length, requested }));
     }
     return created;
@@ -639,6 +757,30 @@ export default class MerchantStockService {
     });
   }
 
+  static async randomizeSectionQuantities(actor, sectionKey) {
+    const items = this.#itemsInSection(actor, sectionKey)
+      .filter((item) => !getProperty(item, 'system.worn.value'));
+    if (!items.length) return [];
+
+    const total = items.reduce((sum, item) => sum + (Number(item.system.quantity?.value) || 0), 0);
+    if (total <= 0) return [];
+
+    const payload = items.map((item) => ({
+      _id: item.id,
+      name: item.name,
+      type: item.type,
+      system: { quantity: { value: Number(item.system.quantity?.value) || 0 } },
+    }));
+    this.distributeQuantities(payload, total, { dropEmpty: false });
+    const updates = payload.map((item) => ({
+      _id: item._id,
+      'system.quantity.value': Number(item.system.quantity.value) || 0,
+    }));
+    const updated = await actor.updateEmbeddedDocuments('Item', updates);
+    ui.notifications.info(_loc('MERCHANT.fill.randomizedQuantities', { count: updates.length }));
+    return updated;
+  }
+
   static async clearSection(actor, sectionKey) {
     const resolved = this.resolveSectionKey(sectionKey);
     if (!resolved) return 0;
@@ -696,26 +838,44 @@ export default class MerchantStockService {
   }
 
   static async #createOrMerge(actor, items, config) {
-    if (config.mode !== 'merge' || config.allowDuplicates) {
-      return actor.createEmbeddedDocuments('Item', items);
+    const stackFill = config.qtyMode === 'total' || config.qtyMode === 'draws';
+    const incoming = stackFill ? this.#collapseByIdentity(items, config) : items;
+    const shouldMerge = config.mode === 'merge' && (!config.allowDuplicates || stackFill);
+    if (!shouldMerge) {
+      return actor.createEmbeddedDocuments('Item', incoming);
     }
 
     const updates = [];
     const creates = [];
-    for (const incoming of items) {
-      const existing = actor.items.find((item) => this.#sameLine(item, incoming, config));
+    for (const incomingItem of incoming) {
+      const existing = actor.items.find((item) => this.#sameLine(item, incomingItem, config));
       if (existing) {
         updates.push({
           _id: existing.id,
-          'system.quantity.value': (Number(existing.system.quantity?.value) || 0) + (Number(incoming.system.quantity?.value) || 1),
+          'system.quantity.value': (Number(existing.system.quantity?.value) || 0) + (Number(incomingItem.system.quantity?.value) || 1),
         });
       } else {
-        creates.push(incoming);
+        creates.push(incomingItem);
       }
     }
     const created = creates.length ? await actor.createEmbeddedDocuments('Item', creates) : [];
     if (updates.length) await actor.updateEmbeddedDocuments('Item', updates);
     return created;
+  }
+
+  static #collapseByIdentity(items, config) {
+    const byKey = new Map();
+    for (const item of items) {
+      this.#ensureQuantity(item);
+      const key = this.identityKey(item, config);
+      const existing = byKey.get(key);
+      if (existing) {
+        existing.system.quantity.value += Number(item.system.quantity.value) || 1;
+      } else {
+        byKey.set(key, item);
+      }
+    }
+    return [...byKey.values()];
   }
 
   static #sameLine(existing, incoming, config) {

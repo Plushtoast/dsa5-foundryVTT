@@ -103,6 +103,15 @@ export default class StockFillDialog extends DefaultAppv2 {
       active: this.config.mode === value,
     }));
     data.activeModeHint = `MERCHANT.restockMode.${this.config.mode}Hint`;
+    const qtyMode = this.config.qtyMode || 'each';
+    data.qtyModes = Object.entries(MerchantConfig.QTY_MODES).map(([value, label]) => ({
+      value,
+      label,
+      hint: `MERCHANT.fill.qtyMode.${value}Hint`,
+      active: qtyMode === value,
+    }));
+    data.qtyModeHint = `MERCHANT.fill.qtyMode.${qtyMode}Hint`;
+    Object.assign(data, this.constructor.#qtyColumnKeys(qtyMode));
     data.hygiene = this.config.hygiene;
     data.includeRestrictedBooks = !this.config.hygiene.excludeIllegalBooks;
     data.enhanceChancePercent = Math.round((Number(this.config.enhanceChance) || 0) * 100);
@@ -147,12 +156,15 @@ export default class StockFillDialog extends DefaultAppv2 {
   }
 
   #categoryRows() {
+    const keys = this.constructor.#qtyColumnKeys(this.config.qtyMode);
     return Object.entries(this.config.categories).map(([key, entry]) => ({
       key,
       enabled: !!entry.enabled,
       disabled: !entry.enabled,
       number: entry.number,
       qtyEach: entry.each,
+      numberHint: keys.numberHint,
+      eachHint: keys.eachHint,
       label: `TYPES.Item.${key}`,
       types: entry.types
         ? Object.entries(entry.types).map(([type, enabled]) => ({
@@ -256,6 +268,8 @@ export default class StockFillDialog extends DefaultAppv2 {
     };
 
     this.config.mode = form.querySelector('[name="mode"]:checked')?.value || this.config.mode;
+    const qtyMode = form.querySelector('[name="qtyMode"]:checked')?.value;
+    this.config.qtyMode = MerchantConfig.QTY_MODES[qtyMode] ? qtyMode : this.config.qtyMode;
     this.config.region = readText('region', this.config.region);
     this.config.maxPrice = readNumber('maxPrice', this.config.maxPrice);
     this.config.enhanceChance = readNumber('enhanceChance', (this.config.enhanceChance || 0) * 100) / 100;
@@ -290,6 +304,11 @@ export default class StockFillDialog extends DefaultAppv2 {
       this.#markPresetCustom();
       return;
     }
+    if (name === 'qtyMode') {
+      this.#syncQtyModeUi();
+      this.#markPresetCustom();
+      return;
+    }
     if (!name.startsWith('cat.')) return;
 
     this.#markPresetCustom();
@@ -301,6 +320,55 @@ export default class StockFillDialog extends DefaultAppv2 {
     const hint = this.element.querySelector('.stock-fill-mode-hint');
     if (!hint) return;
     hint.textContent = _loc(`MERCHANT.restockMode.${this.config.mode}Hint`);
+  }
+
+  static #qtyColumnKeys(qtyMode = 'each') {
+    if (qtyMode === 'draws') {
+      return {
+        numberLabel: 'MERCHANT.fill.drawsLabel',
+        numberHint: 'MERCHANT.fill.drawsHint',
+        eachLabel: 'MERCHANT.fill.eachDrawLabel',
+        eachHint: 'MERCHANT.fill.eachDrawHint',
+      };
+    }
+    if (qtyMode === 'total') {
+      return {
+        numberLabel: 'MERCHANT.fill.numberLabel',
+        numberHint: 'MERCHANT.fill.numberHint',
+        eachLabel: 'MERCHANT.fill.totalLabel',
+        eachHint: 'MERCHANT.fill.totalHint',
+      };
+    }
+    return {
+      numberLabel: 'MERCHANT.fill.numberLabel',
+      numberHint: 'MERCHANT.fill.numberHint',
+      eachLabel: 'MERCHANT.fill.eachLabel',
+      eachHint: 'MERCHANT.fill.eachHint',
+    };
+  }
+
+  #syncQtyModeUi() {
+    const keys = this.constructor.#qtyColumnKeys(this.config.qtyMode);
+    const hint = this.element.querySelector('.stock-fill-qty-hint');
+    if (hint) hint.textContent = _loc(`MERCHANT.fill.qtyMode.${this.config.qtyMode}Hint`);
+    const numberHead = this.element.querySelector('[data-qty-header="number"]');
+    if (numberHead) {
+      numberHead.dataset.tooltip = keys.numberHint;
+      const label = numberHead.querySelector('b');
+      if (label) label.textContent = _loc(keys.numberLabel);
+    }
+    const eachHead = this.element.querySelector('[data-qty-header="each"]');
+    if (eachHead) {
+      eachHead.dataset.tooltip = keys.eachHint;
+      const label = eachHead.querySelector('b');
+      if (label) label.textContent = _loc(keys.eachLabel);
+    }
+    for (const input of this.element.querySelectorAll('[name$=".number"]')) {
+      input.closest('[data-tooltip]')?.setAttribute('data-tooltip', keys.numberHint);
+    }
+    for (const input of this.element.querySelectorAll('[name$=".each"]')) {
+      input.closest('[data-tooltip]')?.setAttribute('data-tooltip', keys.eachHint);
+    }
   }
 
   static #collapseFilterCategory(_event, target) {

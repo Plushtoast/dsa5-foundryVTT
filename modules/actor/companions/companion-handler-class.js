@@ -50,7 +50,7 @@ export default class CompanionHandler {
         for (let i = 0; i < count; i += 1) {
             const data = source.toObject();
             delete data._id;
-            delete data.folder;
+            data.folder = buyer.folder?.id ?? null;
             foundry.utils.setProperty(data, 'prototypeToken.actorLink', true);
             foundry.utils.setProperty(data, 'system.companionData.owners', []);
             const actor = await Actor.create(data, { renderSheet: false });
