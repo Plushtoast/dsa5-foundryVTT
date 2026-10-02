@@ -2,6 +2,10 @@
 
     {{formGroup systemFields.equipmentType.fields.value value=document.system.equipmentType.value localize=true}}
 
+    {{#if (eq document.system.equipmentType.value 'service')}}
+    {{formGroup systemFields.serviceSubcategory value=document.system.serviceSubcategory localize=true}}
+    {{/if}}
+
     <div class="form-group double">
         <label>{{localize "structure"}}</label>
         <div class="form-fields">

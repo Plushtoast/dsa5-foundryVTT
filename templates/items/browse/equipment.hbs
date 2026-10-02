@@ -41,6 +41,14 @@
                             <div class="col">
                                 {{localize (concat 'Equipment.' document.system.equipmentType.value)}}
                             </div>
+                            {{#if (eq document.system.equipmentType.value 'service')}}
+                            <div class="col table-title noBorder">
+                                {{localize "Equipment.serviceSubcategory"}}
+                            </div>
+                            <div class="col">
+                                {{localize (concat 'Equipment.serviceSub.' document.system.serviceSubcategory)}}
+                            </div>
+                            {{/if}}
                             {{#if (eq document.system.equipmentType.value 'bags')}}
                             <div class="col table-title noBorder">
                                 {{localize "carrycapacity"}}

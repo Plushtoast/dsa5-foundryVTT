@@ -14,6 +14,52 @@ const { SERVICES, REQUESTS } = CONJURATION_CONTROL_MODES;
 
 export default class CompanionHandler {
     static COMPANION_TAB_ID = 'companion';
+    static SERVICE_SUBCATEGORY_ANIMAL = 'animal';
+
+    static isAnimalService(item) {
+        return item?.type === 'equipment'
+            && item?.system?.equipmentType?.value === 'service'
+            && (item?.system?.serviceSubcategory || 'other') === this.SERVICE_SUBCATEGORY_ANIMAL;
+    }
+
+    static async findCreatureByName(name) {
+        const wanted = String(name || '').trim();
+        if (!wanted) return null;
+
+        for (const pack of game.packs) {
+            if (pack.documentName !== 'Actor') continue;
+            const index = pack.index.size ? pack.index : await pack.getIndex({ fields: ['name', 'type'] });
+            const entry = index.find((e) => e.name === wanted && ['creature', 'npc'].includes(e.type));
+            if (entry) return pack.getDocument(entry._id);
+        }
+
+        return game.actors.find((actor) => actor.name === wanted && ['creature', 'npc'].includes(actor.type)) ?? null;
+    }
+
+    /**
+     * Duplicate a catalog creature and link it to the buyer as a companion.
+     * @returns {Promise<Actor[]|false>} Created actors, or false if no source creature exists.
+     */
+    static async purchaseAsCompanion(buyer, item, amount = 1) {
+        if (!buyer || !item) return false;
+        const source = await this.findCreatureByName(item.name);
+        if (!source) return false;
+
+        const count = Math.max(1, Number(amount) || 1);
+        const created = [];
+        for (let i = 0; i < count; i += 1) {
+            const data = source.toObject();
+            delete data._id;
+            delete data.folder;
+            foundry.utils.setProperty(data, 'prototypeToken.actorLink', true);
+            foundry.utils.setProperty(data, 'system.companionData.owners', []);
+            const actor = await Actor.create(data, { renderSheet: false });
+            if (!actor) continue;
+            created.push(actor);
+            await this.setCompanion({ actor: buyer }, actor.uuid, { forceActorLink: true });
+        }
+        return created;
+    }
 
     /**
      * Link a summoned creature to its summoner on the companion tab.
@@ -247,20 +293,22 @@ export default class CompanionHandler {
         return CompanionConfig.resolveSpeciesImage(speciesName, imageMap, placeholder);
     }
 
-    static async setCompanion(sheet, uuid) {
+    static async setCompanion(sheet, uuid, { forceActorLink = false } = {}) {
         await CompanionConfig.ensureLoaded();
         const droppedActor = await fromUuid(uuid);
         if (!droppedActor) return false;
 
         if (!droppedActor.prototypeToken.actorLink) {
-            const fix = await foundry.applications.api.DialogV2.confirm({
-                window: { title: "COMPANIONS.Notification.TokenLinkWarning" },
-                content: _loc("COMPANIONS.Notification.TokenLinkExplanation", { name: droppedActor.name }),
-                yes: { label: _loc("COMPANIONS.Notification.TokenLinkEnableBtn"), icon: 'fas fa-link' },
-                no: { label: _loc('cancel'), icon: 'fas fa-times' },
-                rejectClose: false,
-            });
-            if (!fix) return false;
+            if (!forceActorLink) {
+                const fix = await foundry.applications.api.DialogV2.confirm({
+                    window: { title: "COMPANIONS.Notification.TokenLinkWarning" },
+                    content: _loc("COMPANIONS.Notification.TokenLinkExplanation", { name: droppedActor.name }),
+                    yes: { label: _loc("COMPANIONS.Notification.TokenLinkEnableBtn"), icon: 'fas fa-link' },
+                    no: { label: _loc('cancel'), icon: 'fas fa-times' },
+                    rejectClose: false,
+                });
+                if (!fix) return false;
+            }
             await droppedActor.update({ 'prototypeToken.actorLink': true });
         }
 

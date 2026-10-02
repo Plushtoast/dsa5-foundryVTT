@@ -57,6 +57,12 @@ Hooks.once('ready', () => {
           type: 'select',
           options: DSA5.equipmentTypes,
         },
+        {
+          label: 'Equipment.serviceSubcategory',
+          attr: 'serviceSubcategory',
+          type: 'select',
+          options: DSA5.serviceSubcategories,
+        },
         { label: 'PLANT.region', attr: 'region', type: 'text' },
       ],
       book: [

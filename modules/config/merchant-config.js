@@ -284,6 +284,15 @@ export default class MerchantConfig {
       tooltip: 'MERCHANT.fill.preset.herbalistHint',
       categories: ['plant', 'poison', 'consumable'],
     },
+    livestock: {
+      id: 'livestock',
+      label: 'MERCHANT.fill.preset.livestock',
+      icon: 'fas fa-horse',
+      tooltip: 'MERCHANT.fill.preset.livestockHint',
+      categories: ['equipment'],
+      equipmentTypes: ['service'],
+      serviceSubcategories: ['animal'],
+    },
     magic: {
       id: 'magic',
       label: 'MERCHANT.fill.preset.magic',
@@ -299,6 +308,7 @@ export default class MerchantConfig {
       tooltip: 'MERCHANT.fill.preset.tavernHint',
       categories: ['equipment', 'consumable'],
       equipmentTypes: ['service', 'food', 'misc'],
+      serviceSubcategories: ['tavern'],
     },
     custom: {
       id: 'custom',

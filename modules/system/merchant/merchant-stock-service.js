@@ -8,6 +8,7 @@
  *   filters: { [category]: { selects, inputs, booleans } } — item-library detailFilter payload (plain object),
  *   region, maxPrice, allowDuplicates, allowQlVariants,
  *   tradeableOnly, enhanceChance, qlBand, poisonStepBand, ammoStack,
+ *   serviceSubcategories (string[] | null) — when set, equipment services must match,
  *   mode, sectionType,
  *   hygiene: { excludePriceZero, excludeIllegalBooks, excludeArtifacts, excludeMagical, excludeSiege, excludeUniq }
  * }
@@ -57,6 +58,7 @@ export default class MerchantStockService {
       qlBand: MerchantConfig.DEFAULT_QL_BAND,
       poisonStepBand: MerchantConfig.DEFAULT_POISON_STEP_BAND,
       ammoStack: 20,
+      serviceSubcategories: null,
       mode: 'merge',
       sectionType: null,
       hygiene: this.defaultHygiene(),
@@ -75,6 +77,7 @@ export default class MerchantStockService {
     merged.filtersEnabled = !!raw.filtersEnabled;
     merged.filters = foundry.utils.isPlainObject(raw.filters) ? duplicate(raw.filters) : {};
     merged.allowQlVariants = raw.allowQlVariants !== false;
+    merged.serviceSubcategories = this.#normalizeServiceSubcategories(raw.serviceSubcategories);
     merged.mode = MerchantConfig.RESTOCK_MODES[merged.mode] ? merged.mode : 'merge';
     merged.qlBand = MerchantConfig.normalizeBand(raw.qlBand ?? merged.qlBand);
     merged.poisonStepBand = MerchantConfig.normalizeBand(
@@ -103,6 +106,16 @@ export default class MerchantStockService {
       }
     }
     return categories;
+  }
+
+  static #normalizeServiceSubcategories(stored) {
+    const keys = Array.isArray(stored)
+      ? stored
+      : foundry.utils.isPlainObject(stored)
+        ? Object.entries(stored).filter(([, on]) => on).map(([key]) => key)
+        : [];
+    const allowed = keys.filter((key) => DSA5.serviceSubcategories[key]);
+    return allowed.length ? allowed : null;
   }
 
   /**
@@ -174,6 +187,9 @@ export default class MerchantStockService {
         entry.enabled = [...equipmentTypes].some((type) => entry.types[type]);
       }
     }
+    config.serviceSubcategories = preset.serviceSubcategories
+      ? [...preset.serviceSubcategories]
+      : null;
     return config;
   }
 
@@ -233,6 +249,7 @@ export default class MerchantStockService {
     if (hygiene.excludeSiege && this.#isSiege(item)) return false;
     if (item.type === 'book' && hygiene.excludeIllegalBooks && Number(item.system?.legality) !== 0) return false;
     if (item.type === 'equipment' && !this.#equipmentTypeAllowed(item, config)) return false;
+    if (item.type === 'equipment' && !this.#serviceSubcategoryAllowed(item, config)) return false;
     return true;
   }
 
@@ -247,6 +264,14 @@ export default class MerchantStockService {
     const key = item.system?.equipmentType?.value;
     if (!key) return true;
     return types[key] !== false;
+  }
+
+  static #serviceSubcategoryAllowed(item, config) {
+    const allowed = config.serviceSubcategories;
+    if (!allowed?.length) return true;
+    if (item.system?.equipmentType?.value !== 'service') return true;
+    const sub = item.system?.serviceSubcategory || 'other';
+    return allowed.includes(sub);
   }
 
   static applyPriceCap(items, maxPrice) {

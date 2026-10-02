@@ -21,6 +21,7 @@ import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import ImageFrameDialog from '../../dialog/image-frame-dialog.js';
 import ImageFramePicker from '../../system/helpers/image-frame-picker.js';
 import DomFlyAnimation from '../../animation/dom-fly-animation.js';
+import CompanionHandler from '../companions/companion-handler-class.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -907,6 +908,14 @@ export const MerchantSheetMixin = (superclass) =>
 
         price = `${totalPrice}`;
 
+        if (buy && CompanionHandler.isAnimalService(item)) {
+          const sourceCreature = await CompanionHandler.findCreatureByName(item.name);
+          if (!sourceCreature) {
+            ui.notifications.error(_loc('MERCHANT.animalNotFound', { name: item.name }));
+            return;
+          }
+        }
+
         const noNeedToPay = this.noNeedToPay(target, source, price);
         const shouldTrackMoney = !this.isLootTransfer(target, source);
         const hasPaid = noNeedToPay || (await DSA5Payment.payMoney(target, price, true, false));
@@ -918,7 +927,7 @@ export const MerchantSheetMixin = (superclass) =>
             if (isBagWithContents) {
               res = await transferBagWithContents(source, target, item);
             } else {
-              res = await this.updateTargetTransaction(target, item, amount, source, price);
+              res = await this.updateTargetTransaction(target, item, amount, source, price, true);
               await this.updateSourceTransaction(source, target, item, price, itemId, amount);
             }
             await this.transferNotification(item, target, source, buy, price, amount, noNeedToPay, res);
@@ -934,7 +943,7 @@ export const MerchantSheetMixin = (superclass) =>
               res = await transferBagWithContents(source, target, item);
             } else {
               await this.updateSourceTransaction(source, target, item, price, itemId, amount);
-              res = await this.updateTargetTransaction(target, item, amount, source, price);
+              res = await this.updateTargetTransaction(target, item, amount, source, price, false);
             }
             await this.transferNotification(item, source, target, buy, price, amount, noNeedToPay, res);
 
@@ -1021,10 +1030,17 @@ export const MerchantSheetMixin = (superclass) =>
       if (!this.noNeedToPay(source, target, price)) await DSA5Payment.getMoney(source, price, true, false);
     }
 
-    static async updateTargetTransaction(target, sourceItem, amount, source, price) {
+    static async updateTargetTransaction(target, sourceItem, amount, source, price, buy = true) {
       const item = duplicate(sourceItem);
       const isService = getProperty(item, 'system.equipmentType.value') == 'service';
       if (isService) {
+        if (buy && CompanionHandler.isAnimalService(item)) {
+          const created = await CompanionHandler.purchaseAsCompanion(target, item, amount);
+          if (created === false) {
+            ui.notifications.error(_loc('MERCHANT.animalNotFound', { name: item.name }));
+            return;
+          }
+        }
         const msg = _loc('MERCHANT.buyNotification', {
           item: item.name,
           amount,

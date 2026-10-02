@@ -2159,6 +2159,15 @@
     "poison": "Poison",
     "rangeweapons": "Rangeweapons",
     "service": "Services",
+    "serviceSubcategory": "Service type",
+    "serviceSub": {
+      "other": "Other",
+      "animal": "Livestock",
+      "tavern": "Tavern",
+      "smith": "Smith",
+      "scribe": "Scribe",
+      "academy": "Academy"
+    },
     "tools": "Tools",
     "wealth": "Valuables",
     "writing": "Stationery"
@@ -2722,6 +2731,7 @@
     "ammoStack": "Ammunition stack size",
     "buyLootNotification": "<b>{source}</b> takes {amount}x {item} from <b>{target}</b>.",
     "buyNotification": "<b>{source}</b> buys {amount}x {item} from <b>{target}</b> for {price} Silverthalers.",
+    "animalNotFound": "No creature named \"{name}\" was found. The purchase was cancelled.",
     "buyingFactor": "Buy factor",
     "buyTier": "Buy price tier",
     "changeAmountAll": "Adjust quantity of all goods in this section.<br/><small>Left-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Right-<i class=\"fas fa-computer-mouse\"></i> −1<br/>& CTRL ×10</small>",
@@ -2953,6 +2963,8 @@
         "generalHint": "Everyday goods, consumables, and plants.",
         "herbalist": "Herbalist",
         "herbalistHint": "Plants, poisons, and potions.",
+        "livestock": "Livestock market",
+        "livestockHint": "Animals and companions from the livestock market.",
         "magic": "Magic wares",
         "magicHint": "Alchemy, writing goods, and books.",
         "tavern": "Tavern",

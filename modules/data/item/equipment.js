@@ -18,6 +18,12 @@ export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, De
       equipmentType: new SchemaField({
         value: new StringField({ initial: 'misc', required: true, label: 'equipmentType', choices: DSA5.equipmentTypes }),
       }),
+      serviceSubcategory: new StringField({
+        initial: 'other',
+        required: true,
+        choices: DSA5.serviceSubcategories,
+        label: 'Equipment.serviceSubcategory',
+      }),
       structure: new SchemaField({
         value: new NumberField({ initial: 0, min: 0 }),
         max: new NumberField({ initial: 0, min: 0 }),
@@ -39,7 +45,12 @@ export default class EquipmentData extends ItemDataModel.mixin(OnUseTemplate, De
   }
 
   static chatData(data, name) {
-    return [{ key: 'equipmentType', val: `Equipment.${data.equipmentType.value}`, localizeVal: true }];
+    const rows = [{ key: 'equipmentType', val: `Equipment.${data.equipmentType.value}`, localizeVal: true }];
+    if (data.equipmentType?.value === 'service') {
+      const sub = data.serviceSubcategory || 'other';
+      rows.push({ key: 'Equipment.serviceSubcategory', val: `Equipment.serviceSub.${sub}`, localizeVal: true });
+    }
+    return rows;
   }
 
   prepareEmbeddedItemSheet() {

@@ -383,6 +383,15 @@ DSA5.equipmentTypes = {
   automat: 'Equipment.automat',
 };
 
+DSA5.serviceSubcategories = {
+  other: 'Equipment.serviceSub.other',
+  animal: 'Equipment.serviceSub.animal',
+  tavern: 'Equipment.serviceSub.tavern',
+  smith: 'Equipment.serviceSub.smith',
+  scribe: 'Equipment.serviceSub.scribe',
+  academy: 'Equipment.serviceSub.academy',
+};
+
 DSA5.equipmentCategories = new Set(['meleeweapon', 'rangeweapon', 'equipment', 'ammunition', 'armor', 'poison', 'consumable', 'plant', 'book']);
 DSA5.magicCategories = new Set(['ritual', 'ceremony', 'spell', 'liturgy', 'blessing', 'magictrick', 'spellextension', 'magicalsign']);
 

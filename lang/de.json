@@ -2161,6 +2161,15 @@
     "poison": "Gift",
     "rangeweapons": "Fernkampfwaffen",
     "service": "Dienstleistungen",
+    "serviceSubcategory": "Dienstleistungsart",
+    "serviceSub": {
+      "other": "Sonstige",
+      "animal": "Viehmarkt",
+      "tavern": "Wirtshaus",
+      "smith": "Schmied",
+      "scribe": "Schreiber",
+      "academy": "Magierakademie"
+    },
     "tools": "Werkzeug",
     "wealth": "Wertsachen",
     "writing": "Schreibwaren"
@@ -2724,6 +2733,7 @@
     "ammoStack": "Munitionsstapelgröße",
     "buyLootNotification": "<b>{source}</b> nimmt {amount}x {item} aus <b>{target}</b>.",
     "buyNotification": "<b>{source}</b> kauft {amount}x {item} von <b>{target}</b> für {price} Silberstücke.",
+    "animalNotFound": "Kein Wesen „{name}“ gefunden. Der Kauf wurde abgebrochen.",
     "buyingFactor": "Kauffaktor",
     "buyTier": "Kauf-Preisstufe",
     "changeAmountAll": "Anzahl aller Waren in dieser Sektion anpassen.<br/><small>Links-<i class=\"fas fa-computer-mouse\"></i> +1<br/>Rechts-<i class=\"fas fa-computer-mouse\"></i> −1<br/>& STRG ×10</small>",
@@ -2955,6 +2965,8 @@
         "generalHint": "Alltagswaren, Verbrauch und Pflanzen.",
         "herbalist": "Kräuter",
         "herbalistHint": "Pflanzen, Gifte und Tränke.",
+        "livestock": "Viehmarkt",
+        "livestockHint": "Tiere und Begleiter aus dem Viehmarkt.",
         "magic": "Magiewaren",
         "magicHint": "Alchemie, Schreibwaren und Bücher.",
         "tavern": "Taverne",
