@@ -2,6 +2,7 @@ import { JournalListDataModel } from './journallistdatamodel.js';
 import PartialCalendarDateField from '../fields/partial-calendar-date-field.js';
 import { DSAPersonaEntry } from './dsapersonaedramatis.js';
 import ImageFramePicker from '../../system/helpers/image-frame-picker.js';
+import AlmanacNotification from '../../system/helpers/almanac-notification.js';
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -145,8 +146,14 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         }, overrides);
     }
 
+    async _preUpdate(changed, options, user) {
+        AlmanacNotification.captureQuests(this, changed, options);
+        await super._preUpdate(changed, options, user);
+    }
+
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
+        AlmanacNotification.deliver(options);
         game.dsa5?.apps?.CalendarPicker?.refreshQuestlog?.();
     }
 

@@ -457,6 +457,20 @@
         "hint": "Choose which calendar features are visible to players. GMs always have access to all features.",
         "label": "Player Feature Visibility"
       },
+      "notifications": {
+        "close": "Close notification",
+        "eventAdded": "Added",
+        "events": "New event",
+        "hint": "Show a queued on-screen banner when an Almanac entry is revealed or changes state. Each trigger can be turned off separately.",
+        "label": "Almanac Notifications",
+        "personae": "Unlocked Dramatis Personae",
+        "personaeMet": "Met",
+        "personaeUnlocked": "Discovered",
+        "questStarted": "Started",
+        "questlog": "Quest and objective changes",
+        "sound": "Notification sound",
+        "soundHint": "Optional sound played when a notification appears. Leave empty for no sound."
+      },
       "holiday": {
         "Allaventurisches Gauklertreffen": "All-Aventuri Meeting of Jesters",
         "Bardentreffen": "Annual convention of bards",
@@ -3694,7 +3708,10 @@
         "fromQs": "<p>Fixed damage reduced by the linked check’s quality levels, success or fail.</p><p>Example: 8 minus 0.5 per QL on a slide.</p>"
       }
     },
-    "escape": "Escape",
+    "details": "Details",
+    "consequenceNotHit": "not hit",
+    "consequenceNext": "Next: {name}",
+    "consequenceDamage": "{label}: {total} DP",
     "timerRemaining": "{rounds} CR left (Feat of Strength {modifier})",
     "timerTimedOut": "Timer expired",
     "timerExpired": "The timer on '{trap}' expired after {rounds} CR. Apply the book outcome. The trap does not kill automatically.",

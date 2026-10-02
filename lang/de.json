@@ -457,6 +457,20 @@
         "hint": "Wähle welche Kalenderfunktionen für Spieler sichtbar sind. Spielleiter haben immer Zugriff auf alle Funktionen.",
         "label": "Spieler Funktionssichtbarkeit"
       },
+      "notifications": {
+        "close": "Hinweis schließen",
+        "eventAdded": "Hinzugefügt",
+        "events": "Neues Ereignis",
+        "hint": "Zeigt ein eingeblendetes Banner, wenn ein Almanach-Eintrag sichtbar wird oder seinen Status ändert. Jeder Auslöser lässt sich einzeln abschalten.",
+        "label": "Almanach-Hinweise",
+        "personae": "Freigeschaltete Dramatis Personae",
+        "personaeMet": "Kennengelernt",
+        "personaeUnlocked": "Entdeckt",
+        "questStarted": "Begonnen",
+        "questlog": "Auftrags- und Zieländerungen",
+        "sound": "Hinweis-Sound",
+        "soundHint": "Optionaler Sound beim Erscheinen eines Hinweises. Leer lassen, um keinen Sound abzuspielen."
+      },
       "holiday": {
         "Allaventurisches Gauklertreffen": "Allaventurisches Gauklertreffen",
         "Bardentreffen": "Bardentreffen",
@@ -3696,7 +3710,10 @@
         "fromQs": "<p>Fester Schaden, gemindert um die QS der verknüpften Probe, bei Gelingen und Misslingen.</p><p>Beispiel: 8 minus 0,5 je QS auf einer Rutschprobe.</p>"
       }
     },
-    "escape": "Entkommen",
+    "details": "Details",
+    "consequenceNotHit": "nicht getroffen",
+    "consequenceNext": "Als Nächstes: {name}",
+    "consequenceDamage": "{label}: {total} TP",
     "timerRemaining": "Noch {rounds} KR (Kraftakt {modifier})",
     "timerTimedOut": "Zeit abgelaufen",
     "timerExpired": "Die Zeit von '{trap}' ist nach {rounds} KR abgelaufen. Wende die Buchfolge an. Die Falle tötet nicht automatisch.",

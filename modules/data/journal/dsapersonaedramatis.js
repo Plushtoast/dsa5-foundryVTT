@@ -1,6 +1,7 @@
 import MerchantConfig from "../../config/merchant-config.js";
 import { JournalListDataModel } from './journallistdatamodel.js';
 import { JournalEntryTargetHelper } from '../../system/calendar/journalentrytargethelper.js';
+import AlmanacNotification from '../../system/helpers/almanac-notification.js';
 const { TextEditor } = foundry.applications.ux;
 export class DSAPersonaEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarActors';
@@ -115,11 +116,13 @@ export class DSAPersonaEntry extends JournalListDataModel {
 
     async _preUpdate(changed, options, user) {
         if (!options.dsaSkipPersonaFill) await this.#fillActorFields(changed);
+        AlmanacNotification.capturePersonae(this, changed, options);
         await super._preUpdate(changed, options, user);
     }
 
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
+        AlmanacNotification.deliver(options);
         if (!options.dsaSkipPersonaRefresh) DSAPersonaEntry.refreshCalendarPicker();
         if (!options.dsaSkipPersonaSync) void this.#syncActorGaradan(changed);
     }

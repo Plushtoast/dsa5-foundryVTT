@@ -9,6 +9,7 @@ import { QuestLogFeature } from './questlog.js';
 
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { DSAClock } from './clock.js';
+import AlmanacNotification from '../helpers/almanac-notification.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 const EVENTS_VIEW_MODES = ['timeline', 'calendar'];
@@ -458,7 +459,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     context.calendarConfig = DSAClock.settings();
     context.configTabs = this._prepareTabs('config');
 
-    context.featureVisibility = game.settings.get('dsa5', 'calendarFeatureVisibility');
+    context.featureVisibility = AlmanacNotification.mergeVisibility(game.settings.get('dsa5', 'calendarFeatureVisibility'));
     context.playerDateVisibility = game.settings.get('dsa5', 'calendarPlayerDateVisibility');
 
     context.atlasEnabled = DSA5_Utility.moduleEnabled('dsa5-atlas');
@@ -926,10 +927,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   async _onSettingChange(ev) {
-    const isCheckbox = ev.target.type === 'checkbox';
-    const value = isCheckbox ? ev.target.checked : ev.target.value;
-    const setting = ev.target.name;
-    const settingName = ev.target.dataset.settingName || DSAClock.SETTING;
+    const target = ev.currentTarget;
+    const isCheckbox = target.type === 'checkbox';
+    const value = isCheckbox ? target.checked : target.value;
+    const setting = target.name;
+    const settingName = target.dataset.settingName || DSAClock.SETTING;
     const settings = settingName === DSAClock.SETTING
       ? DSAClock.settings()
       : game.settings.get('dsa5', settingName);
@@ -940,7 +942,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     await game.settings.set('dsa5', settingName, settings);
     game.dsa5.apps.CalendarWidget.render(true);
 
-    if ((ev.target.dataset.refresh)) this.render({ force: true, parts: ['config'] });
+    if (target.dataset.refresh) this.render({ force: true, parts: ['config'] });
   }
 
   async _onDirectSettingChange(ev) {

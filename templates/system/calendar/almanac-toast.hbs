@@ -1,0 +1,20 @@
+<div class="dsa-almanac-toast dsa-hud-surface" data-kind="{{kind}}" data-tab="{{tab}}" role="status">
+    <button type="button" class="dsa-hud-icon-button dsa-almanac-toast-close" data-action="close" data-tooltip="{{closeLabel}}" aria-label="{{closeLabel}}">
+        <i class="fas fa-times"></i>
+    </button>
+    {{#if image}}
+    <div class="dsa-hud-portrait dsa-almanac-toast-media" style="background-image: url('{{image}}')"></div>
+    {{else}}
+    <div class="dsa-hud-portrait dsa-almanac-toast-media is-icon"{{#if color}} style="--dsa-almanac-toast-accent: {{color}}"{{/if}}>
+        <i class="{{icon}}"></i>
+    </div>
+    {{/if}}
+    <div class="dsa-almanac-toast-copy">
+        <span class="dsa-almanac-toast-kicker">{{kicker}}</span>
+        <strong class="dsa-almanac-toast-title">{{title}}</strong>
+        <span class="dsa-almanac-toast-change">{{change}}</span>
+    </div>
+    <div class="dsa-almanac-toast-timer" aria-hidden="true" style="--dsa-almanac-toast-hold: {{holdMs}}ms">
+        <span></span>
+    </div>
+</div>

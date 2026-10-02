@@ -1,4 +1,5 @@
 import { JournalListDataModel } from './journallistdatamodel.js';
+import AlmanacNotification from '../../system/helpers/almanac-notification.js';
 
 export class DSACalendarEntry extends JournalListDataModel {
     static SETTING_NAME = 'calendarJournals';
@@ -64,10 +65,12 @@ export class DSACalendarEntry extends JournalListDataModel {
         for (const key of Object.keys(changed.system?.calendarentries || {})) {
             this.#recalculateDay(changed.system.calendarentries[key]);
         }
+        AlmanacNotification.captureEvents(this, changed, options);
         await super._preUpdate(changed, options, user);
     }
     _onUpdate(changed, options, userId) {
         super._onUpdate(changed, options, userId);
+        AlmanacNotification.deliver(options);
         game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.parent.parent.uuid);
     }
     _onCreate(data, options, userId) {
