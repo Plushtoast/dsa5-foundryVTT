@@ -1,6 +1,7 @@
 import actor from '../../hooks/actor.js';
 import CreatureType from './creature-type.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import CompanionLoyalty from '../../actor/companions/companion-loyalty.js';
 
 const { mergeObject, getProperty } = foundry.utils;
 
@@ -84,7 +85,7 @@ export default class Riding {
     const horse = this.getHorse(actor);
     if (!horse) return;
 
-    const skill = this.getLoyaltyFromHorse(horse);
+    const skill = this.getLoyaltyFromHorse(horse, actor);
     if (!skill) {
       return ui.notifications.warn(
         'DSAError.notFound', { localize: true, format: {
@@ -112,8 +113,8 @@ export default class Riding {
     }
   }
 
-  static getLoyaltyFromHorse(horse) {
-    return horse.items.find((x) => x.type == 'skill' && x.name.startsWith(_loc('LocalizedIDs.loyalty')));
+  static getLoyaltyFromHorse(horse, rider) {
+    return CompanionLoyalty.findForOwner(horse, rider?.uuid);
   }
 
   static onRender(html, actor) {

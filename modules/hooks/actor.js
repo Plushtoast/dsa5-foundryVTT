@@ -6,6 +6,7 @@ import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
 import CompanionHandler from '../actor/companions/companion-handler-class.js';
+import CompanionLoyalty from '../actor/companions/companion-loyalty.js';
 import { CONJURATION_CONTROL_MODES } from '../config/conjuration-constants.js';
 
 const { getProperty, hasProperty } = foundry.utils;
@@ -75,8 +76,9 @@ export default function () {
     if (companions && typeof companions === 'object') {
       for (const entry of Object.values(companions)) {
         if (!entry?.uuid) continue;
-        fromUuid(entry.uuid).then((comp) => {
+        fromUuid(entry.uuid).then(async (comp) => {
           if (!comp) return;
+          await CompanionLoyalty.removeForOwner(comp, actor.uuid);
           const owners = (comp.system.companionData?.owners || []).filter((o) => o !== actor.uuid);
           return comp.update({ 'system.companionData.owners': owners }, { render: false });
         }).catch(() => {});

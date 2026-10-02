@@ -65,8 +65,10 @@ import { DSARegionTemplate } from './system/automation/measuretemplate.js';
 import RegionTooltipHandler from './system/automation/region-tooltip.js';
 import TrapRegionControls from './system/automation/trap-region-controls.js';
 import GroupCheck from './system/rolls/group-check.js';
+import ChatCardBump from './system/sidebar/chat-card-bump.js';
 import Riding from './system/automation/riding.js';
 import CompanionHandler from './actor/companions/companion-handler-class.js';
+import CompanionLoyalty from './actor/companions/companion-loyalty.js';
 import { SummoningFlow } from './wizards/summoning/summoning_flow.js';
 import { DialogExtraFlow } from './dialog/dialog-extra-flow.js';
 import ItemEnchantment from './item/item-enchantment.js';
@@ -152,6 +154,7 @@ globalThis.dsa5 = {
       TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,
+      ChatCardBump,
       MerchantModeHelper,
       MerchantConfig,
       MerchantShopHelper,
@@ -174,6 +177,7 @@ globalThis.dsa5 = {
       TrapRegionControls,
       Riding,
       CompanionHandler,
+      CompanionLoyalty,
       SummoningFlow,
       DialogExtraFlow,
       ItemEnchantment,

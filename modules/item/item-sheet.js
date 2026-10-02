@@ -24,6 +24,7 @@ import ItemPoison from './item-poison.js';
 import TreatmentHelper from '../system/enhancement/treatment-helper.js';
 import MerchantStallHelper from '../system/merchant/merchant-stall.js';
 import TrapFlow from '../system/automation/trap-flow.js';
+import CompanionLoyalty from '../actor/companions/companion-loyalty.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -686,7 +687,22 @@ class SkillSheet extends AdvancableSkill(LocalizerSheet) {
       data.applications = this.actor.items.filter((x) => x.type == 'application' && String(x.system.skill || '').trim().toLowerCase() == skillName);
     }
 
+    data.showLoyaltyOwner = data.isOwned && CompanionLoyalty.isLoyaltySkill(this.item);
+    if (data.showLoyaltyOwner) {
+      data.loyaltyOwnerUuid = CompanionLoyalty.ownerUuid(this.item);
+      data.loyaltyOwnerChoices = await CompanionLoyalty.ownerChoices(this.actor);
+    }
+
     return data;
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    const $select = $(this.element).find('.loyalty-owner-select');
+    $select.off('change.dsaLoyaltyOwner').on('change.dsaLoyaltyOwner', async (ev) => {
+      const ok = await CompanionLoyalty.setOwner(this.item, ev.currentTarget.value);
+      if (!ok) this.render();
+    });
   }
 
   static async _deleteApplication(ev, target) {

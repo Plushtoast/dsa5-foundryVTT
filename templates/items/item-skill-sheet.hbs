@@ -6,5 +6,18 @@
   {{formGroup systemFields.group.fields.value value=document.system.group.value localize=true}}
   {{formGroup systemFields.burden.fields.value value=document.system.burden.value localize=true}}
   {{formGroup systemFields.StF.fields.value value=document.system.StF.value localize=true}}
-  
+
+  {{#if showLoyaltyOwner}}
+  <div class="form-group">
+    <label>{{localize "COMPANIONS.Loyalty.owner"}}</label>
+    <div class="form-fields">
+      <select class="select2 loyalty-owner-select" style="width:100%;">
+        {{#each loyaltyOwnerChoices}}
+        <option value="{{uuid}}" {{#if (eq uuid ../loyaltyOwnerUuid)}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+  {{/if}}
+
 </div>

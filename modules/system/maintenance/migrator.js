@@ -12,6 +12,11 @@ const LAZY_MIGRATIONS = [
     url: 'systems/dsa5/modules/system/maintenance/migrations/persona-notes.js',
     needed: hasPersonaPages,
   },
+  {
+    key: 'companionLoyaltyPerOwner',
+    url: 'systems/dsa5/modules/system/maintenance/migrations/companion-loyalty-owners.js',
+    needed: hasCompanionLoyaltyToMigrate,
+  },
 ];
 
 async function fetchPatchNotes() {
@@ -112,6 +117,26 @@ async function markMigrationDone(key) {
 
 function hasPersonaPages() {
   return game.journal.contents.some((journal) => journal.pages.some((page) => page.type === 'dsapersonaedramatis'));
+}
+
+function hasCompanionLoyaltyToMigrate() {
+  const Loyalty = game.dsa5?.apps?.CompanionLoyalty;
+  if (!Loyalty) return false;
+  return game.actors.some((actor) => {
+    const owners = actor.system?.companionData?.owners || [];
+    const skills = Loyalty.list(actor);
+    if (!skills.length) return false;
+    const loyaltyName = Loyalty.loyaltyName();
+    const covered = new Set();
+    for (const skill of skills) {
+      if (skill.name !== loyaltyName) return true;
+      const uuid = Loyalty.ownerUuid(skill);
+      if (!uuid) continue;
+      if (!owners.includes(uuid)) return true;
+      covered.add(uuid);
+    }
+    return owners.some((uuid) => !covered.has(uuid));
+  });
 }
 
 async function runLazyMigrations() {

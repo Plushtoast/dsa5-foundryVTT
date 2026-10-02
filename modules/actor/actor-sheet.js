@@ -35,6 +35,7 @@ import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
 import CompanionHandler from './companions/companion-handler-class.js';
+import CompanionLoyalty from './companions/companion-loyalty.js';
 import CreatureDropDialog from './creature-drop-dialog.js';
 import ItempackageData from '../data/item/itempackage.js';
 import ActorActiveEffectValueDialog from '../dialog/actor-active-effect-value-dialog.js';
@@ -451,6 +452,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
     sheetData.owner = this.actor.isOwner;
     sheetData.notesReadOnly = this.showLimited() && !this.isEditable;
     sheetData.notesInlineEditable = sheetData.owner && !sheetData.notesReadOnly;
+    await CompanionLoyalty.migrateIfNeeded(this.actor);
     sheetData.prepare = this.actor.prepareSheet({ details: this.openDetails });
     PowersourceBar.prepareSheetContext(this.actor, sheetData.prepare);
     sheetData.isGM = game.user.isGM;

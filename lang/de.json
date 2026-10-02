@@ -839,7 +839,10 @@
       "changeText": "Ein domestiziertes Tier hat üblicherweise eine anfängliche Loyalität von 4, ein Wildtier eine von 0.<br><br>Möchtest du den Loyalitätswert von <b>{name}</b> anpassen?",
       "changeTitle": "Loyalität anpassen",
       "label": "Loyalität",
-      "missingHint": "Diese Kreatur besitzt nicht das Talent Loyalität. Füge es hinzu, um die Begleiterdetails zu aktivieren."
+      "missingHint": "Diese Kreatur besitzt nicht das Talent Loyalität. Füge es hinzu, um die Begleiterdetails zu aktivieren.",
+      "owner": "Gegenüber",
+      "ownerTaken": "{name} ist bereits einer anderen Person zugeordnet. Jede Person kann nur eine Loyalität zu diesem Wesen haben.",
+      "ownerUnscoped": "Nicht zugeordnet"
     },
     "Request": {
       "Spent": "Eine Bitte wurde verbraucht ({name}). Verbleibend: {remaining}.",

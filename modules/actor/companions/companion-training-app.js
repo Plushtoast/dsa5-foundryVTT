@@ -3,6 +3,7 @@ import DSA5 from '../../config/config-dsa5.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import APTracker from '../../system/orwell/ap-tracker.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
+import CompanionLoyalty from './companion-loyalty.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const { TextEditor } = foundry.applications.ux;
@@ -364,11 +365,11 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         context.hasReachedMaxTraining = trainingCount >= maxTrainings;
 		
         const allTricks = await this.constructor.getAllTricks();
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
+        const loyaltyName = CompanionLoyalty.loyaltyName();
         const tricksLabel = _loc("COMPANIONS.Trick.label");
         const noReqsLabel = _loc("COMPANIONS.Trick.NoRequirements");
 
-        context.loyaltyItem = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+        context.loyaltyItem = this.#findLoyaltyItem();
         const currentLoyalty = context.loyaltyItem ? context.loyaltyItem.system.talentValue.value : 0;
         
         const trickRequirements = CompanionConfig.trickRequirements;
@@ -735,8 +736,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
     }
 
     #findLoyaltyItem() {
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-        return this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
+        return CompanionLoyalty.findForOwner(this.companion, this.actor.uuid);
     }
 
     static #editItem(event, target) {
@@ -767,8 +767,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
         const isWild = !isFamiliar && this.companion.items.some(i => i.type === 'information' && i.name === wildName);
         if (!isWild) return null;
 
-        const loyaltyName = _loc("LocalizedIDs.loyalty");
-        const loyaltyValue = this.companion.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName))?.system.talentValue.value ?? 0;
+        const loyaltyValue = CompanionLoyalty.findForOwner(this.companion, this.actor.uuid)?.system.talentValue.value ?? 0;
         return loyaltyValue < 10 ? _loc("COMPANIONS.Notification.WildAnimalLoyaltyWarning") : null;
     }
 }

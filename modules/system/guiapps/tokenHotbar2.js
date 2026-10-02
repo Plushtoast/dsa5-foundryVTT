@@ -876,10 +876,10 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   _ridingEntry(actor) {
     const horse = Riding.getHorse(actor);
     if (horse) {
-      const x = Riding.getLoyaltyFromHorse(horse);
+      const x = Riding.getLoyaltyFromHorse(horse, actor);
       if (x) {
         return {
-          name: `${x.name} (${x.system.talentValue.value})`,
+          name: `${x.system?.detail_name || x.name} (${x.system.talentValue.value})`,
           id: 'rideLoyaltyID',
           icon: x.img,
           cssClass: 'skill',
@@ -917,7 +917,8 @@ export default class TokenHotbar2 extends DefaultAppv2 {
 
   _skillEntry(x, cssClass, options = {}) {
     const tw = x.system?.talentValue.value;
-    const name = tw ? `${x.name} (${tw})` : x.name;
+    const label = x.system?.detail_name || x.name;
+    const name = tw ? `${label} (${tw})` : label;
     return {
       name: name,
       id: x.id,

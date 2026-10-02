@@ -38,9 +38,32 @@ export default class SkillData extends ItemDataModel.mixin(DescriptionTemplate, 
     if (source.group && !source.group.value) source.group.value = Object.keys(DSA5.skillGroups)[0];
   }
 
+  get detail_name() {
+    const base = super.detail_name;
+    const ownerUuid = this.parent?.getFlag?.('dsa5', 'loyaltyOwner');
+    if (!ownerUuid) return base;
+
+    let owner;
+    try {
+      owner = fromUuidSync(ownerUuid);
+    } catch {
+      owner = null;
+    }
+    const ownerName = String(owner?.name || '').trim();
+    if (!ownerName) return base;
+    if (base.includes(`(${ownerName})`)) return base;
+    return `${base} (${ownerName})`;
+  }
+
   async getSheetData(data) {
     data.localizerPrefix = 'SKILLdescr.';
     data.hasLocalization = game.i18n.has(`SKILLdescr.${data.document.name}`);
+  }
+
+  prepareEmbeddedItemSheet() {
+    const item = super.prepareEmbeddedItemSheet();
+    item.name = this.detail_name;
+    return item;
   }
 
   static chatData(data, name) {

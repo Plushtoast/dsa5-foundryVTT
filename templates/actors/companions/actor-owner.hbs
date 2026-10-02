@@ -8,6 +8,15 @@
                 <h3 class="owner-card-title">
                     {{this.name}}
                 </h3>
+                {{#if this.loyalty}}
+                <div class="item skills flexrow owner-card-loyalty" data-item-id="{{this.loyalty._id}}">
+                    <button type="button" class="dsadesignbutton noBorder" data-action="itemEdit"
+                        data-tooltip="{{localize 'COMPANIONS.Loyalty.label'}}">
+                        {{localize "CHARAbbrev.FW"}} {{this.loyalty.system.talentValue.value}}
+                    </button>
+                    {{> systems/dsa5/templates/actors/parts/skillselect.hbs item=this.loyalty}}
+                </div>
+                {{/if}}
             </div>
             {{/each}}
         </div>

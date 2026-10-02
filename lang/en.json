@@ -839,7 +839,10 @@
       "changeText": "A domesticated animal usually has an initial loyalty of 4, a wild animal has 0.<br><br>Do you want to adjust the loyalty value of <b>{name}</b>?",
       "changeTitle": "Adjust Loyalty",
       "label": "Loyalty",
-      "missingHint": "This creature does not have the Loyalty talent. Add it to enable companion details."
+      "missingHint": "This creature does not have the Loyalty talent. Add it to enable companion details.",
+      "owner": "Toward",
+      "ownerTaken": "{name} is already assigned to someone else. Each person can only have one loyalty toward this being.",
+      "ownerUnscoped": "Unassigned"
     },
     "Request": {
       "Spent": "A request was spent ({name}). Remaining: {remaining}.",

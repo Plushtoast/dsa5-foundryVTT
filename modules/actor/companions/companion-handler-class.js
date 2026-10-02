@@ -1,6 +1,5 @@
 import Riding from '../../system/automation/riding.js';
 import OnUseEffect from '../../system/automation/onUseEffects.js';
-import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import CompanionConfig from './companion-config.js';
 import { CompanionTrainingApp } from './companion-training-app.js';
 import { CompanionSkillSelectionApp } from './companion-skill-selection-app.js';
@@ -9,6 +8,7 @@ import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { Trade } from '../trade.js';
 import { CONJURATION_CONTROL_MODES } from '../../config/conjuration-constants.js';
 import { SummoningFlow } from '../../wizards/summoning/summoning_flow.js';
+import CompanionLoyalty from './companion-loyalty.js';
 
 const { SERVICES, REQUESTS } = CONJURATION_CONTROL_MODES;
 
@@ -297,34 +297,18 @@ export default class CompanionHandler {
         const isHomunculus = droppedActor.items.some(i => i.type === 'trait' && i.name === _loc("COMPANIONS.HomunculusCreation"));
 
         if (!isHomunculus) {
-            const loyaltyName = _loc("LocalizedIDs.loyalty");
-            const loyaltyItem = droppedActor.items.find(i => i.type === 'skill' && i.name.startsWith(loyaltyName));
-
-            const initialLoyalty = isFamiliar ? 4 : 0;
+            const hadLoyalty = !!CompanionLoyalty.findForOwner(droppedActor, sheet.actor.uuid, { fallbackUnscoped: false });
+            const loyaltyItem = await CompanionLoyalty.ensureForOwner(droppedActor, sheet.actor);
+            const loyaltyName = CompanionLoyalty.loyaltyName();
 
             if (!loyaltyItem) {
-                const [loyaltyItemData] = await DSA5_Utility.collectIndexedCompendiumEntries({
-                    documentName: 'Item',
-                    fields: ['name', 'type'],
-                    filterEntry: (entry) => entry.type === 'skill' && entry.name === loyaltyName,
-                    mapEntry: async (entry, { getDocument }) => (await getDocument(entry._id)).toObject(),
-                });
-
-                if (loyaltyItemData) {
-                    loyaltyItemData.system.talentValue.value = initialLoyalty;
-                    await droppedActor.createEmbeddedDocuments("Item", [loyaltyItemData]);
-
-                    ui.notifications.info(_loc("COMPANIONS.Loyalty.Added", {
-                        name: droppedActor.name,
-                        talent: loyaltyName,
-                        val: initialLoyalty
-                    }));
-                } else {
-                    ui.notifications.warn(_loc("COMPANIONS.Loyalty.NotFound", {
-                        talent: loyaltyName
-                    }));
-                }
-
+                ui.notifications.warn(_loc("COMPANIONS.Loyalty.NotFound", { talent: loyaltyName }));
+            } else if (!hadLoyalty) {
+                ui.notifications.info(_loc("COMPANIONS.Loyalty.Added", {
+                    name: droppedActor.name,
+                    talent: loyaltyItem.system.detail_name,
+                    val: loyaltyItem.system.talentValue.value,
+                }));
             } else if (isFamiliar && loyaltyItem.system.talentValue.value < 4) {
                 await droppedActor.updateEmbeddedDocuments("Item", [{
                     _id: loyaltyItem.id,
@@ -496,7 +480,7 @@ export default class CompanionHandler {
                         await compActor.deleteEmbeddedDocuments('Item', currentNatureItems, { render: false });
                         await compActor.createEmbeddedDocuments('Item', [{ name: nextNatureName, type: 'information' }], { render: false });
 
-                        const loyaltyItem = compActor.items.find(i => i.type === 'skill' && i.name.startsWith(_loc('LocalizedIDs.loyalty')));
+                        const loyaltyItem = CompanionLoyalty.findForOwner(compActor, this.actor.uuid);
                         if (loyaltyItem) {
                             await compActor.updateEmbeddedDocuments('Item', [{
                                 _id: loyaltyItem.id,
@@ -588,6 +572,7 @@ export default class CompanionHandler {
 
         if (removedActor) {
             const owners = removedActor.system.companionData.owners.filter(o => o !== this.actor.uuid);
+            await CompanionLoyalty.removeForOwner(removedActor, this.actor.uuid);
 
             if (owners.length === 0) {
                 const companionTraitName = _loc("LocalizedIDs.companion");
@@ -730,7 +715,7 @@ export default class CompanionHandler {
 
         const rollerTokenId = rollerActor.getActiveTokens()[0]?.id || null;
         const setupData = await rollerActor.setupSkill(skillItem, rollOptions, rollerTokenId);
-        const isLoyaltyRoll = isFastTalk || skillItem.name === _loc('LocalizedIDs.loyalty');
+        const isLoyaltyRoll = isFastTalk || CompanionLoyalty.isLoyaltySkill(skillItem);
 
         const rolled = await rollerActor.basicTest(setupData);
         if (!rolled) return;
@@ -811,7 +796,6 @@ export default class CompanionHandler {
                 homunculusName: _loc("COMPANIONS.HomunculusCreation"),
                 zoologyDom: _loc("LocalizedIDs.zoologyDomesticated"),
                 hotbarCompUuid: Object.values(actor.system.companions).find(c => c.hotbar)?.uuid,
-                loyaltyName: _loc("LocalizedIDs.loyalty"),
                 trainingIndicator,
                 trainingPrefix: _loc("COMPANIONS.Training.ShortPrefix"),
                 trickIndicator,
@@ -874,7 +858,6 @@ export default class CompanionHandler {
         let isHomunculus = false;
         let hasSpells = false;
         let hasPrayers = false;
-        let loyaltyItem = null;
 
         for (const item of comp.items) {
             if (!isDomesticated && item.type === 'information' && item.name === ctx.zoologyDom) isDomesticated = true;
@@ -882,8 +865,9 @@ export default class CompanionHandler {
             if (!isHomunculus && item.type === 'trait' && item.name === ctx.homunculusName) isHomunculus = true;
             if (!hasSpells && ctx.spellTypes.has(item.type)) hasSpells = true;
             if (!hasPrayers && ctx.prayerTypes.has(item.type)) hasPrayers = true;
-            if (!loyaltyItem && item.type === 'skill' && item.name.startsWith(ctx.loyaltyName)) loyaltyItem = item;
         }
+
+        const loyaltyItem = CompanionLoyalty.findForOwner(comp, actor.uuid);
 
         if (isFamiliar || isHomunculus) hasSpells = true;
 
@@ -1025,6 +1009,16 @@ export default class CompanionHandler {
 
     static async prepareOwnersData(actor, sheetData) {
         const ownerUuids = actor.system.companionData.owners;
-        sheetData.petOwners = (await Promise.all(ownerUuids.map(ownerUuid => fromUuid(ownerUuid)))).filter(Boolean);
+        sheetData.petOwners = (await Promise.all(ownerUuids.map(async (ownerUuid) => {
+            const owner = await fromUuid(ownerUuid);
+            if (!owner) return null;
+            const loyalty = CompanionLoyalty.findForOwner(actor, owner.uuid);
+            return {
+                uuid: owner.uuid,
+                name: owner.name,
+                img: owner.img,
+                loyalty: loyalty?.system.prepareEmbeddedItemSheet() ?? null,
+            };
+        }))).filter(Boolean);
     }
 }

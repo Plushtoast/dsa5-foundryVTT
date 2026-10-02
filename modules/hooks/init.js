@@ -19,6 +19,7 @@ import { registerMagicalActionHooks } from '../item/magical-actions/magical-acti
 import { MagicalAlchemistDSA5 } from '../item/concerns/alchimist-dsa5.js';
 import { SavantDSA5 } from '../item/concerns/savant-dsa5.js';
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
+import CompanionLoyalty from '../actor/companions/companion-loyalty.js';
 
 import ActorSheetdsa5Character from './../actor/character-sheet.js';
 import ActorSheetdsa5Creature from './../actor/creature-sheet.js';
@@ -77,6 +78,7 @@ export default function () {
   MagicalAlchemistDSA5.registerHooks();
   SavantDSA5.registerHooks();
   ActiveEffectLifecycle.registerHooks();
+  CompanionLoyalty.registerHooks();
 }
 
 Hooks.once('init', () => {
