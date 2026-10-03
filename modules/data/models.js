@@ -42,8 +42,6 @@ import NPCData from './actor/npc.js';
 import GroupData from './actor/group.js';
 import VehicleData from './actor/vehicle.js';
 import DSAStringField from './fields/dsa_string_field.js';
-import { ItemDataModel } from './baseitem.js';
-import { ActorDataModel } from './baseactor.js';
 import { DSACombatDataModel } from './combat/dsacombat.js';
 import { DSACombatantDataModel } from './combatant/dsacombatant.js';
 import DSAActiveEffectDataModel from './activeeffect/dsaeffect.js';
@@ -88,7 +86,6 @@ export const itemModels = {
     spellextension: SpellextensionData,
     trait: TraitData,
     trap: TrapData,
-    ItemDataModel
 }
 
 export const ActorDataModels = {
@@ -97,7 +94,6 @@ export const ActorDataModels = {
     npc: NPCData,
     group: GroupData,
     vehicle: VehicleData,
-    ActorDataModel
 }
 
 export const fields = {

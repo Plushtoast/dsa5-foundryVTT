@@ -24,7 +24,7 @@ export default class DSASystemConfiguration {
   /** Extra document types that appear as library chips but share an existing index. */
   static extraCategorySources = ["ActiveEffect"]
 
-  static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper"]
+  static skipCategories = ["base", "information", "aggregatedTest", "effectwrapper", "ItemDataModel", "ActorDataModel"]
 
   static initialize() {
 
@@ -47,7 +47,7 @@ export default class DSASystemConfiguration {
     const fromModel = game.model?.[documentName] ?? {};
     const fromConfig = CONFIG[documentName]?.dataModels ?? {};
     return [...new Set([...Object.keys(fromModel), ...Object.keys(fromConfig)])]
-      .filter(x => !this.skipCategories.includes(x))
+      .filter(x => !this.skipCategories.includes(x) && !x.endsWith('DataModel'))
   }
 
   static categoryByType(documentName, type) {

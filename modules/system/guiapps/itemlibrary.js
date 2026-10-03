@@ -136,6 +136,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     this.indexLoader = ItemLibraryIndexLoader.getShared();
     this._cachedListItems = {};
     this._initPromise = null;
+    this.hostCategoryFilter = null;
 
     this._initLibrary();
   }
@@ -498,6 +499,82 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     await this._createIndex("JournalEntry", game.journal)
   }
 
+  collectFilterTags(tab) {
+    return this.effectiveCategoryModels(tab).map(entry => entry.key);
+  }
+
+  hostTypesForTab(tab) {
+    const types = this.hostCategoryFilter?.types;
+    if (!types?.length) return null;
+    const tabKeys = new Set((this.models[tab] || []).map(entry => entry.key));
+    return types.filter(type => tabKeys.has(type));
+  }
+
+  effectiveCategoryModels(tab) {
+    const selected = this.models[tab]?.filter(x => x.selected) || [];
+    if (selected.length) return selected;
+    const hostTypes = this.hostTypesForTab(tab);
+    if (!hostTypes?.length) return [];
+    return (this.models[tab] || []).filter(entry => hostTypes.includes(entry.key));
+  }
+
+  setHostCategoryFilter(filter = null) {
+    this.hostCategoryFilter = filter && typeof filter === 'object' ? { ...filter } : null;
+    this.restrictSelectedCategoriesToHost();
+    this.applyHostCategoryVisibility();
+  }
+
+  restrictSelectedCategoriesToHost() {
+    const types = this.hostCategoryFilter?.types;
+    if (!types?.length) return false;
+    const allowed = new Set(types);
+    let changed = false;
+    for (const tab of Object.keys(this.models || {})) {
+      for (const entry of this.models[tab]) {
+        if (entry.selected && !allowed.has(entry.key)) {
+          entry.selected = false;
+          changed = true;
+        }
+      }
+    }
+    return changed;
+  }
+
+  applyHostCategoryVisibility() {
+    if (!this.element) return;
+    const allowedTabs = this.hostCategoryFilter?.tabs;
+    const allowedTypes = this.hostCategoryFilter?.types;
+    const restrictTabs = Array.isArray(allowedTabs) && allowedTabs.length > 0;
+    const restrictTypes = Array.isArray(allowedTypes) && allowedTypes.length > 0;
+
+    for (const el of this.element.querySelectorAll('.tabelement[data-group="sheet"]')) {
+      const id = el.dataset.tab;
+      el.classList.toggle('host-hidden', restrictTabs && !allowedTabs.includes(id));
+    }
+
+    const tabNav = this.element.querySelector('.itemlibrary-tabs-embed, .navWrapper.itemlibrary-tabs-embed');
+    if (tabNav) tabNav.classList.toggle('host-hidden', restrictTabs && allowedTabs.length <= 1);
+
+    for (const chip of this.element.querySelectorAll('.library-filter-chip')) {
+      const type = chip.querySelector('.filter')?.dataset.type;
+      chip.classList.toggle('host-hidden', restrictTypes && !allowedTypes.includes(type));
+    }
+
+    this.syncCategoryChipStates(this.tabGroups?.sheet);
+  }
+
+  async ensureHostTab(tab, { forceFilter = false } = {}) {
+    if (!tab) {
+      this.applyHostCategoryVisibility();
+      return;
+    }
+    const active = this.element?.querySelector('.tab.active[data-group="sheet"]')?.dataset?.tab;
+    if (forceFilter || this.tabGroups?.sheet !== tab || active !== tab) {
+      await this.changeTab(tab, 'sheet', { force: true, updatePosition: false });
+    }
+    this.applyHostCategoryVisibility();
+  }
+
   async setAdvancedFilters(category = 'none', subcategory = 'none') {
     for (const key in this.models) {
       for (const subkey of this.models[key]) {
@@ -512,7 +589,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   syncCategoryChipStates(tab) {
-    if (!this.element) return;
+    if (!this.element || !tab) return;
     const tabEl = $(this.element).find(`[data-tab="${tab}"]`);
     for (const chip of tabEl.find('.library-filter-chip')) {
       const input = chip.querySelector('.filter');
@@ -851,7 +928,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     const { index, itemType } = this.selectIndex(category);
     const search = this._syncSearchFromInput(category);
     const fields = this.systemConfiguration.getSearchFields(itemType, undefined, this.fullTextSearch);
-    const collectTags = this.models[category]?.filter(x => x.selected).map(x => x.key) || [];
+    const collectTags = this.collectFilterTags(category);
     const startIndex = Number(page) || 0;
 
     const pageSize = this.getPageSize();
@@ -885,7 +962,8 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     return filteredItems;
   }
 
-  async changeTab(tab, group, options) {
+  async changeTab(tab, group, options = {}) {
+    if (this.embedded) options = { updatePosition: false, ...options };
     await this.whenReady();
     const previous = this.tabGroups?.[group];
     super.changeTab(tab, group, options);
@@ -900,23 +978,27 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     if (input) input.value = this.findIndex(tab).search ?? '';
     this._beginFreshFilter(tab);
 
-    switch (tab) {
-      case "Character":
-      case "Religion":
-      case "Items":
-        this.buildItemIndex()
-        break
-      case "Actors":
-        this.buildActorIndex()
-        break
-      case "JournalEntries":
-        this.buildJournalEntryIndex()
-        break
-    }
+    await this._ensureIndexForTab(tab);
 
     if (this.advancedFiltering) await this._syncAdvancedSidebarForTab(tab);
     await this.filterItems(tab);
     this._syncViewModeAttribute();
+  }
+
+  async _ensureIndexForTab(tab) {
+    switch (tab) {
+      case "Character":
+      case "Religion":
+      case "Items":
+        await this.buildItemIndex();
+        break;
+      case "Actors":
+        await this.buildActorIndex();
+        break;
+      case "JournalEntries":
+        await this.buildJournalEntryIndex();
+        break;
+    }
   }
 
   setBGImage(filterdItems, category) {
@@ -926,7 +1008,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   getListColumns(tab) {
     const config = ItemLibraryListColumns.getListColumnConfig();
     const defaultConfig = config._default ?? {};
-    const selected = this.models[tab]?.filter(x => x.selected) || [];
+    const selected = this.effectiveCategoryModels(tab);
     const showPrice = tab === 'Items' && (
       selected.length === 1
         ? ItemLibraryListColumns.typeHasPrice(selected[0].key)
@@ -1158,6 +1240,18 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
   async _createIndex(documentName, worldItems) {
     const index = this.findIndex(documentName);
+    if (index.workerReady) return;
+    if (index.buildPromise) return index.buildPromise;
+
+    index.buildPromise = this._populateIndex(documentName, worldItems).finally(() => {
+      index.buildPromise = undefined;
+    });
+    return index.buildPromise;
+  }
+
+  async _populateIndex(documentName, worldItems) {
+    const index = this.findIndex(documentName);
+    if (index.workerReady) return;
     if (index.build) return;
 
     index.build = true;
@@ -1249,10 +1343,20 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
       if (signal.aborted) return;
       progress.update({ message: 'Library.loading', format: { item: "" }, pct: 1 });
+      await this._refreshVisibleResults(documentName);
     } finally {
       if (signal.aborted) progress.remove?.();
       else this.hideLoading(documentName);
     }
+  }
+
+  async _refreshVisibleResults(documentName) {
+    if (!this.rendered || !this.element) return;
+    const tab = this.tabGroups?.sheet;
+    if (!tab) return;
+    const { itemType } = this.selectIndex(tab);
+    if (itemType !== documentName) return;
+    await this.filterItems(tab);
   }
 
   _worldItemsFor(documentName) {
@@ -1533,6 +1637,9 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
     this.buildItemIndex();
     this._attachToMountTarget();
+    const hostTab = this.hostCategoryFilter?.tab;
+    if (hostTab) void this.ensureHostTab(hostTab);
+    else this.applyHostCategoryVisibility();
   }
 
   async _onItemHover(ev) {

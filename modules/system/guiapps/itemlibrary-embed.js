@@ -91,17 +91,12 @@ export default class ItemLibraryEmbed extends ItemLibraryBase {
     this.close({ animate: false });
   }
 
-  async setContextFromHost({ step, tab } = {}) {
+  async setContextFromHost({ step, tab, types, tabs } = {}) {
     if (!this.rendered) await this.mount();
     else this._attachToMountTarget();
 
-    const currentTab = this.tabGroups?.sheet;
-    if (tab && tab !== currentTab) {
-      await this.changeTab(tab, 'sheet');
-      return;
-    }
-
-    if (tab) this.syncCategoryChipStates(tab);
+    this.setHostCategoryFilter({ step, tab, types, tabs });
+    await this.ensureHostTab(tab || tabs?.[0], { forceFilter: true });
     if (this.advancedFiltering) this._setAdvancedSidebarVisible(true);
   }
 

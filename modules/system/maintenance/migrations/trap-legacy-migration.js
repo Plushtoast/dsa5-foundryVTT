@@ -86,7 +86,7 @@ export default class TrapLegacyMigration {
         distanceFormula: system.chaseDistanceFormula || '2d6',
       });
       if (system.damageFormula) {
-        addDamage('catch', { type: 'formula', label: 'Fang', when: 'onCatch', formula: system.damageFormula, chanceDie: 0, chanceMin: 0, chanceMax: 0 });
+        addDamage('catch', { type: 'formula', label: '', when: 'onCatch', formula: system.damageFormula, chanceDie: 0, chanceMin: 0, chanceMax: 0 });
       }
     } else if (type === 4 || type === 6) {
       addDefense('escape', {

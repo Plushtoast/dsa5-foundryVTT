@@ -312,6 +312,14 @@ export default class DiceDSA5 {
     return roll;
   }
 
+  static resolveTestDifficulty(value, table = DSA5.skillDifficultyModifiers) {
+    if (typeof value === 'number' && Number.isFinite(value)) return value;
+    if (value in table) return table[value];
+    if (value in DSA5.attributeDifficultyModifiers) return DSA5.attributeDifficultyModifiers[value];
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : 0;
+  }
+
   static async setupDialog({ dialogOptions, testData, cardOptions }) {
     const messageMode = game.settings.get('core', 'messageMode');
     const sceneStress = DICE_CONSTANTS.DIFFICULTY.CHALLENGING;
@@ -431,9 +439,11 @@ export default class DiceDSA5 {
 
     // Handle bypass case
     cardOptions.messageMode = optionMessageMode || messageMode;
+    testData.testDifficulty = this.resolveTestDifficulty(testData.testDifficulty);
     if (!testData.situationalModifiers) {
-      testData.situationalModifiers = [];
+      testData.situationalModifiers = foundry.utils.duplicate(dialogOptions.data?.situationalModifiers || []);
     }
+    testData.advancedModifiers ??= { chars: [0, 0, 0], fws: 0, qls: 0 };
 
     return { testData, cardOptions, dialogOptions };
   }
@@ -1000,7 +1010,7 @@ export default class DiceDSA5 {
 
   static async rollAttribute(testData) {
     const roll = testData.roll ? testData.roll : await new Roll('1d20').evaluate();
-    this._appendSituationalModifiers(testData, _loc('Difficulty'), testData.testDifficulty);
+    this._appendSituationalModifiers(testData, _loc('Difficulty'), this.resolveTestDifficulty(testData.testDifficulty));
     const result = await this._rollSingleD20(
       roll,
       testData.source.system.value,
@@ -1909,7 +1919,7 @@ export default class DiceDSA5 {
     let successLevel = 0;
     const actor = this.#actorFromTestData(testData);
 
-    this._appendSituationalModifiers(testData, _loc('Difficulty'), testData.testDifficulty);
+    this._appendSituationalModifiers(testData, _loc('Difficulty'), this.resolveTestDifficulty(testData.testDifficulty));
     const modifiers = await this._situationalModifiers(testData);
 
     let fws = Number(testData.source.system.talentValue.value) + testData.advancedModifiers.fws + (await this._situationalModifiers(testData, 'FW'));

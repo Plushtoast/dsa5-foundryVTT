@@ -18,6 +18,9 @@ const { TextEditor } = foundry.applications.ux;
 export class TrapState extends ChatMessageState {
     static ROLL_OUTCOMES = new Set(['success', 'critical', 'failure', 'botch']);
     static TEMPLATE = 'systems/dsa5/templates/chat/trap/announce.hbs';
+    static CATACOMBS_MODULE = 'dsa5-catacombs';
+    static CATACOMBS_JOURNAL_PACK = 'dsa5-catacombs.catacombsjournals';
+    static CATACOMBS_TRAP_JOURNAL_NAMES = Object.freeze({ de: 'Fallen', en: 'Traps' });
 
     constructor(behavior, token, region, name) {
         super();
@@ -89,13 +92,14 @@ export class TrapState extends ChatMessageState {
             canApply: TrapState.lineCanApply(line),
         }));
         const fallActions = damageLines.filter((line) => line.needsFall);
-        const summaryLines = damageLines.filter((line) => !line.needsFall);
+        const summaryLines = damageLines.filter((line) => TrapState.lineShowsInSummary(line, outcomes));
         const complexity = Number(this.behavior.system.complexity) || 0;
         return {
             behaviour: this.behavior.system,
             token: this.token,
             tokenAnchor: this.token.actor ? this.token.actor.toAnchor().outerHTML : this.token.name,
-            trapName: this.behavior.name,
+            trapName: foundry.utils.escapeHTML(this.behavior.name),
+            trapLink: this.#trapNameMarkup(secrets),
             trapImg: TrapAutomation.trapImg(this.behavior),
             strikes: TrapAutomation.strikesFrom(this.behavior.system),
             damageBadges: TrapAutomation.announceDamageBadges(this.behavior.system),
@@ -108,7 +112,7 @@ export class TrapState extends ChatMessageState {
             damageLines: summaryLines,
             outcomes,
             applyDamageInChat,
-            showNarration: detected && Boolean(this.behavior.system.description),
+            showNarration: TrapState.showPlayerNarration(this.behavior.system.description, this.behavior.system.gmdescription),
             enrichedGmdescription,
             enrichedDescription,
             isGM: secrets,
@@ -124,7 +128,53 @@ export class TrapState extends ChatMessageState {
             passwordRequired: Boolean(this.behavior.system.passwordRequired),
             remainingCharges: this.behavior.system.remainingCharges,
             charges: this.behavior.system.charges,
+            catacombsRules: TrapState.catacombsRulesAvailable(),
         };
+    }
+
+    static catacombsRulesAvailable() {
+        return DSA5_Utility.moduleEnabled(this.CATACOMBS_MODULE);
+    }
+
+    static catacombsTrapJournalNames() {
+        const localized = this.CATACOMBS_TRAP_JOURNAL_NAMES[game.i18n.lang];
+        const names = [localized, ...Object.values(this.CATACOMBS_TRAP_JOURNAL_NAMES)];
+        return [...new Set(names.filter(Boolean))];
+    }
+
+    static #isTrapRulesName(name) {
+        const text = String(name || '').trim().toLowerCase();
+        return this.catacombsTrapJournalNames().some((candidate) => text === candidate.toLowerCase());
+    }
+
+    static async findCatacombsTrapJournal() {
+        if (!this.catacombsRulesAvailable()) return null;
+        const pack = game.packs.get(this.CATACOMBS_JOURNAL_PACK);
+        if (!pack) return null;
+        await pack.getIndex();
+        for (const name of this.catacombsTrapJournalNames()) {
+            const indexed = pack.index.getName?.(name) || pack.index.find((entry) => entry.name === name);
+            if (indexed) return pack.getDocument(indexed._id);
+        }
+        const journals = await pack.getDocuments();
+        for (const journal of journals) {
+            const page = journal.pages?.find((entry) => this.#isTrapRulesName(entry.name));
+            if (page) return page;
+        }
+        return journals.find((journal) => this.#isTrapRulesName(journal.name)) || null;
+    }
+
+    static async openCatacombsTrapJournal() {
+        const doc = await this.findCatacombsTrapJournal();
+        if (!doc) {
+            ui.notifications.warn('DSAError.notFound', {
+                localize: true,
+                format: { category: 'Journal', name: this.catacombsTrapJournalNames()[0] },
+            });
+            return null;
+        }
+        await foundry.documents.collections.Journal._showEntry(doc.uuid, false);
+        return doc;
     }
 
     static combatReactionKeys(entry) {
@@ -134,6 +184,38 @@ export class TrapState extends ChatMessageState {
     static lineCanApply(line) {
         if (!line || line.needsFall || line.needsChance || line.chanceMiss || line.applied) return false;
         return Number.isFinite(Number(line.total)) && Number(line.total) > 0;
+    }
+
+    static plainText(html) {
+        return String(html || '')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/&nbsp;/gi, ' ')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase();
+    }
+
+    static showPlayerNarration(description, gmdescription) {
+        const player = this.plainText(description);
+        if (!player) return false;
+        return player !== this.plainText(gmdescription);
+    }
+
+    static lineListedInOutcomes(line, outcomes = []) {
+        const total = Number(line?.total);
+        const haystacks = (outcomes || []).map((entry) => String(entry.consequence || ''));
+        if (!haystacks.length) return false;
+        if (Number.isFinite(total) && total > 0) {
+            return haystacks.some((text) => text.includes(String(total)) && (!line.label || text.includes(line.label)));
+        }
+        if (line?.chanceLabel) return haystacks.some((text) => text.includes(line.chanceLabel));
+        return false;
+    }
+
+    static lineShowsInSummary(line, outcomes = []) {
+        if (!line || line.needsFall) return false;
+        if (line.needsChance || line.hasAreaTemplate) return true;
+        return !this.lineListedInOutcomes(line, outcomes);
     }
 
     static isDodgeSkillName(name) {
@@ -146,6 +228,12 @@ export class TrapState extends ChatMessageState {
         const amount = Number(value) || 0;
         if (amount > 0) return `+${amount}`;
         return String(amount);
+    }
+
+    #trapNameMarkup(isGM) {
+        const name = this.behavior?.name || '';
+        if (!isGM || typeof this.behavior?.toAnchor !== 'function') return foundry.utils.escapeHTML(name);
+        return this.behavior.toAnchor({ name, classes: ['content-link'] }).outerHTML;
     }
 
     static isNotHitConsequence(text) {
@@ -384,6 +472,13 @@ export class TrapState extends ChatMessageState {
 
     static async _handleTrapHandling(event) {
         const action = event.currentTarget.dataset.action;
+        if (action === 'openTrapRules') {
+            event.preventDefault();
+            event.stopPropagation();
+            await TrapState.openCatacombsTrapJournal();
+            return;
+        }
+
         const messageId = event.currentTarget.closest('.message').dataset.messageId;
         const message = game.messages.get(messageId);
         const trapState = await TrapState.fromMessage(message);
@@ -612,7 +707,7 @@ export class TrapState extends ChatMessageState {
 
         const description = await TextEditor.enrichHTML(behavior.system.description || '', { secrets: true });
         const tokenName = foundry.utils.escapeHTML(token.name);
-        const trapName = foundry.utils.escapeHTML(behavior.name);
+        const trapName = this.#trapNameMarkup(game.user.isGM);
         ChatMessage.create(DSA5_Utility.chatDataSetup(`
             <div>
             <p>${_loc("REGIONBEHAVIOR_DSATrap.trapstart", { name: tokenName, trap: trapName })}</p>

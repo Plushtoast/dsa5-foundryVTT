@@ -3543,13 +3543,36 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 }
 
 .dsa5.trap-announce-card {
+  .trap-announce-details-wrap {
+    position: relative;
+
+    .trap-announce-rules {
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 1;
+      width: auto;
+    }
+  }
+
   details.trap-announce-details summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding-right: 1.5em;
+  }
+
+  details.trap-announce-narration summary {
     cursor: pointer;
     font-weight: 600;
   }
 
   .trap-announce-formula {
     white-space: nowrap;
+  }
+
+  a.content-link {
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .roll-request-row {
@@ -3757,6 +3780,13 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 
   .navWrapper {
     margin-bottom: 8px;
+  }
+
+  .tabelement.host-hidden,
+  .itemlibrary-tab.host-hidden,
+  .itemlibrary-tabs-embed.host-hidden,
+  .navWrapper.host-hidden {
+    display: none !important;
   }
 
   .window-content {

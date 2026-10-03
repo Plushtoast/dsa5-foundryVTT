@@ -1,17 +1,13 @@
 <div class="dsa5 trap-announce-card">
     <div class="flexrow">
         <img class="flex0" src="{{trapImg}}" width="42" height="42" style="margin-right:6px"/>
-        <p>{{{localize "REGIONBEHAVIOR_DSATrap.trapstart" name=tokenAnchor trap=trapName}}}</p>
+        <p>{{{localize "REGIONBEHAVIOR_DSATrap.trapstart" name=tokenAnchor trap=trapLink}}}</p>
     </div>
     {{#if showNarration}}
-    <div class="dsa-info-box">
-        <p class="dsa-info-text small"><b>{{localize "REGIONBEHAVIOR_DSATrap.narrateDetected"}}</b></p>
+    <details class="trap-announce-narration dsa-info-box" open>
+        <summary class="dsa-info-text small"><b>{{localize "REGIONBEHAVIOR_DSATrap.narrateDetected"}}</b></summary>
         <p class="dsa-info-text">{{{enrichedDescription}}}</p>
-    </div>
-    {{else}}
-    {{#unless behaviour.gmdescription}}
-    <p>{{{enrichedDescription}}}</p>
-    {{/unless}}
+    </details>
     {{/if}}
     <div class="flexcol gap5px">
         <div class="flexrow gap2px">
@@ -101,7 +97,11 @@
         {{/each}}
     </div>
     {{/if}}
-    <details class="trap-announce-details dsamt-2">
+    <div class="trap-announce-details-wrap dsamt-2">
+        {{#if catacombsRules}}
+        <a class="trap-handling trap-announce-rules" data-action="openTrapRules" data-tooltip="REGIONBEHAVIOR_DSATrap.rulesJournalHint"><i class="fas fa-circle-info"></i></a>
+        {{/if}}
+        <details class="trap-announce-details">
         <summary>{{localize "REGIONBEHAVIOR_DSATrap.details"}}</summary>
         {{#if isGM}}
         {{#if behaviour.gmdescription}}
@@ -135,4 +135,5 @@
         <div>{{{payloadHint}}}</div>
         {{/if}}
     </details>
+    </div>
 </div>

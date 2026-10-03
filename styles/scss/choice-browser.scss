@@ -52,6 +52,10 @@
     margin: 0;
     cursor: pointer;
 
+    &.host-hidden {
+      display: none !important;
+    }
+
     input.filter {
       position: absolute;
       opacity: 0;

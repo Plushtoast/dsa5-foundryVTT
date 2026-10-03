@@ -35,8 +35,11 @@
       </div>
     </div>
     <div class='row-section lineheight'>
-      <div class='col fourty table-title'><label>{{localize 'cummulatedQS'}}</label></div>
-      <div class='col sixty'><input name='targetQs' class='quantity-click' type='number' min='1' value='{{targetQs}}' /></div>
+      <div class='col fourty table-title'><label>{{localize 'GROUPCHECK.targetQs'}}</label></div>
+      <div class='col sixty'>
+        <input name='targetQs' class='quantity-click' type='number' min='1' value='{{targetQs}}' />
+        <p class='hint'>{{localize 'GROUPCHECK.targetQsHint'}}</p>
+      </div>
     </div>
     <div class='row-section lineheight'>
       <div class='col fourty table-title'><label>{{localize 'interval'}}</label></div>

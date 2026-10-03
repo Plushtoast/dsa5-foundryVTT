@@ -17,7 +17,10 @@ export default class TrapFlow {
   }
 
   static displayLabel(id, label = '') {
-    return String(label || '').trim() || _loc(`REGIONBEHAVIOR_DSATrap.modes.${id}`);
+    const custom = String(label || '').trim();
+    const localized = _loc(`REGIONBEHAVIOR_DSATrap.modes.${id}`);
+    if (!custom || custom === 'Fang' || custom === 'Catch') return localized;
+    return custom;
   }
 
   static rows(model, kind, tabGroups = {}) {
@@ -228,17 +231,18 @@ export default class TrapFlow {
 
   static #lineFor(damage, qs, flow) {
     const chance = this.#chanceMeta(damage);
+    const label = this.displayLabel(damage.id, damage.label);
     let line;
     if (damage.type === 'falling') {
       const height = Math.max(1, Number(damage.height) || 1);
-      line = { id: damage.id, label: damage.label, formula: `${height}d6`, kind: 'falling', height, needsFall: true };
+      line = { id: damage.id, label, formula: `${height}d6`, kind: 'falling', height, needsFall: true };
     } else if (damage.type === 'fromQs') {
       const total = Math.max(0, Math.floor((Number(damage.base) || 0) - (Number(qs) || 0) * (Number(damage.perQs) || 0)));
-      line = { id: damage.id, label: damage.label, formula: String(total), total, kind: 'flat' };
+      line = { id: damage.id, label, formula: String(total), total, kind: 'flat' };
     } else if (!damage.formula) {
-      line = { id: damage.id, label: damage.label, formula: '', total: 0, kind: 'note' };
+      line = { id: damage.id, label, formula: '', total: 0, kind: 'note' };
     } else {
-      line = { id: damage.id, label: damage.label, formula: damage.formula, kind: damage.type || 'formula' };
+      line = { id: damage.id, label, formula: damage.formula, kind: damage.type || 'formula' };
     }
     const shotIndex = Number(flow?.shotIndex) || 0;
     const volley = (Number(flow?.shotsTotal) || 1) > 1;
