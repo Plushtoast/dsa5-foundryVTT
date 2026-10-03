@@ -14,7 +14,7 @@
             <div class="events-day-number">{{dayOfMonth}}</div>
             <div class="events-day-events">
                 {{#each events}}
-                <button type="button" class="event-compact" data-action="selectEvent" data-juuid="{{juuid}}" data-key="{{calendarKey}}" data-uuid="{{juuid}}" data-category="{{category}}" style="--event-color: {{chipColor}};">
+                <button type="button" class="event-compact" data-action="selectEvent" data-juuid="{{juuid}}" data-key="{{calendarKey}}" data-uuid="{{juuid}}" data-category="{{category}}" data-tooltip="{{title}}" style="--event-color: {{chipColor}};">
                     <i class="event-compact__icon {{categoryIcon}}"></i>
                     <span class="event-compact__title">{{title}}</span>
                 </button>

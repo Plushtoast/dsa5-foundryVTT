@@ -3567,6 +3567,7 @@
     "manualDisarmConfirm": "Bist du sicher, dass du die Falle '{name}' deaktivieren möchtest?",
     "manualDisarmHint": "Falle deaktivieren: Der Spielleiter kann die Falle ohne Fertigkeitsprobe deaktivieren.",
     "manualDisarmWarning": "Diese Aktion deaktiviert die Falle sofort ohne Fertigkeitsproben oder Zeitaufwand.",
+    "warning": "Warnung",
     "manuallyDisarmed": "Die Falle '{trap}' wurde von {gm} deaktiviert.",
     "notice": "Wahrnehmen",
     "noticeTraps": "Fallen sind auf den ersten Blick meist nicht zu erkennen. Jede Falle besitzt einen Tarnwert, einen Modifikator für eine Probe auf Sinnesschärfe, um die Falle rechtzeitig zu bemerken. Üblicherweise sollte der Meister einem Helden bei der Untersuchung oder dem Durchqueren eines Raumabschnitts eine solche Probe zugestehen. Abgesehen von dem Tarnwert, sind Proben auf das Anwendungsgebiet Wahrnehmen unmodifiziert, beim Anwendungsgebiet Suchen ist die Probe zusätzlich um 1 erleichtert. Es macht also einen Unterschied, ob man nach einer Falle sucht oder unwissend einen Raum durchquert. Ob die Probe verdeckt vom Meister oder von der Spielerin selbst abgelegt wird, muss die Spielrunde für sich entscheiden.",
@@ -3819,7 +3820,9 @@
     "attempts": "{count} Versuche",
     "unlimitedAttempts": "beliebig viele Versuche",
     "unlimited": "∞",
-    "maxRollsHint": "0 bedeutet beliebig viele Versuche."
+    "maxRollsHint": "0 bedeutet beliebig viele Versuche.",
+    "targetQs": "Ziel-QS",
+    "targetQsHint": "Qualitätsstufen, die gesammelt werden müssen. Ein Teilerfolg gilt ab drei Fünfteln davon."
   },
   "RPr": "Routineprobe",
   "Racedescr": {

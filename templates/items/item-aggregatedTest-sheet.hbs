@@ -4,13 +4,14 @@
   {{formGroup systemFields.usedTestCount.fields.value value=document.system.usedTestCount.value localize=true}}
   {{formGroup systemFields.interval.fields.value value=document.system.interval.value localize=true}}
   {{formGroup systemFields.cummulatedQS.fields.value value=document.system.cummulatedQS.value localize=true}}
+  {{formGroup systemFields.targetQs.fields.value value=document.system.targetQs.value localize=true}}
   {{formGroup systemFields.previousFailedTests.fields.value value=document.system.previousFailedTests.value localize=true}}
   {{formGroup systemFields.baseModifier value=document.system.baseModifier localize=true}}
   {{formGroup systemFields.talent.fields.value value=document.system.talent.value localize=true choices=(selfObj allSkills) blank='-'}}
   {{formGroup systemFields.talent.fields.value2 value=document.system.talent.value2 localize=true choices=(selfObj allSkills) blank='-'}}
   {{formGroup systemFields.talent.fields.value3 value=document.system.talent.value3 localize=true choices=(selfObj allSkills) blank='-'}}
 
-  {{#if (or isGM (gt document.system.cummulatedQS.value 5))}}
+  {{#if showPartSuccess}}
     <div class='form-group full-height'>
       <label>{{localize 'PartSuccess'}}</label>
       <div class="form-fields">
@@ -18,7 +19,7 @@
       </div>
     </div>
   {{/if}}
-  {{#if (or isGM (gt document.system.cummulatedQS.value 9))}}
+  {{#if showSuccess}}
     <div class='form-group full-height'>
       <label>{{localize 'Success'}}</label>
       <div class="form-fields">

@@ -61,7 +61,14 @@ export class TrapState extends ChatMessageState {
         const defenses = stored.defenses || this.behavior?.system?.defenses || {};
         const damages = stored.damages || this.behavior?.system?.damages || {};
         const outcomes = (stored.outcomes || []).map((entry) => {
+            const notHit = TrapState.isNotHitConsequence(entry.consequence);
             const display = QueryOrchestrator.outcomeDisplay({ status: entry.status });
+            if (notHit) {
+                display.resultTooltip = entry.consequence;
+                display.resultSubLabel = '';
+            } else if (entry.consequence && !display.resultTooltip) {
+                display.resultTooltip = entry.consequence;
+            }
             return {
                 ...entry,
                 modeLabel: TrapFlow.displayLabel(entry.mode, defenses[entry.mode]?.label || damages[entry.mode]?.label),
@@ -75,11 +82,14 @@ export class TrapState extends ChatMessageState {
         const enrichedDescription = await TextEditor.enrichHTML(this.behavior.system.description || '', { secrets: true });
         const areaTarget = stored.target || TrapAutomation.areaTargetFrom(this.behavior.system, this.region);
         const applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
+        const offers = this.#offers(stored);
         const damageLines = (stored.flow?.lines || []).map((line) => ({
             ...line,
             hasAreaTemplate: Boolean(areaTarget) && TrapAutomation.lineOffersArea(line),
             canApply: TrapState.lineCanApply(line),
         }));
+        const fallActions = damageLines.filter((line) => line.needsFall);
+        const summaryLines = damageLines.filter((line) => !line.needsFall);
         const complexity = Number(this.behavior.system.complexity) || 0;
         return {
             behaviour: this.behavior.system,
@@ -88,12 +98,14 @@ export class TrapState extends ChatMessageState {
             trapName: this.behavior.name,
             trapImg: TrapAutomation.trapImg(this.behavior),
             strikes: TrapAutomation.strikesFrom(this.behavior.system),
+            damageBadges: TrapAutomation.announceDamageBadges(this.behavior.system),
             detected,
             disarmed: Boolean(this.behavior.system.disarmed),
             triggered: Boolean(stored.triggered),
             countdown,
-            offers: this.#offers(stored),
-            damageLines,
+            offers,
+            fallActions,
+            damageLines: summaryLines,
             outcomes,
             applyDamageInChat,
             showNarration: detected && Boolean(this.behavior.system.description),
@@ -136,6 +148,10 @@ export class TrapState extends ChatMessageState {
         return String(amount);
     }
 
+    static isNotHitConsequence(text) {
+        return Boolean(text) && text === _loc('REGIONBEHAVIOR_DSATrap.consequenceNotHit');
+    }
+
     static defenseOffers(stored = {}, behaviorDefenses = {}, { detected = true, system = {} } = {}) {
         const flow = stored.flow;
         const defenses = Object.keys(stored.defenses || {}).length ? stored.defenses : behaviorDefenses;
@@ -147,11 +163,31 @@ export class TrapState extends ChatMessageState {
             const modifier = TrapAutomation.defenseModifier(system, entry, {
                 detected,
                 damageLines: flow.lines || [],
-            }) + rangeMalus;
+            });
             const catchFormula = entry.type === 'chase'
                 ? TrapFlow.catchDamage(system).map((line) => line.formula).filter(Boolean).join(', ')
                 : '';
-            const unlimited = entry.type === 'group' && !(Number(entry.maxRolls) > 0);
+            const groupCheck = entry.type === 'group'
+                ? TrapAutomation.groupCheckFrom({ ...system, defenses: { [id]: entry } })
+                : null;
+            const targetQs = groupCheck?.targetQs ?? entry.targetQs;
+            const maxRolls = groupCheck?.maxRolls ?? entry.maxRolls;
+            const unlimited = entry.type === 'group' && GroupCheck.isUnlimited(maxRolls);
+            const modifierLabel = modifier ? TrapState.signedModifier(modifier) : '';
+            const hasMeta = Boolean(
+                entry.skill
+                || entry.applications
+                || modifierLabel
+                || rangeMalus
+                || entry.interval
+                || targetQs
+                || maxRolls
+                || unlimited
+                || entry.gs
+                || entry.fw
+                || entry.distanceFormula
+                || catchFormula
+            );
             return {
                 id,
                 label: TrapFlow.displayLabel(id, entry.label),
@@ -159,15 +195,16 @@ export class TrapState extends ChatMessageState {
                 skill: entry.skill || '',
                 applications: entry.applications || '',
                 modifier,
-                modifierLabel: TrapState.signedModifier(modifier),
+                modifierLabel,
                 usesReactionDialog: combatReactions.length > 0,
                 combatReactions,
                 rangeMalus,
+                hasMeta,
                 interval: entry.interval || '',
-                targetQs: entry.targetQs,
-                maxRolls: entry.maxRolls,
+                targetQs,
+                maxRolls,
                 maxRollsLabel: entry.type === 'group'
-                    ? (unlimited ? _loc('GROUPCHECK.unlimited') : String(entry.maxRolls))
+                    ? GroupCheck.formatMaxRolls(maxRolls)
                     : '',
                 gs: entry.gs,
                 fw: entry.fw,
@@ -211,7 +248,8 @@ export class TrapState extends ChatMessageState {
         const trapData = duplicate(this.message.flags?.dsa5?.trapData || {});
         const outcomes = Array.isArray(trapData.outcomes) ? trapData.outcomes : [];
         if (outcome) {
-            const index = outcomes.findIndex((entry) => entry.mode === outcome.mode);
+            const shotIndex = Number(outcome.shotIndex || 0);
+            const index = outcomes.findIndex((entry) => entry.mode === outcome.mode && Number(entry.shotIndex || 0) === shotIndex);
             if (index >= 0) outcomes[index] = { ...outcomes[index], ...outcome };
             else outcomes.push(outcome);
         }
@@ -227,10 +265,10 @@ export class TrapState extends ChatMessageState {
         });
     }
 
-    async applyRollResult({ mode, actorId, status, skipActorMatch = false, qs = 0, reaction = '' } = {}) {
+    async applyRollResult({ mode, actorId, status, skipActorMatch = false, qs = 0, reaction = '', shotIndex } = {}) {
         if (String(mode || '').startsWith('defense:')) {
             if (!TrapState.ROLL_OUTCOMES.has(status)) return;
-            await this.#commitDefense({ id: mode.slice('defense:'.length), status, qs, reaction });
+            await this.#commitDefense({ id: mode.slice('defense:'.length), status, qs, reaction, shotIndex });
             return;
         }
         if (!TrapState.ROLL_OUTCOMES.has(status)) return;
@@ -500,7 +538,7 @@ export class TrapState extends ChatMessageState {
             GroupCheck.openDialog({
                 name: skill,
                 modifier: behavior.system.difficulty,
-                configuration: { targetQs: 1 },
+                configuration: {},
                 otherMessage: headerHtml,
                 forceWhisperIDs: RollRequestService.buildTokenWhisper(token),
                 datasetOptions: {
@@ -607,7 +645,46 @@ export class TrapState extends ChatMessageState {
         const actor = TrapState.actorFromToken(this.token);
         if (!actor?.setupFallingDamage) return;
         const height = Number(event.currentTarget.dataset.height) || 1;
-        actor.setupFallingDamage({ fallingHeight: height }, this.token?.id);
+        actor.setupFallingDamage({
+            fallingHeight: height,
+            trapMessageUuid: this.message?.uuid || '',
+            trapLineId: event.currentTarget.dataset.line || '',
+        }, this.token?.id);
+    }
+
+    static async postFallingDamage(postFunction, payload) {
+        const options = postFunction?.options || postFunction || {};
+        if (!options.trapMessageUuid) return;
+        const trapMessage = await fromUuid(options.trapMessageUuid);
+        if (!trapMessage) return;
+        const trapState = await TrapState.fromMessage(trapMessage);
+        if (!trapState) return;
+        const damage = Number(payload?.result?.chatCardDamage);
+        if (!Number.isFinite(damage)) return;
+
+        const stored = duplicate(trapMessage.flags?.dsa5?.trapData || {});
+        const flow = stored.flow;
+        if (!flow?.lines?.length) return;
+        const line = flow.lines.find((entry) => entry.id === options.trapLineId)
+            || flow.lines.find((entry) => entry.needsFall);
+        if (!line) return;
+        line.needsFall = false;
+        line.total = damage;
+
+        const ownerId = trapState.behavior.system.damages?.[line.sourceId || line.id]?.when;
+        const outcomes = (stored.outcomes || []).map((entry) => {
+            if (entry.mode !== ownerId || !['failure', 'botch'].includes(entry.status)) return entry;
+            return {
+                ...entry,
+                consequence: trapState.#defenseConsequence({
+                    id: entry.mode,
+                    status: entry.status,
+                    reaction: entry.reaction || '',
+                    result: { lines: flow.lines, flow },
+                }),
+            };
+        });
+        await trapState.persistCard({ trapDataPatch: { flow, outcomes } });
     }
 
     async _handleChanceDamage(event) {
@@ -638,6 +715,7 @@ export class TrapState extends ChatMessageState {
         if (hit && line.formula && Roll.validate(line.formula)) {
             const rolled = await TrapFlow.rollLine({ ...line, kind: line.kind === 'note' ? 'formula' : line.kind });
             Object.assign(line, rolled);
+            await TrapAutomation.postRolledDamageLines({ behavior: this.behavior, token: this.token, lines: [line] });
         }
 
         await this.persistCard({ trapDataPatch: { flow } });
@@ -750,6 +828,7 @@ export class TrapState extends ChatMessageState {
             qs: Number(rollResult.qualityStep) || 0,
             skipActorMatch: true,
             reaction: postFunction.reaction || '',
+            shotIndex: postFunction.shotIndex,
         });
     }
 
@@ -767,6 +846,7 @@ export class TrapState extends ChatMessageState {
             defenseId: id,
             actorId: actor.id,
             reaction,
+            shotIndex: Number(stored.flow?.shotIndex) || 0,
         };
         const options = {
             modifier: this.#defenseModifier(entry),
@@ -805,10 +885,14 @@ export class TrapState extends ChatMessageState {
         });
     }
 
-    async #commitDefense({ id, status, qs = 0, reaction = '' } = {}) {
+    async #commitDefense({ id, status, qs = 0, reaction = '', shotIndex } = {}) {
         const stored = this.message.flags?.dsa5?.trapData || {};
         let flow = stored.flow;
-        if (flow?.resolvedIds?.includes(id)) {
+        const index = Number(shotIndex ?? flow?.shotIndex) || 0;
+        const hasAttempt = (stored.outcomes || []).some((entry) => entry.mode === id && Number(entry.shotIndex || 0) === index);
+        if (hasAttempt) {
+            flow = TrapFlow.rewindShot(this.behavior.system, flow, id, index);
+        } else if (flow?.resolvedIds?.includes(id)) {
             flow = TrapFlow.rewind(this.behavior.system, flow, id);
         }
         const result = await TrapAutomation.resolveDefense({
@@ -823,7 +907,7 @@ export class TrapState extends ChatMessageState {
         });
         const consequence = this.#defenseConsequence({ id, status, reaction, result });
         await this.persistCard({
-            outcome: { mode: id, status, actorName: this.token?.name || '', consequence },
+            outcome: { mode: id, status, actorName: this.token?.name || '', consequence, shotIndex: index },
             trapDataPatch: {
                 flow: result.flow,
                 target: stored.target || TrapAutomation.areaTargetFrom(this.behavior.system, this.region),
@@ -835,7 +919,9 @@ export class TrapState extends ChatMessageState {
         const success = ['success', 'critical'].includes(status) && reaction !== 'nothing';
         if (success) return _loc('REGIONBEHAVIOR_DSATrap.consequenceNotHit');
         const parts = [];
-        for (const line of result.lines || []) {
+        const damages = this.behavior.system.damages || {};
+        const lines = (result.lines || []).filter((line) => damages[line.sourceId || line.id]?.when === id);
+        for (const line of lines) {
             if (line.needsFall) parts.push(line.label || _loc('REGIONBEHAVIOR_DSATrap.modes.fall'));
             else if (line.needsChance) parts.push(line.chanceLabel || line.label);
             else if (Number(line.total) > 0) {
@@ -845,9 +931,9 @@ export class TrapState extends ChatMessageState {
                 }));
             }
         }
-        const pending = (result.flow?.pending || []).filter((entryId) => entryId !== id);
+        const defenses = this.behavior.system.defenses || {};
+        const pending = (result.flow?.pending || []).filter((entryId) => defenses[entryId]?.after === id);
         if (pending.length) {
-            const defenses = this.behavior.system.defenses || {};
             const names = pending.map((entryId) => TrapFlow.displayLabel(entryId, defenses[entryId]?.label));
             parts.push(_loc('REGIONBEHAVIOR_DSATrap.consequenceNext', { name: names.join(', ') }));
         }
@@ -887,6 +973,7 @@ export class TrapState extends ChatMessageState {
             trapMessageUuid: this.message.uuid,
             mode,
             actorId: actor.id,
+            shotIndex: Number(this.message.flags?.dsa5?.trapData?.flow?.shotIndex) || 0,
         };
         const options = {
             modifier,
@@ -913,6 +1000,7 @@ export class TrapState extends ChatMessageState {
             status,
             qs: Number(rollResult.qualityStep) || 0,
             skipActorMatch: true,
+            shotIndex: postFunction.shotIndex,
         });
     }
 
@@ -946,6 +1034,7 @@ export class TrapState extends ChatMessageState {
             lines: [...(stored.flow?.lines || []).filter((entry) => !lines.some((line) => line.id === entry.id)), ...lines],
         };
         const total = lines.reduce((sum, line) => sum + (Number(line.total) || 0), 0);
+        await TrapAutomation.postRolledDamageLines({ behavior: this.behavior, token: this.token, lines });
         await this.message.update({ 'flags.data.postData.chatCardDamage': total });
         const consequence = lines
             .filter((line) => Number(line.total) > 0)

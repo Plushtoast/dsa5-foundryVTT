@@ -798,7 +798,7 @@ class AggregatedTestSheet extends ItemSheetdsa5 {
       configuration: {
         rollOptions,
         maxRolls: this.item.system.allowedTestCount.value,
-        targetQs: 10,
+        targetQs: this.item.system.targetQsNeeded,
         partsuccess: this.item.system.partsuccess,
         success: this.item.system.success,
       },

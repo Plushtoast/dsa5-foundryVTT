@@ -5,7 +5,7 @@
         <p>{{localize 'productionInfo'}}</p>
       </div>
       <div class='col ten centerCell'>
-        {{#if (gt document.system.cummulatedQS.value 5)}}
+        {{#if (gte document.system.cummulatedQS.value partSuccessThreshold)}}
           <a data-action='buildItem' data-tooltip='SHEET.PostItem'><i class='fas fa-gavel'></i></a>
         {{/if}}
       </div>

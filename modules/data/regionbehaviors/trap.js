@@ -5,6 +5,7 @@ import TrapAutomation from "../../system/automation/trap.js";
 import TrapFlow from "../../system/automation/trap-flow.js";
 import TrapLegacyMigration from '../../system/maintenance/migrations/trap-legacy-migration.js';
 import TrapDamageFormulaField from "../item/fields/trap_damage_formula_field.js";
+import AggregatedtestData from '../item/aggregatedtest.js';
 import { DSARegionBehaviorBase } from './base.js';
 import AoeTemplate from '../item/templates/aoe.js';
 const { BooleanField, FilePathField, NumberField, HTMLField, StringField, TypedObjectField, TypedSchemaField } = foundry.data.fields;
@@ -109,8 +110,8 @@ export class DSATrapRegionBehavior extends DSARegionBehaviorBase {
                     applications: new StringField({ initial: '', blank: true }),
                     interval: new StringField({ initial: '' }),
                     modifier: new NumberField({ initial: 0, integer: true }),
-                    targetQs: new NumberField({ initial: 1, integer: true }),
-                    maxRolls: new NumberField({ initial: 0, integer: true }),
+                    targetQs: new NumberField({ initial: AggregatedtestData.DEFAULT_TARGET_QS, integer: true }),
+                    maxRolls: new NumberField({ initial: AggregatedtestData.DEFAULT_MAX_ROLLS, integer: true }),
                     timerRounds: new NumberField({ initial: 0, integer: true }),
                     escalateEvery: new NumberField({ initial: 0, integer: true }),
                     escalateMax: new NumberField({ initial: 0, integer: true }),

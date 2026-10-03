@@ -134,6 +134,12 @@ export default class TrapFlow {
     return flow;
   }
 
+  static repeatsForVolley(entry) {
+    if (!entry) return false;
+    if (entry.type === 'combat') return true;
+    return entry.type === 'skill' && (entry.gate || 'choice') === 'choice';
+  }
+
   /**
    * Record a player result. status is success or failure.
    * Returns damage entries that should render now.
@@ -142,19 +148,20 @@ export default class TrapFlow {
     const next = foundry.utils.duplicate(flow);
     const defenses = system.defenses || {};
     const entry = defenses[id];
+    const shotIndex = Number(next.shotIndex) || 0;
     next.resolvedIds = [...(next.resolvedIds || []), id];
     const success = status === 'success' || status === 'critical';
     if (!success) next.failedIds = [...(next.failedIds || []), id];
     if (reaction === 'nothing') next.failedIds = [...new Set([...(next.failedIds || []), id])];
     next.pending = next.pending.filter((entryId) => entryId !== id);
 
-    const opened = [];
     if (entry?.type === 'chase') next.chaseStarted = true;
     if (!success && entry?.type === 'skill' && defenses.chase?.after === id) {
       next.chaseStarted = false;
     }
 
     const due = this.#damagesDue(system, id, success, reaction);
+    const opened = [];
     for (const damage of due) {
       const line = this.#lineFor(damage, qs, next);
       if (!line) continue;
@@ -165,6 +172,12 @@ export default class TrapFlow {
 
     if (!success && defenses.chase?.after === id) next.offerChase = true;
     next.pending = [...new Set([...next.pending, ...this.pendingIds(system, next)])];
+    next.shotsRemaining = Math.max(0, (Number(next.shotsRemaining ?? 1) || 1) - 1);
+    next.shotIndex = shotIndex + 1;
+    if (next.shotsRemaining > 0 && this.repeatsForVolley(entry)) {
+      next.resolvedIds = next.resolvedIds.filter((entryId) => entryId !== id);
+      if (!next.pending.includes(id)) next.pending.unshift(id);
+    }
     return { flow: next, lines: opened };
   }
 
@@ -178,9 +191,26 @@ export default class TrapFlow {
     const next = foundry.utils.duplicate(flow);
     next.resolvedIds = (next.resolvedIds || []).filter((entryId) => entryId !== id);
     next.failedIds = (next.failedIds || []).filter((entryId) => entryId !== id);
-    next.lines = (next.lines || []).filter((line) => !damageIds.has(line.id));
+    next.lines = (next.lines || []).filter((line) => !damageIds.has(line.sourceId || line.id) && !damageIds.has(line.id));
     next.damageIds = (next.damageIds || []).filter((damageId) => !damageIds.has(damageId));
     if (damageIds.size) next.payloadApplied = false;
+    const rest = (next.pending || []).filter((entryId) => entryId !== id);
+    next.pending = [id, ...rest];
+    return next;
+  }
+
+  static rewindShot(system, flow, id, shotIndex) {
+    const damages = system.damages || {};
+    const index = Number(shotIndex) || 0;
+    const next = foundry.utils.duplicate(flow);
+    next.lines = (next.lines || []).filter((line) => {
+      const source = line.sourceId || line.id;
+      if (damages[source]?.when !== id && damages[line.id]?.when !== id) return true;
+      return Number(line.shotIndex || 0) !== index;
+    });
+    next.shotsRemaining = (Number(next.shotsRemaining) || 0) + 1;
+    next.shotIndex = index;
+    next.resolvedIds = (next.resolvedIds || []).filter((entryId) => entryId !== id);
     const rest = (next.pending || []).filter((entryId) => entryId !== id);
     next.pending = [id, ...rest];
     return next;
@@ -209,6 +239,11 @@ export default class TrapFlow {
       line = { id: damage.id, label: damage.label, formula: '', total: 0, kind: 'note' };
     } else {
       line = { id: damage.id, label: damage.label, formula: damage.formula, kind: damage.type || 'formula' };
+    }
+    const shotIndex = Number(flow?.shotIndex) || 0;
+    const volley = (Number(flow?.shotsTotal) || 1) > 1;
+    if (volley) {
+      line = { ...line, id: `${damage.id}:${shotIndex}`, sourceId: damage.id, shotIndex };
     }
     return chance ? { ...line, ...chance } : line;
   }

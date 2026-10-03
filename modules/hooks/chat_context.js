@@ -17,8 +17,10 @@ const getMessageFromLi = (li) => game.messages.get(li?.dataset?.messageId);
 const chatMessageAction = (handler) => (_event, li) => handler(li);
 
 const getActorFromMessage = (message) => {
-  return message.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
+  return message?.speaker?.actor ? game.actors.get(message.speaker.actor) : null;
 };
+
+const getRollSource = (message) => message?.flags?.data?.preData?.source;
 
 const getActorFromRollMessage = (message) => {
   return DSA5_Utility.getSpeaker(message.speaker) || getActorFromMessage(message);
@@ -122,7 +124,10 @@ class ConditionChecker {
       return false;
     }
 
-    const sourceType = message.flags.data.preData.source.type;
+    const source = getRollSource(message);
+    if (!source) return false;
+
+    const sourceType = source.type;
     const costsMana = getProperty(message.flags.data.preData, 'calculatedSpellModifiers.costsMana');
 
     return SPELL_TYPES.includes(sourceType) || costsMana;
@@ -147,14 +152,17 @@ class ConditionChecker {
       return false;
     }
 
-    const { successLevel } = message.flags.data.postData;
+    const source = getRollSource(message);
+    if (!source) return false;
+
+    const { successLevel } = message.flags.data.postData || {};
     const { fateImproved } = message.flags.data;
 
     if (successLevel <= -2 || fateImproved || !ConditionChecker.fateAvailable(actor, group)) {
       return false;
     }
 
-    let rollType = message.flags.data.preData.source.type;
+    let rollType = source.type;
     const mode = message.flags.data.preData.mode || '';
 
     if (ROLLABLE_TYPES.includes(rollType)) rollType = 'char';
@@ -188,9 +196,11 @@ class ConditionChecker {
       return false;
     }
 
+    const source = getRollSource(message);
+    if (!source) return false;
+
     const { talentedRerollUsed } = message.flags.data;
-    const sourceName = message.flags.data.preData.source.name;
-    const aptitudeName = `${_loc('LocalizedIDs.aptitude')} (${sourceName})`;
+    const aptitudeName = `${_loc('LocalizedIDs.aptitude')} (${source.name})`;
 
     return !talentedRerollUsed && !!actor.items.find(item => item.name === aptitudeName);
   }
@@ -331,14 +341,16 @@ class ActionHandler {
     const message = getMessageFromLi(li);
     const { data: cardData } = message.flags;
     const actor = DSA5_Utility.getSpeaker(message.speaker);
+    const source = getRollSource(message);
 
     if (!actor?.isOwner) {
       return ui.notifications.error('DSAError.DamagePermission', { localize: true });
     }
+    if (!source) return;
 
     const { calculatedSpellModifiers } = cardData.preData;
     const maintain = calculatedSpellModifiers.maintainCost?.trim();
-    const sourceType = cardData.preData.source.type;
+    const sourceType = source.type;
     const costsMana = getProperty(calculatedSpellModifiers, 'costsMana');
 
     const payType = MANA_TYPES.includes(sourceType) || costsMana ? 'AsP' : 'KaP';
@@ -347,7 +359,7 @@ class ActionHandler {
     });
 
     if (maintain && maintain !== '0' && manaApplied && cardData.postData.successLevel > 0) {
-      await MaintainedEffects.createForMessage(message.id, actor, maintain, cardData.preData.source.name, payType);
+      await MaintainedEffects.createForMessage(message.id, actor, maintain, source.name, payType);
     }
 
     await updateMessageWithCheckmark(
@@ -505,6 +517,8 @@ const createDoubleDamageOptions = (applyDamageLabel) => [
     onClick: chatMessageAction((li) => ActionHandler.applyChatCardDamage(li, 'sp', 2)),
   },
 ];
+
+export { ConditionChecker };
 
 export function chatContext() {
   Hooks.once('getNotificationChatMessageContextOptions', (app, options, c) => {

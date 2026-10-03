@@ -8,13 +8,17 @@ const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
 export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionTemplate) {
+  static DEFAULT_TARGET_QS = 10;
+  static DEFAULT_MAX_ROLLS = 7;
+  static PART_SUCCESS_FRACTION = 3 / 5;
+
   static defineSchema() {
     return this.mergeSchema(super.defineSchema(), {
       interval: new SchemaField({
         value: new StringField({ initial: '', label: 'interval' }),
       }),
       allowedTestCount: new SchemaField({
-        value: new NumberField({ initial: 7, label: 'allowedTestCount', min: 0, hint: 'GROUPCHECK.maxRollsHint' }),
+        value: new NumberField({ initial: this.DEFAULT_MAX_ROLLS, label: 'allowedTestCount', min: 0, hint: 'GROUPCHECK.maxRollsHint' }),
       }),
       usedTestCount: new SchemaField({
         value: new NumberField({ initial: 0, label: 'usedTestCount', min: 0 }),
@@ -30,10 +34,49 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
       cummulatedQS: new SchemaField({
         value: new NumberField({ initial: 0, label: 'cummulatedQS', min: 0 }),
       }),
+      targetQs: new SchemaField({
+        value: new NumberField({
+          initial: this.DEFAULT_TARGET_QS,
+          label: 'GROUPCHECK.targetQs',
+          min: 1,
+          integer: true,
+          hint: 'GROUPCHECK.targetQsHint',
+        }),
+      }),
       baseModifier: new NumberField({ initial: 0, label: 'Modifier' }),
       partsuccess: new HTMLField({ label: 'PartSuccess' }),
       success: new HTMLField({ label: 'Success' }),
     });
+  }
+
+  static resolveTargetQs(value, fallback = this.DEFAULT_TARGET_QS) {
+    const qs = Number(value);
+    return Number.isFinite(qs) && qs > 0 ? Math.trunc(qs) : fallback;
+  }
+
+  static partSuccessQs(targetQs = this.DEFAULT_TARGET_QS) {
+    const needed = this.resolveTargetQs(targetQs);
+    return Math.max(1, Math.round(needed * this.PART_SUCCESS_FRACTION));
+  }
+
+  get targetQsNeeded() {
+    return this.constructor.resolveTargetQs(this.targetQs?.value);
+  }
+
+  get partSuccessThreshold() {
+    return this.constructor.partSuccessQs(this.targetQsNeeded);
+  }
+
+  get qsProgressLabel() {
+    return `${this.cummulatedQS.value} / ${this.targetQsNeeded}`;
+  }
+
+  get isFullSuccess() {
+    return this.cummulatedQS.value >= this.targetQsNeeded;
+  }
+
+  get isPartSuccess() {
+    return !this.isFullSuccess && this.cummulatedQS.value >= this.partSuccessThreshold;
   }
 
   async getSheetData(data) {
@@ -44,6 +87,10 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
     data.allSkills = await DSA5_Utility.allSkillsList();
     data.embeddedItem = embeddedItem;
     data.renderedItem = renderedItem;
+    data.partSuccessThreshold = this.partSuccessThreshold;
+    const isGM = data.isGM ?? game.user.isGM;
+    data.showPartSuccess = isGM || this.cummulatedQS.value >= this.partSuccessThreshold;
+    data.showSuccess = isGM || this.isFullSuccess;
     data.enrichedsuccess = await TextEditor.enrichHTML(data.document.system.success, { secrets: data.document.isOwner });
     data.enrichedpartsuccess = await TextEditor.enrichHTML(data.document.system.partsuccess, { secrets: data.document.isOwner });
   }
@@ -64,19 +111,22 @@ export default class AggregatedtestData extends ItemDataModel.mixin(DescriptionT
   static async _postItem(item) {
     let txt = '';
     let result = 'Ongoing';
-    if (item.system.cummulatedQS.value >= 10) {
+    const system = item.system;
+    const targetQs = system.targetQsNeeded ?? this.resolveTargetQs(system.targetQs?.value);
+    const partQs = system.partSuccessThreshold ?? this.partSuccessQs(targetQs);
+    if (system.cummulatedQS.value >= targetQs) {
       result = 'Success';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}${await TextEditor.enrichHTML(item.system.success, {
+      txt = `${await TextEditor.enrichHTML(system.partsuccess, { secrets: item.isOwner })}${await TextEditor.enrichHTML(system.success, {
         secrets: item.isOwner,
       })}`;
-    } else if (item.system.cummulatedQS.value >= 6) {
+    } else if (system.cummulatedQS.value >= partQs) {
       result = 'PartSuccess';
-      txt = `${await TextEditor.enrichHTML(item.system.partsuccess, { secrets: item.isOwner })}`;
-    } else if (item.system.testsExhausted) {
+      txt = `${await TextEditor.enrichHTML(system.partsuccess, { secrets: item.isOwner })}`;
+    } else if (system.testsExhausted) {
       result = 'Failure';
     }
     const properties = [
-      this._chatLineHelper({ key: 'cummulatedQS', val: `${item.system.cummulatedQS.value} / 10` }),
+      this._chatLineHelper({ key: 'cummulatedQS', val: `${system.cummulatedQS.value} / ${targetQs}` }),
       this._chatLineHelper({ key: 'interval', val: item.system.interval.value }),
       this._chatLineHelper({ key: 'probes', val: item.system.probesLabel }),
       this._chatLineHelper({ key: 'result', val: result, localizeVal: true }),

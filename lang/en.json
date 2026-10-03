@@ -3565,6 +3565,7 @@
     "manualDisarmConfirm": "Are you sure you want to deactivate the trap '{name}'?",
     "manualDisarmHint": "Deactivate Trap: The GM can deactivate the trap without requiring a skill check.",
     "manualDisarmWarning": "This action will immediately deactivate the trap without any skill checks or time requirements.",
+    "warning": "Warning",
     "manuallyDisarmed": "The trap '{trap}' has been deactivated by {gm}.",
     "notice": "Spot",
     "noticeTraps": "Traps are usually not recognizable at first glance. Each trap has a stealth value, a modifier for a Perception check to notice the trap in time. Usually, the GM should allow a hero to make such a check when investigating or crossing a room section. Apart from the stealth value, Spot checks are unmodified, while Search checks are additionally eased by 1. It makes a difference whether you are searching for a trap or unknowingly crossing a room. Whether the check is made secretly by the GM or by the player themselves must be decided by the gaming group.",
@@ -3817,7 +3818,9 @@
     "attempts": "{count} attempts",
     "unlimitedAttempts": "any number of attempts",
     "unlimited": "∞",
-    "maxRollsHint": "0 means unlimited attempts."
+    "maxRollsHint": "0 means unlimited attempts.",
+    "targetQs": "Target QS",
+    "targetQsHint": "Quality levels that must be collected. A partial success starts at three fifths of that."
   },
   "RPr": "Routine check",
   "Racedescr": {

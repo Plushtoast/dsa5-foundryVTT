@@ -68,6 +68,40 @@ export default class TrapAutomation extends TrapSetpiece {
     if (!this.isValidDamageFormula(target[key])) target[key] = '';
   }
 
+  static DAMAGE_TYPE_ICONS = {
+    formula: 'fas fa-dice-d6',
+    meleeweapon: 'fas fa-hand-fist',
+    rangeweapon: 'fas fa-crosshairs',
+    falling: 'fas fa-person-falling',
+    fromQs: 'fas fa-star',
+  };
+
+  static damageTypeIcon(type, weaponType) {
+    const key = type || weaponType || 'formula';
+    return this.DAMAGE_TYPE_ICONS[key] || this.DAMAGE_TYPE_ICONS.formula;
+  }
+
+  static announceDamageBadges(system = {}) {
+    const badges = [];
+    for (const damage of Object.values(system.damages || {})) {
+      const type = damage?.type || 'formula';
+      let text = '';
+      if (type === 'falling') text = `${Number(damage.height) || 1}d6`;
+      else if (type === 'fromQs') {
+        const base = Number(damage.base) || 0;
+        const per = Number(damage.perQs) || 0;
+        text = per ? `${base}−QS×${per}` : String(base);
+      } else text = damage.formula || '';
+      if (!text) continue;
+      badges.push({
+        text,
+        icon: this.damageTypeIcon(type, damage.weaponType),
+        tooltip: damage.label || `REGIONBEHAVIOR_DSATrap.FLOW.types.${type}`,
+      });
+    }
+    return badges;
+  }
+
   static strikesFrom(system = {}) {
     const combat = TrapFlow.defenseOfType(system, 'combat') || {};
     const strikes = [];
@@ -342,7 +376,7 @@ export default class TrapAutomation extends TrapSetpiece {
       name: resist.skill,
       modifier: resist.mod || 0,
       configuration: {
-        targetQs: Number(args.targetQs) || 1,
+        targetQs: this.resolvedGroupTargetQs(args.targetQs),
         maxRolls: GroupCheck.resolveMaxRolls(args.maxRolls),
         interval: resist.interval || args.interval || '',
       },
@@ -399,9 +433,15 @@ export default class TrapAutomation extends TrapSetpiece {
     const system = behavior?.system;
     if (!system) return null;
     const flow = TrapFlow.initialFlow(system);
+    const shots = this.shotCount(system);
+    flow.shotsRemaining = shots;
+    flow.shotsTotal = shots;
+    flow.shotIndex = 0;
     if (typeof behavior.update === 'function' && Object.keys(system.defenses || {}).length) {
       try {
-        await behavior.update({ 'system.defenses': system.defenses, 'system.damages': system.damages });
+        const updates = { 'system.defenses': system.defenses, 'system.damages': system.damages };
+        if (Number(system.charges) > 0) updates['system.remainingCharges'] = this.consumeCharges(system);
+        await behavior.update(updates);
       } catch (err) {
         console.warn(err);
       }
@@ -436,6 +476,7 @@ export default class TrapAutomation extends TrapSetpiece {
         token,
       });
     }
+    await this.postRolledDamageLines({ behavior, token, lines });
     if (trapMessage && lines.length) {
       const total = (step.flow.lines || []).reduce((sum, line) => sum + (Number(line.total) || 0), 0);
       await trapMessage.update({
@@ -570,6 +611,25 @@ export default class TrapAutomation extends TrapSetpiece {
     return dice;
   }
 
+  static async postRolledDamageLines({ behavior, token, lines } = {}) {
+    const actor = DSA5_Utility.actorFromToken(token);
+    const posted = [];
+    for (const line of lines || []) {
+      if (!line?.roll) continue;
+      const message = await this.postDamageCard({
+        trapName: behavior?.name,
+        strikeName: line.label,
+        formula: line.formula,
+        roll: line.roll,
+        actor,
+        token,
+      });
+      if (message) posted.push(message);
+      delete line.roll;
+    }
+    return posted;
+  }
+
   static async postDamageCard({ trapName, strikeName, formula, roll, actor, token } = {}) {
     if (!roll) return;
     this.#applyDamageDiceAppearance(roll);
@@ -579,6 +639,7 @@ export default class TrapAutomation extends TrapSetpiece {
       formula: formula || roll.formula,
       total: roll.total,
       dice: this.diceFromRoll(roll),
+      actorId: actor?.id || '',
       applyDamageInChat: game.settings.get('dsa5', 'applyDamageInChat'),
     });
     const tokenDoc = token?.document ?? (token?.documentName === 'Token' ? token : null);

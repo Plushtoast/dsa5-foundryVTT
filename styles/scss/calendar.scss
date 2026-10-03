@@ -232,6 +232,116 @@
 }
 
 .dsaCalendarPicker {
+  &.has-hero {
+    --dsa-calendar-on-hero-bg: rgba(6, 6, 8, 0.5);
+    --dsa-muted-bg: var(--dsa-calendar-on-hero-bg);
+    --sheet-bg: var(--dsa-calendar-on-hero-bg);
+    --dsa-surface-elevated: rgba(10, 10, 12, 0.55);
+    --dsa-library-card-bg: rgba(10, 10, 12, 0.5);
+    --oddColor: rgba(255, 255, 255, 0.06);
+
+    .fullScreenHeader h1 {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 4px 18px rgba(0, 0, 0, 0.65);
+    }
+
+    fieldset,
+    .event-card,
+    .searchOptions,
+    .calendarDateChange,
+    .events-day-cell:not(.is-outside),
+    .event-details-container .no-selection,
+    .personae-list-column,
+    .personae-details-column,
+    .persona-details-container {
+      background-color: var(--dsa-calendar-on-hero-bg);
+    }
+
+    .calendar-details.showThis,
+    .calendar-img.showThis,
+    .tooltipBox:not(.dsahidden) {
+      background-color: var(--dsa-calendar-on-hero-bg);
+      border-radius: 0.75rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .calendar-img.showThis {
+      padding: 0.75rem;
+      background-origin: content-box;
+    }
+
+    .event-card {
+      --muted-fg: rgba(255, 255, 255, 0.82);
+    }
+
+    .event-chip {
+      background: rgba(0, 0, 0, 0.38);
+      border-color: rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .event-card__date {
+      background: linear-gradient(180deg, var(--gradient-color) 0%, transparent 100%);
+    }
+
+    .event-card .smallBtn {
+      opacity: 0.9;
+      --button-background: rgba(255, 255, 255, 0.22);
+      --button-text-color: #fff;
+    }
+
+    .searchOptions button {
+      --button-background: rgba(255, 255, 255, 0.18);
+      --button-hover-background: rgba(255, 255, 255, 0.28);
+      --button-text-color: #f4f1ea;
+    }
+
+    .searchOptions button[data-action="filterCategory"] {
+      --button-text-color: unset;
+      filter: brightness(1.25) saturate(1.1);
+    }
+
+    .event-compact {
+      background: color-mix(in srgb, var(--event-color, var(--dsadesign1)) 52%, #1a1a1c);
+
+      &:hover,
+      &.selected {
+        background: color-mix(in srgb, var(--event-color, var(--dsadesign1)) 62%, #1a1a1c);
+      }
+    }
+  }
+
+  .dsa-app-hero,
+  > [data-application-part="hero"] {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  > [data-application-part]:not([data-application-part="hero"]) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dsa-app-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 28%;
+    opacity: var(--dsa-app-hero-opacity, 0.55);
+  }
+
+  .dsa-app-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 48%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.04) 52%, rgba(0, 0, 0, 0.26) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0.2) 36%, rgba(0, 0, 0, 0.46) 70%, rgba(0, 0, 0, 0.7) 100%);
+  }
+
   .tooltipBox {
     position: absolute;
     top: -350px;
@@ -332,7 +442,7 @@
   .calendarDateChange {
     margin-bottom: 0;
     position: relative;
-    z-index: 500000;
+    z-index: 2;
 
     h3 {
       margin-bottom: 4px;
@@ -580,6 +690,10 @@
 
 .circular-calendar-container {
   margin-top: -30px;
+}
+
+.dsaCalendarPicker .circular-calendar canvas {
+  background-color: transparent;
 }
 
 .dsaCalendarWidget {

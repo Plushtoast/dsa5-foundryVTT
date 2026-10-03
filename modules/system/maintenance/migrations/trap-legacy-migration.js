@@ -1,3 +1,6 @@
+import TrapSetpiece from '../../automation/trap-setpiece.js';
+import AggregatedtestData from '../../../data/item/aggregatedtest.js';
+
 /**
  * Convert last-release formula / attack / timer / chase fields into defenses and damages,
  * then drop those leftover keys so item and region documents only store flow.
@@ -24,7 +27,21 @@ export default class TrapLegacyMigration {
       system.defenses = built.defenses;
       system.damages = built.damages;
     }
+    this.normalizeGroupCheckDefaults(system);
     this.stripLegacy(system);
+    return system;
+  }
+
+  static normalizeGroupCheckDefaults(system = {}) {
+    for (const [id, defense] of Object.entries(system.defenses || {})) {
+      if (defense?.type !== 'group') continue;
+      const resolved = TrapSetpiece.groupCheckFrom({
+        ...system,
+        defenses: { [id]: defense },
+      });
+      defense.targetQs = resolved.targetQs;
+      defense.maxRolls = resolved.maxRolls;
+    }
     return system;
   }
 
@@ -78,8 +95,8 @@ export default class TrapLegacyMigration {
         applications: type === 6 ? 'Eintreten & Zertrümmern' : 'Drücken & Verbiegen',
         interval: type === 6 ? '5 KR' : '2 KR',
         modifier: Number(system.escapeModifier) || 0,
-        targetQs: 1,
-        maxRolls: 0,
+        targetQs: AggregatedtestData.DEFAULT_TARGET_QS,
+        maxRolls: AggregatedtestData.DEFAULT_MAX_ROLLS,
         timerRounds: Number(system.timerRounds) || 0,
         escalateEvery: Number(system.escalateEvery) || 0,
         escalateMax: Number(system.escalateMax) || 0,

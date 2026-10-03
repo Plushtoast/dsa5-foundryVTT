@@ -448,10 +448,12 @@ export default class DSA5CombatDialog extends DialogShared {
 
     if (!attackFromBehindAngle) return;
 
-    const opposeFlags = actor.flags.oppose;
+    const opposeFlags = actor.flags?.oppose;
     if (opposeFlags) {
       const message = game.messages.get(opposeFlags.messageId);
-      const preData = message.flags.data.preData;
+      const preData = message?.flags?.data?.preData;
+      if (!preData) return;
+
       const attackActor = DSA5_Utility.getSpeaker(preData.extra.speaker);
 
       if (!attackActor) return;
@@ -549,7 +551,7 @@ export default class DSA5CombatDialog extends DialogShared {
           mountedOptions.selectedIndex = Riding.horseSpeedModifier(horse);
         }
       }
-    } else if (this.dialogData.mode == 'parry' && actor.flags.oppose) {
+    } else if (this.dialogData.mode == 'parry' && actor?.flags?.oppose) {
       const attacker = DSA5_Utility.getSpeaker(actor.flags.oppose.speaker);
       const attackerIsRider = Riding.isRiding(attacker);
       if (advantageousPosition && (attackerIsRider || isRider)) advantageousPosition.checked = isRider && !attackerIsRider;

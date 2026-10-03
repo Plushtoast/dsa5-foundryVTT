@@ -16,6 +16,29 @@ export default class GroupCheck {
   static SKILL_ROW_TEMPLATE = 'systems/dsa5/templates/dialog/parts/group-check-skill-row.hbs';
   static CHAT_TEMPLATE = 'systems/dsa5/templates/chat/roll/groupcheck.hbs';
 
+  static get #aggregatedModel() {
+    return CONFIG.Item.dataModels.aggregatedTest;
+  }
+
+  static get DEFAULT_TARGET_QS() {
+    return this.#aggregatedModel?.DEFAULT_TARGET_QS;
+  }
+
+  static get DEFAULT_MAX_ROLLS() {
+    return this.#aggregatedModel?.DEFAULT_MAX_ROLLS;
+  }
+
+  static resolveTargetQs(value, fallback = this.DEFAULT_TARGET_QS) {
+    if (this.#aggregatedModel?.resolveTargetQs) return this.#aggregatedModel.resolveTargetQs(value, fallback);
+    const qs = Number(value);
+    return Number.isFinite(qs) && qs > 0 ? Math.trunc(qs) : fallback;
+  }
+
+  static partSuccessQs(targetQs = this.DEFAULT_TARGET_QS) {
+    if (this.#aggregatedModel?.partSuccessQs) return this.#aggregatedModel.partSuccessQs(targetQs);
+    return Math.max(1, Math.round(this.resolveTargetQs(targetQs) * 3 / 5));
+  }
+
   static #dialogId(messageId) {
     return messageId ? `dsa-group-check-config-${messageId}` : 'dsa-group-check-config';
   }
@@ -58,7 +81,7 @@ export default class GroupCheck {
    * @param {number} [fallback=7]
    * @returns {number}
    */
-  static resolveMaxRolls(value, fallback = 7) {
+  static resolveMaxRolls(value, fallback = this.DEFAULT_MAX_ROLLS) {
     const maxRolls = Number(value);
     return Number.isFinite(maxRolls) ? Math.max(0, Math.trunc(maxRolls)) : fallback;
   }
@@ -197,9 +220,17 @@ export default class GroupCheck {
 
   static #buildTemplateData(data) {
     const unlimited = this.isUnlimited(data.maxRolls);
+    const qs = Number(data.qs) || 0;
+    const targetQs = this.resolveTargetQs(data.targetQs);
+    const partSuccessThreshold = this.partSuccessQs(targetQs);
     return {
       ...data,
       unlimited,
+      qs,
+      targetQs,
+      partSuccessThreshold,
+      showPartSuccess: qs >= partSuccessThreshold,
+      showSuccess: qs >= targetQs,
       maxRollsLabel: this.formatMaxRolls(data.maxRolls),
       openRolls: unlimited ? 1 : data.openRolls,
       rollOptions: this.#enrichRollOptions(data.rollOptions),
@@ -440,7 +471,7 @@ export default class GroupCheck {
           selectedValue: `${optn.target}|${optn.type}`,
         })),
         maxRolls: this.resolveMaxRolls(configuration.maxRolls),
-        targetQs: configuration.targetQs ?? 10,
+        targetQs: configuration.targetQs ?? this.DEFAULT_TARGET_QS,
         interval: configuration.interval ?? '',
         failed: 0,
         results: [],
@@ -572,8 +603,8 @@ export default class GroupCheck {
     }
 
     const maxRollsInput = Number(form.querySelector('[name="maxRolls"]')?.value);
-    const maxRolls = Number.isFinite(maxRollsInput) ? Math.max(0, maxRollsInput) : 7;
-    const targetQs = Number(form.querySelector('[name="targetQs"]')?.value) || 10;
+    const maxRolls = Number.isFinite(maxRollsInput) ? Math.max(0, maxRollsInput) : this.DEFAULT_MAX_ROLLS;
+    const targetQs = this.resolveTargetQs(form.querySelector('[name="targetQs"]')?.value);
     const interval = form.querySelector('[name="interval"]')?.value?.trim() || '';
 
     const skillKeys = new Set(rollOptions.map((o) => `${o.type}|${o.target}`));
@@ -671,7 +702,7 @@ export default class GroupCheck {
       maxRolls,
       openRolls: unlimited ? 1 : maxRolls,
       doneRolls: 0,
-      targetQs: configuration.targetQs ?? 10,
+      targetQs: configuration.targetQs ?? this.DEFAULT_TARGET_QS,
       interval: configuration.interval || '',
       rollOptions: configuration.rollOptions?.length
         ? configuration.rollOptions.map((optn) => ({ ...optn, calculatedModifier: optn.modifier }))

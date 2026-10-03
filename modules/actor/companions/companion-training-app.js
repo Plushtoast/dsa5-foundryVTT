@@ -4,6 +4,7 @@ import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import APTracker from '../../system/orwell/ap-tracker.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import CompanionLoyalty from './companion-loyalty.js';
+import AggregatedtestData from '../../data/item/aggregatedtest.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const { TextEditor } = foundry.applications.ux;
@@ -11,6 +12,7 @@ const { TextEditor } = foundry.applications.ux;
 export class CompanionTrainingApp extends HandlebarsApplicationMixin(ApplicationV2) {
     static #traitCatalogsPromise = null;
     static speciesImageCache = null;
+    static WILD_MAX_ROLLS = 5;
     #speciesSearch;
 
     constructor(actor, companion, options = {}) {
@@ -564,7 +566,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
             ? _loc("COMPANIONS.Trick.WildAnimalTraining", {petName: this.companion.name, trickName})
             : _loc("COMPANIONS.Trick.AnimalTraining", {petName: this.companion.name, trickName});
         const interval = isWild ? _loc("COMPANIONS.Interval.TwoDays") : _loc("COMPANIONS.Interval.OneDay");
-        const allowedTestCount = isWild ? 5 : 7;
+        const allowedTestCount = isWild ? this.WILD_MAX_ROLLS : AggregatedtestData.DEFAULT_MAX_ROLLS;
 
         let trickMod = 0;
         const currentSpecies = this.companion.system.companionData.species;
@@ -630,7 +632,7 @@ export class CompanionTrainingApp extends HandlebarsApplicationMixin(Application
 
         const itemName = _loc("COMPANIONS.Training.TestName", {petName: this.companion.name, trainingName});
         const interval = _loc("COMPANIONS.Interval.OneMonth");
-        const allowedTestCount = 7;
+        const allowedTestCount = AggregatedtestData.DEFAULT_MAX_ROLLS;
         const zoologyTalent = _loc("LocalizedIDs.Zoology");
 
         const allTrainings = await this.constructor.getAllTrainings();

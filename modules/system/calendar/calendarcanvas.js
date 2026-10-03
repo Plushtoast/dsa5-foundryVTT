@@ -257,16 +257,41 @@ export class CalendarCanvas {
             width: width * dpr,
             height: height * dpr,
             backgroundColor: this.COLORS.BACKGROUND_OUTER,
+            backgroundAlpha: 0,
+            transparent: true,
+            useContextAlpha: true,
             antialias: true,
             resolution: dpr,
             autoDensity: true,
             powerPreference: "high-performance",
             autoStart: true
         });
+        this._configureTransparentRenderer();
         this.element.appendChild(this.app.view);
         this.stage = this.app.stage;
         this.centerX = width / 2;
         this.centerY = height / 2;
+    }
+
+    /**
+     * Foundry's off-board PIXI.Application often keeps an opaque WebGL clear color
+     * unless the renderer (and canvas CSS) are set to alpha 0 explicitly.
+     * @private
+     */
+    _configureTransparentRenderer() {
+        const renderer = this.app?.renderer;
+        if (!renderer) return;
+
+        if (renderer.background) {
+            renderer.background.color = this.COLORS.BACKGROUND_OUTER;
+            renderer.background.alpha = 0;
+        } else {
+            renderer.backgroundColor = this.COLORS.BACKGROUND_OUTER;
+            renderer.backgroundAlpha = 0;
+        }
+
+        const view = this.app.view;
+        if (view?.style) view.style.backgroundColor = 'transparent';
     }
 
     _removeEventListeners() {
@@ -589,6 +614,16 @@ export class CalendarCanvas {
 
     _drawBackground() {
         const background = new PIXI.Graphics();
+        const backingRadius = this.RADIUS.OUTER_FRAME + this.AREASIZES.FIFTEEN;
+
+        background.beginFill(this.COLORS.BACKGROUND_OUTER, 1);
+        background.drawCircle(this.centerX, this.centerY, backingRadius);
+        background.endFill();
+
+        background.beginFill(this.COLORS.BACKGROUND_INNER, 1);
+        background.drawCircle(this.centerX, this.centerY, this.RADIUS.OUTER);
+        background.endFill();
+
         this.containers.background.addChild(background);
 
         // Add background image if available

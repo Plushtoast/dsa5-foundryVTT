@@ -205,13 +205,17 @@
     }
 
     .dsa-pip {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
         padding: 1px 4px;
         border: 1px solid var(--border-color);
         border-radius: 3px;
         background-color: rgba(0, 0, 0, 0.1);
         font-size: 0.75em;
         line-height: 1.4;
+        text-align: center;
         white-space: nowrap;
 
         &.pip-positive {

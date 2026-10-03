@@ -1791,6 +1791,10 @@ export default class Actordsa5 extends Actor {
     if (result.chatData) {
       result.chatData.other = [html];
     }
+
+    if (postFunction.options?.trapMessageUuid) {
+      await game.dsa5.apps.TrapState?.postFallingDamage?.(postFunction, result);
+    }
   }
 
   _setupFallingHeight(options, tokenId) {
@@ -1816,7 +1820,7 @@ export default class Actordsa5 extends Actor {
         messageMode: options.messageMode,
         situationalModifiers,
         fallingFloorOptions: DSA5.fallingConditions,
-        modifier: options.modifier || 1,
+        modifier: options.fallingHeight || options.modifier || 1,
         tumbling: options.tumbling,
         qlMultiplier,
         availableQs,

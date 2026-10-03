@@ -873,7 +873,7 @@ export default class CompanionHandler {
                 companionTestsByUuid.get(comp.uuid).push({
                     item: test,
                     shortName,
-                    isCompleted: (test.system.cummulatedQS?.value || 0) >= 10,
+                    isCompleted: test.system.isFullSuccess,
                     apCost: test.getFlag('dsa5', 'trainingApCost') || '?',
                     isTraining,
                 });

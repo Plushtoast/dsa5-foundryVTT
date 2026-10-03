@@ -13,6 +13,7 @@ export default class AlmanacNotification {
   static #active = null;
   static #holdId = 0;
   static #showToken = 0;
+  static #leaveToken = 0;
 
   static OPTION_DEFAULTS = {
     notifyPersonae: true,
@@ -86,6 +87,7 @@ export default class AlmanacNotification {
       if (!unlocked) continue;
       const isCreature = Number(next.type) === 1;
       toasts.push(this.#toast({
+        id: this.#toastId('personae', model, key),
         kind: 'personae',
         tab: 'personae',
         title: next.name || _loc('PERSONAE.ImportantPersons'),
@@ -111,6 +113,7 @@ export default class AlmanacNotification {
       if (!revealed) continue;
       const category = Number(next.category) || 0;
       toasts.push(this.#toast({
+        id: this.#toastId('events', model, key),
         kind: 'events',
         tab: 'events',
         title: next.title || _loc('CALENDAR.DSA.events'),
@@ -133,6 +136,7 @@ export default class AlmanacNotification {
       if (!next) continue;
 
       const payload = {
+        id: this.#toastId('questlog', model, questKey),
         kind: 'questlog',
         tab: 'questlog',
         kicker: _loc('DSAQUESTLOG.title'),
@@ -166,6 +170,7 @@ export default class AlmanacNotification {
         const objective = this.#merged(previousObjective, objectivePatch);
         toasts.push(this.#toast({
           ...payload,
+          id: this.#toastId('questlog', model, questKey, objectiveKey),
           image: next.image || this.FALLBACK_QUEST_IMG,
           title: objective.text || payload.title,
           change: _loc(choices[Number(objective.status)] || choices[0] || 'DSAQUESTLOG.STATUS.0'),
@@ -182,7 +187,33 @@ export default class AlmanacNotification {
   }
 
   static enqueue(toast) {
-    if (!toast || !this.enabled(toast.kind) || !this.canSee(toast)) return false;
+    if (!toast) return false;
+
+    const id = toast.id;
+    const allowed = this.enabled(toast.kind) && this.canSee(toast);
+
+    if (id && this.#active?.id === id) {
+      if (!allowed) {
+        this.dismiss();
+        return false;
+      }
+      void this.#show(toast, { refresh: true });
+      return true;
+    }
+
+    if (id) {
+      const index = this.#queue.findIndex(entry => entry.id === id);
+      if (index >= 0) {
+        if (!allowed) {
+          this.#queue.splice(index, 1);
+          return false;
+        }
+        this.#queue[index] = toast;
+        return true;
+      }
+    }
+
+    if (!allowed) return false;
     this.#queue.push(toast);
     this.#pump();
     return true;
@@ -210,6 +241,7 @@ export default class AlmanacNotification {
 
   static clear() {
     this.#showToken += 1;
+    this.#leaveToken += 1;
     if (this.#holdId) window.clearTimeout(this.#holdId);
     this.#holdId = 0;
     this.#queue.length = 0;
@@ -231,16 +263,23 @@ export default class AlmanacNotification {
   static #pump() {
     if (this.#active || !this.#queue.length) return;
     const toast = this.#queue.shift();
-    this.#active = toast;
     void this.#show(toast);
   }
 
-  static async #show(toast) {
+  static async #show(toast, { refresh = false } = {}) {
+    this.#active = toast;
+    this.#leaveToken += 1;
+    if (this.#holdId) window.clearTimeout(this.#holdId);
+    this.#holdId = 0;
+    if (refresh) {
+      document.getElementById(this.HOST_ID)?.querySelector('.dsa-almanac-toast')?.classList.remove('is-leaving');
+    }
+
     const token = ++this.#showToken;
     const host = this.#host();
     let html = '';
     try {
-      html = await renderTemplate(this.TEMPLATE, toast);
+      html = await renderTemplate(this.TEMPLATE, { ...toast, refresh, holdMs: this.HOLD_MS });
     } catch (error) {
       console.warn('Could not render almanac notification', error);
       if (token === this.#showToken && this.#active === toast) {
@@ -259,7 +298,7 @@ export default class AlmanacNotification {
     }
 
     this.#bind(el, toast);
-    this.#playSound();
+    if (!refresh) this.#playSound();
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) el.classList.add('is-reduced');
@@ -283,13 +322,16 @@ export default class AlmanacNotification {
     if (!el || el.classList.contains('is-leaving')) return;
     if (this.#holdId) window.clearTimeout(this.#holdId);
     this.#holdId = 0;
+    const token = ++this.#leaveToken;
+    const leaving = this.#active;
     el.classList.add('is-leaving');
     let finished = false;
     const done = () => {
       if (finished) return;
       finished = true;
+      if (token !== this.#leaveToken) return;
       el.remove();
-      this.#active = null;
+      if (this.#active === leaving) this.#active = null;
       const host = document.getElementById(this.HOST_ID);
       if (host && !host.querySelector('.dsa-almanac-toast')) host.remove();
       this.#pump();
@@ -324,6 +366,7 @@ export default class AlmanacNotification {
   static #toast(data) {
     return {
       ...data,
+      id: data.id || '',
       title: data.title || '',
       change: data.change || '',
       kicker: data.kicker || '',
@@ -333,6 +376,12 @@ export default class AlmanacNotification {
       closeLabel: _loc('CALENDAR.DSA.notifications.close'),
       holdMs: this.HOLD_MS,
     };
+  }
+
+  static #toastId(kind, model, ...keys) {
+    return [kind, model?.parent?.uuid || model?.uuid || '', ...keys]
+      .filter(part => part !== undefined && part !== null && String(part) !== '')
+      .join(':');
   }
 
   static #patches(changed, collection) {

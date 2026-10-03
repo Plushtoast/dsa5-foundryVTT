@@ -6,6 +6,7 @@ import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 import { QuestLogFeature } from './questlog.js';
+import { CalendarHeroHelper } from './calendarhero.js';
 
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import { DSAClock } from './clock.js';
@@ -17,6 +18,7 @@ const EVENTS_VIEW_MODES = ['timeline', 'calendar'];
 export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplicationMixin(foundry.applications.api.ApplicationV2) {
   static #yearCache = new Map();
   static #holidayDefsCache = null;
+  static DEFAULT_HERO_OPACITY = CalendarHeroHelper.DEFAULT_OPACITY;
 
   static DEFAULT_OPTIONS = {
     id: 'dsa-calendar-picker',
@@ -51,6 +53,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   };
 
   static PARTS = {
+    hero: CalendarHeroHelper.PART,
     fullscreen: {
       template: 'systems/dsa5/templates/system/fullscreenHeader.hbs',
     },
@@ -91,6 +94,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   };
 
   #search;
+  #hero = new CalendarHeroHelper(this);
   #personaeDramatis = new PersonaeDramatis(this);
   #questLog = new QuestLogFeature(this);
   #temporaryTime = null;
@@ -104,6 +108,26 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
   get title() {
     return _loc(DSAWorldCalendar.selectedCalendar().name);
+  }
+
+  static registerHero(provider) {
+    CalendarHeroHelper.registerHero(provider);
+  }
+
+  static registerConfigSection(section) {
+    CalendarHeroHelper.registerConfigSection(section);
+  }
+
+  static resolveHero() {
+    return CalendarHeroHelper.resolve();
+  }
+
+  applyHero(config) {
+    this.#hero.apply(config);
+  }
+
+  applyHeroOpacity(opacity) {
+    this.#hero.applyOpacity(opacity);
   }
 
   static TABS = {
@@ -431,6 +455,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     data.calendar = calendar;
     data.appTitle = _loc(DSAWorldCalendar.selectedCalendar().name);
     data.yearSuffix = calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+    this.#hero.prepareContext(data);
 
     return data;
   }
@@ -561,6 +586,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _onRender(context, options) {
     await super._onRender(context, options);
 
+    this.#hero.apply(context);
+    await this.#hero.applyConfigSections(context);
     tabSlider($(this.element));
 
     this.#eventsTabObserver?.disconnect();
@@ -806,7 +833,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const detailsContent = calendar.translate(`monthDetails.${monthData.name}`);
 
-    if (game.modules.get('dsa5-godsofaventuria')) {
+    if (game.modules.get('dsa5-godsofaventuria')?.active || game.modules.get('dsa5-godsofaventuria2')?.active) {
       const baseMonthName = calendar.translate(monthData.name, true);
       const mappedName = {
         "Namenlose Tage": "Namenlos",

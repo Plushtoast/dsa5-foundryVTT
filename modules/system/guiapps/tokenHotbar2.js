@@ -360,7 +360,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
         modifier: mod,
       });
     } else if (ev.button == 2) {
-      game.dsa5.macro.requestGC(skill, mod, { maxRolls: 7 });
+      game.dsa5.macro.requestGC(skill, mod, { maxRolls: game.dsa5.apps.GroupCheck.DEFAULT_MAX_ROLLS });
     } else {
       game.dsa5.macro.requestRoll(skill, mod);
     }

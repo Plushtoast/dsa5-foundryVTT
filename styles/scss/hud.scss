@@ -356,6 +356,13 @@
     &.is-reduced.is-leaving {
       animation-duration: 0.01ms;
     }
+
+    &.is-refresh {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
   }
 
   .dsa-almanac-toast-close {

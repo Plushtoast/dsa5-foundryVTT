@@ -3542,9 +3542,25 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
   }
 }
 
-.trap-announce-card details.trap-announce-details summary {
-  cursor: pointer;
-  font-weight: 600;
+.dsa5.trap-announce-card {
+  details.trap-announce-details summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .trap-announce-formula {
+    white-space: nowrap;
+  }
+
+  .roll-request-row {
+    min-width: 0;
+  }
+
+  .roll-request-result-sublabel {
+    flex: 0 1 auto;
+    min-width: 0;
+    white-space: normal;
+  }
 }
 
 // Outcome accents — must beat reserved transparent gutter (same/higher specificity)

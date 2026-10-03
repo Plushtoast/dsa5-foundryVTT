@@ -780,8 +780,9 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
     aggregated.system.usedTestCount.value = postFunction.previousUsedTestCount;
 
     const result = testResult.result;
+    const targetQs = item.system.targetQsNeeded;
     if (result.successLevel > 0) {
-      aggregated.system.cummulatedQS.value = Math.min(10, aggregated.system.cummulatedQS.value + result.qualityStep);
+      aggregated.system.cummulatedQS.value = Math.min(targetQs, aggregated.system.cummulatedQS.value + result.qualityStep);
     } else {
       aggregated.system.previousFailedTests.value += 1;
     }
@@ -792,7 +793,7 @@ class AggregatedTestItemDSA5 extends Itemdsa5 {
     const updated = actor.items.get(postFunction.aggregatedItemId);
     await updated.postItem();
 
-    if (aggregated.system.cummulatedQS.value >= 10) {
+    if (updated.system.isFullSuccess) {
       await updated.sheet?.postFinishedItem();
     }
   }

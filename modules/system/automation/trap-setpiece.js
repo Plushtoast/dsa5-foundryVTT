@@ -2,6 +2,7 @@ import DSA5_Utility from '../helpers/utility-dsa5.js';
 import Chase from '../../combat/chase/chase.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import TrapFlow from './trap-flow.js';
+import GroupCheck from '../rolls/group-check.js';
 
 const { duplicate } = foundry.utils;
 
@@ -145,10 +146,70 @@ export default class TrapSetpiece {
     return [...copies, this.slideStunEffect(damage)];
   }
 
+  static resolvedGroupTargetQs(value) {
+    const qs = Number(value);
+    return Number.isFinite(qs) && qs > 1 ? qs : GroupCheck.DEFAULT_TARGET_QS;
+  }
+
+  static resolvedGroupMaxRolls(value) {
+    const maxRolls = Number(value);
+    return Number.isFinite(maxRolls) && maxRolls > 0 ? maxRolls : GroupCheck.DEFAULT_MAX_ROLLS;
+  }
+
+  static groupCheckFrom(system = {}) {
+    const enricher = TrapSetpiece.#groupCheckFromText(system.description, system.gmdescription);
+    const stored = TrapFlow.defenseOfType(system, 'group') || {};
+    const enricherQs = Number(enricher.targetQs);
+    return {
+      targetQs: Number.isFinite(enricherQs) && enricherQs > 0
+        ? enricherQs
+        : this.resolvedGroupTargetQs(stored.targetQs),
+      maxRolls: enricher.maxRolls != null
+        ? GroupCheck.resolveMaxRolls(enricher.maxRolls)
+        : this.resolvedGroupMaxRolls(stored.maxRolls),
+    };
+  }
+
+  static groupTargetQsFrom(system = {}) {
+    return this.groupCheckFrom(system).targetQs;
+  }
+
+  static groupMaxRollsFrom(system = {}) {
+    return this.groupCheckFrom(system).maxRolls;
+  }
+
+  static #groupCheckFromText(...texts) {
+    const merged = {};
+    for (const text of texts) {
+      const parsed = this.#groupCheckFromEnricher(text);
+      if (!parsed) continue;
+      for (const [key, value] of Object.entries(parsed)) {
+        if (merged[key] == null) merged[key] = value;
+      }
+    }
+    return merged;
+  }
+
+  static #groupCheckFromEnricher(text) {
+    if (!text) return null;
+    for (const match of String(text).matchAll(/options=\{([^}]*)\}/g)) {
+      try {
+        const opts = JSON.parse(`{${match[1]}}`);
+        const parsed = {};
+        if (opts.targetQs != null && Number.isFinite(Number(opts.targetQs))) parsed.targetQs = Number(opts.targetQs);
+        if (opts.maxRolls != null && Number.isFinite(Number(opts.maxRolls))) parsed.maxRolls = Number(opts.maxRolls);
+        if (opts.interval != null && String(opts.interval).trim()) parsed.interval = String(opts.interval).trim();
+        if (Object.keys(parsed).length) return parsed;
+      } catch (err) {
+        /* ignore malformed enricher options */
+      }
+    }
+    return null;
+  }
+
   static timerEscapeResist(system = {}) {
     const escape = TrapFlow.defenseOfType(system, 'group') || {};
-    const maxRolls = Number(escape.maxRolls);
-    const targetQs = Number(escape.targetQs);
+    const groupCheck = this.groupCheckFrom(system);
     return {
       skill: escape.skill || _loc('LocalizedIDs.featOfStrength'),
       mod: Number(escape.modifier) || 0,
@@ -159,8 +220,8 @@ export default class TrapSetpiece {
         system: {
           macroArgs: {
             groupCheck: true,
-            maxRolls: Number.isFinite(maxRolls) ? Math.max(0, maxRolls) : 0,
-            targetQs: Number.isFinite(targetQs) && targetQs > 0 ? targetQs : 1,
+            maxRolls: groupCheck.maxRolls,
+            targetQs: groupCheck.targetQs,
             interval: escape.interval || '',
             applications: escape.applications || '',
           },
@@ -180,13 +241,7 @@ export default class TrapSetpiece {
     if (countdown.remaining < 1) return null;
 
     await this.persistCountdown(behavior, countdown, trapMessage);
-
-    if (!game.combat) {
-      ui.notifications.warn('REGIONBEHAVIOR_DSATrap.timerNeedsCombat', {
-        format: { trap: behavior.name, rounds: countdown.remaining },
-        localize: true,
-      });
-    }
+    await this.ensureStartedCombat(token);
 
     if (system.passwordRequired) {
       await this.notifyPassword(behavior);
@@ -472,6 +527,19 @@ export default class TrapSetpiece {
       console.warn(err);
       return null;
     }
+  }
+
+  static async ensureStartedCombat(token) {
+    const combat = await TrapSetpiece.#ensureCombat(token, game.combat);
+    if (token?.id && token?.actor?.id) {
+      try {
+        await TrapSetpiece.#ensureCombatant(combat, token);
+      } catch (err) {
+        console.warn(err);
+      }
+    }
+    if (!combat.started) await combat.startCombat();
+    return combat;
   }
 
   static async #ensureCombat(token, existing) {
