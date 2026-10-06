@@ -1,5 +1,6 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ChatCardBump from '../sidebar/chat-card-bump.js';
+import { makeDialogContentScrollable } from '../../dialog/dialog-scroll.js';
 
 const { duplicate } = foundry.utils;
 
@@ -92,7 +93,7 @@ export default class QueryOrchestrator {
         render: (event, app) => {
           dialog = app;
           this.#activeQueryDialogs.add(app);
-          app.element?.querySelector('.dialog-content')?.classList.add('scrollable');
+          makeDialogContentScrollable(app);
           config.render?.(event, app);
         },
         close: (event, app) => {

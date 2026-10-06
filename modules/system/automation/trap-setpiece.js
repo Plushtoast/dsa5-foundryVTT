@@ -3,6 +3,7 @@ import Chase from '../../combat/chase/chase.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import TrapFlow from './trap-flow.js';
 import GroupCheck from '../rolls/group-check.js';
+import DiceDSA5 from '../rolls/dice-dsa5.js';
 
 const { duplicate } = foundry.utils;
 
@@ -361,6 +362,14 @@ export default class TrapSetpiece {
     return Math.max(0, Number(roll.total) || 0);
   }
 
+  static async #showChaseStartRoll() {
+    const roll = await new Roll('1d100').evaluate();
+    roll.dice.forEach((die) => {
+      die.options.colorset = 'ko';
+    });
+    await DiceDSA5.showDiceSoNice(roll, DICE_CONSTANTS.CHAT_MODES.BLIND);
+  }
+
   static async applyBoulderCatch(combat, chaser) {
     const flags = chaser?.actor?.flags?.dsa5 || {};
     if (!flags.trapBoulder) return null;
@@ -441,13 +450,15 @@ export default class TrapSetpiece {
       system: { chaseRole: 'chasing', chaseDistance: distance },
     }]);
 
-    if (!Chase.isChaseActive(combat)) await combat.setCombatMode('chase');
+    const startingChase = !Chase.isChaseActive(combat);
+    if (startingChase) await combat.setCombatMode('chase');
     await combat.updateEmbeddedDocuments('Combatant', [
       { _id: victim.id, 'system.chaseRole': 'fleeing' },
       { _id: chaser.id, 'system.chaseRole': 'chasing', 'system.chaseDistance': distance },
     ]);
     Chase.clearAssignFleerHint();
     await combat.setChaseDefaultSkill?.('bodyControl');
+    if (startingChase) await this.#showChaseStartRoll();
 
     return {
       combat,

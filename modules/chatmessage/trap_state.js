@@ -1074,6 +1074,7 @@ export class TrapState extends ChatMessageState {
         const options = {
             modifier,
             postFunction,
+            ...(mode === 'search' ? { messageMode: DICE_CONSTANTS.CHAT_MODES.GM } : {}),
             ...(applications ? { subtitle: ` (${applications})` } : {}),
         };
         const setupData = await actor.setupSkill(skill, options, this.token?.id);

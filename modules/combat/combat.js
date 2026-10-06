@@ -6,6 +6,7 @@ import NavalHouseRules from './mkr/naval-house-rules.js';
 import Chase from './chase/chase.js';
 import VehicleChase from './chase/vehicle-chase.js';
 import { DSACombatantGroup } from './combatant_group.js';
+import { makeDialogContentScrollable } from '../dialog/dialog-scroll.js';
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class DSA5Combat extends Combat {
@@ -99,12 +100,8 @@ export default class DSA5Combat extends Combat {
       content,
       rejectClose: false,
       modal: true,
-      // Same DialogV2 scroll workaround as ActorPickerDialog: content scrolls, footer stays put.
       render: (_event, dialog) => {
-        const form = dialog.element.querySelector('form');
-        if (!form) return;
-        form.style.overflowY = 'hidden';
-        form.querySelector('.dialog-content')?.classList.add('scrollable');
+        makeDialogContentScrollable(dialog);
       },
       buttons: [
         {

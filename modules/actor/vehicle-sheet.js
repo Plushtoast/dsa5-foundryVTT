@@ -3,7 +3,6 @@ import { gearSearchPartTemplates, vehicleCombatPartTemplates } from './template-
 import DSA5 from '../config/config-dsa5.js';
 import Actordsa5 from './actor-dsa5.js';
 import ActorPickerDialog from '../dialog/actor-picker-dialog.js';
-import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import NavalHeroActionHandler from '../combat/mkr/naval-hero-actions.js';
 import NavalCombatDamage from '../combat/mkr/naval-combat-damage.js';
 import NavalBroadside from '../combat/mkr/naval-broadside.js';

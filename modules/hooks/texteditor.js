@@ -3,11 +3,10 @@ import InformationData from '../data/item/information.js';
 import DSA5Payment from '../system/payment/payment.js';
 import FallingDamageHelper from '../actor/concerns/falling-damage-helper.js';
 
-const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
 
 const modRegex = /(-|\+)?\d+/;
-const optionRegex = /options=\{[0-9a-zA-ZöüäÖÜÄß: ",&;()+.\-]+\}/;
+const optionRegex = /options=\{[0-9a-zA-ZöüäÖÜÄß: ",&;()+.-]+\}/;
 const innerRegex = /(?:\[)(.*?)(?=\])/;
 
 function formatEnricherMod(modifier) {
