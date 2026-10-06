@@ -76,3 +76,34 @@
     }
   }
 }
+
+.item-create-dialog__type-list.icon-view {
+  ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 44px);
+    gap: 4px;
+  }
+
+  li {
+    margin-bottom: 0;
+
+    label {
+      box-sizing: border-box;
+      width: 44px;
+      height: 44px;
+      justify-content: center;
+      padding: 4px;
+
+      img {
+        width: 28px;
+        height: 28px;
+        margin: 0;
+        object-fit: contain;
+      }
+
+      > span {
+        display: none;
+      }
+    }
+  }
+}

@@ -1184,6 +1184,8 @@
   "DIALOG": {
     "DeleteItem": "Eintrag entfernen?",
     "DeleteItemDetail": "Möchtest du <b>{item}</b> entfernen?",
+    "switchToIconView": "Zur Symbolansicht wechseln",
+    "switchToListView": "Zur Listenansicht wechseln",
     "ItemRequiresAdoption": "Eintrag anpassen",
     "ItemRequiresAdoptionDescription": "Das Hinzufügen benötigt zuerst eine Anpassung. Wähle den passenden Eintrag.",
     "MessageMode": "Würfelmodus",
@@ -4376,7 +4378,9 @@
     "companionDisplay": "Begleiteranzeige",
     "companionDisplayHint": "Die Leiste zeigt die Hauptgruppe. Begleiter dieser Charaktere — etwa das Tier eines Helden — werden ergänzt, auch wenn sie selbst nicht in der Gruppe stehen. Neben dem Besitzer erscheinen sie als kleines rundes Icon mit LeP-Überlagerung. Als voller Akteur erhalten sie ein eigenes Porträt. Bei Hover nur, solange das Porträt des Besitzers unter dem Mauszeiger ist.",
     "preferActorImg": "Akteursbild bevorzugen",
-    "preferActorImgHint": "Begleiter-Icons nutzen das Akteursbild statt der Token-Textur, wenn eines vorhanden ist. Ein Hotbar-Ausschnitt wird weiter angewendet.",
+    "preferActorImgHint": "Für die Hauptporträts der Schnellleiste wird, wenn verfügbar, das Akteursbild statt der Token-Textur verwendet.",
+    "preferCompanionImg": "Akteursbild des Begleiters bevorzugen",
+    "preferCompanionImgHint": "Für kleine Begleiter-Icons wird, wenn verfügbar, das Akteursbild des Begleiters statt der Token-Textur verwendet.",
     "companionFull": "Als voller Akteur",
     "companionBeside": "Neben dem Besitzer",
     "companionHover": "Neben dem Besitzer nur bei Hover"

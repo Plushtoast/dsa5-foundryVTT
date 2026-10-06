@@ -43,11 +43,11 @@ export default class MerchantConfig {
   };
 
   static CREATE_TYPE_IMAGES = {
-    character: 'icons/svg/mystery-man.svg',
+    character: 'systems/dsa5/icons/categories/Weltliche.webp',
     npc: 'icons/svg/mystery-man-black.svg',
-    creature: 'icons/svg/mystery-man-black.svg',
-    vehicle: 'icons/svg/mystery-man-black.svg',
-    group: 'icons/svg/mystery-man.svg',
+    creature: 'systems/dsa5/icons/categories/Tiere.webp',
+    vehicle: 'systems/dsa5/icons/Garadan2.webp',
+    group: 'systems/dsa5/icons/categories/DSA-Auge-Spieler.webp',
     [this.CREATE_TYPE_MERCHANT]: 'systems/dsa5/icons/money-S.webp',
     [this.CREATE_TYPE_LOOT]: 'systems/dsa5/icons/categories/Equipment.webp',
     [this.CREATE_TYPE_EPIC]: 'systems/dsa5/icons/Garadan6.webp',

@@ -86,6 +86,12 @@ export function setupConfiguration() {
         syncScQuickbar(true);
       },
     },
+    uiSettings: {
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
     scQuickbarPosition: {
       name: 'scQuickbarPosition',
       scope: 'client',

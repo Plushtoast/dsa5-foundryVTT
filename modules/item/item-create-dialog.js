@@ -131,6 +131,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
 
   async _prepareContext(options) {
     const data = await super._prepareContext(options);
+    const typeView = this.#getTypeView();
 
     return mergeObject(data, {
       title: this.title,
@@ -144,8 +145,11 @@ export class ItemCreateDialog extends DefaultAppv2 {
       types: this.documentTypes.map((entry) => ({
         ...entry,
         selected: entry.value === this.selectedType,
+        tooltip: entry.hint ? `${entry.label}: ${_loc(entry.hint)}` : entry.label,
       })),
       searchPlaceholder: _loc('Book.search'),
+      iconView: typeView === 'icons',
+      viewToggleTooltip: _loc(typeView === 'icons' ? 'DIALOG.switchToListView' : 'DIALOG.switchToIconView'),
       ...this.dialogContext,
     });
   }
@@ -156,6 +160,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
     const form = this.element.querySelector('#document-create');
     form?.addEventListener('submit', (event) => this.#onSubmit(event));
     this.element.querySelector('[data-action="cancel"]')?.addEventListener('click', () => this.close());
+    this.element.querySelector('[data-action="toggle-type-view"]')?.addEventListener('click', () => this.#toggleTypeView());
 
     if (!this.hasTypes) return;
 
@@ -171,6 +176,7 @@ export class ItemCreateDialog extends DefaultAppv2 {
     }
 
     this.#syncSelectedState();
+    this.#applyTypeView(this.#getTypeView());
     this.#updateNamePlaceholder();
   }
 
@@ -215,6 +221,40 @@ export class ItemCreateDialog extends DefaultAppv2 {
       const input = row.querySelector('input[type="radio"]');
       row.classList.toggle('selected', !!input?.checked);
     }
+  }
+
+  #getTypeView() {
+    return game.settings.get('dsa5', 'uiSettings')?.createDocumentDialog?.view === 'icons' ? 'icons' : 'list';
+  }
+
+  async #toggleTypeView() {
+    const settings = game.settings.get('dsa5', 'uiSettings') ?? {};
+    const createDocumentDialog = settings.createDocumentDialog ?? {};
+    const view = createDocumentDialog.view === 'icons' ? 'list' : 'icons';
+
+    await game.settings.set('dsa5', 'uiSettings', {
+      ...settings,
+      createDocumentDialog: {
+        ...createDocumentDialog,
+        view,
+      },
+    });
+    this.#applyTypeView(view);
+  }
+
+  #applyTypeView(view) {
+    const iconView = view === 'icons';
+    const typeList = this.element.querySelector('.item-create-dialog__type-list');
+    typeList?.classList.toggle('icon-view', iconView);
+
+    const button = this.element.querySelector('[data-action="toggle-type-view"]');
+    if (!button) return;
+
+    const tooltip = _loc(iconView ? 'DIALOG.switchToListView' : 'DIALOG.switchToIconView');
+    button.dataset.tooltip = tooltip;
+    button.setAttribute('aria-label', tooltip);
+    button.querySelector('i')?.classList.toggle('fa-list', iconView);
+    button.querySelector('i')?.classList.toggle('fa-th-large', !iconView);
   }
 
   #updateNamePlaceholder() {

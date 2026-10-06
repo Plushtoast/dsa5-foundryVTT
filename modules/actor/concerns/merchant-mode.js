@@ -148,6 +148,7 @@ export default class MerchantModeHelper {
     if (!mode) return data;
 
     if (!data.name?.trim()) data.name = this.defaultCreateName({ type: data.type });
+    if (!data.img) data.img = MerchantConfig.CREATE_TYPE_IMAGES[data.type];
     data.type = 'npc';
     this.enableMerchant(data, { mode });
     return data;

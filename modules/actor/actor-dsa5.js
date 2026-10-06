@@ -1979,7 +1979,7 @@ export default class Actordsa5 extends Actor {
     await super._preCreate(data, options, user);
     const update = {};
 
-    if (!data.img) update.img = 'icons/svg/mystery-man-black.svg';
+    if (!data.img) update.img = MerchantConfig.CREATE_TYPE_IMAGES[data.type] ?? this.DEFAULT_ICON;
 
     if (['character', 'group'].includes(data.type)) {
       mergeObject(update, {

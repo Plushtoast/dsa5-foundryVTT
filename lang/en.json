@@ -1184,6 +1184,8 @@
   "DIALOG": {
     "DeleteItem": "Remove entry?",
     "DeleteItemDetail": "Do you want to remove <b>{item}</b>?",
+    "switchToIconView": "Switch to icon view",
+    "switchToListView": "Switch to list view",
     "ItemRequiresAdoption": "Adapt entry",
     "ItemRequiresAdoptionDescription": "The addition requires an Adaptation first. Select the matching entry for ",
     "MessageMode": "Message mode",
@@ -4374,7 +4376,9 @@
     "companionDisplay": "Companion display",
     "companionDisplayHint": "The bar lists the main party. Companions of those characters — such as a hero's pet — are added too, even when they are not party members themselves. Beside the owner they appear as a small round icon with a LeP overlay. As a full actor they get their own portrait. On hover the icon appears only while the owner's portrait is under the pointer.",
     "preferActorImg": "Prefer actor image",
-    "preferActorImgHint": "Companion icons use the actor image instead of the token texture when the actor has one. A hotbar portrait crop is still applied.",
+    "preferActorImgHint": "Use an actor's image instead of the token texture for main quickbar portraits when available.",
+    "preferCompanionImg": "Prefer companion actor image",
+    "preferCompanionImgHint": "Use a companion's actor image instead of the token texture for small companion icons when available.",
     "companionFull": "Show as full actor",
     "companionBeside": "Show next to owner",
     "companionHover": "Show next to owner on hover"
