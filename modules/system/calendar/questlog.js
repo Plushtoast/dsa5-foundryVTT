@@ -213,6 +213,21 @@ export class QuestLogFeature {
         await QuestLogFeature.displayQuestDetails(quest, listItem);
     }
 
+    async selectQuestEntry(pageUuid, questKey) {
+        const page = await fromUuid(pageUuid);
+        const entry = page?.system?.quests?.[questKey];
+        if (!page || !DSAQuestLogEntry.isVisibleToUser(entry)) return false;
+
+        QuestLogFeature.#lastSelectedQuest = { pageUuid, questKey };
+        QuestLogFeature.#collapsedGroups.delete(entry.groupLabel || _loc('DSAQUESTLOG.ungrouped'));
+        await QuestLogFeature.#parent.refreshQuestlog();
+
+        const listItem = Array.from(this.element?.querySelectorAll('.tab[data-tab="questlog"] .persona-list-item') || [])
+            .find(item => item.dataset.questUuid === pageUuid && item.dataset.questKey === questKey);
+        listItem?.classList.add('selected');
+        return true;
+    }
+
     static async displayQuestDetails(quest, target) {
         const container = target.closest('.personae-two-column')?.querySelector('.persona-details-container');
         if (!container) return;

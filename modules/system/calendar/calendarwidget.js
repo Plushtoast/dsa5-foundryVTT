@@ -631,7 +631,7 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         this.constructor.openCalendarPicker('events');
     }
 
-    static async openCalendarPicker(tab = null) {
+    static async openCalendarPicker(tab = null, almanacEntry = null) {
         const resolvedTab = this.resolveOpenTab(tab);
         if (!resolvedTab) return;
 
@@ -639,6 +639,9 @@ export class CalendarWidget extends foundry.applications.api.HandlebarsApplicati
         picker.tabGroups.sheet = resolvedTab;
         await picker.render({ force: true });
         if (picker.rendered) picker.changeTab(resolvedTab, 'sheet');
+        if (almanacEntry?.pageUuid && almanacEntry.entryKey) {
+            await picker.selectAlmanacEntry(resolvedTab, almanacEntry.pageUuid, almanacEntry.entryKey);
+        }
     }
 
     timeAdvance(seconds, ev) {

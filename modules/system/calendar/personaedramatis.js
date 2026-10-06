@@ -71,9 +71,20 @@ export class PersonaeDramatis {
 
         if (!picker.rendered) await picker.render({ force: true });
         picker.changeTab('personae', 'sheet');
-        await picker.refreshPersonae();
+        return picker.selectAlmanacEntry('personae', found.page.uuid, found.key);
+    }
 
-        const listItem = picker.element?.querySelector(`.tab[data-tab="personae"] .persona-list-item[data-actor-uuid="${actorUuid}"]`);
+    async selectPersonaEntry(pageUuid, dramatisKey) {
+        const page = await fromUuid(pageUuid);
+        const entry = page?.system?.personae?.[dramatisKey];
+        if (!page || !entry || (!game.user.isGM && !entry.visible)) return false;
+
+        PersonaeDramatis.#lastSelectedActor = { pageUuid, dramatisKey };
+        PersonaeDramatis.#lastActiveListType = String(entry.type ?? 0);
+        await this.parent.refreshPersonae();
+
+        const listItem = Array.from(this.element?.querySelectorAll('.tab[data-tab="personae"] .persona-list-item') || [])
+            .find(item => item.dataset.personaUuid === pageUuid && item.dataset.key === dramatisKey);
         if (listItem) PersonaeDramatis.updateSelectionUI(listItem);
         return true;
     }

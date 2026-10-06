@@ -583,6 +583,15 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     await this.refreshParts(['questlog']);
   }
 
+  async selectAlmanacEntry(tab, pageUuid, entryKey) {
+    if (!pageUuid || !entryKey) return false;
+
+    if (tab === 'personae') return this.#personaeDramatis.selectPersonaEntry(pageUuid, entryKey);
+    if (tab === 'questlog') return this.#questLog.selectQuestEntry(pageUuid, entryKey);
+    if (tab === 'events') return this.#selectAlmanacEvent(pageUuid, entryKey);
+    return false;
+  }
+
   async _onRender(context, options) {
     await super._onRender(context, options);
 
@@ -1005,8 +1014,11 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     const view = target.dataset.view;
     if (!EVENTS_VIEW_MODES.includes(view) || view === this.#getEventsViewMode()) return;
 
-    this.#eventsViewMode = view;
+    await this.#setEventsViewMode(view);
+  }
 
+  async #setEventsViewMode(view) {
+    this.#eventsViewMode = view;
     for (const btn of this.element.querySelectorAll('[data-action="switchEventsView"]')) {
       btn.classList.toggle('toggleOn', btn.dataset.view === view);
     }
@@ -1027,12 +1039,31 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     }
   }
 
-  static async #selectEvent(ev, target) {
-    const juuid = target.dataset.juuid;
-    const key = target.dataset.key;
-    if (!juuid || !key) return;
+  async #selectAlmanacEvent(pageUuid, calendarKey) {
+    const page = await fromUuid(pageUuid);
+    const sourceEntry = page?.system?.calendarentries?.[calendarKey];
+    if (!sourceEntry || (!game.user.isGM && !sourceEntry.visible)) return false;
 
-    const eventKey = `${juuid}-${key}`;
+    const year = Number(sourceEntry.from?.year);
+    if (!Number.isFinite(year)) return false;
+    const entry = (await this.constructor.fromYearCache(year)).find(candidate =>
+      candidate.uuid === pageUuid && candidate.calendarKey === calendarKey
+    );
+    if (!entry) return false;
+
+    this.#eventsCalendarYear = entry.from.year;
+    this.#eventsCalendarMonth = entry.from.month;
+    this.#selectedEventKey = `${entry.uuid}-${entry.calendarKey}`;
+    await this.#setEventsViewMode('calendar');
+    return true;
+  }
+
+  static async #selectEvent(ev, target) {
+    const pageUuid = target.dataset.pageUuid || target.dataset.juuid;
+    const key = target.dataset.key;
+    if (!pageUuid || !key) return;
+
+    const eventKey = `${pageUuid}-${key}`;
     const entry = this.#eventsCalendarEntries.get(eventKey);
     if (!entry) return;
 
@@ -1115,7 +1146,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         return start <= dom && dom <= end;
       }).map(entry => {
         const calendarKey = entry.calendarKey ?? entry.title;
-        const eventKey = `${entry.juuid}-${calendarKey}`;
+        const eventKey = `${entry.uuid || entry.juuid}-${calendarKey}`;
         this.#eventsCalendarEntries.set(eventKey, entry);
         const chipColor = String(entry.color || '').slice(0, 7);
         return {
@@ -1185,7 +1216,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     if (this.#selectedEventKey) {
       const entry = this.#eventsCalendarEntries.get(this.#selectedEventKey);
       if (entry) {
-        const btn = gridContainer.querySelector(`.event-compact[data-juuid="${entry.juuid}"][data-key="${entry.calendarKey}"]`);
+        const btn = Array.from(gridContainer.querySelectorAll('.event-compact')).find(item =>
+          item.dataset.key === entry.calendarKey &&
+          (entry.uuid ? item.dataset.pageUuid === entry.uuid : item.dataset.juuid === entry.juuid)
+        );
         btn?.classList.add('selected');
         await this.#renderEventDetail(entry);
       } else {

@@ -90,6 +90,8 @@ export default class AlmanacNotification {
         id: this.#toastId('personae', model, key),
         kind: 'personae',
         tab: 'personae',
+        pageUuid: model.parent?.uuid || model.uuid,
+        entryKey: key,
         title: next.name || _loc('PERSONAE.ImportantPersons'),
         change: _loc(isCreature ? 'CALENDAR.DSA.notifications.personaeUnlocked' : 'CALENDAR.DSA.notifications.personaeMet'),
         kicker: _loc('PERSONAE.ImportantPersons'),
@@ -116,6 +118,8 @@ export default class AlmanacNotification {
         id: this.#toastId('events', model, key),
         kind: 'events',
         tab: 'events',
+        pageUuid: model.parent?.uuid || model.uuid,
+        entryKey: key,
         title: next.title || _loc('CALENDAR.DSA.events'),
         change: _loc('CALENDAR.DSA.notifications.eventAdded'),
         kicker: _loc('CALENDAR.DSA.events'),
@@ -139,6 +143,8 @@ export default class AlmanacNotification {
         id: this.#toastId('questlog', model, questKey),
         kind: 'questlog',
         tab: 'questlog',
+        pageUuid: model.parent?.uuid || model.uuid,
+        entryKey: questKey,
         kicker: _loc('DSAQUESTLOG.title'),
         title: next.title || _loc('DSAQUESTLOG.newEntryPlaceholder'),
         image: next.image || this.FALLBACK_QUEST_IMG,
@@ -314,7 +320,7 @@ export default class AlmanacNotification {
     });
     el.addEventListener('click', (ev) => {
       if (ev.target.closest('[data-action="close"]')) return;
-      game.dsa5?.apps?.CalendarWidget?.constructor.openCalendarPicker?.(toast.tab);
+      game.dsa5?.apps?.CalendarWidget?.constructor.openCalendarPicker?.(toast.tab, toast);
     });
   }
 
