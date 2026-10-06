@@ -1,3 +1,4 @@
+import DSA5_Utility from '../helpers/utility-dsa5.js';
 import QueryOrchestrator from './query-orchestrator.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5ChatAutoCompletion from '../sidebar/chat_autocompletion.js';
@@ -59,12 +60,10 @@ export default class MagicAnalysisQueryService {
       title: 'MAGICANALYSIS.dialogTitle',
       header,
       entryFilter: (entry) => entry.isPlayerOwned || entry.isActiveCharacter,
-      callback: ({ actorIds, form }) => {
+      callback: async ({ actorIds, form }) => {
         const messageMode = InformationQueryService.readMessageMode(form, DICE_CONSTANTS.CHAT_MODES.PUBLIC);
-        for (const actorId of actorIds) {
-          const actor = game.actors.get(actorId);
-          if (actor) this.createRequest({ actor, analysisContext, messageMode });
-        }
+        const selectedActors = actorIds.map((actorId) => game.actors.get(actorId)).filter(Boolean);
+        await this.createRequests({ actors: selectedActors, analysisContext, messageMode });
       },
     });
   }
@@ -171,6 +170,33 @@ export default class MagicAnalysisQueryService {
   }
 
   static async createRequest({ actor, analysisContext, messageMode } = {}) {
+    const [message] = await this.createRequests({
+      actors: [actor],
+      analysisContext,
+      messageMode,
+    });
+    return message;
+  }
+
+  static async createRequests({ actors = [], analysisContext, messageMode } = {}) {
+    const states = actors
+      .filter(Boolean)
+      .map((actor) => this.#buildRequestState(actor, analysisContext, messageMode));
+    const possibleStates = states.filter((state) => !state.notPossible);
+    const impossibleStates = states.filter((state) => state.notPossible);
+
+    const messages = await Promise.all(possibleStates.map((state) => QueryOrchestrator.createRequest({
+      queryType: this.QUERY_TYPE,
+      state,
+    })));
+
+    if (impossibleStates.length) {
+      messages.push(await this.#createNotPossibleMessage(impossibleStates, possibleStates));
+    }
+    return messages;
+  }
+
+  static #buildRequestState(actor, analysisContext, messageMode) {
     const { informationUuid, parentUuid, infoContent } = analysisContext;
 
     const progress = this.initProgress(actor);
@@ -196,11 +222,26 @@ export default class MagicAnalysisQueryService {
     };
 
     this.refreshAnalysisState(state);
+    return state;
+  }
 
-    return QueryOrchestrator.createRequest({
-      queryType: this.QUERY_TYPE,
-      state,
-    });
+  static async #createNotPossibleMessage(impossibleStates, possibleStates) {
+    const possiblePlayerIds = new Set(
+      possibleStates.map((state) => state.recipients[0]?.designatedUserId).filter(Boolean),
+    );
+    const recipients = new Set(game.users.filter((user) => user.isGM).map((user) => user.id));
+
+    for (const state of impossibleStates) {
+      const playerId = state.recipients[0]?.designatedUserId;
+      if (playerId && !possiblePlayerIds.has(playerId)) recipients.add(playerId);
+    }
+
+    if (!recipients.size) throw new Error('Cannot send a magical analysis notice without recipients.');
+
+    const content = await renderTemplate(this.TEMPLATE, { notPossible: true });
+    const chatData = DSA5_Utility.chatDataSetup(content, 'roll');
+    chatData.whisper = [...recipients];
+    return ChatMessage.create(chatData);
   }
 
   static #resolveLinkUuid(state) {
@@ -283,8 +324,16 @@ export default class MagicAnalysisQueryService {
     }
 
     const resultPlayerId = state.approval?.playerId || designatedUserId;
-    if (!InformationQueryService.canViewInformationResult(resultPlayerId, game.user, state.messageMode)) {
+    const canViewInformation = InformationQueryService.canViewInformationResult(
+      resultPlayerId,
+      game.user,
+      state.messageMode,
+    );
+    if (!canViewInformation) {
       html.find('.magic-analysis-result-block').remove();
+      html.find('.magic-analysis-max-qs').text(
+        game.i18n.format('MAGICANALYSIS.maxQs', { max: '?' }),
+      );
     }
 
     html.find('.magic-analysis-step-row').each((_idx, element) => {
