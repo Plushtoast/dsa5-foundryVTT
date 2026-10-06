@@ -45,6 +45,7 @@ import DeleteConfirmationDialog from '../dialog/delete-confirmation-dialog.js';
 import { combatPartTemplates, magicPartTemplates, religionPartTemplates } from './template-configs.js';
 import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
 import AmmoPicker from '../system/helpers/ammo-picker.js';
+import FallingDamageHelper from './concerns/falling-damage-helper.js';
 
 const { mergeObject, getProperty, duplicate, hasProperty } = foundry.utils;
 const { TextEditor, ContextMenu, SearchFilter, DragDrop } = foundry.applications.ux;
@@ -861,7 +862,7 @@ export default class ActorSheetDsa5 extends AppV2Mixin(foundry.applications.api.
   }
 
   static _chFallingDamage(ev, target) {
-    this.actor.setupFallingDamage({}, this.getTokenId());
+    FallingDamageHelper.setup(this.actor, {}, this.getTokenId());
   }
 
   static _combatRules() {

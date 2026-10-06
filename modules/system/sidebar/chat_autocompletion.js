@@ -5,6 +5,7 @@ import { UserMultipickDialog } from '../../dialog/addTargetDialog.js';
 import InformationQueryService from '../queries/information-query.js';
 import ChatCommandService from './chat_command_service.js';
 import RollRequestService from '../queries/roll-request.js';
+import FallingDamageHelper from '../../actor/concerns/falling-damage-helper.js';
 
 export default class DSA5ChatAutoCompletion {
   static skills = [];
@@ -51,7 +52,7 @@ export default class DSA5ChatAutoCompletion {
 
         const specialOptions = [
           { name: _loc('regenerate'), type: 'regeneration' },
-          { name: _loc('fallingDamage'), type: 'fallingDamage' }
+          FallingDamageHelper.chatCompletionOption()
         ];
 
         DSA5ChatAutoCompletion.skills = [
@@ -538,7 +539,8 @@ export default class DSA5ChatAutoCompletion {
     html.on('click', '.request-roll', (ev) => {
       const { name, modifier } = ev.currentTarget.dataset;
       const label = ev.currentTarget.textContent.trim();
-      RollRequestService.requestRoll(name, Number(modifier) || 0, label !== name ? label : undefined);
+      const fallingDamageOptions = FallingDamageHelper.requestOptionsFromDataset(ev.currentTarget.dataset);
+      RollRequestService.requestRoll(name, Number(modifier) || 0, label !== name ? label : undefined, fallingDamageOptions);
       ev.stopPropagation();
       return false;
     });

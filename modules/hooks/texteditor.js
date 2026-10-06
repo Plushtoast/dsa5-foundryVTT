@@ -1,6 +1,7 @@
 import DSA5 from '../config/config-dsa5.js';
 import InformationData from '../data/item/information.js';
 import DSA5Payment from '../system/payment/payment.js';
+import FallingDamageHelper from '../actor/concerns/falling-damage-helper.js';
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -144,6 +145,11 @@ export function setEnrichers() {
       pattern: /@(Rq|Ch)\[([^\]]+)\]({[a-zA-ZöüäÖÜÄß()&; -]+})?/g,
       enricher: (match) => {
         const [, type, inner, customTextMatch] = match;
+        if (type === 'Rq') {
+          const fallingDamageEnricher = FallingDamageHelper.enrich(inner, customTextMatch);
+          if (fallingDamageEnricher) return fallingDamageEnricher;
+        }
+
         const { skill, mod, options } = parseEnricherInner(inner);
         const data = encodeURIComponent(JSON.stringify(options));
         let customText = customTextMatch ? customTextMatch.replace(/[{}]/g, '') : skill;

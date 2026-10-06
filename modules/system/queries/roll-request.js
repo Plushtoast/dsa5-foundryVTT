@@ -4,6 +4,7 @@ import RegenerationHelper from '../rolls/regeneration-helper.js';
 import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import { DICE_CONSTANTS } from '../../config/dice-constants.js';
 import { DSAClock } from '../calendar/clock.js';
+import FallingDamageHelper from '../../actor/concerns/falling-damage-helper.js';
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -24,20 +25,28 @@ export default class RollRequestService {
     });
   }
 
-  static async requestRoll(name, modifier = 0, label = undefined) {
+  static async requestRoll(name, modifier = 0, label = undefined, fallingDamageOptions = {}) {
+    await DSA5ChatAutoCompletion.ensureSkills();
     const skill = DSA5ChatAutoCompletion.skills.find((s) => s.name === name);
-    const category = skill?.type || 'skill';
+    const category = skill?.type || (FallingDamageHelper.isName(name) ? FallingDamageHelper.CATEGORY : 'skill');
     if (game.user.isGM) {
-      this.openRequestDialog({ name, category, modifier, label });
+      this.openRequestDialog({ name, category, modifier, label, ...fallingDamageOptions });
     } else {
       const { default: ChatCommandService } = await import('../sidebar/chat_command_service.js');
-      ChatCommandService.speakerAbilityRoll(name, category, { modifier });
+      ChatCommandService.speakerAbilityRoll(name, category, { modifier, ...fallingDamageOptions });
     }
   }
 
-  static async openRequestDialog({ category = 'skill', name = '', modifier = 0, label = undefined } = {}) {
+  static async openRequestDialog({
+    category = 'skill',
+    name = '',
+    modifier = 0,
+    label = undefined,
+    fallingHeight = undefined,
+    fallingFloor = undefined,
+  } = {}) {
     const skillOptions = DSA5ChatAutoCompletion.skills
-      .filter((s) => ['skill', 'attribute', 'regeneration'].includes(s.type))
+      .filter((s) => ['skill', 'attribute', 'regeneration', FallingDamageHelper.CATEGORY].includes(s.type))
       .sort((a, b) => a.name.localeCompare(b.name))
       .map((s) => ({
         value: `${s.name}|${s.type}`,
@@ -83,6 +92,7 @@ export default class RollRequestService {
           actors,
           label: selectedName !== name ? undefined : label,
           advanceHours,
+          ...(FallingDamageHelper.isCategory(selectedType) ? { fallingHeight, fallingFloor } : {}),
         });
       },
     });
@@ -131,6 +141,8 @@ export default class RollRequestService {
     opposable = undefined,
     flowContext = undefined,
     advanceHours = undefined,
+    fallingHeight = undefined,
+    fallingFloor = undefined,
   }) {
     const recipients = await QueryOrchestrator.buildRecipients(actors);
     const restHours = category === 'regeneration'
@@ -151,6 +163,7 @@ export default class RollRequestService {
       ...(subtitle ? { subtitle } : {}),
       ...(opposable !== undefined ? { opposable } : {}),
       ...(flowContext ? { flowContext } : {}),
+      ...(FallingDamageHelper.isCategory(category) ? { fallingHeight, fallingFloor } : {}),
     };
 
     const message = await QueryOrchestrator.createRequest({
@@ -174,6 +187,7 @@ export default class RollRequestService {
       situationalModifiers: state.situationalModifiers,
       subtitle: state.subtitle,
       opposable: state.opposable,
+      ...(FallingDamageHelper.isCategory(state.category) ? { fallingHeight: state.fallingHeight, fallingFloor: state.fallingFloor } : {}),
       ...(byGM ? { byGM: true } : {}),
     };
   }
@@ -419,6 +433,20 @@ export default class RollRequestService {
           ...(payload.byGM ? { byGM: true } : {}),
         };
       }
+      if (FallingDamageHelper.isCategory(payload.category)) {
+        const result = await FallingDamageHelper.setup(actor, {
+          skillModifier: payload.modifier,
+          fallingHeight: payload.fallingHeight,
+          fallingFloor: payload.fallingFloor,
+          messageMode: payload.messageMode,
+        }, undefined);
+        if (!result) {
+          if (payload.messageId) return null;
+          return { userId: game.user.id, status: 'cancelled' };
+        }
+        return this.buildResultPayload(payload.category, result, payload.messageMode);
+      }
+
       let setupData;
 
       switch (payload.category) {

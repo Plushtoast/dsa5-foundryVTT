@@ -42,6 +42,7 @@ import { SituationalModifiersWidget } from '../system/helpers/situational-modifi
 import ActiveEffectLifecycle from '../status/activeEffectLifecycle.js';
 import AmmoPicker from '../system/helpers/ammo-picker.js';
 import RegenerationHelper from '../system/rolls/regeneration-helper.js';
+import FallingDamageHelper from './concerns/falling-damage-helper.js';
 
 import SpecialabilityData from '../data/item/specialability.js';
 const { getProperty, mergeObject, duplicate, setProperty, expandObject } = foundry.utils;
@@ -1736,26 +1737,8 @@ export default class Actordsa5 extends Actor {
     return $(item)[0];
   }
 
-  setupFallingDamage(options, tokenId) {
-    const name = _loc('fallingDamage');
-    const skill = this.items.find((x) => x.type == 'skill' && x.name == _loc('LocalizedIDs.bodyControl')).toObject();
-    const optns = {
-      subtitle: ` (${name})`,
-      postFunction: {
-        functionName: 'game.dsa5.entities.Actordsa5.updateFallingDamage',
-        options,
-        tokenId,
-        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
-      },
-    };
-    this.setupSkill(skill, optns, tokenId).then(async (finalData) => {
-      if (!finalData) return;
-      finalData.testData.opposable = false;
-      const res = await this.basicTest(finalData, { suppressMessage: true });
-      if (!res) return;
-      await Actordsa5.updateFallingDamage(optns.postFunction, res);
-      await DiceDSA5.renderRollCard(res.cardOptions, res.result, res.options.rerenderMessage);
-    });
+  setupFallingDamage(options = {}, tokenId) {
+    return FallingDamageHelper.setup(this, options, tokenId);
   }
 
   rollAnySkill(skillName, tokenID, attributes = {}, options = {}) {
@@ -1767,86 +1750,7 @@ export default class Actordsa5 extends Actor {
   }
 
   static async updateFallingDamage(postFunction, result, source) {
-    const actor = DSA5_Utility.getSpeaker(postFunction.speaker);
-    const qlMultiplier = SpecialabilityRulesDSA5.hasAbility(actor, 'LocalizedIDs.tumbling') ? 3 : 2;
-    const availableQs = (result.result.qualityStep || 0) * qlMultiplier;
-    mergeObject(postFunction.options, {
-      availableQs,
-      qlMultiplier,
-      tumbling: qlMultiplier > 2,
-      reductionFormula: DiceDSA5.fallingDamageReductionFormula(qlMultiplier, availableQs),
-    });
-    const setupData = await actor._setupFallingHeight(postFunction.options, postFunction.tokenId);
-    const fallingDamage = await actor.basicTest(setupData, {
-      suppressMessage: true,
-    });
-    fallingDamage.applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
-    const html = await renderTemplate('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', fallingDamage);
-    result.result.chatCardDamage = fallingDamage.result.damage;
-
-    if (!result.result.other) result.result.other = [];
-
-    result.result.other.push(html);
-
-    if (result.chatData) {
-      result.chatData.other = [html];
-    }
-
-    if (postFunction.options?.trapMessageUuid) {
-      await game.dsa5.apps.TrapState?.postFallingDamage?.(postFunction, result);
-    }
-  }
-
-  _setupFallingHeight(options, tokenId) {
-    const title = _loc('fallingDamage');
-    const testData = {
-      source: {
-        type: 'fallingDamage',
-      },
-      opposable: false,
-      extra: {
-        options,
-        speaker: ActorDialogBuilder.buildSpeaker(this, tokenId),
-      },
-    };
-
-    const situationalModifiers = [];
-    const qlMultiplier = options.qlMultiplier || 2;
-    const availableQs = options.availableQs || 0;
-    const dialogOptions = {
-      title,
-      template: 'systems/dsa5/templates/dialog/fallingdamage-dialog.hbs',
-      data: {
-        messageMode: options.messageMode,
-        situationalModifiers,
-        fallingFloorOptions: DSA5.fallingConditions,
-        modifier: options.fallingHeight || options.modifier || 1,
-        tumbling: options.tumbling,
-        qlMultiplier,
-        availableQs,
-        reductionFormula: options.reductionFormula || DiceDSA5.fallingDamageReductionFormula(qlMultiplier, availableQs),
-      },
-      callback: (html, options = {}) => {
-        testData.situationalModifiers = [
-          {
-            name: _loc('fallingFloor'),
-            value: html.find('[name="fallingFloor"]').val(),
-          },
-        ];
-        cardOptions.messageMode = html.find('[name="messageMode"]:checked').val();
-        testData.fallingHeight = Math.max(1, Number(html.find('[name="testModifier"]').val()) || 1);
-        mergeObject(testData.extra.options, options);
-        return { testData, cardOptions };
-      },
-    };
-
-    const cardOptions = ActorDialogBuilder._setupCardOptions('systems/dsa5/templates/chat/roll/fallingdamage-card.hbs', title, tokenId, this);
-
-    return DiceDSA5.setupDialog({
-      dialogOptions,
-      testData,
-      cardOptions,
-    });
+    return FallingDamageHelper.updateFallingDamage(postFunction, result, source);
   }
 
   setupRegeneration(statusId, options = {}, tokenId) {

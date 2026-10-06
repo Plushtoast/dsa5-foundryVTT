@@ -10,6 +10,7 @@ import SpecialabilityRulesDSA5 from "../system/rules/specialability-rules-dsa5.j
 import ChatCardBump from "../system/sidebar/chat-card-bump.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
 import Actordsa5 from "../actor/actor-dsa5.js";
+import FallingDamageHelper from "../actor/concerns/falling-damage-helper.js";
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -738,9 +739,9 @@ export class TrapState extends ChatMessageState {
 
     async _handleFall(event) {
         const actor = TrapState.actorFromToken(this.token);
-        if (!actor?.setupFallingDamage) return;
+        if (!actor?.setupSkill) return;
         const height = Number(event.currentTarget.dataset.height) || 1;
-        actor.setupFallingDamage({
+        FallingDamageHelper.setup(actor, {
             fallingHeight: height,
             trapMessageUuid: this.message?.uuid || '',
             trapLineId: event.currentTarget.dataset.line || '',

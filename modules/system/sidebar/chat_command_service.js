@@ -4,6 +4,7 @@ import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import DSA5ChatAutoCompletion from './chat_autocompletion.js';
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
+import FallingDamageHelper from '../../actor/concerns/falling-damage-helper.js';
 
 /**
  * Registry for system and module chat slash-commands.
@@ -115,6 +116,14 @@ export default class ChatCommandService {
       }
       case 'regeneration':
         actor.setupRegeneration('regenerate', options, tokenId).then((s) => actor.basicTest(s));
+        break;
+      case FallingDamageHelper.CATEGORY:
+        FallingDamageHelper.setup(actor, {
+          skillModifier: options.modifier,
+          fallingHeight: options.fallingHeight,
+          fallingFloor: options.fallingFloor,
+          messageMode: options.messageMode,
+        }, tokenId);
         break;
     }
   }
