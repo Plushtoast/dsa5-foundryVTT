@@ -23,6 +23,7 @@ export default class GroupData extends ActorDataModel {
         sort: new NumberField({ initial: 0, integer: true }),
       })),
       travel: new SchemaField({
+        showLootActors: new BooleanField({ initial: false }),
         forcedMarchPercent: new NumberField({ initial: 0, min: 0, integer: true }),
         speed: new SchemaField({
           foot: new SchemaField({

@@ -64,13 +64,18 @@
   </div>
 
   <div class="groupbox">
-    <legend class="table-title lineheight">{{localize 'GROUP.travelMode'}}</legend>
+    <legend class="table-title lineheight flexrow flexAlignCenter">
+      <span>{{localize 'GROUP.travelMode'}}</span>
+      <button type="button" class="icon fas fa-box-open noBorder dsadesignbutton{{#if travel.showLootActors}} active{{/if}}"
+              data-action="toggleLootTravelModes" data-tooltip="GROUP.showLootActors"
+              aria-pressed="{{#if travel.showLootActors}}true{{else}}false{{/if}}" style="margin-left: auto;"></button>
+    </legend>
 
     <div class="group-travel-modes">
-      {{#each locations as |loc|}}
+      {{#each travelLocations as |loc|}}
         <div class="row-section tableOdd group-travel-mode" data-location-key="{{loc.key}}">
           <div class="col ten flexrow">
-            <img src="{{loc.img}}" width="20" height="20" />
+            <img src="{{loc.img}}" width="20" height="20" style="object-fit: contain; max-width: 100%;" />
           </div>
           <div class="col two flexrow">
             <a data-action="openLocationSheet" data-location-key="{{loc.key}}">{{loc.name}}</a>

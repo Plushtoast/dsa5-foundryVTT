@@ -63,7 +63,7 @@ export const MerchantSheetMixin = (superclass) =>
         removeOtherTradeFriend: this._removeOtherTradeFriend,
         toggleTradeLock: this._toggleTradeLock,
         itemExternalEdit: this._itemExternalEdit,
-        tradeWrapper: this._tradeWrapper,
+        tradeWrapper: { handler: this._tradeWrapper, buttons: [0, 2] },
         changeAmountAllItems: { handler: this.changeAmountAllItems, buttons: [0, 2] },
         pickShopImage: this._pickShopImage,
         useActorImage: this._useActorImage,
@@ -852,11 +852,73 @@ export const MerchantSheetMixin = (superclass) =>
       await this.transferItem(tradeFriend, this.actor, dataset, false, clickTarget);
     }
 
-    static _tradeWrapper(ev, target) {
+    static async _tradeWrapper(ev, target) {
       const dataset = { ...target.dataset };
       dataset.itemId = this._getItemId(target);
-      dataset.amount = ev.ctrlKey ? 10 : 1;
+
+      if (ev.button === 2) {
+        ev.preventDefault();
+        const source = dataset.fct === 'sellItem' ? this.getTradeFriend() : this.actor;
+        if (dataset.fct === 'sellItem' && !source) {
+          dataset.amount = 1;
+        } else {
+          const sourceItem = source?.items.get(dataset.itemId);
+          const available = Number(sourceItem?.system?.quantity?.value);
+          const maxAmount = Number.isFinite(available) ? Math.max(1, Math.floor(available)) : 1;
+          const amount = await this._selectTradeAmount(maxAmount);
+          if (amount == null) return;
+          dataset.amount = amount;
+        }
+      } else {
+        dataset.amount = ev.ctrlKey ? 10 : 1;
+      }
+
       this.advanceWrapper(target, target.dataset.fct, dataset, target);
+    }
+
+    async _selectTradeAmount(maxAmount) {
+      const fields = {
+        amount: new foundry.data.fields.NumberField({
+          initial: maxAmount,
+          integer: true,
+          label: 'MERCHANT.amount',
+          max: maxAmount,
+          min: 1,
+          required: true,
+        }),
+      };
+      const content = await renderTemplate('systems/dsa5/templates/dialog/merchant-trade-amount.hbs', {
+        amount: maxAmount,
+        fields,
+      });
+
+      return foundry.applications.api.DialogV2.wait({
+        window: { title: 'MERCHANT.selectAmount' },
+        content,
+        buttons: [
+          {
+            action: 'confirm',
+            label: 'ok',
+            default: true,
+            callback: (_event, button, dialog) => {
+              const form = button.form || dialog.form || dialog.element?.querySelector('form');
+              if (!form) throw new Error('Merchant trade amount dialog is missing its form.');
+
+              const amount = Number(new foundry.applications.ux.FormDataExtended(form).object.amount);
+              if (!Number.isInteger(amount) || amount < 1 || amount > maxAmount) {
+                ui.notifications.warn(_loc('MERCHANT.amountOutOfRange', { min: 1, max: maxAmount }));
+                return null;
+              }
+              return amount;
+            },
+          },
+          {
+            action: 'cancel',
+            label: 'Cancel',
+            callback: () => null,
+          },
+        ],
+      });
     }
 
     async transferItem(source, target, dataset, buy = true, clickTarget = null) {

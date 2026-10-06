@@ -209,6 +209,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       tradeWithDepot: this.#tradeWithDepot,
       depotPermissions: this.#depotPermissions,
       setLocationType: this.#setLocationType,
+      toggleLootTravelModes: this.#toggleLootTravelModes,
       resetTravelMode: this.#resetTravelMode,
       quantityClick: { handler: this.#quantityClick, buttons: [0, 2] },
     },
@@ -574,6 +575,9 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         .sort((a, b) => b.system.price.value - a.system.price.value)
         .map((i) => ({ name: i.name, img: i.img, quantity: i.system.quantity.value })),
     }));
+    context.travelLocations = context.locations.filter((loc) =>
+      system.travel.showLootActors || loc.type || !GroupData.isLootDepotActor(loc.actor)
+    );
     context.vehicleTypes = Object.fromEntries(
       Object.entries(DSA5.locationTypes)
         .filter(([key]) => key !== 'foot')
@@ -901,6 +905,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     if (!key || !type) return;
     const current = this.actor.system.locations[key]?.type;
     this.actor.system.setLocationType(key, current === type ? '' : type);
+  }
+
+  static #toggleLootTravelModes() {
+    this.actor.update({ 'system.travel.showLootActors': !this.actor.system.travel.showLootActors });
   }
 
   static #resetTravelMode(event, target) {
