@@ -18,23 +18,30 @@
     </header>
     
     <ul class="ol" data-changes>
-        {{#each source.system.changes as |change i|}}
+        {{#each wizardChangeGroups as |group|}}
+        {{#if group.label}}
+        <li class="row-section">
+            <div class="col sixty"><strong>{{group.label}}</strong></div>
+        </li>
+        {{/if}}
+        {{#each group.changes as |entry|}}
         {{#with @root.changeFields as |changeFields|}}
-        <li class="row-section" data-index="{{i}}">
+        <li class="row-section" data-index="{{entry.index}}">
             <div class="col sixty key wizardKey">
-                <input type="hidden" name="system.changes.{{i}}.key" value="{{change.key}}">
+                <input type="hidden" name="system.changes.{{entry.index}}.key" value="{{entry.change.key}}">
             </div>
             <div class="col thirtyfive center value">
-                {{formInput changeFields.value name=(concat "system.changes." i ".value") value=change.value elementType="input"}}
+                {{formInput changeFields.value name=(concat "system.changes." entry.index ".value") value=entry.change.value elementType="input"}}
             </div>
             <div class="col zerofive flexrow center controls">
-                <input type="hidden" name="system.changes.{{i}}.type" value="{{change.type}}">
-                <input type="hidden" name="system.changes.{{i}}.phase" value="{{change.phase}}">
-                <input type="hidden" name="system.changes.{{i}}.priority" value="{{change.priority}}">
+                <input type="hidden" name="system.changes.{{entry.index}}.type" value="{{entry.change.type}}">
+                <input type="hidden" name="system.changes.{{entry.index}}.phase" value="{{entry.change.phase}}">
+                <input type="hidden" name="system.changes.{{entry.index}}.priority" value="{{entry.change.priority}}">
                 <button type="button" class="icon fas fa-trash noBorder dsadesignbutton" data-action="deleteChange"></button>
             </div>
         </li>
         {{/with}}
+        {{/each}}
         {{/each}}
     </ul>
     {{else}}

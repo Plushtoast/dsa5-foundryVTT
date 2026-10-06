@@ -26,15 +26,27 @@ export default class EffectDropdownBuilder {
         return `<option value="${option.val}" data-type="${option.type}" data-phase="${option.phase || 'initial'}" data-ph="${option.ph}">${option.name}</option>`;
     }
 
-    static _groupedSelectHtml(groups, categoryFilter = null, selectClass = 'wizardMenu') {
+    static _groupedSelectHtml(groups, categoryFilter = null, selectClass = 'wizardMenu', currentKey = null) {
         const filtered = categoryFilter ? groups.filter((g) => g.key === categoryFilter) : groups;
+        if (categoryFilter && currentKey && !filtered.some((g) => g.subgroups.some((s) => s.options.some((o) => o.val === currentKey)))) {
+            const currentGroup = groups.find((g) => g.key !== categoryFilter && g.subgroups.some((s) => s.options.some((o) => o.val === currentKey)));
+            if (currentGroup) {
+                filtered.push({
+                    ...currentGroup,
+                    subgroups: currentGroup.subgroups
+                        .map((s) => ({ ...s, options: s.options.filter((o) => o.val === currentKey) }))
+                        .filter((s) => s.options.length),
+                });
+            }
+        }
         const optgroupStrings = filtered
             .filter((g) => g.subgroups.some((s) => s.options.length))
             .flatMap((g) => {
                 if (categoryFilter) {
                     return g.subgroups.filter((s) => s.options.length).map((s) => {
                         const sorted = [...s.options].sort((a, b) => a.name.localeCompare(b.name));
-                        return `<optgroup label="${s.sub}">${sorted.map((o) => this._optionHtml(o)).join('\n')}</optgroup>`;
+                        const label = g.key === categoryFilter ? s.sub : `${g.label} - ${s.sub}`;
+                        return `<optgroup label="${label}">${sorted.map((o) => this._optionHtml(o)).join('\n')}</optgroup>`;
                     });
                 }
                 const allOpts = g.subgroups.flatMap((s) => s.options).sort((a, b) => a.name.localeCompare(b.name));
@@ -53,6 +65,16 @@ export default class EffectDropdownBuilder {
      */
     static buildGroupedDropdownMenu(document = null, categoryFilter = null, selectClass = 'wizardMenu') {
         return this._groupedSelectHtml(this._getGroupDefinitions(document), categoryFilter, selectClass);
+    }
+
+    static buildGroupedDropdownMenus(document = null, categoryFilter = null, selectClass = 'wizardMenu', currentKeys = []) {
+        const groups = this._getGroupDefinitions(document);
+        return new Map(
+            [...new Set(currentKeys)].map((currentKey) => [
+                currentKey,
+                this._groupedSelectHtml(groups, categoryFilter, selectClass, currentKey),
+            ]),
+        );
     }
 
     static _getGroupDefinitions(document = null) {
@@ -78,6 +100,42 @@ export default class EffectDropdownBuilder {
         return this._getGroupDefinitions(document)
             .filter((g) => g.subgroups.some((s) => s.options.length))
             .map(({ key, label, icon }) => ({ key, label, icon }));
+    }
+
+    static _groupChangesByDefinitions(groups, changes = []) {
+        const optionsByKey = new Map();
+        for (const group of groups) {
+            for (const subgroup of group.subgroups) {
+                for (const option of subgroup.options) {
+                    if (!optionsByKey.has(option.val)) optionsByKey.set(option.val, { groupKey: group.key, name: option.name });
+                }
+            }
+        }
+
+        const groupedChanges = new Map(groups.map(({ key, label }) => [key, { key, label, changes: [] }]));
+        const ungroupedChanges = [];
+        changes.forEach((change, index) => {
+            const option = optionsByKey.get(change?.key);
+            const entry = { change, index, name: option?.name || change?.key || '' };
+            const group = option ? groupedChanges.get(option.groupKey) : null;
+            if (group) group.changes.push(entry);
+            else ungroupedChanges.push(entry);
+        });
+
+        const sortByName = (a, b) => a.name.localeCompare(b.name, game.i18n.lang) || a.index - b.index;
+        const result = [...groupedChanges.values()]
+            .filter((group) => group.changes.length)
+            .map((group) => ({ ...group, changes: group.changes.sort(sortByName) }))
+            .sort((a, b) => a.label.localeCompare(b.label, game.i18n.lang));
+
+        if (ungroupedChanges.length) {
+            result.push({ key: null, label: '', changes: ungroupedChanges.sort(sortByName) });
+        }
+        return result;
+    }
+
+    static getWizardChangeGroups(document = null, changes = []) {
+        return this._groupChangesByDefinitions(this._getGroupDefinitions(document), changes);
     }
 
     static supportsWizardChanges(document = null, changes = []) {
@@ -721,10 +779,24 @@ export default class EffectDropdownBuilder {
         return this._groupedSelectHtml(this._getEnhancementGroupDefinitions(targetType), categoryFilter, selectClass);
     }
 
+    static buildEnhancementGroupedDropdownMenus(targetType, categoryFilter = null, selectClass = 'wizardMenu', currentKeys = []) {
+        const groups = this._getEnhancementGroupDefinitions(targetType);
+        return new Map(
+            [...new Set(currentKeys)].map((currentKey) => [
+                currentKey,
+                this._groupedSelectHtml(groups, categoryFilter, selectClass, currentKey),
+            ]),
+        );
+    }
+
     static getEnhancementWizardCategories(targetType) {
         return this._getEnhancementGroupDefinitions(targetType)
             .filter((g) => g.subgroups.some((s) => s.options.length))
             .map(({ key, label, icon }) => ({ key, label, icon }));
+    }
+
+    static getEnhancementWizardChangeGroups(targetType, changes = []) {
+        return this._groupChangesByDefinitions(this._getEnhancementGroupDefinitions(targetType), changes);
     }
 
     static supportsEnhancementWizardChanges(targetType, changes = []) {

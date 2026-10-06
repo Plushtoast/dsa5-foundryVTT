@@ -144,7 +144,17 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
         const wizardMode = this.wizardMode;
         const wizardCategory = this.wizardCategory;
         const wizardCategories = wizardMode ? EffectDropdownBuilder.getWizardCategories(this.document) : [];
-        mergeObject(partContext, { changeFields, changeTypes, changePriorities, changePhases, wizardMode, wizardCategory, wizardCategories });
+        const wizardChangeGroups = wizardMode ? this._getWizardChangeGroups() : [];
+        mergeObject(partContext, {
+          changeFields,
+          changeTypes,
+          changePriorities,
+          changePhases,
+          wizardMode,
+          wizardCategory,
+          wizardCategories,
+          wizardChangeGroups,
+        });
         break;
       }
       case 'actions': {
@@ -225,14 +235,16 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
   }
 
   _initWizardDropdowns(html) {
-    const groupedMenu = EffectDropdownBuilder.buildGroupedDropdownMenu(this.document, this.wizardCategory);
-    html.find('.changes .ol .wizardKey').each((i, el) => {
+    const rows = html.find('.changes .ol .wizardKey').toArray();
+    const currentKeys = rows.map((el) => $(el).find('input[type="hidden"]').val() || '');
+    const groupedMenus = EffectDropdownBuilder.buildGroupedDropdownMenus(this.document, this.wizardCategory, 'wizardMenu', currentKeys);
+    rows.forEach((el) => {
       const $el = $(el);
       const hiddenInput = $el.find('input[type="hidden"]');
-      const currentKey = hiddenInput.val();
+      const currentKey = hiddenInput.val() || '';
 
       const $wrapper = $('<div class="wizardSelectWrapper"></div>');
-      $wrapper.append(groupedMenu);
+      $wrapper.append(groupedMenus.get(currentKey));
       $el.prepend($wrapper);
 
       const $select = $wrapper.find('.wizardMenu');
@@ -253,5 +265,9 @@ export default class DSABaseEffectConfig extends foundry.applications.sheets.Act
         });
     });
     EffectDropdownBuilder.applyExamplePlaceholders(html);
+  }
+
+  _getWizardChangeGroups() {
+    return EffectDropdownBuilder.getWizardChangeGroups(this.document, this.document.system.changes);
   }
 }

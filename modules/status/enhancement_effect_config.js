@@ -70,6 +70,10 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
     return this.wizardMode;
   }
 
+  _getWizardChangeGroups() {
+    return EffectDropdownBuilder.getEnhancementWizardChangeGroups(this._targetType, this.document.system.changes);
+  }
+
   async _preparePartContext(partId, context) {
     const partContext = await super._preparePartContext(partId, context);
     switch (partId) {
@@ -137,14 +141,21 @@ export default class DSAEnhancementEffectConfig extends DSABaseEffectConfig {
   }
 
   _initWizardDropdowns(html) {
-    const groupedMenu = EffectDropdownBuilder.buildEnhancementGroupedDropdownMenu(this._targetType, this.wizardCategory);
-    html.find('.changes .ol .wizardKey').each((i, el) => {
+    const rows = html.find('.changes .ol .wizardKey').toArray();
+    const currentKeys = rows.map((el) => $(el).find('input[type="hidden"]').val() || '');
+    const groupedMenus = EffectDropdownBuilder.buildEnhancementGroupedDropdownMenus(
+      this._targetType,
+      this.wizardCategory,
+      'wizardMenu',
+      currentKeys,
+    );
+    rows.forEach((el) => {
       const $el = $(el);
       const hiddenInput = $el.find('input[type="hidden"]');
-      const currentKey = hiddenInput.val();
+      const currentKey = hiddenInput.val() || '';
 
       const $wrapper = $('<div class="wizardSelectWrapper"></div>');
-      $wrapper.append(groupedMenu);
+      $wrapper.append(groupedMenus.get(currentKey));
       $el.prepend($wrapper);
 
       const $select = $wrapper.find('.wizardMenu');
