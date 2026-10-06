@@ -56,6 +56,9 @@
     {{#if approval}}
       {{#if (eq approval.phase 'pending')}}
         <p class='very-small margin-top'><i class='fas fa-spinner fa-spin'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.pending'}}</p>
+        <div class='roll-request-gm flexrow gap5px margin-top'>
+          <button type='button' class='roll-request-action magic-analysis-action' data-action='openApproval' aria-label='{{localize "MAGICANALYSIS.approval"}}'><i class='fas fa-check'></i> {{localize 'MAGICANALYSIS.approval'}}</button>
+        </div>
       {{else if (eq approval.phase 'approved')}}
         <hr class='magic-analysis-result-divider'>
         <p class='very-small margin-top'><i class='fas fa-check icon-green'></i> {{localize 'DSAQUERIES.INFORMATIONREQUEST.approved'}}</p>

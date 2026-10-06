@@ -14,6 +14,7 @@ export default class MagicAnalysisQueryService {
   static QUERY_TYPE = 'dsa5.magicAnalysis';
   static FLAG_KEY = 'magicAnalysisRequest';
   static TEMPLATE = 'systems/dsa5/templates/chat/magic-analysis/magic-analysis-request.hbs';
+  static #activeApprovalDialogs = new Set();
 
   static register() {
     QueryOrchestrator.registerQuery(this.QUERY_TYPE, {
@@ -646,44 +647,51 @@ export default class MagicAnalysisQueryService {
   }
 
   static async #promptAndApplyApproval(messageId) {
-    const message = game.messages.get(messageId);
-    const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
-    if (state.approval?.phase !== 'pending') return;
+    if (!game.user.isGM || this.#activeApprovalDialogs.has(messageId)) return;
 
-    let itemLink = '';
-    const linkUuid = this.#resolveLinkUuid(state);
-    if (linkUuid) {
-      const item = await fromUuid(linkUuid);
-      if (item) itemLink = (await item.toAnchor()).outerHTML;
-    }
+    this.#activeApprovalDialogs.add(messageId);
+    try {
+      const message = game.messages.get(messageId);
+      const state = duplicate(message?.getFlag('dsa5', this.FLAG_KEY) || {});
+      if (state.approval?.phase !== 'pending') return;
 
-    const approval = state.approval;
-    const dialogData = {
-      actorName: approval.actorName,
-      playerName: approval.playerName,
-      itemLink,
-      skillName: approval.skillName,
-      qsEntries: approval.qsEntries,
-      critText: approval.critText,
-      botchText: approval.botchText,
-      failText: approval.failText,
-      critIncluded: approval.critIncluded,
-      botchIncluded: approval.botchIncluded,
-      failIncluded: approval.failIncluded,
-      rolledQS: approval.rolledQS,
-    };
+      let itemLink = '';
+      const linkUuid = this.#resolveLinkUuid(state);
+      if (linkUuid) {
+        const item = await fromUuid(linkUuid);
+        if (item) itemLink = (await item.toAnchor()).outerHTML;
+      }
 
-    const infoName = state.itemName || state.infoContent?.name || '';
-    const result = await InformationQueryService.promptApprovalDialog({
-      dialogData,
-      infoName,
-      approvalData: approval,
-    });
+      const approval = state.approval;
+      const dialogData = {
+        actorName: approval.actorName,
+        playerName: approval.playerName,
+        itemLink,
+        skillName: approval.skillName,
+        qsEntries: approval.qsEntries,
+        critText: approval.critText,
+        botchText: approval.botchText,
+        failText: approval.failText,
+        critIncluded: approval.critIncluded,
+        botchIncluded: approval.botchIncluded,
+        failIncluded: approval.failIncluded,
+        rolledQS: approval.rolledQS,
+      };
 
-    if (result.status === 'approved') {
-      await this.#applyApproval(messageId, result.selected);
-    } else if (result.status !== 'expired') {
-      await this.#rejectApproval(messageId);
+      const infoName = state.itemName || state.infoContent?.name || '';
+      const result = await InformationQueryService.promptApprovalDialog({
+        dialogData,
+        infoName,
+        approvalData: approval,
+      });
+
+      if (result.status === 'approved') {
+        await this.#applyApproval(messageId, result.selected);
+      } else if (result.status !== 'expired') {
+        await this.#rejectApproval(messageId);
+      }
+    } finally {
+      this.#activeApprovalDialogs.delete(messageId);
     }
   }
 
@@ -845,6 +853,10 @@ export default class MagicAnalysisQueryService {
       case 'finalize':
         if (!game.user.isGM) return;
         void this.finalizeRequest(messageId);
+        break;
+      case 'openApproval':
+        if (!game.user.isGM) return;
+        void this.#promptAndApplyApproval(messageId);
         break;
     }
   }

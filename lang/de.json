@@ -5580,6 +5580,7 @@
   },
   "MAGICANALYSIS": {
     "title": "Magische Analyse",
+    "approval": "Genehmigung",
     "subtitle": "Magische Analyse",
     "start": "Magische Analyse beginnen",
     "progressIntro": "Optional: Wende Hellsichtzauber, -liturgien oder Artefakt-Verzauberungen an, um die maximale QS zu erhöhen. Die Magiekunde-Probe kannst du würfeln, sobald regeltechnisch QS möglich sind.",

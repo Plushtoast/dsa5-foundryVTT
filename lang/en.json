@@ -5578,6 +5578,7 @@
   },
   "MAGICANALYSIS": {
     "title": "Magical Analysis",
+    "approval": "Approval",
     "subtitle": "Magical Analysis",
     "start": "Start Magical Analysis",
     "progressIntro": "Optional: apply divination spells, liturgies, or item enchantments to raise the maximum QS. Roll Magical Lore as soon as the rules allow any QS.",
