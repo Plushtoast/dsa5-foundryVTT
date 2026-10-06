@@ -1,3 +1,5 @@
+import { DefaultAppv2 } from '../../actor/baseapp.js';
+
 /**
  * GM canvas toggle that reveals regions carrying a DSA trap behavior
  * while the token controls are active.
@@ -85,37 +87,8 @@ export default class TrapRegionControls {
     this.refreshVisibility();
   }
 
-  static async openManagementDialog() {
-    const action = await foundry.applications.api.DialogV2.wait({
-      window: { title: _loc('REGIONBEHAVIOR_DSATrap.manageTraps') },
-      content: `<p>${_loc('REGIONBEHAVIOR_DSATrap.manageTrapsHint')}</p>`,
-      buttons: [
-        { action: 'rearm', label: _loc('REGIONBEHAVIOR_DSATrap.rearmTraps'), icon: 'fas fa-rotate' },
-        { action: 'disable', label: _loc('REGIONBEHAVIOR_DSATrap.disableAllTraps'), icon: 'fas fa-ban' },
-        { action: 'enable', label: _loc('REGIONBEHAVIOR_DSATrap.enableAllTraps'), icon: 'fas fa-check' },
-        {
-          action: 'visibility',
-          label: _loc(this.#enabled ? 'REGIONBEHAVIOR_DSATrap.hideTraps' : 'REGIONBEHAVIOR_DSATrap.showTraps'),
-          icon: this.#enabled ? 'fas fa-eye-slash' : 'fas fa-eye',
-        },
-        { action: 'cancel', label: _loc('cancel'), icon: 'fas fa-times' },
-      ],
-    });
-
-    switch (action) {
-      case 'rearm':
-        await this.rearmTraps();
-        break;
-      case 'disable':
-        await this.setTrapsDisabled(true);
-        break;
-      case 'enable':
-        await this.setTrapsDisabled(false);
-        break;
-      case 'visibility':
-        this.setEnabled(!this.#enabled);
-        break;
-    }
+  static openManagementDialog() {
+    return TrapManagementDialog.open();
   }
 
   static #trapBehaviors(scene = canvas.scene) {
@@ -180,5 +153,64 @@ export default class TrapRegionControls {
       },
     });
     this.#visibilityPatched = true;
+  }
+}
+
+class TrapManagementDialog extends DefaultAppv2 {
+  static DEFAULT_OPTIONS = {
+    id: 'dsa-trap-management-dialog',
+    classes: ['dsa5'],
+    position: { width: 520 },
+    window: {
+      title: 'REGIONBEHAVIOR_DSATrap.manageTraps',
+      contentClasses: ['standard-form', 'flexcol', 'gap5px'],
+    },
+    actions: {
+      rearmTraps: this.#rearmTraps,
+      disableAllTraps: this.#disableAllTraps,
+      enableAllTraps: this.#enableAllTraps,
+      toggleTrapVisibility: this.#toggleTrapVisibility,
+    },
+  };
+
+  static PARTS = {
+    main: {
+      template: 'systems/dsa5/templates/dialog/trap-management.hbs',
+    },
+  };
+
+  static open() {
+    const existing = foundry.applications.instances.get(this.DEFAULT_OPTIONS.id);
+    if (existing) return existing.bringToTop();
+
+    const dialog = new this();
+    dialog.render(true);
+    return dialog;
+  }
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.showingTraps = TrapRegionControls.enabled;
+    return context;
+  }
+
+  static async #rearmTraps() {
+    await TrapRegionControls.rearmTraps();
+    await this.close();
+  }
+
+  static async #disableAllTraps() {
+    await TrapRegionControls.setTrapsDisabled(true);
+    await this.close();
+  }
+
+  static async #enableAllTraps() {
+    await TrapRegionControls.setTrapsDisabled(false);
+    await this.close();
+  }
+
+  static async #toggleTrapVisibility() {
+    TrapRegionControls.setEnabled(!TrapRegionControls.enabled);
+    await this.close();
   }
 }

@@ -1,0 +1,25 @@
+<section class="flexcol gap5px">
+  <p>{{localize "REGIONBEHAVIOR_DSATrap.manageTrapsHint"}}</p>
+  <div class="flexrow">
+    <button type="button" data-action="rearmTraps">
+      <i class="fas fa-rotate"></i> {{localize "REGIONBEHAVIOR_DSATrap.rearmTraps"}}
+    </button>
+  </div>
+  <div class="flexrow">
+    <button type="button" data-action="disableAllTraps">
+      <i class="fas fa-ban"></i> {{localize "REGIONBEHAVIOR_DSATrap.disableAllTraps"}}
+    </button>
+    <button type="button" data-action="enableAllTraps">
+      <i class="fas fa-check"></i> {{localize "REGIONBEHAVIOR_DSATrap.enableAllTraps"}}
+    </button>
+  </div>
+  <div class="flexrow">
+    <button type="button" data-action="toggleTrapVisibility">
+      {{#if showingTraps}}
+        <i class="fas fa-eye-slash"></i> {{localize "REGIONBEHAVIOR_DSATrap.hideTraps"}}
+      {{else}}
+        <i class="fas fa-eye"></i> {{localize "REGIONBEHAVIOR_DSATrap.showTraps"}}
+      {{/if}}
+    </button>
+  </div>
+</section>
