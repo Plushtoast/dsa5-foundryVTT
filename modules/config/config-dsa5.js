@@ -77,6 +77,7 @@ DSA5.statusEffects = [
     name: 'CONDITION.surprised',
     img: 'icons/svg/hazard.svg',
     description: 'CONDITIONDESCRIPTION.surprised',
+    duration: { value: 5, units: 'seconds' },
   },
   {
     id: 'blind',
