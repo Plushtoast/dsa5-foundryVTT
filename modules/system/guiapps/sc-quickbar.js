@@ -935,9 +935,14 @@ export default class ScQuickbar extends DefaultAppv2 {
       portrait.addEventListener('pointerover', this.#onMemberHoverIn.bind(this));
       portrait.addEventListener('pointerout', this.#onMemberHoverOut.bind(this));
       portrait.addEventListener('dblclick', this.#onPortraitDblClick.bind(this));
+      if (game.user.isGM) {
+        portrait.draggable = true;
+        portrait.addEventListener('dragstart', (event) => this.#onMemberDragStart(event));
+      }
     });
 
     this.element.querySelectorAll('.sc-quickbar-companion').forEach((companion) => {
+      if (game.user.isGM) companion.draggable = true;
       companion.addEventListener('pointerover', (event) => {
         event.stopPropagation();
         this.#onMemberHoverIn(event);
@@ -986,6 +991,17 @@ export default class ScQuickbar extends DefaultAppv2 {
   #onMemberHoverOut(event) {
     this.#highlighted?._onHoverOut(event);
     this.#highlighted = null;
+  }
+
+  #onMemberDragStart(event) {
+    if (!game.user.isGM) return;
+
+    const source = event.target.closest('.sc-quickbar-companion') ?? event.currentTarget;
+    const actor = game.actors.get(source.dataset.actorId);
+    if (!actor) return;
+
+    event.dataTransfer.setData('text/plain', JSON.stringify({ type: 'Actor', uuid: actor.uuid }));
+    event.dataTransfer.effectAllowed = 'copy';
   }
 
   async #onWheelResize(ev) {
