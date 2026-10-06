@@ -2,7 +2,7 @@ import { DefaultAppv2 } from '../../actor/baseapp.js';
 import { FormAppv2 } from '../../actor/formapp.js';
 import QueryOrchestrator from '../queries/query-orchestrator.js';
 import { tabSlider } from '../helpers/view_helper.js';
-import { ActorAvatar, resolveActorTokenImage } from '../helpers/hotbar_actor.js';
+import { ActorAvatar } from '../helpers/hotbar_actor.js';
 
 const { mergeObject, fromUuidSync } = foundry.utils;
 
@@ -91,6 +91,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     showPlayerColor: 2,
     showPlayerName: false,
     preferActorImg: true,
+    preferCompanionImg: true,
     showLatency: false,
     showFps: false,
     hidePlayers: false,
@@ -361,13 +362,17 @@ export default class ScQuickbar extends DefaultAppv2 {
   static #memberEntry(actor) {
     const { tokenId, onScene } = this.#sceneTokenRef(actor);
     const tokenDoc = onScene ? canvas.scene.tokens.get(tokenId) : null;
+    const config = this.readConfig();
+    const avatar = ActorAvatar.resolve(actor, tokenDoc, { preferImg: config.preferActorImg });
+    const companionAvatar = ActorAvatar.resolve(actor, tokenDoc, { preferImg: config.preferCompanionImg });
     const entry = {
       actorId: actor.id,
       tokenId,
       onScene,
       name: tokenDoc?.name ?? actor.name,
-      img: resolveActorTokenImage(actor, tokenDoc),
-      ...this.#companionImage(actor, tokenDoc),
+      img: avatar.src,
+      companionImg: companionAvatar.src,
+      companionImgStyle: companionAvatar.style,
       active: this.#isActiveTurn(actor),
       dimmed: this.isMemberDimmed(actor),
       canViewResources: this.#canViewResources(actor),
@@ -390,11 +395,6 @@ export default class ScQuickbar extends DefaultAppv2 {
     entry.tooltipHtml = this.#memberTooltipHtml(entry.name, entry.resources, entry);
     entry.effects = this.#memberEffectIcons(actor);
     return entry;
-  }
-
-  static #companionImage(actor, tokenDoc) {
-    const avatar = ActorAvatar.resolve(actor, tokenDoc, { preferImg: this.readConfig().preferActorImg });
-    return { companionImg: avatar.src, companionImgStyle: avatar.style };
   }
 
   static #playerPresence(actor) {
@@ -540,6 +540,9 @@ export default class ScQuickbar extends DefaultAppv2 {
     config.showPlayerColor = this.#normalizePlayerColor(config.showPlayerColor);
     config.showPlayerName = !!config.showPlayerName;
     config.preferActorImg = config.preferActorImg !== false;
+    config.preferCompanionImg = Object.hasOwn(stored, 'preferCompanionImg')
+      ? stored.preferCompanionImg !== false
+      : config.preferActorImg;
     config.showLatency = !!config.showLatency;
     config.showFps = !!config.showFps;
     config.hidePlayers = !!config.hidePlayers;
@@ -857,7 +860,7 @@ export default class ScQuickbar extends DefaultAppv2 {
     const config = this.constructor.readConfig();
     const {
       displayMode, companionDisplay, fadedUi, compactResources, showName, sideInfo,
-      showPlayerColor, showPlayerName, showLatency, showFps, hidePlayers, preferActorImg,
+      showPlayerColor, showPlayerName, showLatency, showFps, hidePlayers, preferActorImg, preferCompanionImg,
     } = config;
 
     return [
@@ -896,7 +899,8 @@ export default class ScQuickbar extends DefaultAppv2 {
         'players',
       ),
       this.#toggleOption('SCQUICKBAR.showPlayerName', 'fas fa-user-tag', showPlayerName, 'showPlayerName', { group: 'players' }),
-      this.#toggleOption('SCQUICKBAR.preferActorImg', 'fas fa-image', preferActorImg, 'preferActorImg', { group: 'companions' }),
+      this.#toggleOption('SCQUICKBAR.preferActorImg', 'fas fa-image', preferActorImg, 'preferActorImg', { group: 'display' }),
+      this.#toggleOption('SCQUICKBAR.preferCompanionImg', 'fas fa-image', preferCompanionImg, 'preferCompanionImg', { group: 'companions' }),
       this.#toggleOption('SCQUICKBAR.showLatency', 'fas fa-signal', showLatency, 'showLatency', { group: 'players' }),
       this.#toggleOption('SCQUICKBAR.showFps', 'fas fa-gauge-high', showFps, 'showFps', { group: 'players' }),
       this.#toggleOption('SCQUICKBAR.hidePlayers', 'fas fa-users-slash', hidePlayers, 'hidePlayers', { group: 'players' }),
