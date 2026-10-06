@@ -3,7 +3,7 @@
  * while the token controls are active.
  */
 export default class TrapRegionControls {
-  static TOOL_NAME = 'showTraps';
+  static TOOL_NAME = 'manageTraps';
   static BEHAVIOR_TYPE = 'DSATrap';
 
   static #enabled = false;
@@ -59,12 +59,11 @@ export default class TrapRegionControls {
     return {
       name: this.TOOL_NAME,
       order: 5,
-      title: 'REGIONBEHAVIOR_DSATrap.showTraps',
+      title: 'REGIONBEHAVIOR_DSATrap.manageTraps',
       icon: 'fa-solid fa-land-mine-on',
-      toggle: true,
-      active: this.#enabled,
+      button: true,
       visible: this.shouldShowTool(),
-      onChange: (_event, toggled) => this.setEnabled(toggled),
+      onChange: () => this.openManagementDialog(),
     };
   }
 
@@ -84,6 +83,62 @@ export default class TrapRegionControls {
     if (this.#enabled === next) return;
     this.#enabled = next;
     this.refreshVisibility();
+  }
+
+  static async openManagementDialog() {
+    const action = await foundry.applications.api.DialogV2.wait({
+      window: { title: _loc('REGIONBEHAVIOR_DSATrap.manageTraps') },
+      content: `<p>${_loc('REGIONBEHAVIOR_DSATrap.manageTrapsHint')}</p>`,
+      buttons: [
+        { action: 'rearm', label: _loc('REGIONBEHAVIOR_DSATrap.rearmTraps'), icon: 'fas fa-rotate' },
+        { action: 'disable', label: _loc('REGIONBEHAVIOR_DSATrap.disableAllTraps'), icon: 'fas fa-ban' },
+        { action: 'enable', label: _loc('REGIONBEHAVIOR_DSATrap.enableAllTraps'), icon: 'fas fa-check' },
+        {
+          action: 'visibility',
+          label: _loc(this.#enabled ? 'REGIONBEHAVIOR_DSATrap.hideTraps' : 'REGIONBEHAVIOR_DSATrap.showTraps'),
+          icon: this.#enabled ? 'fas fa-eye-slash' : 'fas fa-eye',
+        },
+        { action: 'cancel', label: _loc('cancel'), icon: 'fas fa-times' },
+      ],
+    });
+
+    switch (action) {
+      case 'rearm':
+        await this.rearmTraps();
+        break;
+      case 'disable':
+        await this.setTrapsDisabled(true);
+        break;
+      case 'enable':
+        await this.setTrapsDisabled(false);
+        break;
+      case 'visibility':
+        this.setEnabled(!this.#enabled);
+        break;
+    }
+  }
+
+  static #trapBehaviors(scene = canvas.scene) {
+    return Array.from(scene?.regions ?? []).flatMap((region) =>
+      Array.from(region.behaviors ?? []).filter((behavior) => behavior.type === this.BEHAVIOR_TYPE),
+    );
+  }
+
+  static async rearmTraps() {
+    const chargedTraps = this.#trapBehaviors().filter((behavior) => {
+      const charges = Number(behavior.system?.charges);
+      return Number.isFinite(charges) && charges > 0;
+    });
+
+    await Promise.all(chargedTraps.map((behavior) => behavior.update({
+      'system.remainingCharges': Number(behavior.system.charges),
+      'system.disarmed': false,
+    })));
+  }
+
+  static async setTrapsDisabled(disabled) {
+    const trapsToUpdate = this.#trapBehaviors().filter((behavior) => Boolean(behavior.disabled) !== disabled);
+    await Promise.all(trapsToUpdate.map((behavior) => behavior.update({ disabled })));
   }
 
   /**
