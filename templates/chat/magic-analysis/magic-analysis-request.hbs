@@ -8,6 +8,16 @@
 
   {{#if notPossible}}
     <p>{{localize 'MAGICANALYSIS.notPossible'}}</p>
+    <div class='group-check-card'>
+      <div class='group-check-results'>
+        {{#each actorRows}}
+          <div class='flexrow flexAlignCenter group-check-result-row gap5px {{resultRowClass}}'>
+            <span class='roll-request-result-label icon flex0 {{resultIconClass}}'><i class='fas {{resultIcon}}'></i></span>
+            {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs actorImg=actorImg actorName=actorName}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
   {{else}}
     <p class='very-small'>{{localize 'MAGICANALYSIS.progressIntro'}}</p>
 

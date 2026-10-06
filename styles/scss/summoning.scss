@@ -322,6 +322,18 @@
     }
 }
 
+.application.dsa5.playerMenu {
+    .window-content {
+        overflow: hidden;
+        min-height: 0;
+
+        > .tab[data-tab].active {
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+    }
+}
+
 .playerMenu {
     .player-menu-unselect {
         position: absolute;

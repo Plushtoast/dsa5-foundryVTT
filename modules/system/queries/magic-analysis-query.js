@@ -191,7 +191,7 @@ export default class MagicAnalysisQueryService {
     })));
 
     if (impossibleStates.length) {
-      messages.push(await this.#createNotPossibleMessage(impossibleStates, possibleStates));
+      messages.push(await this.#createNotPossibleMessage(impossibleStates));
     }
     return messages;
   }
@@ -225,20 +225,27 @@ export default class MagicAnalysisQueryService {
     return state;
   }
 
-  static async #createNotPossibleMessage(impossibleStates, possibleStates) {
-    const possiblePlayerIds = new Set(
-      possibleStates.map((state) => state.recipients[0]?.designatedUserId).filter(Boolean),
-    );
-    const recipients = new Set(game.users.filter((user) => user.isGM).map((user) => user.id));
+  static async #createNotPossibleMessage(impossibleStates) {
+    const gmRecipients = game.users.filter((user) => user.isGM).map((user) => user.id);
 
-    for (const state of impossibleStates) {
-      const playerId = state.recipients[0]?.designatedUserId;
-      if (playerId && !possiblePlayerIds.has(playerId)) recipients.add(playerId);
-    }
+    if (!gmRecipients.length) throw new Error('Cannot send a magical analysis notice without GM recipients.');
 
-    if (!recipients.size) throw new Error('Cannot send a magical analysis notice without recipients.');
+    const recipients = new Set(gmRecipients);
+    if (!game.user.isGM) recipients.add(game.user.id);
 
-    const content = await renderTemplate(this.TEMPLATE, { notPossible: true });
+    const failureStyle = QueryOrchestrator.outcomeDisplay({ status: 'failure' });
+    const actorRows = [...new Map(impossibleStates.map((state) => {
+      const actor = game.actors.get(state.actorId);
+      return [state.actorId, {
+        actorName: actor?.name || state.actorId,
+        actorImg: RollRequestService.getActorPortrait(actor),
+        resultIcon: failureStyle.resultIcon,
+        resultIconClass: failureStyle.resultIconClass,
+        resultRowClass: failureStyle.resultRowClass,
+      }];
+    })).values()];
+
+    const content = await renderTemplate(this.TEMPLATE, { notPossible: true, actorRows });
     const chatData = DSA5_Utility.chatDataSetup(content, 'roll');
     chatData.whisper = [...recipients];
     return ChatMessage.create(chatData);
