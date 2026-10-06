@@ -2624,8 +2624,13 @@ export default class Actordsa5 extends Actor {
   async onUpdateEffectDurations(effects, event, context) {
     if (!DSA5_Utility.isActiveGM()) return;
 
-    const toDelete = [];
-    let expiredItemEffects = false;
+    const toDelete = new Map();
+    let resetActor = false;
+    const queueDeletion = (parent, effectId) => {
+      const effectIds = toDelete.get(parent) || [];
+      effectIds.push(effectId);
+      toDelete.set(parent, effectIds);
+    };
 
     for (const effect of effects) {
       const effectFinished = effect.duration?.expired || ((effect.duration?.remaining ?? Infinity) <= 0);
@@ -2633,7 +2638,11 @@ export default class Actordsa5 extends Actor {
       if (!effect.isExpiryEvent(event, context)) continue;
 
       if (effect.parent !== this) {
-        expiredItemEffects = true;
+        const item = effect.parent;
+        if (item?.documentName === 'Item' && item.parent === this) {
+          queueDeletion(item, effect.id);
+          resetActor = true;
+        }
         continue;
       }
 
@@ -2648,7 +2657,7 @@ export default class Actordsa5 extends Actor {
       if (isLeveledCondition) {
         const durationSeconds = effect.duration.seconds;
         if (!durationSeconds || durationSeconds <= 0) {
-          toDelete.push(effect.id);
+          queueDeletion(this, effect.id);
           continue;
         }
 
@@ -2677,18 +2686,18 @@ export default class Actordsa5 extends Actor {
 
           this._notifyConditionDecay(effect, newValue);
         } else {
-          toDelete.push(effect.id);
+          queueDeletion(this, effect.id);
         }
       } else {
-        toDelete.push(effect.id);
+        queueDeletion(this, effect.id);
       }
     }
 
-    if (toDelete.length) {
-      await this.deleteEmbeddedDocuments('ActiveEffect', toDelete);
-    } else if (expiredItemEffects) {
-      this.reset();
+    for (const [parent, effectIds] of toDelete) {
+      await parent.deleteEmbeddedDocuments('ActiveEffect', effectIds);
     }
+
+    if (resetActor) this.reset();
   }
 
   _notifyConditionDecay(effect, newLevel) {
