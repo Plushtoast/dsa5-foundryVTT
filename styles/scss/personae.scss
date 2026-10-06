@@ -558,7 +558,40 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+
+        &.fas {
+          font-family: var(--font-awesome);
+        }
       }
+
+      .split-status-actions {
+          display: flex;
+          flex: 0 0 auto;
+          flex-wrap: nowrap;
+          gap: 0;
+          width: 4rem;
+
+          .detail-action-btn {
+            box-sizing: border-box;
+            flex: 0 0 2rem;
+            width: 2rem;
+            min-width: 2rem;
+            max-width: 2rem;
+            height: 2rem;
+            justify-content: center;
+            padding: 0;
+            border-radius: 0;
+          }
+
+          .detail-action-btn:first-child {
+            border-radius: var(--personae-radius-sm) 0 0 var(--personae-radius-sm);
+          }
+
+          .detail-action-btn:last-child {
+            border-left: 0;
+            border-radius: 0 var(--personae-radius-sm) var(--personae-radius-sm) 0;
+          }
+        }
 
       .broken-actor-link {
         cursor: default;

@@ -105,6 +105,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   #eventsCalendarMonth = null;
   #selectedEventKey = null;
   #eventsCalendarEntries = new Map();
+  #timelineInitialRender = null;
 
   get title() {
     return _loc(DSAWorldCalendar.selectedCalendar().name);
@@ -1046,6 +1047,22 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const year = Number(sourceEntry.from?.year);
     if (!Number.isFinite(year)) return false;
+
+    if (this.#getEventsViewMode() === 'timeline') {
+      const timelineYear = sourceEntry.recurring ? Math.max(year, this.actualTimeComponents().year) : year;
+      const initialRender = this._setupInfiniteScroll();
+      if (initialRender) await initialRender;
+      if (!this._evtState) return false;
+
+      const yearChunk = await this._ensureYearLoaded(timelineYear);
+      const eventCard = Array.from(yearChunk?.querySelectorAll('.event-card') || [])
+        .find(card => card.dataset.pageUuid === pageUuid && card.dataset.key === calendarKey);
+      if (!eventCard) return false;
+
+      this._scrollToCard(eventCard);
+      return true;
+    }
+
     const entry = (await this.constructor.fromYearCache(year)).find(candidate =>
       candidate.uuid === pageUuid && candidate.calendarKey === calendarKey
     );
@@ -1054,7 +1071,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     this.#eventsCalendarYear = entry.from.year;
     this.#eventsCalendarMonth = entry.from.month;
     this.#selectedEventKey = `${entry.uuid}-${entry.calendarKey}`;
-    await this.#setEventsViewMode('calendar');
+    await this.#renderEventsCalendarMonth();
     return true;
   }
 
@@ -1270,7 +1287,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     if (container.dataset.vscrollInit === '1') {
       this.#connectInfiniteScrollObservers(container, root);
-      return;
+      return this.#timelineInitialRender;
     }
 
     this.#disconnectInfiniteScroll();
@@ -1286,7 +1303,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
     const components = this.actualTimeComponents();
     this.#connectInfiniteScrollObservers(container, root);
-    this._renderInitialYearChunk(components.year, components);
+    this.#timelineInitialRender = this._renderInitialYearChunk(components.year, components);
+    return this.#timelineInitialRender;
   }
 
   #connectInfiniteScrollObservers(container, root) {

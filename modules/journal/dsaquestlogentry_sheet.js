@@ -14,6 +14,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             removeObjective: this.#removeObjective,
             toggleObjectiveDone: this.#toggleObjectiveDone,
             toggleObjectiveVisibility: this.#toggleObjectiveVisibility,
+            toggleQuestStatus: this.#toggleQuestStatus,
             togglePlayerOwner: this.#togglePlayerOwner,
             addLinkedDocument: this.#addLinkedDocument,
             removeLinkedDocument: this.#removeLinkedDocument,
@@ -310,7 +311,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             [`system.quests.${questKey}.objectives.${objectiveKey}`]: {
                 text: _loc('DSAQUESTLOG.newObjectivePlaceholder'),
                 status: 0,
-                visible: true,
+                visible: false,
                 sort: DSAQuestLogEntry.nextSortValue(quest?.objectives),
             },
         });
@@ -328,6 +329,15 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
 
         const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
         await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
+    }
+
+    static async #toggleQuestStatus(event, target) {
+        if (!game.user.isGM) return;
+        const { key } = target.dataset;
+        const quest = this.document.system.quests[key];
+        if (!quest) return;
+
+        await this.document.update({ [`system.quests.${key}.status`]: DSAQuestLogEntry.nextStatus(quest.status) });
     }
 
     static async #toggleObjectiveVisibility(event, target) {

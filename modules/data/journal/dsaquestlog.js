@@ -142,6 +142,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     static createEntryData(dateContext = game.time.calendar.timeToComponents(game.time.worldTime), overrides = {}) {
         return foundry.utils.mergeObject({
             title: _loc('DSAQUESTLOG.newEntryPlaceholder'),
+            visible: false,
             startDate: this.createDateSnapshot(dateContext),
         }, overrides);
     }
@@ -164,6 +165,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
 
     static async prepareQuestEntry(entry, { page = null, key = null } = {}) {
         entry.statusName = _loc(this.STATUS_CHOICES[entry.status] || this.STATUS_CHOICES[1]);
+        Object.assign(entry, this.prepareQuestStatus(entry.status));
         entry.priorityName = _loc(this.PRIORITY_CHOICES[entry.priority] || this.PRIORITY_CHOICES[0]);
         entry.audience = this.#numericValue(entry.audience, 0);
         entry.playerOwners = Array.isArray(entry.playerOwners) ? entry.playerOwners : [];
@@ -264,11 +266,26 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         return { done: false, failed: false, state: 'open', stateIcon: 'fa-circle', stateTooltip: 'DSAQUESTLOG.objectiveStateOpen' };
     }
 
-    static nextObjectiveState(objective) {
-        const status = this.#numericValue(objective.status, 0);
-        if (status === 2) return 0;
-        if (status === 1) return 2;
+    static prepareQuestStatus(status) {
+        const currentStatus = this.#numericValue(status, 0);
+        if (currentStatus === 2) {
+            return { statusActionIcon: 'fa-xmark', statusActionTooltip: 'DSAQUESTLOG.questStatusActionFailed' };
+        }
+        if (currentStatus === 1) {
+            return { statusActionIcon: 'fa-check', statusActionTooltip: 'DSAQUESTLOG.questStatusActionEnded' };
+        }
+        return { statusActionIcon: 'fa-circle', statusActionTooltip: 'DSAQUESTLOG.questStatusActionOpen' };
+    }
+
+    static nextStatus(status) {
+        const currentStatus = this.#numericValue(status, 0);
+        if (currentStatus === 2) return 0;
+        if (currentStatus === 1) return 2;
         return 1;
+    }
+
+    static nextObjectiveState(objective) {
+        return this.nextStatus(objective.status);
     }
 
     static createDocumentReference(uuid = '') {

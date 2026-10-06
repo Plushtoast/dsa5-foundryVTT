@@ -26,6 +26,7 @@ export class QuestLogFeature {
         newQuest: QuestLogFeature.newQuest,
         editQuest: QuestLogFeature.editQuest,
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
+        toggleQuestStatus: QuestLogFeature.toggleQuestStatus,
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
         toggleQuestObjectiveState: QuestLogFeature.toggleQuestObjectiveState,
@@ -264,6 +265,16 @@ export class QuestLogFeature {
         if (!page || !entry) return;
 
         await page.update({ [`system.quests.${questKey}.visible`]: !entry.visible });
+    }
+
+    static async toggleQuestStatus(event, target) {
+        if (!game.user.isGM) return;
+        const page = await fromUuid(target.dataset.questUuid);
+        const questKey = target.dataset.questKey;
+        const quest = page?.system?.quests?.[questKey];
+        if (!page || !quest) return;
+
+        await page.update({ [`system.quests.${questKey}.status`]: DSAQuestLogEntry.nextStatus(quest.status) });
     }
 
     static async toggleQuestObjectiveDone(event, target) {

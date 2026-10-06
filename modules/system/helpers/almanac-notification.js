@@ -160,7 +160,7 @@ export default class AlmanacNotification {
       if (revealed) {
         toasts.push(this.#toast({
           ...payload,
-          change: _loc('CALENDAR.DSA.notifications.questStarted'),
+          change: _loc(choices[Number(next.status)] || choices[0] || 'DSAQUESTLOG.STATUS.0'),
         }));
       } else if (statusChanged) {
         toasts.push(this.#toast({
@@ -171,9 +171,12 @@ export default class AlmanacNotification {
 
       for (const [objectiveKey, objectivePatch] of this.#patches(patch, 'objectives')) {
         const previousObjective = previous?.objectives?.[objectiveKey];
-        if (!previousObjective || objectivePatch.status === undefined) continue;
-        if (Number(objectivePatch.status) === Number(previousObjective.status)) continue;
+        if (!previousObjective) continue;
         const objective = this.#merged(previousObjective, objectivePatch);
+        const objectiveRevealed = objective.visible !== false && previousObjective.visible === false;
+        const objectiveStatusChanged = objectivePatch.status !== undefined
+          && Number(objectivePatch.status) !== Number(previousObjective.status);
+        if (!objectiveRevealed && !objectiveStatusChanged) continue;
         toasts.push(this.#toast({
           ...payload,
           id: this.#toastId('questlog', model, questKey, objectiveKey),
@@ -229,10 +232,11 @@ export default class AlmanacNotification {
     if (user?.isGM) return true;
     if (toast?.kind === 'questlog') {
       if (toast.visible === false) return false;
+      if (toast.objectiveVisible === false) return false;
       const audience = Number(toast.audience) || 0;
       if (audience === 2) return false;
       if (audience === 1) return (toast.playerOwners || []).includes(user.id);
-      return toast.objectiveVisible !== false;
+      return true;
     }
     return toast?.visible !== false;
   }

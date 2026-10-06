@@ -31,15 +31,17 @@
                 {{/if}}
                 {{#if isGM}}
                 <div class='persona-detail-actions flex0'>
+                    
                     <button type='button' class='detail-action-btn edit-btn' data-tooltip='SHEET.EditItem' data-action='editQuest' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'>
                         <i class='fas fa-edit'></i>
                     </button>
                     <button type='button' class='detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.showQuestlogJournal"}}' data-action='openQuestReference' data-uuid='{{uuid}}'>
                         <i class='fas fa-book-open'></i>
                     </button>
-                    <button type='button' class='detail-action-btn delete-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleQuestVisibility' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'>
-                        <i class='fas fa-eye{{ifThen visible "" "-slash"}}'></i>
-                    </button>
+                    <div class='split-status-actions'>
+                        <button type='button' class='icon fas {{statusActionIcon}} detail-action-btn sheet-btn very-small' data-tooltip='{{localize statusActionTooltip}}' data-action='toggleQuestStatus' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'></button>
+                        <button type='button' class='icon fas fa-eye{{ifThen visible "" "-slash"}} detail-action-btn sheet-btn very-small' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleQuestVisibility' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'></button>
+                    </div>
                 </div>
                 {{/if}}
             </div>
