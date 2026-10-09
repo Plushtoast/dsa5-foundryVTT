@@ -1,4 +1,5 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
+import DiceDSA5 from '../rolls/dice-dsa5.js';
 
 /**
  * Player-started trap defenses and typed damage already stored on the trap.
@@ -278,8 +279,9 @@ export default class TrapFlow {
 
   static async rollLine(line) {
     if (!line?.formula || line.kind === 'flat' || line.kind === 'note' || line.needsChance) return line;
-    if (!Roll.validate(line.formula)) return line;
-    const roll = await new Roll(line.formula).evaluate();
+    const formula = DiceDSA5.replaceDieLocalization(line.formula);
+    if (!Roll.validate(formula)) return line;
+    const roll = await new Roll(formula).evaluate();
     return { ...line, total: Number(roll.total) || 0, roll };
   }
 

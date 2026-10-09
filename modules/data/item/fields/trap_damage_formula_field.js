@@ -1,3 +1,5 @@
+import { DICE_CONSTANTS } from '../../../config/dice-constants.js';
+
 const { StringField } = foundry.data.fields;
 
 /**
@@ -9,7 +11,8 @@ export default class TrapDamageFormulaField extends StringField {
   _validateType(value, options) {
     super._validateType(value, options);
     if (!value) return;
-    if (!Roll.validate(value)) {
+    const formula = value.replace(new RegExp(DICE_CONSTANTS.PATTERNS.DIE_LOCALIZATION.source, 'g'), 'd');
+    if (!Roll.validate(formula)) {
       throw new Error(_loc('REGIONBEHAVIOR_DSATrap.FLOW.invalidFormula'));
     }
   }

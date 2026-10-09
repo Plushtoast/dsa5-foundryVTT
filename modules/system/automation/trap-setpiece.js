@@ -358,7 +358,7 @@ export default class TrapSetpiece {
   static async rollChaseDistance(formula) {
     const text = String(formula || '').trim();
     if (!text || !this.isValidDamageFormula?.(text)) return 0;
-    const roll = await new Roll(text).evaluate();
+    const roll = await new Roll(DiceDSA5.replaceDieLocalization(text)).evaluate();
     return Math.max(0, Number(roll.total) || 0);
   }
 

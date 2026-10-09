@@ -24,7 +24,7 @@ export default class TrapAutomation extends TrapSetpiece {
     const text = String(value).trim();
     if (!text) return true;
     if (text.includes('[')) return false;
-    return Roll.validate(text);
+    return DiceDSA5.isValidDamageFormula(text);
   }
 
   static migrateSource(source) {
@@ -584,7 +584,7 @@ export default class TrapAutomation extends TrapSetpiece {
 
   static async #applyUnopposedDamage(actor, strike, behavior, token) {
     const formula = strike?.damageFormula || '';
-    const roll = await new Roll(formula).evaluate();
+    const roll = await new Roll(DiceDSA5.replaceDieLocalization(formula)).evaluate();
     await this.postDamageCard({
       trapName: behavior?.name,
       strikeName: strike?.name,
