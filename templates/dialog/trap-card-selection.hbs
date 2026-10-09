@@ -1,0 +1,23 @@
+<section class="flexcol gap5px">
+  <p>{{localize "REGIONBEHAVIOR_DSATrap.trapCardSelectorHint"}}</p>
+  {{#if hasTraps}}
+    <div class="flexcol gap2px">
+      {{#each traps as |trap|}}
+        <button type="button" class="trap-card-choice" data-action="selectTrap" data-trap-preview data-trap-uuid="{{trap.uuid}}" aria-pressed="false">
+          <span>{{trap.name}}</span>
+          <span class="small">{{trap.regionName}}</span>
+        </button>
+      {{/each}}
+    </div>
+  {{else}}
+    <p>{{localize "REGIONBEHAVIOR_DSATrap.noAvailableTrapsForTrapCard"}}</p>
+  {{/if}}
+  <div class="flexrow">
+    <button type="button" data-action="confirmTrapCard" disabled>
+      <i class="fas fa-user-check"></i> {{localize "REGIONBEHAVIOR_DSATrap.confirmTrapCard"}}
+    </button>
+    <button type="button" data-action="cancel">
+      <i class="fas fa-times"></i> {{localize "cancel"}}
+    </button>
+  </div>
+</section>
