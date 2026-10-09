@@ -67,6 +67,16 @@ export default class ScQuickbar extends DefaultAppv2 {
     2: 'SCQUICKBAR.playerColorBackground',
   };
 
+  static VERTICAL_ANCHOR_CHOICES = {
+    top: 'SCQUICKBAR.anchorTop',
+    bottom: 'SCQUICKBAR.anchorBottom',
+  };
+
+  static HORIZONTAL_ANCHOR_CHOICES = {
+    left: 'SCQUICKBAR.anchorLeft',
+    right: 'SCQUICKBAR.anchorRight',
+  };
+
   static COMPANION_CHOICES = {
     0: 'SCQUICKBAR.companionFull',
     1: 'SCQUICKBAR.companionBeside',
@@ -76,13 +86,15 @@ export default class ScQuickbar extends DefaultAppv2 {
   static DISPLAY_MODE_LABELS = [
     'SCQUICKBAR.displayAll',
     'SCQUICKBAR.displayLoggedIn',
-    'SCQUICKBAR.displayNone',
+    'SCQUICKBAR.displayCollapsed',
   ];
 
   static DEFAULT_CONFIG = {
     displayMode: 0,
     layout: 1,
     size: 64,
+    verticalAnchor: 'bottom',
+    horizontalAnchor: 'left',
     fadedUi: false,
     compactResources: false,
     showName: true,
@@ -533,6 +545,8 @@ export default class ScQuickbar extends DefaultAppv2 {
       this.PORTRAIT_SIZE_MIN,
       this.PORTRAIT_SIZE_MAX,
     );
+    config.verticalAnchor = config.verticalAnchor === 'top' ? 'top' : 'bottom';
+    config.horizontalAnchor = config.horizontalAnchor === 'right' ? 'right' : 'left';
     config.fadedUi = !!config.fadedUi;
     config.compactResources = !!config.compactResources;
     config.showName = config.showName !== false;
@@ -601,12 +615,37 @@ export default class ScQuickbar extends DefaultAppv2 {
     return combatant?.id === game.combat.combatant?.id;
   }
 
-  static #savedPosition() {
+  static #savedPosition({ width, height, vertical, verticalAnchor, horizontalAnchor } = {}) {
     const saved = game.settings.get('dsa5', 'scQuickbarPosition') ?? {};
-    if (Number.isFinite(saved.left) && Number.isFinite(saved.top)) {
+    if (!Number.isFinite(saved.left) || !Number.isFinite(saved.top)) return null;
+    if (width === undefined || height === undefined || vertical === undefined) {
       return { left: saved.left, top: saved.top };
     }
-    return null;
+
+    const layout = vertical ? 0 : 1;
+    if ((saved.layout !== undefined && saved.layout !== layout)
+      || (saved.verticalAnchor !== undefined && saved.verticalAnchor !== verticalAnchor)
+      || (saved.horizontalAnchor !== undefined && saved.horizontalAnchor !== horizontalAnchor)) {
+      return { left: saved.left, top: saved.top };
+    }
+
+    if (vertical && verticalAnchor === 'bottom') {
+      const savedHeight = Number.isFinite(saved.height) ? saved.height : height;
+      const bottom = Number.isFinite(saved.bottom)
+        ? saved.bottom
+        : window.innerHeight - saved.top - savedHeight;
+      return { left: saved.left, top: window.innerHeight - bottom - height };
+    }
+
+    if (!vertical && horizontalAnchor === 'right') {
+      const savedWidth = Number.isFinite(saved.width) ? saved.width : width;
+      const right = Number.isFinite(saved.right)
+        ? saved.right
+        : window.innerWidth - saved.left - savedWidth;
+      return { left: window.innerWidth - right - width, top: saved.top };
+    }
+
+    return { left: saved.left, top: saved.top };
   }
 
   static #verticalControlsHeight(portraitSize) {
@@ -693,10 +732,26 @@ export default class ScQuickbar extends DefaultAppv2 {
   setPosition(position) {
     const currentPosition = super.setPosition(position);
     if (Number.isFinite(currentPosition?.left) && Number.isFinite(currentPosition?.top)) {
-      game.settings.set('dsa5', 'scQuickbarPosition', {
+      const config = this.constructor.readConfig();
+      const rect = this.element?.getBoundingClientRect();
+      const width = Number.isFinite(currentPosition.width) ? currentPosition.width : rect?.width;
+      const height = Number.isFinite(currentPosition.height) ? currentPosition.height : rect?.height;
+      const savedPosition = {
         left: currentPosition.left,
         top: currentPosition.top,
-      });
+        layout: config.layout,
+        verticalAnchor: config.verticalAnchor,
+        horizontalAnchor: config.horizontalAnchor,
+      };
+      if (Number.isFinite(width)) {
+        savedPosition.width = width;
+        savedPosition.right = window.innerWidth - currentPosition.left - width;
+      }
+      if (Number.isFinite(height)) {
+        savedPosition.height = height;
+        savedPosition.bottom = window.innerHeight - currentPosition.top - height;
+      }
+      game.settings.set('dsa5', 'scQuickbarPosition', savedPosition);
     }
     return currentPosition;
   }
@@ -717,6 +772,8 @@ export default class ScQuickbar extends DefaultAppv2 {
       portraitSize,
       displayMode,
       companionDisplay,
+      verticalAnchor,
+      horizontalAnchor,
     } = this.constructor.readDisplaySettings();
     const collapsed = displayMode === this.constructor.DISPLAY_MODE_COLLAPSED;
     const loggedInOnly = displayMode === this.constructor.DISPLAY_MODE_LOGGED_IN;
@@ -741,7 +798,13 @@ export default class ScQuickbar extends DefaultAppv2 {
       showStats: showLatency || showFps,
     });
     const { companionClearance, ...position } = dimensions;
-    const saved = this.constructor.#savedPosition();
+    const saved = this.constructor.#savedPosition({
+      width: position.width,
+      height: position.height,
+      vertical,
+      verticalAnchor,
+      horizontalAnchor,
+    });
 
     mergeObject(options, {
       position: mergeObject(position, saved ?? {}),
@@ -964,10 +1027,17 @@ export default class ScQuickbar extends DefaultAppv2 {
 
     if (this.constructor.#savedPosition()) return;
 
-    const viewportHeight = window.innerHeight;
-    const elementHeight = this.element?.offsetHeight || 88;
-    const top = Math.max(20, viewportHeight - elementHeight - 80);
-    this.setPosition({ top, left: 20 });
+    const { vertical, verticalAnchor, horizontalAnchor } = this.constructor.readDisplaySettings();
+    const rect = this.element?.getBoundingClientRect();
+    const width = rect?.width || 88;
+    const height = rect?.height || 88;
+    const left = !vertical && horizontalAnchor === 'right'
+      ? Math.max(20, window.innerWidth - width - 20)
+      : 20;
+    const top = vertical && verticalAnchor === 'top'
+      ? 20
+      : Math.max(20, window.innerHeight - height - 80);
+    this.setPosition({ top, left });
   }
 
   _onClose(options) {
@@ -1059,6 +1129,7 @@ export class ConfigureScQuickbar extends FormAppv2 {
     },
     actions: {
       resetScQuickbar: this.resetScQuickbar,
+      cycleDisplayMode: this.#cycleDisplayMode,
     },
   };
 
@@ -1068,15 +1139,18 @@ export class ConfigureScQuickbar extends FormAppv2 {
     },
     display: {
       template: 'systems/dsa5/templates/system/sc-quickbar/configure.hbs',
-      scrollable: ['.scrollable'],
+      classes: ['scrollable'],
+      scrollable: [''],
     },
     players: {
       template: 'systems/dsa5/templates/system/sc-quickbar/configure-players.hbs',
-      scrollable: ['.scrollable'],
+      classes: ['scrollable'],
+      scrollable: [''],
     },
     companions: {
       template: 'systems/dsa5/templates/system/sc-quickbar/configure-companions.hbs',
-      scrollable: ['.scrollable'],
+      classes: ['scrollable'],
+      scrollable: [''],
     },
   };
 
@@ -1101,7 +1175,8 @@ export class ConfigureScQuickbar extends FormAppv2 {
       const name = ev.currentTarget.name.split('.');
       let val = ev.currentTarget.value;
       if (ev.currentTarget.type === 'checkbox') val = ev.currentTarget.checked;
-      else if (ev.currentTarget.tagName === 'RANGE-PICKER' || ev.currentTarget.tagName === 'SELECT') val = Number(val);
+      else if (ev.currentTarget.tagName === 'RANGE-PICKER') val = Number(val);
+      else if (ev.currentTarget.tagName === 'SELECT' && Number.isFinite(Number(val))) val = Number(val);
 
       if (name[0] === 'config') {
         await ScQuickbar.patchConfig({ [name[1]]: val });
@@ -1118,11 +1193,22 @@ export class ConfigureScQuickbar extends FormAppv2 {
     mergeObject(data, {
       enableScQuickbar: game.settings.get('dsa5', 'enableScQuickbar'),
       config,
+      displayModeLabel: ScQuickbar.DISPLAY_MODE_LABELS[config.displayMode],
       layoutChoices: ScQuickbar.LAYOUT_CHOICES,
+      verticalAnchorChoices: ScQuickbar.VERTICAL_ANCHOR_CHOICES,
+      horizontalAnchorChoices: ScQuickbar.HORIZONTAL_ANCHOR_CHOICES,
       playerColorChoices: ScQuickbar.PLAYER_COLOR_CHOICES,
       companionChoices: ScQuickbar.COMPANION_CHOICES,
     });
     return data;
+  }
+
+  static async #cycleDisplayMode() {
+    const { displayMode } = ScQuickbar.readConfig();
+    await ScQuickbar.patchConfig({
+      displayMode: (displayMode + 1) % ScQuickbar.DISPLAY_MODE_LABELS.length,
+    });
+    await this.render();
   }
 
   static async resetScQuickbar() {

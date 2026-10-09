@@ -17,6 +17,22 @@
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.resetHint'}}</p>
     </div>
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.displayMode">
+        <label>{{localize 'SCQUICKBAR.displayModeSetting'}}</label>
+        <div class="form-fields">
+            <button type="button" class="sc-quickbar-mode-control" data-action="cycleDisplayMode"
+                data-tooltip="SCQUICKBAR.displayModeSettingHint"
+                aria-label="{{localize 'SCQUICKBAR.displayModeSetting'}}: {{localize displayModeLabel}}">
+                <span>{{localize displayModeLabel}}</span>
+                <span class="sc-quickbar-mode-pips" aria-hidden="true">
+                    <i class="{{#if (eq config.displayMode 0)}}active{{/if}}"></i>
+                    <i class="{{#if (eq config.displayMode 1)}}active{{/if}}"></i>
+                    <i class="{{#if (eq config.displayMode 2)}}active{{/if}}"></i>
+                </span>
+            </button>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.displayModeSettingHint'}}</p>
+    </div>
     <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.size">
         <label>{{localize 'SCQUICKBAR.size'}}</label>
         <div class="form-fields">
@@ -33,6 +49,27 @@
         </div>
         <p class="hint">{{localize 'SCQUICKBAR.layoutHint'}}</p>
     </div>
+    {{#if (eq config.layout 0)}}
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.verticalAnchor">
+        <label>{{localize 'SCQUICKBAR.verticalAnchor'}}</label>
+        <div class="form-fields">
+            <select name="config.verticalAnchor">
+                {{selectOptions verticalAnchorChoices selected=config.verticalAnchor localize=true}}
+            </select>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.verticalAnchorHint'}}</p>
+    </div>
+    {{else}}
+    <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.horizontalAnchor">
+        <label>{{localize 'SCQUICKBAR.horizontalAnchor'}}</label>
+        <div class="form-fields">
+            <select name="config.horizontalAnchor">
+                {{selectOptions horizontalAnchorChoices selected=config.horizontalAnchor localize=true}}
+            </select>
+        </div>
+        <p class="hint">{{localize 'SCQUICKBAR.horizontalAnchorHint'}}</p>
+    </div>
+    {{/if}}
     <div class="form-group" data-setting-id="dsa5.scQuickbarConfig.showName">
         <label>{{localize 'SCQUICKBAR.showName'}}</label>
         <div class="form-fields">

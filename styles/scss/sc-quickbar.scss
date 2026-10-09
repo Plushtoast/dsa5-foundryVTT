@@ -501,8 +501,16 @@
   gap: 8px;
 }
 
-#context-menu .sc-context-tristate {
-  margin-left: auto;
+.sc-quickbar-mode-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  width: 100%;
+}
+
+#context-menu .sc-context-tristate,
+.sc-quickbar-mode-pips {
   display: inline-flex;
   gap: 3px;
 
@@ -517,4 +525,9 @@
       opacity: 1;
     }
   }
+}
+
+#context-menu .sc-context-tristate,
+.sc-quickbar-mode-pips {
+  margin-left: auto;
 }
