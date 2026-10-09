@@ -43,7 +43,7 @@
                 <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
                     {{#each dice}}
                         <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleDie" data-index="{{this.index}}">
-                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>
+                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} {{this.die}}">{{this.currentValue}}</span>
                         </a>
                     {{/each}}
                 </div>
@@ -76,7 +76,7 @@
                 <div class="card-content hide-option roll-result center flexrow flexAlignCenter">
                     {{#each dice}}
                         <a class="dieButton {{#if this.selected}}dieSelected{{/if}}" data-action="toggleImprove" data-index="{{this.index}}">
-                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} d20">{{this.currentValue}}</span>
+                            <span data-tooltip="{{this.tooltip}}" class="{{this.cssClass}} die-{{this.attr}} {{this.die}}">{{this.currentValue}}</span>
                         </a>
                     {{/each}}
                 </div>

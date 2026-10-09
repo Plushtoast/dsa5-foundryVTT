@@ -136,6 +136,7 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
                     index: i,
                     currentValue: item.res,
                     attr,
+                    die: item.die || 'd20',
                     cssClass: item.suc ? 'suc' : 'fail',
                     tooltip: item.tar ? `${_loc(item.char === 'attack' ? 'Attack' : item.char === 'parry' ? 'Parry' : `CHAR.${item.char.toUpperCase()}`)} vs ${item.tar}` : '',
                     selected: this.tabGroups.sheet === 'reroll' ? this.selectedForReroll.has(i) : this.selectedForImprove === i,
@@ -457,7 +458,7 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
         newRerollDie.dice.forEach((die) => { die.options.colorset = FateRolls.DICE_COLOR_BLACK; });
         await DiceDSA5.showDiceSoNice(newRerollDie, data.messageMode);
 
-        let finalRoll = Roll.fromData(originalRoll.toJSON());
+        const finalRoll = Roll.fromData(originalRoll.toJSON());
         let newResultFlatIndex = 0;
         const damageChangesHtml = [];
         newRerollDie.terms.forEach((term) => {
@@ -465,9 +466,10 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
             term.results.forEach((res) => {
                 const map = diceMapping[newResultFlatIndex];
                 const faces = originalRoll.terms[map.termIdx].faces;
-                const formatted = FateRolls.formatDieChange(map.originalResult, res.result, { char: 'damage', faces });
+                const finalValue = Math.max(map.originalResult, res.result);
+                const formatted = FateRolls.formatDieChange(map.originalResult, finalValue, { char: 'damage', faces });
                 damageChangesHtml.push(formatted.html);
-                finalRoll.terms[map.termIdx].results[map.resIdx].result = res.result;
+                finalRoll.terms[map.termIdx].results[map.resIdx].result = finalValue;
                 newResultFlatIndex++;
             });
         });

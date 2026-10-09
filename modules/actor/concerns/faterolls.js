@@ -38,6 +38,7 @@ export class FateRolls {
         DSA5_Utility.clearUserTargets();
         const { damageRoll } = data.postData;
         const rollFormula = damageRoll.formula || damageRoll._formula;
+        const originalRoll = DiceDSA5.fromRollData(damageRoll);
         const newRoll = await DiceDSA5.manualRolls(
             await new Roll(rollFormula).evaluate(),
             'CHATCONTEXT.rerollDamage',
@@ -46,7 +47,10 @@ export class FateRolls {
         newRoll.dice.forEach(die => die.options.colorset = this.DICE_COLOR_BLACK);
         await DiceDSA5.showDiceSoNice(newRoll, newTestData.messageMode);
         await ChatMessage.create(DSA5_Utility.chatDataSetup(infoMsg));
-        newTestData.damageRoll = foundry.utils.duplicate(newRoll);
+        const originalTotal = Number(originalRoll?.total ?? damageRoll.total);
+        newTestData.damageRoll = foundry.utils.duplicate(
+            Number.isFinite(originalTotal) && originalTotal > newRoll.total ? (originalRoll ?? damageRoll) : newRoll
+        );
         await actor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: message });
         await message.update({ [`flags.data.${this.FLAGS.FATE_DAMAGE_REROLL}`]: true });
         await this.reduceSchips(actor, schipsource);
@@ -492,7 +496,7 @@ export class FateRolls {
      * @param {number[]} diceIndices - Indices of dice to reroll
      * @param {Object} testData - Test data containing roll information
      * @param {string} rollContext - Localization key for roll context
-     * @param {boolean} useMinimum - Whether to use minimum of old/new values (talented rule)
+     * @param {boolean} useMinimum - Whether d20s keep the lower old/new result (talented rule)
      * @param {Object} actor - The actor (for Phex tradition check)
      * @param {boolean} isPhex - Whether actor has Phex tradition
      * @param {number[]|null} cheatResults - Optional forced die results (same order as diceIndices)
@@ -525,16 +529,15 @@ export class FateRolls {
             const term = testData.roll.terms[dieIndex * 2];
             const newValue = newRoll.terms[rollIndex * 2].results[0].result;
             const originalValue = term.results[0].result;
-            const formatted = this.formatDieChange(originalValue, newValue, {
+            const finalValue = Number(term.faces) === 20
+                ? (useMinimum || isPhex ? Math.min(newValue, originalValue) : newValue)
+                : Math.max(newValue, originalValue);
+            const formatted = this.formatDieChange(originalValue, finalValue, {
                 char: this.#dieCharForIndex(testData, dieIndex),
                 faces: term.faces,
             });
             changedRolls.push(formatted.html);
             changedRollsText.push(formatted.text);
-            let finalValue = newValue;
-            if (useMinimum || isPhex) {
-                finalValue = Math.min(newValue, originalValue);
-            }
             changes.push({ index: dieIndex, val: finalValue });
         });
         testData.roll.editRollAtIndex(changes);
