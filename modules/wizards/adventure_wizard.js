@@ -115,8 +115,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       const journal = await fromUuid(uuid);
       if (journal) this.#recordNavigation();
       await this.showJournal(journal);
-    }
-    else if (ev.button == 2) this.unpinJournal(uuid);
+    } else if (ev.button == 2) this.unpinJournal(uuid);
   }
 
   static async _getChapter(ev, target) {
@@ -327,6 +326,8 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
     const books = this.readCustomBooksSetting().filter((entry) => entry.id !== id);
     await game.settings.set('dsa5', BookWizard.#customBooksSettingKey, books);
+    this.#historyBack = this.#historyBack.filter((state) => state.bookType !== 'customBooks' || state.bookId !== id);
+    this.#historyForward = this.#historyForward.filter((state) => state.bookType !== 'customBooks' || state.bookId !== id);
 
     const permissions = game.settings.get('dsa5', 'expansionPermissions');
     if (permissions[id] !== undefined) {

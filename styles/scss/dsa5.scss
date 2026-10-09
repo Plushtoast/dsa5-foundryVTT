@@ -470,6 +470,16 @@ table.infoTable {
   }
 }
 
+.dsabuttonbar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  > button:not(:first-child):not(:last-child) {
+    border-radius: 0;
+  }
+}
+
 .combatGripControls {
   justify-content: center;
   width: 100%;
