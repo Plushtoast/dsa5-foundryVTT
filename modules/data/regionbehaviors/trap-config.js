@@ -101,7 +101,10 @@ export default class DSATrapRegionBehaviorConfig extends foundry.applications.sh
     const type = target.closest('fieldset')?.querySelector('[data-trap-add]')?.value;
     if (!kind || !type) return;
     const id = await this.document.system.addFlowEntry(kind, type);
-    if (id) this.tabGroups[TrapFlow.tabGroup(kind)] = id;
+    if (id) {
+      this.tabGroups[TrapFlow.tabGroup(kind)] = id;
+      this.render({ force: true });
+    }
   }
 
   static async deleteTrapFlow(_event, target) {
