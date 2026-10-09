@@ -97,6 +97,9 @@
         {{/each}}
     </div>
     {{/if}}
+    {{#if poisonButton}}
+    <div class="roll-request-card">{{{poisonButton}}}</div>
+    {{/if}}
     <div class="trap-announce-details-wrap dsamt-2">
         {{#if catacombsRules}}
         <a class="trap-handling trap-announce-rules" data-action="openTrapRules" data-tooltip="REGIONBEHAVIOR_DSATrap.rulesJournalHint"><i class="fas fa-circle-info"></i></a>

@@ -94,10 +94,11 @@ export default class ItemPoison {
     return item || null;
   }
 
-  static chatButton(poison) {
+  static chatButton(poison, tokenUuid = '') {
     if (!poison?.name) return '';
     const esc = foundry.utils.escapeHTML;
-    return `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${esc(poison.name)}" data-type="poison" data-pack="${esc(poison.pack || '')}" data-itemid="${esc(poison.itemId || '')}" data-uuid="${esc(poison.uuid || '')}"><i class="fas fa-dice"></i>${esc(_loc('TYPES.Item.poison'))}: ${esc(poison.name)}</a>`;
+    const tokenAttribute = tokenUuid ? ` data-token-uuid="${esc(tokenUuid)}"` : '';
+    return `<a class="roll-button roll-item" data-removecharge="${!poison.permanent}" data-name="${esc(poison.name)}" data-type="poison" data-pack="${esc(poison.pack || '')}" data-itemid="${esc(poison.itemId || '')}" data-uuid="${esc(poison.uuid || '')}"${tokenAttribute}><i class="fas fa-dice"></i>${esc(_loc('TYPES.Item.poison'))}: ${esc(poison.name)}</a>`;
   }
 
   static async handleChatRoll({ actor, speaker, dataset = {}, message } = {}) {
@@ -128,9 +129,10 @@ export default class ItemPoison {
   }
 
   static async #ensureVictimTarget({ speaker, dataset, message } = {}) {
-    if (game.user.targets?.size) return;
+    const tokenUuid = dataset?.tokenUuid || dataset?.tokenuuid;
+    if (!tokenUuid && game.user.targets?.size) return;
 
-    const uuid = dataset.tokenUuid || dataset.tokenuuid || message?.flags?.dsa5?.zoneAttack?.targetTokenUuid;
+    const uuid = tokenUuid || message?.flags?.dsa5?.zoneAttack?.targetTokenUuid;
     let token = null;
     if (uuid) {
       try {

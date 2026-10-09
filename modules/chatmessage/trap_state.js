@@ -11,6 +11,7 @@ import ChatCardBump from "../system/sidebar/chat-card-bump.js";
 import { DICE_CONSTANTS } from "../config/dice-constants.js";
 import Actordsa5 from "../actor/actor-dsa5.js";
 import FallingDamageHelper from "../actor/concerns/falling-damage-helper.js";
+import ItemPoison from "../item/item-poison.js";
 
 const { duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -87,6 +88,10 @@ export class TrapState extends ChatMessageState {
         const areaTarget = stored.target || TrapAutomation.areaTargetFrom(this.behavior.system, this.region);
         const applyDamageInChat = game.settings.get('dsa5', 'applyDamageInChat');
         const offers = this.#offers(stored);
+        const payload = TrapAutomation.payloadFromBehavior(this.behavior);
+        const poisonButton = stored.triggered && !offers.length
+            ? ItemPoison.chatButton(payload.flags?.poison, this.token?.uuid)
+            : '';
         const damageLines = (stored.flow?.lines || []).map((line) => ({
             ...line,
             hasAreaTemplate: Boolean(areaTarget) && TrapAutomation.lineOffersArea(line),
@@ -120,12 +125,13 @@ export class TrapState extends ChatMessageState {
             disarmDuration: [1, 5, 5][complexity],
             payloadHint: (() => {
                 try {
-                    return TrapAutomation.hitExtrasMarkup(TrapAutomation.payloadFromBehavior(this.behavior)) || '';
+                    return TrapAutomation.hitExtrasMarkup(payload, { includePoison: false }) || '';
                 } catch (err) {
                     console.warn(err);
                     return '';
                 }
             })(),
+            poisonButton,
             passwordRequired: Boolean(this.behavior.system.passwordRequired),
             remainingCharges: this.behavior.system.remainingCharges,
             charges: this.behavior.system.charges,

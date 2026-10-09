@@ -321,10 +321,12 @@ export default class TrapAutomation extends TrapSetpiece {
     };
   }
 
-  static hitExtrasMarkup(payload = {}) {
+  static hitExtrasMarkup(payload = {}, { includePoison = true } = {}) {
+    const flags = { ...(payload.flags || {}) };
+    if (!includePoison) delete flags.poison;
     return DiceDSA5.parseEffect({
       system: { effect: { value: '' } },
-      flags: { dsa5: payload.flags || {} },
+      flags: { dsa5: flags },
     });
   }
 
