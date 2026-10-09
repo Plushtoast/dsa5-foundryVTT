@@ -1,5 +1,6 @@
 import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
+import { CalendarWidget } from './calendarwidget.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import { PersonaeDramatis } from './personaedramatis.js';
@@ -428,12 +429,14 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   }
 
   #getChronologicalSortKey(entry) {
-    const day = entry?.from?.day;
-    if (typeof day === 'number') return day;
-
     const month = entry?.from?.month;
     const dayOfMonth = entry?.from?.dayOfMonth;
-    return month * 100 + dayOfMonth;
+    const months = game.time.calendar.months.values;
+    let dayOffset = 0;
+    for (let index = 0; index < month; index += 1) {
+      dayOffset += months[index].days;
+    }
+    return dayOffset + dayOfMonth - 1;
   }
 
   #tryScrollToToday() {
@@ -943,7 +946,16 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async _confirmDateChange() {
     if (this.#temporaryTime === null) return;
 
-    await game.time.set(this.#temporaryTime);
+    const skipTimeAnimation = Math.abs(this.#temporaryTime - game.time.worldTime) >= DSAClock.secondsPerDay;
+    if (skipTimeAnimation) CalendarWidget.skipNextTimeAnimation = true;
+
+    try {
+      await game.time.set(this.#temporaryTime);
+    } finally {
+      if (skipTimeAnimation && CalendarWidget.skipNextTimeAnimation) {
+        CalendarWidget.skipNextTimeAnimation = false;
+      }
+    }
 
     this.#temporaryTime = null;
 
@@ -1467,11 +1479,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
 
       if (shouldPlaceTodayMarker && !todayMarkerInserted && entry.from.month === todayMonth) {
         const entryStart = Number(entry?.from?.dayOfMonth);
-        const entryEnd = Number(entry?.to?.dayOfMonth ?? entryStart);
-        if (Number.isFinite(entryStart) && Number.isFinite(entryEnd)) {
-          if (todayDay <= entryStart || (entryStart <= todayDay && todayDay <= entryEnd)) {
-            appendTodayMarker();
-          }
+        if (Number.isFinite(entryStart) && todayDay <= entryStart) {
+          appendTodayMarker();
         }
       }
 
