@@ -51,11 +51,18 @@
     {{#if stall.hasBuyer}}
     {{#if stall.isCards}}
     {{#unless stall.presentationMode}}
-    {{#unless stall.isLoot}}
-    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="toggleSellMode">{{localize 'MERCHANT.stall.sell'}}</button>
+    {{#if stall.isLoot}}
+    <button type="button" class="sheetButton {{#unless stall.sellMode}}active{{/unless}}" data-action="setLootInventory"
+      data-inventory="loot" aria-pressed="{{#unless stall.sellMode}}true{{else}}false{{/unless}}">
+      {{localize 'MERCHANT.stall.inventoryOf' name=document.name}}
+    </button>
+    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="setLootInventory"
+      data-inventory="tradeFriend" aria-pressed="{{#if stall.sellMode}}true{{else}}false{{/if}}">
+      {{localize 'MERCHANT.stall.inventoryOf' name=tradeFriend.name}}
+    </button>
     {{else}}
-    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="toggleSellMode">{{localize 'MERCHANT.exchange'}}</button>
-    {{/unless}}
+    <button type="button" class="sheetButton {{#if stall.sellMode}}active{{/if}}" data-action="toggleSellMode">{{localize 'MERCHANT.stall.sell'}}</button>
+    {{/if}}
     {{/unless}}
     {{/if}}
     {{/if}}

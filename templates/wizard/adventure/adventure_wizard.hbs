@@ -9,18 +9,24 @@
         <div class='col tocList scrollable flex1'>
           {{{toc}}}
         </div>
-        <footer class='tocPageNav action-buttons flexrow flexAlignCenter' {{#unless showPageNav}}hidden{{/unless}}>
-          <button class='button_30px' data-action='movePage' type='button' data-direction='previous' data-tooltip='Previous Page'>
+        <footer class='tocPageNav action-buttons flexrow flexAlignCenter' {{#unless showHistoryNav}}hidden{{/unless}}>
+          <button class='button_30px' data-action='navigateHistory' type='button' data-direction='back' data-tooltip="{{localize 'Book.historyBack'}}" aria-label="{{localize 'Book.historyBack'}}" {{#unless canGoBack}}disabled{{/unless}}>
+            <i class='fa-solid fa-clock-rotate-left'></i>
+          </button>
+          <button class='button_30px' data-page-navigation data-action='movePage' type='button' data-direction='previous' data-tooltip='Previous Page' {{#unless showPageNav}}hidden{{/unless}}>
             <i class='fa-solid fa-chevron-left'></i>
           </button>
-          <button class='button_30px' data-action='library' type='button' data-tooltip="{{localize 'Book.home'}}">
+          <button class='button_30px' data-page-navigation data-action='library' type='button' data-tooltip="{{localize 'Book.home'}}" {{#unless showPageNav}}hidden{{/unless}}>
             <i class='fas fa-book'></i>
           </button>
-          <button class='button_30px' data-action='increaseFontSize' type='button' data-tooltip="{{localize 'SHEET.increaseFontSize'}}" aria-label="{{localize 'SHEET.increaseFontSize'}}">
+          <button class='button_30px' data-page-navigation data-action='increaseFontSize' type='button' data-tooltip="{{localize 'SHEET.increaseFontSize'}}" aria-label="{{localize 'SHEET.increaseFontSize'}}" {{#unless showPageNav}}hidden{{/unless}}>
             <i class='fas fa-text-height'></i>
           </button>
-          <button class='button_30px' data-action='movePage' type='button' data-direction='next' data-tooltip='Next Page'>
+          <button class='button_30px' data-page-navigation data-action='movePage' type='button' data-direction='next' data-tooltip='Next Page' {{#unless showPageNav}}hidden{{/unless}}>
             <i class='fa-solid fa-chevron-right'></i>
+          </button>
+          <button class='button_30px' data-action='navigateHistory' type='button' data-direction='forward' data-tooltip="{{localize 'Book.historyForward'}}" aria-label="{{localize 'Book.historyForward'}}" {{#unless canGoForward}}disabled{{/unless}}>
+            <i class='fa-solid fa-clock-rotate-right'></i>
           </button>
         </footer>
       </div>

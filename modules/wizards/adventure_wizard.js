@@ -27,6 +27,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   #hoverShowTimer;
   #hoverHideTimer;
   #activePreviewKey;
+  #historyBack = [];
+  #historyForward = [];
+
+  static NAVIGATION_HISTORY_LIMIT = 10;
 
   constructor(app) {
     super(app);
@@ -107,12 +111,20 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
   static async _openPin(ev, target) {
     const uuid = target.dataset.uuid;
 
-    if (ev.button == 0) this.showJournal(await fromUuid(uuid));
+    if (ev.button == 0) {
+      const journal = await fromUuid(uuid);
+      if (journal) this.#recordNavigation();
+      await this.showJournal(journal);
+    }
     else if (ev.button == 2) this.unpinJournal(uuid);
   }
 
-  static _getChapter(ev, target) {
-    this.#getChapter($(target).closest('.tocList').attr('data-type'), target.dataset.id);
+  static async _getChapter(ev, target) {
+    const selectedType = $(target).closest('.tocList').attr('data-type');
+    if (this.selectedType !== selectedType || this.selectedChapter !== target.dataset.id || this.content) {
+      this.#recordNavigation();
+    }
+    await this.#getChapter(selectedType, target.dataset.id);
   }
 
   #getChapter(selectedType, selectedChapter) {
@@ -121,7 +133,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.content = undefined;
     this.pageTocs = undefined;
     this.selectedSubChapter = undefined;
-    this.loadPage($(this.element));
+    return this.loadPage($(this.element));
   }
 
   static async _subChapter(ev, target) {
@@ -134,11 +146,14 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
           behavior: 'smooth',
         });
       } else {
+        this.#recordNavigation();
         await this.loadJournalById(jid);
       }
     } else {
       html.find('.subChapter').removeClass('selected');
       html.find(`[data-id="${name}"]`).addClass('selected');
+      const journal = this.journals.find((x) => x.name == name && x.flags.dsa5.parent == this.selectedChapter);
+      if (journal && journal.id !== this.selectedSubChapter) this.#recordNavigation();
       await this.loadJournal(name);
     }
 
@@ -151,6 +166,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   static async _increaseFontSize(ev, target) {
     await increaseFontSize($(this.element).find('.chapter'), 'journalFontSizeIndex', target);
+  }
+
+  static async _navigateHistory(_ev, target) {
+    await this.#traverseHistory(target.dataset.direction);
   }
 
   static DEFAULT_OPTIONS = {
@@ -172,6 +191,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       fulltextsearch: this._fulltextsearch,
       openPin: { handler: this._openPin, buttons: [0, 2] },
       movePage: this._movePage,
+      navigateHistory: this._navigateHistory,
       getChapter: this._getChapter,
       subChapter: this._subChapter,
       selectLibraryView: this._selectLibraryView,
@@ -341,9 +361,88 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     this.selectedSubChapter = undefined;
   }
 
+  #captureNavigationState() {
+    if (!this.book) return { bookId: null };
+
+    return {
+      bookId: this.book.id,
+      bookType: this.currentType,
+      selectedType: this.selectedType,
+      selectedChapter: this.selectedChapter,
+      selectedSubChapter: this.selectedSubChapter,
+      content: this.content,
+    };
+  }
+
+  #sameNavigationState(first, second) {
+    if (!first || !second || first.bookId !== second.bookId) return false;
+    if (first.bookId === null) return true;
+
+    return (
+      first.bookType === second.bookType &&
+      first.selectedType === second.selectedType &&
+      first.selectedChapter === second.selectedChapter &&
+      first.selectedSubChapter === second.selectedSubChapter &&
+      first.content === second.content
+    );
+  }
+
+  #pushNavigationState(stack, state) {
+    stack.push(state);
+    if (stack.length > BookWizard.NAVIGATION_HISTORY_LIMIT) stack.shift();
+  }
+
+  #recordNavigation() {
+    const state = this.#captureNavigationState();
+    if (!this.#sameNavigationState(this.#historyBack.at(-1), state)) this.#pushNavigationState(this.#historyBack, state);
+    this.#historyForward.length = 0;
+    this.#updatePageNav();
+  }
+
+  async #traverseHistory(direction) {
+    if (!['back', 'forward'].includes(direction)) throw new Error(`Invalid journal browser history direction: ${direction}`);
+
+    const source = direction === 'back' ? this.#historyBack : this.#historyForward;
+    const destination = direction === 'back' ? this.#historyForward : this.#historyBack;
+    const target = source.at(-1);
+    if (!target) return;
+
+    const current = this.#captureNavigationState();
+    await this.#restoreNavigationState(target);
+    source.pop();
+    this.#pushNavigationState(destination, current);
+    this.#updatePageNav();
+  }
+
+  async #restoreNavigationState(state) {
+    const html = $(this.element);
+    if (state.bookId === null) {
+      this.#resetBook();
+    } else {
+      if (!state.bookType || !Array.isArray(this[state.bookType]) || !this[state.bookType].some((book) => book.id === state.bookId)) {
+        throw new Error(`Journal browser history book is no longer available: ${state.bookId}`);
+      }
+
+      if (this.book?.id !== state.bookId || this.currentType !== state.bookType) {
+        await this.loadBook(state.bookId, html, state.bookType, false);
+      }
+      if (this.book?.id !== state.bookId || this.currentType !== state.bookType || !this.journals) {
+        throw new Error(`Unable to restore journal browser history for book: ${state.bookId}`);
+      }
+
+      this.selectedType = state.selectedType;
+      this.selectedChapter = state.selectedChapter;
+      this.selectedSubChapter = state.selectedSubChapter;
+      this.content = state.content;
+    }
+
+    await this.loadPage(html);
+  }
+
   _showBooks() {
+    if (this.book) this.#recordNavigation();
     this.#resetBook();
-    this.loadPage($(this.element));
+    return this.loadPage($(this.element));
   }
 
   async toggleBookVisibility(id, type, toggle) {
@@ -654,30 +753,32 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     }
 
     const curChapterIndex = flattenedChapters.findIndex((x) => x == this.selectedChapter);
-    this.bookData.chapters.findIndex((x) => x.name == this.selectedChapter);
+    let targetChapter = this.selectedChapter;
 
     if (dir == 'next') targetindex++;
     else targetindex--;
 
     if (targetindex < 0) {
-      this.selectedChapter = flattenedChapters[curChapterIndex - 1];
-      if (!this.selectedChapter) return;
+      targetChapter = flattenedChapters[curChapterIndex - 1];
+      if (!targetChapter) return;
 
-      journals = (await this.getPagy(this.selectedChapter, undefined)).journals;
+      journals = (await this.getPagy(targetChapter, undefined)).journals;
       targetindex = 0;
     } else if (targetindex >= journals.length) {
-      this.selectedChapter = flattenedChapters[curChapterIndex + 1];
-      if (!this.selectedChapter) return;
+      targetChapter = flattenedChapters[curChapterIndex + 1];
+      if (!targetChapter) return;
 
-      journals = (await this.getPagy(this.selectedChapter, undefined)).journals;
+      journals = (await this.getPagy(targetChapter, undefined)).journals;
       targetindex = 0;
     }
 
-    if (['prep', 'foundryUsage'].includes(this.selectedChapter)) return;
+    if (['prep', 'foundryUsage'].includes(targetChapter)) return;
 
     const journal = journals[targetindex];
 
     if (journal) {
+      this.#recordNavigation();
+      this.selectedChapter = targetChapter;
       await this.loadJournalById(journal.id);
     }
 
@@ -923,6 +1024,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         //todo make this work for pages
         if (dataset.type != 'JournalEntryPage') {
           ev.stopPropagation();
+          this.#recordNavigation();
           this.loadJournalById(dataset.id);
         }
       }
@@ -953,15 +1055,19 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
     ).render(true);
   }
 
-  async loadBook(id, html, type) {
+  async loadBook(id, html, type, recordHistory = true) {
+    if (!type) type = this.currentType;
+    const nextBook = this[type]?.find((x) => x.id == id);
+    if (recordHistory && nextBook && (this.book?.id !== id || this.currentType !== type || this.selectedChapter || this.content)) {
+      this.#recordNavigation();
+    }
+
     this.selectedChapter = undefined;
     this.selectedType = undefined;
     this.content = undefined;
 
-    if (!type) type = this.currentType;
-
     this.currentType = type;
-    this.book = this[type].find((x) => x.id == id);
+    this.book = nextBook;
     if (!this.book) return;
 
     if (type === 'customBooks') {
@@ -979,7 +1085,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       this.journals = await journal.getDocuments();
       this.checkChapters(journal);
       await this.recordRecentBook(type, id);
-      this.loadPage(html);
+      await this.loadPage(html);
       return;
     }
 
@@ -1004,7 +1110,7 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
         }
         this.checkChapters(journal);
         await this.recordRecentBook(type, id);
-        this.loadPage(html);
+        await this.loadPage(html);
       });
   }
 
@@ -1437,7 +1543,11 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   #updatePageNav(html = $(this.element)) {
     const footer = html.find('.tocPageNav')[0];
-    if (footer) footer.hidden = !this.book;
+    if (footer) footer.hidden = !this.book && !this.#historyBack.length && !this.#historyForward.length;
+    for (const button of html.find('[data-page-navigation]')) button.hidden = !this.book;
+    for (const button of html.find('[data-action="navigateHistory"]')) {
+      button.disabled = button.dataset.direction === 'back' ? !this.#historyBack.length : !this.#historyForward.length;
+    }
   }
 
   async _prepareContext(_options) {
@@ -1452,6 +1562,9 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
       breadcrumbs: this.renderBreadcrumbs(),
       toc,
       fontSize,
+      showHistoryNav: !!this.book || !!this.#historyBack.length || !!this.#historyForward.length,
+      canGoBack: !!this.#historyBack.length,
+      canGoForward: !!this.#historyForward.length,
       showPageNav: !!this.book,
     });
     return data;
@@ -1512,9 +1625,10 @@ export default class BookWizard extends DragMixin(DefaultAppv2) {
 
   async loadBookAndPage(book, chapter, bookType, chapterCategory) {
     //todo figure out booktype, chapterCategory automatically
+    this.#recordNavigation();
     this.#resetBook();
-    await this.loadBook(book, $(this.element), bookType);
-    this.#getChapter(chapterCategory, chapter);
+    await this.loadBook(book, $(this.element), bookType, false);
+    await this.#getChapter(chapterCategory, chapter);
     await this.render(true);
   }
 }

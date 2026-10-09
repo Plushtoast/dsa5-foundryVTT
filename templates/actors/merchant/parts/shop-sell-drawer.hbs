@@ -1,7 +1,7 @@
 {{#if stall.sellMode}}
 <aside class="dsa-shop-drawer">
   <header class="dsa-shop-drawer__head flexrow flexAlignCenter">
-    <h3>{{localize 'MERCHANT.stall.sell'}}</h3>
+    <h3>{{#if stall.isLoot}}{{localize 'MERCHANT.stall.transfer'}}{{else}}{{localize 'MERCHANT.stall.sell'}}{{/if}}</h3>
     <button type="button" class="icon fas fa-times noBorder dsadesignbutton" data-action="toggleSellMode"></button>
   </header>
   {{#unless stall.hasBuyer}}

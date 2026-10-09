@@ -78,6 +78,7 @@ export const MerchantSheetMixin = (superclass) =>
         toggleShopAffordable: this._toggleShopAffordable,
         toggleShopSpecials: this._toggleShopSpecials,
         toggleSellMode: this._toggleSellMode,
+        setLootInventory: this._setLootInventory,
         togglePresentationMode: this._togglePresentationMode,
         toggleShopPurse: this._toggleShopPurse,
         setShopViewMode: this._setShopViewMode,
@@ -380,6 +381,20 @@ export const MerchantSheetMixin = (superclass) =>
         return;
       }
       this.sellMode = !this.sellMode;
+      this.render();
+    }
+
+    static _setLootInventory(_event, target) {
+      if (this.actor.system.merchant?.merchantType !== 'loot') {
+        throw new Error('Loot inventory selector used on a non-loot actor.');
+      }
+
+      const inventory = target.dataset.inventory;
+      if (inventory !== 'loot' && inventory !== 'tradeFriend') {
+        throw new Error(`Unknown loot inventory view: ${inventory}`);
+      }
+
+      this.sellMode = inventory === 'tradeFriend';
       this.render();
     }
 
