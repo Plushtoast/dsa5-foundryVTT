@@ -191,9 +191,9 @@ export function setEnrichers() {
       },
     },
     {
-      pattern: /@Info\[[a-zA-ZöüäÖÜÄ&; -.0-9]+\]/g,
-      enricher: async (match, options) => {
-        const uuid = match[0].match(innerRegex)[0].slice(1);
+      pattern: /@Info\[([^\]]+)\]/g,
+      enricher: async (match) => {
+        const uuid = match[1];
         const document = await fromUuid(uuid);
 
         if (!document || document.type != 'information') return $('<a class="content-link broken"><i class="fas fa-unlink"></i>info</a>')[0];

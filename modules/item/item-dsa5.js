@@ -83,6 +83,11 @@ export default class Itemdsa5 extends Item {
   /** @type {string} Default icon path for items without specific icons */
   static DEFAULT_ICON = ITEM_CONSTANTS.DEFAULT_ICON_PATH;
 
+  _createDocumentLink(eventData, options = {}) {
+    if (this.type === 'information' && !options.label) return `@Info[${this.uuid}]`;
+    return super._createDocumentLink(eventData, options);
+  }
+
   static supportsOnUseActions(type) {
     return !!CONFIG.Item.dataModels?.[type]?.implementsOnUseEffect;
   }
