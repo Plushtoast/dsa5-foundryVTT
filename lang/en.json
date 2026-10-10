@@ -4688,6 +4688,8 @@
   "cummulativeStatusEffects": "Cumulative conditions",
   "cummulativeStatusEffectsHint": "All conditions which are calculated as a sum of different sources.",
   "damage": "Damage",
+  "bonusDamage": "Bonus damage die",
+  "damagePenalty": "Damage penalty die",
   "stpDamage": "StP-Damage",
   "damageApplied": "Damage has been applied",
   "damageOverThreshold": "Including bonus damage of the damage threshold",

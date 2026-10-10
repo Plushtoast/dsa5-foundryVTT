@@ -1264,9 +1264,10 @@ export default class DiceDSA5 {
    * Convert a string containing dice notation to a roll result
    * @param {string} text - Text containing dice notation
    * @param {Object} testData - Optional test data for dice animations
+   * @param {Array} [rollCollector] - Optional array to collect the evaluated rolls
    * @returns {Promise<number>} Evaluated roll result
    */
-  static async _stringToRoll(text, testData) {
+  static async _stringToRoll(text, testData, rollCollector) {
     try {
       const diceMatches = [];
       const modifiedText = `${text}`;
@@ -1295,15 +1296,12 @@ export default class DiceDSA5 {
         );
       }
 
-      let evaluationString = modifiedText;
-      rollResults.forEach(roll => {
-        const diceNotationRegex = new RegExp(DICE_CONSTANTS.PATTERNS.DICE_NOTATION.source, 'g');
-        evaluationString = evaluationString.replace(
-          diceNotationRegex,
-          roll.total
-        );
-      });
-      return Roll.safeEval(evaluationString);
+      let rollIndex = 0;
+      const diceNotationRegex = new RegExp(DICE_CONSTANTS.PATTERNS.DICE_NOTATION.source, 'g');
+      const evaluationString = modifiedText.replace(diceNotationRegex, () => rollResults[rollIndex++].total);
+      const result = Roll.safeEval(evaluationString);
+      rollCollector?.push(...rollResults);
+      return result;
     } catch (error) {
       console.error(`Error evaluating dice string "${text}":`, error);
       return 0;
@@ -1344,6 +1342,7 @@ export default class DiceDSA5 {
     const armorPen = [];
     let bonusDmg = 0;
     let baseDmgBonus = 0;
+    const bonusDamageCharacteristics = [];
 
     for (const val of testData.situationalModifiers) {
       if (val.armorPen) armorPen.push(val.armorPen);
@@ -1362,7 +1361,8 @@ export default class DiceDSA5 {
 
         const isOverride = /^=/.test(val.damageBonus);
         const rollString = `${val.damageBonus}`.replace(/^=/, '');
-        const roll = await DiceDSA5._stringToRoll(rollString, testData);
+        const bonusRolls = [];
+        const roll = await DiceDSA5._stringToRoll(rollString, testData, bonusRolls);
         const number = roll * (val.step || 1);
 
         if (isOverride) {
@@ -1376,6 +1376,24 @@ export default class DiceDSA5 {
           baseDmgBonus += number;
         else
           bonusDmg += number;
+
+        for (const bonusRoll of bonusRolls) {
+          for (const term of bonusRoll.terms) {
+            if (term instanceof foundry.dice.terms.Die || term.class == 'Die') {
+              for (const dieResult of term.results) {
+                const discarded = !!dieResult.discarded;
+                bonusDamageCharacteristics.push({
+                  char: discarded ? 'discarded' : DAMAGE,
+                  res: dieResult.result,
+                  die: 'd' + term.faces,
+                  discarded,
+                  bonusDamage: !discarded && number >= 0,
+                  damagePenalty: !discarded && number < 0,
+                });
+              }
+            }
+          }
+        }
       }
 
       if (val.flatValues?.damageBonus) {
@@ -1409,6 +1427,8 @@ export default class DiceDSA5 {
         }
       }
     }
+
+    result.characteristics.push(...bonusDamageCharacteristics);
 
     const weaponBonus = damage - weaponroll;
 
