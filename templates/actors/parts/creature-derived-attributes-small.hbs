@@ -124,7 +124,7 @@
     </div>
     <div class="derivedAttrs row-section">
         <div class="col two lineheight">
-            <span data-tooltip="FORMULA.creature.conjuringDifficulty">{{localize "conjuringDifficulty"}}</span>
+            <span {{#unless (isAnimal document.system.creatureClass.value)}}data-tooltip="FORMULA.creature.conjuringDifficulty"{{/unless}}>{{#if (isAnimal document.system.creatureClass.value)}}{{localize "jagd"}}{{else}}{{localize "conjuringDifficulty"}}{{/if}}</span>
         </div>
         <div class="col eight lineheight center">
 
@@ -134,7 +134,11 @@
         </div>
 
         <div class="col eight lineheight center">
-            {{formInput systemFields.conjuringDifficulty.fields.value value=document.system.conjuringDifficulty.value}}
+            {{#if (isAnimal document.system.creatureClass.value)}}
+                {{formInput systemFields.jagd.fields.value value=document.system.jagd.value}}
+            {{else}}
+                {{formInput systemFields.conjuringDifficulty.fields.value value=document.system.conjuringDifficulty.value}}
+            {{/if}}
         </div>
     </div>
     <div class="derivedAttrs row-section">

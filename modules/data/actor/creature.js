@@ -50,6 +50,9 @@ export default class CreatureData extends ActorDataModel.mixin(RidingTemplate, C
         conjuringDifficulty: new SchemaField({
             value: new NumberField({ initial: 0 }),
         }),
+        jagd: new SchemaField({
+            value: new NumberField({ initial: 0 }),
+        }),
         description: new SchemaField({
             value: new HTMLField({ initial: '' }),
         }),
