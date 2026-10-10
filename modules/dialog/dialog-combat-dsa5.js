@@ -17,6 +17,7 @@ import ReloadTimeField from '../data/item/fields/reload_time_field.js';
 import SpecialabilityData from '../data/item/specialability.js';
 import { SituationalModifiersWidget } from '../system/helpers/situational-modifiers-widget.js';
 import ActiveEffectScopedRules from '../status/active_effect_scoped_rules.js';
+import OpportunityAttackHelper from './helpers/opportunity-attack.js';
 const { mergeObject, duplicate, getProperty, deepClone } = foundry.utils;
 
 export default class DSA5CombatDialog extends DialogShared {
@@ -24,7 +25,7 @@ export default class DSA5CombatDialog extends DialogShared {
     wrongHand: { mod: -4 },
     advantageousPosition: { mod: 2 },
     attackFromBehind: { mod: -4 },
-    opportunityAttack: { mod: -4 },
+    ...OpportunityAttackHelper.rollModifiers,
     doubleAttack: { mod: -2 },
     narrowSpace: { mod: 0 },
     waterOptions: {
@@ -120,7 +121,9 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     }
 
-    return foundry.utils.expandObject(flattenedRollModifiers);
+    const rollModifierData = foundry.utils.expandObject(flattenedRollModifiers);
+    OpportunityAttackHelper.setDisplayedModifier(rollModifierData);
+    return rollModifierData;
   }
 
   /**
@@ -198,6 +201,7 @@ export default class DSA5CombatDialog extends DialogShared {
 
     const html = $(this.element);
     this.applyMovementWaterDefaults(html);
+    OpportunityAttackHelper.activateListeners(html);
     const specAbs = html.find('.specAbs');
     specAbs.on('mouseenter', (ev) => {
       const el = ev.currentTarget;
@@ -223,12 +227,6 @@ export default class DSA5CombatDialog extends DialogShared {
     html.find('.variantChange').on('mousedown', (ev) => this.changeSpecAbVariant(ev));
 
     html.on('mousedown', '.specAbs', (ev) => {
-      if (html.find('.opportunityAttack').is(':checked')) {
-        ui.notifications.error('DSAError.opposedAttackNoSpecAbs', {
-          localize: true,
-        });
-        return;
-      }
       const elem = $(ev.currentTarget);
       const dataset = ev.currentTarget.dataset;
       let step = Number(dataset.step);
@@ -236,10 +234,7 @@ export default class DSA5CombatDialog extends DialogShared {
       const subcategory = Number(dataset.category);
       const cTypes = SpecialabilityData.COMBAT_SKILL_TYPES;
 
-      if (!this.#allowsOpportunityManeuver(subcategory, cTypes)) {
-        ui.notifications.error('DSAError.opposedAttackNoSpecAbs', { localize: true });
-        return;
-      }
+      if (!OpportunityAttackHelper.canUseSpecialAbility(html, this.dialogData.renderData, subcategory, cTypes)) return;
 
       const actor = DSA5_Utility.getSpeaker(this.dialogData.speaker);
       const target = ActiveEffectScopedRules.targetFor(actor, this.dialogData.mode);
@@ -278,29 +273,9 @@ export default class DSA5CombatDialog extends DialogShared {
       this.calculateModifier();
       this.setCombatSpecTooltip(ev.currentTarget);
     });
-    html.find('.opportunityAttack').on('change', (ev) => {
-      if ($(ev.currentTarget).is(':checked')) {
-        for (const k of html.find('.specAbs')) {
-          $(k).removeClass('active').attr('data-step', 0).find('.step').text('');
-        }
-      }
-    });
     html.on('change', 'input,select', (ev) => this.calculateModifier(ev));
     html.find('.quantity-click').on('mousedown', (ev) => this.calculateModifier(ev));
 
-  }
-
-  #allowsOpportunityManeuver(subcategory, cTypes) {
-    const opportunityAttackManeuvers = this.dialogData.renderData.opportunityAttackManeuvers;
-    if (!opportunityAttackManeuvers) return true;
-
-    const allowBasic = opportunityAttackManeuvers.allowBasic === true;
-    const allowSpecial = opportunityAttackManeuvers.allowSpecial === true;
-    const basicCategories = [cTypes.BASEMANEUVER, cTypes.COMBATSTYLE_EXTENDED_BASE];
-    const specialCategories = [cTypes.SPECIALMANEUVER, cTypes.COMBATSTYLE_EXTENDED];
-    if (basicCategories.includes(subcategory)) return allowBasic || allowSpecial;
-    if (specialCategories.includes(subcategory)) return allowSpecial;
-    return true;
   }
 
   checkCounterAttack(ev) {
@@ -833,7 +808,7 @@ export default class DSA5CombatDialog extends DialogShared {
     const attackerIsSwarm = actor.isSwarm();
 
     testData.opposingWeaponSize = attackerIsSwarm ? 0 : data.weaponsize;
-    testData.attackOfOpportunity = this.attackOfOpportunity(testData.situationalModifiers, data);
+    testData.attackOfOpportunity = OpportunityAttackHelper.addSituationalModifiers(testData.situationalModifiers, data);
     testData.extra.attackFromBehind = Number(data.attackFromBehind) || 0;
     const specAbModifiers = Itemdsa5.getSpecAbModifiers(html, mode);
     const scopedTarget = ActiveEffectScopedRules.targetFor(actor, mode);
@@ -1034,36 +1009,6 @@ export default class DSA5CombatDialog extends DialogShared {
       }
     });
     return res;
-  }
-
-  static attackOfOpportunity(situationalModifiers, formData) {
-    const value = Number(formData.opportunityAttack) || 0;
-    if (value) {
-      situationalModifiers.push({
-        name: _loc('MODS.opportunityAttack'),
-        value,
-      });
-      const enemySense = _loc('LocalizedIDs.enemySense');
-      const winhallStyle = _loc('LocalizedIDs.winhallStyle');
-      game.user.targets.forEach((target) => {
-        for (const item of target.actor?.items || []) {
-          if (item.type == 'specialability') {
-            if (item.name == enemySense) {
-              situationalModifiers.push({
-                name: enemySense,
-                value: -4,
-              });
-            } else if (item.name == winhallStyle) {
-              situationalModifiers.push({
-                name: winhallStyle,
-                value: -2,
-              });
-            }
-          }
-        }
-      });
-    }
-    return value != 0;
   }
 
   static getRollButtons(testData, dialogOptions, resolve, reject) {
