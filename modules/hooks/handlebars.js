@@ -1,6 +1,7 @@
 import DSA5 from '../config/config-dsa5.js';
 import SpecCategoryHelp from '../system/helpers/speccategory-help.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
+import CreatureType from '../system/automation/creature-type.js';
 
 const { getProperty } = foundry.utils;
 
@@ -82,7 +83,7 @@ export default function () {
     itemCategory: (a) => {
       return DSA5_Utility.categoryLocalization(a);
     },
-    isAnimal: (creatureClass) => /^(?:Tier|Animal)\b/i.test(creatureClass || ''),
+    isAnimal: (creatureClass) => CreatureType.isAnimal(creatureClass),
     joinStr: (a, b) => b.join(a),
     itemPrice: (a) => DSA5_Utility.itemPrice(a),
     moneyString: (html) => new Handlebars.SafeString(html || '-'),

@@ -95,6 +95,10 @@ export default class CreatureType {
     return ids;
   }
 
+  static isAnimal(creatureClass) {
+    return /^(?:Tier|Animal)\b/i.test(creatureClass || '');
+  }
+
   static getClass(type, creatureClass) {
     const cl = {
       DemonType: DemonType,
