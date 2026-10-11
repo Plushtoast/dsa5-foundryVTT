@@ -1386,7 +1386,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
 
   static async contentData(options = {}) {
     return {
-      categories: Array.from(DSA5.equipmentCategories),
+      categories: [...DSA5.equipmentCategories, 'alcohol'],
       options,
     };
   }

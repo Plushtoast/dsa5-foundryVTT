@@ -310,14 +310,14 @@ export default class MerchantStockService {
     return filtered;
   }
 
-  static applyTypeDefaults(item, config = {}) {
+  static applyTypeDefaults(item, config = {}, categoryKey = item?.type) {
     if (!item?.system) return item;
 
     if (item.system.worn) item.system.worn.value = false;
     if ('tradeLocked' in item.system) item.system.tradeLocked = false;
     delete item.system.parent_id;
 
-    const category = config.categories?.[item.type];
+    const category = config.categories?.[categoryKey] || config.categories?.[item.type];
     const each = Number(category?.each);
     const hasEach = Number.isFinite(each) && each > 0;
     const skipQty = config.qtyMode === 'total' || config.qtyMode === 'draws';
@@ -399,12 +399,14 @@ export default class MerchantStockService {
     if (!requested) return [];
 
     const filter = config.filtersEnabled ? config.filters?.[category] : null;
+    const filterCategory = category === 'alcohol' ? 'poison' : category;
     let pool;
     if (filter && (filter.selects?.length || filter.inputs?.length || filter.booleans?.length || filter.rangeSearches?.length)) {
-      pool = await library.findEquipmentItemDetailed(filter, category, false);
+      pool = await library.findEquipmentItemDetailed(filter, filterCategory, false);
     } else {
       pool = await library.getRandomItems(category, Math.max(requested * 3, requested + 24));
     }
+    pool = library.filterRandomItemsByCategory(pool, category);
 
     if (category === 'plant' && config.region) {
       pool = this.#preferRegion(pool, config.region);
@@ -547,7 +549,7 @@ export default class MerchantStockService {
         actor,
       });
       for (const item of picked) {
-        this.applyTypeDefaults(item, normalized);
+        this.applyTypeDefaults(item, normalized, type);
         this.maybeEnhance(item, { chance: normalized.enhanceChance });
       }
       if (normalized.qtyMode === 'total') {
@@ -828,6 +830,9 @@ export default class MerchantStockService {
         if (all) return true;
         if (equipSet && ['equipment', 'consumable'].includes(item.type)) {
           return equipSet.has(item.system?.equipmentType?.value);
+        }
+        if (item.type === 'poison' && (typeSet.has('poison') || typeSet.has('alcohol'))) {
+          return Number(item.system?.subcategory) === 2 ? typeSet.has('alcohol') : typeSet.has('poison');
         }
         if (typeSet.size && !typeSet.has(item.type)) return false;
         return true;

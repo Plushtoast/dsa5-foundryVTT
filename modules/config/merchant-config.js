@@ -264,6 +264,7 @@ export default class MerchantConfig {
     consumable: { number: 6, each: 1 },
     plant: { number: 6, each: 1 },
     poison: { number: 4, each: 1 },
+    alcohol: { number: 4, each: 1 },
     book: { number: 4, each: 1 },
   });
 
@@ -318,7 +319,7 @@ export default class MerchantConfig {
       label: 'MERCHANT.fill.preset.tavern',
       icon: 'fas fa-beer-mug-empty',
       tooltip: 'MERCHANT.fill.preset.tavernHint',
-      categories: ['equipment', 'consumable'],
+      categories: ['equipment', 'alcohol'],
       equipmentTypes: ['service', 'food', 'misc'],
       serviceSubcategories: ['tavern'],
     },
@@ -426,6 +427,7 @@ export default class MerchantConfig {
       if (key === 'equipment') entry.types = equipmentTypes;
       categories[key] = entry;
     }
+    categories.alcohol = { enabled: false };
     return { categories };
   }
 

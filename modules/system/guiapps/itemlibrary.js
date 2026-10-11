@@ -671,6 +671,18 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
   }
 
   async getRandomItems(category, limit) {
+    if (category === 'poison' || category === 'alcohol') {
+      const poisons = await this.findEquipmentItemDetailed({}, 'poison', false);
+      const filtered = this.filterRandomItemsByCategory(poisons, category);
+      return this.shuffle(filtered)
+        .slice(0, limit + 5)
+        .filter((item) => {
+          const enchantments = item.getFlag('dsa5', 'enchantments');
+          return !enchantments || !enchantments.some((enchant) => enchant.talisman);
+        })
+        .slice(0, limit);
+    }
+
     const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
 
     const shuffledItems = this.shuffle(filteredItems)
@@ -686,6 +698,16 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
         return !enchantments || !enchantments.some(enchant => enchant.talisman);
       })
       .slice(0, limit);
+  }
+
+  filterRandomItemsByCategory(items, category) {
+    if (category === 'poison') {
+      return items.filter((item) => item?.type === 'poison' && Number(item.system?.subcategory) !== 2);
+    }
+    if (category === 'alcohol') {
+      return items.filter((item) => item?.type === 'poison' && Number(item.system?.subcategory) === 2);
+    }
+    return items;
   }
 
   shuffle(array) {
