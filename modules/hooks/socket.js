@@ -24,12 +24,25 @@ import MagicAnalysisQueryService from '../system/queries/magic-analysis-query.js
 import TransactionSummaryService from '../system/payment/transaction-summary.js';
 import MerchantShopPresence from '../system/merchant/merchant-shop-presence.js';
 import TrapData from '../data/item/trap.js';
+import RandomVictim from '../system/helpers/random-victim.js';
 
 export function connectSocket() {
   game.socket.on('system.dsa5', async (data) => {
     switch (data.type) {
       case 'brawlStart':
         DSA5Combat.brawlStart(2000, false);
+        return;
+      case 'randomVictimCarousel':
+        if (data.payload?.senderId === game.user.id) return;
+        if (!game.users.get(data.payload?.senderId)?.isGM) {
+          console.warn('Ignoring random victim carousel from a non-GM sender');
+          return;
+        }
+        if (!data.payload?.actor?.id || !Array.isArray(data.payload.actors)) {
+          console.warn('Ignoring invalid random victim carousel socket payload');
+          return;
+        }
+        RandomVictim.show(data.payload.actor, { actors: data.payload.actors });
         return;
       case MerchantShopPresence.SOCKET_TYPE:
         MerchantShopPresence.socketListener(data);

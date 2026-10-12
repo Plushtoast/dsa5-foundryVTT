@@ -46,11 +46,21 @@ export default class RandomVictim {
     return notification;
   }
 
-  static async pickAndShow(actors, options = {}) {
+  static async pickAndShow(actors, { showToAll = false, ...options } = {}) {
     const pool = [...(actors ?? [])].filter(Boolean);
     const actor = await this.pick(pool, options);
     if (!actor) return null;
     this.show(actor, { actors: pool });
+    if (showToAll) {
+      await game.socket.emit('system.dsa5', {
+        type: 'randomVictimCarousel',
+        payload: {
+          senderId: game.user.id,
+          actor: { id: actor.id, name: actor.name, img: actor.img },
+          actors: pool.map(({ id, name, img }) => ({ id, name, img })),
+        },
+      });
+    }
     return actor;
   }
 

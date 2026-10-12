@@ -515,7 +515,7 @@ export default class TokenHotbar2 extends DefaultAppv2 {
   }
 
   async handleGMRandomVictim(ev) {
-    await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button == 2);
+    await game.dsa5.apps.gameMasterMenu.rollRandomPlayer(ev.button === 0, ev.shiftKey);
   }
 
   async handleSharedEffect(ev) {

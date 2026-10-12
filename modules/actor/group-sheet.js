@@ -1049,7 +1049,10 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   static async #randomMember(event) {
-    await RandomVictim.pickAndShow(this.actor.system.actors, { withMisfortune: event.button === 2 });
+    await RandomVictim.pickAndShow(this.actor.system.actors, {
+      withMisfortune: event.button === 0,
+      showToAll: event.shiftKey,
+    });
   }
 
   static #chCollapse(event, target) {

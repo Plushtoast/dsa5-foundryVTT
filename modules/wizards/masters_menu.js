@@ -555,15 +555,15 @@ class GameMasterMenu extends DragMixin(DefaultAppv2) {
   }
 
   static async _randomPlayer(ev) {
-    await this.rollRandomPlayer(ev.button == 2);
+    await this.rollRandomPlayer(ev.button === 0, ev.shiftKey);
   }
 
-  async rollRandomPlayer(withMisfortune) {
+  async rollRandomPlayer(withMisfortune = false, showToAll = false) {
     const selected = this.getSelectedActors();
     const anythingselected = Object.values(selected).filter((x) => x).length != 0;
     const heros = this.heros.length ? this.heros : await this.getTrackedHeros();
     const pool = heros.filter((hero) => !anythingselected || selected[hero.id]);
-    const actor = await RandomVictim.pickAndShow(pool, { withMisfortune });
+    const actor = await RandomVictim.pickAndShow(pool, { withMisfortune, showToAll });
     return actor?.id;
   }
 
