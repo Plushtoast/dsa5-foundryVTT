@@ -89,6 +89,53 @@ export class ItemDataModel extends DSADataModel {
   }
 
   /**
+   * Resolve the item data model that owns a library / merchant fill category.
+   * Direct `CONFIG.Item.dataModels` keys win; other keys are claimed by
+   * `ownsLibraryCategory` on a type.
+   */
+  static forLibraryCategory(category) {
+    const models = CONFIG.Item?.dataModels ?? {};
+    if (models[category]) return models[category];
+    return Object.values(models).find((model) => model.ownsLibraryCategory?.(category)) ?? this;
+  }
+
+  static ownsLibraryCategory(_category) {
+    return false;
+  }
+
+  /** Extra fill-checkbox keys this type contributes (not real Item types). */
+  static libraryFillCategories() {
+    return [];
+  }
+
+  static allLibraryFillCategories() {
+    const keys = [];
+    for (const model of Object.values(CONFIG.Item?.dataModels ?? {})) {
+      if (typeof model.libraryFillCategories === 'function') keys.push(...model.libraryFillCategories());
+    }
+    return keys;
+  }
+
+  /** Item type to query in the library index for this fill category. */
+  static librarySearchType(category) {
+    return category;
+  }
+
+  static libraryUsesTypePool(category) {
+    return this.librarySearchType(category) !== category
+      || this.filterLibraryItems !== ItemDataModel.filterLibraryItems;
+  }
+
+  static libraryFillKey(item) {
+    return item?.type;
+  }
+
+  /** Narrow a type pool to the requested fill category. Default keeps the pool. */
+  static filterLibraryItems(items, _category) {
+    return items;
+  }
+
+  /**
    * Post item data to chat
    * @async
    * @param {Item} item - The item to post

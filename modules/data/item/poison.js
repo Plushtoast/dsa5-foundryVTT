@@ -10,8 +10,44 @@ const { NumberField, StringField, SchemaField } = foundry.data.fields;
 export default class PoisonData extends ItemDataModel.mixin(DescriptionTemplate, ObfuscableTemplate, EquipmentTemplate) {
   static STATUS_ID = 'poisoned';
 
+  /** Merchant / random-goods fill aliases keyed by `system.subcategory`. */
+  static FILL_SUBCATEGORIES = Object.freeze({
+    alcohol: 2,
+    suchtmittel: 3,
+  });
+
   static isSource(source) {
     return source?.type === 'poison';
+  }
+
+  static ownsLibraryCategory(category) {
+    return category === 'poison' || category in this.FILL_SUBCATEGORIES;
+  }
+
+  static libraryFillCategories() {
+    return Object.keys(this.FILL_SUBCATEGORIES);
+  }
+
+  static librarySearchType(_category) {
+    return 'poison';
+  }
+
+  static libraryFillKey(item) {
+    const sub = Number(item?.system?.subcategory);
+    for (const [key, value] of Object.entries(this.FILL_SUBCATEGORIES)) {
+      if (sub === value) return key;
+    }
+    return 'poison';
+  }
+
+  static filterLibraryItems(items, category) {
+    const reserved = Object.values(this.FILL_SUBCATEGORIES);
+    if (category === 'poison') {
+      return items.filter((item) => item?.type === 'poison' && !reserved.includes(Number(item.system?.subcategory)));
+    }
+    const sub = this.FILL_SUBCATEGORIES[category];
+    if (sub == null) return super.filterLibraryItems(items, category);
+    return items.filter((item) => item?.type === 'poison' && Number(item.system?.subcategory) === sub);
   }
 
   static applyStatus(effect) {

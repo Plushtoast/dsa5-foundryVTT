@@ -1,5 +1,6 @@
 import DSA5 from './config-dsa5.js';
 import ImageFramePicker from '../system/helpers/image-frame-picker.js';
+import { ItemDataModel } from '../data/baseitem.js';
 
 /**
  * Merchant / loot constants shared by the system and book modules.
@@ -264,7 +265,6 @@ export default class MerchantConfig {
     consumable: { number: 6, each: 1 },
     plant: { number: 6, each: 1 },
     poison: { number: 4, each: 1 },
-    alcohol: { number: 4, each: 1 },
     book: { number: 4, each: 1 },
   });
 
@@ -427,7 +427,9 @@ export default class MerchantConfig {
       if (key === 'equipment') entry.types = equipmentTypes;
       categories[key] = entry;
     }
-    categories.alcohol = { enabled: false };
+    for (const key of ItemDataModel.allLibraryFillCategories()) {
+      categories[key] = { enabled: false };
+    }
     return { categories };
   }
 

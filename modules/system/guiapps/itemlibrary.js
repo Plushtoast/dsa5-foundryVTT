@@ -1,5 +1,6 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import ADVANCEDFILTERS from './itemlibrary_advanced_filters.js';
+import { ItemDataModel } from '../../data/baseitem.js';
 import { clickableAbility, tabSlider } from '../helpers/view_helper.js';
 import { applyFontSize, getFontSizeLabel, showFontSizeContextMenu } from '../helpers/font-size-picker.js';
 import ItemLibraryIndexLoader from './itemlibrary/indexLoader.js';
@@ -670,44 +671,43 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     await this.filterItems(tab);
   }
 
+  libraryModelFor(category) {
+    return ItemDataModel.forLibraryCategory(category);
+  }
+
+  librarySearchType(category) {
+    return this.libraryModelFor(category).librarySearchType(category);
+  }
+
   async getRandomItems(category, limit) {
-    if (category === 'poison' || category === 'alcohol') {
-      const poisons = await this.findEquipmentItemDetailed({}, 'poison', false);
-      const filtered = this.filterRandomItemsByCategory(poisons, category);
-      return this.shuffle(filtered)
+    const Model = this.libraryModelFor(category);
+    const searchType = Model.librarySearchType(category);
+    let documents;
+    if (Model.libraryUsesTypePool(category)) {
+      const pool = await this.findEquipmentItemDetailed({}, searchType, false);
+      documents = Model.filterLibraryItems(pool, category);
+    } else {
+      const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
+      const shuffledItems = this.shuffle(filteredItems)
         .slice(0, limit + 5)
-        .filter((item) => {
-          const enchantments = item.getFlag('dsa5', 'enchantments');
-          return !enchantments || !enchantments.some((enchant) => enchant.talisman);
-        })
-        .slice(0, limit);
+        .map(x => this._getStoredObject(this.indexes.Item, x))
+        .filter(x => x?.uuid);
+      documents = await Promise.all(shuffledItems.map(x => fromUuid(x.uuid)));
+      documents = Model.filterLibraryItems(documents, category);
     }
 
-    const filteredItems = await this.flattenedResults(this.indexes.Item, '', { tag: [category], limit: this.filterLimit });
-
-    const shuffledItems = this.shuffle(filteredItems)
+    return this.shuffle(documents)
       .slice(0, limit + 5)
-      .map(x => this._getStoredObject(this.indexes.Item, x))
-      .filter(x => x?.uuid);
-
-    const documents = await Promise.all(shuffledItems.map(x => fromUuid(x.uuid)));
-    return documents
-      .filter(x => {
-        if (!x) return false;
-        const enchantments = x.getFlag('dsa5', 'enchantments');
-        return !enchantments || !enchantments.some(enchant => enchant.talisman);
+      .filter((item) => {
+        if (!item) return false;
+        const enchantments = item.getFlag?.('dsa5', 'enchantments') || item.flags?.dsa5?.enchantments;
+        return !enchantments || !enchantments.some((enchant) => enchant.talisman);
       })
       .slice(0, limit);
   }
 
   filterRandomItemsByCategory(items, category) {
-    if (category === 'poison') {
-      return items.filter((item) => item?.type === 'poison' && Number(item.system?.subcategory) !== 2);
-    }
-    if (category === 'alcohol') {
-      return items.filter((item) => item?.type === 'poison' && Number(item.system?.subcategory) === 2);
-    }
-    return items;
+    return this.libraryModelFor(category).filterLibraryItems(items, category);
   }
 
   shuffle(array) {

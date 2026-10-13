@@ -1,5 +1,6 @@
 import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5 from '../../config/config-dsa5.js';
+import { ItemDataModel } from '../../data/baseitem.js';
 import DSA5SoundEffect from '../../system/helpers/dsa-soundeffect.js';
 import DSA5Payment from '../../system/payment/payment.js';
 import RuleChaos from '../../system/rules/rule_chaos.js';
@@ -1386,7 +1387,7 @@ export class RandomGoodsAddition extends foundry.applications.api.DialogV2 {
 
   static async contentData(options = {}) {
     return {
-      categories: [...DSA5.equipmentCategories, 'alcohol'],
+      categories: [...DSA5.equipmentCategories, ...ItemDataModel.allLibraryFillCategories()],
       options,
     };
   }

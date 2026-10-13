@@ -20,6 +20,7 @@
  */
 import DSA5 from '../../config/config-dsa5.js';
 import MerchantConfig from '../../config/merchant-config.js';
+import { ItemDataModel } from '../../data/baseitem.js';
 import MerchantShopHelper from './merchant-shop-helper.js';
 import { ItemFactory } from '../../item/item-factory.js';
 
@@ -399,7 +400,7 @@ export default class MerchantStockService {
     if (!requested) return [];
 
     const filter = config.filtersEnabled ? config.filters?.[category] : null;
-    const filterCategory = category === 'alcohol' ? 'poison' : category;
+    const filterCategory = ItemDataModel.forLibraryCategory(category).librarySearchType(category);
     let pool;
     if (filter && (filter.selects?.length || filter.inputs?.length || filter.booleans?.length || filter.rangeSearches?.length)) {
       pool = await library.findEquipmentItemDetailed(filter, filterCategory, false);
@@ -831,8 +832,9 @@ export default class MerchantStockService {
         if (equipSet && ['equipment', 'consumable'].includes(item.type)) {
           return equipSet.has(item.system?.equipmentType?.value);
         }
-        if (item.type === 'poison' && (typeSet.has('poison') || typeSet.has('alcohol'))) {
-          return Number(item.system?.subcategory) === 2 ? typeSet.has('alcohol') : typeSet.has('poison');
+        const Model = CONFIG.Item.dataModels[item.type];
+        if (Model && [...typeSet].some((key) => key === item.type || Model.ownsLibraryCategory?.(key))) {
+          return typeSet.has(Model.libraryFillKey?.(item) ?? item.type);
         }
         if (typeSet.size && !typeSet.has(item.type)) return false;
         return true;

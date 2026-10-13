@@ -4489,6 +4489,7 @@
   "TYPES.Item.plant": "Plant",
   "TYPES.Item.poison": "Poison",
   "TYPES.Item.alcohol": "Alcohol",
+  "TYPES.Item.suchtmittel": "Drugs",
   "TYPES.Item.rangeweapon": "Ranged weapon",
   "TYPES.Item.ritual": "Ritual",
   "TYPES.Item.skill": "Skill",
