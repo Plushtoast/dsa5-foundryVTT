@@ -493,6 +493,10 @@ export const MerchantSheetMixin = (superclass) =>
         await MerchantShopHelper.setBuyingFactor(this.actor, target.value);
         return;
       }
+      if (target?.classList?.contains('customPriceTag')) {
+        await this.setCustomPrice(event);
+        return;
+      }
       return super._onChangeForm(formConfig, event);
     }
 
@@ -636,7 +640,9 @@ export const MerchantSheetMixin = (superclass) =>
     }
 
     static _setCustomPrice(ev, target) {
-      target.classList.toggle('edit');
+      if (ev.target.closest('.customPriceTag')) return;
+      target.classList.add('edit');
+      target.querySelector('.customPriceTag')?.focus();
     }
 
     async _processSubmitData(event, form, submitData, options = {}) {
@@ -656,6 +662,12 @@ export const MerchantSheetMixin = (superclass) =>
 
       for (const input of this.element.querySelectorAll('.customPriceTag')) {
         input.addEventListener('change', (ev) => this.setCustomPrice(ev), { signal });
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key !== 'Enter') return;
+          ev.preventDefault();
+          ev.stopPropagation();
+          ev.currentTarget.blur();
+        }, { signal });
         input.addEventListener('blur', (ev) => ev.currentTarget.closest('.setCustomPrice')?.classList.remove('edit'), { signal });
       }
 
@@ -778,7 +790,7 @@ export const MerchantSheetMixin = (superclass) =>
       ev.stopPropagation();
       ev.preventDefault();
       const itemId = this._getItemId(ev.currentTarget);
-
+      if (!itemId) return;
       await this.actor.updateEmbeddedDocuments('Item', [{ _id: itemId, 'flags.dsa5.customPriceTag': Number(ev.target.value) }]);
     }
 
@@ -1301,7 +1313,7 @@ export const MerchantSheetMixin = (superclass) =>
           value.hasFeatured = value.items.some((item) => item.flags?.dsa5?.shopFeatured);
           value.hasHiddenToday = value.items.some((item) => item.flags?.dsa5?.shopHiddenToday && !item.system?.tradeLocked);
           for (const item of value.items) {
-            item.defaultPrice = this.getItemPrice(item);
+            item.defaultPrice = MerchantStallHelper.listPrice(item);
             item.calculatedPrice = MerchantStallHelper.playerFacingPrice(item, this.actor);
             item.priceTag = ` / ${item.calculatedPrice}`;
           }
