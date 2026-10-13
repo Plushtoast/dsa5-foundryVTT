@@ -473,7 +473,7 @@ export class FateRolls {
 
     static #dieFaceClass(char, faces) {
         const size = `d${Number(faces) || 20}`;
-        const type = char ? `die-${String(char).toLowerCase()}` : 'die-ch';
+        const type = char ? `die-${char}` : 'die-ch';
         return `${type} ${size}`;
     }
 
