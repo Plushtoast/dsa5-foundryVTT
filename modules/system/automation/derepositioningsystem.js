@@ -17,7 +17,7 @@ export default class DPS {
 
   static rangeFinder(tokenSource, tokenTarget) {
     const gridSize = canvas.scene.grid.size;
-    const ray = new foundry.canvas.geometry.Ray(tokenSource, tokenTarget);
+    const ray = new foundry.canvas.geometry.Ray(DPS.#measurePoint(tokenSource), DPS.#measurePoint(tokenTarget));
     const tileDistance = ray.distance / gridSize;
     const distance = tileDistance * canvas.scene.grid.distance;
     const elevation = Math.abs((getProperty(tokenSource, 'document.elevation') || 0) - (getProperty(tokenTarget, 'document.elevation') || 0));
@@ -29,6 +29,22 @@ export default class DPS {
       tileDistance,
       unit: canvas.scene.grid.units,
     };
+  }
+
+  static #measurePoint(placeableOrPoint) {
+    if (!placeableOrPoint) return placeableOrPoint;
+
+    const center = placeableOrPoint.center;
+    if (center && Number.isFinite(center.x) && Number.isFinite(center.y)) {
+      return center;
+    }
+
+    if (typeof placeableOrPoint.getCenterPoint === 'function') {
+      const point = placeableOrPoint.getCenterPoint();
+      if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) return point;
+    }
+
+    return placeableOrPoint;
   }
 
   static inDistance(toToken) {
