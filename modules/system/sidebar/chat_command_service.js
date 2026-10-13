@@ -141,7 +141,11 @@ export default class ChatCommandService {
         <div class='col sixty'><input name='modifier' class='quantity-click' data-tooltip='TT.strgx10' data-tooltip-direction='RIGHT' type='number' value='0' /></div>
       </div>`;
 
-    const actorEntries = actors || ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));
+    const actorEntries = actors
+      || ActorPickerDialog.applySourcePreselection(
+        ActorPickerDialog.buildActorPickerData(),
+        ActorPickerDialog.ACTOR_SOURCES.group,
+      );
 
     ActorPickerDialog.open({
       actors: actorEntries,
@@ -162,7 +166,10 @@ export default class ChatCommandService {
     if (!game.user.isGM) return;
 
     const pay = mode === 'pay';
-    const actorEntries = ActorPickerDialog.buildActorPickerData().map((a) => ({ ...a, preselected: true }));
+    const actorEntries = ActorPickerDialog.applySourcePreselection(
+      ActorPickerDialog.buildActorPickerData(),
+      ActorPickerDialog.ACTOR_SOURCES.group,
+    );
     const header = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/dialog/parts/payment-amount-input.hbs', {
       amount,
       description,

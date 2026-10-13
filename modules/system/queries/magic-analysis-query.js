@@ -48,9 +48,10 @@ export default class MagicAnalysisQueryService {
       return;
     }
 
-    const actors = ActorPickerDialog.buildActorPickerData()
-      .filter((a) => a.isPlayerOwned || a.isActiveCharacter)
-      .map((a) => ({ ...a, preselected: true }));
+    const actors = ActorPickerDialog.applySourcePreselection(
+      ActorPickerDialog.buildActorPickerData().filter((a) => a.isPlayerOwned || a.isActiveCharacter),
+      ActorPickerDialog.ACTOR_SOURCES.group,
+    );
 
     const header = `${await InformationQueryService.renderMessageModeHeader()}<hr/>`;
 

@@ -54,9 +54,10 @@ export default class RollRequestService {
         selected: s.name === name && s.type === category,
       }));
 
-    const actorData = ActorPickerDialog.buildActorPickerData()
-      .filter((a) => a.isPlayerOwned || a.isActiveCharacter)
-      .map((a) => ({ ...a, preselected: true }));
+    const actorData = ActorPickerDialog.applySourcePreselection(
+      ActorPickerDialog.buildActorPickerData().filter((a) => a.isPlayerOwned || a.isActiveCharacter),
+      ActorPickerDialog.ACTOR_SOURCES.group,
+    );
 
     const header = await renderTemplate(this.DIALOG_TEMPLATE, {
       skills: skillOptions,

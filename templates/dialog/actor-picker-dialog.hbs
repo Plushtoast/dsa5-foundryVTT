@@ -12,7 +12,7 @@
       {{#if actorSources.length}}
       <div class="split-button query-actor-source-toggle">
         {{#each actorSources as |src|}}
-        <button type="button" class="ui-control icon {{src.icon}}" data-action="actorSource" data-source="{{src.key}}" aria-pressed="{{#if @first}}true{{else}}false{{/if}}" data-tooltip="{{localize src.tooltip}}" aria-label="{{localize src.tooltip}}"></button>
+        <button type="button" class="ui-control icon {{src.icon}}" data-action="actorSource" data-source="{{src.key}}" aria-pressed="{{#if src.pressed}}true{{else}}false{{/if}}" data-tooltip="{{localize src.tooltip}}" aria-label="{{localize src.tooltip}}"></button>
         {{/each}}
       </div>
       {{/if}}

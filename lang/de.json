@@ -1546,6 +1546,7 @@
   "DSAQUERIES": {
     "ACTORSOURCE": {
       "group": "Gruppe",
+      "scene": "Szene",
       "selectAll": "Alle auswählen",
       "selectNone": "Auswahl aufheben",
       "self": "Spielercharaktere",

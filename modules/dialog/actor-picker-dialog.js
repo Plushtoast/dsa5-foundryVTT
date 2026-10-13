@@ -26,11 +26,13 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       meta: metaParts.join(' - '),
       isActiveCharacter,
       isPlayerOwned: actor.hasPlayerOwner,
+      hasOnlinePlayer: !!designatedUser,
     };
   }
 
   static ACTOR_SOURCES = Object.freeze({
     group: 'group',
+    scene: 'scene',
     tracked: 'tracked',
     self: 'self',
   });
@@ -66,6 +68,23 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     return game.users.map((u) => u.character).filter(Boolean);
   }
 
+  static #getSceneActors() {
+    const scene = canvas?.scene;
+    if (!scene) return [];
+
+    const isGM = game.user.isGM;
+    const seen = new Set();
+    const actors = [];
+    for (const token of scene.tokens) {
+      if (!isGM && token.hidden && !token.isOwner) continue;
+      const actor = token.actor;
+      if (!actor || seen.has(actor.id)) continue;
+      seen.add(actor.id);
+      actors.push(actor);
+    }
+    return actors;
+  }
+
   static #resolveGroupActor(element) {
     const id = element?.querySelector('.query-actor-picker')?.dataset.groupActorId;
     return id ? game.actors.get(id) : null;
@@ -75,6 +94,8 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     switch (source) {
       case this.ACTOR_SOURCES.group:
         return this.#getGroupMemberActors(groupActor);
+      case this.ACTOR_SOURCES.scene:
+        return this.#getSceneActors();
       case this.ACTOR_SOURCES.tracked:
         return this.#getMasterMenuActors();
       case this.ACTOR_SOURCES.self:
@@ -105,6 +126,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
     if (this.#getGroupMemberActors(groupActor).length) {
       sources.push({ key: this.ACTOR_SOURCES.group, icon: 'fa-solid fa-people-group', tooltip: 'DSAQUERIES.ACTORSOURCE.group' });
     }
+    if (this.#getSceneActors().length) {
+      sources.push({ key: this.ACTOR_SOURCES.scene, icon: 'fa-solid fa-map', tooltip: 'DSAQUERIES.ACTORSOURCE.scene' });
+    }
     sources.push({ key: this.ACTOR_SOURCES.tracked, icon: 'fa-solid fa-clipboard-list', tooltip: 'DSAQUERIES.ACTORSOURCE.tracked' });
     if (this.#getSelfActors().length) {
       sources.push({ key: this.ACTOR_SOURCES.self, icon: 'fa-solid fa-user', tooltip: 'DSAQUERIES.ACTORSOURCE.self' });
@@ -119,13 +143,31 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
       groupActor && groupMembers.length ? this.ACTOR_SOURCES.group : actorSources[0]?.key
     );
 
-    let entries = this.buildActorPickerData({ actors: this.#getActorsBySource(initialSource, groupActor) });
+    let entries = this.buildActorPickerData({ source: initialSource, groupActor });
     if (entryFilter) entries = entries.filter(entryFilter);
-    return { entries, initialSource, actorSources };
+    entries = this.applySourcePreselection(entries, initialSource);
+    return {
+      entries,
+      initialSource,
+      actorSources: actorSources.map((src) => ({ ...src, pressed: src.key === initialSource })),
+    };
   }
 
-  static buildActorPickerData({ existingIds = new Set(), actors } = {}) {
-    return (actors ?? this.#getTrackedActors())
+  /**
+   * Party and scene lists preselect actors whose designated player is currently online.
+   * Other sources still preselect the full list.
+   */
+  static applySourcePreselection(entries, source) {
+    const onlineOnly = source === this.ACTOR_SOURCES.group || source === this.ACTOR_SOURCES.scene;
+    return entries.map((entry) => ({
+      ...entry,
+      preselected: onlineOnly ? !!entry.hasOnlinePlayer : true,
+    }));
+  }
+
+  static buildActorPickerData({ existingIds = new Set(), actors, source, groupActor = null } = {}) {
+    const resolvedActors = actors ?? (source ? this.#getActorsBySource(source, groupActor) : this.#getTrackedActors());
+    return resolvedActors
       .filter((actor) => !existingIds.has(actor.id))
       .map((actor) => this.#buildActorEntry(actor))
       .sort((a, b) => {
@@ -242,9 +284,9 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
   async #switchActorSource(source) {
     const selectionMode = ActorPickerDialog.#getSelectionMode(this.element);
     const groupActor = ActorPickerDialog.#resolveGroupActor(this.element);
-    let actors = ActorPickerDialog.buildActorPickerData({ actors: ActorPickerDialog.#getActorsBySource(source, groupActor) });
+    let actors = ActorPickerDialog.buildActorPickerData({ source, groupActor });
     if (this._entryFilter) actors = actors.filter(this._entryFilter);
-    actors = actors.map((a) => ({ ...a, preselected: true }));
+    actors = ActorPickerDialog.applySourcePreselection(actors, source);
 
     const list = this.element.querySelector('.query-actor-list');
     if (!list) return;
@@ -325,7 +367,7 @@ export default class ActorPickerDialog extends foundry.applications.api.DialogV2
           ui.notifications.error('DSAError.noProperActor', { localize: true });
           return;
         }
-        actors = built.entries.map((a) => ({ ...a, preselected: true }));
+        actors = built.entries;
       }
     }
 
