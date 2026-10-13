@@ -1905,7 +1905,7 @@
     "armorAndWeaponDamage": "Weapon breaking and Armor Sturdiness",
     "armorAndWeaponDamageHint": "Optional rule: weapons can break via the breaking factor, and armor degrades with use.",
     "attackFromBehindAngle": "Angle of Dead Zone",
-    "attackFromBehindAngleHint": "The angle in which an attack from behind is considered a dead zone. By default 120°. Sets the corresponding modifier for attacks from behind. Only active if the Dere Positioning System is activated. At 0° no modifier is set.",
+    "attackFromBehindAngleHint": "The angle in which an attack from behind is considered a dead zone. By default 100°. Sets the corresponding modifier for attacks from behind. Only active if the Dere Positioning System is activated. At 0° no modifier is set.",
     "calendar": "TDE Calendar",
     "calendarHint": "Choose the TDE calendar for world time (months, weekdays, holidays) in the calendar widget.",
     "capQSat": "Max achievable quality level",

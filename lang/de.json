@@ -1907,7 +1907,7 @@
     "armorAndWeaponDamage": "Waffen- und Rüstungsverschleiß",
     "armorAndWeaponDamageHint": "Optionale Regel: Waffen können über den Bruchfaktor beschädigt werden, Rüstungen nutzen sich ab.",
     "attackFromBehindAngle": "Toter Winkel",
-    "attackFromBehindAngleHint": "Der Winkel in dem ein Angriff von hinten als Toter Winkel gilt. Standardmäßig 120°. Setzt den entsprechenden Modifikator bei Angriffen von hinten. Nur aktiv wenn das Dere Positioning System aktiviert ist. Bei 0° wird kein Modifikator gesetzt.",
+    "attackFromBehindAngleHint": "Der Winkel in dem ein Angriff von hinten als Toter Winkel gilt. Standardmäßig 100°. Setzt den entsprechenden Modifikator bei Angriffen von hinten. Nur aktiv wenn das Dere Positioning System aktiviert ist. Bei 0° wird kein Modifikator gesetzt.",
     "calendar": "DSA Kalender",
     "calendarHint": "Wählt den aventurischen Kalender für die Weltzeit (Monate, Wochentage, Feiertage) im Kalender-Widget.",
     "capQSat": "Maximale erwürfelbare QS",
