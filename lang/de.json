@@ -3183,23 +3183,23 @@
     "wagePaid": "Rechnung bezahlt"
   },
   "PERSONAE": {
-    "Add": "Person/Kreatur hinzufügen",
+    "Add": "Akteur hinzufügen",
     "FIELDS": {
       "personae": {
         "actor_uuid": {
-          "hint": "Ziehe einen Akteur per Drag & Drop hierher, der im Bestiarium repräsentiert wird.",
+          "hint": "Ziehe einen Akteur per Drag & Drop hierher, der im Almanach repräsentiert wird.",
           "label": "Akteur",
-          "warning": "Ein Persona Entry muss mit einem Akteur verknüpft sein, um in Bestiarium/Personae Dramatis angezeigt zu werden."
+          "warning": "Ein Persona Entry muss mit einem Akteur verknüpft sein, um im Almanach angezeigt zu werden."
         },
         "description": {
           "label": "Beschreibung"
         },
         "faction": {
-          "hint": "Kommagetrennte Liste von Fraktionen/Typen. Der Akteur wird im Bestiarium unter jeder Fraktion gruppiert.",
+          "hint": "Kommagetrennte Liste von Fraktionen/Typen. Der Akteur wird im Almanach unter jeder Fraktion gruppiert.",
           "label": "Fraktion/Typus"
         },
         "important": {
-          "hint": "Markiert diese Person als wichtig mit goldenem Rahmen um den Avatar.",
+          "hint": "Markiert diesen Akteur mit einem goldenen Rahmen um den Avatar als wichtig.",
           "label": "Wichtig"
         },
         "img": {
@@ -3253,7 +3253,7 @@
           "label": "Untertitel"
         },
         "tags": {
-          "hint": "Eine Komma-separierte Liste von Tags, um die Person/Kreatur mit wichtigen Details zu versehen oder Standard-Tags wie Spezies, Kultur und Profession zu überschreiben.",
+          "hint": "Eine Komma-separierte Liste von Tags, um den Akteur mit wichtigen Details zu versehen oder Standard-Tags wie Spezies, Kultur und Profession zu überschreiben.",
           "label": "Tags"
         },
         "type": {
@@ -3282,7 +3282,7 @@
     "copyActorDescription": "Akteurbeschreibung vom Original kopieren",
     "copyAvatar": "Avatar vom Original kopieren",
     "copyToken": "Token vom Original kopieren",
-    "dragPersons": "Ziehe Personen oder Kreaturen per Drag & Drop hierher.",
+    "dragPersons": "Ziehe Akteure per Drag & Drop hierher.",
     "filterDuplicates": "Duplikate ausblenden",
     "filterImportant": "Nur Wichtige",
     "filterVisible": "Nur für Spieler sichtbar",

@@ -3181,23 +3181,23 @@
     "wagePaid": "Payment received"
   },
   "PERSONAE": {
-    "Add": "Add Person/Creature",
+    "Add": "Add Actor",
     "FIELDS": {
       "personae": {
         "actor_uuid": {
-          "hint": "Drag and drop an actor here to represent them in the Bestiary.",
+          "hint": "Drag and drop an actor here to represent them in the Almanac.",
           "label": "Actor",
-          "warning": "A Persona Entry must be linked to an Actor to be displayed in the Bestiary/Dramatis Personae."
+          "warning": "A Persona Entry must be linked to an Actor to be displayed in the Almanac."
         },
         "description": {
           "label": "Description"
         },
         "faction": {
-          "hint": "Comma-separated list of factions/types. The actor is grouped under each faction in the Bestiary.",
+          "hint": "Comma-separated list of factions/types. The actor is grouped under each faction in the Almanac.",
           "label": "Faction/Type"
         },
         "important": {
-          "hint": "Marks this person as important with a golden border around their avatar.",
+          "hint": "Marks this actor with a golden border around the avatar as important.",
           "label": "Important"
         },
         "img": {
@@ -3251,7 +3251,7 @@
           "label": "Subtitle"
         },
         "tags": {
-          "hint": "A comma-separated list of tags to attach important details to the person/creature or override default tags like species, culture, and profession.",
+          "hint": "A comma-separated list of tags to attach important details to the actor or override default tags like species, culture, and profession.",
           "label": "Tags"
         },
         "type": {
@@ -3280,7 +3280,7 @@
     "copyActorDescription": "Copy actor description from original actor",
     "copyAvatar": "Copy avatar from original actor",
     "copyToken": "Copy token from original actor",
-    "dragPersons": "Drag people or creatures here.",
+    "dragPersons": "Drag actors here.",
     "filterDuplicates": "Hide duplicates",
     "filterImportant": "Important only",
     "filterVisible": "Visible to players only",
