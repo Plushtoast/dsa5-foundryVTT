@@ -370,7 +370,7 @@
     right: 0;
     bottom: 0;
     height: calc(var(--missing, 0) * 100%);
-    background: var(--dsa-hud-accent);
+    background: color-mix(in srgb, var(--dsa-hud-accent) 55%, transparent);
     pointer-events: none;
   }
 

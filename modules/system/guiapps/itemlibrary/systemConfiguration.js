@@ -39,6 +39,28 @@ export default class DSASystemConfiguration {
     return [documentName]
   }
 
+  static shouldIndexPack(pack, { documentNames, filteredCompendiums } = {}) {
+    if (!pack) return false;
+    if (documentNames && !documentNames.includes(pack.documentName)) return false;
+    if (!game.user?.isGM && !pack.visible) return false;
+    if (filteredCompendiums?.[pack.metadata?.packageName]) return false;
+    if (this.isWorldDestroyerBackupPack(pack)) return false;
+    return true;
+  }
+  
+  static isWorldDestroyerBackupPack(pack) {
+    const folderId = this.worldDestroyerBackupFolderId(pack?.documentName ?? pack?.metadata?.type);
+    return folderId != null && pack?.folder?.id == folderId;
+  }
+
+  static worldDestroyerBackupFolderId(type = 'Actor') {
+    if (!type || !game.folders) return null;
+    const parentName = `${_loc('DSASETTINGS.worldDestroyer')} - Backups`;
+    const parent = game.folders.contents.find((x) => x.name == parentName && x.type == 'Compendium' && x.folder?.id == null);
+    if (!parent) return null;
+    return game.folders.contents.find((x) => x.name == type && x.type == 'Compendium' && x.folder?.id == parent.id)?.id ?? null;
+  }
+
   static categorySourceNames() {
     return [...this.documentNames, ...this.extraCategorySources]
   }

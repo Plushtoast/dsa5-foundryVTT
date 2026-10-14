@@ -1288,11 +1288,10 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
 
     try {
       const packNames = this.systemConfiguration.indexPackNames(documentName);
-      const packs = game.packs.filter(p =>
-        packNames.includes(p.documentName) &&
-        (game.user.isGM || p.visible) &&
-        !filteredCompendiums[p.metadata.packageName]
-      );
+      const packs = game.packs.filter(p => this.systemConfiguration.shouldIndexPack(p, {
+        documentNames: packNames,
+        filteredCompendiums,
+      }));
 
       index.workerReady = false;
       if (!this.indexLoader?.enabled) {
