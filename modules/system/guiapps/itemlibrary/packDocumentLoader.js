@@ -1,10 +1,16 @@
 /**
- * Loads compendium documents for the item library without extra getIndex fields.
+ * Loads pack entries for the item library.
  *
- * Modes:
+ * Actors default to pack index fields only. Full getDocuments() is opt-in
+ * via libraryActorWarmLoad (cached documents, slower index).
+ * Items / journals / effects still use getDocuments().
+ *
+ * Modes (full-document loads):
  * - bulk: one getDocuments() per pack, all packs in parallel (default, fastest)
  * - chunked: ID chunks and limited concurrency (stabler on slow internet sockets)
  */
+import SearchDocument from './searchDocument.js';
+
 export default class ItemLibraryPackLoader {
   static WORKER_BATCH_SIZE = 200;
 
@@ -15,12 +21,27 @@ export default class ItemLibraryPackLoader {
     ActiveEffect: 80,
   };
 
+  static INDEX_DOCUMENT_NAMES = new Set(['Actor']);
+
   static configuredMode() {
     try {
       return game.settings?.get('dsa5', 'libraryIndexLoadMode') || 'bulk';
     } catch (err) {
       return 'bulk';
     }
+  }
+
+  static actorWarmLoad() {
+    try {
+      return !!game.settings?.get('dsa5', 'libraryActorWarmLoad');
+    } catch (err) {
+      return false;
+    }
+  }
+
+  static shouldLoadFullDocuments(documentName) {
+    if (!this.INDEX_DOCUMENT_NAMES.has(documentName)) return true;
+    return this.actorWarmLoad();
   }
 
   static resolveMode(setting = this.configuredMode()) {
@@ -89,17 +110,59 @@ export default class ItemLibraryPackLoader {
     return {};
   }
 
+  static toIndexSource(pack, entry) {
+    return {
+      ...entry,
+      uuid: entry.uuid || pack.getUuid?.(entry._id) || `Compendium.${pack.collection}.${entry._id}`,
+      pack: pack.collection,
+      documentName: pack.documentName,
+    };
+  }
+
   /**
    * @param {CompendiumCollection} pack
    * @param {object} [options]
    * @param {string} [options.documentName]
    * @param {string[]} [options.skipTypes]
+   * @param {string[]} [options.fields]
    * @param {'bulk'|'chunked'} [options.mode]
+   * @param {boolean} [options.warm]
    * @param {AbortSignal} [options.signal]
    * @param {(loaded: number, total: number) => void} [options.onProgress]
    * @returns {Promise<object[]>}
    */
-  static async loadPack(pack, { documentName, skipTypes, mode, signal, onProgress } = {}) {
+  static async loadPack(pack, { documentName, skipTypes, mode, fields, warm, signal, onProgress } = {}) {
+    const docName = documentName ?? pack.documentName;
+    const skip = skipTypes ?? this.skipTypesFor(docName);
+    const loadDocuments = warm ?? this.shouldLoadFullDocuments(docName);
+
+    if (!loadDocuments) {
+      return this.loadPackIndex(pack, {
+        documentName: docName,
+        skipTypes: skip,
+        fields: fields ?? SearchDocument.indexFieldsFor(docName),
+        signal,
+        onProgress,
+      });
+    }
+
+    return this.loadPackDocuments(pack, { documentName: docName, skipTypes: skip, mode, signal, onProgress });
+  }
+
+  static async loadPackIndex(pack, { documentName, skipTypes, fields = [], signal, onProgress } = {}) {
+    const skip = skipTypes ?? this.skipTypesFor(documentName ?? pack.documentName);
+    const skipSet = new Set(skip);
+
+    if (signal?.aborted) return [];
+    if (pack.getIndex) await pack.getIndex({ fields });
+    if (signal?.aborted) return [];
+
+    const sources = this.#indexContents(pack, skipSet);
+    onProgress?.(sources.length, sources.length);
+    return sources;
+  }
+
+  static async loadPackDocuments(pack, { documentName, skipTypes, mode, signal, onProgress } = {}) {
     const skip = skipTypes ?? this.skipTypesFor(documentName ?? pack.documentName);
     const skipSet = new Set(skip);
     const resolved = this.resolveMode(mode);
@@ -135,6 +198,15 @@ export default class ItemLibraryPackLoader {
     }
 
     return this.#contents(pack, skipSet);
+  }
+
+  static #indexContents(pack, skipSet) {
+    const sources = [];
+    for (const entry of pack.index ?? []) {
+      if (skipSet.has(entry.type)) continue;
+      sources.push(this.toIndexSource(pack, entry));
+    }
+    return sources;
   }
 
   static #countIndexed(pack, skipSet) {

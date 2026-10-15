@@ -388,6 +388,10 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
         icon: "fa-filter",
         val: game.settings.get('dsa5', 'filterDuplicateItems')
       },
+      libraryActorWarmLoad: {
+        icon: "fa-fire",
+        val: game.settings.get('dsa5', 'libraryActorWarmLoad')
+      },
       moduleFilter: {
         icon: "fa-cubes",
         dialog: true,
@@ -440,6 +444,11 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
           const category = html.find('.tab.active')[0]?.dataset.tab;
           if (category) await this.filterItems(category);
         }
+        break
+      case "libraryActorWarmLoad":
+        val = !game.settings.get('dsa5', 'libraryActorWarmLoad')
+        await game.settings.set('dsa5', 'libraryActorWarmLoad', val)
+        await this._rebuildDocumentIndex('Actor')
         break
       case "moduleFilter":
         DSA5ItemLibrary._showCompendiumFilter();
@@ -1386,6 +1395,20 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     return game.items;
   }
 
+  async _rebuildDocumentIndex(documentName) {
+    const index = this.findIndex(documentName);
+    if (!index) return;
+    if (!index.build && !index.workerReady && !index.buildPromise) return;
+
+    index.abortController?.abort();
+    const pending = index.buildPromise;
+    index.build = false;
+    index.workerReady = false;
+    if (pending) await pending.catch(() => {});
+    this.hideLoading(documentName);
+    await this._createIndex(documentName, this._worldItemsFor(documentName));
+  }
+
   async _swapIndexLoadMode(_event, _target) {
     if (this._indexModeSwapInFlight) return;
     this._indexModeSwapInFlight = true;
@@ -1395,12 +1418,7 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
       await game.settings.set('dsa5', 'libraryIndexLoadMode', next);
       const building = Object.values(this.indexes ?? {}).filter((index) => index.build);
       for (const index of building) {
-        const documentName = index.documentName;
-        index.abortController?.abort();
-        index.build = false;
-        index.workerReady = false;
-        this.hideLoading(documentName);
-        await this._createIndex(documentName, this._worldItemsFor(documentName));
+        await this._rebuildDocumentIndex(index.documentName);
       }
     } finally {
       this._indexModeSwapInFlight = false;
@@ -1530,24 +1548,34 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     this.candidateUuidsBySubcategory[subcategory] = uuids;
     this.detailFilter[subcategory].candidates = uuids;
 
+    const detailStore = this.detailStoreBySubcategory[subcategory];
+    const missingUuids = [];
+    for (const uuid of uuids) {
+      if (detailStore[uuid]) continue;
+      const stored = this._getStoredObject(index, uuid);
+      if (stored && SearchDocument.hasDetailFilterFields(stored, subcategory)) {
+        detailStore[uuid] = stored;
+      } else if (uuid.startsWith('Compendium')) {
+        missingUuids.push(uuid);
+      }
+    }
+
     const BATCH_SIZE = 25;
-    const compendiumUuids = uuids.filter(uuid => uuid.startsWith('Compendium'));
-    const totalBatches = Math.ceil(compendiumUuids.length / BATCH_SIZE);
+    const totalBatches = Math.ceil(missingUuids.length / BATCH_SIZE);
 
     for (let i = 0; i < totalBatches; i++) {
-      const batchUuids = compendiumUuids.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
-      const missingUuids = batchUuids.filter(uuid => !this.detailStoreBySubcategory[subcategory][uuid]);
-      const batchItems = await Promise.all(missingUuids.map(uuid => fromUuid(uuid)));
+      const batchUuids = missingUuids.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE);
+      const batchItems = await Promise.all(batchUuids.map(uuid => fromUuid(uuid)));
 
       for (const item of batchItems.filter(Boolean)) {
         const enriched = AdvancedSearchDocument.toSearchableObject(item, subcategory);
-        this.detailStoreBySubcategory[subcategory][enriched.uuid] = enriched;
+        detailStore[enriched.uuid] = enriched;
       }
 
       const progressPct = Math.min(0.1 + 0.8 * ((i + 1) / totalBatches), 0.9);
       progress.update({
         message: 'Library.loading',
-        format: { item: `${catName} (${Math.min((i + 1) * BATCH_SIZE, compendiumUuids.length)}/${compendiumUuids.length})` },
+        format: { item: `${catName} (${Math.min((i + 1) * BATCH_SIZE, missingUuids.length)}/${missingUuids.length})` },
         pct: progressPct
       });
 

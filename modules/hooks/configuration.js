@@ -915,6 +915,14 @@ export function setupConfiguration() {
         chunked: 'DSASETTINGS.libraryIndexLoadModeChunked',
       },
     },
+    libraryActorWarmLoad: {
+      name: 'DSASETTINGS.libraryActorWarmLoad',
+      hint: 'DSASETTINGS.libraryActorWarmLoadHint',
+      scope: 'client',
+      config: true,
+      default: false,
+      type: Boolean,
+    },
     hideJournalBrowserFreeModules: {
       name: 'DSASETTINGS.hideJournalBrowserFreeModules',
       hint: 'DSASETTINGS.hideJournalBrowserFreeModulesHint',

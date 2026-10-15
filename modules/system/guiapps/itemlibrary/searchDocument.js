@@ -1,5 +1,6 @@
 import ADVANCEDFILTERS from '../itemlibrary_advanced_filters.js';
 import ItemLibraryListColumns from './listColumns.js';
+import DSASystemConfiguration from './systemConfiguration.js';
 
 export default class SearchDocument {
   static cachedKeys = {
@@ -31,6 +32,52 @@ export default class SearchDocument {
       default:
         return 'description.value'
     }
+  }
+
+  static detailFiltersFor(type) {
+    return (game.dsa5?.advancedFilters || ADVANCEDFILTERS)[type] || [];
+  }
+
+  static indexFieldPath(attr) {
+    if (!attr) return null;
+    if (attr.startsWith('system.') || attr === 'description') return attr;
+    return `system.${attr}`;
+  }
+
+  static applyDetailFilterFields(object, item, type) {
+    for (const attr of this.detailFiltersFor(type)) {
+      if (!attr.attr) continue;
+      object[attr.attr] = ItemLibraryListColumns.getSystemAttrValue(item, attr.attr) ?? '';
+    }
+    return object;
+  }
+
+  static hasDetailFilterFields(object, type) {
+    if (!object) return false;
+    return this.detailFiltersFor(type).every((attr) => attr.attr in object);
+  }
+
+  static indexFieldsFor(documentName, { fullTextSearch } = {}) {
+    const fields = new Set();
+    const useDescription = fullTextSearch ?? game.dsa5?.itemLibrary?.fullTextSearch;
+    if (useDescription) {
+      const descriptionKey = this.getDescriptionKey(documentName);
+      if (descriptionKey) fields.add(descriptionKey);
+    }
+
+    const types = DSASystemConfiguration.typeKeysFor(documentName);
+    for (const type of types) {
+      if (ItemLibraryListColumns.typeHasPrice(type)) fields.add('system.price.value');
+      for (const col of ItemLibraryListColumns.getListDisplayFields(type)) {
+        if (!col.attr) continue;
+        if (col.columnType === 'plantTypes') fields.add('system.planttype');
+        else fields.add(this.indexFieldPath(col.attr));
+      }
+      for (const attr of this.detailFiltersFor(type)) {
+        if (attr.attr) fields.add(this.indexFieldPath(attr.attr));
+      }
+    }
+    return [...fields];
   }
 
   static toJournalSearchableObject(item) {
@@ -75,20 +122,15 @@ export default class SearchDocument {
       }
     }
 
+    this.applyDetailFilterFields(object, item, item.type);
     return object;
   }
 }
 
 export class AdvancedSearchDocument extends SearchDocument {
   static toSearchableObject(item, subcategory) {
-    const object = super.toSearchableObject(item, item.documentName)
-
-    const attrs = ADVANCEDFILTERS[subcategory] || [];
-    for (const attr of attrs) {
-      object[attr.attr] = attr.attr.split('.').reduce((prev, cure) => {
-        return prev[cure] === undefined ? {} : prev[cure];
-      }, item.system);
-    }
+    const object = super.toSearchableObject(item, item.documentName);
+    if (subcategory && subcategory !== item.type) this.applyDetailFilterFields(object, item, subcategory);
     return object;
   }
 }
