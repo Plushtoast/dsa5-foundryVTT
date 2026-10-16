@@ -316,6 +316,23 @@ export default class MagicAnalysisQueryService {
     });
   }
 
+  /**
+   * Information lore follows world distribution + messageMode.
+   * Max QS follows the Magiekunde roll's visibility (#2855).
+   */
+  static applyResultVisibility(html, state, user = game.user) {
+    const resultPlayerId = state.approval?.playerId || state.recipients?.[0]?.designatedUserId;
+    if (!InformationQueryService.canViewInformationResult(resultPlayerId, user, state.messageMode)) {
+      html.find('.magic-analysis-result-block').remove();
+    }
+
+    if (!RollRequestService.canUserSeeMessageMode(state.messageMode, { actorId: state.actorId }, user)) {
+      html.find('.magic-analysis-max-qs').text(
+        game.i18n.format('MAGICANALYSIS.maxQs', { max: '?' }),
+      );
+    }
+  }
+
   static handleRenderMessage(msg, html) {
     const state = foundry.utils.getProperty(msg.message, 'flags.dsa5.magicAnalysisRequest');
     if (!state) return;
@@ -331,18 +348,7 @@ export default class MagicAnalysisQueryService {
       html.find('.roll-request-gm').remove();
     }
 
-    const resultPlayerId = state.approval?.playerId || designatedUserId;
-    const canViewInformation = InformationQueryService.canViewInformationResult(
-      resultPlayerId,
-      game.user,
-      state.messageMode,
-    );
-    if (!canViewInformation) {
-      html.find('.magic-analysis-result-block').remove();
-      html.find('.magic-analysis-max-qs').text(
-        game.i18n.format('MAGICANALYSIS.maxQs', { max: '?' }),
-      );
-    }
+    this.applyResultVisibility(html, state);
 
     html.find('.magic-analysis-step-row').each((_idx, element) => {
       const row = $(element);

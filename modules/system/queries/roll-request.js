@@ -321,19 +321,23 @@ export default class RollRequestService {
     return entry.resultDetails?.messageMode || state.messageMode || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
   }
 
-  static canUserSeeResult(entry, state = {}, user = game.user) {
-    if (!entry.resultDetails) return false;
+  static canUserSeeMessageMode(messageMode, { actorId } = {}, user = game.user) {
     if (user?.isGM) return true;
 
-    const messageMode = this.resultMessageMode(entry, state);
-    if (this.PUBLIC_MESSAGE_MODES.has(messageMode)) return true;
+    const mode = messageMode || DICE_CONSTANTS.CHAT_MODES.PUBLIC;
+    if (this.PUBLIC_MESSAGE_MODES.has(mode)) return true;
     // Blind rolls are GM-only: even the actor owner must not see success vs failure.
-    if (messageMode === DICE_CONSTANTS.CHAT_MODES.BLIND) return false;
-    if ([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.SELF].includes(messageMode)) {
-      const actor = game.actors.get(entry.actorId);
+    if (mode === DICE_CONSTANTS.CHAT_MODES.BLIND) return false;
+    if ([DICE_CONSTANTS.CHAT_MODES.GM, DICE_CONSTANTS.CHAT_MODES.SELF].includes(mode)) {
+      const actor = game.actors.get(actorId);
       return !!actor?.testUserPermission(user, 'OWNER');
     }
     return false;
+  }
+
+  static canUserSeeResult(entry, state = {}, user = game.user) {
+    if (!entry.resultDetails) return false;
+    return this.canUserSeeMessageMode(this.resultMessageMode(entry, state), { actorId: entry.actorId }, user);
   }
 
   static getRequestedIcon(category, name) {
