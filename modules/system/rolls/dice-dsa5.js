@@ -11,6 +11,7 @@ import Itemdsa5 from '../../item/item-dsa5.js';
 import DSA5StatusEffects from '../../status/status_effects.js';
 import OpposedDsa5 from './opposed-dsa5.js';
 import RegenerationHelper from './regeneration-helper.js';
+import { HomunculusRegeneration } from '../../actor/concerns/homunculus-regeneration.js';
 import DSAActiveEffectConfig from '../../status/active_effect_config.js';
 import DSA5SoundEffect from '../helpers/dsa-soundeffect.js';
 import EquipmentDamage from '../automation/equipment-damage.js';
@@ -207,6 +208,12 @@ export default class DiceDSA5 {
     if (actor.system.isMage && regenerateAsP) dice.push('1d6');
     if (actor.system.isPriest && regenerateKaP) dice.push('1d6');
 
+    const ownerDiceCount = dice.length;
+    const baths = HomunculusRegeneration.selectedBaths(testData);
+    for (let i = 0; i < baths.length; i++) dice.push('1d6');
+
+    if (!dice.length) dice.push('1d6');
+
     const roll = await new Roll(dice.join('+')).evaluate();
 
     // Apply colors to dice
@@ -217,12 +224,12 @@ export default class DiceDSA5 {
     }
 
     if (actor.system.isMage && regenerateAsP) {
-      const targetIndex = actor.system.isPriest && regenerateKaP ? dice.length - 2 : dice.length - 1;
+      const targetIndex = actor.system.isPriest && regenerateKaP ? ownerDiceCount - 2 : ownerDiceCount - 1;
       mergeObject(roll.dice[targetIndex].options, d3dColors('ge'));
     }
 
     if (actor.system.isPriest && regenerateKaP) {
-      mergeObject(roll.dice[dice.length - 1].options, d3dColors('in'));
+      mergeObject(roll.dice[ownerDiceCount - 1].options, d3dColors('in'));
     }
 
     return roll;
@@ -961,6 +968,23 @@ export default class DiceDSA5 {
         index += 2;
       }
     }
+
+    const baths = HomunculusRegeneration.selectedBaths(testData).map((bath) => ({ ...bath }));
+    for (const bath of baths) {
+      const dieResult = Number(roll.terms[index]?.results?.[0]?.result) || 0;
+      chars.push({
+        char: 'bloodBath',
+        res: dieResult,
+        die: 'd6',
+      });
+      bath.lep = dieResult;
+      bath.cost = bath.usedBloodReserve ? 0 : HomunculusRegeneration.BLOOD_COST;
+      index += 2;
+    }
+    result.homunculusBloodBath = baths;
+    result.homunculusBloodCost = HomunculusRegeneration.unpaidCost(baths);
+    if (result.LeP == null && baths.length) result.LeP = 0;
+    result.homunculusSelfRest = !!testData.homunculusSelfRest || HomunculusRegeneration.isHomunculus(actor);
 
     result.characteristics = chars;
     await this.#confirmNegativeRegeneration(testData, result);

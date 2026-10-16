@@ -34,7 +34,7 @@ import { GlobalToolTipHandler } from '../system/globals/tooltip.js';
 import { DICE_CONSTANTS } from '../config/dice-constants.js';
 import { InventoryBulkActionHelper } from '../system/helpers/inventory-bulk-action.js';
 import { PersonaeDramatis } from '../system/calendar/personaedramatis.js';
-import CompanionHandler from './companions/companion-handler-class.js';
+import CompanionHandler from './companions/companion-handler.js';
 import CompanionLoyalty from './companions/companion-loyalty.js';
 import CreatureDropDialog from './creature-drop-dialog.js';
 import ItempackageData from '../data/item/itempackage.js';

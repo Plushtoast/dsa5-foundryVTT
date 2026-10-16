@@ -112,5 +112,24 @@
         </div>
         {{/if}}
 
+        {{#if homunculusSelfRest}}
+        <div class="form-group">
+            <p data-tooltip="COMPANIONS.Notification.HomunculusNoSleepRegen">{{localize "COMPANIONS.Notification.HomunculusNoSleepRegen"}}</p>
+        </div>
+        {{/if}}
+
+        {{#each homunculusBloodBathOptions}}
+        <div class="form-group">
+            <label data-tooltip="{{bathTooltip}}">{{localize "bloodBath" name=name}}</label>
+            <input type="checkbox" name="homunculusBloodBath.{{id}}" value="1" data-homunculus-blood-bath data-uuid="{{uuid}}" data-companion-id="{{id}}" data-name="{{name}}" data-tooltip="{{bathTooltip}}">
+        </div>
+        {{#if hasBlutkonserve}}
+        <div class="form-group">
+            <label data-tooltip="{{reserveTooltip}}">{{localize "LocalizedIDs.bloodReserve"}}</label>
+            <input type="checkbox" name="homunculusBloodReserve.{{id}}" value="1" data-homunculus-blood-reserve data-companion-id="{{id}}" data-tooltip="{{reserveTooltip}}" disabled>
+        </div>
+        {{/if}}
+        {{/each}}
+
     </div>
 </form>

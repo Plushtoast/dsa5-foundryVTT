@@ -2,13 +2,14 @@ import Riding from '../../system/automation/riding.js';
 import OnUseEffect from '../../system/automation/onUseEffects.js';
 import CompanionConfig from './companion-config.js';
 import { CompanionTrainingApp } from './companion-training-app.js';
-import { CompanionSkillSelectionApp } from './companion-skill-selection-app.js';
+import { CompanionSkillSelectionApp } from './companion-skill-selection.js';
 import CompanionHotbar from './companion-hotbar.js';
 import { RollDialogBuilder } from '../../dialog/dialog-builder.js';
 import { Trade } from '../trade.js';
 import { CONJURATION_CONTROL_MODES } from '../../config/conjuration-constants.js';
 import { SummoningFlow } from '../../wizards/summoning/summoning_flow.js';
 import CompanionLoyalty from './companion-loyalty.js';
+import { HomunculusRegeneration } from '../concerns/homunculus-regeneration.js';
 
 const { SERVICES, REQUESTS } = CONJURATION_CONTROL_MODES;
 
@@ -342,7 +343,7 @@ export default class CompanionHandler {
             await droppedActor.update({ 'system.companionData.owners': owners }, { render: false });
         }
 
-        const isHomunculus = droppedActor.items.some(i => i.type === 'trait' && i.name === _loc("COMPANIONS.HomunculusCreation"));
+        const isHomunculus = HomunculusRegeneration.isHomunculus(droppedActor);
 
         if (!isHomunculus) {
             const hadLoyalty = !!CompanionLoyalty.findForOwner(droppedActor, sheet.actor.uuid, { fallbackUnscoped: false });
@@ -695,6 +696,9 @@ export default class CompanionHandler {
         if (!actor || !actor.isOwner) {
             ui.notifications.warn(_loc("COMPANIONS.Notification.NoPermissionRegeneration"));
             return;
+        }
+        if (HomunculusRegeneration.isHomunculus(actor)) {
+            ui.notifications.warn(_loc("COMPANIONS.Notification.HomunculusNoSleepRegen"));
         }
         const setup = await actor.setupRegeneration("regenerate", {});
         if (setup) await actor.basicTest(setup);

@@ -1,5 +1,6 @@
 import DSA5_Utility from '../helpers/utility-dsa5.js';
 import QueryOrchestrator from '../queries/query-orchestrator.js';
+import { HomunculusRegeneration } from '../../actor/concerns/homunculus-regeneration.js';
 
 export default class RegenerationHelper {
   static STAT_TYPES = ['LeP', 'AsP', 'KaP'];
@@ -160,7 +161,19 @@ export default class RegenerationHelper {
     const actor = this.getActorFromMessage(message);
     if (!this.canApplyActor(actor, { allowGM })) return false;
 
-    return this.hasRegenStats(this.getPostData(message));
+    const postData = this.getPostData(message);
+    if (this.isHomunculusSelfRest(actor, postData)) return false;
+
+    return this.hasRegenStats(postData);
+  }
+
+  static isHomunculusSelfRest(actor, postData) {
+    return !!postData?.homunculusSelfRest || HomunculusRegeneration.isHomunculus(actor);
+  }
+
+  static ownerLePAfterRegen(actor, ownerLeP) {
+    const wounds = actor?.system?.status?.wounds;
+    return this.nextPoolValue(wounds?.value, ownerLeP, wounds?.max);
   }
 
   static async markApplied(message) {
@@ -197,8 +210,58 @@ export default class RegenerationHelper {
     const postData = this.getPostData(message);
     if (!this.hasRegenStats(postData)) return false;
 
-    const applied = await this.applyToActor(actor, postData);
+    if (this.isHomunculusSelfRest(actor, postData)) {
+      if (notifyOnDenied) {
+        ui.notifications.warn('COMPANIONS.Notification.HomunculusNoSleepRegen', { localize: true });
+      }
+      return false;
+    }
+
+    const baths = HomunculusRegeneration.selectedBaths(postData);
+    const resolved = await HomunculusRegeneration.resolveBaths(baths);
+    for (const { bath, actor: companion } of resolved) {
+      if (!companion || !this.canApplyActor(companion, { allowGM })) {
+        if (notifyOnDenied) {
+          ui.notifications.error(_loc('DSAError.HomunculusBloodPermission', { name: bath?.name || companion?.name || '' }));
+        }
+        return false;
+      }
+    }
+
+    const unpaid = HomunculusRegeneration.unpaidCost(baths);
+    const ownerLeP = Number(postData.LeP) || 0;
+    if (this.ownerLePAfterRegen(actor, ownerLeP) < unpaid) {
+      if (notifyOnDenied) {
+        ui.notifications.error(_loc('DSAError.HomunculusBloodCannotPay', { cost: unpaid }));
+      }
+      return false;
+    }
+
+    const ownerSnapshot = {
+      'system.status.wounds.value': actor.system.status.wounds.value,
+      'system.status.astralenergy.value': actor.system.status.astralenergy.value,
+      'system.status.karmaenergy.value': actor.system.status.karmaenergy.value,
+    };
+
+    const ownerAmounts = this.normalizeAmounts(postData);
+    ownerAmounts.LeP -= unpaid;
+    ownerAmounts.negativeRegenerationConfirmed = postData.negativeRegenerationConfirmed;
+
+    const applied = await this.applyToActor(actor, ownerAmounts, { skipConfirm: unpaid > 0 });
     if (!applied) return false;
+
+    try {
+      for (const { bath, actor: companion } of resolved) {
+        const healed = await this.applyToActor(companion, { LeP: Number(bath.lep) || 0 }, { skipConfirm: true });
+        if (!healed) throw new Error(bath.name);
+      }
+    } catch (err) {
+      await actor.update(ownerSnapshot);
+      if (notifyOnDenied) {
+        ui.notifications.error(_loc('DSAError.HomunculusBloodPermission', { name: err?.message || '' }));
+      }
+      return false;
+    }
 
     await this.markApplied(message);
     return true;

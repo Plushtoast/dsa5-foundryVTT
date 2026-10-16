@@ -1,6 +1,6 @@
 import Riding from '../system/automation/riding.js';
 import { SummoningFlow } from '../wizards/summoning/summoning_flow.js';
-import CompanionHandler from './companions/companion-handler-class.js';
+import CompanionHandler from './companions/companion-handler.js';
 
 /**
  * Chooser when a creature actor is dropped onto a character sheet

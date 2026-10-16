@@ -3,16 +3,20 @@ import { RollDialogBuilder } from "../dialog/dialog-builder.js";
 import DSA5StatusEffects from "../status/status_effects.js";
 import { SituationalModifiersWidget } from "../system/helpers/situational-modifiers-widget.js";
 import DiceDSA5 from "../system/rolls/dice-dsa5.js";
+import { HomunculusRegeneration } from "./concerns/homunculus-regeneration.js";
 import { RegenerationModifiers } from "./concerns/regeneration-modifiers.js";
 const { mergeObject } = foundry.utils;
 export class ActorDialogBuilder extends RollDialogBuilder {
-    static createRegenerationDialog(statusId, options, tokenId, actor) {
+    static async createRegenerationDialog(statusId, options, tokenId, actor) {
         const title = _loc('regenerationTest');
         const item = { type: 'regenerate', system: {} };
         const template = 'systems/dsa5/templates/chat/roll/regeneration-card.hbs';
         const { testData, cardOptions } = this.createBaseConfig(item, actor, tokenId, options, template, title)
         testData.opposable = false;
         testData.extra.statusId = statusId;
+        const homunculusSelfRest = HomunculusRegeneration.isHomunculus(actor);
+        const homunculusBloodBathOptions = homunculusSelfRest ? [] : await HomunculusRegeneration.listOwnerHomunculi(actor);
+        testData.homunculusSelfRest = homunculusSelfRest;
         const situationalModifiers = DSA5StatusEffects.getRollModifiers(actor, item);
         situationalModifiers.push(...RegenerationModifiers.get(actor));
         const dialogOptions = {
@@ -25,6 +29,8 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                 showAspModifier: actor.system.isMage,
                 showKapModifier: actor.system.isPriest,
                 specialAbilityOptions: RegenerationModifiers.getSpecialAbilityOptions(actor),
+                homunculusBloodBathOptions,
+                homunculusSelfRest,
                 situationalModifiers,
                 modifier: options.modifier || 0,
             },
@@ -52,6 +58,7 @@ export class ActorDialogBuilder extends RollDialogBuilder {
                     if (regenerate) update[`system.status.regeneration.${k}Temp`] = 0;
                 }
                 Object.assign(testData, RegenerationModifiers.collectSpecialAbilityChoices(html));
+                Object.assign(testData, HomunculusRegeneration.collectChoices(html));
                 RegenerationModifiers.applySpecialAbilityRollOptions(testData, actor);
                 mergeObject(testData.extra.options, options);
                 actor.update(update);

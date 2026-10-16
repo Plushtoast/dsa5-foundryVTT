@@ -22,7 +22,7 @@ import ActorPickerDialog from '../../dialog/actor-picker-dialog.js';
 import ImageFrameDialog from '../../dialog/image-frame-dialog.js';
 import ImageFramePicker from '../../system/helpers/image-frame-picker.js';
 import DomFlyAnimation from '../../animation/dom-fly-animation.js';
-import CompanionHandler from '../companions/companion-handler-class.js';
+import CompanionHandler from '../companions/companion-handler.js';
 
 const { mergeObject, getProperty, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;

@@ -5,7 +5,7 @@ import Riding from '../system/automation/riding.js';
 import AdvantageRulesDSA5 from '../system/rules/advantage-rules-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';
 import { DSAAura } from '../system/automation/aura.js';
-import CompanionHandler from '../actor/companions/companion-handler-class.js';
+import CompanionHandler from '../actor/companions/companion-handler.js';
 import CompanionLoyalty from '../actor/companions/companion-loyalty.js';
 import { CONJURATION_CONTROL_MODES } from '../config/conjuration-constants.js';
 

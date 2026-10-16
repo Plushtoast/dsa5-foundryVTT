@@ -1,3 +1,4 @@
+import { HomunculusRegeneration } from '../actor/concerns/homunculus-regeneration.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 import DSA5CombatDialog from './dialog-combat-dsa5.js';
 import DialogShared from './dialog-shared.js';
@@ -67,6 +68,8 @@ export default class DSA5Dialog extends DialogShared {
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+
+    HomunculusRegeneration.bindDialog(this.element);
 
     const html = $(this.element)
     html.find('.dieButton').on('click', (ev) => {

@@ -1,5 +1,5 @@
 import Actordsa5 from '../actor/actor-dsa5.js';
-import CompanionHandler from '../actor/companions/companion-handler-class.js';
+import CompanionHandler from '../actor/companions/companion-handler.js';
 import { DefaultAppv2 } from '../actor/baseapp.js';
 import OpposedDsa5 from '../system/rolls/opposed-dsa5.js';
 import RuleChaos from '../system/rules/rule_chaos.js';

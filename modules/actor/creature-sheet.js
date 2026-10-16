@@ -3,7 +3,7 @@ import { gearSearchPartTemplates, magicPartTemplates, religionPartTemplates } fr
 import TraitRulesDSA5 from '../system/rules/trait-rules-dsa5.js';
 import APTracker from '../system/orwell/ap-tracker.js';
 import CreatureType from '../system/automation/creature-type.js';
-import CompanionHandler from './companions/companion-handler-class.js';
+import CompanionHandler from './companions/companion-handler.js';
 import DSA5_Utility from '../system/helpers/utility-dsa5.js';
 
 export default class ActorSheetdsa5Creature extends ActorSheetDsa5 {

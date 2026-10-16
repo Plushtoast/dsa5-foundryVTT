@@ -5,6 +5,11 @@
         <b>{{localize "badEnvironment"}}</b>: x 0.5
     </div>
     {{/if}}
+    {{#if testData.homunculusSelfRest}}
+    <div class="card-content" data-tooltip="COMPANIONS.Notification.HomunculusNoSleepRegen">
+        {{localize "COMPANIONS.Notification.HomunculusNoSleepRegen"}}
+    </div>
+    {{/if}}
     {{#if testData.LeP}}
     <div class="card-content">
         <b>{{localize "wounds"}}</b>: {{testData.LeP}}
@@ -17,6 +22,21 @@
     {{/if}} {{#if testData.KaP}}
     <div class="card-content">
         <b>{{localize "karmaenergy"}}</b>: {{testData.KaP}}
+    </div>
+    {{/if}}
+    {{#each testData.homunculusBloodBath}}
+    <div class="card-content">
+        <b>{{localize "bloodBathHeal" name=name lep=lep}}</b>
+        {{#if usedBloodReserve}}
+        — {{localize "bloodReserveUsed" name=name}}
+        {{else}}
+        — {{localize "bloodBathCost" cost=cost}}
+        {{/if}}
+    </div>
+    {{/each}}
+    {{#if testData.homunculusBloodBath.length}}
+    <div class="card-content">
+        <b>{{localize "bloodBathCost" cost=testData.homunculusBloodCost}}</b>
     </div>
     {{/if}}
 </div>

@@ -2,7 +2,7 @@ import { SUMMONING_PRESETS } from './summoning_presets.js';
 import DSA5_Utility from '../../system/helpers/utility-dsa5.js';
 import TokenScatter from '../../animation/token-scatter.js';
 import { DSATokenDocument } from '../../hooks/token.js';
-import CompanionHandler from '../../actor/companions/companion-handler-class.js';
+import CompanionHandler from '../../actor/companions/companion-handler.js';
 import { CONJURATION_CONTROL_MODES } from '../../config/conjuration-constants.js';
 
 const { mergeObject } = foundry.utils;
