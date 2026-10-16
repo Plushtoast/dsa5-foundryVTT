@@ -1046,22 +1046,29 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
         : selected.some(x => ItemLibraryListColumns.typeHasPrice(x.key))
     );
 
+    const { itemType: tabDocumentName } = this.selectIndex(tab);
+    const type = selected.length === 1 ? selected[0].key : undefined;
+    const documentName = selected.length === 1
+      ? (selected[0].documentName || tabDocumentName)
+      : tabDocumentName;
+    const sortContext = { documentName, type };
+
     const leading = (defaultConfig.leading ?? ['img', 'name']).map(id => ({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS[id] }));
-    let middle = [];
-    let tail = [];
+    const tail = [];
+    let middle;
 
     if (selected.length === 1) {
-      const type = selected[0].key;
-      middle = ItemLibraryListColumns.getTypeListColumns(type).map(col => ItemLibraryListColumns.resolveColumnFieldDef(col));
+      middle = ItemLibraryListColumns.getTypeListColumns(type).map(col => ItemLibraryListColumns.resolveColumnFieldDef(col, sortContext));
       if (showPrice) tail.push({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS.price });
     } else {
-      let multi = [...(defaultConfig.multi ?? ['type'])].filter(id => id !== 'price');
+      const multi = [...(defaultConfig.multi ?? ['type'])].filter(id => id !== 'price');
       if (showPrice) multi.push('price');
       middle = multi.map(id => ({ ...ItemLibraryListColumns.BUILTIN_COLUMN_DEFS[id] })).filter(col => col.id);
     }
 
     return [...leading, ...middle, ...tail].map(col => ({
       ...col,
+      sortType: ItemLibraryListColumns.resolveColumnSortType(col, sortContext),
       sorted: this.listSort.column === col.id,
       sortDir: this.listSort.column === col.id ? this.listSort.direction : 'asc',
     }));
@@ -1121,31 +1128,28 @@ export class ItemLibraryBase extends foundry.applications.api.HandlebarsApplicat
     const { itemType } = this.selectIndex(tab);
     const columns = this.getEffectiveViewMode(tab) === 'list' ? this.getListColumns(tab) : [];
 
-    const prepared = items.map(item => {
-      const row = {
-        ...item,
-        compendiumLabel: this.resolveCompendiumLabel(item.compendium),
-        typeLabel: this.resolveTypeLabel(item.documentName || itemType, item.type),
-      };
+    const prepared = items.map(item => ({
+      ...item,
+      compendiumLabel: this.resolveCompendiumLabel(item.compendium),
+      typeLabel: this.resolveTypeLabel(item.documentName || itemType, item.type),
+    }));
 
+    if (this.getEffectiveViewMode(tab) === 'list' && this.listSort.column) {
+      const column = columns.find(col => col.id === this.listSort.column) ?? { id: this.listSort.column };
+      const direction = this.listSort.direction;
+      prepared.sort((a, b) => ItemLibraryListColumns.compareColumnValues(a, b, column, { direction }));
+    }
+
+    if (!columns.length) return prepared;
+
+    return prepared.map(item => {
+      const row = { ...item };
       for (const col of columns) {
         if (['img', 'name', 'type', 'compendium', 'price', 'typeLabel', 'compendiumLabel'].includes(col.id)) continue;
         row[col.id] = this.formatListCellValue(item, col);
       }
       return row;
     });
-
-    if (this.getEffectiveViewMode(tab) === 'list' && this.listSort.column) {
-      const col = this.listSort.column;
-      const dir = this.listSort.direction === 'desc' ? -1 : 1;
-      prepared.sort((a, b) => {
-        const av = (col === 'type' ? a.typeLabel : col === 'compendium' ? a.compendiumLabel : a[col]) ?? '';
-        const bv = (col === 'type' ? b.typeLabel : col === 'compendium' ? b.compendiumLabel : b[col]) ?? '';
-        return String(av).localeCompare(String(bv), game.i18n.lang, { sensitivity: 'base' }) * dir;
-      });
-    }
-
-    return prepared;
   }
 
   updateResultCount(category) {
