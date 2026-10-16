@@ -65,7 +65,7 @@ export class RollDialogBuilder {
             cardOptions.flags.img.src = actor.token.texture.src;
         } else if (!token?.document) {
             const speaker = ChatMessage.getSpeaker();
-            if (speaker.actor == actor.id) {
+            if (actor.id && speaker.actor === actor.id) {
                 cardOptions.speaker.alias = speaker.alias;
                 cardOptions.speaker.token = speaker.token;
                 cardOptions.speaker.scene = speaker.scene;
