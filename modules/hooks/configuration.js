@@ -346,6 +346,13 @@ export function setupConfiguration() {
       default: false,
       type: Boolean,
     },
+    journalListUx: {
+      name: 'JOURNALLIST.setting',
+      scope: 'client',
+      config: false,
+      default: {},
+      type: Object,
+    },
     dsaTokenRuler: {
       name: 'DSASETTINGS.dsaTokenRuler',
       hint: 'DSASETTINGS.dsaTokenRulerHint',

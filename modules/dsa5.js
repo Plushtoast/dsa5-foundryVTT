@@ -46,6 +46,7 @@ import DPS from './system/automation/derepositioningsystem.js';
 import DSATables from './tables/dsatables.js';
 import TestModuleLoader from './tests/testModuleLoader.js';
 import DiceDSA5 from './system/rolls/dice-dsa5.js';
+import RegenerationHelper from './system/rolls/regeneration-helper.js';
 import DSA5StatusEffects from './status/status_effects.js';
 import { MerchantSheetMixin, RandomGoodsAddition } from './actor/mixins/merchantmixin.js';
 import MerchantModeHelper from './actor/concerns/merchant-mode.js';
@@ -67,7 +68,7 @@ import TrapRegionControls from './system/automation/trap-region-controls.js';
 import GroupCheck from './system/rolls/group-check.js';
 import ChatCardBump from './system/sidebar/chat-card-bump.js';
 import Riding from './system/automation/riding.js';
-import CompanionHandler from './actor/companions/companion-handler-class.js';
+import CompanionHandler from './actor/companions/companion-handler.js';
 import CompanionLoyalty from './actor/companions/companion-loyalty.js';
 import { SummoningFlow } from './wizards/summoning/summoning_flow.js';
 import { DialogExtraFlow } from './dialog/dialog-extra-flow.js';
@@ -102,6 +103,7 @@ import * as DSAPause from './hooks/pause.js';
 import { CalendarWidget } from './system/calendar/calendarwidget.js';
 import { DSAClock } from './system/calendar/clock.js';
 import { DSACalendarPicker } from './system/calendar/calendarpicker.js';
+import JournalListUx from './journal/journal-list-ux.js';
 import { DSACombatantGroup } from './combat/combatant_group.js';
 import { DSATrapRegionBehavior } from './data/regionbehaviors/trap.js';
 import { DSAAuraRegionBehavior } from './data/regionbehaviors/aura.js';
@@ -165,6 +167,7 @@ globalThis.dsa5 = {
       AttrFilterUi,
       StockFillDialog,
       DiceDSA5,
+      RegenerationHelper,
       DSATour,
       OpposeDSA,
       EquipmentDamage,
@@ -198,6 +201,7 @@ globalThis.dsa5 = {
       TrapState,
       Clock: new DSAClock(),
       CalendarPicker: new DSACalendarPicker(),
+      JournalListUx,
       CalendarWidget: new CalendarWidget(),
       WorldCalendar: DSAWorldCalendar,
       SummoningAPI,

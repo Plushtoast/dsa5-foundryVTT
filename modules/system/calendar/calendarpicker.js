@@ -89,7 +89,10 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     questlog: {
       template: 'systems/dsa5/templates/system/calendar/questlog.hbs',
-      templates: ['systems/dsa5/templates/system/calendar/questlog-detail.hbs'],
+      templates: [
+        'systems/dsa5/templates/system/calendar/questlog-detail.hbs',
+        'systems/dsa5/templates/journal/parts/status-picker.hbs',
+      ],
       scrollable: ['.questlog-list', '.persona-details-container']
     }
   };

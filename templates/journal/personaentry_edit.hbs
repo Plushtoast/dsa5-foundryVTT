@@ -2,14 +2,7 @@
   <div class='personae-two-column'>
     <div class='personae-list-column'>
       <div class='personae-list-header'>
-        <div class='flexrow'>
-          <div class='list-search flex1'>
-            <input type='search' class='search-input actorsearch' placeholder='{{localize "Book.search"}}' value='{{search}}' />
-            <i class='fas fa-search'></i>
-          </div>
-
-          <button type='button' data-action='addEntry' class='fas icon fa-plus'></button>
-        </div>
+        {{> "systems/dsa5/templates/journal/parts/list-toolbar.hbs"}}
         {{#if isGM}}
           <div class='form-group' data-tooltip='dsacalendar.showInCalendarHint'>
             <label>{{localize 'dsacalendar.showInCalendar'}}</label>
@@ -19,46 +12,45 @@
       </div>
 
       <div class='personae-list eventscontainer scrollable'>
-        {{#each sortedEntries as |persona key|}}
-          <div class='persona-list-item{{ifThen persona.visible '' ' invisible'}} {{ifThen (eq ../currentKey key) 'selected' ''}}' data-persona-uuid='{{uuid}}' data-persona-juuid='{{juuid}}' data-key='{{key}}' data-action='selectEntry'>
-            <div class='persona-list-image'>
-              <img src='{{img}}' alt='{{name}}' />
-              {{#if garadanClass}}
-              <div class='persona-status garjourn {{garadanClass}}' data-tooltip="GARADAN.{{garadan}}"></div>
-              {{/if}}
-            </div>
-            <div class='persona-list-info'>
-              <h5 class='persona-list-name'>{{name}}</h5>
-              {{#if subtitle}}
-                <div class='persona-list-meta'>
-                  <span class='persona-type'>{{subtitle}}</span>
-                  {{#unless persona.visible}}
-                  <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
-                  {{/unless}}
+        {{#each entryGroups}}
+          {{#> "systems/dsa5/templates/journal/parts/list-group.hbs"}}
+            {{#each entries as |persona|}}
+              <div class='persona-list-item{{ifThen persona.visible '' ' invisible'}} {{ifThen (eq @root.currentKey persona.key) 'selected' ''}}' data-persona-uuid='{{persona.uuid}}' data-key='{{persona.key}}' data-persona-factions='{{persona.faction}}' data-persona-tags='{{persona.tags}}' data-persona-important='{{persona.important}}' data-persona-visible='{{persona.visible}}' data-actor-uuid='{{persona.actor_uuid}}' data-action='selectEntry'>
+                <div class='persona-list-image'>
+                  <img src='{{persona.img}}' alt='{{persona.name}}' />
+                  {{#if persona.garadanClass}}
+                  <div class='persona-status garjourn {{persona.garadanClass}}' data-tooltip="GARADAN.{{persona.garadan}}"></div>
+                  {{/if}}
                 </div>
-              {{else}}
-                {{#unless persona.visible}}
-                <div class='persona-list-meta'>
-                  <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                <div class='persona-list-info'>
+                  <h5 class='persona-list-name'>{{persona.name}}</h5>
+                  {{#if persona.subtitle}}
+                    <div class='persona-list-meta'>
+                      <span class='persona-type'>{{persona.subtitle}}</span>
+                      {{#unless persona.visible}}
+                      <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                      {{/unless}}
+                    </div>
+                  {{else}}
+                    {{#unless persona.visible}}
+                    <div class='persona-list-meta'>
+                      <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                    </div>
+                    {{/unless}}
+                  {{/if}}
                 </div>
-                {{/unless}}
-              {{/if}}
-            </div>
-            <div class='persona-list-status'>
-              <i class='fas fa-chevron-right'></i>
-            </div>
-          </div>
+                <div class='persona-list-status'>
+                  <i class='fas fa-chevron-right'></i>
+                </div>
+              </div>
+            {{/each}}
+          {{/"systems/dsa5/templates/journal/parts/list-group.hbs"}}
         {{/each}}
         {{#unless sortedEntries.length}}
          <div class="no-personae-list">
           <div class="empty-state-small">
               <i class="fas fa-users"></i>
               <p>{{localize "PERSONAE.dragPersons"}}</p>
-              {{#if ../isGM}}
-              <button type="button" class="flexrow add-persona-small">
-                  <div class="flex0"><i class="fas fa-plus"></i></div><div>{{localize "PERSONAE.Add"}}</div>
-              </button>
-              {{/if}}
           </div>
         </div>
         {{/unless}}

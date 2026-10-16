@@ -7,7 +7,7 @@
             {{/if}}
         </div>
         <div class="persona-detail-title">
-            <h1 class="persona-detail-name">{{name}}</h1>
+            <h3 class="persona-detail-name">{{name}}</h3>
             <p class="persona-detail-subtitle">{{preparedFactionDisplay}}</p>
             {{#each preparedTags}}
             <span class="persona-detail-type">{{this}}</span>
@@ -54,28 +54,33 @@
             {{/each}}
         </nav>
         {{/unless}}
+        {{#unless (and hideEmptyFields (not hasDescription))}}
         <div class='tab {{tabs.description.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='description' data-group='{{tabs.description.group}}'>
             <div class="detail-section">
-                {{#if noTabs}}<h3 class="section-title">{{localize 'Description'}}</h3>{{/if}}
+                {{#if noTabs}}<h3 class="section-title" data-no-toc>{{localize 'Description'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">{{{preparedDescription}}}</div>
                 </div>
             </div>
         </div>
+        {{/unless}}
         {{#if isGM}}
+        {{#unless (and hideEmptyFields (not hasGmNotes))}}
         <div class='tab {{tabs.slnotes.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='slnotes' data-group='{{tabs.slnotes.group}}'>
             <div class="detail-section">
-                {{#if noTabs}}<h3 class="section-title">{{localize 'GM Notes'}}</h3>{{/if}}
+                {{#if noTabs}}<h3 class="section-title" data-no-toc>{{localize 'GM Notes'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">{{#if actor}}{{{actor.system.details.notes.gmdescription}}}{{/if}}</div>
                 </div>
             </div>
         </div>
+        {{/unless}}
         {{/if}}
 
+        {{#unless (and hideEmptyFields (not hasNotes))}}
         <div class='tab {{tabs.notes.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='notes' data-group='{{tabs.notes.group}}'>
             <div class="detail-section">
-                {{#if noTabs}}<h3 class="section-title">{{localize 'Notes'}}</h3>{{/if}}
+                {{#if noTabs}}<h3 class="section-title" data-no-toc>{{localize 'Notes'}}</h3>{{/if}}
                 <div class="section-content">
                     <div class="description-text">
                         {{#if noTabs}}
@@ -89,11 +94,12 @@
                 </div>
             </div>
         </div>
+        {{/unless}}
 
         {{#if contacts}}
         <div class='tab {{tabs.contacts.cssClass}} {{ifThen noTabs 'active' ''}}' data-tab='contacts' data-group='{{tabs.contacts.group}}'>
             <div class="detail-section">
-                {{#if noTabs}}<h3 class="section-title">{{localize 'PERSONAE.FIELDS.personae.socialContact.label'}}</h3>{{/if}}
+                {{#if noTabs}}<h3 class="section-title" data-no-toc>{{localize 'PERSONAE.FIELDS.personae.socialContact.label'}}</h3>{{/if}}
                 <div class="section-content">
                     {{#each contacts}}
                     <div class="persona-list-item" data-persona-uuid="{{../uuid}}" data-key="{{../dramatisKey}}">

@@ -1,0 +1,14 @@
+<section class='faction-group journal-view-group{{ifThen isCollapsed " collapsed" ""}}' data-group-key='{{groupKey}}' data-hide-header='{{hideHeader}}'>
+  {{#unless hideHeader}}
+    <div class='faction-header' data-action='toggleListGroup' role='button' tabindex='0' aria-expanded='{{ifThen isCollapsed "false" "true"}}'>
+      <div class='faction-title flexrow flexAlignCenter'>
+        <i class='fas fa-chevron-down faction-collapse-indicator flex0'></i>
+        <h2 class='faction-name journal-list-group-name'>{{groupLabel}}</h2>
+      </div>
+      <span class='faction-count'>{{count}}</span>
+    </div>
+  {{/unless}}
+  <div class='faction-body journal-view-group-body'>
+    {{> @partial-block}}
+  </div>
+</section>

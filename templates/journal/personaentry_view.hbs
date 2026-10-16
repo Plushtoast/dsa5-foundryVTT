@@ -1,11 +1,17 @@
 <div>
     <div class="flexcol gap10px">
-        <div class="flexrow">
-            <input type="search" placeholder="{{localize 'Library.search'}}" value="{{search}}">
+        <div class="journal-list-view-toolbar">
+            {{> "systems/dsa5/templates/journal/parts/list-toolbar.hbs"}}
         </div>
         <div class="flexcol gap10px eventscontainer">
-            {{#each sortedEntries}}
-                {{> systems/dsa5/templates/system/calendar/persona-detail.hbs noTabs='yes'}}
+            {{#each entryGroups}}
+                {{#> "systems/dsa5/templates/journal/parts/view-group.hbs"}}
+                    {{#each entries as |persona|}}
+                        <div class="journal-list-entry" data-key="{{persona.key}}" data-persona-factions="{{persona.faction}}" data-persona-tags="{{persona.tags}}" data-persona-important="{{persona.important}}" data-persona-visible="{{persona.visible}}">
+                            {{> systems/dsa5/templates/system/calendar/persona-detail.hbs noTabs='yes' hideEmptyFields=@root.listUxState.filters.hideEmptyFields}}
+                        </div>
+                    {{/each}}
+                {{/"systems/dsa5/templates/journal/parts/view-group.hbs"}}
             {{/each}}
         </div>
     </div>

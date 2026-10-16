@@ -1,5 +1,6 @@
 import { DSACityDetailsEntry } from '../data/journal/dsacitydetails.js';
 import CalendarListJournalSheet from './calendar_list_journal_sheet.js';
+import JournalListUx from './journal-list-ux.js';
 
 export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'details';
@@ -23,6 +24,7 @@ export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
             template: 'systems/dsa5/templates/journal/citydetailsentry_edit.hbs',
             templates: [
                 'systems/dsa5/templates/journal/citydetailsentry_edit_detail.hbs',
+                ...CalendarListJournalSheet.listUxPartials,
             ],
             scrollable: ['', '.scrollable', '.citydetails-details-container'],
         },
@@ -33,39 +35,60 @@ export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1'],
             template: 'systems/dsa5/templates/journal/citydetailsentry_view.hbs',
-            templates: [],
+            templates: [...CalendarListJournalSheet.listUxPartials],
         },
     };
+
+    get listUxDescriptor() {
+        const collator = JournalListUx.collator();
+        return {
+            typeKey: 'city',
+            entryHeadingClass: 'citydetails-detail-name',
+            searchPlaceholder: 'Book.search',
+            addTooltip: 'DSACITYDETAILS.Add',
+            ungroupOnSort: 'name',
+            editItemSelector: '.citydetails-list-item, .persona-list-item',
+            viewItemSelector: '.citydetails-detail-view, .citygen-card',
+            editSearch: { selectors: ['.citydetails-list-name, .persona-list-name', '.citydetails-list-meta, .persona-list-meta'] },
+            viewSearch: { selectors: ['.citydetails-detail-name, .citygen-card__name', '.citydetails-detail-meta, .citygen-card__meta', '.citydetails-detail-content, .citygen-card__desc'] },
+            getGroupInfo: entry => [{
+                key: entry.kind || 'merchants',
+                label: entry.kindLabel || _loc(DSACityDetailsEntry.KIND_CHOICES[entry.kind] || DSACityDetailsEntry.KIND_CHOICES.merchants),
+            }],
+            compareGroups: (left, right) => {
+                const order = DSACityDetailsEntrySheet.KIND_ORDER;
+                const index = value => {
+                    const found = order.indexOf(value);
+                    return found === -1 ? Number.MAX_SAFE_INTEGER : found;
+                };
+                return index(left) - index(right);
+            },
+            compare: (a, b, sort) => {
+                if (sort === 'name') return collator.compare(a.name || '', b.name || '');
+                return this.constructor.sortEntryPairs([, a], [, b]);
+            },
+            filters: [{
+                key: 'kinds',
+                type: 'set',
+                icon: 'fa-filter',
+                options: () => this.constructor.KIND_ORDER.map(kind => ({
+                    key: kind,
+                    label: _loc(DSACityDetailsEntry.KIND_CHOICES[kind]),
+                })),
+                predicate: (entry, uxState) => JournalListUx.isEnabled(uxState.filters?.kinds, entry.dataset.kind),
+            }],
+            sortModes: [
+                { key: 'kind', label: 'JOURNALLIST.sortByKind' },
+                { key: 'name', label: 'JOURNALLIST.sortByName' },
+            ],
+        };
+    }
 
     static sortEntryPairs([, a], [, b]) {
         const kindOrder = this.#sortIndex(this.KIND_ORDER, a.kind) - this.#sortIndex(this.KIND_ORDER, b.kind);
         if (kindOrder) return kindOrder;
 
-        return (a.name || '').localeCompare(b.name || '', game.i18n?.lang, { sensitivity: 'base' });
-    }
-
-    static buildTOC(html, { includeElement = true } = {}) {
-        const cls = JournalEntryPage.implementation;
-        const root = { level: 0, children: [] };
-        const stack = [root];
-        const searchHeadings = element => {
-            if ((element instanceof HTMLHeadingElement) && element.classList.contains('citydetails-detail-name')) {
-                const node = cls._makeHeadingNode(element, { includeElement });
-                let parent = stack.at(-1);
-                if (node.level <= parent.level) {
-                    stack.pop();
-                    parent = stack.at(-1);
-                }
-                parent.children.push(node);
-                stack.push(node);
-            }
-            for (const child of (element.children || [])) {
-                searchHeadings(child);
-            }
-        };
-        if (Array.isArray(html)) html.forEach(searchHeadings);
-        else searchHeadings(html);
-        return cls._flattenTOC(root.children);
+        return JournalListUx.collator().compare(a.name || '', b.name || '');
     }
 
     static #sortIndex(order, value) {
@@ -91,39 +114,6 @@ export class DSACityDetailsEntrySheet extends CalendarListJournalSheet {
                 },
             },
         });
-    }
-
-    onSearchFilter(_event, query, rgx, html) {
-        this.isView ? this.#viewFilter(query, rgx, html) : this.#editFilter(query, rgx, html);
-    }
-
-    #viewFilter(query, rgx, html) {
-        for (const entry of html.querySelectorAll('.citydetails-detail-view, .citygen-card')) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const name = entry.querySelector('.citydetails-detail-name, .citygen-card__name')?.textContent || '';
-            const meta = entry.querySelector('.citydetails-detail-meta, .citygen-card__meta')?.textContent || '';
-            const content = entry.querySelector('.citydetails-detail-content, .citygen-card__desc')?.textContent || '';
-            const isMatch = [name, meta, content].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
-            entry.hidden = !isMatch;
-        }
-    }
-
-    #editFilter(query, rgx, html) {
-        for (const entry of html.querySelectorAll('.citydetails-list-item, .persona-list-item')) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const name = entry.querySelector('.citydetails-list-name, .persona-list-name')?.textContent || '';
-            const meta = entry.querySelector('.citydetails-list-meta, .persona-list-meta')?.textContent || '';
-            const isMatch = [name, meta].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
-            entry.hidden = !isMatch;
-        }
     }
 
     async renderDetail(key) {

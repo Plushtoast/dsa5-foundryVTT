@@ -1736,6 +1736,14 @@
     "qualityAndPrice": "Qualität und Preis",
     "typeText": "Typ"
   },
+  "JOURNALLIST": {
+    "setting": "Journal-Listenfilter und Sortierung",
+    "menu": "Filter und Sortierung",
+    "sortByDate": "Nach Datum sortieren",
+    "sortByKind": "Nach Art sortieren",
+    "sortByName": "Nach Name sortieren",
+    "sortByStatus": "Nach Status sortieren"
+  },
   "DSAQUESTLOG": {
     "AUDIENCE": {
       "0": "Gruppe",
@@ -3293,6 +3301,7 @@
     "copyToken": "Token vom Original kopieren",
     "dragPersons": "Ziehe Akteure per Drag & Drop hierher.",
     "filterDuplicates": "Duplikate ausblenden",
+    "filterHideEmptyFields": "Leere Beschreibungsfelder ausblenden",
     "filterImportant": "Nur Wichtige",
     "filterVisible": "Nur für Spieler sichtbar",
     "journals": {

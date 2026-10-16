@@ -40,7 +40,26 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     static STATUS_SORT_ORDER = {
         0: 1,
         1: 2,
+        2: 3,
     };
+
+    static questStatusOptions(current = null) {
+        const selected = current == null ? null : this.#numericValue(current, 0);
+        return [
+            { value: 0, key: '0', icon: 'fa-circle', label: 'DSAQUESTLOG.STATUS.0', selected: selected === 0 },
+            { value: 1, key: '1', icon: 'fa-check', label: 'DSAQUESTLOG.STATUS.1', selected: selected === 1 },
+            { value: 2, key: '2', icon: 'fa-xmark', label: 'DSAQUESTLOG.STATUS.2', selected: selected === 2 },
+        ];
+    }
+
+    static objectiveStatusOptions(current = null) {
+        const selected = current == null ? null : this.#numericValue(current, 0);
+        return [
+            { value: 0, key: '0', icon: 'fa-circle', label: 'DSAQUESTLOG.objectiveStateOpen', selected: selected === 0 },
+            { value: 1, key: '1', icon: 'fa-check-circle', label: 'DSAQUESTLOG.objectiveStateDone', selected: selected === 1 },
+            { value: 2, key: '2', icon: 'fa-times-circle', label: 'DSAQUESTLOG.objectiveStateFailed', selected: selected === 2 },
+        ];
+    }
 
     static defineSchema() {
         const {
@@ -185,6 +204,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 objectiveKey,
                 ...objective,
                 ...this.prepareObjectiveState(objective),
+                statusOptions: this.objectiveStatusOptions(objective.status),
             }));
         entry.doneObjectives = entry.preparedObjectives.filter(objective => objective.status === 1).length;
         entry.totalObjectives = entry.preparedObjectives.length;
@@ -205,6 +225,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.preparedLinkedDocuments = grouped.others;
         entry.uuid = page?.uuid;
         entry.questKey = key;
+        entry.statusOptions = this.questStatusOptions(entry.status);
         return entry;
     }
 

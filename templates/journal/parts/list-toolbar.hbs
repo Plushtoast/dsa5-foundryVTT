@@ -1,0 +1,12 @@
+<div class='flexrow journal-list-toolbar'>
+  {{#if showMenu}}
+    <button type='button' class='icon fas fa-bars list-context-menu noBorder dsadesignbutton' data-action='listMenu' data-tooltip='{{localize "JOURNALLIST.menu"}}'></button>
+  {{/if}}
+  <div class='list-search flex1'>
+    <input type='search' class='search-input' placeholder='{{localize searchPlaceholder}}' value='{{search}}' />
+    <i class='fas fa-search'></i>
+  </div>
+  {{#if showAdd}}
+    <button type='button' data-action='addEntry' class='icon fas fa-plus noBorder dsadesignbutton list-add-button' data-tooltip='{{localize addTooltip}}'></button>
+  {{/if}}
+</div>

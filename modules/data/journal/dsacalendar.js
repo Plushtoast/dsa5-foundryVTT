@@ -50,7 +50,7 @@ export class DSACalendarEntry extends JournalListDataModel {
                     dayOfMonth: new NumberField({ required: false, min: 1, step: 1 }),
                 }),
                 category: new NumberField({ required: true, initial: 2, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
-                visible: new BooleanField({ initial: true, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
+                visible: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
                 recurring: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
             })),
         };
@@ -59,6 +59,7 @@ export class DSACalendarEntry extends JournalListDataModel {
         return foundry.utils.mergeObject({
             title: _loc('dsacalendar.newEntryPlaceholder'),
             from: this.createDateSnapshot(dateContext, { includeDay: true }),
+            visible: false,
         }, overrides);
     }
     async _preUpdate(changed, options, user) {

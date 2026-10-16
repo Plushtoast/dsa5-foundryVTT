@@ -1,174 +1,183 @@
 <div class='scrollable standard-form'>
-  {{#each sortedEntries as |quest|}}
-    <div class='persona-detail-view detailbox margin-top'>
-      <div class='persona-detail-header{{ifThen quest.preparedImage " has-quest-image" ""}}'>
-        {{#if quest.preparedImage}}
-        <div class='dsa-faded-header-media dsa-media-frame' style='{{quest.preparedImageVars}}'>
-          <img class='dsa-media-frame__img' src='{{quest.preparedImage}}' alt='' />
-        </div>
-        {{/if}}
-        <div class='persona-detail-header-overlay'>
-          <div class='persona-detail-title'>
-            <h1 class='questlog-detail-name'>{{quest.title}}</h1>
-            <p class='persona-detail-subtitle'>{{quest.statusName}}{{#if quest.chapter}} • {{quest.chapter}}{{/if}}{{#if quest.location}} • {{quest.location}}{{/if}}</p>
-            <div class='questlog-badge-row'>
-              {{#each quest.preparedAudienceBadges}}
-                <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
-              {{/each}}
-            </div>
-            {{#each quest.preparedTags}}
-              <span class='persona-detail-type'>{{this}}</span>
-            {{/each}}
-          </div>
-          <div class='flexrow gap5px questlog-detail-aside flex0'>
-            {{#if quest.timelineBadges.length}}
-              <div class='flexcol questlog-timeline-column'>
-                {{#each quest.timelineBadges}}
-                  <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
-                    <i class='fas {{icon}}'></i>
-                    <span>{{value}}</span>
-                  </span>
-                {{/each}}
+  <div class='journal-list-view-toolbar'>
+    {{> "systems/dsa5/templates/journal/parts/list-toolbar.hbs"}}
+  </div>
+  <div class='flexcol gap10px eventscontainer'>
+    {{#each entryGroups}}
+      {{#> "systems/dsa5/templates/journal/parts/view-group.hbs"}}
+        {{#each entries as |quest|}}
+          <div class='persona-detail-view detailbox margin-top' data-key='{{quest.key}}' data-quest-status='{{quest.status}}'>
+            <div class='persona-detail-header{{ifThen quest.preparedImage " has-quest-image" ""}}'>
+              {{#if quest.preparedImage}}
+              <div class='dsa-faded-header-media dsa-media-frame' style='{{quest.preparedImageVars}}'>
+                <img class='dsa-media-frame__img' src='{{quest.preparedImage}}' alt='' />
               </div>
-            {{/if}}
-            {{#if @root.isGM}}
-              <div class='persona-detail-actions flex0'>
-                <div class='split-status-actions'>
-                  <button type='button' class='icon fas {{quest.statusActionIcon}} detail-action-btn sheet-btn' data-tooltip='{{localize quest.statusActionTooltip}}' data-action='toggleQuestStatus' data-key='{{quest.questKey}}'></button>
-                  <button type='button' class='icon fas fa-eye{{ifThen quest.visible "" "-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'></button>
-                </div>
-              </div>
-            {{/if}}
-          </div>
-        </div>
-      </div>
-      <div class='persona-detail-content'>
-        {{#if quest.preparedSummary}}
-          <div class='detail-section'>
-            <h3 class='section-title'>{{localize 'DSAQUESTLOG.summary'}}</h3>
-            <div class='description-text'>{{quest.preparedSummary}}</div>
-          </div>
-        {{/if}}
-
-        {{#if quest.totalObjectives}}
-          <div class='detail-section'>
-            <h3 class='section-title'>{{localize 'DSAQUESTLOG.objectives'}} <span class='small'>{{quest.progressText}}</span></h3>
-            <div class='questlog-objective-list'>
-              {{#each quest.preparedObjectives}}
-                <div class='questlog-objective-card{{ifThen done " is-done" ""}}{{ifThen failed " is-failed" ""}}{{ifThen visible "" " invisible"}} flexrow'>
-                  <div class='questlog-objective-main'>
-                    <div class='questlog-objective-line'>
-                      <span class='questlog-objective-icon'><i class='fas {{stateIcon}}'></i></span>
-                      <span>{{text}}</span>
-                    </div>
+              {{/if}}
+              <div class='persona-detail-header-overlay'>
+                <div class='persona-detail-title'>
+                  <h3 class='questlog-detail-name'>{{quest.title}}</h3>
+                  <p class='persona-detail-subtitle'>{{quest.statusName}}{{#if quest.chapter}} • {{quest.chapter}}{{/if}}{{#if quest.location}} • {{quest.location}}{{/if}}</p>
+                  <div class='questlog-badge-row'>
+                    {{#each quest.preparedAudienceBadges}}
+                      <span class='persona-detail-type questlog-badge questlog-badge-{{cssClass}}'>{{label}}</span>
+                    {{/each}}
                   </div>
+                  {{#each quest.preparedTags}}
+                    <span class='persona-detail-type'>{{this}}</span>
+                  {{/each}}
+                </div>
+                <div class='flexrow gap5px questlog-detail-aside flex0'>
+                  {{#if quest.timelineBadges.length}}
+                    <div class='flexcol questlog-timeline-column'>
+                      {{#each quest.timelineBadges}}
+                        <span class='persona-detail-type questlog-badge questlog-timeline-badge' data-tooltip='{{localize tooltip}}'>
+                          <i class='fas {{icon}}'></i>
+                          <span>{{value}}</span>
+                        </span>
+                      {{/each}}
+                    </div>
+                  {{/if}}
                   {{#if @root.isGM}}
-                    <div class='persona-detail-actions flex0 flexrow dsaflex-no-wrap'>
-                      <button type='button' class='icon fas {{stateIcon}} detail-action-btn sheet-btn' data-tooltip='{{localize stateTooltip}}' data-action='toggleObjectiveState' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'></button>
-                      <button type='button' class='icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.objectives.visible.label"}}' data-action='toggleObjectiveVisibility' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'></button>
+                    <div class='persona-detail-actions flex0'>
+                      <div class='split-status-actions'>
+                        {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn" currentIcon=quest.statusActionIcon currentTooltip=quest.statusActionTooltip setAction="setQuestStatus" key=quest.questKey options=quest.statusOptions}}
+                        <button type='button' class='icon fas fa-eye{{ifThen quest.visible "" "-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'></button>
+                      </div>
                     </div>
                   {{/if}}
                 </div>
-              {{/each}}
+              </div>
             </div>
-          </div>
-        {{/if}}
+            <div class='persona-detail-content'>
+              {{#if quest.preparedSummary}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc>{{localize 'DSAQUESTLOG.summary'}}</h3>
+                  <div class='description-text'>{{quest.preparedSummary}}</div>
+                </div>
+              {{/if}}
 
-        {{#if quest.preparedDetails}}
-          <div class='detail-section'>
-            <h3 class='section-title'>{{localize 'Description'}}</h3>
-            <div class='description-text'>{{{quest.preparedDetails}}}</div>
-          </div>
-        {{/if}}
+              {{#if quest.totalObjectives}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc>{{localize 'DSAQUESTLOG.objectives'}} <span class='small'>{{quest.progressText}}</span></h3>
+                  <div class='questlog-objective-list'>
+                    {{#each quest.preparedObjectives}}
+                      <div class='questlog-objective-card{{ifThen done " is-done" ""}}{{ifThen failed " is-failed" ""}}{{ifThen visible "" " invisible"}} flexrow'>
+                        <div class='questlog-objective-main'>
+                          <div class='questlog-objective-line'>
+                            <span class='questlog-objective-icon'><i class='fas {{stateIcon}}'></i></span>
+                            <span>{{text}}</span>
+                          </div>
+                        </div>
+                        {{#if @root.isGM}}
+                          <div class='persona-detail-actions flex0 flexrow dsaflex-no-wrap'>
+                            {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn" currentIcon=stateIcon currentTooltip=stateTooltip setAction="setObjectiveStatus" key=../questKey objectiveKey=objectiveKey options=statusOptions}}
+                            <button type='button' class='icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.objectives.visible.label"}}' data-action='toggleObjectiveVisibility' data-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'></button>
+                          </div>
+                        {{/if}}
+                      </div>
+                    {{/each}}
+                  </div>
+                </div>
+              {{/if}}
 
-        {{#if @root.isGM}}
-          {{#if quest.preparedGMNotes}}
-            <div class='detail-section'>
-              <h3 class='section-title'>{{localize 'GM Notes'}}</h3>
-              <div class='description-text'>{{{quest.preparedGMNotes}}}</div>
-            </div>
-          {{/if}}
-        {{/if}}
+              {{#if quest.preparedDetails}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc>{{localize 'Description'}}</h3>
+                  <div class='description-text'>{{{quest.preparedDetails}}}</div>
+                </div>
+              {{/if}}
 
-        {{#if quest.preparedInvolved.length}}
-          <div class='detail-section'>
-            <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>{{localize 'DSAQUESTLOG.involvedPersons'}}</h3>
-            <div class='dsa-avatar-chip-list'>
-              {{#each quest.preparedInvolved}}
-                {{#if canOpen}}
-                  <button type='button' class='dsa-avatar-chip noBorder{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedPerson' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
-                    <img src='{{img}}' alt='{{name}}' />
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
-                  </button>
-                {{else}}
-                  <div class='dsa-avatar-chip is-static{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen missingPersona " missing-persona" ""}}{{ifThen visible "" " invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>
-                    <img src='{{img}}' alt='{{name}}' />
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
+              {{#if @root.isGM}}
+                {{#if quest.preparedGMNotes}}
+                  <div class='detail-section'>
+                    <h3 class='section-title' data-no-toc>{{localize 'GM Notes'}}</h3>
+                    <div class='description-text'>{{{quest.preparedGMNotes}}}</div>
                   </div>
                 {{/if}}
-              {{/each}}
-            </div>
-          </div>
-        {{/if}}
+              {{/if}}
 
-        {{#if quest.preparedInvolvedItems.length}}
-          <div class='detail-section'>
-            <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>{{localize 'DSAQUESTLOG.involvedItems'}}</h3>
-            <div class='dsa-avatar-chip-list'>
-              {{#each quest.preparedInvolvedItems}}
-                {{#if canOpen}}
-                  <button type='button' class='dsa-avatar-chip dsa-avatar-chip--item noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedItem' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
-                    <img src='{{img}}' alt='{{name}}' />
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
-                  </button>
-                {{else}}
-                  <div class='dsa-avatar-chip dsa-avatar-chip--item is-static{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>
-                    <img src='{{img}}' alt='{{name}}' />
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
+              {{#if quest.preparedInvolved.length}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>{{localize 'DSAQUESTLOG.involvedPersons'}}</h3>
+                  <div class='dsa-avatar-chip-list'>
+                    {{#each quest.preparedInvolved}}
+                      {{#if canOpen}}
+                        <button type='button' class='dsa-avatar-chip noBorder{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-action='openInvolvedPerson' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                          <img src='{{img}}' alt='{{name}}' />
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </button>
+                      {{else}}
+                        <div class='dsa-avatar-chip is-static{{ifThen important " persona-important" ""}}{{ifThen missing " missing" ""}}{{ifThen missingPersona " missing-persona" ""}}{{ifThen visible "" "invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedPersonsHint"}}'>
+                          <img src='{{img}}' alt='{{name}}' />
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </div>
+                      {{/if}}
+                    {{/each}}
                   </div>
-                {{/if}}
-              {{/each}}
-            </div>
-          </div>
-        {{/if}}
+                </div>
+              {{/if}}
 
-        {{#if quest.preparedInvolvedNotes.length}}
-          <div class='detail-section'>
-            <h3 class='section-title' data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>{{localize 'DSAQUESTLOG.involvedNotes'}}</h3>
-            <div class='dsa-avatar-chip-list'>
-              {{#each quest.preparedInvolvedNotes}}
-                {{#if canOpen}}
-                  <button type='button' class='dsa-avatar-chip dsa-avatar-chip--note noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}' data-action='openInvolvedNote' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
-                    <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
-                  </button>
-                {{else}}
-                  <div class='dsa-avatar-chip dsa-avatar-chip--note is-static{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>
-                    <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
-                    <span class='dsa-avatar-chip-name'>{{name}}</span>
+              {{#if quest.preparedInvolvedItems.length}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>{{localize 'DSAQUESTLOG.involvedItems'}}</h3>
+                  <div class='dsa-avatar-chip-list'>
+                    {{#each quest.preparedInvolvedItems}}
+                      {{#if canOpen}}
+                        <button type='button' class='dsa-avatar-chip dsa-avatar-chip--item noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-action='openInvolvedItem' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                          <img src='{{img}}' alt='{{name}}' />
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </button>
+                      {{else}}
+                        <div class='dsa-avatar-chip dsa-avatar-chip--item is-static{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedItemsHint"}}'>
+                          <img src='{{img}}' alt='{{name}}' />
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </div>
+                      {{/if}}
+                    {{/each}}
                   </div>
-                {{/if}}
-              {{/each}}
+                </div>
+              {{/if}}
+
+              {{#if quest.preparedInvolvedNotes.length}}
+                <div class='detail-section'>
+                  <h3 class='section-title' data-no-toc data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>{{localize 'DSAQUESTLOG.involvedNotes'}}</h3>
+                  <div class='dsa-avatar-chip-list'>
+                    {{#each quest.preparedInvolvedNotes}}
+                      {{#if canOpen}}
+                        <button type='button' class='dsa-avatar-chip dsa-avatar-chip--note noBorder{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-action='openInvolvedNote' data-uuid='{{uuid}}' data-tooltip='{{name}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                          <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </button>
+                      {{else}}
+                        <div class='dsa-avatar-chip dsa-avatar-chip--note is-static{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}' data-tooltip='{{localize "DSAQUESTLOG.involvedNotesHint"}}'>
+                          <span class='dsa-avatar-chip-media' aria-hidden='true'></span>
+                          <span class='dsa-avatar-chip-name'>{{name}}</span>
+                        </div>
+                      {{/if}}
+                    {{/each}}
+                  </div>
+                </div>
+              {{/if}}
+
+              {{#if quest.preparedLinkedDocuments.length}}
+                <div class='questlog-document-badges'>
+                  {{#each quest.preparedLinkedDocuments}}
+                    <span class='persona-detail-type questlog-badge questlog-document-badge{{ifThen missing " missing" ""}}{{ifThen visible "" "invisible"}}'>
+                      <button type='button' class='questlog-document-open' data-action='openLinkedDocument' data-uuid='{{uuid}}' data-tooltip='{{documentTypeLabel}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
+                        <span class='questlog-document-type'>{{documentTypeLabel}}</span>
+                        <span>{{label}}</span>
+                      </button>
+                      {{#if @root.isGM}}
+                        <button type='button' class='questlog-document-toggle icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}}' data-action='toggleLinkedDocumentVisibility' data-key='{{../questKey}}' data-link-key='{{linkKey}}' data-tooltip='{{localize "DSAQUESTLOG.toggleLinkedDocumentVisibility"}}'></button>
+                      {{/if}}
+                    </span>
+                  {{/each}}
+                </div>
+              {{/if}}
             </div>
           </div>
-        {{/if}}
-
-        {{#if quest.preparedLinkedDocuments.length}}
-          <div class='questlog-document-badges'>
-            {{#each quest.preparedLinkedDocuments}}
-              <span class='persona-detail-type questlog-badge questlog-document-badge{{ifThen missing " missing" ""}}{{ifThen visible "" " invisible"}}'>
-                <button type='button' class='questlog-document-open' data-action='openLinkedDocument' data-uuid='{{uuid}}' data-tooltip='{{documentTypeLabel}}{{#if subtitle}}: {{subtitle}}{{/if}}'>
-                  <span class='questlog-document-type'>{{documentTypeLabel}}</span>
-                  <span>{{label}}</span>
-                </button>
-                {{#if @root.isGM}}
-                  <button type='button' class='questlog-document-toggle icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}}' data-action='toggleLinkedDocumentVisibility' data-key='{{../questKey}}' data-link-key='{{linkKey}}' data-tooltip='{{localize "DSAQUESTLOG.toggleLinkedDocumentVisibility"}}'></button>
-                {{/if}}
-              </span>
-            {{/each}}
-          </div>
-        {{/if}}
-      </div>
-    </div>
-  {{/each}}
+        {{/each}}
+      {{/"systems/dsa5/templates/journal/parts/view-group.hbs"}}
+    {{/each}}
+  </div>
 </div>

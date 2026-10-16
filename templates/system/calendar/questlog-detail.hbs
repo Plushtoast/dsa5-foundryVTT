@@ -39,7 +39,7 @@
                         <i class='fas fa-book-open'></i>
                     </button>
                     <div class='split-status-actions'>
-                        <button type='button' class='icon fas {{statusActionIcon}} detail-action-btn sheet-btn very-small' data-tooltip='{{localize statusActionTooltip}}' data-action='toggleQuestStatus' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'></button>
+                        {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn very-small" currentIcon=statusActionIcon currentTooltip=statusActionTooltip setAction="setQuestStatus" questUuid=uuid questKey=questKey options=statusOptions}}
                         <button type='button' class='icon fas fa-eye{{ifThen visible "" "-slash"}} detail-action-btn sheet-btn very-small' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleQuestVisibility' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'></button>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                             </div>
                             {{#if ../isGM}}
                                 <div class='persona-detail-actions flex0 flexrow dsaflex-no-wrap'>
-                                    <button type='button' class='icon fas {{stateIcon}} detail-action-btn sheet-btn' data-tooltip='{{localize stateTooltip}}' data-action='toggleQuestObjectiveState' data-quest-uuid='{{../uuid}}' data-quest-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'></button>
+                                    {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn" currentIcon=stateIcon currentTooltip=stateTooltip setAction="setQuestObjectiveStatus" questUuid=../uuid questKey=../questKey objectiveKey=objectiveKey options=statusOptions}}
                                     <button type='button' class='icon fas {{ifThen visible "fa-eye" "fa-eye-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.objectives.visible.label"}}' data-action='toggleObjectiveVisibility' data-quest-uuid='{{../uuid}}' data-quest-key='{{../questKey}}' data-objective-key='{{objectiveKey}}'></button>
                                 </div>
                             {{/if}}

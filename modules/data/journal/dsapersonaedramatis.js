@@ -217,6 +217,10 @@ export class DSAPersonaEntry extends JournalListDataModel {
         return factions.length ? factions : [unknownLabel];
     }
 
+    static hasText(html) {
+        return !!String(html || '').replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ').trim();
+    }
+
     static async preparePersonaEntry(entry, document, key, heros) {
         entry.actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
         entry.actorMissing = !!entry.actor_uuid && !entry.actor;
@@ -260,6 +264,9 @@ export class DSAPersonaEntry extends JournalListDataModel {
         entry.notesDocumentUuid = linkNotes ? entry.actor.uuid : document.uuid;
         entry.notesFieldName = linkNotes ? this.ACTOR_NOTES_FIELD : `system.personae.${key}.notes`;
         entry.preparedNotes = await TextEditor.enrichHTML(notesSource, { secrets: game.user.isGM });
+        entry.hasDescription = DSAPersonaEntry.hasText(entry.preparedDescription);
+        entry.hasNotes = DSAPersonaEntry.hasText(entry.preparedNotes);
+        entry.hasGmNotes = DSAPersonaEntry.hasText(entry.actor?.system?.details?.notes?.gmdescription);
         const unknownFaction = _loc("PERSONAE.UnknownFaction");
         entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
         entry.preparedFactionDisplay = entry.preparedFactions.join(", ");

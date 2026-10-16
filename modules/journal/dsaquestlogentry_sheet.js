@@ -1,5 +1,7 @@
 import { DSAQuestLogEntry } from "../data/journal/dsaquestlog.js";
 import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
+import JournalListUx from "./journal-list-ux.js";
+import JournalStatusPicker from "./journal-status-picker.js";
 import ImageFrameDialog from "../dialog/image-frame-dialog.js";
 import DSA5_Utility from "../system/helpers/utility-dsa5.js";
 
@@ -12,15 +14,14 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         actions: {
             addObjective: this.#addObjective,
             removeObjective: this.#removeObjective,
-            toggleObjectiveDone: this.#toggleObjectiveDone,
             toggleObjectiveVisibility: this.#toggleObjectiveVisibility,
-            toggleQuestStatus: this.#toggleQuestStatus,
+            setQuestStatus: this.#setQuestStatus,
+            setObjectiveStatus: this.#setObjectiveStatus,
             togglePlayerOwner: this.#togglePlayerOwner,
             addLinkedDocument: this.#addLinkedDocument,
             removeLinkedDocument: this.#removeLinkedDocument,
             openLinkedDocument: this.#openLinkedDocument,
             toggleLinkedDocumentVisibility: this.#toggleLinkedDocumentVisibility,
-            toggleObjectiveState: this.#toggleObjectiveState,
             openInvolvedPerson: this.#openInvolvedPerson,
             openInvolvedItem: this.#openInvolvedItem,
             openInvolvedNote: this.#openInvolvedNote,
@@ -40,6 +41,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/questlogentry_edit.hbs',
+            templates: [...CalendarListJournalSheet.listUxPartials, JournalStatusPicker.PARTIAL],
             scrollable: ['', '.scrollable', '.persona-details-container'],
         },
         footer: super.EDIT_PARTS.footer,
@@ -49,14 +51,53 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1'],
             template: 'systems/dsa5/templates/journal/questlogentry_view.hbs',
+            templates: [...CalendarListJournalSheet.listUxPartials, JournalStatusPicker.PARTIAL],
         },
     };
 
+    get listUxDescriptor() {
+        const collator = JournalListUx.collator();
+        return {
+            typeKey: 'quest',
+            entryHeadingClass: 'questlog-detail-name',
+            searchPlaceholder: 'Book.search',
+            addTooltip: 'DSAQUESTLOG.createQuest',
+            editItemSelector: '.persona-list-item',
+            viewItemSelector: '.persona-detail-view',
+            editSearch: { selectors: ['.persona-list-name', '.persona-list-meta', '.questlog-summary'] },
+            viewSearch: { selectors: ['.questlog-detail-name', '.persona-detail-subtitle', '.persona-detail-content'] },
+            getGroupInfo: entry => {
+                const label = entry.groupLabel || entry.chapter?.trim() || _loc('DSAQUESTLOG.ungrouped');
+                return [{ key: label, label }];
+            },
+            compareGroups: (left, right) => collator.compare(left, right),
+            compare: (a, b, sort) => {
+                if (sort === 'name') return JournalListUx.comparePinThenTitle(a, b, 'title');
+                return this.constructor.sortEntryPairs([, a], [, b]);
+            },
+            filters: [{
+                key: 'statuses',
+                type: 'set',
+                icon: 'fa-filter',
+                options: () => DSAQuestLogEntry.questStatusOptions().map(option => ({
+                    key: option.key,
+                    label: _loc(option.label),
+                    icon: option.icon,
+                })),
+                predicate: (entry, uxState) => JournalListUx.isEnabled(uxState.filters?.statuses, entry.dataset.questStatus),
+            }],
+            sortModes: [
+                { key: 'status', label: 'JOURNALLIST.sortByStatus' },
+                { key: 'name', label: 'JOURNALLIST.sortByName' },
+            ],
+        };
+    }
+
     static sortEntryPairs([, a], [, b]) {
         if (!!a.pinToTop !== !!b.pinToTop) return a.pinToTop ? -1 : 1;
-        const statusOrder = DSAQuestLogEntry.STATUS_SORT_ORDER[a.status] - DSAQuestLogEntry.STATUS_SORT_ORDER[b.status];
+        const statusOrder = (DSAQuestLogEntry.STATUS_SORT_ORDER[a.status] ?? 99) - (DSAQuestLogEntry.STATUS_SORT_ORDER[b.status] ?? 99);
         if (statusOrder) return statusOrder;
-        return (a.title || '').localeCompare(b.title || '', game.i18n?.lang, { sensitivity: 'base' });
+        return JournalListUx.collator().compare(a.title || '', b.title || '');
     }
 
     async _prepareEntries(context, _options) {
@@ -71,6 +112,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     #prepareEditEntry(entry) {
         entry.statusName = _loc(DSAQuestLogEntry.STATUS_CHOICES[entry.status] || DSAQuestLogEntry.STATUS_CHOICES[1]);
         entry.preparedSummary = entry.summary?.trim();
+        entry.groupLabel = entry.chapter?.trim() || _loc('DSAQUESTLOG.ungrouped');
 
         const objectives = Object.values(entry.objectives || {}).filter(objective => objective && (objective.visible || game.user.isGM));
         entry.totalObjectives = objectives.length;
@@ -94,6 +136,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
     async _onDetailRendered(_key) {
         this.#bindNestedSortDragDrop();
         DSAQuestLogEntry.hydrateQuestMedia(this.element);
+        JournalStatusPicker.bind(this.element);
     }
 
     #bindNestedSortDragDrop() {
@@ -190,30 +233,6 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         if (!foundry.utils.isEmpty(update)) await this.document.update(update);
     }
 
-    static buildTOC(html, { includeElement = true } = {}) {
-        const cls = JournalEntryPage.implementation;
-        const root = { level: 0, children: [] };
-        const stack = [root];
-        const searchHeadings = element => {
-            if ((element instanceof HTMLHeadingElement) && element.classList.contains('questlog-detail-name')) {
-                const node = cls._makeHeadingNode(element, { includeElement });
-                let parent = stack.at(-1);
-                if (node.level <= parent.level) {
-                    stack.pop();
-                    parent = stack.at(-1);
-                }
-                parent.children.push(node);
-                stack.push(node);
-            }
-            for (const child of (element.children || [])) {
-                searchHeadings(child);
-            }
-        };
-        if (Array.isArray(html)) html.forEach(searchHeadings);
-        else searchHeadings(html);
-        return cls._flattenTOC(root.children);
-    }
-
     async newEntry() {
         const id = foundry.utils.randomID();
         this.currentKey = id;
@@ -224,40 +243,6 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
                 },
             },
         });
-    }
-
-    onSearchFilter(_event, query, rgx, html) {
-        this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
-    }
-
-    #viewFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll('.persona-detail-view')) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const title = entry.querySelector('.questlog-detail-name')?.textContent || '';
-            const subtitle = entry.querySelector('.persona-detail-subtitle')?.textContent || '';
-            const content = entry.querySelector('.persona-detail-content')?.textContent || '';
-            const isMatch = [title, subtitle, content].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
-            entry.hidden = !isMatch;
-        }
-    }
-
-    #editFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll('.persona-list-item')) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const title = entry.querySelector('.persona-list-name')?.textContent || '';
-            const meta = entry.querySelector('.persona-list-meta')?.textContent || '';
-            const summary = entry.querySelector('.questlog-summary')?.textContent || '';
-            const isMatch = [title, meta, summary].some(text => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(text)));
-            entry.hidden = !isMatch;
-        }
     }
 
     async renderDetail(key) {
@@ -276,12 +261,14 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
                 objectiveKey,
                 ...objective,
                 ...DSAQuestLogEntry.prepareObjectiveState(objective),
+                statusOptions: DSAQuestLogEntry.objectiveStatusOptions(objective.status),
             }));
         const linkedDocumentEntries = DSAQuestLogEntry.sortedTypedObjectEntries(quest.linkedPages).map(([linkKey, link]) => ({
             linkKey,
             uuid: link?.uuid || link?.pageUuid || '',
             visible: link?.visible !== false,
         }));
+        await JournalStatusPicker.preload();
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/questlogentry_edit_detail.hbs', {
             elem: quest,
             key,
@@ -322,22 +309,13 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}`]: _del });
     }
 
-    static async #toggleObjectiveDone(event, target) {
-        const { key, objectiveKey } = target.dataset;
-        const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
-        if (!objective) return;
-
-        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
-    }
-
-    static async #toggleQuestStatus(event, target) {
+    static async #setQuestStatus(event, target) {
         if (!game.user.isGM) return;
         const { key } = target.dataset;
+        const status = Number(target.dataset.status);
         const quest = this.document.system.quests[key];
-        if (!quest) return;
-
-        await this.document.update({ [`system.quests.${key}.status`]: DSAQuestLogEntry.nextStatus(quest.status) });
+        if (!quest || Number.isNaN(status)) return;
+        await this.document.update({ [`system.quests.${key}.status`]: status });
     }
 
     static async #toggleObjectiveVisibility(event, target) {
@@ -347,13 +325,12 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
         await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.visible`]: !objective.visible });
     }
 
-    static async #toggleObjectiveState(event, target) {
+    static async #setObjectiveStatus(event, target) {
         const { key, objectiveKey } = target.dataset;
+        const status = Number(target.dataset.status);
         const objective = this.document.system.quests[key]?.objectives?.[objectiveKey];
-        if (!objective) return;
-
-        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: nextState });
+        if (!objective || Number.isNaN(status)) return;
+        await this.document.update({ [`system.quests.${key}.objectives.${objectiveKey}.status`]: status });
     }
 
     static async #togglePlayerOwner(event, target) {

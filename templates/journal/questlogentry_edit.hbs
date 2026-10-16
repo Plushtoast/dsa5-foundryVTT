@@ -2,14 +2,7 @@
   <div class='personae-two-column'>
     <div class='personae-list-column'>
       <div class='personae-list-header'>
-        <div class='flexrow'>
-          <div class='list-search flex1'>
-            <input type='search' class='search-input actorsearch' placeholder='{{localize "Book.search"}}' value='{{search}}' />
-            <i class='fas fa-search'></i>
-          </div>
-
-          <button type='button' data-action='addEntry' class='fas icon fa-plus'></button>
-        </div>
+        {{> "systems/dsa5/templates/journal/parts/list-toolbar.hbs"}}
         {{#if isGM}}
           <div class='form-group' data-tooltip='DSAQUESTLOG.showInQuestlogHint'>
             <label>{{localize 'DSAQUESTLOG.showInQuestlog'}}</label>
@@ -19,30 +12,34 @@
       </div>
 
       <div class='personae-list questlog-list eventscontainer scrollable'>
-        {{#each sortedEntries as |quest key|}}
-          <div class='persona-list-item{{ifThen quest.visible '' ' invisible'}} {{ifThen (eq ../currentKey key) 'selected' ''}}' data-key='{{key}}' data-action='selectEntry'>
-            <div class='persona-list-image center flexAlignCenter'>
-              <i class='fas {{ifThen quest.pinToTop "fa-star" "fa-scroll"}}'></i>
-            </div>
-            <div class='persona-list-info'>
-              <h5 class='persona-list-name'>{{quest.title}}</h5>
-              <div class='persona-list-meta'>
-                <span class='persona-type'>{{quest.statusName}}</span>
-                {{#if quest.chapter}}
-                  <span class='persona-type'>{{quest.chapter}}</span>
-                {{/if}}
-                {{#if quest.totalObjectives}}
-                  <span class='persona-type'>{{quest.progressText}}</span>
-                {{/if}}
-                {{#unless quest.visible}}
-                  <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
-                {{/unless}}
+        {{#each entryGroups}}
+          {{#> "systems/dsa5/templates/journal/parts/list-group.hbs"}}
+            {{#each entries as |quest|}}
+              <div class='persona-list-item{{ifThen quest.visible '' ' invisible'}} {{ifThen (eq @root.currentKey quest.key) 'selected' ''}}' data-key='{{quest.key}}' data-quest-status='{{quest.status}}' data-action='selectEntry'>
+                <div class='persona-list-image center flexAlignCenter'>
+                  <i class='fas {{ifThen quest.pinToTop "fa-star" "fa-scroll"}}'></i>
+                </div>
+                <div class='persona-list-info'>
+                  <h5 class='persona-list-name'>{{quest.title}}</h5>
+                  <div class='persona-list-meta'>
+                    <span class='persona-type'>{{quest.statusName}}</span>
+                    {{#if quest.chapter}}
+                      <span class='persona-type'>{{quest.chapter}}</span>
+                    {{/if}}
+                    {{#if quest.totalObjectives}}
+                      <span class='persona-type'>{{quest.progressText}}</span>
+                    {{/if}}
+                    {{#unless quest.visible}}
+                      <span class='persona-type persona-hidden'><i class='fas fa-eye-slash'></i></span>
+                    {{/unless}}
+                  </div>
+                  {{#if quest.preparedSummary}}
+                    <div class='questlog-summary small'>{{quest.preparedSummary}}</div>
+                  {{/if}}
+                </div>
               </div>
-              {{#if quest.preparedSummary}}
-                <div class='questlog-summary small'>{{quest.preparedSummary}}</div>
-              {{/if}}
-            </div>
-          </div>
+            {{/each}}
+          {{/"systems/dsa5/templates/journal/parts/list-group.hbs"}}
         {{/each}}
       </div>
     </div>

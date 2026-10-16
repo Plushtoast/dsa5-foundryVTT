@@ -1,6 +1,7 @@
 import { DSAPersonaEntry } from "../data/journal/dsapersonaedramatis.js";
 import { PersonaeDramatis } from "../system/calendar/personaedramatis.js";
 import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
+import JournalListUx from "./journal-list-ux.js";
 
 export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'personae';
@@ -20,7 +21,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
     };
 
     static sortEntryPairs([, a], [, b]) {
-        return a.name.localeCompare(b.name);
+        return JournalListUx.collator().compare(a.name || '', b.name || '');
     }
 
     static EDIT_PARTS = {
@@ -28,6 +29,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/personaentry_edit.hbs',
+            templates: [...CalendarListJournalSheet.listUxPartials],
             scrollable: ['', '.scrollable', '.persona-details-container'],
         },
         footer: super.EDIT_PARTS.footer,
@@ -38,17 +40,74 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1'],
             template: 'systems/dsa5/templates/journal/personaentry_view.hbs',
-            templates: ['systems/dsa5/templates/system/calendar/persona-detail.hbs']
+            templates: ['systems/dsa5/templates/system/calendar/persona-detail.hbs', ...CalendarListJournalSheet.listUxPartials]
         },
     };
 
+    get listUxDescriptor() {
+        const unknownFaction = _loc('PERSONAE.UnknownFaction');
+        const collator = JournalListUx.collator();
+        return {
+            typeKey: 'personae',
+            entryHeadingClass: 'persona-detail-name',
+            searchPlaceholder: 'Book.search',
+            addTooltip: 'PERSONAE.Add',
+            uniqueFirstInView: true,
+            editItemSelector: '.persona-list-item',
+            viewItemSelector: '.journal-list-entry',
+            editSearch: {
+                selectors: ['.persona-list-name', '.persona-list-meta'],
+                datasetKeys: ['personaFactions', 'personaTags'],
+            },
+            viewSearch: {
+                selectors: ['.persona-detail-name', '.persona-detail-subtitle', '.persona-detail-type'],
+                datasetKeys: ['personaFactions', 'personaTags'],
+            },
+            getGroupInfo: entry => DSAPersonaEntry.parseFactions(entry.faction, unknownFaction).map(faction => ({ key: faction, label: faction })),
+            compareGroups: (left, right) => {
+                if (left === unknownFaction) return 1;
+                if (right === unknownFaction) return -1;
+                return collator.compare(left, right);
+            },
+            compare: (a, b) => collator.compare(a.name || '', b.name || ''),
+            filters: [
+                {
+                    key: 'important',
+                    label: 'PERSONAE.filterImportant',
+                    icon: 'fa-star',
+                    predicate: entry => entry.dataset.personaImportant === 'true',
+                },
+                {
+                    key: 'visible',
+                    label: 'PERSONAE.filterVisible',
+                    icon: 'fa-eye',
+                    gmOnly: true,
+                    predicate: entry => entry.dataset.personaVisible === 'true',
+                },
+                {
+                    key: 'hideEmptyFields',
+                    label: 'PERSONAE.filterHideEmptyFields',
+                    icon: 'fa-compress',
+                    rerender: true,
+                    predicate: () => true,
+                },
+            ],
+            sortModes: [
+                { key: 'name', label: 'JOURNALLIST.sortByName' },
+            ],
+        };
+    }
+
     async _prepareEntries(context, options) {
         const heros = this.isView ? await DSAPersonaEntry.getHeros() : null;
+        const unknownFaction = _loc('PERSONAE.UnknownFaction');
         for (const key of Object.keys(context.sortedEntries)) {
             const entry = context.sortedEntries[key];
             const actor = entry.actor_uuid ? await fromUuid(entry.actor_uuid) : null;
             entry.garadan = this.isView ? DSAPersonaEntry.resolveGaradan(entry, actor) : DSAPersonaEntry.resolveGaradan(entry);
             entry.garadanClass = DSAPersonaEntry.shouldShowGaradan(entry, { isGM: context.isGM }) ? DSAPersonaEntry.GARADAN_CLASSES[entry.garadan] || '' : '';
+            entry.uuid = this.document.uuid;
+            entry.preparedFactions = DSAPersonaEntry.parseFactions(entry.faction, unknownFaction);
 
             if (this.isView) {
                 await DSAPersonaEntry.preparePersonaEntry(entry, this.document, key, heros);
@@ -100,30 +159,6 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         this.render(true);
     }
     
-    static buildTOC(html, { includeElement = true } = {}) {
-        const cls = JournalEntryPage.implementation;
-        const root = { level: 0, children: [] };
-        const stack = [root];
-        const searchHeadings = element => {
-            if ((element instanceof HTMLHeadingElement) && element.classList.contains("persona-detail-name")) {
-                const node = cls._makeHeadingNode(element, { includeElement });
-                let parent = stack.at(-1);
-                if (node.level <= parent.level) {
-                    stack.pop();
-                    parent = stack.at(-1);
-                }
-                parent.children.push(node);
-                stack.push(node);
-            }
-            for (const child of (element.children || [])) {
-                searchHeadings(child);
-            }
-        };
-        if (Array.isArray(html)) html.forEach(searchHeadings);
-        else searchHeadings(html);
-        return cls._flattenTOC(root.children);
-    }
-
     async newEntry(options = {}) {
         if (options.actor && !DSAPersonaEntry.isValidActor(options.actor)) {
             ui.notifications.warn('PERSONAE.actorTypeNotAllowed', { localize: true });
@@ -139,34 +174,6 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
                 }
             }
         })
-    }
-
-    onSearchFilter(_event, query, rgx, html) {
-        this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
-    }
-
-    #viewFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".persona-detail-view")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-            const name = entry.querySelector('.persona-detail-name').textContent || '';
-            const isMatch = [name].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
-        }
-    }
-
-    #editFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".persona-list-item")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-            const name = entry.querySelector('.persona-list-name').textContent || '';
-            const isMatch = [name].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
-        }
     }
 
     async renderDetail(key) {

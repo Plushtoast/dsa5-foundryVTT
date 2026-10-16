@@ -1734,6 +1734,14 @@
     "qualityAndPrice": "Quality and price",
     "typeText": "Type"
   },
+  "JOURNALLIST": {
+    "setting": "Journal list filters and sort",
+    "menu": "Filters and sort",
+    "sortByDate": "Sort by date",
+    "sortByKind": "Sort by kind",
+    "sortByName": "Sort by name",
+    "sortByStatus": "Sort by status"
+  },
   "DSAQUESTLOG": {
     "AUDIENCE": {
       "0": "Party",
@@ -3291,6 +3299,7 @@
     "copyToken": "Copy token from original actor",
     "dragPersons": "Drag actors here.",
     "filterDuplicates": "Hide duplicates",
+    "filterHideEmptyFields": "Hide empty description fields",
     "filterImportant": "Important only",
     "filterVisible": "Visible to players only",
     "journals": {

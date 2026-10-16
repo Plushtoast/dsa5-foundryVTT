@@ -1,0 +1,22 @@
+<div class='journal-status-picker'>
+  <button type='button' class='{{buttonClass}} icon fas {{currentIcon}}' data-action='openStatusPicker' data-tooltip='{{localize currentTooltip}}'></button>
+  <div class='statusEffectMenu'>
+    <ul>
+      {{#each options}}
+        <li>
+          <button
+            type='button'
+            class='icon fas {{icon}} dsadesignbutton noBorder{{ifThen selected " selected" ""}}'
+            data-action='{{../setAction}}'
+            data-status='{{value}}'
+            data-tooltip='{{localize label}}'
+            {{#if ../key}}data-key='{{../key}}'{{/if}}
+            {{#if ../questUuid}}data-quest-uuid='{{../questUuid}}'{{/if}}
+            {{#if ../questKey}}data-quest-key='{{../questKey}}'{{/if}}
+            {{#if ../objectiveKey}}data-objective-key='{{../objectiveKey}}'{{/if}}
+          ></button>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

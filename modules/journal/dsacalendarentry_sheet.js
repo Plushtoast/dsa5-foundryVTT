@@ -1,5 +1,6 @@
 import { DSACalendarEntry } from "../data/journal/dsacalendar.js";
 import CalendarListJournalSheet from "./calendar_list_journal_sheet.js";
+import JournalListUx from "./journal-list-ux.js";
 
 export class DSACalendarEntrySheet extends CalendarListJournalSheet {
     static objectKey = 'calendarentries';
@@ -12,7 +13,7 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
     };
 
     static sortEntryPairs([, a], [, b]) {
-        return a.from.year - b.from.year || a.from.day - b.from.day;
+        return (a.from?.year - b.from?.year) || (a.from?.day - b.from?.day);
     }
 
     static EDIT_PARTS = {
@@ -20,7 +21,7 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1', 'scrollable', 'standard-form'],
             template: 'systems/dsa5/templates/journal/calendarentry_edit.hbs',
-            templates: ['systems/dsa5/templates/journal/calendarentry_edit_detail.hbs'],
+            templates: ['systems/dsa5/templates/journal/calendarentry_edit_detail.hbs', ...CalendarListJournalSheet.listUxPartials],
             scrollable: ['', '.scrollable', '.persona-details-container'],
         },
         footer: super.EDIT_PARTS.footer,
@@ -31,9 +32,55 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
         content: {
             classes: ['flex1'],
             template: 'systems/dsa5/templates/journal/calendarentry_view.hbs',
-            templates: ['systems/dsa5/templates/journal/calendarcard.hbs']
+            templates: ['systems/dsa5/templates/journal/calendarcard.hbs', ...CalendarListJournalSheet.listUxPartials]
         },
     };
+
+    get listUxDescriptor() {
+        const collator = JournalListUx.collator();
+        const yearSuffix = game.time.calendar.translate(CONFIG.time.worldCalendarConfig.years.yearSuffix);
+        return {
+            typeKey: 'events',
+            entryHeadingClass: 'event-card__title',
+            searchPlaceholder: 'Book.search',
+            addTooltip: 'dsacalendar.createEvent',
+            ungroupOnSort: 'name',
+            editItemSelector: '.persona-list-item',
+            viewItemSelector: '.event-card',
+            editSearch: { selectors: ['.persona-list-name', '.eventlocation'], datasetKeys: ['searchText'] },
+            viewSearch: { selectors: ['.event-card__title', '.eventlocation', '.event-card__desc'] },
+            getGroupInfo: entry => {
+                const year = entry.from?.year ?? 0;
+                const month = entry.from?.month ?? 0;
+                const label = [entry.from?.monthLong, year, yearSuffix].filter(Boolean).join(' ');
+                return [{ key: `${year}-${month}`, label }];
+            },
+            compareGroups: (left, right) => {
+                const [leftYear, leftMonth] = left.split('-').map(Number);
+                const [rightYear, rightMonth] = right.split('-').map(Number);
+                return (leftYear - rightYear) || (leftMonth - rightMonth);
+            },
+            compare: (a, b, sort) => {
+                if (sort === 'name') return collator.compare(a.title || '', b.title || '');
+                return this.constructor.sortEntryPairs([, a], [, b]);
+            },
+            filters: [{
+                key: 'categories',
+                type: 'set',
+                icon: 'fa-filter',
+                options: () => Object.entries(DSACalendarEntry.CATEGORY_CHOICES).map(([key, label]) => ({
+                    key: String(key),
+                    label: _loc(label),
+                    icon: DSACalendarEntry.CATEGORY_ICONS[key],
+                })),
+                predicate: (entry, uxState) => JournalListUx.isEnabled(uxState.filters?.categories, entry.dataset.category),
+            }],
+            sortModes: [
+                { key: 'date', label: 'JOURNALLIST.sortByDate' },
+                { key: 'name', label: 'JOURNALLIST.sortByName' },
+            ],
+        };
+    }
 
     async _prepareEntries(context, options) {
         const calendar = game.time.calendar;
@@ -41,6 +88,11 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
         for (const key of Object.keys(context.sortedEntries)) {
             const entry = context.sortedEntries[key];
             await DSACalendarEntry.prepareCalendarEntry(entry);
+            entry.calendarKey = key;
+            entry.uuid = this.document.uuid;
+            entry.juuid = this.document.parent?.uuid;
+            entry.yearSuffix = context.yearSuffix;
+            entry.isOwner = this.document.isOwner;
         }
     }
 
@@ -53,36 +105,6 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
     async _afterRegistrationChange() {
         game.dsa5.apps.CalendarPicker.constructor.invalidateCache(this.document.parent.uuid);
         await game.dsa5?.apps?.CalendarPicker?.refreshParts?.(['events', 'config']);
-    }
-
-    static buildTOC(html, { includeElement = true } = {}) {
-        const cls = JournalEntryPage.implementation;
-        const root = { level: 0, children: [] };
-        const stack = [root];
-        const searchHeadings = container => {
-            if (container.classList.contains("event-card__body")) {
-                const element = container.querySelector('.event-card__title');
-                const node = cls._makeHeadingNode(element, { includeElement });
-                const time = container.querySelector('.event-chip');
-                if(time) {
-                    node.children.push({ level: node.level + 1, text: time.textContent, slug: cls.slugifyHeading(time.textContent), children: [] });
-                }
-                let parent = stack.at(-1);
-                if (node.level <= parent.level) {
-                    stack.pop();
-                    parent = stack.at(-1);
-                }
-                parent.children.push(node);
-                stack.push(node);
-            } else {
-                for (const child of (container.children || [])) {
-                    searchHeadings(child);
-                }
-            }            
-        };
-        if (Array.isArray(html)) html.forEach(searchHeadings);
-        else searchHeadings(html);
-        return cls._flattenTOC(root.children);
     }
 
     async newEntry() {
@@ -114,36 +136,4 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
         });
     }
 
-    #viewFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".event-card")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const title = entry.querySelector('.event-card__title').textContent || '';
-            const location = entry.querySelector('.eventlocation')?.textContent || '';
-            const description = entry.querySelector('.event-card__desc')?.textContent || '';
-            const isMatch = [title, location, description].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
-        }
-    }
-
-    #editFilter(_event, query, rgx, html) {
-        for (const entry of html.querySelectorAll(".event-card")) {
-            if (!query) {
-                entry.hidden = false;
-                continue;
-            }
-
-            const title = entry.querySelector('.persona-list-name').textContent || '';
-            const location = entry.querySelector('.eventlocation')?.textContent || '';
-            const isMatch = [title, location].some(q => rgx.test(foundry.applications.ux.SearchFilter.cleanQuery(q)));
-            entry.hidden = !isMatch;
-        }
-    }
-
-    onSearchFilter(_event, query, rgx, html) {
-        this.isView ? this.#viewFilter(_event, query, rgx, html) : this.#editFilter(_event, query, rgx, html);
-    }
 }

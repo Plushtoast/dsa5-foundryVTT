@@ -1,9 +1,8 @@
 import { DSAQuestLogEntry } from '../../data/journal/dsaquestlog.js';
 import ListKeyboardNavigation from './list_keyboard_navigation.js';
 import { PersonaeDramatis } from './personaedramatis.js';
-
-const OPEN_STATUS = 0;
-const FILTER_SETTING = 'questlogFilterOpenOnly';
+import JournalListUx from '../../journal/journal-list-ux.js';
+import JournalStatusPicker from '../../journal/journal-status-picker.js';
 
 export class QuestLogFeature {
     static #parent;
@@ -26,10 +25,11 @@ export class QuestLogFeature {
         newQuest: QuestLogFeature.newQuest,
         editQuest: QuestLogFeature.editQuest,
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
-        toggleQuestStatus: QuestLogFeature.toggleQuestStatus,
+        setQuestStatus: QuestLogFeature.setQuestStatus,
+        openStatusPicker: QuestLogFeature.openStatusPicker,
         openQuestReference: QuestLogFeature.openQuestReference,
         toggleQuestObjectiveDone: QuestLogFeature.toggleQuestObjectiveDone,
-        toggleQuestObjectiveState: QuestLogFeature.toggleQuestObjectiveState,
+        setQuestObjectiveStatus: QuestLogFeature.setQuestObjectiveStatus,
         toggleObjectiveVisibility: QuestLogFeature.toggleObjectiveVisibility,
         toggleLinkedDocumentVisibility: QuestLogFeature.toggleLinkedDocumentVisibility,
         toggleQuestGroup: QuestLogFeature.toggleQuestGroup,
@@ -107,15 +107,11 @@ export class QuestLogFeature {
             .map(([group, questsInGroup]) => ({ group, quests: questsInGroup, isCollapsed: QuestLogFeature.#collapsedGroups.has(group) }));
     }
 
-    static #isOpenOnlyFilterActive() {
-        return !!game.settings.get('dsa5', FILTER_SETTING);
-    }
-
     static async questlogListMenu(event, target) {
         event.preventDefault();
         event.stopPropagation();
 
-        const openOnly = QuestLogFeature.#isOpenOnlyFilterActive();
+        const uxState = JournalListUx.readState('quest');
         const menuItems = [];
         if (game.user.isGM) {
             menuItems.push({
@@ -124,11 +120,14 @@ export class QuestLogFeature {
                 onClick: () => QuestLogFeature.newQuest(),
             });
         }
-        menuItems.push({
-            label: _loc('DSAQUESTLOG.filterOpenOnly'),
-            icon: openOnly ? '<i class="fas fa-check"></i>' : '<i class="fas fa-scroll"></i>',
-            onClick: () => QuestLogFeature.#toggleOpenOnlyFilter(),
-        });
+        for (const option of DSAQuestLogEntry.questStatusOptions()) {
+            const active = JournalListUx.isEnabled(uxState.filters?.statuses, option.key);
+            menuItems.push({
+                label: _loc(option.label),
+                icon: active ? '<i class="fas fa-check"></i>' : `<i class="fas ${option.icon}"></i>`,
+                onClick: () => QuestLogFeature.#toggleStatusFilter(option.key),
+            });
+        }
 
         const menu = new foundry.applications.ux.ContextMenu(
             QuestLogFeature.#parent.element,
@@ -141,9 +140,11 @@ export class QuestLogFeature {
         ui.context = menu;
     }
 
-    static async #toggleOpenOnlyFilter() {
-        const next = !QuestLogFeature.#isOpenOnlyFilterActive();
-        await game.settings.set('dsa5', FILTER_SETTING, next);
+    static async #toggleStatusFilter(statusKey) {
+        const uxState = JournalListUx.readState('quest');
+        const current = { ...(uxState.filters?.statuses || {}) };
+        current[statusKey] = current[statusKey] === false;
+        await JournalListUx.writeState('quest', { filters: { ...uxState.filters, statuses: current } });
         QuestLogFeature.#applyListFilters();
     }
 
@@ -158,9 +159,9 @@ export class QuestLogFeature {
     }
 
     static #filterListContent(html, query, rgx) {
-        const openOnly = QuestLogFeature.#isOpenOnlyFilterActive();
+        const uxState = JournalListUx.readState('quest');
         for (const entry of html.querySelectorAll('.persona-list-item')) {
-            const matchesStatus = !openOnly || Number(entry.dataset.questStatus) === OPEN_STATUS;
+            const matchesStatus = JournalListUx.isEnabled(uxState.filters?.statuses, entry.dataset.questStatus);
             let matchesSearch = true;
             if (query) {
                 const title = entry.querySelector('.persona-list-name')?.textContent || '';
@@ -233,9 +234,11 @@ export class QuestLogFeature {
         const container = target.closest('.personae-two-column')?.querySelector('.persona-details-container');
         if (!container) return;
 
+        await JournalStatusPicker.preload();
         const detailHTML = await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/system/calendar/questlog-detail.hbs', quest);
         container.innerHTML = detailHTML;
         DSAQuestLogEntry.hydrateQuestMedia(container);
+        JournalStatusPicker.bind(container);
     }
 
     static #visibleQuestItems() {
@@ -267,14 +270,19 @@ export class QuestLogFeature {
         await page.update({ [`system.quests.${questKey}.visible`]: !entry.visible });
     }
 
-    static async toggleQuestStatus(event, target) {
+    static openStatusPicker(_event, target) {
+        JournalStatusPicker.open(target);
+    }
+
+    static async setQuestStatus(event, target) {
         if (!game.user.isGM) return;
         const page = await fromUuid(target.dataset.questUuid);
         const questKey = target.dataset.questKey;
+        const status = Number(target.dataset.status);
         const quest = page?.system?.quests?.[questKey];
-        if (!page || !quest) return;
+        if (!page || !quest || Number.isNaN(status)) return;
 
-        await page.update({ [`system.quests.${questKey}.status`]: DSAQuestLogEntry.nextStatus(quest.status) });
+        await page.update({ [`system.quests.${questKey}.status`]: status });
     }
 
     static async toggleQuestObjectiveDone(event, target) {
@@ -288,15 +296,15 @@ export class QuestLogFeature {
         await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
     }
 
-    static async toggleQuestObjectiveState(event, target) {
+    static async setQuestObjectiveStatus(event, target) {
         if (!game.user.isGM) return;
         const page = await fromUuid(target.dataset.questUuid);
         const { questKey, objectiveKey } = target.dataset;
+        const status = Number(target.dataset.status);
         const objective = page?.system?.quests?.[questKey]?.objectives?.[objectiveKey];
-        if (!page || !objective) return;
+        if (!page || !objective || Number.isNaN(status)) return;
 
-        const nextState = DSAQuestLogEntry.nextObjectiveState(objective);
-        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: nextState });
+        await page.update({ [`system.quests.${questKey}.objectives.${objectiveKey}.status`]: status });
     }
 
     static async toggleObjectiveVisibility(event, target) {
@@ -376,6 +384,7 @@ export class QuestLogFeature {
             selectItem: (event, item) => QuestLogFeature.selectQuest(event, item),
         });
         this.#keyboardNavigation.bind(this.element);
+        JournalStatusPicker.bind(this.element);
         QuestLogFeature.#applyListFilters();
     }
 
