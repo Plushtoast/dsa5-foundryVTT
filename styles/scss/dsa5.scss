@@ -2174,6 +2174,12 @@ a.img-entity-link {
 .roll-request-card {
   .roll-request-header {
     margin: 0 0 0.35rem;
+    min-width: 0;
+
+    .roll-request-row-names {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
   }
 
   .roll-request-skill-icon {
@@ -2183,6 +2189,48 @@ a.img-entity-link {
     border: 1px solid var(--border-color);
     border-radius: 3px;
     flex: 0 0 24px;
+
+    &.noBorder {
+      border: none;
+    }
+  }
+
+  .coopcast-share {
+    width: 2.2em;
+    flex: 0 0 2.2em;
+    min-width: 0;
+    height: 18px;
+    padding: 0 2px;
+    text-align: center;
+  }
+
+  .coopcast-row.flexrow {
+    flex-wrap: nowrap;
+    align-items: flex-start;
+  }
+
+  .coopcast-row-main {
+    min-width: 0;
+  }
+
+  .coopcast-share-controls {
+    flex-wrap: nowrap;
+    --button-size: 18px;
+    --input-height: 18px;
+    --control-height: 18px;
+
+    > button {
+      --button-size: 18px;
+      --input-height: 18px;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      line-height: 18px;
+      padding: 0;
+      flex: 0 0 18px;
+      font-size: 10px;
+    }
   }
 
   .roll-request-rows {
@@ -3609,6 +3657,7 @@ body.detached .application.dsa5.actor.vertical-tabs .tabs.right {
 // Outcome accents — must beat reserved transparent gutter (same/higher specificity)
 .roll-request-card .roll-request-row,
 .trap-announce-card .roll-request-row,
+.cooperative-cast-card .roll-request-row,
 .information-query-result-roll {
   &.roll-request-row-success {
     background: rgba(0, 111, 61, 0.12);

@@ -386,6 +386,14 @@ export default class QueryOrchestrator {
       return;
     }
 
+    const message = game.messages.get(messageId);
+    const requestMeta = message?.getFlag('dsa5', 'queryRequest');
+    const query = requestMeta?.type ? this.getQuery(requestMeta.type) : null;
+    if (typeof query?.handleResult === 'function') {
+      await query.handleResult({ messageId, actorId, result });
+      return;
+    }
+
     await this.enqueueMessageUpdate(messageId, async (state) => {
       const recipient = state.recipients.find((entry) => entry.actorId === actorId);
       if (!recipient) return state;

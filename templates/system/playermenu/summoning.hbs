@@ -32,6 +32,27 @@
     {{#if showRitualPhase}}
     <div class="summoning-phase">
         {{> systems/dsa5/templates/system/conjuration/parts/rituals.hbs}}
+        {{#if showCircleHelpers}}
+        <div class="groupbox paddingBox">
+            <div class="row-section flexrow flexAlignCenter gap5px">
+                <div class="col seventy table-title lineheight">{{localize 'PLAYER.circleHelpers'}}</div>
+                <div class="col thirty right">
+                    <button type="button" class="dsadesignbutton noBorder" data-action="pickCircleHelpers"
+                        data-tooltip="{{localize 'PLAYER.pickCircleHelpers'}}">
+                        <i class="fas fa-users" aria-hidden="true"></i> {{localize 'PLAYER.pickCircleHelpers'}}
+                    </button>
+                </div>
+            </div>
+            <div class="bags flexrow flexAlignCenter gap2px wrap">
+                {{#each circleHelpers as |helper|}}
+                <div class="slot" style="background-image:url('{{helper.img}}')" data-tooltip="{{helper.name}}">
+                    <a class="player-menu-unselect" data-action="removeCircleHelper" data-actor-id="{{helper.id}}"
+                        data-tooltip="{{localize 'COOPCAST.remove'}}"><i class="fas fa-times"></i></a>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        {{/if}}
     </div>
     {{/if}}
 

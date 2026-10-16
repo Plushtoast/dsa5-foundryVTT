@@ -15,6 +15,7 @@ import { SummoningExecutor } from './summoning/summoning_executor.js';
 import SpecialabilityRulesDSA5 from '../system/rules/specialability-rules-dsa5.js';
 import ItemEnchantment from '../item/item-enchantment.js';
 import { DialogExtraFlow } from '../dialog/dialog-extra-flow.js';
+import CooperativeCasting from '../system/rolls/cooperative-casting.js';
 
 const { getProperty, setProperty, mergeObject, duplicate } = foundry.utils;
 const { renderTemplate } = foundry.applications.handlebars;
@@ -120,6 +121,7 @@ export default class PlayerMenu extends DefaultAppv2 {
       selectedIds: [],
       selectedEntityIds: [],
       selectedPackageIds: [],
+      circleHelperIds: [],
       conjurationTypes: {
         [CONJURATION_TYPES.DEMON]: _loc('CONJURATION.demon'),
         [CONJURATION_TYPES.ELEMENTAL]: _loc('CONJURATION.elemental'),
@@ -360,6 +362,17 @@ export default class PlayerMenu extends DefaultAppv2 {
     // Difficulty/AsP from conjuration AEs are shown in the helper UI.
     // Roll ease/cost still come from skillModifiers.step / conditional|feature.AsPCost on the ritual.
 
+    const helperActors = (this.conjurationData.circleHelperIds || []).map((id) => game.actors.get(id)).filter(Boolean);
+    const ritualNames = this.conjurationData.skills[this.conjurationData.conjurationType] || [];
+    const unknownCount = CooperativeCasting.unknownRitualCount(this.actor, helperActors, ritualNames);
+    if (unknownCount) {
+      moreModifiers.push({
+        name: _loc('COOPCAST.unknownRitualPenalty'),
+        value: -unknownCount,
+        selected: true,
+      });
+    }
+
     if (this.conjurationData.packageModifier)
       moreModifiers.push({
         name: _loc('summoningPackage'),
@@ -383,6 +396,29 @@ export default class PlayerMenu extends DefaultAppv2 {
         functionName: 'game.dsa5.apps.playerMenu.postConjurationRoll',
       },
     };
+
+    if (helperActors.length) {
+      const skillForCircle = this.actor.items.get(row.attr('data-item-id'));
+      let session = CooperativeCasting.findActiveSession(this.actor.id);
+      if (!session && skillForCircle) {
+        session = await CooperativeCasting.startSummoningCircle({
+          lead: this.actor,
+          helpers: helperActors,
+          item: skillForCircle,
+          conjurationType: this.conjurationData.conjurationType,
+          unknownCount,
+        });
+      }
+      if (session) {
+        options.postFunction = {
+          functionName: CooperativeCasting.POST_FN,
+          requestMessageId: session.id,
+          actorId: this.actor.id,
+          action: 'itemRoll',
+          updateSummoning: true,
+        };
+      }
+    }
 
     if (row.attr('data-enchantment') === '1') {
       const sourceItem = this.actor.items.get(row.attr('data-source-item-id'));
@@ -673,6 +709,8 @@ export default class PlayerMenu extends DefaultAppv2 {
       showEntity: this._onShowEntity,
       setSummoningPhase: this.#setSummoningPhase,
       openActorBadge: this.#openActorBadge,
+      pickCircleHelpers: this.#pickCircleHelpers,
+      removeCircleHelper: this.#removeCircleHelper,
       clearConjuration: this.#clearConjuration,
       selectFavoriteCreature: this.#selectFavoriteCreature,
       openSelectedItem: this.#openSelectedItem,
@@ -685,6 +723,21 @@ export default class PlayerMenu extends DefaultAppv2 {
     if (!uuid) return;
     const doc = await fromUuid(uuid);
     doc?.sheet?.render(true);
+  }
+
+  static async #pickCircleHelpers() {
+    if (!this.actor) return;
+    const ritualNames = this.conjurationData.skills[this.conjurationData.conjurationType] || [];
+    const helperIds = await CooperativeCasting.pickCircleHelperIds(this.actor, ritualNames);
+    if (!helperIds) return;
+    this.conjurationData.circleHelperIds = helperIds;
+    this.render(true);
+  }
+
+  static #removeCircleHelper(ev, target) {
+    const id = target.dataset.actorId;
+    this.conjurationData.circleHelperIds = (this.conjurationData.circleHelperIds || []).filter((entry) => entry !== id);
+    this.render(true);
   }
 
   static #openActorBadge(ev, target) {
@@ -718,6 +771,7 @@ export default class PlayerMenu extends DefaultAppv2 {
     this.conjurationData.packageModifier = 0;
     this.conjurationData.qs = 0;
     this.conjurationData.rollAttempted = false;
+    this.conjurationData.circleHelperIds = [];
   }
 
   /**
@@ -1099,6 +1153,11 @@ export default class PlayerMenu extends DefaultAppv2 {
       availableActors: availableActors.map((a) => ({ id: a.id, name: a.name, img: a.img })),
       showActorSwitcher: availableActors.length > 1 || game.user.isGM,
       actorBadges: this.#prepareActorBadges(),
+      showCircleHelpers: CooperativeCasting.canShowCircleHelpers(this.actor, this.conjurationData.conjurationType),
+      circleHelpers: (this.conjurationData.circleHelperIds || [])
+        .map((id) => game.actors.get(id))
+        .filter(Boolean)
+        .map((helper) => ({ id: helper.id, name: helper.name, img: helper.img })),
       hasSummoningTarget: !!this.conjuration,
       favoriteCreatures: data.favoriteCreatures ?? CompanionHandler.listConjurationFavorites(this.actor),
     });

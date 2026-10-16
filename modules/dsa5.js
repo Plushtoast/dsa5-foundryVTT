@@ -66,6 +66,7 @@ import { DSARegionTemplate } from './system/automation/measuretemplate.js';
 import RegionTooltipHandler from './system/automation/region-tooltip.js';
 import TrapRegionControls from './system/automation/trap-region-controls.js';
 import GroupCheck from './system/rolls/group-check.js';
+import CooperativeCasting from './system/rolls/cooperative-casting.js';
 import ChatCardBump from './system/sidebar/chat-card-bump.js';
 import Riding from './system/automation/riding.js';
 import CompanionHandler from './actor/companions/companion-handler.js';
@@ -158,6 +159,7 @@ globalThis.dsa5 = {
       TestModuleLoader,
       DSA5SoundEffect,
       GroupCheck,
+      CooperativeCasting,
       ChatCardBump,
       MerchantModeHelper,
       MerchantConfig,
@@ -218,6 +220,7 @@ globalThis.dsa5 = {
       TransactionSummaryService,
       InformationQueryService,
       RollRequestService,
+      CooperativeCasting,
       MagicAnalysisQueryService,
     },
     combat: {
@@ -375,6 +378,7 @@ Hooks.once('init', () => {
   InformationQueryService.register();
   MerchantShopPresence.register();
   RollRequestService.register();
+  CooperativeCasting.register();
   NavalHeroActionHandler.register();
   NavalCombatDamage.register();
   NavalHouseRules.register();

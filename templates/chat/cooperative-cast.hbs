@@ -1,0 +1,103 @@
+<div class="dsa5 roll-request-card cooperative-cast-card" data-phase="{{phaseLabel}}">
+  <div class="flexrow flexAlignCenter gap5px roll-request-header">
+    {{#if itemImg}}
+      <img src="{{itemImg}}" alt="{{itemName}}" class="roll-request-skill-icon flex0 noBorder" data-tooltip="{{itemName}}">
+    {{else}}
+      <i class="fas fa-link flex0" aria-hidden="true" data-tooltip="{{title}}"></i>
+    {{/if}}
+    <div class="roll-request-row-names">
+      <span class="roll-request-row-title ellipsis" data-tooltip="{{itemName}}">{{itemName}}</span>
+      <span class="very-small ellipsis"{{#if titleHint}} data-tooltip="{{titleHint}}"{{/if}}>{{title}}</span>
+    </div>
+  </div>
+  <p class="very-small" data-tooltip="{{phaseHint}}">{{phaseLabel}}</p>
+
+  {{#if combinedSummary}}
+  <div class="coopcast-summary very-small" data-tooltip="{{combinedSummary.tooltip}}">
+    <b>{{localize 'COOPCAST.combinedQS'}}</b>: {{combinedSummary.combinedQS}} / 6
+  </div>
+  {{/if}}
+  {{#if showCost}}
+  <div data-tooltip="{{localize 'COOPCAST.costHint'}}"><b>{{localize 'cost'}}</b>: {{finalcost}} {{manaAbbrev}}</div>
+  {{/if}}
+  {{#if unknownCount}}
+  <div class="very-small">{{localize 'COOPCAST.unknownRitualPenalty'}}: {{unknownCount}}</div>
+  {{/if}}
+  {{#if packPenaltyEase}}
+  <div class="very-small">{{localize 'COOPCAST.packAssistEase'}}: {{packPenaltyEase}}</div>
+  {{/if}}
+
+  {{#if recipients.length}}
+  <div class="roll-request-rows">
+    {{#each recipients}}
+    <div class="flexrow flexAlignCenter roll-request-row coopcast-row gap5px {{resultRowClass}}" data-actor-id="{{actorId}}" data-status="{{status}}" data-is-lead="{{isLead}}"{{#if resultTooltip}} data-tooltip="{{resultTooltip}}" aria-label="{{resultTooltip}}"{{/if}}>
+      <div class="flexcol flex1 coopcast-row-main">
+        {{> systems/dsa5/templates/chat/roll/parts/roll-request-row-identity.hbs}}
+        {{#if resultLines.length}}
+        <div class="coopcast-result-lines">
+          {{#each resultLines}}
+          <div class="very-small ellipsis"{{#if tooltip}} data-tooltip="{{tooltip}}"{{/if}}>{{text}}</div>
+          {{/each}}
+        </div>
+        {{/if}}
+      </div>
+      {{#if resultIcon}}
+        <span class="roll-request-result-label icon flex0 {{resultIconClass}}"><i class="fas {{resultIcon}}"></i></span>
+      {{else if resultLabel}}
+        <div class="roll-request-result-stack flex0">
+          <b class="roll-request-result-label">{{resultLabel}}</b>
+          {{#if resultSubLabel}}
+            <span class="roll-request-result-sublabel">{{resultSubLabel}}</span>
+          {{/if}}
+        </div>
+      {{/if}}
+      {{#if showShareInput}}
+        <div class="flexrow flex0 flexAlignCenter gap2px coopcast-share-controls" data-tooltip="{{localize 'COOPCAST.costHint'}}">
+          <button type="button" class="coopcast-action icon fas fa-chevron-left dsadesignbutton" data-action="shiftShare" data-dir="-1" data-actor-id="{{actorId}}" data-tooltip="{{localize 'COOPCAST.shareDown'}}" aria-label="{{localize 'COOPCAST.shareDown'}}"></button>
+          <input type="number" class="coopcast-share quantity-click" data-actor-id="{{actorId}}" value="{{share}}" min="0" step="1" data-tooltip="{{localize 'TT.strgx10'}}">
+          <button type="button" class="coopcast-action icon fas fa-chevron-right dsadesignbutton" data-action="shiftShare" data-dir="1" data-actor-id="{{actorId}}" data-tooltip="{{localize 'COOPCAST.shareUp'}}" aria-label="{{localize 'COOPCAST.shareUp'}}"></button>
+        </div>
+      {{/if}}
+      <div class="roll-request-row-side flexrow flex0 flexAlignEnd gap2px">
+        {{#if canRoll}}
+          <button type="button" class="coopcast-action icon fas fa-dice" data-action="roll" data-actor-id="{{actorId}}" data-tooltip="{{localize 'ROLLREQUEST.rollAction'}}" aria-label="{{localize 'ROLLREQUEST.rollAction'}}"></button>
+        {{/if}}
+        {{#if canTreatWounds}}
+          <button type="button" class="coopcast-action icon fas fa-hand-holding-medical" data-action="treatWounds" data-actor-id="{{actorId}}" data-tooltip="{{localize 'LocalizedIDs.treatWounds'}}" aria-label="{{localize 'LocalizedIDs.treatWounds'}}"></button>
+        {{/if}}
+        {{#if canPay}}
+          <button type="button" class="coopcast-action icon fas fa-coins" data-action="pay" data-actor-id="{{actorId}}" data-tooltip="{{localize 'COOPCAST.pay'}}" aria-label="{{localize 'COOPCAST.pay'}}"></button>
+        {{/if}}
+        {{#if canSb}}
+          <button type="button" class="coopcast-action icon fas fa-heart-pulse" data-action="selfControl" data-actor-id="{{actorId}}" data-tooltip="{{selfControlTitle}}" aria-label="{{selfControlTitle}}"></button>
+        {{/if}}
+        {{#if canGMRoll}}
+          <button type="button" class="coopcast-action icon fas fa-dice roll-request-gm" data-action="rollOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize 'DSAQUERIES.COMMANDS.rollOnBehalf'}}" aria-label="{{localize 'DSAQUERIES.COMMANDS.rollOnBehalf'}}"></button>
+        {{/if}}
+        {{#if canGMPay}}
+          <button type="button" class="coopcast-action icon fas fa-coins roll-request-gm" data-action="payOnBehalf" data-actor-id="{{actorId}}" data-tooltip="{{localize 'COOPCAST.payOnBehalf'}}" aria-label="{{localize 'COOPCAST.payOnBehalf'}}"></button>
+        {{/if}}
+        {{#if canRemove}}
+          <button type="button" class="coopcast-action icon fas fa-user-minus" data-action="remove" data-actor-id="{{actorId}}" data-tooltip="{{localize 'COOPCAST.remove'}}" aria-label="{{localize 'COOPCAST.remove'}}"></button>
+        {{/if}}
+        {{#if canGMAction}}
+          <button type="button" class="coopcast-menu icon fas fa-ellipsis-vertical roll-request-gm" data-actor-id="{{actorId}}" data-tooltip="{{localize 'DSAQUERIES.COMMANDS.more'}}" aria-label="{{localize 'DSAQUERIES.COMMANDS.more'}}"></button>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <div class="flexrow gap5px margin-top">
+    {{#if canCommitShares}}
+      <button type="button" class="coopcast-action" data-action="commitShares" data-tooltip="{{localize 'COOPCAST.costHint'}}"><i class="fas fa-check"></i> {{localize 'COOPCAST.commitShares'}}</button>
+    {{/if}}
+    {{#if canReassign}}
+      <button type="button" class="coopcast-action" data-action="reassign" data-tooltip="{{localize 'COOPCAST.reassign'}}"><i class="fas fa-arrows-rotate"></i> {{localize 'COOPCAST.reassign'}}</button>
+    {{/if}}
+    {{#if canAbort}}
+      <button type="button" class="coopcast-action" data-action="abort" data-tooltip="{{localize 'COOPCAST.abort'}}"><i class="fas fa-ban"></i> {{localize 'COOPCAST.abort'}}</button>
+    {{/if}}
+  </div>
+</div>

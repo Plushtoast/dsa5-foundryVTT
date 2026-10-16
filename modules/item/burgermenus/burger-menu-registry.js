@@ -2,6 +2,7 @@ import { registerCommonKnowledgeHooks } from './common_knowledge.js';
 import { registerPracticalApplicationHooks } from './practical_application.js';
 import { registerVisionOfTheDeityHooks } from './vision-der-gottheit.js';
 import { registerVisionOfTrueFaithHooks } from './vision-des-wahren-glaubens.js';
+import { registerCooperativeCastingHooks } from './cooperative-casting.js';
 
 export class BurgerMenuRegistry {
   static registerHooks() {
@@ -9,5 +10,6 @@ export class BurgerMenuRegistry {
     registerPracticalApplicationHooks();
     registerVisionOfTheDeityHooks();
     registerVisionOfTrueFaithHooks();
+    registerCooperativeCastingHooks();
   }
 }

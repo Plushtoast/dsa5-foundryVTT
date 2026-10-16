@@ -6,6 +6,7 @@ import PostRollBuffs from '../system/rolls/postroll-buffs.js';
 import { PostRollBuffPicker } from '../dialog/postroll-buff-picker.js';
 import RegenerationHelper from '../system/rolls/regeneration-helper.js';
 import UnifiedFateDSA5 from '../dialog/unified-fate-app.js';
+import CooperativeCasting from '../system/rolls/cooperative-casting.js';
 const { getProperty } = foundry.utils;
 
 const SPELL_TYPES = ['liturgy', 'ceremony', 'spell', 'ritual', 'magicalsign'];
@@ -347,6 +348,10 @@ class ActionHandler {
       return ui.notifications.error('DSAError.DamagePermission', { localize: true });
     }
     if (!source) return;
+    if (CooperativeCasting.ownsManaFor(message)) {
+      ui.notifications.info('COOPCAST.payOnSummary', { localize: true });
+      return;
+    }
 
     const { calculatedSpellModifiers } = cardData.preData;
     const maintain = calculatedSpellModifiers.maintainCost?.trim();
