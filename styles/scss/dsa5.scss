@@ -990,12 +990,22 @@ select[multiple] {
   width: 35px;
   height: 35px;
   display: inline-block;
+  position: relative;
   background-size: contain;
   line-height: 35px;
   text-align: center;
   background-position: calc(50% + 1px);
   background-repeat: no-repeat;
   filter: drop-shadow(0 0 2px black);
+
+  > sup {
+    position: absolute;
+    top: 1px;
+    right: 3px;
+    line-height: 1;
+    font-size: 0.7em;
+    pointer-events: none;
+  }
 }
 
 .skills .d20 {

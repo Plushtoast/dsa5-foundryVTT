@@ -443,7 +443,7 @@ export default class OpposedDsa5 {
         if (!hide)
           DiceDSA5._addRollDiceSoNice(
             message.flags.data.preData,
-            Roll.fromData(message.flags.data.postData.damageRoll),
+            DiceDSA5.damageRollForDiceSoNice(message.flags.data.postData),
             game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration('damage'),
           );
       }

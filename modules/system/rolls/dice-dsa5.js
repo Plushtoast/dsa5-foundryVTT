@@ -160,7 +160,8 @@ export default class DiceDSA5 {
     let roll = await configHandler();
 
     roll = await ManualRollDialog.apply(roll, ManualRollDialog.getRollDescription(testData), testData.extra.options);
-    if (!testData.extra?.options?.skipDiceSoNice) {
+    // Combat-tab TP waits for showDamage so bonus TP dice can animate with the weapon roll.
+    if (!testData.extra?.options?.skipDiceSoNice && testData.mode !== DAMAGE) {
       await this.showDiceSoNice(roll, cardOptions.messageMode);
     }
 
@@ -1093,6 +1094,7 @@ export default class DiceDSA5 {
       extra: {},
       armorPen: result.armorPen,
       damageRoll: result.damageRoll,
+      bonusDamageRolls: result.bonusDamageRolls,
     };
   }
 
@@ -1265,9 +1267,11 @@ export default class DiceDSA5 {
    * @param {string} text - Text containing dice notation
    * @param {Object} testData - Optional test data for dice animations
    * @param {Array} [rollCollector] - Optional array to collect the evaluated rolls
+   * @param {Object} [options]
+   * @param {boolean} [options.showDiceSoNice=true] - Animate dice immediately (false to defer)
    * @returns {Promise<number>} Evaluated roll result
    */
-  static async _stringToRoll(text, testData, rollCollector) {
+  static async _stringToRoll(text, testData, rollCollector, { showDiceSoNice = true } = {}) {
     try {
       const diceMatches = [];
       const modifiedText = `${text}`;
@@ -1289,7 +1293,7 @@ export default class DiceDSA5 {
 
       const rollResults = await Promise.all(rollPromises);
 
-      if (testData) {
+      if (testData && showDiceSoNice) {
         const diceColor = game.dsa5.apps.DiceSoNiceCustomization.getAttributeConfiguration('ch');
         rollResults.forEach(roll =>
           this._addRollDiceSoNice(testData, roll, diceColor)
@@ -1343,6 +1347,7 @@ export default class DiceDSA5 {
     let bonusDmg = 0;
     let baseDmgBonus = 0;
     const bonusDamageCharacteristics = [];
+    const extraDamageRolls = [];
 
     for (const val of testData.situationalModifiers) {
       if (val.armorPen) armorPen.push(val.armorPen);
@@ -1362,7 +1367,7 @@ export default class DiceDSA5 {
         const isOverride = /^=/.test(val.damageBonus);
         const rollString = `${val.damageBonus}`.replace(/^=/, '');
         const bonusRolls = [];
-        const roll = await DiceDSA5._stringToRoll(rollString, testData, bonusRolls);
+        const roll = await DiceDSA5._stringToRoll(rollString, testData, bonusRolls, { showDiceSoNice: false });
         const number = roll * (val.step || 1);
 
         if (isOverride) {
@@ -1376,6 +1381,8 @@ export default class DiceDSA5 {
           baseDmgBonus += number;
         else
           bonusDmg += number;
+
+        extraDamageRolls.push(...bonusRolls);
 
         for (const bonusRoll of bonusRolls) {
           for (const term of bonusRoll.terms) {
@@ -1475,7 +1482,7 @@ export default class DiceDSA5 {
       }
 
       const status = actor.system[isRangeWeapon ? 'rangeStats' : 'meleeStats'].damage;
-      const statusDmg = await DiceDSA5._stringToRoll(status, testData);
+      const statusDmg = await DiceDSA5._stringToRoll(status, testData, extraDamageRolls, { showDiceSoNice: false });
       if (statusDmg != 0) {
         damage += statusDmg;
         damageBonusDescription.baseDmgBonus.push(_loc('statuseffects') + ' ' + statusDmg);
@@ -1511,6 +1518,8 @@ export default class DiceDSA5 {
     result.damagedescription = DiceDSA5.buildBonusDescription(damageBonusDescription);
     result.damage = Math.round(damage);
     result.damageRoll = duplicate(damageRoll);
+    const bonusDamageRolls = extraDamageRolls.filter((roll) => roll.dice?.length).map((roll) => duplicate(roll));
+    if (bonusDamageRolls.length) result.bonusDamageRolls = bonusDamageRolls;
   }
 
   /**
@@ -1730,7 +1739,8 @@ export default class DiceDSA5 {
   }
 
   static async _addRollDiceSoNice(testData, roll, color) {
-    if (testData.messageMode) {
+    if (!roll || testData?.extra?.options?.skipDiceSoNice) return;
+    if (testData?.messageMode) {
       for (let i = 0; i < roll.dice.length; i++) mergeObject(roll.dice[i].options, color);
 
       await this.showDiceSoNice(roll, testData.messageMode);
@@ -2161,6 +2171,38 @@ export default class DiceDSA5 {
       console.warn('DiceDSA5.fromRollData failed', error);
     }
     return null;
+  }
+
+  /**
+   * Combine the weapon TP roll with deferred bonus TP dice for Dice so Nice.
+   * Attack rolls hide damage until a hit; these extra dice must animate then,
+   * not with the attack d20.
+   * @param {Object} postData
+   * @returns {Roll|null}
+   */
+  static damageRollForDiceSoNice(postData) {
+    const damageRoll = this.fromRollData(postData?.damageRoll);
+    if (!damageRoll) return null;
+
+    const extras = (postData.bonusDamageRolls || [])
+      .map((data) => this.fromRollData(data))
+      .filter((roll) => roll?.dice?.length);
+    return this.#combineEvaluatedRolls(damageRoll, ...extras);
+  }
+
+  static #combineEvaluatedRolls(...rolls) {
+    const valid = rolls.filter((roll) => roll);
+    if (valid.length <= 1) return valid[0] ?? null;
+
+    const { OperatorTerm, RollTerm } = foundry.dice.terms;
+    const terms = [];
+    for (const roll of valid) {
+      if (terms.length) terms.push(new OperatorTerm({ operator: '+' }));
+      for (const term of roll.terms) {
+        terms.push(RollTerm.fromData(term.toJSON()));
+      }
+    }
+    return Roll.fromTerms(terms);
   }
 
   /**
