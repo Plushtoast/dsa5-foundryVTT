@@ -161,7 +161,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     },
     gmTools: {
       template: 'systems/dsa5/templates/actors/group/group-gm-tools.hbs',
-      scrollable: [''],
+      scrollable: ['.scrollable'],
       templates: ['systems/dsa5/templates/actors/group/parts/group-helpers.hbs'],
     },
     notes: {
@@ -191,6 +191,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       requestSkillRoll: this.#requestSkillRoll,
       createEventsJournal: this.#createEventsJournal,
       groupHelperAction: this.#groupHelperAction,
+      collapseGroupHelper: this.#collapseGroupHelper,
       awardAP: this.#awardAP,
       groupPayment: this.#groupPayment,
       groupGetPaid: this.#groupGetPaid,
@@ -238,8 +239,11 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
   _prepareTabs(group) {
     const tabs = super._prepareTabs(group);
-    if (!game.user.isGM || GroupAPI.getGmToolEntries(this.actor).length === 0) {
+    if (!GroupAPI.getGmToolEntries(this.actor).length) {
       delete tabs.gmTools;
+    } else if (!game.user.isGM && tabs.gmTools) {
+      tabs.gmTools.label = 'GROUP.camp';
+      tabs.gmTools.icon = 'fas fa-campground';
     }
     const tabKeys = Object.keys(tabs);
     const hasActive = tabKeys.some((key) => tabs[key].active);
@@ -254,19 +258,37 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   #skillSearch;
   #inventorySearch;
   #hookIds = [];
+  #sheetBodyScroll = { top: 0, left: 0 };
+  #expandedHelperId = null;
+
+  async _preRender(context, options) {
+    const body = this.element?.querySelector('.sheet-body');
+    if (body) this.#sheetBodyScroll = { top: body.scrollTop, left: body.scrollLeft };
+    return super._preRender(context, options);
+  }
 
   async _onRender(context, options) {
     await super._onRender(context, options);
     this.element.classList.toggle('vertical-tabs', game.settings.get('dsa5', 'tabsOutsideSheet'));
+    const body = this.element.querySelector('.sheet-body');
+    if (body) {
+      body.scrollTop = this.#sheetBodyScroll.top;
+      body.scrollLeft = this.#sheetBodyScroll.left;
+    }
 
     if (this.#hookIds.length === 0) {
       const rerenderBound = this.#onRelatedActorUpdate.bind(this);
       this.#hookIds.push(
-        Hooks.on('updateActor', rerenderBound),
-        Hooks.on('createItem', rerenderBound),
-        Hooks.on('updateItem', rerenderBound),
-        Hooks.on('deleteItem', rerenderBound),
+        { hook: 'updateActor', id: Hooks.on('updateActor', rerenderBound) },
+        { hook: 'createItem', id: Hooks.on('createItem', rerenderBound) },
+        { hook: 'updateItem', id: Hooks.on('updateItem', rerenderBound) },
+        { hook: 'deleteItem', id: Hooks.on('deleteItem', rerenderBound) },
+        { hook: 'createActiveEffect', id: Hooks.on('createActiveEffect', rerenderBound) },
+        { hook: 'updateActiveEffect', id: Hooks.on('updateActiveEffect', rerenderBound) },
+        { hook: 'deleteActiveEffect', id: Hooks.on('deleteActiveEffect', rerenderBound) },
+        { hook: 'updateWorldTime', id: Hooks.on('updateWorldTime', this.#onWorldTime.bind(this)) },
       );
+      this.element.addEventListener('change', this.#onGroupHelperChange);
     }
 
     this.#skillSearch ??= new foundry.applications.ux.SearchFilter({
@@ -496,18 +518,34 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   }
 
   #onRelatedActorUpdate(doc) {
-    const actor = doc instanceof Item ? doc.parent : doc;
+    let actor = doc instanceof Actor ? doc : doc?.parent;
+    if (actor && !(actor instanceof Actor)) actor = actor.parent;
     if (!actor || actor === this.actor) return;
     if (!this.actor.system.isLinkedActor(actor)) return;
     this.actor.reset();
     if (this.rendered) this.render();
   }
 
+  #onWorldTime() {
+    if (!this.rendered) return;
+    if (this.tabGroups?.sheet !== 'gmTools') return;
+    this.render({ parts: ['gmTools'] });
+  }
+
+  #onGroupHelperChange = (event) => {
+    const field = event.target.closest('[data-group-helper-change]');
+    if (!field) return;
+    event.stopPropagation();
+    const helperEl = field.closest('[data-group-helper]');
+    const helper = GroupAPI.helpers.get(helperEl?.dataset.groupHelper);
+    helper?.execute(this.actor, event, { ...helperEl?.dataset, ...field.dataset, ...event.target.dataset });
+  };
+
   _tearDown(options) {
     super._tearDown(options);
-    const hookNames = ['updateActor', 'createItem', 'updateItem', 'deleteItem'];
-    for (let i = 0; i < this.#hookIds.length; i++) {
-      Hooks.off(hookNames[i], this.#hookIds[i]);
+    this.element?.removeEventListener('change', this.#onGroupHelperChange);
+    for (const entry of this.#hookIds) {
+      Hooks.off(entry.hook, entry.id);
     }
     this.#hookIds.length = 0;
     this.#skillSearch?.unbind();
@@ -598,7 +636,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
 
     context.isPrimaryParty = game.settings.get('dsa5', 'primaryParty') === this.actor.uuid;
 
-    context.gmTools = game.user.isGM ? await GroupAPI.prepareGmToolEntries(this.actor) : [];
+    context.gmTools = await GroupAPI.prepareGmToolEntries(this.actor);
+    context.gmTools.expanded = this.#expandedHelperEntry(context.gmTools);
     context.helpers = {
       members: GroupAPI.getHelperEntries('members', this.actor),
       custom: GroupAPI.getHelperEntries('custom', this.actor),
@@ -938,12 +977,35 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     await DSACalendarEntry.startCreation(null, dateContext);
   }
 
+  #expandedHelperEntry(gmTools) {
+    const expandedId = this.#expandedHelperId;
+    if (!expandedId) return null;
+    const card = gmTools.cards.find((entry) => entry.id === expandedId);
+    const panel = gmTools.panels.find((entry) => entry.id === expandedId);
+    if (!card || !panel) {
+      this.#expandedHelperId = null;
+      return null;
+    }
+    return { ...card, html: panel.html };
+  }
+
+  static #collapseGroupHelper() {
+    this.#expandedHelperId = null;
+    this.render({ parts: ['gmTools'] });
+  }
+
   static #groupHelperAction(event, target) {
     const trigger = target.closest('[data-group-helper]');
     const helperId = trigger?.dataset?.groupHelper;
     if (!helperId) return;
     const helper = GroupAPI.helpers.get(helperId);
-    helper?.execute(this.actor, event, trigger.dataset);
+    const dataset = { ...trigger.dataset, ...target.dataset };
+    if (typeof helper?.renderHtml === 'function' && !target.closest('[data-group-helper-panel]')) {
+      this.#expandedHelperId = helperId;
+      this.render({ parts: ['gmTools'] });
+      return;
+    }
+    helper?.execute(this.actor, event, dataset);
   }
 
   static async #awardAP() {

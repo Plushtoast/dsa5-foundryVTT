@@ -2311,6 +2311,7 @@
     "alreadyMember": "Dieser Akteur ist bereits Mitglied der Gruppe.",
     "camp": "Lager",
     "gmTools": "Spielleiter-Funktionen",
+    "closeHelper": "Zurück zu den Funktionen",
     "createEventsJournal": "Ereignisjournal erstellen",
     "createNewGroup": "Neue Gruppe erstellen",
     "deploy": "Mitglieder aufstellen",

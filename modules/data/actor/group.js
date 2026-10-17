@@ -1,4 +1,5 @@
 import { ActorDataModel } from '../baseactor.js';
+import MasterFunctionsField from '../fields/master-functions-field.js';
 
 const { SchemaField, StringField, NumberField, BooleanField, HTMLField, TypedObjectField } = foundry.data.fields;
 
@@ -53,6 +54,7 @@ export default class GroupData extends ActorDataModel {
         autoSize: new BooleanField({ initial: true }),
         lockRotation: new BooleanField({ initial: false }),
       }),
+      masterFunctions: new MasterFunctionsField({ initial: {} }),
     });
   }
 

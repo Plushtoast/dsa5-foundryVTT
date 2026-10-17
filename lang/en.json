@@ -2309,6 +2309,7 @@
     "alreadyMember": "This actor is already a member of the group.",
     "camp": "Camp",
     "gmTools": "Gamemaster tools",
+    "closeHelper": "Back to tools",
     "createEventsJournal": "Create Events Journal",
     "createNewGroup": "Create new group",
     "deploy": "Deploy Members",
