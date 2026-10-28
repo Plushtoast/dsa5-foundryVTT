@@ -595,6 +595,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
     context.verticalTabs = game.settings.get('dsa5', 'tabsOutsideSheet');
     context.systemFields = this.document.system.schema?.fields;
 
+    context.hideForeignIdentity = !!system.privacy?.hideForeignIdentity;
     context.members = this._prepareMembersData();
     context.aggregateStats = system.aggregateStats;
     context.memberCount = system.memberCount;
@@ -650,6 +651,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
   _prepareMembersData() {
     const members = [];
     const system = this.actor.system;
+    const hideForeignIdentity = !!system.privacy?.hideForeignIdentity;
 
     const sorted = Object.entries(system.members)
       .sort(([, a], [, b]) => a.sort - b.sort);
@@ -662,6 +664,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
       const vantages = [];
       const purse = [];
       const canViewPrivateDetails = game.user.isGM || actor.isOwner;
+      const canViewIdentity = !hideForeignIdentity || canViewPrivateDetails;
 
       if (canViewPrivateDetails) {
         for (const item of actor.items) {
@@ -689,7 +692,7 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
         ownerName: owner?.name ?? null,
         ownerColor: owner?.color ?? null,
         canViewPrivateDetails,
-        schips: actor.schipsWithExtras?.() || actor.schipshtml?.() || [],
+        schips: canViewIdentity ? (actor.schipsWithExtras?.() || actor.schipshtml?.() || []) : [],
         prepare: {
           money: {
             coins: purse
@@ -716,8 +719,8 @@ export default class GroupActorSheet extends AppV2Mixin(foundry.applications.api
           isPriest: !!s.isPriest,
           details: {
             species: s.details?.species?.value ?? '',
-            culture: s.details?.culture?.value ?? '',
-            career: s.details?.career?.value ?? '',
+            culture: canViewIdentity ? (s.details?.culture?.value ?? '') : '',
+            career: canViewIdentity ? (s.details?.career?.value ?? '') : '',
             experience: {
               total: s.details?.experience?.total ?? 0,
               spent: s.details?.experience?.spent ?? 0,
