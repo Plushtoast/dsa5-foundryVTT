@@ -1806,7 +1806,12 @@
     "sortByDate": "Sort by date",
     "sortByKind": "Sort by kind",
     "sortByName": "Sort by name",
-    "sortByStatus": "Sort by status"
+    "sortByStatus": "Sort by status",
+    "visibleActors": {
+      "label": "Visible to actors",
+      "hint": "Click the eye to show this entry to everyone. Hover to grant or deny individual player actors while the eye is closed."
+    },
+    "visibleActorsEmpty": "No player actors available"
   },
   "DSAQUESTLOG": {
     "AUDIENCE": {

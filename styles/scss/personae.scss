@@ -68,6 +68,86 @@
   align-items: center;
 }
 
+.form-fields:has(.dsa-visibility-control) {
+  overflow: visible;
+}
+
+.dsa-visibility-control {
+  position: relative;
+  display: inline-flex;
+  overflow: visible;
+  flex: 0 0 auto;
+
+  .dsa-visibility-actors {
+    display: none;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    z-index: 30;
+    margin: 0;
+    padding: 8px;
+    min-width: 40px;
+    width: max-content;
+    max-width: 220px;
+    list-style: none;
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.82);
+    white-space: nowrap;
+  }
+
+  &:hover .dsa-visibility-actors,
+  .dsa-visibility-actors:hover {
+    display: block;
+  }
+
+  .dsa-visibility-actors li {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    margin: 2px;
+    vertical-align: top;
+  }
+
+  .dsa-visibility-empty {
+    width: auto;
+    height: auto;
+    padding: 0.35rem 0.5rem;
+    color: var(--dsa-text-inverse);
+    font-size: 0.75rem;
+  }
+
+  .dsa-visibility-actor {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.45;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: none;
+    }
+
+    &.is-active {
+      opacity: 1;
+      border-color: var(--dsadesign1);
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &.is-partial > button {
+    color: var(--dsadesign1);
+  }
+}
+
 .journal-status-picker {
   position: relative;
   display: inline-flex;
@@ -523,6 +603,7 @@
       .questlog-detail-aside,
       .persona-detail-actions,
       .journal-status-picker,
+      .dsa-visibility-control,
       button {
         pointer-events: auto;
       }
@@ -645,11 +726,19 @@
             border-radius: 0;
           }
 
-          .detail-action-btn:first-child {
+          .journal-status-picker,
+          .dsa-visibility-control {
+            flex: 0 0 2rem;
+            width: 2rem;
+          }
+
+          > :first-child .detail-action-btn,
+          > :first-child.detail-action-btn {
             border-radius: var(--personae-radius-sm) 0 0 var(--personae-radius-sm);
           }
 
-          .detail-action-btn:last-child {
+          > :last-child .detail-action-btn,
+          > :last-child.detail-action-btn {
             border-left: 0;
             border-radius: 0 var(--personae-radius-sm) var(--personae-radius-sm) 0;
           }

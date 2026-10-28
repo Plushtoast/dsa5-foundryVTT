@@ -51,6 +51,7 @@ export class DSACalendarEntry extends JournalListDataModel {
                 }),
                 category: new NumberField({ required: true, initial: 2, choices: DSACalendarEntry.CATEGORY_CHOICES, label: "dsacalendar.FIELDS.calendarentries.category.label" }),
                 visible: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.visible.label" }),
+                visibleActors: JournalListDataModel.visibleActorsField(),
                 recurring: new BooleanField({ initial: false, label: "dsacalendar.FIELDS.calendarentries.recurring.label" }),
             })),
         };
@@ -96,6 +97,7 @@ export class DSACalendarEntry extends JournalListDataModel {
         entry.categoryName = _loc(DSACalendarEntry.CATEGORY_CHOICES[entry.category]);
         entry.color = DSACalendarEntry.CATEGORY_COLORS[entry.category];
         entry.enriched = await foundry.applications.ux.TextEditor.enrichHTML(entry.content, { secrets: game.user.isGM });
+        await this.prepareVisibility(entry);
     }
     #recalculateDay(date) {
         if (!date || !date.from?.dayOfMonth) return;

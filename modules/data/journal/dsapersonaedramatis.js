@@ -58,6 +58,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
                 description: new HTMLField({ label: "PERSONAE.FIELDS.personae.description.label" }),
                 actor_uuid: new DocumentUUIDField({ type: "Actor", label: "PERSONAE.FIELDS.personae.actor_uuid.label", hint: "PERSONAE.FIELDS.personae.actor_uuid.hint" }),
                 visible: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.visible.label" }),
+                visibleActors: JournalListDataModel.visibleActorsField(),
                 important: new BooleanField({ initial: false, label: "PERSONAE.FIELDS.personae.important.label", hint: "PERSONAE.FIELDS.personae.important.hint" }),
                 showSpecies: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showSpecies.label" }),
                 showCulture: new BooleanField({ initial: true, label: "PERSONAE.FIELDS.personae.showCulture.label" }),
@@ -273,6 +274,7 @@ export class DSAPersonaEntry extends JournalListDataModel {
         entry.uuid = document.uuid;
         entry.dramatisKey = key;
         await this.prepareContacts(entry, heros);
+        await this.prepareVisibility(entry);
     }
     static async prepareContacts(entry, heros) {
         if (!game.user.isGM) return;

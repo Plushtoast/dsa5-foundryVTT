@@ -2,6 +2,7 @@ import { DSAWorldCalendar } from './calendar.js';
 import { CalendarCanvas } from './calendarcanvas.js';
 import { CalendarWidget } from './calendarwidget.js';
 import { DSACalendarEntry } from '../../data/journal/dsacalendar.js';
+import { JournalListDataModel } from '../../data/journal/journallistdatamodel.js';
 import { tabSlider } from '../../system/helpers/view_helper.js';
 import { PersonaeDramatis } from './personaedramatis.js';
 import { DSAPersonaEntry } from '../../data/journal/dsapersonaedramatis.js';
@@ -40,6 +41,8 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       openMoreSearch: this.#toggleMoreSearch,
       ...PersonaeDramatis.actions,
       ...QuestLogFeature.actions,
+      toggleVisibility: JournalListDataModel.onToggleVisibility,
+      toggleActorVisibility: JournalListDataModel.onToggleActorVisibility,
       scrollToToday: this.#scrollToToday,
       scrollMonthPrev: this.#scrollBackward,
       scrollMonthNext: this.#scrollForward,
@@ -76,6 +79,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         'systems/dsa5/templates/system/calendar/event-compact.hbs',
         'systems/dsa5/templates/system/calendar/event-detail.hbs',
         'systems/dsa5/templates/system/calendar/events-month-grid.hbs',
+        JournalListDataModel.VISIBILITY_PARTIAL,
       ]
     },
     calendar: {
@@ -84,7 +88,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
     },
     personae: {
       template: 'systems/dsa5/templates/system/calendar/personaedramatis.hbs',
-      templates: ['systems/dsa5/templates/system/calendar/persona-detail.hbs'],
+      templates: ['systems/dsa5/templates/system/calendar/persona-detail.hbs', JournalListDataModel.VISIBILITY_PARTIAL],
       scrollable: ['.personae-list', '.persona-details-container']
     },
     questlog: {
@@ -92,6 +96,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
       templates: [
         'systems/dsa5/templates/system/calendar/questlog-detail.hbs',
         'systems/dsa5/templates/journal/parts/status-picker.hbs',
+        JournalListDataModel.VISIBILITY_PARTIAL,
       ],
       scrollable: ['.questlog-list', '.persona-details-container']
     }
@@ -215,7 +220,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
         if (page.type !== 'dsacalendar') continue;
         const entriesObj = page.system?.calendarentries || {};
         for (const [key, entry] of Object.entries(entriesObj)) {
-          if (!game.user.isGM && !entry.visible) continue;
+          if (!JournalListDataModel.isVisibleToUser(entry)) continue;
           if (entry.recurring ? entry.from.year <= year : entry.from.year === year) {
             candidates.push({ entry, page, key });
           }
@@ -1058,7 +1063,7 @@ export class DSACalendarPicker extends foundry.applications.api.HandlebarsApplic
   async #selectAlmanacEvent(pageUuid, calendarKey) {
     const page = await fromUuid(pageUuid);
     const sourceEntry = page?.system?.calendarentries?.[calendarKey];
-    if (!sourceEntry || (!game.user.isGM && !sourceEntry.visible)) return false;
+    if (!sourceEntry || !JournalListDataModel.isVisibleToUser(sourceEntry)) return false;
 
     const year = Number(sourceEntry.from?.year);
     if (!Number.isFinite(year)) return false;

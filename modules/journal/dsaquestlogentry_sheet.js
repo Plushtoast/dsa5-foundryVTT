@@ -269,6 +269,7 @@ export class DSAQuestLogEntrySheet extends CalendarListJournalSheet {
             visible: link?.visible !== false,
         }));
         await JournalStatusPicker.preload();
+        await DSAQuestLogEntry.prepareVisibility(quest);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/questlogentry_edit_detail.hbs', {
             elem: quest,
             key,

@@ -1,0 +1,16 @@
+{{#if isGM}}
+<div class="dsa-visibility-control{{ifThen visibilityPartial ' is-partial' ''}}">
+  <button type="button" class="{{buttonClass}} icon fas {{visibilityIcon}}" data-action="toggleVisibility" data-tooltip="{{localize 'JOURNALLIST.visibleActors.hint'}}"{{#if key}} data-key="{{key}}"{{/if}}{{#if uuid}} data-uuid="{{uuid}}"{{/if}}{{#if personaUuid}} data-persona-uuid="{{personaUuid}}"{{/if}}{{#if questUuid}} data-quest-uuid="{{questUuid}}"{{/if}}{{#if questKey}} data-quest-key="{{questKey}}"{{/if}}></button>
+  <ul class="dsa-visibility-actors">
+    {{#each visibilityActors}}
+      <li>
+        <button type="button" class="dsa-visibility-actor noBorder{{#if selected}} is-active{{/if}}" data-action="toggleActorVisibility" data-actor-uuid="{{uuid}}" data-tooltip="{{name}}"{{#if ../key}} data-key="{{../key}}"{{/if}}{{#if ../uuid}} data-uuid="{{../uuid}}"{{/if}}{{#if ../personaUuid}} data-persona-uuid="{{../personaUuid}}"{{/if}}{{#if ../questUuid}} data-quest-uuid="{{../questUuid}}"{{/if}}{{#if ../questKey}} data-quest-key="{{../questKey}}"{{/if}}>
+          <img src="{{img}}" alt="{{name}}">
+        </button>
+      </li>
+    {{else}}
+      <li class="dsa-visibility-empty">{{localize 'JOURNALLIST.visibleActorsEmpty'}}</li>
+    {{/each}}
+  </ul>
+</div>
+{{/if}}

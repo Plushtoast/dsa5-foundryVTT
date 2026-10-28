@@ -183,6 +183,7 @@ export class DSAPersonaeEntrySheet extends CalendarListJournalSheet {
         entry.garadan = DSAPersonaEntry.resolveGaradan(entry);
         entry.canLinkActorNotes = DSAPersonaEntry.isActorNotesLinkable(actor);
         entry.linkActorNotesActive = DSAPersonaEntry.shouldLinkActorNotes(entry, actor);
+        await DSAPersonaEntry.prepareVisibility(entry);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/personaentry_edit_detail.hbs', {
             elem: entry,
             document: this.document,

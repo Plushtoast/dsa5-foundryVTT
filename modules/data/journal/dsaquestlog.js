@@ -89,6 +89,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
                 audience: new NumberField({ required: true, initial: 0, choices: DSAQuestLogEntry.AUDIENCE_CHOICES, label: 'DSAQUESTLOG.FIELDS.quests.audience.label' }),
                 playerOwners: new ArrayField(new StringField({ required: true }), { initial: [] }),
                 visible: new BooleanField({ initial: true, label: 'DSAQUESTLOG.FIELDS.quests.visible.label' }),
+                visibleActors: JournalListDataModel.visibleActorsField(),
                 pinToTop: new BooleanField({ initial: false, label: 'DSAQUESTLOG.FIELDS.quests.pinToTop.label' }),
                 chapter: new StringField({ label: 'DSAQUESTLOG.FIELDS.quests.chapter.label' }),
                 location: new StringField({ label: 'DSAQUESTLOG.FIELDS.quests.location.label' }),
@@ -196,7 +197,6 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.audienceLabel = _loc(this.AUDIENCE_CHOICES[entry.audience] || this.AUDIENCE_CHOICES[0]);
         entry.playerOwnerNames = this.resolvePlayerNames(entry.playerOwners);
         entry.isGM = game.user.isGM;
-        entry.isVisibleToPlayers = !!entry.visible && entry.audience !== 2;
         entry.preparedAudienceBadges = this.prepareAudienceBadges(entry);
         entry.preparedObjectives = this.sortedTypedObjectEntries(entry.objectives)
             .filter(([, objective]) => objective && (objective.visible || game.user.isGM))
@@ -226,6 +226,7 @@ export class DSAQuestLogEntry extends JournalListDataModel {
         entry.uuid = page?.uuid;
         entry.questKey = key;
         entry.statusOptions = this.questStatusOptions(entry.status);
+        await this.prepareVisibility(entry);
         return entry;
     }
 
@@ -256,16 +257,6 @@ export class DSAQuestLogEntry extends JournalListDataModel {
     static resolvePlayerNames(playerOwners = []) {
         const users = new Map(this.getAssignablePlayers().map(user => [user.id, user.name]));
         return playerOwners.map(id => users.get(id)).filter(Boolean);
-    }
-
-    static isVisibleToUser(entry, user = game.user) {
-        if (user?.isGM) return true;
-        if (!entry?.visible) return false;
-
-        const audience = this.#numericValue(entry?.audience, 0);
-        if (audience === 2) return false;
-        if (audience === 1) return (entry.playerOwners || []).includes(user.id);
-        return true;
     }
 
     static prepareAudienceBadges(entry) {

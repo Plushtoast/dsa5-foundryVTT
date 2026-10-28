@@ -25,6 +25,8 @@ export class QuestLogFeature {
         newQuest: QuestLogFeature.newQuest,
         editQuest: QuestLogFeature.editQuest,
         toggleQuestVisibility: QuestLogFeature.toggleQuestVisibility,
+        toggleVisibility: QuestLogFeature.toggleQuestVisibility,
+        toggleActorVisibility: QuestLogFeature.toggleActorVisibility,
         setQuestStatus: QuestLogFeature.setQuestStatus,
         openStatusPicker: QuestLogFeature.openStatusPicker,
         openQuestReference: QuestLogFeature.openQuestReference,
@@ -261,13 +263,11 @@ export class QuestLogFeature {
     }
 
     static async toggleQuestVisibility(event, target) {
-        if (!game.user.isGM) return;
-        const page = await fromUuid(target.dataset.questUuid);
-        const questKey = target.dataset.questKey;
-        const entry = page?.system?.quests?.[questKey];
-        if (!page || !entry) return;
+        await DSAQuestLogEntry.onToggleVisibility(event, target);
+    }
 
-        await page.update({ [`system.quests.${questKey}.visible`]: !entry.visible });
+    static async toggleActorVisibility(event, target) {
+        await DSAQuestLogEntry.onToggleActorVisibility(event, target);
     }
 
     static openStatusPicker(_event, target) {

@@ -100,6 +100,14 @@
 
   .event-card-controls {
     opacity: 0;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
+
+    .dsa-visibility-control .smallBtn {
+      top: 0;
+      right: 0;
+    }
   }
 
   .event-card__body {

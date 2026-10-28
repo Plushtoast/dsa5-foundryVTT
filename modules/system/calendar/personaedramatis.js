@@ -1,4 +1,5 @@
 import { DSAPersonaEntry } from "../../data/journal/dsapersonaedramatis.js";
+import { JournalListDataModel } from "../../data/journal/journallistdatamodel.js";
 import ListKeyboardNavigation from "./list_keyboard_navigation.js";
 export class PersonaeDramatis {
     static #parent;
@@ -38,7 +39,8 @@ export class PersonaeDramatis {
         selectActor: PersonaeDramatis.selectActor,
         editActor: PersonaeDramatis.editActor,
         showSheet: PersonaeDramatis.showSheet,
-        toggleVisibility: PersonaeDramatis.toggleVisibility,
+        toggleVisibility: JournalListDataModel.onToggleVisibility,
+        toggleActorVisibility: JournalListDataModel.onToggleActorVisibility,
         switchList: PersonaeDramatis.switchList,
         newPersona: PersonaeDramatis.newPersona,
         personaeListMenu: PersonaeDramatis.personaeListMenu,
@@ -57,7 +59,7 @@ export class PersonaeDramatis {
     static async showPersonaInPicker(actorUuid) {
         const found = DSAPersonaEntry.findByActorUuid(actorUuid);
         if (!found) return false;
-        if (!game.user.isGM && !found.entry.visible) return false;
+        if (!JournalListDataModel.isVisibleToUser(found.entry)) return false;
         if (!this.#personaeTabAvailable()) return false;
 
         const picker = PersonaeDramatis.#parent ?? game.dsa5?.apps?.CalendarPicker;
@@ -77,7 +79,7 @@ export class PersonaeDramatis {
     async selectPersonaEntry(pageUuid, dramatisKey) {
         const page = await fromUuid(pageUuid);
         const entry = page?.system?.personae?.[dramatisKey];
-        if (!page || !entry || (!game.user.isGM && !entry.visible)) return false;
+        if (!page || !entry || !JournalListDataModel.isVisibleToUser(entry)) return false;
 
         PersonaeDramatis.#lastSelectedActor = { pageUuid, dramatisKey };
         PersonaeDramatis.#lastActiveListType = String(entry.type ?? 0);
@@ -144,7 +146,7 @@ export class PersonaeDramatis {
                     if (!Object.prototype.hasOwnProperty.call(personae, key)) continue;
 
                     const entry = personae[key];
-                    if ((!entry.visible && !isGM) || !entry.actor_uuid) continue;
+                    if (!JournalListDataModel.isVisibleToUser(entry) || !entry.actor_uuid) continue;
 
                     const personaEntry = {
                         ...entry,
@@ -518,15 +520,7 @@ export class PersonaeDramatis {
     }
 
     static async toggleVisibility(event, target) {
-        const { entry, page, key } = await PersonaeDramatis.#entryFromTarget(target);
-        if (!entry) return;
-
-        await page.update({ [`system.personae.${key}.visible`]: !entry.visible });
-        const i = target.querySelector('i');
-        i.classList.toggle('fa-eye', !entry.visible);
-        i.classList.toggle('fa-eye-slash', entry.visible);
-        this.element.querySelector('.persona-list-item.selected')?.classList.toggle('invisible', entry.visible);
-        this.element.querySelector('.persona-list-item.selected .persona-hidden')?.classList.toggle('dsahidden', !entry.visible);
+        await JournalListDataModel.onToggleVisibility(event, target);
     }
     static switchList(event, target) {
         const listType = target.dataset.listType;

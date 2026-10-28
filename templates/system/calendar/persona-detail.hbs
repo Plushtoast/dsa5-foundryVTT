@@ -31,11 +31,7 @@
                 <i class="fas fa-user"></i>
             </button>
             {{/if}}
-            <button type="button" class="detail-action-btn delete-btn"
-                data-tooltip="PERSONAE.FIELDS.personae.visible.label" data-action="toggleVisibility"
-                data-persona-uuid="{{uuid}}" data-key="{{dramatisKey}}">
-                <i class="fas fa-eye{{ifThen visible '' '-slash'}}"></i>
-            </button>
+            {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="detail-action-btn" key=dramatisKey uuid=uuid personaUuid=uuid}}
         </div>
         {{else if actorMissing}}
         <span class="broken-actor-link" data-tooltip="PERSONAE.FIELDS.personae.actor_uuid.warning">

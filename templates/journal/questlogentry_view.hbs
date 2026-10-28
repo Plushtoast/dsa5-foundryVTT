@@ -41,7 +41,7 @@
                     <div class='persona-detail-actions flex0'>
                       <div class='split-status-actions'>
                         {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn" currentIcon=quest.statusActionIcon currentTooltip=quest.statusActionTooltip setAction="setQuestStatus" key=quest.questKey options=quest.statusOptions}}
-                        <button type='button' class='icon fas fa-eye{{ifThen quest.visible "" "-slash"}} detail-action-btn sheet-btn' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleVisibility' data-key='{{quest.questKey}}'></button>
+                        {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="detail-action-btn sheet-btn" key=quest.questKey uuid=quest.uuid visibilityIcon=quest.visibilityIcon visibilityActors=quest.visibilityActors visibilityPartial=quest.visibilityPartial isGM=@root.isGM}}
                       </div>
                     </div>
                   {{/if}}

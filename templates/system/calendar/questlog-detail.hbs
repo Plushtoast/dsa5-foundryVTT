@@ -40,7 +40,7 @@
                     </button>
                     <div class='split-status-actions'>
                         {{> "systems/dsa5/templates/journal/parts/status-picker.hbs" buttonClass="detail-action-btn sheet-btn very-small" currentIcon=statusActionIcon currentTooltip=statusActionTooltip setAction="setQuestStatus" questUuid=uuid questKey=questKey options=statusOptions}}
-                        <button type='button' class='icon fas fa-eye{{ifThen visible "" "-slash"}} detail-action-btn sheet-btn very-small' data-tooltip='{{localize "DSAQUESTLOG.FIELDS.quests.visible.label"}}' data-action='toggleQuestVisibility' data-quest-uuid='{{uuid}}' data-quest-key='{{questKey}}'></button>
+                        {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="detail-action-btn sheet-btn very-small" key=questKey uuid=uuid questUuid=uuid questKey=questKey}}
                     </div>
                 </div>
                 {{/if}}

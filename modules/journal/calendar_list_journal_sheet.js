@@ -1,5 +1,6 @@
 import JournalListUx, { JOURNAL_LIST_UX_PARTIALS } from './journal-list-ux.js';
 import JournalStatusPicker from './journal-status-picker.js';
+import { JournalListDataModel } from '../data/journal/journallistdatamodel.js';
 
 export default class CalendarListJournalSheet extends foundry.applications.sheets.journal.JournalEntryPageHandlebarsSheet {
     #search;
@@ -14,6 +15,7 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
         actions: {
             selectEntry: CalendarListJournalSheet.#selectEntry,
             toggleVisibility: CalendarListJournalSheet.#toggleVisibility,
+            toggleActorVisibility: CalendarListJournalSheet.#toggleActorVisibility,
             removeEntry: CalendarListJournalSheet.#removeEntry,
             addEntry: CalendarListJournalSheet.#addEntry,
             listMenu: CalendarListJournalSheet.#listMenu,
@@ -41,7 +43,7 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
         for (const [key, handler] of Object.entries(applicationOptions.actions ?? {})) {
             const fn = typeof handler === 'object' ? handler.handler : handler;
             const commitAndRun = async function(event, target) {
-                const skipSubmit = ['listMenu', 'toggleListGroup', 'openStatusPicker', 'editEvent', 'setQuestStatus', 'setObjectiveStatus'].includes(key);
+                const skipSubmit = ['listMenu', 'toggleListGroup', 'openStatusPicker', 'editEvent', 'setQuestStatus', 'setObjectiveStatus', 'toggleVisibility', 'toggleActorVisibility'].includes(key);
                 if (!skipSubmit && !this.isView && this.isEditable && this.form) await this.submit();
                 return fn?.call(this, event, target);
             };
@@ -55,7 +57,7 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
     async _prepareContext(options) {
         const context = await super._prepareContext(options);
         const entries = Object.entries(foundry.utils.duplicate(this.document.system[this.constructor.objectKey] || {}))
-            .filter(([, value]) => value && (value.visible || game.user.isGM));
+            .filter(([, value]) => value && JournalListDataModel.isVisibleToUser(value));
 
         context.sortedEntries = Object.fromEntries(entries);
         context.isGM = game.user.isGM;
@@ -211,11 +213,16 @@ export default class CalendarListJournalSheet extends foundry.applications.sheet
         if (!selected.hidden) selected.scrollIntoView({ block: 'nearest' });
     }
 
-    static async #toggleVisibility(ev, target) {
-        const key = target.dataset.key;
-        const entry = this.document.system[this.constructor.objectKey][key];
-        if (!entry) return;
-        await this.document.update({ [`system.${this.constructor.objectKey}.${key}.visible`]: !entry.visible });
+    static async #toggleVisibility(event, target) {
+        const resolved = await JournalListDataModel.resolveVisibilityTarget(target, this.document);
+        if (!resolved) return;
+        await JournalListDataModel.toggleVisible(resolved.page, resolved.collection, resolved.key);
+    }
+
+    static async #toggleActorVisibility(event, target) {
+        const resolved = await JournalListDataModel.resolveVisibilityTarget(target, this.document);
+        if (!resolved?.actorUuid) return;
+        await JournalListDataModel.toggleActor(resolved.page, resolved.collection, resolved.key, resolved.actorUuid);
     }
 
     static async #selectEntry(event, target) {

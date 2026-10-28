@@ -126,6 +126,7 @@ export class DSACalendarEntrySheet extends CalendarListJournalSheet {
         const availableMonths = this.#getLocalizedArray(calendar.months.values, calendar.translationPrefix);
         elem.from.max = calendar.months.values[elem.from.month].days + 1;
 
+        await DSACalendarEntry.prepareVisibility(elem);
         return await foundry.applications.handlebars.renderTemplate('systems/dsa5/templates/journal/calendarentry_edit_detail.hbs', {
             elem,
             document: this.document,

@@ -1,3 +1,5 @@
+import { JournalListDataModel } from '../../data/journal/journallistdatamodel.js';
+
 const { renderTemplate } = foundry.applications.handlebars;
 
 export default class AlmanacNotification {
@@ -98,6 +100,7 @@ export default class AlmanacNotification {
         image: next.img || this.FALLBACK_PERSONA_IMG,
         icon: isCreature ? 'fas fa-paw' : 'fas fa-user',
         visible: true,
+        visibleActors: Array.isArray(next.visibleActors) ? [...next.visibleActors] : [],
       }));
     }
     return toasts;
@@ -126,6 +129,7 @@ export default class AlmanacNotification {
         icon: icons[category] || 'fas fa-calendar',
         color: colors[category] || '',
         visible: true,
+        visibleActors: Array.isArray(next.visibleActors) ? [...next.visibleActors] : [],
       }));
     }
     return toasts;
@@ -152,6 +156,7 @@ export default class AlmanacNotification {
         visible: next.visible !== false,
         audience: Number(next.audience) || 0,
         playerOwners: Array.isArray(next.playerOwners) ? [...next.playerOwners] : [],
+        visibleActors: Array.isArray(next.visibleActors) ? [...next.visibleActors] : [],
       };
 
       const revealed = payload.visible && (!previous || previous.visible === false);
@@ -229,16 +234,8 @@ export default class AlmanacNotification {
   }
 
   static canSee(toast, user = game.user) {
-    if (user?.isGM) return true;
-    if (toast?.kind === 'questlog') {
-      if (toast.visible === false) return false;
-      if (toast.objectiveVisible === false) return false;
-      const audience = Number(toast.audience) || 0;
-      if (audience === 2) return false;
-      if (audience === 1) return (toast.playerOwners || []).includes(user.id);
-      return true;
-    }
-    return toast?.visible !== false;
+    if (toast?.objectiveVisible === false) return false;
+    return JournalListDataModel.isVisibleToUser(toast, user);
   }
 
   static get pending() {

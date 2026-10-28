@@ -7,9 +7,7 @@
   <div class='form-group'>
     <label>{{localize document.system.schema.fields.personae.element.fields.name.label}}</label>
     <div class='form-fields gap0px'>
-        {{#if isGM}}
-        <button type='button' data-action='toggleVisibility' data-tooltip="{{document.system.schema.fields.personae.element.fields.visible.label}}" data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
-        {{/if}}
+        {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="icon" key=key uuid=document.uuid visibilityIcon=elem.visibilityIcon visibilityActors=elem.visibilityActors visibilityPartial=elem.visibilityPartial isGM=isGM}}
         {{formInput document.system.schema.fields.personae.element.fields.name value=elem.name name=(concat 'system.personae.' key '.name')}}
         <button type='button' data-action='removeEntry' data-key='{{key}}' data-tooltip='delete' class='fas icon fa-trash'></button>
     </div>

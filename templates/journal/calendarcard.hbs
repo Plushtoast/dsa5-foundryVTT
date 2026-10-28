@@ -12,6 +12,9 @@
                 data-tooltip="dsacalendar.FIELDS.calendarentries.visible.label"></i>{{/unless}}</h3>
             {{#if isOwner}}
             <div class="event-card-controls flex0">
+                {{#if uuid}}
+                {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="smallBtn icon" key=calendarKey uuid=uuid}}
+                {{/if}}
                 <button type="button" class="smallBtn fa-solid fa-edit icon" data-action="editEvent" data-uuid="{{uuid}}" data-key="{{calendarKey}}"></button>
             </div>
             {{/if}}

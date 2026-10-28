@@ -3,6 +3,7 @@ export const JOURNAL_LIST_UX_PARTIALS = [
     'systems/dsa5/templates/journal/parts/list-group.hbs',
     'systems/dsa5/templates/journal/parts/view-group.hbs',
     'systems/dsa5/templates/journal/parts/status-picker.hbs',
+    'systems/dsa5/templates/journal/parts/visibility-control.hbs',
 ];
 
 export default class JournalListUx {

@@ -2,9 +2,7 @@
   <div class='form-group'>
     <label>{{localize document.system.schema.fields.details.element.fields.name.label}}</label>
     <div class='form-fields gap0px'>
-      {{#if isGM}}
-        <button type='button' data-action='toggleVisibility' data-tooltip='{{document.system.schema.fields.details.element.fields.visible.label}}' data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
-      {{/if}}
+      {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="icon" key=key uuid=document.uuid visibilityIcon=elem.visibilityIcon visibilityActors=elem.visibilityActors visibilityPartial=elem.visibilityPartial isGM=isGM}}
       {{formInput document.system.schema.fields.details.element.fields.name value=elem.name name=(concat 'system.details.' key '.name')}}
       <button type='button' data-action='duplicateEntry' data-key='{{key}}' data-tooltip='{{localize "DSACITYDETAILS.Duplicate"}}' class='fas icon fa-copy'></button>
       <button type='button' data-action='removeEntry' data-key='{{key}}' data-tooltip='delete' class='fas icon fa-trash'></button>

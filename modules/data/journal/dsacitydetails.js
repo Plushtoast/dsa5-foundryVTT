@@ -64,6 +64,7 @@ export class DSACityDetailsEntry extends JournalListDataModel {
                 gmNotes: new HTMLField({ label: 'DSACITYDETAILS.FIELDS.details.gmNotes.label' }),
                 img: new FilePathField({ categories: ['IMAGE'], label: 'DSACITYDETAILS.FIELDS.details.img.label' }),
                 visible: new BooleanField({ initial: true, label: 'DSACITYDETAILS.FIELDS.details.visible.label' }),
+                visibleActors: JournalListDataModel.visibleActorsField(),
                 qualityRowIndex: new NumberField({ nullable: true, initial: null, choices: DSACityDetailsEntry.QUALITY_CHOICES, label: 'DSACITYDETAILS.FIELDS.details.qualityRowIndex.label' }),
                 priceRowIndex: new NumberField({ nullable: true, initial: 2, choices: DSACityDetailsEntry.PRICE_CHOICES, label: 'DSACITYDETAILS.FIELDS.details.priceRowIndex.label' }),
             })),
@@ -103,6 +104,7 @@ export class DSACityDetailsEntry extends JournalListDataModel {
         entry.hasPrice = entry.priceRowIndex !== null && entry.priceRowIndex !== undefined;
         entry.uuid = page?.uuid;
         entry.detailKey = key;
+        await this.prepareVisibility(entry);
     }
 
     static resolveKind(kind) {

@@ -1808,7 +1808,12 @@
     "sortByDate": "Nach Datum sortieren",
     "sortByKind": "Nach Art sortieren",
     "sortByName": "Nach Name sortieren",
-    "sortByStatus": "Nach Status sortieren"
+    "sortByStatus": "Nach Status sortieren",
+    "visibleActors": {
+      "label": "Sichtbar für Akteure",
+      "hint": "Klicke auf das Auge, um den Eintrag für alle sichtbar zu machen. Beim Darüberfahren kannst du einzelnen Spielerakteuren Zugriff geben oder nehmen, während das Auge geschlossen ist."
+    },
+    "visibleActorsEmpty": "Keine Spielerakteure vorhanden"
   },
   "DSAQUESTLOG": {
     "AUDIENCE": {

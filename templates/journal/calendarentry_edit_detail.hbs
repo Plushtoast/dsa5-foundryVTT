@@ -2,9 +2,7 @@
   <div class='form-group'>
     <label>{{localize document.system.schema.fields.calendarentries.element.fields.title.label}}</label>
     <div class='form-fields gap0px'>
-        {{#if isGM}}
-        <button type='button' data-action='toggleVisibility' data-tooltip="{{document.system.schema.fields.calendarentries.element.fields.visible.label}}" data-key='{{key}}' class='icon fas {{ifThen elem.visible "fa-eye" "fa-eye-slash"}}'></button>
-        {{/if}}
+        {{> "systems/dsa5/templates/journal/parts/visibility-control.hbs" buttonClass="icon" key=key uuid=document.uuid visibilityIcon=elem.visibilityIcon visibilityActors=elem.visibilityActors visibilityPartial=elem.visibilityPartial isGM=isGM}}
         {{formInput document.system.schema.fields.calendarentries.element.fields.title value=elem.title name=(concat 'system.calendarentries.' key '.title')}}
         <button type='button' data-action='removeEntry' data-tooltip="delete" data-key='{{key}}' class='fas icon fa-trash'></button>      
     </div>
