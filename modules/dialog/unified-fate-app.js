@@ -355,8 +355,12 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
             case 'improve':
                 return this._validateImproveDieSelection();
             default:
-                return true;
+                return this._validateCustomDieSelection();
         }
+    }
+
+    _validateCustomDieSelection() {
+        return true;
     }
 
     _validateImproveDieSelection() {
@@ -387,8 +391,20 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
             case 'improve':
                 return this._executeImprove(newTestData, data);
             default:
-                return null;
+                return this._executeCustomSheetAction({ data, newTestData, cardOptions, isCheat, tab });
         }
+    }
+
+    async _executeCustomSheetAction({ data, newTestData, cardOptions, isCheat, tab }) {
+        const payload = { data, newTestData, cardOptions, isCheat, tab, result: null };
+        Hooks.call('dsa5.executeFateSheetAction', this, payload);
+        return (await payload.result) ?? null;
+    }
+
+    _buildChatContent(actionResult) {
+        if (actionResult.chatContent != null) return actionResult.chatContent;
+        const infoMsg = FateRolls.buildUsageMessage(this.dsaActor, actionResult.chatType, this._schipSource());
+        return `${infoMsg}${actionResult.chatRollDetails || ''}`;
     }
 
     async _executeReroll(data, newTestData, isCheat) {
@@ -539,15 +555,16 @@ export default class UnifiedFateDSA5 extends HandlebarsApplicationMixin(Applicat
             await this.dsaActor[data.postData.postFunction]({ testData: newTestData, cardOptions }, { rerenderMessage: this.message });
         }
 
-        const infoMsg = FateRolls.buildUsageMessage(this.dsaActor, actionResult.chatType, this._schipSource());
-        await ChatMessage.create(DSA5_Utility.chatDataSetup(`${infoMsg}${actionResult.chatRollDetails || ''}`));
+        await ChatMessage.create(DSA5_Utility.chatDataSetup(this._buildChatContent(actionResult)));
 
         const updatedMessage = game.messages.get(this.message.id);
         const updates = {};
         for (const flag of actionResult.flagToUpdate || []) updates[`flags.data.${flag}`] = true;
         if (Object.keys(updates).length) await updatedMessage.update(updates);
 
-        await FateRolls.reduceSchips(this.dsaActor, this._schipSource());
+        if (!actionResult.skipReduceSchips) {
+            await FateRolls.reduceSchips(this.dsaActor, this._schipSource());
+        }
         this.close();
     }
 }
