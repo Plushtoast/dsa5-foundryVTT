@@ -2326,6 +2326,7 @@
     "dropMemberHint": "Drop a character, NPC or creature here to add it to the group.",
     "dropMembersHint": "Drop a character, NPC or creature here to add it to the group.",
     "forcedMarch": "Forced March",
+    "hideForeignIdentity": "Hide other characters' culture, career, and fate points",
     "inventory": "Inventory",
     "locationLocked": "This depot is locked.",
     "locationOnly": "Only merchant or loot actors can be added as depots.",

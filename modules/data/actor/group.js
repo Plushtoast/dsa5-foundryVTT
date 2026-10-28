@@ -54,6 +54,9 @@ export default class GroupData extends ActorDataModel {
         autoSize: new BooleanField({ initial: true }),
         lockRotation: new BooleanField({ initial: false }),
       }),
+      privacy: new SchemaField({
+        hideForeignIdentity: new BooleanField({ initial: false, label: 'GROUP.hideForeignIdentity' }),
+      }),
       masterFunctions: new MasterFunctionsField({ initial: {} }),
     });
   }
