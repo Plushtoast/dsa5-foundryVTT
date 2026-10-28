@@ -44,7 +44,6 @@
           <span class="badgePip" style="background-color: {{hero.ownerColor}}; color: #fff; font-size: 0.7em;">{{hero.ownerName}}</span>
         {{/if}}
     {{/"systems/dsa5/templates/actors/parts/member-card-header.hbs"}}
-    {{#if (or (not @root.hideForeignIdentity) hero.canViewPrivateDetails)}}
     <div class='row-section col'>
       <div class='col fourty'>
         <div class='flexrow'>
@@ -54,7 +53,6 @@
         </div>
       </div>
     </div>
-    {{/if}}
     <div class='row-section col'>
       <div class='col headerbadgeflex flexAlignCenter wrap gap5px'>
         {{#if (eq hero.type 'creature')}}
@@ -65,13 +63,11 @@
         {{#if hero.system.details.species}}
         <span class='group-attr-icon flex0'>{{hero.system.details.species}}</span>
         {{/if}}
-        {{#if (or (not @root.hideForeignIdentity) hero.canViewPrivateDetails)}}
         {{#if hero.system.details.culture}}
         <span class='group-attr-icon flex0'>{{hero.system.details.culture}}</span>
         {{/if}}
         {{#if hero.system.details.career}}
         <span class='group-attr-icon flex0'>{{hero.system.details.career}}</span>
-        {{/if}}
         {{/if}}
         {{/if}}
       </div>

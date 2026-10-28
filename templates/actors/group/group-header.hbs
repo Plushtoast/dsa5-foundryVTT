@@ -14,7 +14,6 @@
           {{#if isGM}}
             <button type="button" class="icon fas fa-star{{#unless isPrimaryParty}}-half-stroke{{/unless}} flexAlignEnd dsadesignbutton noBorder" data-action="setPrimaryParty" data-tooltip="{{ifThen isPrimaryParty 'GROUP.unsetPrimaryParty' 'GROUP.setPrimaryParty'}}"></button>
             <button type="button" class="icon fas fa-users-cog flexAlignEnd dsadesignbutton noBorder" data-action="shareOwnership" data-tooltip="GROUP.shareOwnership"></button>
-            <input type="checkbox" class="flexAlignEnd" name="system.privacy.hideForeignIdentity" {{checked document.system.privacy.hideForeignIdentity}} data-tooltip="GROUP.hideForeignIdentity" />
           {{/if}}
           <a class='actorDrag button icon fas fa-link flexAlignEnd dsadesignbutton noBorder' data-tooltip='TT.dragLink'></a>
         </div>
